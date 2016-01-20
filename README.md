@@ -1,81 +1,29 @@
-# odoo_v8.0 Code Base
-This repository is used as a codebase for odoo v8.0 instances and the related setup tools (odoo-tools.sh). 
-The *master* branch of this repo is always a deploy-able production ready branch.
-
-# WARNING
-This structure is going to change very soon!
+# FS-Online odoo code base
+This repository is used as a codebase for FS-Online instances and the related setup tools. 
+The *o[0-9]+* branches of this repo are always deploy-able production ready branches.
 
 ## CONVENTIONS
 
-### Branches:
-**The default latest stable branch is called master.**
-The other branches in the github repository are either **production branches starting with "int" or "ext"** (intdadi,
-intdadirle, exthof) or development and bugfix branches (setuptools, fix1234, dev_wsd_templates) that will be merged back into the master branch.
+#### Branches:
+**The default latest stable branch is called o[0-9]+ e.g.: o8 or o9.** where the number after o stands for the odoo version. 
+The other branches in the github repository are development branches in the form of o8_[ISSUENUMBER]_[OPTIONALDESCRIPTION] e.g.: o8_123 or o8_123_shoptemplates or without an Github Issue o8_[DESCRIPTION]
 
-### Branch Names
-- **dev[description]** or **freename** e.g.: *devsetuptools*  = Development branches that will be merged into master (deleted after merge)
-- **fix[Issue Number]** e.g.: *fix1234*  = Bug Fixes related to Github Issues (deleted after merge)
-- **int[rolloutlevel]** e.g.: *intdemo* = Production Branches hosted on our servers (our servers - also our hosted ones e.g.: at abaton)
-- **ext[customer id]** e.g.: *exthofe* = Production Branches hosted on customer servers (no control/payment for this servers from our side)
+Examples:
+- o8 = Master Branch for FS-Online for odoo Version 8
+- o9 = Master Branch for FS-Online for odoo Version 9
+- o8_256 = Development or Bugfix Branch related to github issue 256 to be merged into o8 Master Branch
+- o8_fixsendmail = Development or Bugfix Branch without an issue to be merged into o8 Master Branch
+- o9_123_addfreetoshop = Development or Bugfix Branch related to github issue 123 to be merged into o9 Master Branch with optional description
 
-#### Examples of Branch Names on github:
-- master (default stable branch)
-- intdadi
-- intdadirl1
-- intdevel
-- exthofe
-- fix1234 (deleted after merge)
-- setuptools (deleted after merge)
-- dev_website_sale_donate_newtemplating (deleted after merge)
+#### Release Tags
+Release tags must have the form [BRANCH]r[COUNTER] e.g.: **o8r1** or **o9r23**
 
-### Branch Updates (Deployment) for the odoo codebase:
-The flow of fast-forward-branch-updates is always: master -> intdadi -> intdadirl1 - intdadirl2
-Ext branches are normally not included in the update cycle.
-Therefore and to make FF possible **merges or commits are never done directly in any "int" or "ext" branches**
-Where int marks a server we pay (our own server) for and ext marks a server the custommer pays for (custommer server).
+## Odoo Tools
+Simple setup and maintenance through odoo-tools.sh. **odoo-tools.sh** is a simple setup script that is able to:
 
-### Backup Filename Convention
-```odoo-tools.sh backup``` can create backups of odoo, etherpad and owncloud. If you are creating backups always include
-the configuration files of the programm as a partial backup also and finally move all partial backups in a single zip or tgz archive. 
-
-Odoo backup example:
-- Step 1: Odoo Database Backup **o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip**
-- Step 2: Odoo Config File Backup **o8_intdadi_dadi-odoo_conf-2015_01_0156.tgz**
-- Step 3: **Move** both archives into the final backup archive **o8_intdadi_dadi-odoo-2015_01_23_0156.zip**
-
-#### Convention for backup parts file names:
-```[instancename]-[progname]_[backuptype]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` e.g.: o8_intdadi_dadi-odoo_db-2015_01_23_0154.zip
-
-- **progname** should be in [odoo|pad|cloud]
-- **backuptype** must be in [db|conf|file]
-  - **db** = backup of a database (sql dump)
-  - **conf** = config files
-  - **file** = the rest ;) - file based backups
-
-
-#### Convention for the final backup file name:
-All backup parts must be moved into a final backup archive of the format:
-- ```[instancename]-[progname]-[YYYY]_[MM]_[DD]_[HHmm].[fileending]``` 
-    - e.g.: o8_intdadi_dadi-odoo-2015_01_23_0154.tgz
-
-If it is a cyclical backup e.g. weekly or daily the Date Part can be replaced like this:
-- ```[instancename]-[progname]-[YYYY]_week_[weeknumber].[fileending]``` 
-  - e.g.: o8_intdadi_dadi-odoo-week_32.tgz
-- ```[instancename]-[progname]-[YYYY]_day_[monday].[fileending]``` 
-  - e.g.: o8_intdadi_dadi-odoo-day_monday.tgz
-
-
-## GOALS
-
-#### One Codebase (github repository) for all instances
-- The branch determines the release (master=latest -> intdadi -> intdadirl1)
-- All third party addons as well as odoo itself are linked as submodules and therefore tied with a specific commit
-
-#### Simple setup and maintenance through odoo-tools.sh
-**odoo-tools.sh** is a simple setup script that is able to
-- **prepare** an ubuntu 14.04 LTS server to run odoo v8 (libs, tools, settings)
-- **setup**/download the odoo code base for odoo v8 from github
-- **newdb** create a new odoo instance:
+- **prepare** (DEPRICATED by Saltstack) an ubuntu 14.04 LTS server to run odoo v8 (libs, tools, settings)
+- **setup**/download (DEPRICATED by Saltstack) the odoo code base for odoo v8 from github
+- **newdb** (DEPRICATED by Saltstack) create a new odoo instance:
     - linux user
     - database creation
     - postgres user
@@ -86,160 +34,68 @@ If it is a cyclical backup e.g. weekly or daily the Date Part can be replaced li
     - backup and logrotate cron jobs
     - create and link custom-addons githup repository into the instance addons folder
     - Install push-to-deploy workflow for updating the custom addons folder
-- **duplicatedb** duplicate an instance (TODO!)
-- **update** one or all instances to the latest master branch (TODO!)
-    - clone the server (VMWare)
-    - create new snapshot on the clone
-    - backup instances on the clone
-    - Try the update(s) on the clone (one by one) and if it all worked:
-    - Do the Updates on the production machine
-- **maintenancemode** set one or all instances into maintenance mode (not reachable from the outside)
+- **maintenancemode** (DEPRICATED by Saltstack) set one or all instances into maintenance mode (not reachable from the outside)
 - **backup** one or all instances
-- **restore** one or all instances (TODO!)
-- ToDo: deploy addon(s) to one or more databases on the local server
+- **restore** one or all instances
 
 **HINT:** **db-tools.sh** is used by odoo-tools.sh to backup and restore the database and data-dir of an instance.
 
-
-## SETUP
-This setup process will only work on a fresh install of Ubuntu 14.04 LTS. Make sure timezone is correct and the server
-has internet access!
-
-
-### 1.) Be Root ;)
-```bash
-ssh yourname@yourserver
-sudo su
-```
-
-### 2.) get odoo-tools.sh
-```bash
-wget -O - https://raw.githubusercontent.com/OpenAT/odoo_v8.0/master/TOOLS/odoo-tools.sh > odoo-tools.sh
-chmod 755 odoo-tools.sh
-```
-
-### 3.) Prepare the Ubuntu Server
-```bash
-odoo-tools.sh prepare
-```
-**Reboot the server!**
-
-### 4.) Setup the odoo_v8.0 codebase (=branch):
-```bash
-# USAGE: odoo-tools.sh setup {TARGET_BRANCH}
-odoo-tools.sh setup intdadi
-```
-This will create a new folder in **/opt/odoo_v8.0** called **intdadi**.
-
-**HINT:** You can run **multiple branches on the same server!** All the branches will use and increment the same 
-counter-file for the Database-Port therefore no port collisions can happen between Instances of different branches! 
-A maximum of 99 Instances are possible for all installed branches!
-
-### 5.) Create a new Instance:
-**5.1) Create a new Github-Repository** manually for the custom-addons-folder of the new instance:
--  **Create a new Github-Repository** hosting the custom-addons of the instance:
-    -  Where: https://github.com/OpenAT/
-    -  Name: **cu_{DATABASE_NAME}** e.g.: cu_dadi (DATABASE_NAME should be the customer number e.g.: ahch or dadi)
-- **Create a webhook** in the repository settings (https://github.com/OpenAT/cu_ahch/settings/hooks)
-    - Payload Url: e.g.: ahch.datadialog.net/cu_ahch
-    - Content Type: application/x-www-from-urlencoded
-
-**5.2) Create the Default DNS-Entries for the new instance:**
-- dadi.datadialog.net, \*.dadi.datadialog.net
-
-**5.3) Install the new Instance:**
-```bash
-# usage: odoo-tools.sh newdb {TARGET_BRANCH} {SUPER_PASSWORD} {DATABASE_NAME} {DOMAIN_NAME} [CUADDONSREPONAME]
-odoo-tools.sh newdb intdadi admin dadi www.datadialog.net
-```
-- Test/open the new instance
-- Install addon base_config
-
-**5.4) Save the installation summary in keepass!!!**
-
-**5.5) Add the instance to the monitoring service**
-
-**5.6) Ask the customer to set the correct DNS entries:**
-www.datadialog.net, aswidget.www.datadialog.net, pad.www.datadialog.net, cloud.www.datadialog.net
-
-
 ## DEVELOPMENT
+Development is all done locally on mac or linux machines with pycharm.
 
-To develop with this repo use this workflow:
-
+#### Development workflow:
 ```bash
-# 1.) Clone the repo odoo_v8 branch master locally:
-git clone -b master --recurse-submodules https://github.com/OpenAT/odoo_v8.0.git ${instance_dir}
-
-# Check if the upstream (remote) is set correctly for the master branch
-git branch -vv
-git --set-upstream-to=https://github.com/OpenAT/odoo_v8.0.git master    # creates remotes and origin
+# 1.) Clone the branch o8 locally:
+git clone -b o8 https://github.com/OpenAT/online
+git submodule update --init --recursive
+git branch -avv
 
 # 2.) Create and checkout a new branch:
-git branch dev-ckeditor_advanced
-git checkout dev-ckeditor_advanced
+#     Optional Create a new Issue in Github First for the issue number
+git branch o8_ckeditor_advanced
+git checkout o8_ckeditor_advanced
 
 # 3.) Push your Branch to Github (so everybody knows what you are working on)
 git commit
-git push origin dev-ckeditor_advanced
+git push origin o8_ckeditor_advanced
 
 # 4.) Do stuff and commit and push changes until ready:
 git add [file or folders]    # This tells git what to include in next commit
 git commit -m "[ADD] Added README.md"
-git push origin dev-ckeditor_advanced
+git push origin o8_ckeditor_advanced
 
-# 5.) When ready with development 
-# - create pull request on github (at webpage) if wanted to discuss / review changes
-# - Update master branch to latest
-# - rebase dev-ckeditor_advanced on master
-# - rebase dev-ckeditor_advanced submodules on master
-# - merge dev-ckeditor_advanced in master with rebase
+# 5.) Merging the Branch
+# 5.1) Update master branch first
 git fetch
-git checkout master    # NOW IN BRANCH master
+git checkout o8
 git pull
-git checkout dev-ckeditor_advanced    # NOW IN BRANCH dev-ckeditor_advanced
-git rebase master
+# 5.2) Rebase development branch on master branch (o8) to add possible changes, avoiding merge confilcts later on!
+git checkout o8_ckeditor_advanced
+git rebase o8
 git submodule update
-git checkout master    # NOW IN BRANCH master
-git merge dev-ckeditor_advanced
+# 5.3) Locally merge the Development Branch (o8_ckeditor_advanced) into the master branch (o8)
+#      !!! OR Create a Pull request in Github which is the prefered method !!!
+git checkout o8
+git merge o8_ckeditor_advanced
 git push origin master
 ```
 
-Adding new Submodules to the repo:
+#### Adding new Submodules to the repo:
 ```bash
-# This is an example how to add a submodule:
+# This is an example how to add a submodule with the submodule branch master:
 git submodule add -b master https://github.com/ether/etherpad-lite.git etherpad-lite
 
-# Ubdate all submodules
+# Update all submodules
 git submodule update --rebase --remote --recursive
 ```
 
-
-## UPDATE OF AN INSTANCE (and its DBs)
-
-This is for now only a placeholder but will describe the update process of a customer instance.
+#### Update of all existing Submodules
 ```bash
-
-# Update Master
-git checkout master                             
-git pull                                        
-git submodule update
-
-# Update Branch (Code Repo for a server in this case)
-git checkout intdadi                            
-git rebase master
-git submodule update
-git push origin intdadi
-```
-
-
-## Update of all Submodules of branch master
-```bash
-git checkout master
+git checkout o8
 git pull
 git submodule update --remote --rebase --recursive
 git commit -am "[UPDATE] all submodules updated"
-git push master
+git push origin o8
 ```
 
 ## DOCUMENTATION
