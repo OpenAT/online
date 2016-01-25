@@ -45,6 +45,7 @@
 [submodule "addons-thirdparty/oca/social"]
 	path = addons-thirdparty/oca/social
 	url = https://github.com/OCA/social.git
+	branch = 8.0
 [submodule "addons-thirdparty/oca/sale-workflow"]
 	path = addons-thirdparty/oca/sale-workflow
 	url = https://github.com/OCA/sale-workflow.git
