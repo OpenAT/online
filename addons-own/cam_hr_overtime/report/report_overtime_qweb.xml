@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Qweb Report Action -->
+        <report
+            id="hr_timesheet_report"
+            model="hr_timesheet_sheet.sheet"
+            report_type="qweb-html"
+            string="Timesheet Report"
+            name="cam_hr_overtime.hr_timesheet_qweb_report"
+        />
+
+        <!-- Qweb Report -->
+        <template id="hr_timesheet_qweb_report">
+             <t t-call="report.html_container">
+                 <!--<t t-call="report.external_layout">-->
+                    <t t-foreach="docs" t-as="ts">
+                        <div class="page">
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2>Zeiterfassung, <span t-field="ts.employee_id"/></h2>
+                                        <h2>Zeiterfassung, <span t-field="ts.employee_id.remaining_leaves"/></h2>
+                                        <h4><span t-field="ts.date_from"/> bis <span t-field="ts.date_to"/></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2">Aktueller Monat:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Urlaub in Tagen:</td>
+                                                    <td><span t-field="ts.total_vacation_days"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kommt/Geht:</td>
+                                                    <td><span t-field="ts.total_attendance2"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Urlaub:</td>
+                                                    <td><span t-field="ts.total_vacation"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Krankenstand:</td>
+                                                    <td><span t-field="ts.total_illness"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Abwesenheit:</td>
+                                                    <td><span t-field="ts.total_others"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Berechnete Anwesenheit:</td>
+                                                    <td><span t-field="ts.total_overtime"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Stundenkorrektur:</td>
+                                                    <td><span t-field="ts.total_overtime_correction"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Summe Anwesenheit:</td>
+                                                    <td><span t-field="ts.total_overtime_and_correction"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2">Summe bisheriger Zeiterfassungen:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Urlaub in Tagen:</td>
+                                                    <td><span t-field="ts.sum_vacation_days"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Urlaub:</td>
+                                                    <td><span t-field="ts.sum_vacation"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Krankenstand:</td>
+                                                    <td><span t-field="ts.sum_illness"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Abwesenheit:</td>
+                                                    <td><span t-field="ts.sum_others"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kommt/Geht:</td>
+                                                    <td><span t-field="ts.sum_attendance"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Anwesenheit:</td>
+                                                    <td><span t-field="ts.sum_overtime"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2">Projekterfassung:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Kommt/Geht:</td>
+                                                    <td><span t-field="ts.total_attendance"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Projekterfassung:</td>
+                                                    <td><span t-field="ts.total_timesheet"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Differenz:</td>
+                                                    <td><span t-field="ts.total_difference"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3>Anwesenheit pro Tag</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+                                <div class="row">
+                                    <table class="table table-condensed .small">
+                                        <thead>
+                                            <tr>
+                                                <th>Tag</th>
+                                                <th>Gepl.</th>
+                                                <th>Urlaub</th>
+                                                <th>Krank.</th>
+                                                <th>Abw.</th>
+                                                <th>K/G</th>
+                                                <th>Anw.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="ts.day_details" t-as="day">
+                                                <tr>
+                                                    <td><span t-field="day.name" t-field-options='{"format": "dd"}'/></td>
+                                                    <td><span t-field="day.planned"/></td>
+                                                    <td><span t-field="day.vacation"/></td>
+                                                    <td><span t-field="day.illness"/></td>
+                                                    <td><span t-field="day.others"/></td>
+                                                    <td><span t-field="day.attendance"/></td>
+                                                    <td><span t-field="day.overtime"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                 <!--</t>-->
+             </t>
+        </template>
+
+    </data>
+</openerp>

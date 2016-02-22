@@ -1,0 +1,11 @@
+--- preprocess.py.orig	2013-05-14 14:47:48.091792993 +0200
++++ preprocess.py	2013-05-14 14:47:54.703709874 +0200
+@@ -21,7 +21,7 @@
+ 
+ from lxml import etree
+ import re
+-rml_parents = ['tr','story','section']
++rml_parents = ['td','tr','story','section']
+ html_parents = ['tr','body','div']
+ sxw_parents = ['{http://openoffice.org/2000/table}table-row','{http://openoffice.org/2000/office}body','{http://openoffice.org/2000/text}section']
+ odt_parents = ['{urn:oasis:names:tc:opendocument:xmlns:office:1.0}body','{urn:oasis:names:tc:opendocument:xmlns:table:1.0}table-row','{urn:oasis:names:tc:opendocument:xmlns:text:1.0}section']

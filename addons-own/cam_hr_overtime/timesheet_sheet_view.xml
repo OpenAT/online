@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="cam_hr_overtime_timesheet_sheet_summary" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet_summary</field>
+            <field name="model">hr_timesheet_sheet.sheet.day_detail</field>
+            <!--<field name="sequence">30</field>-->
+            <field name="arch" type="xml">
+	            <tree string="Summary" colors="blue:vacation&gt;0 or illness&gt;0 or others&gt;0;grey:planned==0;">
+	                <field name="sheet_id" invisible="1"/>
+	                <field name="name"/>
+	                <field name="planned" widget="float_time" sum="Total Planned"/>
+	                <field name="vacation" widget="float_time" sum="Total Vacation"/>
+	                <field name="illness" widget="float_time" sum="Total Illness"/>
+	                <field name="others" widget="float_time" sum="Total Others"/>
+	                <field name="attendance" widget="float_time" sum="Total Attendance" />
+	                <field name="overtime" widget="float_time" sum="Total Overtime"/>
+	            </tree>
+           </field>
+        </record>
+            
+    	<record id="cam_hr_overtime_show_summary" model="ir.actions.act_window">
+            <field name="name">Summary</field>
+            <field name="res_model">hr_timesheet_sheet.sheet.day_detail</field>
+            <field name="view_id" ref="cam_hr_overtime_timesheet_sheet_summary"/>
+            <field name="context">{}</field>
+            <field name="domain">[('sheet_id','=',active_id)]</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+    	</record>
+
+        <record id="cam_hr_overtime_timesheet_difference" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet_difference</field>
+            <field name="model">hr_timesheet_sheet.sheet.day</field>
+            <!--<field name="sequence">30</field>-->
+            <field name="arch" type="xml">
+            <tree string="Booking Differences" colors="red:total_difference &gt; 0.25 or total_difference &lt; -0.25">
+                <field name="sheet_id" invisible="1"/>
+                <field name="name"/>
+                <field name="total_attendance" widget="float_time" sum="Sum Attendance"/>                
+                <field name="total_timesheet" string="Hours Booked" widget="float_time" sum="Sum Hours Booked"/>
+                <field name="total_difference" widget="float_time" sum="Sum Difference"/>
+            </tree>
+           </field>
+        </record>          
+        
+        <record id="cam_hr_overtime_show_difference" model="ir.actions.act_window">
+            <field name="name">Booking Differences</field>
+            <field name="res_model">hr_timesheet_sheet.sheet.day</field>
+            <field name="view_id" ref="cam_hr_overtime_timesheet_difference"/>
+            <field name="context">{}</field>
+            <field name="domain">[('sheet_id','=',active_id)]</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+    	</record>  
+    
+        <record id="cam_hr_overtime_timesheet_sheet_form" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet_overtime</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
+            <field name="arch" type="xml">
+            	<!--<button name="button_confirm" states="draft" string="Submit to Managers" type="object" class="oe_highlight"/>-->
+	            <button name="button_confirm" position="before">
+					<button name="button_compute"
+                            string="Compute"
+                            type="object"
+                            attrs="{'invisible':[('state','!=','draft')]}"/>
+	            </button>
+
+	            <div name="buttons" position="inside">
+                    <button type="action"
+                            class="oe_stat_button"
+                            icon="fa-clock-o"
+                            name="%(cam_hr_overtime_show_summary)d"
+                            string="Summary" />
+                    <button type="action"
+                            class="oe_stat_button"
+                            icon="fa-clock-o"
+                            name="%(cam_hr_overtime_show_difference)d"
+                            string="Differences" />
+	            </div>
+
+
+                <field name="action" position = "after">
+                     <field name="action_desc"/>
+                     <field name="flag"/>
+                </field>
+                <button string="Sign In" position="replace">
+					<div><button name="attendance_action_change" attrs="{'invisible': [('state_attendance', 'in',['present','present_out'])]}" type="object" string="Sign In" context="{'sign_flag':'B'}" class="oe_link"/></div>
+				</button>
+                <button string="Sign Out" position="replace">
+                	<div><button name="attendance_action_change" attrs="{'invisible': ['|', ('state_attendance','=',False), ('state_attendance', 'in',['absent','present_out'])]}" type="object" string="Sign Out" context="{'sign_flag':'B'}" class="oe_link"/></div>
+					<!-- <div><button name="attendance_action_change" string="Sign In - Out of Office" attrs="{'invisible':[('state_attendance','in',['present_out','present'])]}" type="object" context="{'sign_flag':'B','out_of_office': True}" class="oe_link"/></div>
+					<div><button name="attendance_action_change" string="Sign Out - Out of Office" attrs="{'invisible':[('state_attendance','in',['present','absent'])]}" type="object" context="{'sign_flag':'B','out_of_office': True}" class="oe_link"/></div>
+					 --><div><button name="button_lunch" string="Lunch" attrs="{'invisible':[('state_attendance','in',['present_out','absent'])]}" type="object" class="oe_link" context="{}"/></div>
+				</button>
+
+                <field name="company_id" position="after">
+                    <h3 colspan="2" style="padding: 1em 0 0.5em 0">Summary Approved Timesheets:</h3>
+                    <field name="sum_vacation_days"/>
+                    <field name="sum_vacation"/>
+                    <field name="sum_illness"/>
+                    <field name="sum_others"/>
+                    <field name="sum_attendance"/>
+                    <field name="sum_overtime"/>
+                    <field name="user_id"/>
+
+                </field>
+
+                <field name="total_attendance" position="before">
+                    <h3 colspan="2" style="padding: 0 0 0.5em 0">Current Month:</h3>
+                    <field name="total_vacation_days"/>
+                    <field name="total_attendance2"/>
+                    <field name="total_vacation"/>
+                    <field name="total_illness"/>
+                    <field name="total_others"/>
+                    <!--<field name="total_planned" string="Planned Attendance this Month"/>-->
+                    <field name="total_overtime" string="Calculated Attendance"/>
+                    <field name="total_overtime_correction"/>
+                    <field name="total_overtime_and_correction"/>
+                    <h3 colspan="2" style="padding: 1em 0 0.5em 0">Project Summary:</h3>
+                </field>
+
+	            <notebook position="inside">
+	                 <page string="Overtime Corrections">
+	                    <field colspan="4" name="correction_ids" nolabel="1">
+	                        <tree string="Overtime Corrections">
+	                            <field name="name" />
+	                            <field name="value_hours"/>
+	                        </tree>
+	                    </field>
+	                </page>
+                    <page string="Attendance Summary">
+                        <field colspan="4" name="day_details" nolabel="1">
+                            <tree string="Summary" colors="blue:vacation&gt;0 or illness&gt;0 or others&gt;0;grey:planned==0;">
+                                <field name="sheet_id" invisible="1"/>
+                                <field name="name"/>
+                                <field name="planned" widget="float_time" sum="Total Planned"/>
+                                <field name="vacation" widget="float_time" sum="Total Vacation"/>
+                                <field name="illness" widget="float_time" sum="Total Illness"/>
+                                <field name="others" widget="float_time" sum="Total Others"/>
+                                <field name="attendance" widget="float_time" sum="Total Attendance" />
+                                <field name="overtime" widget="float_time" sum="Total Overtime"/>
+                            </tree>
+                        </field>
+                    </page>
+	            </notebook>
+            </field>
+            <!--<field name="sequence">20</field>-->
+        </record>
+          
+        <record id="cam_hr_overtime_timesheet_sheet_tree" model="ir.ui.view">
+            <field name="name">hr_timesheet_sheet.sheet_overtime_tree</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"/>
+            <field name="arch" type="xml">
+                <field name="total_difference" position="after">
+                    <field name="total_overtime"/>
+                </field>
+            </field>
+            <!--<field name="sequence">20</field>-->
+        </record>        
+
+        <record id="cam_hr_overtime_hr_holiday_form" model="ir.ui.view">
+            <field name="name">hr_holidays.overtime_form</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+                <field name="number_of_days_temp" position="replace">
+                    <field name="number_of_days_temp" invisible="1"/>
+                </field>
+            </field>
+            <!--<field name="sequence">20</field>-->
+        </record>
+        
+        <record id="cam_hr_overtime_hr_holiday_form2" model="ir.ui.view">
+            <field name="name">hr_holidays.allocation_form</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+                <field name="department_id" position="after">
+                 	<field name="effective_date" required="1"/>               
+                </field>
+            </field>
+            <!--<field name="sequence">20</field>-->
+        </record>
+        
+        <record id="cam_hr_overtime_hr_attendance_form" model="ir.ui.view">
+            <field name="name">hr.attendance.form</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_form"/>
+            <field name="arch" type="xml">
+               <field name="action_desc"  position ="after">
+               		<field name="flag"/>
+               </field>
+                <group position="attributes">
+                	<attribute name="style">width:30%%</attribute>
+                </group>
+            </field>
+        </record>
+        
+        <record id="cam_hr_overtime_attendance_tree" model="ir.ui.view">
+            <field name="name">hr.attendance.tree</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+            <field name="arch" type="xml">
+                <field name="action_desc" position="after">
+                	<field name="flag"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="cam_hr_overtime_attendance_who" model="ir.ui.view">
+            <field name="name">hr.attendance.tree</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_who"/>
+            <field eval="3" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="action" position="after">
+                	<field name="action_desc"/>
+                	<field name="flag"/>
+                </field>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="cam_hr_overtime_holiday_status_form">
+            <field name="name">hr.holidays.status.form</field>
+            <field name="model">hr.holidays.status</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                	<field name="code" required="1"/>	
+                </field>
+            </field>
+        </record>
+                                       
+    </data>
+</openerp>

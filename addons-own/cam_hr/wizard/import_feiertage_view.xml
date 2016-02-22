@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_wizard_import_feiertage" model="ir.ui.view">
+            <field name="name">Feiertage importieren</field>
+            <field name="model">wizard.import_feiertage</field>
+            <field name="arch" type="xml">
+                <form string="Feiertage importieren" version="7.0" height="400">
+                	<group string="Verfügbare Vorlagen">
+                		<field name="template_id" nolabel="1" widget="selection"/>
+                	</group>
+                	<group string="Mitarbeiter" height="400"> 
+	                	<field name="employee_ids" nolabel="1" />
+                	</group>
+                    <footer>
+                        <button string="Importiere Feiertage" name="import_feiertage" type="object" class="oe_highlight"/>
+                        oder
+                        <button string="Abbrechen" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_wizard_import_feiertage" model="ir.actions.act_window">
+            <field name="name">Importiere Feiertage</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.import_feiertage</field>
+            <field name="view_id" ref="view_wizard_import_feiertage"/>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+
+    </data>
+</openerp>

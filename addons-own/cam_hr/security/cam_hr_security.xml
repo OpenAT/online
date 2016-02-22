@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        
+	    <record id="group_invisible" model="res.groups">
+	        <field name="name">Invisible</field>
+	        <field name="category_id" ref="base.module_category_hidden"/>
+	    </record>        
+
+	</data>
+
+</openerp>

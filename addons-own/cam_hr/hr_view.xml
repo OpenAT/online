@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+	
+	<!-- Hide unused menus -->
+	
+     <record id ="base.group_user" model="res.groups">
+         <field name="implied_ids" eval="[(4, ref('base.group_hr_attendance'))]"/>
+     </record>
+	
+	<menuitem name="Invisible" id="hr_invisible" parent="hr.menu_hr_root" groups="group_invisible" sequence="100"/>
+	<menuitem id="hr_holidays.menu_open_ask_holidays" parent="hr_invisible"/>
+	<menuitem id="hr_holidays.menu_open_view_holiday_status" parent="hr_invisible"/>
+	<menuitem id="hr.menu_hr_job" parent="hr_invisible"/>
+	<menuitem id="hr.menu_view_employee_category_form" parent="hr_invisible"/>
+	<menuitem id="hr.menu_hr_department_tree" parent="hr_invisible"/>
+	<menuitem id="project_timesheet.menu_hr_timesheet_sign_in" parent="hr_invisible"/>
+	
+	
+	
+
+    <menuitem name="Personal" id="hr.menu_hr_main" parent="hr.menu_hr_root" groups="base.group_hr_manager" sequence="5"/>
+    <menuitem name="Arbeitszeiten" id="hr_menu_working_hours" parent="hr.menu_hr_configuration" action="resource.action_resource_calendar_form" groups="base.group_hr_manager"/>
+    <menuitem name="Kommen / Gehen Gründe" id="hr_attendance.menu_open_view_attendance_reason" parent="hr.menu_hr_configuration"/>
+    <menuitem name="Vertragstypen" id="hr_contract.hr_menu_contract_type" parent="hr.menu_hr_configuration"/>
+        
+        
+        <record id="edit_my_holiday_form" model="ir.ui.view">
+            <field name="name">Leave Request</field>
+            <field name="model">hr.holidays</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Leave Request" version="7.0">
+                <header>
+                    <button string="Confirm" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
+                    <button string="Approve" name="validate" states="confirm" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>
+                    <button string="Validate" name="second_validate" states="validate1" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>
+                    <button string="Refuse" name="refuse" states="confirm,validate1,validate" type="workflow" groups="base.group_hr_manager"/>
+                    <button string="Reset to New" name="reset" states="refuse"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate" statusbar_colors='{"confirm":"blue","validate1":"blue","refuse":"red"}'/>
+                </header>
+                <sheet string="Leave Request">
+                    <group style="width:30%%">
+                        <field name="employee_id" required="1" groups="base.group_hr_manager" on_change="onchange_employee(employee_id)"/>
+                        <field name="date_from" string="Start Datum" widget="date" required="1" />
+                        <field name="date_to" string="End Datum" widget="date" required="1"/>
+                        <field name="half_day"/>                        
+                        <field name="holiday_status_id" invisible="1" context="{'employee_id':employee_id}"/>
+                        <field name="name" attrs="{'readonly':[('state','!=','draft'),('state','!=','confirm')]}" invisible="1"/>
+                        <field name="type" invisible="1"/>
+                       </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+        
+        <record id="edit_feiertag_form" model="ir.ui.view">
+            <field name="name">Leave Request</field>
+            <field name="model">hr.holidays</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Leave Request" version="7.0">
+                <header>
+                    <button string="Confirm" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
+                    <button string="Approve" name="validate" states="confirm" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>
+                    <button string="Validate" name="second_validate" states="validate1" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>
+                    <button string="Refuse" name="refuse" states="confirm,validate1,validate" type="workflow" groups="base.group_hr_manager"/>
+                    <button string="Reset to New" name="reset" states="refuse"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate" statusbar_colors='{"confirm":"blue","validate1":"blue","refuse":"red"}'/>
+                </header>
+                <sheet string="Leave Request">
+                    <group style="width:30%%">
+                        <field name="employee_id" required="1" on_change="onchange_employee(employee_id)"/>
+                        <field name="date_from" string="Datum" widget="date" required="1" />
+                        <field name="holiday_status_id" invisible="1" context="{'employee_id':employee_id}"/>
+                        <field name="name" placeholder="z.B. Pfingstmontag" attrs="{'readonly':[('state','!=','draft'),('state','!=','confirm')]}"/>
+                        <field name="type" invisible="1"/>
+                       </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="holidays_tree">
+            <field name="name">hr.holidays.tree</field>
+            <field name="model">hr.holidays</field>
+            <field name="arch" type="xml">
+                <tree fonts="bold:message_unread==True" colors="red:state == 'refuse';blue:state == ' draft';black:state in ('confirm','validate','validate1')" string="Leave Requests">
+                    <field name="employee_id"/>
+                    <field name="name"/>
+                    <field name="date_from" widget="date"/>
+                    <field name="date_to" widget="date"/>
+                    <field name="state"/>
+                    <field name="leave_code" invisible="1"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="message_unread" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="holidays_filter" model="ir.ui.view">
+            <field name="name">hr.holidays.filter</field>
+            <field name="model">hr.holidays</field>
+            <field name="arch" type="xml">
+                <search string="Search Leave">
+                    <field name="name"/>
+                    <separator/>                    
+                    <filter icon="terp-check" domain="[('state','=','draft')]" string="To Confirm"/>
+                    <filter icon="terp-camera_test" domain="[('state','in',('confirm','validate1'))]" string="To Approve" name="approve"/>
+                    <filter icon="terp-camera_test" domain="[('state','=','validate')]" string="Validated" name="validated"/>
+                    <separator/>
+                    <filter icon="terp-go-year" name="year" string="Year" domain="[('holiday_status_id.active','=',True)]" help="Filters only on allocations and requests that belong to an holiday type that is 'active' (active field is True)"/>
+                    <filter string="Unread Messages" name="message_unread" domain="[('message_unread','=',True)]" help="Unread messages"/>
+                    <separator/>
+                    <filter string="My Leaves" icon="terp-personal" name="my_leaves" domain="[('employee_id.user_id','=', uid)]" help="My Leaves"/>
+                    <filter string="My Leaves &amp; To Approve" icon="terp-personal" name="my_leaves_a_to_approve" domain="['|',('state','=','confirm'),('employee_id.user_id','=', uid)]" help="My Leaves &amp;l To Approve"/>
+                    <separator/>
+                    <field name="employee_id"/>
+                    <field name="holiday_status_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter name="group_name" string="Description" domain="[]" context="{'group_by':'name'}"/>
+                        <filter name="group_date_from" string="Start Date" icon="terp-personal" domain="[]" context="{'group_by':'date_from'}"/>
+                        <filter name="group_employee" string="Employee" icon="terp-personal" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'manager_id'}"/>
+                        <filter string="Status" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>                
+            </field>
+            <field name="priority">0</field>            
+        </record>
+        
+        
+        <record model="ir.actions.act_window" id="hr_meine_urlaubsantraege_action">
+            <field name="name">Meine Urlaubsanträge</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'leave_code':'vacation'}</field>
+            <field name="domain">[('user_id','=',uid),('leave_code','=','vacation'),('type','=','remove')]</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_meine_urlaubsantraege_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="holidays_tree"/>
+            <field name="act_window_id" ref="hr_meine_urlaubsantraege_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_meine_urlaubsantraege_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="act_window_id" ref="hr_meine_urlaubsantraege_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window" id="hr_alle_urlaubsantraege_action">
+            <field name="name">Alle Urlaubsanträge</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_approve':1,'leave_code':'vacation'}</field>
+            <field name="domain">[('leave_code','=','vacation'),('type','=','remove')]</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="search_view_id" ref="holidays_filter"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_alle_urlaubsantraege_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="holidays_tree"/>
+            <field name="act_window_id" ref="hr_alle_urlaubsantraege_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_alle_urlaubsantraege_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="act_window_id" ref="hr_alle_urlaubsantraege_action"/>
+        </record>
+        
+
+        <menuitem name="Urlaub"
+            id="hr_menu_main_urlaub" 
+            parent="hr.menu_hr_root" 
+            sequence="10"/>
+        
+        <menuitem name="Meine Urlaubsanträge"
+            id="hr_menu_meine_urlaubsantraege" 
+            parent="hr_menu_main_urlaub" 
+            action="hr_meine_urlaubsantraege_action"/>
+        
+        <menuitem name="Alle Urlaubsanträge" 
+            id="hr_menu_alle_urlaubsantraege" 
+            parent="hr_menu_main_urlaub" 
+            action="hr_alle_urlaubsantraege_action"
+            groups="base.group_hr_manager"/> 
+            
+        <record id="edit_urlaubsanspruch_form" model="ir.ui.view">
+            <field name="name">Leave Request</field>
+            <field name="model">hr.holidays</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Leave Request" version="7.0">
+                <header>
+                    <button string="Confirm" name="confirm" states="draft" type="workflow" class="oe_highlight"/>
+                    <button string="Approve" name="validate" states="confirm" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>
+                    <button string="Validate" name="second_validate" states="validate1" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>
+                    <button string="Refuse" name="refuse" states="confirm,validate1,validate" type="workflow" groups="base.group_hr_manager"/>
+                    <button string="Reset to New" name="reset" states="refuse"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate" statusbar_colors='{"confirm":"blue","validate1":"blue","refuse":"red"}'/>
+                </header>
+                <sheet string="Leave Request">
+                    <group style="width:30%%">
+                        <field name="employee_id" required="1" on_change="onchange_employee(employee_id)"/>
+                        <field string="Anzahl Tage" name="number_of_days_temp" required="1"/>
+                        <field name="effective_date" string="Zuschreibungsdatum" widget="date" required="1" />
+                        <field name="holiday_status_id" invisible="1" context="{'employee_id':employee_id}"/>
+                        <field name="name" placeholder="z.B. Urlaubszuschreibung 2014" attrs="{'readonly':[('state','!=','draft'),('state','!=','confirm')]}"/>
+                        <field name="type" invisible="1"/>
+                       </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+            
+            
+        <record model="ir.ui.view" id="urlaubsanspruch_tree">
+            <field name="name">hr.holidays.allocation.tree</field>
+            <field name="model">hr.holidays</field>
+            <field name="arch" type="xml">
+                <tree colors="red:state == 'refuse';blue:state == 'draft';black:state in ('confirm','validate','validate1')" string="Allocation Requests">
+                    <field name="employee_id"/>
+                    <field name="name"/>
+                    <field name="number_of_days_temp" string="Urlaubsanspruch"/>
+                    <field name="effective_date" string="Zuschreibungsdatum" widget="date"/>
+                    <field name="state"/>
+                    <field name="leave_code" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+            
+        <record model="ir.actions.act_window" id="hr_urlaubsanspruch_action">
+            <field name="name">Urlaubsanspruch</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_type':'add','leave_code':'vacation'}</field>
+            <field name="domain">[('type','=','add')]</field>
+            <field name="view_id" ref="edit_urlaubsanspruch_form"/>
+            <field name="search_view_id" ref="holidays_filter"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_urlaubsanspruch_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="urlaubsanspruch_tree"/>
+            <field name="act_window_id" ref="hr_urlaubsanspruch_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_urlaubsanspruch_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="edit_urlaubsanspruch_form"/>
+            <field name="act_window_id" ref="hr_urlaubsanspruch_action"/>
+        </record>
+            
+        
+        <menuitem name="Urlaubsanspruch" 
+            id="hr_menu_urlaubsanspruch" 
+            parent="hr_menu_main_urlaub" 
+            action="hr_urlaubsanspruch_action"
+            groups="base.group_hr_manager"/>
+            
+        <record model="ir.actions.act_window" id="hr_krankenstaende_action">
+            <field name="name">Krankenstände</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'leave_code':'illness'}</field>
+            <field name="domain">[('leave_code','=','illness')]</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="search_view_id" ref="holidays_filter"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_krankenstaende_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="holidays_tree"/>
+            <field name="act_window_id" ref="hr_krankenstaende_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_krankenstaende_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="act_window_id" ref="hr_krankenstaende_action"/>
+        </record>
+        
+        
+        <menuitem name="Krankenstand" id="hr_menu_krankenstand" parent="hr.menu_hr_root" groups="base.group_hr_manager" sequence="25"/>
+        
+        <menuitem name="Krankenstände" 
+        id="hr_menu_krankenstaende" 
+        parent="hr_menu_krankenstand"
+        action="hr_krankenstaende_action"/>
+        
+        <record model="ir.ui.view" id="feiertage_tree">
+            <field name="name">hr.holidays.tree</field>
+            <field name="model">hr.holidays</field>
+            <field name="arch" type="xml">
+                <tree colors="red:state == 'refuse';blue:state == ' draft';black:state in ('confirm','validate','validate1')" string="Leave Requests">
+                    <field name="employee_id"/>
+                    <field name="name"/>
+                    <field name="date_from" widget="date" string="Datum"/>
+                    <field name="state"/>
+                    <field name="leave_code" invisible="1"/>
+                    <field name="user_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="hr_feiertage_action">
+            <field name="name">Feiertage</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'leave_code':'legal'}</field>
+            <field name="domain">[('leave_code','=','legal')]</field>
+            <field name="view_id" ref="edit_feiertag_form"/>
+            <field name="search_view_id" ref="holidays_filter"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_feiertage_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="feiertage_tree"/>
+            <field name="act_window_id" ref="hr_feiertage_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_feiertage_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="edit_feiertag_form"/>
+            <field name="act_window_id" ref="hr_feiertage_action"/>
+        </record>
+        
+        <menuitem name="Feiertage" id="hr_menu_abwesenheiten" parent="hr.menu_hr_root" groups="base.group_hr_manager" sequence="30"/>
+        
+        <menuitem name="Feiertage" 
+        id="hr_menu_feiertage" 
+        action="hr_feiertage_action"
+        parent="hr_menu_abwesenheiten"/>
+        
+        
+        <record id="hr_timesheet_sheet.menu_act_hr_timesheet_sheet_form" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('base.group_hr_manager')])]"/>
+            <field name="parent_id" ref="hr_attendance.menu_hr_time_tracking"/>
+            <field name="name">Alle Zeiterfassungen</field>
+            <field name="sequence">3</field>
+        </record>
+        
+        <record id="hr_meine_zeiterfassungen_action" model="ir.actions.act_window">
+            <field name="name">Meine Zeiterfassungen</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr_timesheet_sheet.sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="domain">[('user_id','=',uid)]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="hr_timesheet_sheet.view_hr_timesheet_sheet_filter"/>
+        </record>
+        
+                
+        <menuitem name="Meine Zeiterfassungen"
+        id="hr_menu_meine_zeiterfassungen"
+        parent="hr_attendance.menu_hr_time_tracking"
+        action="hr_meine_zeiterfassungen_action"
+        sequence="2"/>
+        
+        
+        
+        
+        <!--<record id="timesheet_form" model="ir.ui.view">-->
+            <!--<field name="name">timesheet_form</field>-->
+            <!--<field name="model">hr_timesheet_sheet.sheet</field>-->
+            <!--<field name="priority">1</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form string="Zeiterfassung" version="7.0">-->
+                <!--<header>-->
+                    <!--<button icon="gtk-execute" name="button_compute" string="Compute" type="object" attrs="{'invisible':[('state','!=','draft')]}"/>-->
+                    <!--<button name="button_confirm" states="draft" string="Submit to Manager" type="object" class="oe_highlight"/>-->
+                    <!--<button name="done" states="confirm" string="Approve" type="workflow" groups="base.group_hr_manager" class="oe_highlight"/>-->
+                    <!--<button name="action_set_to_draft" states="done" string="Set to Draft" type="object" />-->
+                    <!---->
+                    <!--<button name="cancel" states="confirm" string="Refuse" type="workflow" groups="base.group_hr_user" />-->
+                    <!--<field name="state" widget="statusbar" statusbar_visible="new,confirm,done"/>-->
+                <!--</header>-->
+                <!--<sheet>-->
+                    <!--<div class="oe_title">-->
+                        <!--<label for="employee_id" class="oe_edit_only"/>-->
+                        <!--<h1><field name="employee_id" on_change="onchange_employee_id(employee_id)" class="oe_inline"/></h1>-->
+                        <!--<field name="user_id" invisible="1"/>-->
+                    <!--</div>-->
+                    <!--<group>-->
+                        <!--<group>-->
+                            <!--<label for="date_from" string="Timesheet Period"/>-->
+                            <!--<div><field name="date_from" class="oe_inline"/> bis <field name="date_to" class="oe_inline"/></div>-->
+                            <!--<field name="name" invisible="1"/>-->
+               				<!--<field name="total_attendance" widget="float_time" string="Anwesenheit"/>-->
+               				<!--<field name="total_timesheet" widget="float_time" string="Projektzeiten"/>-->
+               				<!--<field name="total_difference" widget="float_time" string="Differenz"/>-->
+                            <!--<field name="department_id" invisible="1"/>-->
+                            <!--<field name="company_id" groups="base.group_multi_company"/>-->
+                        <!--</group>-->
+                         <!--<group>-->
+                             <!--<label for="state_attendance"/>-->
+                             <!--<div>-->
+                                 <!--<field name="state_attendance"/>-->
+                                 <!--<div><button name="attendance_action_change" attrs="{'invisible': [('state_attendance', '=', 'present')]}" type="object" string="Sign In" class="oe_link"/></div>-->
+                                 <!--<div><button name="attendance_action_change" attrs="{'invisible': ['|', ('state_attendance','=',False), ('state_attendance', '=', 'absent')]}" type="object" string="Sign Out" class="oe_link"/></div>-->
+                                 <!--<div><button name="button_lunch" string="Lunch" attrs="{'invisible':[('state_attendance','in',['present_out','absent'])]}" type="object" class="oe_link" context="{}"/></div>-->
+                             <!--</div>-->
+                             <!---->
+                         <!--</group>-->
+                        <!---->
+                    <!--</group>-->
+                    <!--<notebook>-->
+                    <!--<page string="Anwesenheit">-->
+                           <!--<group col="2" colspan="2">-->
+                               <!--<group colspan="1" string="Anwesenheitszeiten">-->
+                                   <!--<field context="{'employee_id': employee_id, 'user_id':user_id}" name="attendances_ids" nolabel="1">-->
+                                       <!--<tree string="Kommen / Gehen Details" editable="bottom">-->
+                                           <!--<field name="name"/>-->
+                                           <!--<field name="action"/>-->
+                                           <!--<field name="action_desc" string="Grund"/>-->
+                                           <!--<field invisible="1" name="employee_id"/>-->
+                                       <!--</tree>-->
+                                   <!--</field>-->
+                               <!--</group>-->
+                               <!--<group colspan="1" string="Anwesenheit pro Tag">-->
+                                     <!--<field colspan="1" name="period_ids" nolabel="1" >-->
+                                       <!--<tree string="Anwesenheit pro Tag" colors="red:total_difference &gt; 0.25 or total_difference &lt; -0.25" >-->
+                                           <!--<field name="name"/>-->
+                            				<!--<field name="total_attendance" widget="float_time" string="Anwesenheit"/>-->
+                            				<!--<field name="total_timesheet" widget="float_time" string="Projektzeiten"/>-->
+                            				<!--<field name="total_difference" widget="float_time" string="Differenz"/>-->
+                                       <!--</tree>-->
+                                   <!--</field>-->
+                               <!--</group>-->
+                          <!--</group>-->
+                   <!--</page>-->
+                   <!--<page string="Zusammenfassung">-->
+                   		<!--<widget type="weekly_timesheet" attrs="{'readonly': [['state', 'not in', ['new', 'draft']]]}"/>-->
+                   <!--</page>-->
+                        <!--<page string="Projektbuchungen">-->
+                            <!--<field context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to}" name="timesheet_ids" nolabel="1">-->
+                                <!--<tree editable="top" string="Timesheet Activities">-->
+                                    <!--<field name="date"/>-->
+                                    <!--<field domain="[('type','in',['normal', 'contract']), ('state', '&lt;&gt;', 'close'),('use_timesheets','=',1)]" name="account_id" on_change="on_change_account_id(account_id, user_id)" context="{'default_use_timesheets': 1}"/>-->
+                                    <!--<field name="name"/>-->
+                                    <!--<field name="unit_amount" on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)" widget="float_time" string="Hours" sum="Hours"/>-->
+                                    <!--<field name="to_invoice" widget="selection"/>-->
+                                    <!--<field invisible="1" name="journal_id"/>-->
+                                    <!--<field invisible="1" name="product_id" domain="[('type','=','service')]" on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)"/>-->
+                                    <!--<field invisible="1" name="product_uom_id" on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)"/>-->
+                                    <!--<field invisible="1" name="amount"/>-->
+                                    <!--<field invisible="1" name="general_account_id"/>-->
+                                    <!--<field invisible="1" name="user_id" required="1"/>-->
+                                <!--</tree>-->
+                                <!--<form string="Timesheet Activities" version="7.0">-->
+                                    <!--<field name="date"/>-->
+                                    <!--<field domain="[('type','=','normal'), ('state', '&lt;&gt;', 'close')]" name="account_id" on_change="on_change_account_id(account_id, user_id)"/>-->
+                                    <!--<field name="name"/>-->
+                                    <!--<field name="unit_amount" on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)" widget="float_time"/>-->
+                                    <!--<field name="to_invoice"/>-->
+                                    <!--<field name="journal_id"/>-->
+                                    <!--<field name="product_id" domain="[('type','=','service')]" on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)"/>-->
+                                    <!--<field name="product_uom_id" on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)"/>-->
+                                    <!--<field name="amount"/>-->
+                                    <!--<field name="general_account_id"/>-->
+                                    <!--<field name="user_id" required="1"/>-->
+                                <!--</form>-->
+                            <!--</field>-->
+                        <!--</page>-->
+                   <!--<page string="Überstundenkorrektur">-->
+                        <!--<group col="6" string="Überstundenkorrektur">-->
+                            <!--<group col="2" colspan="1">-->
+                                <!--<field col="1" colspan="1" name="correction_ids" nolabel="1">-->
+                                    <!--<tree string="Überstundenkorrektur">-->
+                                        <!--<field name="name" />-->
+                                        <!--<field name="value_hours"/>-->
+                                    <!--</tree>-->
+                                <!--</field>-->
+                            <!--</group>-->
+                        <!--</group>-->
+                   <!--</page>-->
+                   <!--</notebook>-->
+                <!--</sheet>-->
+                <!--<div class="oe_chatter">-->
+                    <!--<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>-->
+                    <!--<field name="message_ids" widget="mail_thread"/>-->
+                <!--</div>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+        
+        <record id="hr_timesheet.act_hr_timesheet_line_evry1_all_form" model="ir.actions.act_window">
+            <field name="name">Timesheet Activities</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.analytic.timesheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{"search_default_today":1}</field>
+            <field name="domain">[('user_id','=',uid)]</field>
+            <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to record activities.
+              </p><p>
+                You can register and track your workings hours by project every
+                day. Every time spent on a project will become a cost in the
+                analytic accounting/contract and can be re-invoiced to
+                customers if required.
+              </p>
+            </field>
+        </record>
+        
+        <record id="hr_alle_projektzeiten_action" model="ir.actions.act_window">
+            <field name="name">Alle Projektzeiten</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.analytic.timesheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{"search_default_today":1}</field>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+        </record>
+        
+        <menuitem name="Alle Projektzeiten"
+        id="hr_menu_alle_projektzeiten"
+        action="hr_alle_projektzeiten_action"
+        parent="hr_attendance.menu_hr_time_tracking"
+        groups="base.group_hr_manager"/>
+        
+        <record id="hr_meine_anwesenheitszeiten_action" model="ir.actions.act_window">
+            <field name="name">Meine Anwesenheitszeiten</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.attendance</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="domain">[('user_id','=',uid)]</field>
+            <field name="context">{"search_default_today":1}</field>
+            <field name="search_view_id" ref="hr_attendance.view_hr_attendance_filter"/>
+        </record>
+        
+
+        
+        <menuitem name="Meine Anwesenheitszeiten"
+        id="hr_attendance.menu_open_view_attendance"
+        action="hr_meine_anwesenheitszeiten_action"
+        parent="hr_attendance.menu_hr_attendance"/>
+        
+        <record id="hr_alle_anwesenheitszeiten_action" model="ir.actions.act_window">
+            <field name="name">Alle Anwesenheitszeiten</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.attendance</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="domain">[]</field>
+            <field name="context">{"search_default_today":1}</field>
+            <field name="search_view_id" ref="hr_attendance.view_hr_attendance_filter"/>
+        </record>
+        
+        <menuitem name="Alle Anwesenheitszeiten"
+        id="hr_menu_alle_anwesenheitszeiten"
+        action="hr_alle_anwesenheitszeiten_action"
+        parent="hr_attendance.menu_hr_attendance"
+        groups="base.group_hr_manager"
+        sequence="35"/>
+        
+        
+        
+        <!--<record id="view_hr_contract_form" model="ir.ui.view">-->
+            <!--<field name="name">view_hr_contract_form</field>-->
+            <!--<field name="model">hr.contract</field>-->
+            <!--<field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>-->
+            <!--<field name="priority">35</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form position="replace">-->
+                    <!--<form string="Contract" version="7.0">-->
+                        <!--<sheet>-->
+                        <!--<div class="oe_title">-->
+                            <!--<h1>-->
+                                <!--<field name="name" placeholder="z.B. Max Mustermann 2014"/>-->
+                            <!--</h1>-->
+                        <!--</div>-->
+                        <!--<group>-->
+                            <!--<group>-->
+                                <!--<field name="employee_id"/>-->
+                                <!--<field name="type_id"/>-->
+                                <!--<field name="date_start"/>-->
+                                <!--<field name="date_end"/>-->
+                                <!--<field name="working_hours"/>-->
+                            <!--</group>-->
+                            <!--<group string="Bemerkungen">-->
+                                <!--<field nolabel="1" name="notes" placeholder="Weitere Informationen..."/>-->
+                            <!--</group>-->
+                        <!--</group>-->
+                        <!--</sheet>-->
+                    <!--</form>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+        
+        
+        
+        <!--<record id="view_hr_employee_form" model="ir.ui.view">-->
+            <!--<field name="name">view_hr_employee_form</field>-->
+            <!--<field name="model">hr.employee</field>-->
+            <!--<field name="inherit_id" ref="hr.view_employee_form"/>-->
+            <!--<field name="priority">30</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<form position="replace">-->
+                    <!--<form string="Employee" version="7.0">-->
+                        <!--<sheet>-->
+                            <!--<field name="image_medium" widget="image" class="oe_left oe_avatar"/>-->
+                            <!--<div class="oe_title">-->
+                                <!--<label for="name" class="oe_edit_only"/>-->
+                                <!--<h1>-->
+                                    <!--<field name="name"/>-->
+                                <!--</h1>-->
+                            <!--</div>-->
+                            <!--<div class="oe_right oe_button_box" name="button_box">-->
+                               <!--<button name="%(hr_contract.act_hr_employee_2_hr_contract)d" string="Verträge" type="action" groups="base.group_hr_manager"/>-->
+                               <!--<button name="%(hr_holidays.act_hr_employee_holiday_request)d" string="Urlaube" type="action" groups="base.group_hr_manager"/>-->
+                               <!--<button name="%(hr_timesheet_sheet.act_hr_employee_2_hr_timesheet)d" string="Timesheets" type="action" groups="base.group_hr_manager"/>-->
+                            <!--</div>-->
+                            <!--<group>-->
+                                <!--<field name="user_id" on_change="onchange_user(user_id)" string="Related User"/>-->
+                                <!--<field name="parent_id"/>-->
+                                <!--<field name="active"/>-->
+                            <!--</group>-->
+                            <!--<notebook>-->
+                                <!--<page string="Personal Information" groups="base.group_hr_user">-->
+                                    <!--<group>-->
+                                        <!--<group string="Citizenship &amp; Other Info">-->
+                                            <!--<field name="country_id" options="{&quot;no_open&quot;: True}"/>-->
+                                            <!--<field name="identification_id" groups="base.group_hr_user"/>-->
+                                            <!--<field name="passport_id" groups="base.group_hr_user"/>-->
+                                            <!--<field name="otherid" groups="base.group_hr_user"/>-->
+                                        <!--</group>-->
+                                        <!--<group string="Contact Information">-->
+                                            <!--<field name="address_home_id" context="{'show_address': 1}" options="{&quot;always_reload&quot;: True, &quot;highlight_first_line&quot;: True}"/>-->
+                                            <!--<field name="work_phone"/>-->
+                                            <!--<field name="work_email" widget="email"/>-->
+                                        <!--</group>-->
+                                    <!--</group>-->
+                                <!--</page>-->
+                            <!--</notebook>-->
+                            <!--<group string="Projektzeiten">-->
+                            	<!--<field name="product_id"/>-->
+                            <!--</group>-->
+                                <!--<group string="Bemerkungen">-->
+                                    <!--<field nolabel="1" name="notes" placeholder="Weitere informationen ..." colspan="4"/>-->
+                                <!--</group>-->
+                        <!--</sheet>-->
+                    <!--</form>-->
+                <!--</form>-->
+            <!--</field>-->
+        <!--</record>-->
+        
+	<record id="view_hr_holidays_template_form" model="ir.ui.view">
+            <field name="name">view_hr_holidays_template_form</field>
+            <field name="model">hr.holidays.template</field>
+            <field name="arch" type="xml">
+               <form string="Public Holiday Template" version="7.0">
+                   <sheet>
+                       <div class="oe_title">
+                           <label for="name" class="oe_edit_only"/>
+                           <h1>
+                               <field name="name"/>
+                           </h1>
+                       </div>
+                       <div class="oe_right oe_button_box" name="button_box">
+                          <button name="%(action_wizard_import_feiertage)d" string="Create Public Holidays" type="action"/>
+                       </div>
+                       <group>
+                           <field name="sequence"/>
+                           <field name="create_employees"/>
+                       </group>
+                       <group string="Public Holidays">
+                       		<field name="line_ids" nolabel="1">
+                       			<tree editable="bottom">
+                       				<field name="name"/>
+                       				<field name="date"/>
+                       			</tree>
+                       		</field>
+                       </group>
+                   </sheet>
+               </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_hr_holidays_template_tree">
+            <field name="name">view_hr_holidays_template_tree</field>
+            <field name="model">hr.holidays.template</field>
+            <field name="arch" type="xml">
+                <tree string="Templates">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="create_employees"/>
+                    <field name="line_ids"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record id="view_hr_holidays_template_filter" model="ir.ui.view">
+            <field name="name">view_hr_holidays_template_filter</field>
+            <field name="model">hr.holidays.template</field>
+            <field name="arch" type="xml">
+                <search string="Search Leave">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        
+        <record id="hr_public_holidays_template_action" model="ir.actions.act_window">
+            <field name="name">Templates</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.holidays.template</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="False"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="view_hr_holidays_template_filter"/>
+        </record>
+        
+        <menuitem name="Templates" 
+        id="menu_public_holidays_template"
+        action="hr_public_holidays_template_action"
+        parent="hr_menu_abwesenheiten"
+        sequence="20"/>
+        
+        <menuitem name="Importiere Feiertage" 
+        id="menu_wizard_import_feiertage" 
+        action="action_wizard_import_feiertage" 
+        parent="hr_menu_abwesenheiten"/>
+	
+	</data>
+</openerp>

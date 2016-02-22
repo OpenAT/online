@@ -1,0 +1,796 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#   * cam_hr_overtime
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20140206-002714\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 09:21+0000\n"
+"PO-Revision-Date: 2014-04-24 09:21+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#. module: cam_hr_overtime
+msgid "Total Others"
+msgstr "Gesamt Andere"
+
+#: field:hr_timesheet_sheet.sheet.day_detail,sheet_id:0
+#: field:hr_timesheet_sheet.sheet.project_hours,sheet_id:0
+#. module: cam_hr_overtime
+msgid "Sheet"
+msgstr "Sheet"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:627
+#. module: cam_hr_overtime
+#, python-format
+msgid "Abwesenheitstyp: '%s' ist nicht konfiguriert!"
+msgstr "Abwesenheitstyp: '%s' ist nicht konfiguriert!"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr_overtime
+msgid "Submit to Manager"
+msgstr "Dem Manager vorlegen"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:49
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:57
+#. module: cam_hr_overtime
+#, python-format
+msgid "Achtung!"
+msgstr "Achtung!"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_employee_timesheet_report
+#. module: cam_hr_overtime
+msgid "Timesheet report per employee"
+msgstr "Timesheetauswertung pro Mitarbeiter"
+
+#: help:hr_timesheet_sheet.sheet,sum_vacation_days:0
+#. module: cam_hr_overtime
+msgid "Total vacation in days of all previous timesheets in state 'done'"
+msgstr "Gesamter Urlaub (in Tagen) aller vorhergehenden genehmigten Timesheets."
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "Gruppierung..."
+msgstr "Gruppierung..."
+
+#: field:hr_timesheet_sheet.sheet,sum_others:0
+#. module: cam_hr_overtime
+msgid "Sum Others"
+msgstr "Summe andere"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_timesheet_sheet_sheet
+#: field:overtime.correction,timesheet_id:0
+#. module: cam_hr_overtime
+msgid "Timesheet"
+msgstr "Zeiterfassung"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_timesheet_sheet_sheet
+#: field:overtime.correction,employee_id:0
+#. module: cam_hr_overtime
+msgid "Employee"
+msgstr "Mitarbeiter"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:323
+#. module: cam_hr_overtime
+#, python-format
+msgid "Please specify a 'Lunch Duration' in the company configuration!"
+msgstr "Bitte Länge der  'Mittagspause' konfigurieren."
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "1.5cm 1.5cm 28.0cm 1.5cm"
+msgstr "1.5cm 1.5cm 28.0cm 1.5cm"
+
+#: field:hr_timesheet_sheet.sheet,total_others:0
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Others"
+msgstr "Andere"
+
+#: view:hr_timesheet_sheet.sheet:0
+#: field:hr_timesheet_sheet.sheet,correction_ids:0
+#: field:hr_timesheet_sheet.sheet,total_overtime_correction:0
+#: view:overtime.correction:0
+#. module: cam_hr_overtime
+msgid "Overtime Corrections"
+msgstr "Überstundenkorrektur"
+
+#: model:ir.actions.act_window,name:cam_hr_overtime.cam_hr_overtime_timesheet_report_action
+#: model:ir.ui.menu,name:cam_hr_overtime.cam_hr_overtime_timesheet_report_menu
+#. module: cam_hr_overtime
+msgid "Mitarbeiter Überstunden und Urlaub Auswertung"
+msgstr "Mitarbeiter Überstunden und Urlaub Auswertung"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_holidays
+#. module: cam_hr_overtime
+msgid "Leave"
+msgstr "Urlaub"
+
+#: field:hr.holidays.status,code:0
+#. module: cam_hr_overtime
+msgid "Code"
+msgstr "Code"
+
+#: help:overtime.correction,timesheet_id:0
+#. module: cam_hr_overtime
+msgid "Bitte beachten Sie, dass das Timesheet im status 'Entwurf' sein muss!"
+msgstr "Bitte beachten Sie, dass das Timesheet im status 'Entwurf' sein muss!"
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "Urlaubstage"
+msgstr "Urlaubstage"
+
+#: model:ir.actions.act_window,help:cam_hr_overtime.cam_hr_overtime_act_overtime_correction
+#. module: cam_hr_overtime
+msgid "<p class=\"oe_view_nocontent_create\">\n"
+"                Click to enter an overtime correction entry.\n"
+"              </p><p>\n"
+"               Modify the overtime account of employees.\n"
+"              </p>\n"
+"            "
+msgstr "<p class=\"oe_view_nocontent_create\">\n"
+"                Klicken um einen Korrektureintrag für Überstunden zu erstellen.\n"
+"              </p><p>\n"
+"               Ändern der Überstundenkonten von Mitarbeitern.\n"
+"              </p>\n"
+"            "
+
+#: field:hr.holidays,leave_code:0
+#. module: cam_hr_overtime
+msgid "Leave Code"
+msgstr "Leave Code"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Remaining vacation"
+msgstr "Verbleibende Urlaubstage"
+
+#: model:ir.model,name:cam_hr_overtime.model_overtime_correction
+#. module: cam_hr_overtime
+msgid "overtime.correction"
+msgstr "overtime.correction"
+
+#: view:hr_timesheet_sheet.sheet.day:0
+#. module: cam_hr_overtime
+msgid "Sum Hours Booked"
+msgstr "Gesamte verbuchte Zeit"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_holidays_status
+#. module: cam_hr_overtime
+msgid "Leave Type"
+msgstr "Abwesenheitstyp"
+
+#: model:hr.holidays.status,name:cam_hr_overtime.holiday_status_vacation
+#. module: cam_hr_overtime
+msgid "Personal Vacation"
+msgstr "Urlaub"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:548
+#. module: cam_hr_overtime
+#, python-format
+msgid "Sie können die Arbeitszeiten nicht ändern, da es schon eine Zeiterfassung gibt, die sich im Status 'bestätigt' oder 'erledigt' befindet."
+msgstr "Sie können die Arbeitszeiten nicht ändern, da es schon eine Zeiterfassung gibt, die sich im Status 'bestätigt' oder 'erledigt' befindet."
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Overtime in hours"
+msgstr "Überstunden in Stunden"
+
+#: field:hr.config.settings,vacation_type_id:0
+#: field:res.company,vacation_type_id:0
+#. module: cam_hr_overtime
+msgid "Holiday state of vacation"
+msgstr "Abwesenheitstyp \"Urlaub\""
+
+#: field:hr_timesheet_sheet.sheet,total_planned:0
+#: field:hr_timesheet_sheet.sheet.day_detail,planned:0
+#. module: cam_hr_overtime
+msgid "Planned Hours"
+msgstr "Geplante Stunden"
+
+#: field:hr_timesheet_sheet.sheet,sum_overtime:0
+#. module: cam_hr_overtime
+msgid "Sum Overtime"
+msgstr "Summe Überstunden"
+
+#: field:hr_timesheet_sheet.sheet,total_attendance2:0
+#: field:hr_timesheet_sheet.sheet.day_detail,attendance:0
+#: report:hr_timesheet_sheet.sheet.report:0
+#: model:ir.model,name:cam_hr_overtime.model_hr_attendance
+#. module: cam_hr_overtime
+msgid "Attendance"
+msgstr "Anwesenheitszeit"
+
+#: view:hr_timesheet_sheet.sheet:0
+#: view:hr_timesheet_sheet.sheet.day:0
+#: model:ir.actions.act_window,name:cam_hr_overtime.cam_hr_overtime_show_difference
+#. module: cam_hr_overtime
+msgid "Booking Differences"
+msgstr "Buchungsdifferenzen"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:49
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:57
+#. module: cam_hr_overtime
+#, python-format
+msgid "Sie können keine Überstundenkorrektur auf ein bereits genehmigtes timesheet durchführen. Setzen Sie das Timesheet auf \"Entwurf\" und versuchen Sie es nochmal."
+msgstr "Sie können keine Überstundenkorrektur auf ein bereits genehmigtes timesheet durchführen. Setzen Sie das Timesheet auf \"Entwurf\" und versuchen Sie es nochmal."
+
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#. module: cam_hr_overtime
+msgid "Total Attendance"
+msgstr "Gesamte Anwesenheitszeit"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_timesheet_sheet_sheet_project_hours
+#. module: cam_hr_overtime
+msgid "Project hours per period"
+msgstr "Projektstundenn pro Periode"
+
+#: model:mail.message.subtype,name:cam_hr_overtime.mt_state_changed
+#. module: cam_hr_overtime
+msgid "State changed"
+msgstr "Status geändert"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:567
+#. module: cam_hr_overtime
+#, python-format
+msgid "Sie können den Vertrag nicht ändern. Legen Sie einen neuen Vertrag für diesen Mitarbeiter an oder setzen Sie die Zeiterfassung auf 'Entwurf' zurück."
+msgstr "Sie können den Vertrag nicht ändern. Legen Sie einen neuen Vertrag für diesen Mitarbeiter an oder setzen Sie die Zeiterfassung auf 'Entwurf' zurück."
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "year"
+msgstr "Jahr"
+
+#: field:hr_employee.timesheet.report,employee_id:0
+#. module: cam_hr_overtime
+msgid "Employee"
+msgstr "Mitarbeiter"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total vacation this timesheet"
+msgstr "Gesamter Urlaub in dieser Periode"
+
+#: field:overtime.correction,value_hours:0
+#. module: cam_hr_overtime
+msgid "Hours"
+msgstr "Stunden"
+
+#: field:hr.attendance,flag:0
+#. module: cam_hr_overtime
+msgid "Flag"
+msgstr "Markierung"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:627
+#. module: cam_hr_overtime
+#, python-format
+msgid "Konfigurationsfehler"
+msgstr "Konfigurationsfehler"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:672
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:689
+#. module: cam_hr_overtime
+#, python-format
+msgid "Invalid action !"
+msgstr "Ungültige Aktion!"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total hours spent on Projects"
+msgstr "Zugeordnete Projektzeit"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Projects"
+msgstr "Projekte"
+
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#. module: cam_hr_overtime
+msgid "Total Planned"
+msgstr "Gesamt Geplant"
+
+#: view:overtime.correction:0
+#. module: cam_hr_overtime
+msgid "Search Overtime Corrections"
+msgstr "Suche Überstundenkorrekturen"
+
+#: view:overtime.correction:0
+#. module: cam_hr_overtime
+msgid "-100"
+msgstr "-100"
+
+#: model:hr.holidays.status,name:cam_hr_overtime.holiday_status_krankenstand
+#. module: cam_hr_overtime
+msgid "Krankenstand"
+msgstr "Krankenstand"
+
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#. module: cam_hr_overtime
+msgid "Total Overtime"
+msgstr "Gesamte Überstunden"
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "Employee Timesheet Report"
+msgstr "Mitarbeiter Überstunden und Urlaub Auswertung"
+
+#: selection:hr.attendance,flag:0
+#. module: cam_hr_overtime
+msgid "Manual"
+msgstr "Manuell"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Planned"
+msgstr "Geplant"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr_overtime
+msgid "Sign In"
+msgstr "Einloggen"
+
+#: help:hr.config.settings,max_difference_day:0
+#: help:res.company,max_difference_day:0
+#. module: cam_hr_overtime
+msgid "Max difference per day in minutes. If difference is higher, it will raise a warning each sign in/sign out with the specific days. User wont be able to confirm the timesheet, if there are >1 days.\n"
+"This check is only active if value > 0."
+msgstr "Maximal erlaubte Differenz pro Tag in Minuten. Wenn die Differenz höher ist, so kann ein Timesheet nicht bestätigt werden."
+
+#: help:overtime.correction,value_hours:0
+#. module: cam_hr_overtime
+msgid "This field is added to the current overtime. For correction please insert a negative value! e.g. -20"
+msgstr "Dieser Wert wird zu den aktuellen Überstunden addiert. Um die Überstunden zu verringern muss ein negativer Wert verwendet werden!"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:567
+#. module: cam_hr_overtime
+#, python-format
+msgid "Vertrag ändern"
+msgstr "Vertrag ändern"
+
+#: field:hr_timesheet_sheet.sheet,sum_attendance:0
+#: view:hr_timesheet_sheet.sheet.day:0
+#. module: cam_hr_overtime
+msgid "Sum Attendance"
+msgstr "Gesamte Anwesenheitszeit"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total overtime this timesheet"
+msgstr "Gesamte Überstunden in dieser Periode"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:672
+#. module: cam_hr_overtime
+#, python-format
+msgid "Cannot approve leave if the related timesheet(s) are not in state 'draft'"
+msgstr "Das zugehörige Timesheet muss sich im Status 'Entwurf' befinden."
+
+#: field:hr_timesheet_sheet.sheet,project_hours:0
+#. module: cam_hr_overtime
+msgid "Project Hours"
+msgstr "Projektstunden"
+
+#: help:hr_timesheet_sheet.sheet,sum_attendance:0
+#: help:hr_timesheet_sheet.sheet,sum_illness:0
+#: help:hr_timesheet_sheet.sheet,sum_others:0
+#: help:hr_timesheet_sheet.sheet,sum_planned:0
+#. module: cam_hr_overtime
+msgid "Total illness in hours of all previous timesheets in state 'done'"
+msgstr "Gesamtstunden Krankenstand aller vorhergehenden genehmigten Timesheets."
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:365
+#. module: cam_hr_overtime
+#, python-format
+msgid "The difference per day exceeds the maximum of %s minutes for the timesheet: \"%s\".\n"
+"Please correct the following days:: \n"
+" %s"
+msgstr "Die Buchungsdifferenz (maximal: %s) pro Tag für das Timesheet \"%s\" ist zu hoch.\n"
+"Bitte folgende Tage korrigieren:: \n"
+"%s"
+
+#: view:overtime.correction:0
+#. module: cam_hr_overtime
+msgid "z.B. Auszahlung Überstunden"
+msgstr "z.B. Auszahlung Überstunden"
+
+#: view:hr_employee.timesheet.report:0
+#: field:hr_employee.timesheet.report,year:0
+#: help:hr_employee.timesheet.report,year:0
+#. module: cam_hr_overtime
+msgid "Jahr"
+msgstr "Jahr"
+
+#: help:hr.config.settings,lunch_duration:0
+#: help:res.company,lunch_duration:0
+#. module: cam_hr_overtime
+msgid "Lunch duration in minutes (used for Lunch-button)"
+msgstr "Dauer Mittagspause in Minuten (Mittagspause-Button)"
+
+#: field:hr_employee.timesheet.report,date:0
+#. module: cam_hr_overtime
+msgid "date"
+msgstr "Datum"
+
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#. module: cam_hr_overtime
+msgid "Total Illness"
+msgstr "Gesamter Krankenstand"
+
+#: field:hr.config.settings,time_credit:0
+#: field:res.company,time_credit:0
+#. module: cam_hr_overtime
+msgid "Time Credit"
+msgstr "Gewährter Bonus in Minuten"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr_overtime
+msgid "Lunch"
+msgstr "Mittagspause"
+
+#: help:overtime.correction,name:0
+#. module: cam_hr_overtime
+msgid "Diese Beschreibung wird auf dem Timesheet angedruckt!"
+msgstr "Diese Beschreibung wird auf dem Timesheet angedruckt!"
+
+#: field:hr_timesheet_sheet.sheet.day_detail,name:0
+#. module: cam_hr_overtime
+msgid "Date"
+msgstr "Datum"
+
+#: field:hr_timesheet_sheet.sheet.day_detail,others:0
+#. module: cam_hr_overtime
+msgid "Other Leaves"
+msgstr "Andere Abwesenheit"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:149
+#. module: cam_hr_overtime
+#, python-format
+msgid "Timesheet not up to date"
+msgstr "Timesheet ist nicht aktuell"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Period:"
+msgstr "Periode:"
+
+#: help:hr_timesheet_sheet.sheet,sum_vacation:0
+#. module: cam_hr_overtime
+msgid "Total vacation in hours of all previous timesheets in state 'done'"
+msgstr "Gesamter Urlaub aller vorhergehenden genehmigten Timesheets."
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr_overtime
+msgid "Compute"
+msgstr "Berechnen"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_timesheet_sheet_sheet_day_detail
+#. module: cam_hr_overtime
+msgid "Days by Period"
+msgstr "Tage pro Periode"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Timesheet Report"
+msgstr "Auswertung Zeiterfassung"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total vacation as of"
+msgstr "Gesamter Urlaub Stichtag"
+
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#. module: cam_hr_overtime
+msgid "Total Vacation"
+msgstr "Offener Urlaub"
+
+#: model:ir.model,name:cam_hr_overtime.model_res_company
+#. module: cam_hr_overtime
+msgid "Companies"
+msgstr "Unternehmen"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_contract
+#. module: cam_hr_overtime
+msgid "Contract"
+msgstr "Arbeitsvertrag"
+
+#: view:hr_timesheet_sheet.sheet:0
+#: view:hr_timesheet_sheet.sheet.day_detail:0
+#: model:ir.actions.act_window,name:cam_hr_overtime.cam_hr_overtime_show_summary
+#. module: cam_hr_overtime
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+#: field:hr_timesheet_sheet.sheet,total_vacation_days:0
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Vacation in days"
+msgstr "Urlaub in Tagen"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Allocations"
+msgstr "Zuzählungen"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:323
+#. module: cam_hr_overtime
+#, python-format
+msgid "Error"
+msgstr "Fehler"
+
+#: model:ir.actions.report.xml,name:cam_hr_overtime.timesheet_report
+#. module: cam_hr_overtime
+msgid "Auswertung Zeiterfassung"
+msgstr "Auswertung Zeiterfassung"
+
+#: view:hr_timesheet_sheet.sheet.day:0
+#. module: cam_hr_overtime
+msgid "Sum Difference"
+msgstr "Summe Differenz"
+
+#: field:hr_timesheet_sheet.sheet,total_illness:0
+#: field:hr_timesheet_sheet.sheet.day_detail,illness:0
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Illness"
+msgstr "Krankenstand"
+
+#: model:ir.actions.act_window,name:cam_hr_overtime.cam_hr_overtime_act_overtime_correction
+#: model:ir.ui.menu,name:cam_hr_overtime.menu_act_act_overtime_correction
+#: view:overtime.correction:0
+#. module: cam_hr_overtime
+msgid "Overtime Correction"
+msgstr "Überstundenkorrektur"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total overtime"
+msgstr "Anzahl Überstunden"
+
+#: constraint:hr.contract:0
+#. module: cam_hr_overtime
+msgid "Error! contracts can only start on the first day of a month."
+msgstr "Fehler! Verträge können nur am ersten Tag des Monats starten."
+
+#: field:hr_timesheet_sheet.sheet,sum_planned:0
+#. module: cam_hr_overtime
+msgid "Sum Planned"
+msgstr "Gesamt Geplant"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:689
+#. module: cam_hr_overtime
+#, python-format
+msgid "Cannot refuse leave if the related timesheet(s) are not in state 'draft'"
+msgstr "Eintrag kann nicht abgelehnt werden, da sich das entsprechende Timesheet nicht im Status 'Entwurf' befindet"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Employee:"
+msgstr "Mitarbeiter:"
+
+#: field:hr_timesheet_sheet.sheet,sum_vacation_days:0
+#. module: cam_hr_overtime
+msgid "Sum Vacation in days"
+msgstr "Gesamter Urlaub in Tagen"
+
+#: model:mail.message.subtype,description:cam_hr_overtime.mt_state_changed
+#. module: cam_hr_overtime
+msgid "Stage changed"
+msgstr "Stufe geändert"
+
+#: field:hr.config.settings,illness_type_id:0
+#: field:res.company,illness_type_id:0
+#. module: cam_hr_overtime
+msgid "Holiday state of illness"
+msgstr "Abwesenheitstyp \"Krankenstand\""
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:149
+#. module: cam_hr_overtime
+#, python-format
+msgid "Please compute/print your Timesheet again!"
+msgstr "Bitte berechnen/drucken Sie das Timesheet erneut aus!"
+
+#: selection:hr.attendance,flag:0
+#. module: cam_hr_overtime
+msgid "Terminal"
+msgstr "Terminal"
+
+#: field:hr_employee.timesheet.report,overtime:0
+#: field:hr_timesheet_sheet.sheet,total_overtime:0
+#: field:hr_timesheet_sheet.sheet.day_detail,overtime:0
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Overtime"
+msgstr "Überstunden"
+
+#: help:hr.attendance,flag:0
+#. module: cam_hr_overtime
+msgid "(Manual) If you create/modifiy manually.\n"
+"(Button) If you create your sign in/sign outs with the 'sign in/sign out' buttons\n"
+"(Terminal) Created by the Terminal"
+msgstr "(Manuell) Wenn Einträge manuelle erstelltl/editiert wurden.\n"
+"(Button) Wenn Einträge mittels Button erstellt wurden.\n"
+"(Terminal) Erstellt durch ein Zeiterfassungsterminal"
+
+#: field:hr_timesheet_sheet.sheet,sum_vacation:0
+#. module: cam_hr_overtime
+msgid "Sum Vacation"
+msgstr "Summe Urlaub"
+
+#: field:hr_timesheet_sheet.sheet,sum_illness:0
+#. module: cam_hr_overtime
+msgid "Sum Illness"
+msgstr "Summe Krankenstand"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr_overtime
+msgid "Attendances"
+msgstr "Anwesenheitszeiten"
+
+#: field:hr_employee.timesheet.report,name:0
+#: field:overtime.correction,name:0
+#. module: cam_hr_overtime
+msgid "Description"
+msgstr "Beschreibung"
+
+#: model:ir.model,name:cam_hr_overtime.model_resource_calendar
+#. module: cam_hr_overtime
+msgid "Resource Calendar"
+msgstr "Ressourcen Kalender"
+
+#: field:hr.config.settings,lunch_duration:0
+#: field:res.company,lunch_duration:0
+#. module: cam_hr_overtime
+msgid "Lunch Duration"
+msgstr "Dauer Mittagspause"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr_overtime
+msgid "Sign Out"
+msgstr "Ausloggen"
+
+#: field:hr_timesheet_sheet.sheet.project_hours,sum_hours:0
+#. module: cam_hr_overtime
+msgid "Hours spent"
+msgstr "Benötigte Stunden"
+
+#: help:hr.holidays,effective_date:0
+#. module: cam_hr_overtime
+msgid "This is the date when this allocation becomes effective."
+msgstr "Effektives Zuzählungsdatum"
+
+#: field:hr_timesheet_sheet.sheet,vacation_alloc_days:0
+#. module: cam_hr_overtime
+msgid "Vacation Allocations"
+msgstr "Urlaubszuzählungen"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "State:"
+msgstr "Status:"
+
+#: field:hr.config.settings,max_difference_day:0
+#: field:res.company,max_difference_day:0
+#. module: cam_hr_overtime
+msgid "Max difference per Day"
+msgstr "Maximal erlaubte Differenz pro Tag"
+
+#: help:hr_timesheet_sheet.sheet,sum_overtime:0
+#. module: cam_hr_overtime
+msgid "Total overtime in hours of all previous timesheets in state 'done'"
+msgstr "Offene Überstunden in Stunden aller vorhergehenden genehmigten Timesheets"
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "Mitarbeiter"
+msgstr "Mitarbeiter"
+
+#: constraint:hr.contract:0
+#. module: cam_hr_overtime
+msgid "You can not have 2 contracts that overlap !"
+msgstr "Verträge dürfen sich nicht überlappen!"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total overtime as of"
+msgstr "Gesamte Überstunden Stichtag"
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "Aktuelles Jahr"
+msgstr "Aktuelles Jahr"
+
+#: selection:hr.attendance,flag:0
+#. module: cam_hr_overtime
+msgid "Button"
+msgstr "Button"
+
+#: field:hr.holidays,effective_date:0
+#. module: cam_hr_overtime
+msgid "Effective date"
+msgstr "Effektives Datum"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:548
+#. module: cam_hr_overtime
+#, python-format
+msgid "Arbeitszeiten ändern"
+msgstr "Arbeitszeiten ändern"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:78
+#. module: cam_hr_overtime
+#, python-format
+msgid "Achtung"
+msgstr "Achtung"
+
+#: constraint:hr.holidays:0
+#. module: cam_hr_overtime
+msgid "Es existiert bereits eine Abwesenheit für diesen Mitarbeiter, in diesem Zeitraum!"
+msgstr "Es existiert bereits eine Abwesenheit für diesen Mitarbeiter, in diesem Zeitraum!"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Page"
+msgstr "Seite"
+
+#: help:hr.config.settings,time_credit:0
+#: help:res.company,time_credit:0
+#. module: cam_hr_overtime
+msgid "Time credit in minutes when doing SignIn/SignOut"
+msgstr "Gewährter Bonus in Minuten beim SignIn/SignOut"
+
+#: field:hr_timesheet_sheet.sheet.project_hours,account_id:0
+#. module: cam_hr_overtime
+msgid "Project"
+msgstr "Projekt"
+
+#: view:hr_timesheet_sheet.sheet.day:0
+#. module: cam_hr_overtime
+msgid "Hours Booked"
+msgstr "Gebuchte Stunden"
+
+#: model:ir.model,name:cam_hr_overtime.model_hr_config_settings
+#. module: cam_hr_overtime
+msgid "hr.config.settings"
+msgstr "hr.config.settings"
+
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:365
+#. module: cam_hr_overtime
+#, python-format
+msgid "Cannot confirm Timesheet!"
+msgstr "Kann Timesheet nicht bestätigen!"
+
+#: view:hr_employee.timesheet.report:0
+#. module: cam_hr_overtime
+msgid "Überstunden"
+msgstr "Überstunden"
+
+#: field:hr_timesheet_sheet.sheet,day_details:0
+#. module: cam_hr_overtime
+msgid "Day Details"
+msgstr "Tagesdetails"
+
+#: view:hr_employee.timesheet.report:0
+#: field:hr_employee.timesheet.report,month:0
+#: help:hr_employee.timesheet.report,month:0
+#. module: cam_hr_overtime
+msgid "Monat"
+msgstr "Monat"
+
+#: field:hr_employee.timesheet.report,vacation:0
+#: field:hr_timesheet_sheet.sheet,total_vacation:0
+#: field:hr_timesheet_sheet.sheet.day_detail,vacation:0
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Vacation"
+msgstr "Urlaub"
+
+#: report:hr_timesheet_sheet.sheet.report:0
+#. module: cam_hr_overtime
+msgid "Total"
+msgstr "Gesamt"
+

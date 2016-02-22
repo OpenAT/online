@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data noupdate="1">
+    
+
+        <!-- Personal Vacation -->
+        <record model="hr.holidays.status" id="holiday_status_vacation">
+            <field name="name">Personal Vacation</field>
+            <field name="limit">True</field>
+            <field name="code">vacation</field>
+            <field name="color_name">blue</field>
+        </record>
+
+        <record model="hr.holidays.status" id="holiday_status_krankenstand">
+            <field name="name">Krankenstand</field>
+            <field name="code">illness</field>
+            <field name="limit">True</field>
+            <field name="color_name">red</field>
+        </record>   
+        
+        <record model="hr.holidays.status" id="holiday_status_feiertag">
+            <field name="name">Feiertage</field>
+            <field name="code">legal</field>
+            <field name="limit">True</field>
+            <field name="color_name">red</field>
+        </record> 
+        
+        <record id="base.main_company" model="res.company">
+            <field name="timesheet_range">month</field>
+            <field name="vacation_type_id" ref="holiday_status_vacation"/>
+            <field name="illness_type_id" ref="holiday_status_krankenstand"/>
+        </record>
+        
+	</data>
+	
+
+	
+	<data>
+        <!--  Message Subtypes -->
+        <record id="mt_state_changed" model="mail.message.subtype">
+            <field name="name">State changed</field>
+            <field name="res_model">hr_timesheet_sheet.sheet</field>
+            <field name="default" eval="True"/>
+            <field name="description">Stage changed</field>
+        </record>
+    </data>
+</openerp>

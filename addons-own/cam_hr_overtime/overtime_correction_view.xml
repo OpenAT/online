@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <record id="cam_hr_overtime_correction_form" model="ir.ui.view">
+            <field name="name">Overtime Correction</field>
+            <field name="model">overtime.correction</field>
+            <field name="arch" type="xml">
+                <form string="Overtime Correction" version="7.0">
+                 <sheet>
+                    <group style="width:30%%">
+                    		<field name="name" placeholder="z.B. Auszahlung Überstunden"/>
+	                        <field name="employee_id" on_change="on_change_employee(employee_id)" />
+	                        <field name="timesheet_id" on_change="on_change_employee(employee_id)"/>
+	                        <field name="value_hours" placeholder="-10"/>
+                   </group>
+                </sheet>
+               </form>
+               
+            </field>
+        </record>
+        
+       <record id="cam_hr_overtime_correction_search" model="ir.ui.view">
+            <field name="name">Overtime Correction</field>
+            <field name="model">overtime.correction</field>
+            <field name="arch" type="xml">
+              <search string="Search Overtime Corrections">
+                       <field name="employee_id"/>
+                       <field name="timesheet_id"/>
+                       <field name="name"/>
+             </search>
+            </field>
+        </record>
+        
+       <record id="cam_hr_overtime_correction_tree" model="ir.ui.view">
+            <field name="name">Overtime Correction</field>
+            <field name="model">overtime.correction</field>
+            <field name="arch" type="xml">
+                <tree string="Overtime Corrections">
+                		<field name="employee_id"/>
+                        <field name="timesheet_id"/>
+                        <field name="name"/>
+                        <field name="value_hours"/>
+               </tree>
+            </field>
+        </record>
+       
+       <record id="cam_hr_overtime_act_overtime_correction" model="ir.actions.act_window">
+            <field name="name">Overtime Correction</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">overtime.correction</field>
+            <field name="view_type">form</field>
+            <field name="view_id" eval="cam_hr_overtime_correction_tree"/>
+            <field name="search_view_id" ref="cam_hr_overtime_correction_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to enter an overtime correction entry.
+              </p><p>
+              	Modify the overtime account of employees.
+              </p>
+            </field>            
+        </record>
+
+        <menuitem action="cam_hr_overtime_act_overtime_correction" id="menu_act_act_overtime_correction" parent="hr_attendance.menu_hr_time_tracking"
+             sequence="3" groups="base.group_hr_manager"/>
+
+        <!-- INHERIT: CONTRACT FORM VIEW: Add default_overtime -->
+        <record id="cam_hr_contract_view_form" model="ir.ui.view">
+            <field name="name">add default overtime</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="job_id" position="after">
+                        <field name="default_overtime"/>
+                    </field>
+                </data>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

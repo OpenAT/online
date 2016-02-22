@@ -1,0 +1,6 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"cam_hr_holiday_template_user","hr_holidays_template","cam_hr.model_hr_holidays_template","base.group_hr_user",1,0,0,0
+"cam_hr_holiday_template_manager","hr_holidays_template","cam_hr.model_hr_holidays_template","base.group_hr_manager",1,1,1,1
+
+"cam_hr_holiday_template_line_user","hr_holidays_template_line","cam_hr.model_hr_holidays_template_line","base.group_hr_user",1,0,0,0
+"cam_hr_holiday_template_line_manager","hr_holidays_template_line","cam_hr.model_hr_holidays_template_line","base.group_hr_manager",1,1,1,1

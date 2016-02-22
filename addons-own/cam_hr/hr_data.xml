@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="1">
+	
+	
+	<record id="reason_dg_ko" model="hr.action.reason">
+          <field name="name">Außendienst</field>
+          <field name="action_type">sign_in</field>
+       </record>
+       
+       <record id="reason_dg_ge" model="hr.action.reason">
+          <field name="name">Außendienst</field>
+          <field name="action_type">sign_out</field>
+       </record>
+       
+       <record id="reason_arzt_ko" model="hr.action.reason">
+          <field name="name">Arztbesuch</field>
+          <field name="action_type">sign_in</field>
+       </record>
+       
+       <record id="reason_arzt_ge" model="hr.action.reason">
+          <field name="name">Arztbesuch</field>
+          <field name="action_type">sign_out</field>
+       </record>
+       
+       
+       <!-- 40h/Woche Arbeitsvertrag -->
+        <record id="resource_40h" model="resource.calendar">
+            <field name="name">40 Stunden/Woche</field>
+        </record>
+        
+       
+        <record model="resource.calendar.attendance" id="calendar_attendance_40h_mon">
+            <field name="name">Montag</field>
+            <field name="dayofweek">0</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_40h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_40h_tue">
+            <field name="name">Dienstag</field>
+            <field name="dayofweek">1</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_40h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_40h_wed">
+            <field name="name">Mittwoch</field>
+            <field name="dayofweek">2</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_40h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_40h_thu">
+            <field name="name">Donnerstag</field>
+            <field name="dayofweek">3</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_40h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_40h_fr">
+            <field name="name">Freitag</field>
+            <field name="dayofweek">4</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_40h"/>
+        </record>
+        
+       
+       <!-- 38.5h/Woche Arbeitsvertrag -->
+        <record id="resource_385h" model="resource.calendar">
+            <field name="name">38.5 Stunden/Woche</field>
+        </record>
+        
+       
+        <record model="resource.calendar.attendance" id="calendar_attendance_385h_mon">
+            <field name="name">Montag</field>
+            <field name="dayofweek">0</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_385h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_385h_tue">
+            <field name="name">Dienstag</field>
+            <field name="dayofweek">1</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_385h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_385h_wed">
+            <field name="name">Mittwoch</field>
+            <field name="dayofweek">2</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_385h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_385h_thu">
+            <field name="name">Donnerstag</field>
+            <field name="dayofweek">3</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">17</field>
+            <field name="calendar_id" ref="resource_385h"/>
+        </record>
+        
+        <record model="resource.calendar.attendance" id="calendar_attendance_385h_fr">
+            <field name="name">Freitag</field>
+            <field name="dayofweek">4</field>
+            <field name="hour_from">09</field>
+            <field name="hour_to">15.5</field>
+            <field name="calendar_id" ref="resource_385h"/>
+        </record>
+        
+       
+        <record id="hr_contract.hr_contract_type_emp" model="hr.contract.type">
+            <field name="name">Angestellter</field>
+        </record>
+
+        <record id="hr_contract.hr_contract_type_wrkr" model="hr.contract.type">
+            <field name="name">Arbeiter</field>
+        </record>
+
+        <record id="hr_contract.hr_contract_type_sub" model="hr.contract.type">
+            <field name="name">Freier Mitarbeiter</field>
+        </record>
+        
+	</data>
+</openerp>

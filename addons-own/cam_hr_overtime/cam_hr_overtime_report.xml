@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+	
+<!-- 	<report id="timesheet_report"
+			string="Auswertung Zeiterfassung"
+			model="hr_timesheet_sheet.sheet"
+			name="hr_timesheet_sheet.sheet.report"
+			rml="cam_hr_overtime/report/report_hr_overtime.rml"
+			auto="False"
+			header="False"/> -->
+	</data>
+</openerp>

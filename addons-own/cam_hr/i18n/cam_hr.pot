@@ -1,0 +1,528 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* cam_hr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20131022-232438\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-05 08:39+0000\n"
+"PO-Revision-Date: 2014-05-05 08:39+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#: model:ir.actions.act_window,name:hr_timesheet_sheet.act_hr_timesheet_sheet_form
+#: model:ir.ui.menu,name:hr_timesheet_sheet.menu_act_hr_timesheet_sheet_form
+#. module: cam_hr
+msgid "Timesheets to Validate"
+msgstr "Alle Zeiterfassungen"
+
+#: model:ir.actions.act_window,name:hr_timesheet.act_hr_timesheet_line_evry1_all_form
+#: model:ir.ui.menu,name:hr_timesheet.menu_hr_working_hours
+#. module: cam_hr
+msgid "Timesheet Activities"
+msgstr "Meine Projektzeiten"
+
+#: model:ir.actions.act_window,name:hr_timesheet_sheet.ir_actions_server_timsheet_sheet
+#: model:ir.ui.menu,name:hr_timesheet_sheet.menu_act_hr_timesheet_sheet_form_my_current
+#. module: cam_hr
+msgid "My Current Timesheet"
+msgstr "Aktuelle Zeiterfassung"
+
+#: model:ir.ui.menu,name:hr_attendance.menu_open_view_attendance
+#. module: cam_hr
+msgid "Meine Anwesenheitszeiten"
+msgstr "Meine Anwesenheitszeiten"
+
+#: model:ir.ui.menu,name:cam_hr.hr_menu_working_hours
+#. module: cam_hr
+msgid "Arbeitzeiten"
+msgstr "Arbeitzeiten"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Kommen / Gehen Details"
+msgstr "Kommen / Gehen Details"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Group By..."
+msgstr "Gruppierung..."
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Projektbuchungen"
+msgstr "Projektbuchungen"
+
+#: field:hr.holidays.template_line,template_id:0
+#: field:wizard.import_feiertage,template_id:0
+#. module: cam_hr
+msgid "Template"
+msgstr "Vorlage"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Projektzeiten"
+msgstr "Projektzeiten"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Verträge"
+msgstr "Verträge"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Zusammenfassung"
+msgstr "Zusammenfassung"
+
+#: model:ir.actions.act_window,name:cam_hr.hr_meine_anwesenheitszeiten_action
+#. module: cam_hr
+msgid "Meine Anwesenheitszeiten"
+msgstr "Meine Anwesenheitszeiten"
+
+#: model:ir.model,name:cam_hr.model_hr_timesheet_sheet_sheet
+#. module: cam_hr
+msgid "Timesheet"
+msgstr "Zeiterfassung"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Set to Draft"
+msgstr "Setze auf Entwurf"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Timesheet Period"
+msgstr "Zeiterfassungsperiode"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Überstundenkorrektur"
+msgstr "Überstundenkorrektur"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Validate"
+msgstr "Genehmigt"
+
+#: view:hr.holidays:0
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Refuse"
+msgstr "Abgelehnt"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Timesheet Activities"
+msgstr "Zeiterfassungsaktivitäten"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Citizenship & Other Info"
+msgstr "Wohnort & Andere Infos"
+
+#: model:ir.model,name:cam_hr.model_hr_holidays
+#. module: cam_hr
+msgid "Leave"
+msgstr "Urlaub"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "z.B. Pfingstmontag"
+msgstr "z.B. Pfingstmontag"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "bis"
+msgstr "bis"
+
+#: view:wizard.import_feiertage:0
+#. module: cam_hr
+msgid "Verfügbare Vorlagen"
+msgstr "Verfügbare Vorlagen"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Zeiterfassung"
+msgstr "Zeiterfassung"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Weitere informationen ..."
+msgstr "Weitere informationen ..."
+
+#: model:ir.model,name:cam_hr.model_hr_holidays_template
+#. module: cam_hr
+msgid "Holiday Templates"
+msgstr "Feiertag Vorlage"
+
+#: view:hr.holidays.template:0
+#. module: cam_hr
+msgid "Create Public Holidays"
+msgstr "Erstelle Feiertage für Mitarbeiter"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Timesheets"
+msgstr "Stundenzettel"
+
+#: view:hr.holidays:0
+#: model:ir.actions.act_window,name:cam_hr.hr_urlaubsanspruch_action
+#: model:ir.ui.menu,name:cam_hr.hr_menu_urlaubsanspruch
+#. module: cam_hr
+msgid "Urlaubsanspruch"
+msgstr "Urlaubsanspruch"
+
+#: model:ir.model,name:cam_hr.model_hr_attendance
+#. module: cam_hr
+msgid "Attendance"
+msgstr "Anwesenheitszeit"
+
+#: model:ir.actions.act_window,name:cam_hr.action_wizard_import_feiertage
+#: model:ir.ui.menu,name:cam_hr.menu_wizard_import_feiertage
+#: view:wizard.import_feiertage:0
+#. module: cam_hr
+msgid "Importiere Feiertage"
+msgstr "Importiere Feiertage"
+
+#: model:ir.model,name:cam_hr.model_hr_holidays_template_line
+#. module: cam_hr
+msgid "hr.holidays.template_line"
+msgstr "hr.holidays.template_line"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Anwesenheitszeiten"
+msgstr "Anwesenheitszeiten"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Urlaube"
+msgstr "Urlaube"
+
+#: view:hr.employee:0
+#: view:hr.holidays:0
+#: model:ir.model,name:cam_hr.model_hr_employee
+#. module: cam_hr
+msgid "Employee"
+msgstr "Mitarbeiter"
+
+#: view:wizard.import_feiertage:0
+#. module: cam_hr
+msgid "Feiertage importieren"
+msgstr "Feiertage importieren"
+
+#: view:wizard.import_feiertage:0
+#: field:wizard.import_feiertage,employee_ids:0
+#. module: cam_hr
+msgid "Mitarbeiter"
+msgstr "Mitarbeiter"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Hours"
+msgstr "Stunden"
+
+#: model:ir.actions.act_window,name:cam_hr.hr_feiertage_action
+#: model:ir.ui.menu,name:cam_hr.hr_menu_abwesenheiten
+#: model:ir.ui.menu,name:cam_hr.hr_menu_feiertage
+#. module: cam_hr
+msgid "Feiertage"
+msgstr "Feiertage"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Anzahl Tage"
+msgstr "Anzahl Tage"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Start Datum"
+msgstr "Start Datum"
+
+#: model:ir.ui.menu,name:cam_hr.hr_menu_krankenstand
+#. module: cam_hr
+msgid "Krankenstand"
+msgstr "Krankenstand"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Filters only on allocations and requests that belong to an holiday type that is 'active' (active field is True)"
+msgstr "Filter auf Urlaubsansprüche und Anfragen, die 'aktiv' sind (Aktiv Feld ist angehakt)"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Sign In"
+msgstr "Einloggen"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Datum"
+msgstr "Datum"
+
+#: model:ir.actions.act_window,name:cam_hr.hr_meine_zeiterfassungen_action
+#: model:ir.ui.menu,name:cam_hr.hr_menu_meine_zeiterfassungen
+#. module: cam_hr
+msgid "Meine Zeiterfassungen"
+msgstr "Meine Zeiterfassungen"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Related User"
+msgstr "Verknüpfter Benutzer"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Leave Requests"
+msgstr "Urlaubsanfragen"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Start Date"
+msgstr "Start am"
+
+#: view:hr.contract:0
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Bemerkungen"
+msgstr "Bemerkungen"
+
+#: view:hr.contract:0
+#. module: cam_hr
+msgid "Weitere Informationen..."
+msgstr "Weitere Informationen..."
+
+#: view:hr.contract:0
+#. module: cam_hr
+msgid "z.B. Max Mustermann 2014"
+msgstr "z.B. Max Mustermann 2014"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Reset to New"
+msgstr "Zurück auf Neu"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Contact Information"
+msgstr "Kontakt Information"
+
+#: view:hr.holidays.template:0
+#: field:hr.holidays.template,line_ids:0
+#: model:ir.ui.menu,name:cam_hr.menu_public_holidays
+#. module: cam_hr
+msgid "Public Holidays"
+msgstr "Feiertage"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Status"
+msgstr "Status"
+
+#: help:hr.holidays.template,sequence:0
+#. module: cam_hr
+msgid "If there are multiple templates, the one with the lowest sequence is chosen."
+msgstr "Falls es mehrere Vorlagen gibt, wird jene mit der kleinsten Sequenz ausgewählt."
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Grund"
+msgstr "Grund"
+
+#: view:wizard.import_feiertage:0
+#. module: cam_hr
+msgid "oder"
+msgstr "oder"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Zuschreibungsdatum"
+msgstr "Zuschreibungsdatum"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Lunch"
+msgstr "Mittagspause"
+
+#: view:hr.holidays.template:0
+#. module: cam_hr
+msgid "Public Holiday Template"
+msgstr "Feiertag Vorlage"
+
+#: field:hr.attendance,user_id:0
+#. module: cam_hr
+msgid "User"
+msgstr "Benutzer"
+
+#: field:hr.holidays.template_line,date:0
+#. module: cam_hr
+msgid "Date"
+msgstr "Datum"
+
+#: model:ir.ui.menu,name:cam_hr.hr_menu_main_urlaub
+#. module: cam_hr
+msgid "Urlaub"
+msgstr "Urlaub"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Compute"
+msgstr "Berechnen"
+
+#: view:wizard.import_feiertage:0
+#. module: cam_hr
+msgid "Abbrechen"
+msgstr "Abbrechen"
+
+#: view:hr.contract:0
+#. module: cam_hr
+msgid "Contract"
+msgstr "Arbeitsvertrag"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Submit to Manager"
+msgstr "Dem Manager vorlegen"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "z.B. Urlaubszuschreibung 2014"
+msgstr "z.B. Urlaubszuschreibung 2014"
+
+#: model:ir.model,name:cam_hr.model_wizard_import_feiertage
+#. module: cam_hr
+msgid "Importiere Feiertage für Mitarbeiter"
+msgstr "Importiere Feiertage für Mitarbeiter"
+
+#: model:ir.actions.act_window,name:cam_hr.hr_alle_anwesenheitszeiten_action
+#: model:ir.ui.menu,name:cam_hr.hr_menu_alle_anwesenheitszeiten
+#. module: cam_hr
+msgid "Alle Anwesenheitszeiten"
+msgstr "Alle Anwesenheitszeiten"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Allocation Requests"
+msgstr "Anfrage Urlaubsanspruch"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Anwesenheit"
+msgstr "Anwesenheit"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Validated"
+msgstr "Bestätigt"
+
+#: view:hr.employee:0
+#. module: cam_hr
+msgid "Personal Information"
+msgstr "Persönliche Info"
+
+#: model:ir.actions.act_window,name:cam_hr.hr_krankenstaende_action
+#: model:ir.ui.menu,name:cam_hr.hr_menu_krankenstaende
+#. module: cam_hr
+msgid "Krankenstände"
+msgstr "Krankenstände"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Differenz"
+msgstr "Differenz"
+
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Sign Out"
+msgstr "Ausloggen"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "My Leaves"
+msgstr "Mein Urlaubskonto"
+
+#: field:hr.holidays.template,create_employees:0
+#. module: cam_hr
+msgid "Create holidays for new employees"
+msgstr "Feiertage bei Mitarbeiteranlage erstellen"
+
+#: view:hr.holidays.template:0
+#: model:ir.actions.act_window,name:cam_hr.hr_public_holidays_template_action
+#: model:ir.ui.menu,name:cam_hr.menu_public_holidays_template
+#. module: cam_hr
+msgid "Templates"
+msgstr "Vorlagen"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Leave Request"
+msgstr "Urlaubsanfrage"
+
+#: view:hr.holidays:0
+#: field:hr.holidays.template_line,name:0
+#. module: cam_hr
+msgid "Description"
+msgstr "Beschreibung"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "End Datum"
+msgstr "End Datum"
+
+#: view:hr.holidays:0
+#: view:hr.holidays.template:0
+#. module: cam_hr
+msgid "Search Leave"
+msgstr "Suche Abwesenheit"
+
+#: model:ir.ui.menu,name:cam_hr.hr_invisible
+#. module: cam_hr
+msgid "Invisible"
+msgstr "Unsichtbar"
+
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Anwesenheit pro Tag"
+msgstr "Anwesenheit pro Tag"
+
+#: field:hr.holidays.template,name:0
+#. module: cam_hr
+msgid "Name"
+msgstr "Name"
+
+#: view:hr.holidays:0
+#: view:hr_timesheet_sheet.sheet:0
+#. module: cam_hr
+msgid "Approve"
+msgstr "Genehmige"
+
+#: field:hr.holidays.template,sequence:0
+#. module: cam_hr
+msgid "Sequence"
+msgstr "Sequenz"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Manager"
+msgstr "Abteilungsleiter"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "To Confirm"
+msgstr "Zu Bestätigen"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "Year"
+msgstr "Jahr"
+
+#: view:hr.holidays:0
+#. module: cam_hr
+msgid "To Approve"
+msgstr "Zu Genehmigen"
+

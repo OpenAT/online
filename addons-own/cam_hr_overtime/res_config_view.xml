@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="cam_hr_overtime_settings" model="ir.ui.view">
+            <field name="name">cam_hr_overtime.hr.config.inherit</field>
+            <field name="model">hr.config.settings</field>
+            <!--<field name="inherit_id" ref="hr_attendance.hr_attendace_group"/>-->
+            <field name="inherit_id" ref="hr.view_human_resources_configuration"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//div[@name='hr_attendance']" position="after">
+                    <div>
+                    	<label for="time_credit"/>
+                        <field name="time_credit" class="oe_inline"/>                        
+                    </div>
+                    <div>
+                    	<label for="max_difference_day"/>
+                        <field name="max_difference_day" class="oe_inline"/>                        
+                    </div>   
+                    <div>
+                    	<label for="lunch_duration"/>
+                        <field name="lunch_duration" class="oe_inline"/>                        
+                    </div>   
+                    <div>
+                    	<label for="vacation_type_id"/>
+                        <field name="vacation_type_id" class="oe_inline"/>                        
+                    </div>  
+                    <div>
+                    	<label for="illness_type_id"/>
+                        <field name="illness_type_id" class="oe_inline"/>                        
+                    </div>                                                                                                                                       
+                 </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

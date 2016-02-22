@@ -1,0 +1,9 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"hr_timesheet_sheet_sheet_user_day_detail","hr_timesheet_sheet.sheet.user.day_detail","cam_hr_overtime.model_hr_timesheet_sheet_sheet_day_detail","base.group_user",1,0,0,0
+"hr_contract_employee","hr.contract.employee","hr_contract.model_hr_contract","base.group_user",1,0,0,0
+"resource_calendar_attendance","resource.calendar.attendance","resource.model_resource_calendar_attendance","base.group_user",1,0,0,0
+"hr_timesheet_sheet_sheet_project_hours","hr_timesheet_sheet.sheet.project_hours","cam_hr_overtime.model_hr_timesheet_sheet_sheet_project_hours","base.group_user",1,0,0,0
+"overtime_correction_user","overtime.correction_user","cam_hr_overtime.model_overtime_correction","base.group_user",1,0,0,0
+"overtime_correction_hr_user","overtime.correction_hr_user","cam_hr_overtime.model_overtime_correction","base.group_hr_user",1,1,1,1
+"hr_employee_timesheet_report_manager","hr_employee.timesheet.report_manager","cam_hr_overtime.model_hr_employee_timesheet_report","base.group_hr_user",1,0,0,0
+"resource_calendar_attendance_manger","resource.calendar.attendance_manger","resource.model_resource_calendar_attendance","base.group_hr_user",1,1,1,1
