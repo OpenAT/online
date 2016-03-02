@@ -12,20 +12,14 @@
     <!-- ADD class hidden to header and footer -->
     <template id="aswidget" inherit_id="website.layout" name="aswidget remove footer">
         <xpath expr="//header" position="attributes">
-            <t t-if="request.session.get('aswidget', False)">
                 <attribute name="t-att-class"> 'hidden' if request.session.get('aswidget', False) else '' </attribute>
-            </t>
         </xpath>
         <xpath expr="//main" position="attributes">
-            <t t-if="request.session.get('aswidget', False)">
                 <!-- For I-Frame height calculation -->
-                <attribute name="data-iframe-height">True</attribute>
-            </t>
+                <attribute name="t-att-data-iframe-height"> 'True' if request.session.get('aswidget', False) else '' </attribute>
         </xpath>
         <xpath expr="//footer" position="attributes">
-            <t t-if="request.session.get('aswidget', False)">
-                <attribute name="t-att-class">'hidden'</attribute>
-            </t>
+                <attribute name="t-att-class"> 'hidden' if request.session.get('aswidget', False) else '' </attribute>
         </xpath>
     </template>
 

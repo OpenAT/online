@@ -42,7 +42,7 @@
 
         <!-- SUB-TEMPLATE: Small Cart Header -->
         <template id="small_cart_header" name="Small Cart Header">
-          <h3 class="small_cart_header" t-if="website_sale_order and website_sale_order.website_order_line">
+          <h3 class="small_cart_header" t-if="(website_sale_order and website_sale_order.website_order_line) or show_small_cart_header">
               <a href="/shop/cart">
                   <i class="fa fa-shopping-cart"></i>My Items <small class="text-danger">(change)</small>
 
