@@ -274,10 +274,11 @@
 		manageTriggerEvent({method:method, eventType: 'Mouse Up',                  eventName:  'mouseup' });
 		manageTriggerEvent({method:method, eventType: 'Mouse Down',                eventName:  'mousedown' });
 		manageTriggerEvent({method:method, eventType: 'Orientation Change',        eventName:  'orientationchange' });
+		manageTriggerEvent({method:method, eventType: 'Print',                     eventName:  ['afterprint', 'beforeprint'] });
+		manageTriggerEvent({method:method, eventType: 'Ready State Change',        eventName:  'readystatechange' });
 		manageTriggerEvent({method:method, eventType: 'Touch Start',               eventName:  'touchstart' });
 		manageTriggerEvent({method:method, eventType: 'Touch End',                 eventName:  'touchend' });
 		manageTriggerEvent({method:method, eventType: 'Touch Cancel',              eventName:  'touchcancel' });
-		manageTriggerEvent({method:method, eventType: 'Print',                     eventName:  ['afterprint', 'beforeprint'] });
 		manageTriggerEvent({method:method, eventType: 'Transition Start',          eventNames: ['transitionstart','webkitTransitionStart','MSTransitionStart','oTransitionStart','otransitionstart'] });
 		manageTriggerEvent({method:method, eventType: 'Transition Iteration',      eventNames: ['transitioniteration','webkitTransitionIteration','MSTransitionIteration','oTransitionIteration','otransitioniteration'] });
 		manageTriggerEvent({method:method, eventType: 'Transition End',            eventNames: ['transitionend','webkitTransitionEnd','MSTransitionEnd','oTransitionEnd','otransitionend'] });
@@ -475,8 +476,13 @@
 			},
 
 			getPageInfo: function getPageInfoF(callback){
-				pageInfoCallback = callback;
-				sendMsg(0,0,'pageInfo');
+				if ('function' === typeof callback){
+					pageInfoCallback = callback;
+					sendMsg(0,0,'pageInfo');
+				} else {
+					pageInfoCallback = function(){};
+					sendMsg(0,0,'pageInfoStop');
+				}
 			},
 
 			moveToAnchor: function moveToAnchorF(hash){
@@ -640,7 +646,7 @@
 
 	// document.documentElement.offsetHeight is not reliable, so
 	// we have to jump through hoops to get a better value.
-	function getComputedBodyStyle(prop) {
+	function getComputedStyle(prop,el) {
 		/* istanbul ignore next */  //Not testable in PhantomJS
 		function convertUnitsToPxForIE8(value) {
 			var PIXEL = /^\d+(px)?$/i;
@@ -662,9 +668,8 @@
 			return value;
 		}
 
-		var
-			el = document.body,
-			retVal = 0;
+		var retVal = 0;
+		el =  el || document.body;
 
 		/* istanbul ignore else */ // Not testable in phantonJS
 		if (('defaultView' in document) && ('getComputedStyle' in document.defaultView)) {
@@ -694,7 +699,7 @@
 			timer          = getNow();
 
 		for (var i = 0; i < elementsLength; i++) {
-			elVal = elements[i].getBoundingClientRect()[side] + getComputedBodyStyle('margin'+Side);
+			elVal = elements[i].getBoundingClientRect()[side] + getComputedStyle('margin'+Side,elements[i]);
 			if (elVal > maxVal) {
 				maxVal = elVal;
 			}
@@ -737,7 +742,7 @@
 	var
 		getHeight = {
 			bodyOffset: function getBodyOffsetHeight(){
-				return  document.body.offsetHeight + getComputedBodyStyle('marginTop') + getComputedBodyStyle('marginBottom');
+				return  document.body.offsetHeight + getComputedStyle('marginTop') + getComputedStyle('marginBottom');
 			},
 
 			offset: function(){

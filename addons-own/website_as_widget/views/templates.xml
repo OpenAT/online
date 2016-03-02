@@ -2,15 +2,32 @@
 <openerp>
 <data>
 
-<!-- Remove Header and Footer if the Website was called throug http://baseurl/aswidget/realpath -->
-<template id="assets_frontend" inherit_id="website.assets_frontend" name="assets_frontend website_as_widget">
-    <xpath expr="." position="inside">
-        <t t-if="request.session.get('aswidget', False) is True">
-            <link rel='stylesheet' href='/website_as_widget/static/src/css/website_as_widget.css'/>
-            <script type="text/javascript" src="/website_tools/static/lib/iframe-resizer/js/iframeResizer.contentWindow.min.js"></script>
-        </t>
-    </xpath>
-</template>
+    <!-- Load the i-Frame-Resizer Java Script -->
+    <template id="assets_frontend" inherit_id="website.assets_frontend" name="assets_frontend website_as_widget">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/website_tools/static/lib/iframe-resizer/js/iframeResizer.contentWindow.js"></script>
+        </xpath>
+    </template>
+
+    <!-- ADD class hidden to header and footer -->
+    <template id="aswidget" inherit_id="website.layout" name="aswidget remove footer">
+        <xpath expr="//header" position="attributes">
+            <t t-if="request.session.get('aswidget', False)">
+                <attribute name="t-att-class"> 'hidden' if request.session.get('aswidget', False) else '' </attribute>
+            </t>
+        </xpath>
+        <xpath expr="//main" position="attributes">
+            <t t-if="request.session.get('aswidget', False)">
+                <!-- For I-Frame height calculation -->
+                <attribute name="data-iframe-height">True</attribute>
+            </t>
+        </xpath>
+        <xpath expr="//footer" position="attributes">
+            <t t-if="request.session.get('aswidget', False)">
+                <attribute name="t-att-class">'hidden'</attribute>
+            </t>
+        </xpath>
+    </template>
 
 </data>
 </openerp>

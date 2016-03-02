@@ -4,6 +4,7 @@ from openerp import http
 from openerp.http import request
 from openerp.osv import orm
 
+# DEPRICATED! only there for downward compatibility
 class website_as_widget(http.Controller):
     @http.route(['/aswidget'], type='http', auth="public", website=True)
     def page_as_widget(self, *args, **kwargs):
@@ -25,4 +26,7 @@ class ir_http(orm.AbstractModel):
         response = super(ir_http, self)._dispatch()
         if 'aswidget' in request.httprequest.host:
             request.session['aswidget'] = True
+        elif 'aswidget' in request.httprequest.args:
+            request.session['aswidget'] = False if request.httprequest.args.get('aswidget') in ['False', 'false'] \
+                else True
         return response

@@ -15,7 +15,7 @@ define(['iframeResizerContent','jquery'], function(mockMsgListener,$) {
 
 	window.iFrameResizer = {
 		messageCallback: function(msg){msgCalled = msg;},
-		readyCallback:   function(){window.parent.readyCalled = true;alert('ready')},
+		readyCallback:   function(){this.readyCalled = true;},
 		targetOrigin:    '*'
 	};
 
@@ -35,7 +35,7 @@ define(['iframeResizerContent','jquery'], function(mockMsgListener,$) {
 	mockMsgListener(createMsg('reset'));
 
 	window.msgCalled   = null;
-	window.readyCalled = false;
+	//window.readyCalled = null;
 
 	beforeEach(function(){
 		spyOn(msgObject.source,'postMessage');
@@ -95,6 +95,8 @@ define(['iframeResizerContent','jquery'], function(mockMsgListener,$) {
 
 		it('getPageInfo', function(done) {
 			win.parentIFrame.getPageInfo(function(pageInfo){
+				expect(pageInfo.iframeHeight).toBe(500);
+				expect(pageInfo.iframeWidth).toBe(300);
 				expect(pageInfo.clientHeight).toBe(645);
 				expect(pageInfo.clientWidth).toBe(1295);
 				expect(pageInfo.offsetLeft).toBe(20);
@@ -104,7 +106,12 @@ define(['iframeResizerContent','jquery'], function(mockMsgListener,$) {
 				done();
 			});
 			expect(msgObject.source.postMessage).toHaveBeenCalledWith('[iFrameSizer]parentIFrameTests:0:0:pageInfo', '*');
-			mockMsgListener(createMsg('pageInfo:{"clientHeight":645,"clientWidth":1295,"offsetLeft":20,"offsetTop":85,"scrollLeft":0,"scrollTop":0}'));
+			mockMsgListener(createMsg('pageInfo:{"iframeHeight":500,"iframeWidth":300,"clientHeight":645,"clientWidth":1295,"offsetLeft":20,"offsetTop":85,"scrollLeft":0,"scrollTop":0}'));
+		});
+
+		it('getPageInfoStop', function() {
+			win.parentIFrame.getPageInfo();
+			expect(msgObject.source.postMessage).toHaveBeenCalledWith('[iFrameSizer]parentIFrameTests:0:0:pageInfoStop', '*');
 		});
 
 		it('scrollTo', function() {
@@ -139,8 +146,8 @@ define(['iframeResizerContent','jquery'], function(mockMsgListener,$) {
 
 	describe('inbound message: ', function() {
 
-		xit('readyCallack', function() {
-			expect(window.iFrameResizer.readyCallback).toHaveBeenCalled();
+		it('readyCallack', function() {
+			expect(window.readyCalled).toEqual(true);
 		});
 
 		it('message (String)', function() {

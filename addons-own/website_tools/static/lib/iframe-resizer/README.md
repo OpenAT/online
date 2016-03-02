@@ -3,19 +3,19 @@
 [![NPM version](https://badge.fury.io/js/iframe-resizer.svg)](http://badge.fury.io/js/iframe-resizer)
 [![Build Status](https://travis-ci.org/davidjbradshaw/iframe-resizer.png?branch=master)](https://travis-ci.org/davidjbradshaw/iframe-resizer)
 [![Coverage Status](https://coveralls.io/repos/davidjbradshaw/iframe-resizer/badge.svg?branch=master&service=github)](https://coveralls.io/github/davidjbradshaw/iframe-resizer)
-[![license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 
 This library enables the automatic resizing of the height and width of both same and cross domain iFrames to fit their contained content. It provides a range of features to address the most common issues with using iFrames, these include:
 
 * Height and width resizing of the iFrame to content size.
 * Works with multiple and nested iFrames.
-* Automatic domain authentication for cross domain iFrames.
+* Domain authentication for cross domain iFrames.
 * Provides a range of page size calculation methods to support complex CSS layouts.
 * Detects changes to the DOM that can cause the page to resize using [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver).
 * Detects events that can cause the page to resize (Window Resize, CSS Animation and Transition, Orientation Change and Mouse events).
 * Simplified messaging between iFrame and host page via [postMessage](https://developer.mozilla.org/en-US/docs/Web/API/window.postMessage).
 * Fixes in page links in iFrame and supports links between the iFrame and parent page.
 * Provides custom sizing and scrolling methods.
+* Exposes parent position and viewport size to the iFrame.
 * Works with [ViewerJS](http://viewerjs.org/) to support PDF and ODF documents.
 * Fallback support down to IE8.
 
@@ -315,16 +315,22 @@ Remove the iFrame from the parent page.
 
 Returns the ID of the iFrame that the page is contained in.
 
-### getPageInfo(callback)
+### getPageInfo(callback || false)
 
 Ask the containing page for its positioning coordinates. You need to provide a callback which receives an object with the following properties:
 
+* **iframeHeight** The height of the iframe in pixels
+* **iframeWidth** The width of the iframe in pixels
 * **clientHeight** The height of the viewport in pixels
 * **clientWidth** The width of the viewport in pixels
 * **offsetLeft** The number of pixels between the left edge of the containing page and the left edge of the iframe
 * **offsetTop** The number of pixels between the top edge of the containing page and the top edge of the iframe
 * **scrollLeft** The number of pixels between the left edge of the iframe and the left edge of the iframe viewport
 * **scrollTop** The number of pixels between the top edge of the iframe and the top edge of the iframe viewport
+
+Your callback function will be recalled when the parent page is scrolled or resized.
+
+Pass `false` to disable the callback. 
 
 ### scrollTo(x,y)
 
@@ -506,12 +512,17 @@ The parentIFrame methods object in the iFrame is now always available and the `e
 
 ## Version History
 
-* v3.4.1 [#271](https://github.com/davidjbradshaw/iframe-resizer/issues/271) Fix bower.json to point to *js* folder, rather then *src* [[Yachi](https://github.com/yachi)]. Only teardown events on close if currently enabled.
-* v3.4.0 [#262](https://github.com/davidjbradshaw/iframe-resizer/issues/262) Add getPageInfo method to parentIFrame [[Pierre Olivier](https://github.com/pomartel)]. [#263](https://github.com/davidjbradshaw/iframe-resizer/issues/263) Change leftMostElement to rightMostElement [[Luiz Panariello](https://github.com/LuizPanariello)]. [#265](https://github.com/davidjbradshaw/iframe-resizer/issues/265) Fix issue when no options being passed and added test for this.
-* v3.3.1 Point index.js to the JS folder, instead of the src folder. Added touch event listeners. AutoResize method now returns current state.
-* v3.3.0 [#97](https://github.com/davidjbradshaw/iframe-resizer/issues/97) Add autoResize method to parentIFrame. Fix bug when setHeightCalculationMethod is called with invalid value. Add interval timer to event teardown. Log targetOrigin. [#253](https://github.com/davidjbradshaw/iframe-resizer/issues/253) Work around bug with MooTools interfering with system objects.
-* v3.2.0 Added calculation of margin to LowestElement, LeftMostElement and TaggedElement calculation modes. Check callback function is a function before calling it. [#246](https://github.com/davidjbradshaw/iframe-resizer/issues/246) Fixed issue when scrollCallback changes the page position. [#247](https://github.com/davidjbradshaw/iframe-resizer/issues/247) Fix rounding issue when page is zoomed in Chrome [[thenewguy](https://github.com/thenewguy)].
-* v3.1.1 Added readyCallback to iFrame. Create iFrameResizer object on iFrame during setup, rather than waiting for init message to be returned from iFrame. Add ref to iFrame in host page log messages. [#245](https://github.com/davidjbradshaw/iframe-resizer/issues/245) Fix issue with iFrame not correctly resizing when multiple images are injected into the page [[mdgbayly](https://github.com/mdgbayly)]. [#246](https://github.com/davidjbradshaw/iframe-resizer/issues/246) Fix issue with including ':' in messages passed to iFrames.
+* v3.5.3 [#283](https://github.com/davidjbradshaw/iframe-resizer/issues/286) Added *readystatechange* event listener.
+* v3.5.2 [#314](https://github.com/davidjbradshaw/iframe-resizer/pull/314) Add iframeHeight and iframeWidth properties to pageInfo [[Pierre Olivier](https://github.com/pomartel)]. [#303](https://github.com/davidjbradshaw/iframe-resizer/issues/303) Fix issue with IE8 polyFils. 
+* v3.5.1 [#286](https://github.com/davidjbradshaw/iframe-resizer/issues/286) Fixed *taggedElement / lowestElement / rightMostElement* to calculate correct margin [[Dan Ballance](danballance)].
+* v3.5.0 Recall getPageInfo callback when parent page position changes. Added *Array.prototype.forEach* to IE8 polyfils.
+* v3.4.2 Only teardown events on close if currently enabled.
+* v3.4.1 [#271](https://github.com/davidjbradshaw/iframe-resizer/issues/271) Fix bower.json to point to *js* folder, rather then *src* [[Yachi](https://github.com/yachi)].
+* v3.4.0 [#262](https://github.com/davidjbradshaw/iframe-resizer/issues/262) Add *getPageInfo* method to *parentIFrame* [[Pierre Olivier](https://github.com/pomartel)]. [#263](https://github.com/davidjbradshaw/iframe-resizer/issues/263) Change *leftMostElement* to rightMostElement [[Luiz Panariello](https://github.com/LuizPanariello)]. [#265](https://github.com/davidjbradshaw/iframe-resizer/issues/265) Fix issue when no options being passed and added test for this.
+* v3.3.1 Point index.js to the JS folder, instead of the src folder. Added touch event listeners. *AutoResize* method now returns current state.
+* v3.3.0 [#97](https://github.com/davidjbradshaw/iframe-resizer/issues/97) Add *autoResize* method to *parentIFrame*. Fix bug when *setHeightCalculationMethod* is called with invalid value. Add interval timer to event teardown. Log targetOrigin*. [#253](https://github.com/davidjbradshaw/iframe-resizer/issues/253) Work around bug with MooTools interfering with system objects.
+* v3.2.0 Added calculation of margin to *LowestElement*, *LeftMostElement* and *taggedElement* calculation modes. Check callback function is a function before calling it. [#246](https://github.com/davidjbradshaw/iframe-resizer/issues/246) Fixed issue when *scrollCallback* changes the page position. [#247](https://github.com/davidjbradshaw/iframe-resizer/issues/247) Fix rounding issue when page is zoomed in Chrome [[thenewguy](https://github.com/thenewguy)].
+* v3.1.1 Added *readyCallback* to iFrame. Create *iFrameResizer* object on iFrame during setup, rather than waiting for init message to be returned from iFrame. Add ref to iFrame in host page log messages. [#245](https://github.com/davidjbradshaw/iframe-resizer/issues/245) Fix issue with iFrame not correctly resizing when multiple images are injected into the page [[mdgbayly](https://github.com/mdgbayly)]. [#246](https://github.com/davidjbradshaw/iframe-resizer/issues/246) Fix issue with including ':' in messages passed to iFrames.
 * v3.1.0 [#101](https://github.com/davidjbradshaw/iframe-resizer/issues/101) Support async loading of iFrame script. [#239](https://github.com/davidjbradshaw/iframe-resizer/issues/239) Throttle size checking to once per screen refresh (16ms). Fixed issue with hidden iFrames in FireFox. Improved handling of parent page events. [#236](https://github.com/davidjbradshaw/iframe-resizer/issues/236) Cope with iFrames that don't have a *src* value. [#242](https://github.com/davidjbradshaw/iframe-resizer/issues/242) Fix issue where iFrame is removed and then put back with same ID [[Alban Mouton](https://github.com/albanm)].
 * v3.0.0 Added *taggedElement* size calculation method. [#199](https://github.com/davidjbradshaw/iframe-resizer/issues/199) Added in page options to iFrame. [#70](https://github.com/davidjbradshaw/iframe-resizer/issues/70) Added width calculation method options. Added methods to bound iFrames to comunicate from parent to iFrame. Ignore calls to setup an already bound iFrame. Improved event handling. Refactored MutationObserver functions. Moved IE8 polyfil from docs to own JS file and added *Funtion.prototype.bind()*. Added detection for tab focus. Fixed bug with nested inPageLinks. Public methods in iFrame now always enabled and option removed. Renamed enableInPageLinks to inPageLinks. Added double iFrame example.
 * v2.8.10 Fixed bug with resizeFrom option not having default value in iFrame, if called from old version in parent page.
@@ -571,9 +582,12 @@ The parentIFrame methods object in the iFrame is now always available and the `e
 * v1.1.0 Added DOM [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) trigger to better detect content changes in iFrame, [#7](https://github.com/davidjbradshaw/iframe-resizer/issues/7) Set height of iFrame body element to auto to prevent resizing loop, if it's set to a percentage.
 * v1.0.3 [#6](https://github.com/davidjbradshaw/iframe-resizer/issues/6) Force incoming messages to string. Migrated to Grunt 4.x. Published to Bower.
 * v1.0.2 [#2](https://github.com/davidjbradshaw/iframe-resizer/issues/2) mime-type changed for IE8-10.
-* v1.0.0 Initial published release.
+* v1.0.0 Initial pubic release.
 
 
 ## License
 Copyright &copy; 2013-15 [David J. Bradshaw](https://github.com/davidjbradshaw).
 Licensed under the [MIT License](LICENSE).
+
+[![NPM](https://nodei.co/npm/iframe-resizer.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/iframe-resizer/)
+[![NPM](https://nodei.co/npm-dl/iframe-resizer.png?months=3&height=3)](https://nodei.co/npm/iframe-resizer/)

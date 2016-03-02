@@ -2,35 +2,67 @@
 
 Call webpages as widgets (without header or footer).
 
-## Call the page from a subdomain called aswidget
-http://aswidget.ahch.datadialog.net/shop
+## ENABLE aswidget Version
+```http://dadi.datadialog.net/shop?aswidget=True```
 
-## Call the page with aswidget=True and the page widgeturl=%2Fshop
-http://ahch.datadialog.net/?aswidget=True&widgeturl=%2Fshop
+## DISABLE aswidget Version
+```http://dadi.datadialog.net/shop?aswidget=False```
 
-## Show the page normally again (with header and footer)
-http://ahch.datadialog.net/?aswidget=False
-This will remove the aswidget=True from the current session
-
-## Session and Domains:
-It is always better to call the i-frame url from a sub-domain URL (ahch.datadialog.net) because this will generate a
-different session for the subdomain and so one could still call the website with header and footer (different session)
-from the other domain (ahch.datadialog.net)
-
-**HINT:** Keep in mind that session cookies can be shared from parent domains to child (sub) domains but not the
-other way around!
-
-## Embed the Page as an iFrame
-Please look at the example html file at website_as_widget/test_iframe.html
-
+## Example
+Example of a page hosting an I-Frame (= Organisations Webpage) 
+that shows the page ```dadi.datadialog.net/shop``` inside the I-Frame:
 ```html
-<iframe id="dadifcom" src="http://aswidget.test.com:8069/shop/category/spenden-100007"
+<head>
+    <title>I-Frame-Embedding Example Page </title>
+
+    <script type="text/javascript">
+        //MDN PolyFil for IE8 (This is not needed if you use the jQuery version)
+        if (!Array.prototype.forEach){
+            Array.prototype.forEach = function(fun /*, thisArg */){
+            "use strict";
+            if (this === void 0 || this === null || typeof fun !== "function") throw new TypeError();
+
+            var
+            t = Object(this),
+            len = t.length >>> 0,
+            thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+
+            for (var i = 0; i < len; i++)
+            if (i in t)
+                fun.call(thisArg, t[i], i, t);
+            };
+        }
+    </script>
+    
+    <script type="text/javascript" 
+            src="http://dadi.datadialog.net/website_tools/static/lib/iframe-resizer/js/iframeResizer.min.js"/>
+
+</head>
+
+<body>
+<h1>Above I-Frame</h1>
+<p>Some content above the iframe</p>
+
+<iframe class="fso_iframe" src="http://dadi.datadialog.net/shop?aswidget=True"
         scrolling="no" frameborder="0" width="100%"
-        style="widht:100%; border:none; padding:0; margin:0;">
+        style="width:100%; border:none; padding:0; margin:0;">
 </iframe>
-<script type="text/javascript" src="../website_tools/static/lib/iframe-resizer/js/iframeResizer.min.js"></script>
-<script>iFrameResize({log:false, checkOrigin:false, heightCalculationMethod: 'bodyScroll'}, '#dadifcom')</script>
+<script type="text/javascript">
+    iFrameResize({
+        log: false,
+        enablePublicMethods: true,
+        checkOrigin: false,
+        inPageLinks: true,
+        heightCalculationMethod: taggedElement,
+    }, '.fso_iframe')
+</script>
+
+
+<h1>Below I-Frame</h1>
+<p>Some content below the iframe</p>
+</body>
 ```
 
-https://github.com/davidjbradshaw/iframe-resizer
+## Documentation and Credits
+- https://github.com/davidjbradshaw/iframe-resizer
 
