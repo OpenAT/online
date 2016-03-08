@@ -2,12 +2,12 @@
 <openerp>
     <data noupdate="1">
 
-        <template id="assets_frontend" inherit_id="website.assets_frontend" name="frst_pp_assets">
-          <xpath expr="." position="inside">
-              <!-- HINT: website_tools loads the needed jquery validate library -->
-              <!--<script type="text/javascript" src="/payment_postfinance/static/src/js/frst_form_validate.js"></script>-->
-          </xpath>
-        </template>
+        <!--<template id="assets_frontend" inherit_id="website.assets_frontend" name="frst_pp_assets">-->
+          <!--<xpath expr="." position="inside">-->
+              <!--&lt;!&ndash; HINT: website_tools loads the needed jquery validate library &ndash;&gt;-->
+              <!--&lt;!&ndash;<script type="text/javascript" src="/payment_postfinance/static/src/js/frst_form_validate.js"></script>&ndash;&gt;-->
+          <!--</xpath>-->
+        <!--</template>-->
 
         <template id="postfinance_acquirer_button">
             <form id="postfinance" t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
@@ -17,14 +17,9 @@
                 <input type='hidden' name='reference' t-att-value='reference'/>
                 <input type='hidden' name='amount' t-att-value='amount or "0.0"'/>
                 <input type='hidden' name='currency' t-att-value='currency.name'/>
-                <div class="form-group">
-                    <label for="frst_iban">IBAN</label>
-                    <input type="text" name='frst_iban' class="form-control" id="frst_iban" placeholder="Enter IBAN" t-att-value="partner_values['frst_iban']"/>
-                </div>
-                <div class="form-group">
-                    <label for="frst_bic">BIC</label>
-                    <input type="text" name='frst_bic' class="form-control" id="frst_bic" placeholder="Enter BIC" t-att-value="partner_values['frst_bic']"/>
-                </div>
+                <input type='hidden' name='esr_reference_number' t-att-value='tx_values.get("esr_reference_number")'/>
+                <input type='hidden' name='esr_customer_number' t-att-value='tx_values.get("esr_customer_number")'/>
+                <input type='hidden' name='esr_code_line' t-att-value='tx_values.get("esr_code_line")'/>
                 <!-- submit -->
                 <button type="submit" width="100px"
                     t-att-class="submit_class">

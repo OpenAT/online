@@ -14,7 +14,7 @@ class PostfinanceController(http.Controller):
 
     # This route is called through the "pay now" button on the /shop/payment page
     @http.route(['/payment/postfinance/feedback'], type='http', auth='none', website=True)
-    def frst_form_feedback(self, **post):
+    def postfinance_form_feedback(self, **post):
         cr = request.cr
         uid = SUPERUSER_ID
         context = request.context
@@ -30,14 +30,14 @@ class PostfinanceController(http.Controller):
         #
         # The method "form_feedback" will:
         #
-        # 1.) call "_frst_form_get_tx_from_data"
+        # 1.) call "_postfinance_form_get_tx_from_data"
         #     to get the id for the transaction linked to the current sales order
         #
-        # 2.) call "_frst_form_get_invalid_parameters"
+        # 2.) call "_postfinance_form_get_invalid_parameters"
         #     to check for any invalid parameters (here we check iban and bic) if any invalid parameters are found
         #     it will stop and return False
         #
-        # 3.) call "_frst_form_validate"
+        # 3.) call "_postfinance_form_validate"
         #     returns true if the payment povider sended a correct state like "PENDING" or "AUTHORIZED" -> This is
         #     dependend on the payment provider or it will return FALSE if the answer was not understandable. But in
         #     our case we do not talk to an PP so we simply return "tx.write({'state': 'pending'})" which also gives
@@ -45,7 +45,7 @@ class PostfinanceController(http.Controller):
         #     HINT: !! We do also update the BankAccount with the IBAN and BIC for the partner in this method !!
         #
         # ToDo:     What i really do not understand is what happens if form_feedback gets false returned? Right
-        # ToDo:     now nothing really happens but that "_frst_form_validate" is not reached!?!
+        # ToDo:     now nothing really happens but that "_postfinance_form_validate" is not reached!?!
         #
 
         # Get the Tx related to the post data of Postfinance and store the current state of the tx

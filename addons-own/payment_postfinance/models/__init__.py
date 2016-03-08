@@ -1,2 +1,3 @@
 __author__ = 'mkarrer'
-import frst
+
+import postfinance

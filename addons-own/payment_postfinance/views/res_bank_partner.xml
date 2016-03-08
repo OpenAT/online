@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- INHERIT: bank form view -->
+        <record id="payment_postfinance_esr" model="ir.ui.view">
+            <field name="name">Add Postfinance esr_customer_number</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="bank_bic" position="after">
+                        <field name="esr_customer_number" placeholder="e.g. 01-234-5"/>
+                    </field>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

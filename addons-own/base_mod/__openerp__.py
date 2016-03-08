@@ -21,42 +21,26 @@
 ##############################################################################
 
 {
-    'name': "FS-Online Payment Provider: Postfinance ESR",
-    'summary': """Payment Provider: Postfinance ESR (EinzahlungsSchein mit Referenznummer) Schweiz""",
+    'name': "FS-Online base_mod",
+    'summary': """FS-Online Basic Extensions or Modification of odoo""",
     'description': """
 
-Erlaubt es per ESR eine Dauerspende oder Einmalspende zu tätigen
-================================================================
+FS-Online Basic Extensions or Modification of odoo
+==================================================
 
-Dieses Addon erlaubt es per ESR eine Dauerspende oder Einmalspende mit FS-Online durchzuführen. Es ist ein
-neuer Payment Provider für odoo der das addon payment als Basis nutzt.
+Modifications
+-------------
 
-Postfinanze ESR Payment Provider für FS-Online
-----------------------------------------------
-
-- Neuer odoo PaymentProvider für Postfinace ESR
-- Generiert ESR Referenz Nummer auf Basis der Sales Order Nummer
-- Gereriert ESR Kundennummer
-- Generiert ESR Kodierzeile
-- Neues Feld "Postfinance Kundennummer" (postfinance_customer_number) bei Bankkonten
-- Überprüft ob die Währung mit der Postfinance Kundennummer übereinstimmt
+- instance_base_port field for res.company
 
     """,
     'author': "DataDialog - Michael Karrer (michael.karrer@datadialog.net)",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
-    'depends': [
-        'base_mod',
-        'website_tools',
-        'payment',
-        'website_sale_payment_fix',
-    ],
+    'depends': [],
     'installable': True,
     'data': [
-        # Template has to be loaded first because frst_data uses its id ;)
-        'views/postfinance_acquirerbutton.xml',
-        'data/postfinance_data.xml',
-        'views/postfinance_transaction.xml',
+        'views/res_partner.xml',
     ],
 }

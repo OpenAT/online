@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from openerp.osv import osv, fields
 
-from openerp import models, fields
 
-
-class base_config(models.Model):
+class base_config(osv.Model):
     _name = "base_config"
     pass
 
 base_config()
+
