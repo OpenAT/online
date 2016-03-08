@@ -172,6 +172,10 @@
                                     <label for="module_payment_ogonedadi" />
                                 </div>
                                 <div>
+                                    <field name="module_payment_postfinance" class="oe_inline" />
+                                    <label for="module_payment_postfinance" />
+                                </div>
+                                <div>
                                     <field name="module_mail_global_bcc" class="oe_inline" />
                                     <label for="module_mail_global_bcc" />
                                 </div>

@@ -114,6 +114,9 @@ class base_config_settings(osv.osv_memory):
         'module_payment_ogonedadi': fields.boolean('payment_ogonedadi -- Payment Provider Ogone extended by Dadi',
                                                       help='Extended Ogone Payment Provider that will work with multible answers from ogone even if odoo web session is lost.'
                                                            '\n Installs Module: payment_ogonedadi'),
+        'module_payment_postfinance': fields.boolean('payment_postfinance -- Payment Provider ESR Postfinance for CH',
+                                                      help='ESR Payment Provider'
+                                                           '\n Installs Module: payment_postfinance'),
         'module_mail_global_bcc': fields.boolean('mail_global_bcc -- send all outgoing emails to a email address defined in mail.outgoing.global.bcc',
                                                       help='send all outgoing emails to a email address defined in mail.outgoing.global.bcc in the ir.config_parameter settings'
                                                            '\n Installs Module: mail_global_bcc'),
