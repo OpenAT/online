@@ -54,9 +54,9 @@ Postfinanze ESR Payment Provider für FS-Online
     ],
     'installable': True,
     'data': [
-        # Template has to be loaded first because frst_data uses its id ;)
         'views/postfinance_acquirerbutton.xml',
         'data/postfinance_data.xml',
         'views/postfinance_transaction.xml',
+        'views/res_bank_partner.xml',
     ],
 }
