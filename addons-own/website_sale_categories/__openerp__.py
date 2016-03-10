@@ -37,13 +37,15 @@ website_sale_categories
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
     'depends': [
+        'sale',
+        'website',
         'website_sale',
     ],
     'installable': True,
     'data': [
-        'templates.xml',
-        'views.xml',
+        'views/templates.xml',
+        'views/views.xml',
     ],
 }

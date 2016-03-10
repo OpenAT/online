@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="product_public_category_form_view_extras" model="ir.ui.view">
+            <field name="name">product.public.category.form.menu</field>
+            <field name="model">product.public.category</field>
+            <field name="inherit_id" ref="website_sale.product_public_category_form_view"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_left']" position="attributes">
+                    <attribute name="class"></attribute>
+                </xpath>
+                <field name="sequence" position="after">
+                    <field name="cat_hide"/>
+                    <field name="cat_root"/>
+                    <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_products_grid_before" placeholder="col-md-3"/>
+                    <field name="cat_products_grid" placeholder="col-md-9"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- INHERIT: Add cat_root_id and cat_id to the sales-order-form sales-order-line Tree View -->
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form categories from shop</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//tree[@string='Sales Order Lines']/field[@name='tax_id']" position="before">
+                    <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

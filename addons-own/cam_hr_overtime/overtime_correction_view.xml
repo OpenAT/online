@@ -9,8 +9,8 @@
                  <sheet>
                     <group style="width:30%%">
                     		<field name="name" placeholder="z.B. Auszahlung Überstunden"/>
-	                        <field name="employee_id" on_change="on_change_employee(employee_id)" />
-	                        <field name="timesheet_id" on_change="on_change_employee(employee_id)"/>
+	                        <field name="employee_id" on_change="on_change_employee(employee_id, timesheet_id)" />
+	                        <field name="timesheet_id" on_change="on_change_employee(employee_id, timesheet_id)"/>
 	                        <field name="value_hours" placeholder="-10"/>
                    </group>
                 </sheet>

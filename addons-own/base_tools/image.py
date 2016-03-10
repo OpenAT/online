@@ -27,11 +27,12 @@ from PIL import Image
 
 
 def resize_to_thumbnail(img, box=(440, 440), fit=1):
-    '''Downsample the image.
+    """Downsample the image.
     @param img: Image - base64 Image Data
     @param box: tuple(x, y) - the bounding box of the result image
     @param fit: boolean - crop the image to fill the box
-    '''
+    """
+
     # DECODE the img to an base64 PIL object
     img = Image.open(StringIO.StringIO(img.decode('base64')))
     filetype = img.format.upper()
@@ -39,15 +40,7 @@ def resize_to_thumbnail(img, box=(440, 440), fit=1):
     if img.mode not in ["1", "L", "P", "RGB", "RGBA"]:
         img = img.convert("RGB")
 
-    # RESIZE
-    #preresize image with factor 2, 4, 8 and fast algorithm
-    factor = 1
-    while img.size[0]/factor > 2*box[0] and img.size[1]*2/factor > 2*box[1]:
-        factor *=2
-    if factor > 1:
-        img.thumbnail((img.size[0]/factor, img.size[1]/factor), Image.NEAREST)
-
-    #calculate the cropping box and get the cropped part
+    # Crop the image
     if fit:
         x1 = y1 = 0
         x2, y2 = img.size
@@ -61,10 +54,10 @@ def resize_to_thumbnail(img, box=(440, 440), fit=1):
             x2 = int(x2/2+box[0]*hRatio/2)
         img = img.crop((x1, y1, x2, y2))
 
-    #Resize the image with best quality algorithm ANTI-ALIAS
+    # Resize the image
     img.thumbnail(box, Image.ANTIALIAS)
 
-    #RETURN the image
+    # RETURN the image
     background_stream = StringIO.StringIO()
     img.save(background_stream, filetype)
     return background_stream.getvalue().encode('base64')

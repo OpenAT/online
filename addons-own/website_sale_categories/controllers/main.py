@@ -30,3 +30,4 @@ class website_sale_categories(website_sale):
                                                      context=request.context)
             domain += ['|', ('public_categ_ids', '=', False), ('public_categ_ids', 'in', nonroot_categories)]
         return domain
+

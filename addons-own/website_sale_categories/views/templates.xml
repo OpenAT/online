@@ -5,9 +5,6 @@
     <!-- SUBTEMPLATE: RECURSIVE Category Descriptions at TOP Text -->
     <template id="categories_recursive_description_text" name="Category Description at Top">
 
-        <!-- Custom CSS per Category -->
-        <style t-field="c.cat_css_showatchilds"/>
-
         <!-- Top Description editable (category is the current category) -->
         <t t-if="c.id == int(category)">
             <!-- Info-Box (for logged in users only)-->
@@ -101,6 +98,15 @@
     </template>
 
 
+    <!-- INHERIT website.layout:  Set classes for the categories -->
+    <template id="website_sale_categories_variables" inherit_id="website.layout" name="Set website_sale_categories variables">
+        <xpath expr="//body" position="attributes">
+                <attribute name="t-att-data-rootcatid"> category.cat_root_id.id if category else 'False' </attribute>
+                <attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>
+        </xpath>
+    </template>
+
+
     <!-- TEMPLATE: ADVANCED CATEGORY NAVIGATION and TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
     <template id="products_categories_menu" inherit_id="website_sale.products" active="True" customize_show="True" name="Product Categories Advanced">
 
@@ -112,6 +118,8 @@
             <t t-set="start_categories" t-value="categories"/>
             <t t-set="cat_hide" t-value="False" />
             <t t-set="rootcatid" t-value="False"/>
+            <t t-set="cat_products_grid_before" t-value="False"/>
+            <t t-set="cat_products_grid" t-value="False"/>
 
             <!-- Check if a category is currently selected -->
             <t t-if="category">
@@ -129,6 +137,16 @@
                      </t>
                     <!-- Store the id of the root cat -->
                     <t t-set="rootcatid" t-value="category.cat_root_id.id"/>
+                </t>
+
+                <!-- Set the products_grid_before and products_grid classes -->
+                <t t-if="rootcatid">
+                    <t t-set="cat_products_grid_before" t-value="category.cat_root_id.cat_products_grid_before"/>
+                    <t t-set="cat_products_grid" t-value="category.cat_root_id.cat_products_grid"/>
+                </t>
+                <t t-if="category.cat_products_grid_before or category.cat_products_grid">
+                    <t t-set="cat_products_grid_before" t-value="category.cat_products_grid_before"/>
+                    <t t-set="cat_products_grid" t-value="category.cat_products_grid"/>
                 </t>
 
             </t>
@@ -157,20 +175,24 @@
         <!-- Categories Advanced Navigation left column -->
         <xpath expr="//div[@id='products_grid_before']" position="attributes">
             <attribute name="class"></attribute>
-            <attribute name="t-att-class">'col-md-12' if cat_hide else 'col-md-3'</attribute>
+            <attribute name="t-att-class">cat_products_grid_before if cat_products_grid_before else 'col-md-3'</attribute>
         </xpath>
 
         <!-- Categories Advanced Navigation right column -->
         <xpath expr="//div[@id='products_grid']" position="attributes">
             <attribute name="class"></attribute>
-            <attribute name="t-att-class">'col-md-12' if cat_hide else 'col-md-9'</attribute>
+            <attribute name="t-att-class">cat_products_grid if cat_products_grid else 'col-md-9'</attribute>
         </xpath>
 
         <!-- REMOVE TEMPLATE SNIPPET DROPPING AREAS -->
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure']" position="replace"><div></div></xpath>
         <xpath expr="//div[@id='wrap']/div[@class='oe_structure mb32']" position="replace"><div></div></xpath>
 
-        <!-- TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
+    </template>
+
+
+    <!-- TEMPLATE: TOP AND BOTTOM CATEGORY DESCRIPTIONS -->
+    <template id="advanced_categories_descriptions" inherit_id="website_sale_categories.products_categories_menu" active="True" customize_show="True" name="Categories Advanced Descriptions">
 
         <!-- TOP Category Descriptions -->
         <xpath expr="//div[@id='wrap']/div[@class='container oe_website_sale']" position="before">
@@ -234,8 +256,35 @@
                 </t>
             </t>
         </xpath>
-
     </template>
+
+
+    <!-- ADD EXTRA INPUT FIELDS WHEN ADDING PRODUCTS TO CART: cat_root_id and cat_id -->
+
+    <!-- INHERIT SUB-TEMPLATE products_item: Add category and root category if available to the form -->
+    <template id="wsc_products_item_cat" inherit_id="website_sale.products_item" name="INPUT cat_root_id and cat_id">
+        <xpath expr="//div[@class='product_price']" position="before">
+            <input name="cat_root_id" t-att-value="category.cat_root_id.id if category else 'False'" type="hidden"/>
+            <input name="cat_id" t-att-value="category.id if category else 'False'" type="hidden"/>
+        </xpath>
+    </template>
+
+    <!-- INHERIT SUB-TEMPLATE product: Add category and root category if available to the form -->
+    <template id="wsc_product_cat" inherit_id="website_sale.product" name="INPUT cat_root_id and cat_id">
+        <xpath expr="//form" position="inside">
+            <input name="cat_root_id" t-att-value="category.cat_root_id.id if category else 'False'" type="hidden"/>
+            <input name="cat_id" t-att-value="category.id if category else 'False'" type="hidden"/>
+        </xpath>
+    </template>
+
+    <!-- INHERIT SUB-TEMPLATE checkoutbox: Add category and root category if available to the form -->
+    <template id="wsc_checkoutbox_item_cat" inherit_id="website_sale_donate.checkoutbox" name="INPUT cat_root_id and cat_id">
+        <xpath expr="//form" position="inside">
+            <input name="cat_root_id" t-att-value="category.cat_root_id.id if category else 'False'" type="hidden"/>
+            <input name="cat_id" t-att-value="category.id if category else 'False'" type="hidden"/>
+        </xpath>
+    </template>
+
 
 </data>
 </openerp>

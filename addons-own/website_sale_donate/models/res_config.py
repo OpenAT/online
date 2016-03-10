@@ -56,4 +56,10 @@ class website_sale_donate_config_settings(osv.osv_memory):
         # Behaviour
         'add_to_cart_stay_on_page': fields.related('website_id', 'add_to_cart_stay_on_page', type="boolean",
                                                    string='Add to Cart and stay on the Page'),
+        # Square Images
+        'square_image_x': fields.related('website_id', 'square_image_x', type="integer",
+                                         string='Product SquareImage x-Size in Pixel'),
+        'square_image_y': fields.related('website_id', 'square_image_y', type="integer",
+                                         string='Product SquareImage y-Size in Pixel'),
+
     }

@@ -30,8 +30,6 @@ from openerp import SUPERUSER_ID
 class product_public_category_menu(models.Model):
     _inherit = 'product.public.category'
 
-    cat_css_showatchilds = fields.Text(string="CSS used at this and its Child Categories")
-
     cat_desc_showatchilds = fields.Html(string="Top-Description shown at Child Categories")
     cat_desc = fields.Html(string="Top-Category-Description")
 
@@ -50,6 +48,9 @@ class product_public_category_menu(models.Model):
     cat_root_id = fields.Many2one(comodel_name='product.public.category',
                                   string='Nearest Root Category or UpMost Parent')
 
+    cat_products_grid_before = fields.Char(string="CSS classes for div#products_grid_before")
+    cat_products_grid = fields.Char(string="CSS classes for div#products_grid")
+
     # Update the field cat_root_id at addon installation or update
     # Todo: Test if this works at install time too an not just at addon update
     def init(self, cr, context=None):
@@ -60,30 +61,42 @@ class product_public_category_menu(models.Model):
             # To set the parent_id will trigger the recalculation of cat_root_id in the write method
             cat.write({"parent_id": cat.parent_id.id or None})
 
+    # Set cat_root_id
+    def create(self, cr, uid, vals, context=None):
+        cat_id = super(product_public_category_menu, self).create(cr, uid, vals, context=context)
+
+        category = self.browse(cr, SUPERUSER_ID, cat_id)
+
+        # Call Write again after creation to update the root cat
+        category.write(vals)
+
+        return cat_id
 
     # Recalculate the cat_root_id
     @api.multi
     def write(self, vals):
-        # Write the changes (to the environment cache?) first!
-        # ATTENTION: Hidden categories are treated like root categories!
-        if 'cat_hide' in vals and self.ensure_one():
-            if vals['cat_hide']:
+        if self.ensure_one():
+            # Write the changes (to the environment cache?) first!
+            # ATTENTION: Hidden categories are treated like root categories!
+            if vals.get('cat_hide'):
                 vals['cat_root'] = True
-        res = super(product_public_category_menu, self).write(vals)
 
-        # If parent_id or cat_root or cat_hide are changed calculate the cat_root_id field
-        if 'parent_id' in vals or 'cat_root' in vals or 'cat_hide' in vals and self.ensure_one():
+            if vals.get('cat_root'):
+                vals['cat_root_id'] = self.id
 
-            # Calculate the cat_root_id of the current category
-            cat = self
-            while True:
-                if cat.cat_root or cat.cat_hide or not cat.parent_id:
-                    self.cat_root_id = cat.id
-                    break
-                else:
-                    cat = cat.parent_id
+            elif vals.get('parent_id'):
+                cat = self.browse(vals['parent_id'])
+                while True:
+                    if cat.cat_root or cat.cat_hide or not cat.parent_id:
+                        vals['cat_root_id'] = cat.id
+                        break
+                    else:
+                        cat = cat.parent_id
 
-            # Calculate the cat_root_id of the child categories (if any)
+            # Update self
+            res = super(product_public_category_menu, self).write(vals)
+
+            # Re-Calculate the cat_root_id of the child categories (if any)
             categories = self.env['product.public.category'].search(['&',
                                                                      ('id', 'child_of', int(self.id)),
                                                                      ('id', 'not in', self.ids)])
@@ -98,3 +111,43 @@ class product_public_category_menu(models.Model):
                         cat = cat.parent_id
 
         return res
+
+
+# Add fields for public RootCat and Public Cat to the sales_order_line
+class sale_order_line(models.Model):
+    _inherit = 'sale.order.line'
+
+    cat_root_id = fields.Many2one(comodel_name='product.public.category', string='RootCateg.')
+    cat_id = fields.Many2one(comodel_name='product.public.category', string='Categ.')
+
+
+# Store the cat_id and cat_root_id in the sales order line!
+class sale_order(models.Model):
+    _inherit = "sale.order"
+
+    def _cart_update(self, cr, uid, ids, product_id=None, line_id=None, add_qty=0, set_qty=0, context=None, **kwargs):
+
+        # Update Cart and get the sales_order_line
+        cu = super(sale_order, self)._cart_update(cr, uid, ids,
+                                                  product_id=product_id,
+                                                  line_id=line_id,
+                                                  add_qty=add_qty,
+                                                  set_qty=set_qty,
+                                                  context=context, **kwargs)
+        line_id = cu.get('line_id')
+        sol_obj = self.pool.get('sale.order.line')
+        sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
+
+        # Update the sale_order_line with cat_root_id and cat_id if in kwargs
+        try:
+            cat_root_id = int(kwargs.get('cat_root_id'))
+            sol.cat_root_id = cat_root_id
+        except:
+            pass
+        try:
+            cat_id = int(kwargs.get('cat_id'))
+            sol.cat_id = cat_id
+        except:
+            pass
+
+        return cu

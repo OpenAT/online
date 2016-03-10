@@ -16,6 +16,20 @@
                             </div>
                         </div>
                     </group>
+                    <group string="Images">
+                        <label for="square_image_x"/>
+                        <div name="square_image_x">
+                            <div class="oe_inline">
+                                <field name="square_image_x"/>
+                            </div>
+                        </div>
+                        <label for="square_image_y"/>
+                        <div name="square_image_y">
+                            <div class="oe_inline">
+                                <field name="square_image_y"/>
+                            </div>
+                        </div>
+                    </group>
                     <group string="Mandatory Billing Fields">
                         <!-- NAME IS MANDATORY BY ODOO! -->
                         <label for="name_mandatory_bill"/>

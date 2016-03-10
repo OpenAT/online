@@ -41,6 +41,9 @@ class website_sale_donate_settings(osv.Model):
         'add_to_cart_stay_on_page': fields.boolean(string='Add to Cart and stay on Page'),
         # Global Fields for Snippets
         'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox'),
+        # Square Image Dimensions
+        'square_image_x': fields.integer(string='Product SquareImage x-Size in Pixel'),
+        'square_image_y': fields.integer(string='Product SquareImage y-Size in Pixel'),
     }
     _defaults = {
         # Mandatory for billing
@@ -53,6 +56,8 @@ class website_sale_donate_settings(osv.Model):
         'street_mandatory_ship': 1,
         'city_mandatory_ship': 1,
         'country_id_mandatory_ship': 1,
+        'square_image_x': 400,
+        'square_image_y': 400,
     }
 
 
@@ -90,7 +95,13 @@ class product_template(osv.Model):
             # need to return also an dict for the image like result[1] = {'image_square': base_64_data}
             result[obj.id] = {'image_square': False}
             if obj.image:
-                result[obj.id] = {'image_square': resize_to_thumbnail(img=obj.image, box=(440, 440),)}
+                # Get x and y size from website config
+                # HINT: Only one Webpage allowed in odoo 8 ;) so [0] is ok
+                website = self.pool.get('website').search(cr, uid, [], context=context)[0]
+                website = self.pool.get('website').browse(cr, uid, website, context=context)
+                x = website.square_image_x or 440
+                y = website.square_image_y or 440
+                result[obj.id] = {'image_square': resize_to_thumbnail(img=obj.image, box=(x, y),)}
         return result
 
     def _set_square_image(self, cr, uid, id, name, value, args, context=None):
@@ -299,6 +310,10 @@ class sale_order(osv.Model):
                     # so_obj = self.pool.get('sale.order')
                     # so = so_obj.browse(cr, SUPERUSER_ID, sol.order_id.id, context=context)
                     # so.write(cr, SUPERUSER_ID, {}, context=context)
+
+            # Add Root CatID and root cat id to the so-line if they are in kwargs
+            # TODO: this code should be in website_sale_categories!!!
+
 
         return cu
 

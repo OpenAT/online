@@ -60,7 +60,7 @@ class overtime_correction(osv.osv):
                     raise osv.except_osv(_('Achtung!'), _('Sie können keine Überstundenkorrektur auf ein bereits genehmigtes timesheet durchführen. Setzen Sie das Timesheet auf "Entwurf" und versuchen Sie es nochmal.'))
         return super(overtime_correction,self).create(cr, uid, vals, context)
     
-    def on_change_employee(self, cr, uid, ids, employee_id):
+    def on_change_employee(self, cr, uid, ids, employee_id, timesheet_id):
         res = {}
         res['value']={}
         res['domain']= {}
@@ -70,7 +70,7 @@ class overtime_correction(osv.osv):
         if employee_id:
             sheet_ids = self.pool.get('hr_timesheet_sheet.sheet').search(cr,uid,[('employee_id','=',employee_id)])
             if sheet_ids:
-                res['value']['timesheet_id'] = sheet_ids[0]
+                res['value']['timesheet_id'] = timesheet_id if timesheet_id in sheet_ids else sheet_ids[0]
                 res['domain']['timesheet_id'] = [('id', 'in', sheet_ids)]
                 return res
 
