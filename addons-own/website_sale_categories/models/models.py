@@ -61,6 +61,11 @@ class product_public_category_menu(models.Model):
             # To set the parent_id will trigger the recalculation of cat_root_id in the write method
             cat.write({"parent_id": cat.parent_id.id or None})
 
+    @api.onchange('cat_hide')
+    def set_cat_root(self):
+        if self.cat_hide:
+            self.cat_root = True
+
     # Set cat_root_id
     def create(self, cr, uid, vals, context=None):
         cat_id = super(product_public_category_menu, self).create(cr, uid, vals, context=context)
@@ -76,22 +81,29 @@ class product_public_category_menu(models.Model):
     @api.multi
     def write(self, vals):
         if self.ensure_one():
-            # Write the changes (to the environment cache?) first!
+
             # ATTENTION: Hidden categories are treated like root categories!
-            if vals.get('cat_hide'):
+            if vals.get('cat_hide') or vals.get('cat_root'):
                 vals['cat_root'] = True
 
+            # cat_hide or cat_root was set
             if vals.get('cat_root'):
                 vals['cat_root_id'] = self.id
+            # cat_hide or cat_root was NOT set = Check Parents
+            else:
+                # Search for cat_root in parent if any parent found
+                # HINT: parent_id in vals could also be "False"! (or no self.parent_id)
+                parent = self.browse(vals['parent_id']) if 'parent_id' in vals else self.parent_id
+                if parent:
+                    while True:
+                        if parent.cat_root or parent.cat_hide or not parent.parent_id:
+                            vals['cat_root_id'] = parent.id
+                            break
+                        else:
+                            parent = parent.parent_id
+                else:
+                    vals['cat_root_id'] = self.id
 
-            elif vals.get('parent_id'):
-                cat = self.browse(vals['parent_id'])
-                while True:
-                    if cat.cat_root or cat.cat_hide or not cat.parent_id:
-                        vals['cat_root_id'] = cat.id
-                        break
-                    else:
-                        cat = cat.parent_id
 
             # Update self
             res = super(product_public_category_menu, self).write(vals)
@@ -110,8 +122,49 @@ class product_public_category_menu(models.Model):
                     else:
                         cat = cat.parent_id
 
-        return res
+            # Return
+            return res
+        else:
+            raise Exception('Please change public categories one by one!')
 
+    # @api.multi
+    # def unlink(self):
+    #     if self.ensure_one():
+    #         # Find existing Child Categories
+    #         child_categories = self.env['product.public.category'].search(['&',
+    #                                                                  ('id', 'child_of', int(self.id)),
+    #                                                                  ('id', 'not in', self.ids)])
+    #
+    #         # Delete the category (so it could not be found anymore)
+    #         res = super(product_public_category_menu, self).unlink()
+    #
+    #         # Recalculate the RootCats for the child categories
+    #         for child_cat in child_categories:
+    #             child_cat.write({"parent_id": child_cat.parent_id.id or None})
+    #
+    #         return res
+    #     else:
+    #         raise Exception('Please delete public categories one by one!')
+
+    @api.multi
+    def unlink(self):
+
+        child_categories = self.env['product.public.category']
+        # Find and store all Child Categories
+        for category in self:
+            # Find existing Child Categories
+            child_categories += category.env['product.public.category'].search(['&',
+                                                                     ('id', 'child_of', int(category.id)),
+                                                                     ('id', 'not in', category.ids)])
+
+        # Unlink the categories (so they do not disturb the recalculation for child cats)
+        res = super(product_public_category_menu, self).unlink()
+
+        # Recalculate the RootCats for any found child categories
+        for child_cat in child_categories:
+            child_cat.write({"parent_id": child_cat.parent_id.id or None})
+
+        return res
 
 # Add fields for public RootCat and Public Cat to the sales_order_line
 class sale_order_line(models.Model):
