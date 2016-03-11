@@ -14,6 +14,8 @@
                     <field name="cat_hide"/>
                     <field name="cat_root"/>
                     <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_products_grid_ppg" placeholder="9"/>
+                    <field name="cat_products_grid_ppr" placeholder="3"/>
                     <field name="cat_products_grid_before" placeholder="col-md-3"/>
                     <field name="cat_products_grid" placeholder="col-md-9"/>
                 </field>

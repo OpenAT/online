@@ -2,11 +2,26 @@
 from openerp import http
 from openerp.http import request
 
+from openerp.addons.website_sale.controllers import main
+
 # import the base controller class to inherit from
 from openerp.addons.website_sale.controllers.main import website_sale
 
 
 class website_sale_categories(website_sale):
+
+    @http.route()
+    def shop(self, page=0, category=None, search='', **post):
+        cr, uid, context, pool = request.cr, request.uid, request.context, request.registry
+        # Try to set product grid before the Controller get's started
+        if category:
+            category = pool['product.public.category'].browse(cr, uid, int(category), context=context)
+            # HINT: If the category has not Parent the cat_root_id will be the category itself
+            main.PPG = 9
+            main.PPR = 3
+
+        return super(website_sale_categories, self).shop(page=page, category=category, search=search, **post)
+
     # List only products in the same cat_root_id tree:
     def _get_search_domain(self, search, category, attrib_values):
         domain = super(website_sale_categories, self)._get_search_domain(search, category, attrib_values)

@@ -47,12 +47,15 @@ class product_public_category_menu(models.Model):
     # ATTENTION: Hidden categories are treated like root categories even if root_cat is not set!
     cat_root_id = fields.Many2one(comodel_name='product.public.category',
                                   string='Nearest Root Category or UpMost Parent')
-
+    # DIV boxes classes
     cat_products_grid_before = fields.Char(string="CSS classes for div#products_grid_before")
     cat_products_grid = fields.Char(string="CSS classes for div#products_grid")
+    # Number of Grid-Items
+    cat_products_grid_ppg = fields.Integer(string="Products per Page")
+    cat_products_grid_ppr = fields.Integer(string="Products per Row")
+    # TODO: Grid Template selector (e.g. List or Grid View)
 
     # Update the field cat_root_id at addon installation or update
-    # Todo: Test if this works at install time too an not just at addon update
     def init(self, cr, context=None):
         print "INIT OF website_sale_categories"
         allcats = self.search(cr, SUPERUSER_ID, [])
