@@ -53,7 +53,10 @@ class product_public_category_menu(models.Model):
     # Number of Grid-Items
     cat_products_grid_ppg = fields.Integer(string="Products per Page")
     cat_products_grid_ppr = fields.Integer(string="Products per Row")
-    # TODO: Grid Template selector (e.g. List or Grid View)
+    # Grid Template selector
+    grid_template = fields.Selection([('website_sale.products', 'Default Grid Layout'),
+                                      ('website_sale_categories.products_listing', 'List Layout')],
+                                     string="Shop Grid Template")
 
     # Update the field cat_root_id at addon installation or update
     def init(self, cr, context=None):

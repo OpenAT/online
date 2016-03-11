@@ -120,6 +120,9 @@
 
                     </page>
                 </xpath>
+                <field name="active" position="after">
+                    <field name="format"/>
+                </field>
             </field>
         </record>
 

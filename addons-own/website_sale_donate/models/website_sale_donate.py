@@ -118,6 +118,9 @@ class product_template(osv.Model):
         return result
 
     _columns = {
+        # EXTRA FIELDS
+        'format': fields.char(string="Format"),
+
         # BEHAVIOUR
         'simple_checkout': fields.boolean('Simple Checkout'),
 

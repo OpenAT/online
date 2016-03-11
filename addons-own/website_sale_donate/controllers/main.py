@@ -44,7 +44,8 @@ class website_sale_donate(website_sale):
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
 
         # Product Qweb Template based on the product_page_template field
-        # HINT: qcontext hold the initial values the qweb template was called with
+        # HINT: qcontext holds the initial values the qweb template was called with
+        # HINT: The first attribute of website.render is the template ID
         if product.product_page_template:
             productpage = request.website.render(product.product_page_template, productpage.qcontext)
 

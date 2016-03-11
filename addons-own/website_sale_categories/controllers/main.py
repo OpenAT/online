@@ -18,7 +18,7 @@ class website_sale_categories(website_sale):
             if cat[attribute]:
                 return cat[attribute]
             # If we have a parent id AND we are not a root cat: continue search
-            elif cat.parent_id and cat.cat_root_id != cat.id:
+            elif cat.parent_id and cat.cat_root_id.id != cat.id:
                 cat = cat.parent_id
                 continue
             else:
@@ -32,7 +32,7 @@ class website_sale_categories(website_sale):
         main.PPG = 20
         main.PPR = 4
 
-        # Set products grid raster before the controller get's started
+        # Set products grid raster and templates
         if category:
             category = pool['product.public.category'].browse(cr, uid, int(category), context=context)
             # Search up the category tree
@@ -43,7 +43,18 @@ class website_sale_categories(website_sale):
             if ppr:
                 main.PPR = ppr
 
-        return super(website_sale_categories, self).shop(page=page, category=category, search=search, **post)
+        page = super(website_sale_categories, self).shop(page=page, category=category, search=search, **post)
+
+        if category:
+            # Set Template for the shop grid (or list view)
+            # Shop Grid Qweb Template based on the grid_template field
+            # HINT: qcontext holds the initial values the qweb template was called with
+            # HINT: The first attribute of website.render is the template ID
+            template = self._find_attr_in_cat_tree(category, attribute='grid_template')
+            if template:
+                page = request.website.render(template, page.qcontext)
+
+        return page
 
     # List only products in the same cat_root_id tree:
     def _get_search_domain(self, search, category, attrib_values):

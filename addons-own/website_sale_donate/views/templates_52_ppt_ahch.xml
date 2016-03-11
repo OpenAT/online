@@ -31,8 +31,15 @@
                                             <h1 itemprop="name" t-field="product.name">Product Name</h1>
                                             <div t-field="product.description_sale" class="oe_structure" id="product_desc_short"/>
                                             <br/>
-                                            <div id="product_data">
-
+                                            <div id="product_data" class="oe_structure">
+                                                <t t-if="product.default_code">
+                                                    <div class="field_label">Order Number:</div>
+                                                    <div t-field="product.default_code"/>
+                                                </t>
+                                                <t t-if="product.format">
+                                                    <div class="field_label">Format:</div>
+                                                    <div t-field="product.format"/>
+                                                </t>
                                             </div>
                                         </div>
                                         <!-- (Right) CHECKOUTBOX (Add to Cart Box) -->

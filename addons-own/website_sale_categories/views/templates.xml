@@ -286,5 +286,32 @@
     </template>
 
 
+    <!-- INHERIT TEMPLATE products: Add t-if to table -->
+    <template id="products_list_view" inherit_id="website_sale.products" name="Switch for Table">
+        <xpath expr="//div[@id='products_grid']//table" position="attributes">
+            <attribute name="t-if">not hide_table</attribute>
+        </xpath>
+        <xpath expr="//div[@id='products_grid']//table" position="after">
+            <t t-if="show_products_list">
+                <t t-foreach="products" t-as="product">
+                    <div class="oe_product oe_list oe_product_cart"
+                         t-att-data-publish="product.website_published and 'on' or 'off'">
+                        <t t-call="website_sale.products_item"/>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+
+    <!-- TEMPLATE products: Custom Products List Template -->
+    <template id="products_listing" name="List View">
+        <t t-call="website_sale.products">
+            <t t-set="hide_table">True</t>
+            <t t-set="show_products_list">True</t>
+        </t>
+    </template>
+
+
 </data>
 </openerp>
