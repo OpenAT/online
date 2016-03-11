@@ -10,15 +10,38 @@ from openerp.addons.website_sale.controllers.main import website_sale
 
 class website_sale_categories(website_sale):
 
+    def _find_attr_in_cat_tree(self, category, attribute=str()):
+        # Search up the category tree to the next root cat or to the top
+        # Return the attribute value or false
+        cat = category
+        while True:
+            if cat[attribute]:
+                return cat[attribute]
+            # If we have a parent id AND we are not a root cat: continue search
+            elif cat.parent_id and cat.cat_root_id != cat.id:
+                cat = cat.parent_id
+                continue
+            else:
+                return False
+
     @http.route()
     def shop(self, page=0, category=None, search='', **post):
         cr, uid, context, pool = request.cr, request.uid, request.context, request.registry
-        # Try to set product grid before the Controller get's started
+
+        # Set the Default Grid in case no category was found or nothing set in any cat for PPG and PPR
+        main.PPG = 20
+        main.PPR = 4
+
+        # Set products grid raster before the controller get's started
         if category:
             category = pool['product.public.category'].browse(cr, uid, int(category), context=context)
-            # HINT: If the category has not Parent the cat_root_id will be the category itself
-            main.PPG = 9
-            main.PPR = 3
+            # Search up the category tree
+            ppg = self._find_attr_in_cat_tree(category, attribute='cat_products_grid_ppg')
+            if ppg:
+                main.PPG = ppg
+            ppr = self._find_attr_in_cat_tree(category, attribute='cat_products_grid_ppr')
+            if ppr:
+                main.PPR = ppr
 
         return super(website_sale_categories, self).shop(page=page, category=category, search=search, **post)
 
