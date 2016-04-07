@@ -4,3 +4,7 @@
     border: none;
     color: transparent;
 }
+.jquery-validate-error-message {
+    font-size: 65%;
+    margin-left: 1em;
+}

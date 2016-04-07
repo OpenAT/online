@@ -2,6 +2,25 @@
 <openerp>
     <data>
 
+        <!-- Extend res.partner form to include extra fields -->
+        <record model="ir.ui.view" id="wsd_res_partner_form_web_fields">
+            <field name="name">wsd_res_partner_form_web_fields</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="website" position="after">
+                    <field name="fore_name_web"/>
+                    <field name="company_name_web"/>
+                    <field name="street_number_web"/>
+                    <field name="post_office_box_web"/>
+                </field>
+                <field name="email" position="after">
+                    <field name="newsletter_web"/>
+                    <field name="donation_receipt_web"/>
+                </field>
+            </field>
+        </record>
+
         <!-- Extend the product form to include the website_sale_donate fields -->
         <record model="ir.ui.view" id="product_template_form_view">
             <field name="name">product.template.product.website_donate.form</field>
@@ -223,5 +242,137 @@
                 </xpath>
             </field>
         </record>
+
+
+        <!-- WEBSITE CHECKOUT BILLING FIELDS: Create form, tree and list view for the checkout fields -->
+        <record model="ir.ui.view" id="website_sale_donate_checkout_fields_form">
+            <field name="name">website_sale_donate.checkout_fields_form</field>
+            <field name="model">website.checkout_billing_fields</field>
+            <field name="arch" type="xml">
+                <form string="Website Checkout Fields">
+                    <group>
+                        <field name="sequence"/>
+                        <field name="show"/>
+                        <field name="res_partner_field_id"/>
+                        <field name="mandatory"/>
+                        <field name="label"/>
+                        <field name="placeholder"/>
+                        <field name="validation_rule"/>
+                        <field name="css_classes"/>
+                        <field name="clearfix"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="website_sale_donate_checkout_fields_tree">
+            <field name="name">website_sale_donate.checkout_fields_tree</field>
+            <field name="model">website.checkout_billing_fields</field>
+            <field name="arch" type="xml">
+                <tree string="Website Checkout Fields" default_order="sequence" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="show"/>
+                    <field name="res_partner_field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="website_sale_donate_checkout_fields_search">
+            <field name="name">website_sale_donate.checkout_fields_search</field>
+            <field name="model">website.checkout_billing_fields</field>
+            <field name="arch" type="xml">
+                <search string="Website Checkout Fields">
+                    <field name="show"/>
+                    <field name="res_partner_field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="website_sale_donate_checkout_fields_action">
+            <field name="name">Website Billing Fields</field>
+            <field name="res_model">website.checkout_billing_fields</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="website_sale_donate_checkout_fields_tree"/>
+            <field name="search_view_id" ref="website_sale_donate_checkout_fields_search"/>
+        </record>
+        <!-- And we add the Action to a Menu with the shortcut menuitem -->
+        <menuitem action="website_sale_donate_checkout_fields_action" id="website_sale_donate_checkout_fields_menu" parent="base.menu_config" sequence="91"/>
+
+        <!-- WEBSITE CHECKOUT SHIPPING FIELDS: Create form, tree and list view for the checkout shipping fields -->
+        <record model="ir.ui.view" id="website_sale_donate_checkout_shipping_fields_form">
+            <field name="name">website_sale_donate.checkout_shipping_fields_form</field>
+            <field name="model">website.checkout_shipping_fields</field>
+            <field name="arch" type="xml">
+                <form string="Website Checkout Shipping Fields">
+                    <group>
+                        <field name="sequence"/>
+                        <field name="show"/>
+                        <field name="res_partner_field_id"/>
+                        <field name="mandatory"/>
+                        <field name="label"/>
+                        <field name="placeholder"/>
+                        <field name="validation_rule"/>
+                        <field name="css_classes"/>
+                        <field name="clearfix"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="website_sale_donate_checkout_shipping_fields_tree">
+            <field name="name">website_sale_donate.checkout_shipping_fields_tree</field>
+            <field name="model">website.checkout_shipping_fields</field>
+            <field name="arch" type="xml">
+                <tree string="Website Checkout Shipping Fields" default_order="sequence" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="show"/>
+                    <field name="res_partner_field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="website_sale_donate_checkout_shipping_fields_search">
+            <field name="name">website_sale_donate.checkout_shipping_fields_search</field>
+            <field name="model">website.checkout_shipping_fields</field>
+            <field name="arch" type="xml">
+                <search string="Website Checkout Shipping Fields">
+                    <field name="show"/>
+                    <field name="res_partner_field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="wsd_checkout_shipping_fields_action">
+            <field name="name">Website Shipping Fields</field>
+            <field name="res_model">website.checkout_shipping_fields</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="website_sale_donate_checkout_shipping_fields_tree"/>
+            <field name="search_view_id" ref="website_sale_donate_checkout_shipping_fields_search"/>
+        </record>
+        <!-- And we add the Action to a Menu with the shortcut menuitem -->
+        <menuitem action="wsd_checkout_shipping_fields_action" id="wsd_checkout_shipping_fields_menu" parent="base.menu_config" sequence="92"/>
+
     </data>
 </openerp>

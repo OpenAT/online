@@ -2,19 +2,22 @@
 <openerp>
     <data noupdate="1">
 
-        <template id="website_tools.assets_frontend" inherit_id="website.assets_frontend" name="webite_tools_assets_frontend">
+        <template id="website_tools.assets_frontend" inherit_id="website.assets_frontend" name="website_tools_assets_frontend">
             <xpath expr="." position="inside">
                 <!--  Odoo comes with its own jquery.validate.js /web/static/lib/jquery.validate/jquery.validate.js
                     but since it is only loaded in the backend we can safely load our own newer version for the frontend ;)
                 -->
-                <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.13.1/dist/jquery.validate.js"></script>
-                <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.13.1/dist/additional-methods.js"></script>
-                <!--<t t-if="request.context['lang'] == 'de_DE'">-->
-                    <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.13.1/dist/localization/messages_de.min.js"></script>
-                    <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.13.1/dist/localization/methods_de.min.js"></script>
-                <!--</t>-->
+                <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.15.0/dist/jquery.validate.js"/>
+                <!-- https://github.com/jzaefferer/jquery-validation/tree/master/src/additional -->
+                <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.15.0/dist/additional-methods.js"/>
+
+                <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.15.0/dist/localization/messages_de.min.js"/>
+                <script type="text/javascript" src="/website_tools/static/lib/jquery-validation-1.15.0/dist/localization/methods_de.min.js"/>
+                <!-- Default Settings to make jquery validate work nicely with bootstrap 3 (removes error messages uses icons instead) -->
+                <script type="text/javascript" src="/website_tools/static/src/js/jquery-validate-defaults.js"/>
+
                 <!-- Load custom css for smaller fixes -->
-                <link rel="stylesheet" href='/website_tools/static/src/css/website.css' t-ignore="true"/>
+                <link rel="stylesheet" href='/website_tools/static/src/css/website_tools.css' t-ignore="true"/>
             </xpath>
         </template>
 

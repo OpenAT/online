@@ -11,7 +11,9 @@ import numbers
 # import the base controller class to inherit from
 from openerp.addons.website_sale.controllers.main import website_sale
 
+
 class website_sale_payment_fix(website_sale):
+
     # Overwrite the Json controller for the pay now button
     @http.route()
     def payment_transaction(self, acquirer_id):

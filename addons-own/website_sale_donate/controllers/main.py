@@ -4,6 +4,9 @@ from openerp import SUPERUSER_ID
 from openerp import http
 from openerp.tools.translate import _
 from openerp.http import request
+from lxml import etree
+import copy
+import requests
 
 # To get a new db connection:
 # from openerp.modules.registry import RegistryManager
@@ -28,6 +31,7 @@ class website_sale_donate(website_sale):
     # so we have the same settings for arbitrary price and payment interval as already set by the user in the so line
     # Todo: Would need to update the Java Script of Website_sale to select the correct product variante if it
     #       is already in the current sales order (like i do it for price_donate and payment_interval)
+    #       ALSO i need to update the java script that loads the product variant pictures
     # /shop/product/<model("product.template"):product>
     @http.route()
     def product(self, product, category='', search='', **kwargs):
@@ -86,8 +90,13 @@ class website_sale_donate(website_sale):
     # /shop/cart
     @http.route()
     def cart(self, **post):
+
         cartpage = super(website_sale_donate, self).cart(**post)
         cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
+
+        if request.website['one_page_checkout']:
+            return request.redirect("/shop/checkout")
+
         return cartpage
 
     # SIMPLE CHECKOUT:
@@ -142,6 +151,7 @@ class website_sale_donate(website_sale):
         # If simple_checkout is set for the product redirect directly to checkout or confirm_order
         if product.simple_checkout or kw.get('simple_checkout'):
             kw.pop('simple_checkout', None)
+            # This will redirect directly to the payment if confirm_order finds no errors
             if kw.get('email') and kw.get('name') and kw.get('shipping_id'):
                 return request.redirect('/shop/confirm_order' + '?' + request.httprequest.query_string)
             return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
@@ -153,29 +163,290 @@ class website_sale_donate(website_sale):
         # Redirect to the shopping cart
         return request.redirect("/shop/cart")
 
+    # Add Shipping and Billing Fields to values (= the qcontext for the checkout template)
+    # HINT: The calculated values for the fields can be found in the qcontext dict in key 'checkout'
+    def checkout_values(self, data=None):
+        values = super(website_sale_donate, self).checkout_values(data=data)
+
+        # Add Billing Fields to values dict
+        billing_fields = request.env['website.checkout_billing_fields']
+        billing_fields = billing_fields.search([])
+        values['billing_fields'] = billing_fields
+
+        # Add Shipping Fields to values dict
+        shipping_fields = request.env['website.checkout_shipping_fields']
+        shipping_fields = shipping_fields.search([])
+        values['shipping_fields'] = shipping_fields
+
+        # Set value to True or False for all boolean fields
+        for field in billing_fields:
+            f_name = field.res_partner_field_id.name
+            if field.res_partner_field_id.ttype == 'boolean':
+                if values['checkout'].get(f_name) == 'True' or values['checkout'].get(f_name):
+                    values['checkout'][f_name] = True
+                else:
+                    values['checkout'][f_name] = False
+        for field in shipping_fields:
+            f_name = 'shipping_' + field.res_partner_field_id.name
+            if field.res_partner_field_id.ttype == 'boolean':
+                if values['checkout'].get(f_name) == 'True' or values['checkout'].get(f_name):
+                    values['checkout'][f_name] = True
+                else:
+                    values['checkout'][f_name] = False
+
+        # Add option-tag attributes for shipping-address-selector for wsd_checkout_form_billing_fields template
+        if values.get('shippings'):
+            shippings_selector_attrs = dict()
+            # Render the dict for every shipping res.partner
+            for shipping in values.get('shippings'):
+                field_data = dict()
+                for field in shipping_fields:
+                    f_name = field.res_partner_field_id.name
+                    field_data['data-shipping_' + f_name] = shipping[f_name]
+                shippings_selector_attrs[shipping.id] = field_data
+            values['shippings_selector_attrs'] = shippings_selector_attrs
+
+        return values
 
     # Set mandatory billing and shipping fields
-    # HINT: All possible fields are added to the website object as boolean fields in
-    #       website_sale_donate.py -> website_sale_donate_settings with a naming convention of
-    #       _mandatory_bill and _mandatory_ship
-    # HINT: Possible since odoo commit
-    #       https://github.com/odoo/odoo/commit/4f41c3327c40d3fbbd219dad732a98d09d52bd30
     def _get_mandatory_billing_fields(self):
-        return [key.replace("_mandatory_bill", "", 1)
-                for key in request.website._fields.keys()
-                if "_mandatory_bill" in key and request.website[key] is True]
+        billing_fields = request.env['website.checkout_billing_fields']
+        billing_fields = billing_fields.search([])
+        mandatory_bill = []
+        for field in billing_fields:
+            if field.mandatory:
+                mandatory_bill.append(field.res_partner_field_id.name)
+        print "mandatory_bill %s" % mandatory_bill
+        return mandatory_bill
 
     def _get_optional_billing_fields(self):
-        return [key.replace("_mandatory_bill", "", 1)
-                for key in request.website._fields.keys()
-                if "_mandatory_bill" in key and request.website[key] is False]
+        billing_fields = request.env['website.checkout_billing_fields']
+        billing_fields = billing_fields.search([])
+        optional_bill = []
+        for field in billing_fields:
+            if not field.mandatory:
+                optional_bill.append(field.res_partner_field_id.name)
+        print "optional_bill %s" % optional_bill
+        return optional_bill
 
     def _get_mandatory_shipping_fields(self):
-        return [key.replace("_mandatory_ship", "", 1)
-                for key in request.website._fields.keys()
-                if "_mandatory_ship" in key and request.website[key] is True]
+        shipping_fields = request.env['website.checkout_shipping_fields']
+        shipping_fields = shipping_fields.search([])
+        mandatory_ship = []
+        for field in shipping_fields:
+            if field.mandatory:
+                mandatory_ship.append(field.res_partner_field_id.name)
+        print "mandatory_ship %s" % mandatory_ship
+        return mandatory_ship
 
     def _get_optional_shipping_fields(self):
-        return [key.replace("_mandatory_ship", "", 1)
-                for key in request.website._fields.keys()
-                if "_mandatory_ship" in key and request.website[key] is False]
+        shipping_fields = request.env['website.checkout_shipping_fields']
+        shipping_fields = shipping_fields.search([])
+        optional_ship = []
+        for field in shipping_fields:
+            if not field.mandatory:
+                optional_ship.append(field.res_partner_field_id.name)
+        print "optional_ship %s" % optional_ship
+        return optional_ship
+
+    # =================
+    # ONE PAGE CHECKOUT
+    # =================
+
+    # Render the payment page with an additional dictionary acquirers_opc for One-Page-Checkout
+    def opc_payment(self, **post):
+
+        # Render the payment page and therefore get all Pay-Now Button forms
+        payment_page = super(website_sale_donate, self).payment(**post)
+        payment_qcontext = None
+        if hasattr(payment_page, 'qcontext'):
+            payment_qcontext = payment_page.qcontext
+
+        # Check for redirection caused by errors
+        if not payment_qcontext:
+            return payment_page
+
+        # Set the current acquirer to be correctly pre selected on subsequent renders of the checkout page
+        if post.get('acquirer'):
+            payment_qcontext['acquirer_id'] = post.get('acquirer')
+            # TODO: If an acquirer and post data is already present we could do form data validation
+            # TODO: Should add a new mehtod to payment providers: something like _[paymentmethod]_pre_send_form_validate()
+            # TODO: If errors are found we could add them to the errors dict
+
+        # Check for errors in qcontext
+        # HINT: If errors are present Pay-Now button forms will NOT! be rendered by payment controller
+        if payment_qcontext.get('errors'):
+            return payment_page
+
+        # Create alternative Pay-Now buttons (button_opc)
+        # Remove the form and submit button, uniquely prefix the acquirer input fields and set data from post
+        for acquirer in payment_qcontext['acquirers']:
+
+            # Convert the Pay-Now button forms into input fields without surrounding form tag
+            # to insert them into the regular checkout form
+            # http://lxml.de/lxmlhtml.html
+            # http://lxml.de/tutorial.html
+            button = etree.fromstring(acquirer.button)
+            assert button.tag == 'form', "ERROR: One Page Checkout: Payment Button has not <form> as root tag!"
+
+            # Process input tags of original button to include post values
+            for form_input in button.iter("input"):
+                if form_input.get('name'):
+                    prefixed_input_name = "aq" + str(acquirer.id) + '_' + str(form_input.get('name'))
+                    # Set values from post data if empty in template (e.g.: FRST IBAN and BIC)
+                    if not form_input.get('value') and prefixed_input_name in post:
+                        form_input.set('value', post.get(prefixed_input_name))
+
+            # Update the original acquirer.button
+            acquirer.button = etree.tostring(button, encoding='UTF-8', pretty_print=True)
+
+            # Process the One-Page-Checkout version of the Pay-Now Button (=no form and submit-button but just inputs)
+            button = etree.fromstring(acquirer.button)
+
+            # Prefix the name attribute of the input tags
+            for form_input in button.iter("input"):
+                if form_input.get('name'):
+                    # ATTENTION: Must be the same than above
+                    form_input.set('name', "aq" + str(acquirer.id) + '_' + str(form_input.get('name')))
+
+            # Remove the Pay-Now button
+            # HINT: element tree functions will return  None if an element is not found, but an empty element
+            #       will have a boolean value of False because it acts like a container
+            if button.find(".//button") is not None:
+                button.find(".//button").getparent().remove(button.find(".//button"))
+
+            # Store the form tag attributes in extra input fields (which is not used right now but nice to have)
+            for item in ['action', 'method', 'target']:
+                child = etree.SubElement(button, "input")
+                child.set('name', "aq" + str(acquirer.id) + '_form_' + item)
+                child.set('type', 'hidden')
+                child.set('value', button.get(item))
+
+            # Replace the form tag with a div tag
+            button_new = etree.Element('div')
+            button_new.set('id', "aq" + str(acquirer.id))
+            for child in button:
+                button_new.append(child)
+            button = button_new
+
+            # Convert the button etree back to a string and store it in button_opc
+            # print(etree.tostring(button, encoding='UTF-8', pretty_print=True))
+            acquirer.button_opc = etree.tostring(button, encoding='UTF-8', pretty_print=True)
+
+        return payment_page
+
+    # Checkout Page
+    @http.route()
+    def checkout(self, **post):
+
+        # Store or get Acquirer in/from Session (Payment-Method)
+        # if post.get('acquirer'):
+        #     request.session['last_acquirer_id'] = post.get('acquirer')
+        # elif request.session['last_acquirer_id']:
+        #     post['acquirer'] = request.session['last_acquirer_id']
+
+        # Render the Checkout Page
+        checkout_page = super(website_sale_donate, self).checkout(**post)
+
+        # If One-Page-Checkout is enabled and checkout_page is not just a redirection
+        if request.website['one_page_checkout'] and hasattr(checkout_page, 'qcontext'):
+
+            # Checkout-Page was already called and now submits it's form data
+            if post:
+
+                # STEP 1: Update Delivery Method through payment controller
+                carrier_id = post.get('delivery_type')
+                if carrier_id:
+                    post['carrier_id'] = int(carrier_id)
+                    self.payment(**post)
+                    # HINT: carrier_id must be removed or payment will always return a redirection to /shop/payment
+                    post.pop('carrier_id')
+
+                # STEP 2: confirm_order
+                # Validate the checkout page form data and create or update partner and sales order
+                confirm_order = self.confirm_order(**post)
+                # Check for errors
+                if confirm_order.qcontext:
+                    if confirm_order.qcontext.get('error'):
+                        # Extend qcontext with acquirer data (populated with data from post)
+                        payment_page = self.opc_payment(**post)
+                        if payment_page.qcontext:
+                            # Add the qcontext of the payment page to the checkout page
+                            confirm_order.qcontext.update(payment_page.qcontext)
+                            # Render the checkout page to show the errors (errors from payment page would be included)
+                            # HINT: confirm_order controller renders the checkout page again on errors
+                            # HINT: confirm_order controller will not save or update any shippings on error
+                            #       therefore adding field_date to shippings is not needed here
+                            return confirm_order
+                        # On redirections caused by errors found by the payment controller
+                        else:
+                            return payment_page
+                # Check for a different redirection than '/shop/payment' caused by an error
+                if hasattr(confirm_order, 'location'):
+                    if confirm_order.location != '/shop/payment':
+                        # Return the redirection
+                        return confirm_order
+
+                # STEP 3: payment
+                # Validate the payment page after sale order and partner got created or updated in STEP 1
+                payment_page = self.opc_payment(**post)
+                # Check for redirections caused by errors
+                if not payment_page.qcontext:
+                    return payment_page
+
+                # Process the checkout controller again to include possible changes made in STEP 2
+                checkout_page = super(website_sale_donate, self).checkout(**post)
+
+                # ATTENTION: Add the qcontext of the payment page to the checkout page (not needed later on)
+                checkout_page.qcontext.update(payment_page.qcontext)
+
+                # Check for errors found by the payment controller
+                if payment_page.qcontext.get('errors'):
+                    # Render the checkout page to show the errors
+                    return checkout_page
+
+                # STEP 4: payment_transaction
+                # Create or update the Payment-Transaction and update the Sales Order
+                # HINT: Normally done by a json request before the pay-now form get's auto submitted by Java Script
+                if not post.get('acquirer'):
+                    # HINT: payment qcontext was already added in STEP 2
+                    return checkout_page
+                # TODO: BUGFixing - Transaction is not updated after first creation ? Force update may be needed
+                pay_now = self.payment_transaction(int(post.get('acquirer')))
+                # Check for redirection caused by errors
+                if not isinstance(pay_now, int):
+                    return pay_now
+
+                # STEP 5: Open the payment provider page OR directly validate the sales order if amount.total is 0
+                # Return the checkout page and auto submit the correct Pay-Now_Button_Form by java script
+                # TODO: if amount.total == 0 Directly set sales order to done and redirect to /shop/payment/validate
+                # TODO: Also check this behaviour if not One-Page-Checkout !!!
+                for acquirer in payment_page.qcontext['acquirers']:
+                    if int(acquirer.id) == int(post.get('acquirer')):
+                        checkout_page.qcontext['acquirer_auto_submit'] = acquirer
+                return checkout_page
+
+            # Checkout-Page is called for the first time (with no post data)
+            else:
+                payment_page = self.opc_payment()
+                if hasattr(payment_page, 'qcontext'):
+                    # Add the qcontext of the payment page to the checkout page
+                    checkout_page.qcontext.update(payment_page.qcontext)
+                    # Render the checkout page
+                    return checkout_page
+                # On error
+                else:
+                    # Return the redirection caused by the payment controller
+                    return payment_page
+
+        return checkout_page
+
+    # Payment Page
+    @http.route()
+    def payment(self, **post):
+        res = super(website_sale_donate, self).payment(**post)
+        if request.website['one_page_checkout']:
+            return request.redirect("/shop/checkout")
+        return res
+
+    # HINT: Shopping Cart Redirection is done above around line 92
