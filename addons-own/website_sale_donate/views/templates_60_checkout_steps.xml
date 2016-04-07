@@ -2,252 +2,748 @@
 <openerp>
     <data>
 
-        <!-- SHOPPING CART: payment interval, quantity controls -->
-        <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
-            <!-- Add payment interval as text under the product price -->
-            <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
-                <t t-if="line.payment_interval_id">
-                    <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
-                </t>
-            </xpath>
-            <!-- Do not show Sales order line text in shopping cart! (Because of two bugs: Bug 1: False if none Bug2: english language) -->
-            <xpath expr="//table[@id='cart_products']//div[@class='text-muted']" position="replace">
-                    <div class="hidden"></div>
-                    <!--<t t-if="'\n'.join(line.name.splitlines()[1:]) != 'False'">-->
-                        <!--<div class="text-muted" t-esc="'\n'.join(line.name.splitlines()[1:])"/>-->
-                    <!--</t>-->
-            </xpath>
-            <!-- Change the product quantity controls (oe_website_spinner) to only show "-" if hide_quantity set -->
-            <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
-                <div class="input-group oe_website_spinner">
-                  <span class="input-group-addon" t-att-style="'width: 100%; padding: 9px 12px 9px 36px;' if line.product_id.hide_quantity else ''">
-                      <a t-attf-href="#" class="mb8 js_add_cart_json" data-no-instant="">
-                          <i class="fa fa-minus"></i>
-                      </a>
-                  </span>
-                  <input type="text"
-                      t-att-class="'js_quantity form-control' if line.product_id.hide_quantity == False else 'hidden js_quantity form-control'"
-                      t-att-data-line-id="line.id"
-                      t-att-data-product-id="line.product_id.id"
-                      t-att-value="int(line.product_uom_qty)"/>
-                  <span class="input-group-addon">
-                      <a t-attf-href="#"
-                         t-att-class="'mb8 float_left js_add_cart_json' if line.product_id.hide_quantity == False else 'hidden mb8 float_left js_add_cart_json'"
-                         data-no-instant="">
-                          <i class="fa fa-plus"></i>
-                      </a>
-                  </span>
+        <!-- SUBTEMPLATE: Checkout Pages Header -->
+        <template id="wsd_checkout_pages_header" name="Checkout Pages Custom Header and Checkout-Step-Indicator">
+            <!-- Page Header and Checkout-Step-Indicator -->
+            <div class="row wsd_checkout_pages_header">
+                <div class="col-md-12" id="wsd_checkout_steps_nav">
+
+                    <!-- Checkout Step Indicator, Back Button and Login Button -->
+                    <div class="navbar checkout_steps_navigation" role="navigation">
+
+                        <!-- Checkout-Step-Indicator -->
+                        <t t-if="not website.one_page_checkout">
+                            <ul class="checkout_steps_indicator nav nav-tabs navbar-left">
+                                <li role="presentation" t-att-class="'cart active' if cart_page else 'cart'">
+                                    <a href="/shop/cart"><span t-esc="website.cart_page_header"/></a>
+                                </li>
+                                <li role="presentation" t-att-class="'checkout active' if checkout_page else 'checkout'">
+                                    <a href="/shop/checkout"><span t-esc="website.checkout_page_header"/></a>
+                                </li>
+                                <li role="presentation" t-att-class="'payment disabled active' if payment_page else 'payment disabled'">
+                                    <a href="#"><span t-esc="website.payment_page_header"/></a>
+                                </li>
+                                <li role="presentation" t-att-class="'confirmation disabled active' if confirmation_page else 'confirmation disabled'">
+                                    <a href="#"><span t-esc="website.confirmation_page_header"/></a>
+                                </li>
+                            </ul>
+                        </t>
+
+                        <!-- Back-to-Page and Login/Logout Button -->
+                        <div class="checkout_steps_buttons nav navbar-right">
+                            <t t-call="website_sale_donate.wsd_button_back_to_page">
+                                <t t-set="wsd_button_back_to_page" t-value="'btn btn-default navbar-btn'"/>
+                            </t>
+                            <t t-call="website_sale_donate.wsd_button_login_logout">
+                                <t t-set="wsd_button_login_logout" t-value="'btn btn-primary navbar-btn'"/>
+                            </t>
+                        </div>
+                    </div>
                 </div>
-            </xpath>
-            <!-- Hide list price in shopping cart if price_donate true WARNING XPATH NOT WORKING IN PRODUCTIONS SERVERS ?!?
-            <xpath expr="//del[@t-field='line.product_id.lst_price']" position="attributes">
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'text-danger hidden' if line.product_id.price_donate else 'text-danger'</attribute>
-            </xpath>
-            -->
+
+                <!-- Page Header -->
+                <div class="col-md-12" id="wsd_checkout_steps_header">
+                    <t t-if="cart_page and website.cart_page_header"><h1 t-esc="website.cart_page_header"/></t>
+                    <t t-if="checkout_page and website.checkout_page_header"><h1 t-esc="website.checkout_page_header"/></t>
+                    <t t-if="payment_page and website.payment_page_header"><h1 t-esc="website.payment_page_header"/></t>
+                    <t t-if="confirmation_page and website.confirmation_page_header"><h1 t-esc="website.confirmation_page_header"/></t>
+                </div>
+            </div>
+
+            <!-- Top Snippet Dropping Area -->
+            <div class="row wsd_checkout_pages_snippets_top">
+                <div class="col-md-12">
+                    <t t-if="cart_page"><div t-field="website.cart_page_top"/></t>
+                    <t t-if="checkout_page"><div t-field="website.checkout_page_top"/></t>
+                    <t t-if="payment_page"><div t-field="website.payment_page_top"/></t>
+                    <t t-if="confirmation_page"><div t-field="website.confirmation_page_top"/></t>
+                </div>
+            </div>
         </template>
 
-        <!-- SHOPPING CART: Better Back Button -->
-        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" active="True" name="Back_to_Shop Button">
-            <xpath expr="//a[@href='/shop']" position="replace">
-                <!-- Back Button -->
-                <t t-if="request.session['last_page']">
-                    <a id="back_to_shop" t-att-href="request.session['last_page']" class="btn btn-default">Back</a>
-                </t>
-                <t t-if="not request.session['last_page']">
-                    <a id="back_to_page" href="/" class="btn btn-default">Back</a>
-                </t>
+
+        <!-- ============= -->
+        <!-- SHOPPING CART -->
+        <!-- ============= -->
+
+        <!-- INHERIT SUB-TEMPLATE total: Hide Tax if 0 -->
+        <template id="wsd_total" inherit_id="website_sale.total">
+            <xpath expr="//tr[@id='order_total_taxes']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_tax else 'text-muted hidden'</attribute>
             </xpath>
         </template>
 
+        <!-- INHERIT SUB-TEMPLATE cart_delivery: Hide Delivery if 0 -->
+        <template id="wsd_total_delivery" inherit_id="website_sale_delivery.cart_delivery">
+            <xpath expr="//tr[@id='order_delivery']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_delivery else 'text-muted hidden'</attribute>
+            </xpath>
+        </template>
 
-        <!-- CHECKOUT: honor the mandatory fields AND hide Tax and Total -->
-        <template id="wsd_checkout" inherit_id="website_sale.checkout" name="Checkout Manadtory Fields">
-            <xpath expr="//form[@action='/shop/confirm_order']" position="attributes">
-                <attribute name="id">wsd_checkout</attribute>
-            </xpath>
+        <!-- INHERIT SHOPPING CART -->
+        <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
 
-            <!-- BILLING -->
-            <!-- INFO: contact_name wurde zweimal vergeben daher dieser haessliche fix -->
-            <xpath expr="//label[@for='contact_name']" position="replace">
-                <t></t>
+            <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
+            <xpath expr="//ul[@class='wizard pull-right']" position="attributes">
+                <attribute name="t-if">False</attribute>
             </xpath>
-            <xpath expr="//label[@for='contact_name']" position="replace">
-                <t></t>
+            <xpath expr="//h1[@class='mb32']" position="attributes">
+                <attribute name="t-if">False</attribute>
             </xpath>
-            <xpath expr="//input[@name='name']" position="before">
-                <label t-att-class="'control-label mandatory text-danger f-name' if website.name_mandatory_bill else 'control-label f-name'" for="name">Name</label>
-            </xpath>
-            <xpath expr="//input[@name='email']" position="before">
-                <label t-att-class="'control-label mandatory text-danger f-email' if website.email_mandatory_bill else 'control-label f-email'" for="email">Email</label>
-            </xpath>
-
-            <xpath expr="//label[@for='street2']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-street2' if website.street2_mandatory_bill else 'control-label f-street2'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='city']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-city' if website.city_mandatory_bill else 'control-label f-city'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='country_id']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-country_id' if website.country_id_mandatory_bill else 'control-label f-country_id'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='phone']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-phone' if website.phone_mandatory_bill else 'control-label f-phone'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='street']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-street' if website.street_mandatory_bill else 'control-label f-street'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='state_id']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-state_id' if website.state_id_mandatory_bill else 'control-label f-state_id'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='vat']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-vat' if website.vat_mandatory_bill else 'control-label f-vat'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='zip']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-zip' if website.zip_mandatory_bill else 'control-label f-zip'</attribute>
+            <xpath expr="//h1[@class='mb32']" position="after">
+                <t t-call="website_sale_donate.wsd_checkout_pages_header">
+                    <t t-set="cart_page" t-value="True"/>
+                </t>
             </xpath>
 
-            <!-- SHIPPING -->
-            <xpath expr="//label[@for='shipping_name']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_name' if website.name_mandatory_ship else 'control-label f-shipping_name'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='shipping_phone']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_phone' if website.phone_mandatory_ship else 'control-label f-shipping_phone'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='shipping_street']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_street' if website.street_mandatory_ship else 'control-label f-shipping_street'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='shipping_city']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_city' if website.city_mandatory_ship else 'control-label f-shipping_city'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='shipping_zip']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_zip' if website.zip_mandatory_ship else 'control-label f-shipping_zip'</attribute>
-            </xpath>
-            <xpath expr="//label[@for='shipping_country_id']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'control-label mandatory text-danger f-shipping_country_id' if website.country_id_mandatory_ship else 'control-label f-shipping_country_id'</attribute>
-            </xpath>
-
-            <!-- Set default Country if not already selected -->
-            <xpath expr="//option[@t-att-value='country.id']" position="replace">
-                <!--<attribute name="t-att-selected">'True' if country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == 'AT')</attribute>-->
-                <option t-att-value="country.id" t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''"><t t-esc="country.name"/></option>
-            </xpath>
-
-            <xpath expr="//label[@for='shipping_state_id']" position="attributes">
-                <attribute name="style"></attribute>
-                <attribute name="t-att-style">'' if website.state_id_mandatory_ship else 'font-weight: normal'</attribute>
-            </xpath>
-
-             <!-- Show Small cart on right side -->
-            <xpath expr="//div[@class='col-lg-offset-1 col-lg-3 col-md-3 text-muted']" position="replace">
-                <div class="col-lg-offset-1 col-lg-3 col-md-3 text-muted">
-                    <div class="row">
-                        <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
-                        <t t-call="website_sale_donate.small_cart_header"/>
-                        <t t-call="website_sale_donate.small_cart" />
+            <!-- Bottom Snippet-Dropping-Area (below cart) -->
+            <xpath expr="//div[@class='container oe_website_sale']/div[@class='row'][1]" position="after">
+                <div class="row wsd_cart_page_bottom">
+                    <div class="col-md-12">
+                        <div t-field="website.cart_page_bottom"/>
                     </div>
                 </div>
             </xpath>
+
+            <!-- SHOPPING CART ADJUSTMENTS -->
+
+            <!-- Add payment interval as text under the product price -->
+            <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
+                <t t-if="line.payment_interval_id">
+                    <div class="small text-muted text-right">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                </t>
+            </xpath>
+
+            <!-- Do not show Sales order line text in shopping cart! (Because of two bugs: Bug 1: False if none Bug2: english language) -->
+            <xpath expr="//table[@id='cart_products']//div[@class='text-muted']" position="replace">
+                    <div class="hidden"> </div>
+            </xpath>
+
+            <!-- Hide list price in shopping cart if price_donate -->
+            <xpath expr="//del[@t-field='line.product_id.lst_price']" position="attributes">
+                <attribute name="t-if">not line.product_id.price_donate</attribute>
+            </xpath>
+
+            <!-- Change the product quantity controls (oe_website_spinner) -->
+            <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
+                <!-- Product Quantity Selector -->
+                <div class="cart_controls">
+                    <div class="input-group oe_website_spinner pull-left">
+                        <span class="input-group-addon">
+                            <a t-attf-href="#"
+                               t-att-class="'mb8 js_add_cart_json disabled' if line.product_id.hide_quantity else 'mb8 js_add_cart_json'"
+                               data-no-instant="">
+                                <i class="fa fa-minus"></i>
+                            </a>
+                        </span>
+
+                        <input type="text"
+                               class="js_quantity form-control"
+                               t-att-disabled="line.product_id.hide_quantity"
+                               t-att-data-line-id="line.id"
+                               t-att-data-product-id="line.product_id.id"
+                               t-att-value="int(line.product_uom_qty)"/>
+
+                        <span class="input-group-addon">
+                            <a t-attf-href="#"
+                               t-att-class="'mb8 float_left disabled' if line.product_id.hide_quantity else 'mb8 float_left js_add_cart_json'"
+                               data-no-instant="">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </span>
+
+                    </div>
+                    <!-- Remove Product Button -->
+                    <a href="#" class="remove_product"
+                       t-att-data-line-id="line.id">
+                        <span class="glyphicon glyphicon-remove"/>
+                    </a>
+                </div>
+            </xpath>
+
+            <!-- Replace Continue-to-Checkout Button -->
+            <xpath expr="//a[@href='/shop/checkout']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//a[@href='/shop/checkout']" position="after">
+                <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line"
+                   class="btn btn-primary pull-right" href="/shop/checkout">
+                    <t t-if="website.button_cart_to_data">
+                       <span t-field="website.button_cart_to_data"/>
+                    </t>
+                    <t t-if="not website.button_cart_to_data">
+                       Continue
+                    </t>
+                    &amp;nbsp;<span class="glyphicon glyphicon-chevron-right"/>
+                </a>
+            </xpath>
+        </template>
+
+        <!-- INHERIT CONTINUE SHOPPING OPTION: OPTION: Better Back Button -->
+        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" active="True" name="Back_to_Shop Button">
+            <xpath expr="//a[@href='/shop']" position="replace">
+                <!-- Back-to-Page Button -->
+                <t t-call="website_sale_donate.wsd_button_back_to_page">
+                    <t t-set="wsd_button_back_to_page" t-value="'btn btn-default'"/>
+                </t>
+            </xpath>
         </template>
 
 
-        <!-- CONFIRMATION: Headline appears on separate line -->
+        <!-- ============= -->
+        <!-- CHECKOUT PAGE -->
+        <!-- ============= -->
+
+        <!-- SUBTEMPLATE Checkout Billing Fields -->
+        <template id="wsd_checkout_form_billing_fields" name="wsd checkout-form-billing-fields">
+
+            <!-- GENERAL char and boolean fields -->
+            <t t-foreach="billing_fields or []" t-as="billing_field">
+                <t t-set="f_name" t-value="billing_field.res_partner_field_id.name"/>
+                <t t-set="f_type" t-value="billing_field.res_partner_field_id.ttype"/>
+                <t t-set="css_classes" t-value="billing_field.css_classes"/>
+                <t t-set="validation_rule" t-value="{}"/>
+                <t t-if="billing_field.validation_rule">
+                    <t t-set="validation_rule" t-value="{'data-rule-'+billing_field.validation_rule: True}"/>
+                </t>
+
+                <t t-if="billing_field.show">
+
+                    <!-- CHAR AND SPECIAL FIELDS -->
+                    <t t-if="f_type == 'char' or f_name in ['country_id', 'state_id']">
+                        <!-- FORM GROUP -->
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <!-- LABEL -->
+                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
+                                   t-att-for="f_name">
+                                <t t-esc="billing_field.label"/>
+                            </label>
+                            <!-- CHAR FIELDS -->
+                            <t t-if="f_name not in ['country_id', 'state_id']">
+                                <input type="text"
+                                       t-att-name="f_name"
+                                       class="form-control"
+                                       t-att-value="checkout.get(f_name)"
+                                       t-att-placeholder="billing_field.placeholder"
+                                       t-att-required="billing_field.mandatory"
+                                       t-att="validation_rule"
+                                />
+                            </t>
+                            <!-- COUNTRY -->
+                            <t t-if="f_name == 'country_id'">
+                                <select t-att-name="f_name"
+                                        class="form-control"
+                                        t-att-required="billing_field.mandatory">
+                                    <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                    <t t-foreach="countries or []" t-as="country">
+                                        <!-- Set default country from res.config if none selected -->
+                                        <option t-att-value="country.id"
+                                                t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''">
+                                            <t t-esc="country.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <!-- STATE -->
+                            <t t-if="f_name == 'state_id'">
+                                <select t-att-name="f_name"
+                                        class="form-control"
+                                        t-att-required="billing_field.mandatory">
+                                    <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                    <t t-foreach="states or []" t-as="state">
+                                        <option t-att-value="state.id" style="display:none;"
+                                                t-att-data-country_id="state.country_id.id"
+                                                t-att-selected="state.id == checkout.get('state_id')">
+                                            <t t-esc="state.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- CHECKBOX FIELDS -->
+                    <t t-if="f_type == 'boolean'">
+                        <div t-att-class="'checkbox ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')">
+                                <input type="checkbox"
+                                       t-att-name="f_name"
+                                       t-att-value="checkout.get(f_name)"
+                                       t-att-checked="True if checkout.get(f_name) else ''"
+                                       t-att-required="billing_field.mandatory"
+                                />
+                                <t t-esc="billing_field.label"/>
+                            </label>
+                        </div>
+                    </t>
+
+                    <!-- CLEARFIX DIV -->
+                    <t t-if="billing_field.clearfix">
+                        <div t-att-class="'clearfix f-' + f_name"/>
+                    </t>
+                </t>
+            </t>
+
+            <!-- SHIPPING ADDRESS SELECTOR -->
+            <t t-if="not website.hide_shipping_address">
+                <!-- Correct an odoo Bug? Shipping Address is always shown after the first call of payment -->
+                <t t-if="website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id">
+                    <t t-set="shipping_id" t-value="0"/>
+                </t>
+
+                <div class="clearfix shipping-address-selector"/>
+                <div class="form-group has-feedback col-lg-12">
+                    <label>Shipping</label>
+                    <select name="shipping_id" class="form-control">
+                        <option value="0">
+                            Ship to the same address
+                        </option>
+                        <t t-foreach="shippings" t-as="shipping">
+                            <!-- HINT: shippings_selector_attrs.get(shipping.id) is a dict {attr: value, attr: value } -->
+                            <option t-att-value="shipping.id"
+                                    t-att-selected="shipping.id == shipping_id"
+                                    t-att="shippings_selector_attrs.get(shipping.id)">
+                                <t t-esc="', '.join('\n'.join(shipping.name_get()[0][1].split(',')).split('\n')[1:])"/>
+                            </option>
+                        </t>
+                        <option value="-1"
+                                t-att-selected="error and len(error) > 0 and shipping_id == -1">
+                            -- Create a new address --
+                        </option>
+                    </select>
+                </div>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE Checkout Shipping Fields -->
+        <!-- HINT: Field names are prefixed with shipping_ -->
+        <template id="wsd_checkout_form_shipping_fields" name="wsd checkout-form-shipping-fields">
+
+            <!-- GENERAL char and boolean fields -->
+            <t t-foreach="shipping_fields or []" t-as="shipping_field">
+                <t t-set="f_name" t-value="'shipping_' + shipping_field.res_partner_field_id.name"/>
+                <t t-set="f_type" t-value="shipping_field.res_partner_field_id.ttype"/>
+                <t t-set="css_classes" t-value="shipping_field.css_classes"/>
+                <t t-set="validation_rule" t-value="{}"/>
+                <t t-if="shipping_field.validation_rule">
+                    <t t-set="validation_rule" t-value="{'data-rule-'+shipping_field.validation_rule: True}"/>
+                </t>
+
+                <t t-if="shipping_field.show">
+
+                    <!-- CHAR AND SPECIAL FIELDS -->
+                    <t t-if="f_type == 'char' or f_name in ['shipping_country_id', 'shipping_state_id']">
+                        <!-- FORM GROUP -->
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <!-- LABEL -->
+                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')"
+                                   t-att-for="f_name">
+                                <t t-esc="shipping_field.label"/>
+                            </label>
+                            <!-- CHAR FIELDS -->
+                            <t t-if="f_name not in ['shipping_country_id', 'shipping_state_id']">
+                                <input type="text"
+                                       t-att-name="f_name"
+                                       class="form-control"
+                                       t-att-value="checkout.get(f_name, '')"
+                                       t-att-placeholder="shipping_field.placeholder"
+                                       t-att-readonly="'readonly' if shipping_id &gt;= 0 else ''"
+                                       t-att-required="shipping_field.mandatory"
+                                       t-att="validation_rule"
+                                />
+                            </t>
+                            <!-- COUNTRY -->
+                            <t t-if="f_name == 'shipping_country_id'">
+                                <select t-att-name="f_name" class="form-control" t-att-disabled="  'disabled' if shipping_id &gt;= 0 else ''">
+                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
+                                    <t t-foreach="countries or []" t-as="country">
+                                        <!-- Set default country from res.config if none selected -->
+                                        <option t-att-value="country.id"
+                                                t-att-selected="'True' if (country.id == checkout.get(f_name) or (country.id != checkout.get(f_name) and country.code == website.country_default_value.code)) else ''">
+                                            <t t-esc="country.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <!-- STATE -->
+                            <t t-if="f_name == 'shipping_state_id'">
+                                <select t-att-name="f_name" class="form-control">
+                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
+                                    <t t-foreach="states or []" t-as="state">
+                                        <option t-att-value="state.id" style="display:none;"
+                                                t-att-data-country_id="state.country_id.id"
+                                                t-att-selected="state.id == checkout.get(f_name)">
+                                            <t t-esc="state.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- CHECKBOX FIELDS -->
+                    <t t-if="f_type == 'boolean'">
+                        <div t-att-class="'checkbox ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')">
+                                <input type="checkbox"
+                                       t-att-name="f_name"
+                                       t-att-value="checkout.get(f_name)"/><t t-esc="shipping_field.label"/>
+                            </label>
+                        </div>
+                    </t>
+
+                    <!-- CLEARFIX DIV -->
+                    <t t-if="shipping_field.clearfix">
+                        <div t-att-class="'clearfix f-' + f_name"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE ONE-PAGE-CHECKOUT: Payment-Method (Acquirers) and Delivery-Method Selection -->
+        <template id="wsd_opc_payment" name="Payment One-Page-Checkout">
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+
+            <!-- DELIVERY Options -->
+            <div t-if="deliveries and not website.hide_delivery_methods"
+                 class="row wsd_opc_delivery"
+                 t-att-id="'delivery_carrier' if not website.one_page_checkout else ''">
+                <!-- Header: Delivery -->
+                <div class="col-lg-12">
+                    <h3>
+                        <t t-if="website.delivery_title"><span t-field="website.delivery_title"/></t>
+                        <t t-if="not website.delivery_title">Delivery</t>
+                    </h3>
+                </div>
+                <div class="col-lg-12">
+                    <ul class="list-unstyled">
+                        <li t-foreach="deliveries" t-as="delivery">
+                            <t t-if="delivery.available">
+                                <label>
+                                    <input t-att-value="delivery.id" type="radio" name="delivery_type"
+                                        t-att-checked="order.carrier_id and order.carrier_id.id == delivery.id and 'checked' or False"/>
+                                    <span t-field="delivery.name"/>
+                                    <span class="badge" t-field="delivery.price"
+                                        t-field-options='{
+                                            "widget": "monetary",
+                                            "from_currency": "delivery.product_id.company_id.currency_id",
+                                            "display_currency": "website_sale_order.currency_id"
+                                        }'/>
+                                    <div t-field="delivery.website_description" class="text-muted"/>
+                                </label>
+                            </t>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAYMENT Method Selection -->
+            <div class="row js_payment wsd_opc_payment" t-if="acquirers" id="payment_method">
+                <!-- Header: Payment -->
+                <div class="col-lg-12">
+                    <h3>
+                        <t t-if="website.payment_title"><span t-field="website.payment_title"/></t>
+                        <t t-if="not website.payment_title">Payment</t>
+                    </h3>
+                </div>
+                <div class="col-lg-12">
+                    <!-- Payment Page Errors -->
+                    <t t-foreach="errors" t-as="error">
+                        <div class="alert alert-danger" t-if="error">
+                            <h4>
+                                <t t-esc="error[0]"/>
+                            </h4>
+                            <t t-esc="error[1]"/>
+                        </div>
+                    </t>
+                    <!-- Acquirer-Selection: input elements and images (icons) -->
+                    <!-- http://getbootstrap.com/components/#btn-groups -->
+                    <!-- http://getbootstrap.com/javascript/#buttons -->
+                    <!-- http://getbootstrap.com/components/#nav-tabs -->
+                    <!-- http://stackoverflow.com/questions/34677186/html-form-with-bootstrap-togglabe-tabs-by-radio-buttons -->
+                    <t t-set="acquirer_id" t-value="acquirer_id or acquirers[0].id"/>
+                    <!-- Acquirer-Selection (Payment Method) Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <t t-foreach="acquirers or []" t-as="acquirer">
+                            <!-- Only show correct acquirers (payment methods) -->
+                            <t t-if="acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))">
+                                <li role="presentation" t-att-class="'active' if str(acquirer.id) == str(acquirer_id) else False">
+                                    <a t-att-href="'#aq' + str(acquirer.id)" t-att-aria-controls="'aq' + str(acquirer.id)" role="tab" data-toggle="tab">
+                                        <!-- Hidden Input Radio Tag -->
+                                        <input type="radio" name="acquirer" class="tab-acquirer-input hidden" autocomplete="off"
+                                               t-att-data-input-id="'aq' + str(acquirer.id)"
+                                               t-att-value="acquirer.id"
+                                               t-att-checked="str(acquirer.id) == str(acquirer_id)"/>
+                                        <!-- Acquirer Icon or Default Image -->
+                                        <span class="tab-acquirer-image">
+                                            <t t-if="not acquirer.acquirer_icon">
+                                                <span>
+                                                    <img t-if="not acquirer.acquirer_icon" class="media-object"
+                                                         t-att-title="acquirer.name"
+                                                         t-att-src="'/payment_%s/static/src/img/%s_icon.png' % (acquirer.provider, acquirer.provider)"/>
+                                                </span>
+                                            </t>
+                                            <t t-if="acquirer.acquirer_icon">
+                                                <span t-field="acquirer.acquirer_icon"
+                                                   t-field-options='{"widget": "image", "class": "media-object"}'/>
+                                            </t>
+                                        </span>
+                                        <!-- Acquirer Name -->
+                                        <span class="tab-acquirer-name" t-field="acquirer.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </t>
+                    </ul>
+                    <!-- Acquirer-Selection Tab Content -->
+                    <div class="tab-content tab-equal-heights">
+                        <t t-foreach="acquirers or []" t-as="acquirer">
+                            <!-- Only show correct acquirers (payment methods) -->
+                            <t t-if="acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))">
+                                <div role="tabpanel"
+                                     t-att-class="'tab-pane fade in active' if str(acquirer.id) == str(acquirer_id) else 'tab-pane fade'"
+                                     t-att-id="'aq' + str(acquirer.id)"
+                                     t-att-data-id="acquirer.id">
+                                    <div t-field="acquirer.pre_msg"/>
+                                    <t t-if="website.one_page_checkout">
+                                        <div t-raw="acquirer.button_opc"/>
+                                    </t>
+                                    <t t-if="not website.one_page_checkout">
+                                        <div t-raw="acquirer.button"/>
+                                    </t>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REDIRECT TO PAYMENT PROVIDER Auto-Submit-Form: Finally redirect to payment-provider if all data is correct -->
+            <!-- TODO: Target of form should be _top if aswidget is true (do it with java script?) -->
+            <!-- TODO: Hide all input fields with css? (only button remains) -->
+            <t t-if="acquirer_auto_submit and website.one_page_checkout">
+                <div class="row acquirer_auto_submit">
+                    <div class="col-lg-12">
+                        <div t-raw="acquirer_auto_submit.button" class="js_payment_auto_submit_form"/>
+                    </div>
+                </div>
+            </t>
+
+        </template>
+
+        <!-- SUBTEMPLATE: CHECKOUT FORM -->
+        <template id="wsd_checkout_form" name="WSD Checkout Form">
+
+            <form t-att-action="'/shop/checkout' if website.one_page_checkout else '/shop/confirm_order'"
+                  method="post"
+                  id="wsd_checkout_form">
+
+                <!-- Billing and Shipping -->
+                <div class="row">
+                    <!-- Header: "Your Data" -->
+                    <div class="col-md-12 checkout_title">
+                        <h3>
+                            <t t-if="website.checkout_title"><span t-field="website.checkout_title"/></t>
+                            <t t-if="not website.checkout_title">Your Data</t>
+                        </h3>
+                    </div>
+                    <!-- Billing Fields and Shipping-Address-Selector -->
+                    <!-- HINT: the divs for the bootstrap columns are the fields div's -->
+                    <div class="col-md-12 oe_cart">
+                        <div class="row billing-fields">
+                            <t t-call="website_sale_donate.wsd_checkout_form_billing_fields"/>
+                        </div>
+                    </div>
+                    <!-- Shipping Fields (hidden if ship to same address) -->
+                    <div t-att-class="'col-md-12 hidden' if (website.hide_shipping_address) else 'col-md-12'">
+                        <div class="row js_shipping shipping-fields"
+                             t-att-style="'display:none' if (not shipping_id) or  website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id else ''">
+                            <!-- HINT: the divs for the bootstrap columns are the field div's -->
+                            <t t-call="website_sale_donate.wsd_checkout_form_shipping_fields"/>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- One-Page-Checkout: Acquirer, Delivery-Method, Auto-Submit-Form -->
+                <t t-if="website.one_page_checkout">
+                    <t t-call="website_sale_donate.wsd_opc_payment"/>
+                </t>
+
+                <!-- Back and Submit Buttons -->
+                <t t-if="not acquirer_auto_submit">
+                    <div class="clearfix">
+                        <!-- Back-To-Page Button -->
+                        <t t-call="website_sale_donate.wsd_button_back_to_page">
+                            <t t-set="wsd_button_back_to_page" t-value="'btn btn-default'"/>
+                        </t>
+
+                        <!-- Button Submit-Checkout-Form (button_data_to_payment) -->
+                        <a class="btn btn-primary pull-right a-submit" id="wsd_checkout_form_submit_button">
+                            <t t-if="website.button_data_to_payment">
+                               <span t-field="website.button_data_to_payment"/>
+                            </t>
+                            <t t-if="not website.button_data_to_payment">
+                               Confirm
+                            </t>
+                            &amp;nbsp;<span class="glyphicon glyphicon-chevron-right"/>
+                        </a>
+                    </div>
+                </t>
+            </form>
+        </template>
+
+
+        <!-- INHERIT: CHECKOUT PAGE -->
+        <template id="wsd_checkout" inherit_id="website_sale.checkout" name="WSD Checkout-Page Changes">
+
+            <!-- DISABLE original checkout page elements -->
+            <xpath expr="//ul[@class='wizard pull-right']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//h1[1]" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//form[@action='/shop/confirm_order']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+
+            <!-- INSERT Custom Checkout Page -->
+            <xpath expr="//div[@class='container oe_website_sale']" position="inside">
+
+                <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
+                <t t-call="website_sale_donate.wsd_checkout_pages_header">
+                    <t t-set="checkout_page" t-value="True"/>
+                </t>
+
+                <!-- Content -->
+                <div class="row wsd_checkout_page_content">
+                    <!-- Right Column: small cart (must float to top) -->
+                    <div class="col-md-3 col-md-offset-1 col-md-push-8" id="wsd_checkout_page_right_column">
+                        <!-- Small Cart -->
+                        <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                        <t t-call="website_sale_donate.small_cart_header">
+                            <!-- Always Show Small-Cart Header -->
+                            <t t-set="show_small_cart_header" t-value="True"/>
+                        </t>
+                        <t t-call="website_sale_donate.small_cart" />
+                    </div>
+                    <!-- Left Column: checkout form -->
+                    <div class="col-md-8 col-md-pull-4" id="wsd_checkout_page_left_column">
+                        <!-- Checkout Form -->
+                        <t t-call="website_sale_donate.wsd_checkout_form"/>
+                    </div>
+                </div>
+
+                <!-- Bottom Snippet-Dropping-Area -->
+                <div class="row wsd_checkout_page_bottom">
+                    <div class="col-md-12">
+                        <div t-field="website.checkout_page_bottom"/>
+                    </div>
+                </div>
+            </xpath>
+
+        </template>
+
+
+
+        <!-- ============= -->
+        <!-- PAYMENT PAGE  -->
+        <!-- ============= -->
+
+        <!-- INHERIT PAYMENT -->
+        <template id="wsd_payment" inherit_id="website_sale.payment" name="WSD Payment Page">
+
+
+            <!-- DISABLE original payment page elements -->
+            <xpath expr="//div[@class='container oe_website_sale']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+
+            <!-- Custom Payment Page -->
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <div class="container oe_website_sale">
+
+                    <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
+                    <t t-call="website_sale_donate.wsd_checkout_pages_header">
+                        <t t-set="payment_page" t-value="True"/>
+                    </t>
+
+                    <!-- Content -->
+                    <div class="row wsd_payment_page_content">
+
+                        <!-- Left Column -->
+                        <div class="col-md-8">
+                            <!-- Small Cart -->
+                            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                            <t t-call="website_sale_donate.small_cart_header">
+                                <!-- Always Show Small-Cart Header -->
+                                <t t-set="show_small_cart_header" t-value="True"/>
+                            </t>
+                            <t t-call="website_sale_donate.small_cart" />
+                            <!-- Acquirer (Payment-Method) and Delivery-Method -->
+                            <t t-call="website_sale_donate.wsd_opc_payment"/>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-3 col-md-offset-1">
+                            <!-- Billing Address -->
+                            <div class="payment_billing_address">
+                                <h4>Bill To:</h4>
+                                <div t-field="order.partner_invoice_id"
+                                     t-field-options='{
+                                     "widget": "contact",
+                                     "fields": ["address", "name", "phone", "email"]
+                                     }'/>
+                                <div>
+                                  <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
+                                </div>
+                            </div>
+                            <!-- Shipping Address -->
+                            <t t-if="not website.hide_shipping_address">
+                                <div class="payment_shipping_address">
+                                    <h4>Ship To:</h4>
+                                    <t t-if="website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id">
+                                      <div t-field="order.partner_shipping_id"
+                                           t-field-options='{
+                                           "widget": "contact",
+                                           "fields": ["address", "name", "phone"]
+                                           }'/>
+                                    </t>
+                                    <address t-if="website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id">Ship to the same address</address>
+                                    <div>
+                                      <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Snippet-Dropping-Area -->
+                    <div class="row wsd_payment_page_bottom">
+                        <div class="col-md-12">
+                            <div t-field="website.payment_page_bottom"/>
+                        </div>
+                    </div>
+
+                </div>
+            </xpath>
+
+        </template>
+
+
+        <!-- ================== -->
+        <!-- CONFIRMATION PAGE  -->
+        <!-- ================== -->
+
+        <!-- INHERIT: CONFIRMATION: Headline appears on separate line -->
         <template id="wsd_product_item" inherit_id="website_sale.confirmation" name="Confirmation Free Heading">
             <xpath expr="//ul[@class='wizard pull-right']" position="after">
                 <div class="clearfix mb32"></div>
             </xpath>
         </template>
-
-        <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Delivery Selector -->
-        <template id="hide_delivery_selector" inherit_id="website_sale_delivery.payment_delivery" active="True" customize_show="True" name="Hide Delivery Selector">
-            <xpath expr="//div[@id='delivery_carrier']" position="attributes">
-                <attribute name="class">hidden</attribute>
-            </xpath>
-        </template>
-
-        <!-- WEBSITE CUSTOM OPTION: CHECKOUT: Hide Shipping Address Selector -->
-        <template id="hide_shipping_address" inherit_id="website_sale.checkout" active="True" customize_show="True" name="Hide Shipping Address">
-            <xpath expr="//div[@class='form-group col-lg-12']" position="attributes">
-                <attribute name="class">form-group col-lg-12 hidden</attribute>
-            </xpath>
-            <xpath expr="//div[@class='js_shipping row mb16']" position="attributes">
-                <attribute name="class">js_shipping row mb16 hidden</attribute>
-            </xpath>
-        </template>
-
-        <!-- WEBSITE CUSTOM OPTION: PAYMENT: Hide Shipping address at right column -->
-        <template id="hide_shipping_address_payment" inherit_id="website_sale.payment" active="True" customize_show="True" name="Hide Shipping Address">
-            <xpath expr="//div[@id='right_column']//t" position="replace">
-                <div></div>
-            </xpath>
-        </template>
-
-        <!-- WEBSITE CUSTOM OPTION: PAYMENT: use small_cart -->
-        <template id="wsd_payment_small_cart" inherit_id="website_sale.payment" active="True" customize_show="True" name="Use Small Cart">
-            <xpath expr="//table[@id='cart_products']" position="replace">
-                <t t-call="website_sale_donate.small_cart_header"/>
-                <t t-call="website_sale_donate.small_cart"/>
-            </xpath>
-            <xpath expr="//t[@t-call='website_sale.total']" position="replace">
-                <t></t>
-            </xpath>
-        </template>
-
-        <!-- PAYMENT: Hide Acquirer with recurring_transactions=False if -->
-        <template id="hide_acquierer_if_no_recurring" inherit_id="website_sale.payment" name="Hide Acquirers if not enabled for recurring transactions">
-
-            <!-- Add payment interval as text under the product price -->
-            <xpath expr="//table[@id='cart_products']//span[@t-field='line.price_unit']" position="after">
-                <t t-if="line.payment_interval_id">
-                    <div class="small">(<t t-esc="line.payment_interval_id.name"/>)</div>
-                </t>
-            </xpath>
-
-            <!-- Only show correct Acquirers -->
-            <xpath expr="//label[@t-if='acquirer.button']" position="attributes">
-                <attribute name="t-if">acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))</attribute>
-            </xpath>
-
-            <!-- Add the custom image if available -->
-            <xpath expr="//img[@class='media-object']" position="attributes">
-                <attribute name="t-if">not acquirer.acquirer_icon</attribute>
-            </xpath>
-            <xpath expr="//img[@class='media-object']" position="after">
-                <t t-if="acquirer.acquirer_icon">
-                    <span  t-field="acquirer.acquirer_icon" t-field-options='{"widget": "image", "class": "media-object", "style": "max-width: 200px; display: inline-block;"}'/>
-                </t>
-            </xpath>
-
-        </template>
-
 
     </data>
 </openerp>

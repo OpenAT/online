@@ -9,53 +9,131 @@ import openerp.addons.decimal_precision as dp
 from openerp.addons.base_tools.image import resize_to_thumbnail
 
 
+# Additional fields for the web checkout
+class res_partner(osv.Model):
+    _inherit = 'res.partner'
+
+    _columns = {
+        # Vorname (wird dann in das feld name geschrieben)
+        'fore_name_web': fields.char(string='Fore Name Web'),
+        # Firmenname
+        'company_name_web': fields.char(string='Company Name Web'),
+        # Hausnummer
+        'street_number_web': fields.char(string='Street Number Web'),
+        # Postfach
+        'post_office_box_web': fields.char(string='Post Office Box Web'),
+        # Newsletteranmeldung event. auch Opt Out
+        'newsletter_web': fields.boolean(string='Newsletter Web'),
+        # Spendenquittung, Spendenbestaetigung fuer die Steuer
+        'donation_receipt_web': fields.boolean(string='Donation Receipt Web'),
+    }
+
+
+class website_checkout_billing_fields(osv.Model):
+    """res.partner billing fields for the website checkout form"""
+    _name = 'website.checkout_billing_fields'
+    _description = 'Checkout Billing Fields'
+    _order = 'sequence, res_partner_field_id'
+
+    _columns = {
+        'sequence': fields.integer('Sequence', help='Sequence number for ordering'),
+        'show': fields.boolean(string='Show', help='Show field in webpage'),
+        'res_partner_field_id': fields.many2one('ir.model.fields',
+                                                string="res.partner Field",
+                                                domain="[('model_id.model', '=', 'res.partner')]",
+                                                required=True),
+        'mandatory': fields.boolean(string='Mandatory'),
+        'label': fields.char(string='Label', translate=True),
+        'placeholder': fields.char(string='Placeholder Text', translate=True),
+        'validation_rule': fields.char(string='Validation Rule'),
+        'css_classes': fields.char(string='CSS classes'),
+        'clearfix': fields.boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field'),
+    }
+
+    _defaults = {
+        'active': True,
+        'sequence': 1000,
+        'class': 'col-lg-6',
+    }
+
+class website_checkout_shipping_fields(osv.Model):
+    """res.partner shipping fields for the website checkout form"""
+    _name = 'website.checkout_shipping_fields'
+    _description = 'Checkout Shipping Fields'
+    _order = 'sequence, res_partner_field_id'
+
+    _columns = {
+        'sequence': fields.integer('Sequence', help='Sequence number for ordering'),
+        'show': fields.boolean(string='Show', help='Show field in webpage'),
+        'res_partner_field_id': fields.many2one('ir.model.fields',
+                                                string="res.partner Field",
+                                                domain="[('model_id.model', '=', 'res.partner')]",
+                                                required=True),
+        'mandatory': fields.boolean(string='Mandatory'),
+        'label': fields.char(string='Label', translate=True),
+        'placeholder': fields.char(string='Placeholder Text', translate=True),
+        'validation_rule': fields.char(string='Validation Rule'),
+        'css_classes': fields.char(string='CSS classes'),
+        'clearfix': fields.boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field'),
+    }
+
+    _defaults = {
+        'active': True,
+        'sequence': 1000,
+        'class': 'col-lg-6',
+    }
+
+
 # Mandatory fields setting for checkout form
 # HINT: used in website_sale_donate main.py -> _get_mandatory_*_fields
 # ATTENTION: You must use *_mandatory_bill and *_mandatory_ship after the field name! (to later identify the fields)
 class website_sale_donate_settings(osv.Model):
     _inherit = 'website'
     _columns = {
-        # Billing
-        'name_mandatory_bill': fields.boolean(string='name'),
-        'phone_mandatory_bill': fields.boolean(string='phone'),
-        'email_mandatory_bill': fields.boolean(string='email'),
-        'street2_mandatory_bill': fields.boolean(string='street2'),
-        'city_mandatory_bill': fields.boolean(string='city'),
-        'country_id_mandatory_bill': fields.boolean(string='country_id'),
-        'street_mandatory_bill': fields.boolean(string='street'),
-        'state_id_mandatory_bill': fields.boolean(string='state_id'),
-        'vat_mandatory_bill': fields.boolean(string='state_id'),
-        'vat_subjected_mandatory_bill': fields.boolean(string='state_id'),
-        'zip_mandatory_bill': fields.boolean(string='state_id'),
-        # Shipping
-        'name_mandatory_ship': fields.boolean(string='name'),
-        'phone_mandatory_ship': fields.boolean(string='phone'),
-        'street_mandatory_ship': fields.boolean(string='street'),
-        'city_mandatory_ship': fields.boolean(string='city'),
-        'country_id_mandatory_ship': fields.boolean(string='country_id'),
-        'state_id_mandatory_ship': fields.boolean(string='state_id'),
-        'zip_mandatory_ship': fields.boolean(string='street2'),
-        # Country
-        'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
+        # Checkout Pages Headers
+        'cart_page_header': fields.char(string='Cart Page Main Header', translate=True),
+        'checkout_page_header': fields.char(string='Checkout Page Main Header', translate=True),
+        'payment_page_header': fields.char(string='Payment Page Main Header', translate=True),
+        'confirmation_page_header': fields.char(string='Confirmation Page Main Header', translate=True),
+        # Checkout Steps Indicator
+        'cart_indicator': fields.char(string='Indicator Cart', translate=True),
+        'checkout_indicator': fields.char(string='Indicator Checkout', translate=True),
+        'payment_indicator': fields.char(string='Indicator Payment', translate=True),
+        'confirmation_indicator': fields.char(string='Indicator Confirmation', translate=True),
+        # small-cart-header
+        'small_cart_title': fields.char(string='Small Cart Title', translate=True),
+        # Section h3's for the custom checkout form
+        'checkout_title': fields.char(string='Data Checkout-Form-Title', translate=True),
+        'payment_title': fields.char(string='Payment Checkout-Form-Title', translate=True),
+        'delivery_title': fields.char(string='Delivery Checkout-Form-Title', translate=True),
+        # Buttons
+        'button_login': fields.char(string='Login Button', translate=True),
+        'button_logout': fields.char(string='Logout Button', translate=True),
+        'button_back_to_page': fields.char(string='Back to Page Button', translate=True),
+        'button_cart_to_data': fields.char(string='Cart to Data Button', translate=True),
+        'button_data_to_payment': fields.char(string='Data to Payment Button', translate=True),
         # Behaviour
+        'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
         'add_to_cart_stay_on_page': fields.boolean(string='Add to Cart and stay on Page'),
+        'checkout_show_login_button': fields.boolean(string='Show Login Button on Checkout Page'),
+        'one_page_checkout': fields.boolean(string='One-Page-Checkout'),
+        'hide_shipping_address': fields.boolean(string='Hide Shipping Address'),
+        'hide_delivery_methods': fields.boolean(string='Hide Delivery Methods'),
         # Global Fields for Snippets
         'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox'),
+        'cart_page_top': fields.html(string='Cart Page Top Snippet Dropping Area'),
+        'cart_page_bottom': fields.html(string='Cart Page Bottom Snippet Dropping Area'),
+        'checkout_page_top': fields.html(string='Checkout Page Top Snippet Dropping Area'),
+        'checkout_page_bottom': fields.html(string='Checkout Page Bottom Snippet Dropping Area'),
+        'payment_page_top': fields.html(string='Payment Page Top Snippet Dropping Area'),
+        'payment_page_bottom': fields.html(string='Payment Page Bottom Snippet Dropping Area'),
+        'confirmation_page_top': fields.html(string='Payment Page Top Snippet Dropping Area'),
+        'confirmation_page_bottom': fields.html(string='Payment Page Bottom Snippet Dropping Area'),
         # Square Image Dimensions
         'square_image_x': fields.integer(string='Product SquareImage x-Size in Pixel'),
         'square_image_y': fields.integer(string='Product SquareImage y-Size in Pixel'),
     }
     _defaults = {
-        # Mandatory for billing
-        'name_mandatory_bill': 1,
-        'email_mandatory_bill': 1,
-        'country_id_mandatory_bill': 1,
-        # Mandatory for shipping
-        'name_mandatory_ship': 1,
-        'phone_mandatory_ship': 1,
-        'street_mandatory_ship': 1,
-        'city_mandatory_ship': 1,
-        'country_id_mandatory_ship': 1,
         'square_image_x': 400,
         'square_image_y': 400,
     }
@@ -165,7 +243,7 @@ class product_template(osv.Model):
             help="Medium-sized image of the background. It is automatically "\
                  "resized as a 128x128px image, with aspect ratio preserved, "\
                  "only when the image exceeds one of those sizes. Use this field in form views or some kanban views."),
-        # Override of the orignal image functional fields to store full size images!
+        # Override of the original image functional fields to store full size images!
         'image_medium': fields.function(_get_image, fnct_inv=_set_image,
             string="Medium-sized image", type="binary", multi="_get_image",
             store={

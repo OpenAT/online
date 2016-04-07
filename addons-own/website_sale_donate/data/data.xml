@@ -43,7 +43,7 @@
         <!-- Default Delivery Method -->
         <record id="delivery_method_none" model="delivery.carrier">
             <field name="name">None</field>
-            <field name="active" eval="True"/>
+            <field name="show" eval="True"/>
             <field name="partner_id" search="[]" model="res.partner"/>
             <field name="product_id" ref="product.product_product_consultant"/>
             <field name="normal_price">0</field>
@@ -51,5 +51,303 @@
             <field name="website_description">None</field>
         </record>
 
+        <!-- Checkout Billing Fields -->
+        <record id="fore_name_web" model="website.checkout_billing_fields">
+            <field name="sequence">5</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Fore Name</field>
+            <field name="placeholder">John</field>
+            <field name="css_classes">col-lg-6 hidden</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="name" model="website.checkout_billing_fields">
+            <field name="sequence">10</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_name"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Name</field>
+            <field name="placeholder">Mr. John Doe</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="company_name_web" model="website.checkout_billing_fields">
+            <field name="sequence">20</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_company_name_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Company</field>
+            <field name="placeholder">Company Name (optional)</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="email" model="website.checkout_billing_fields">
+            <field name="sequence">30</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_email"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">EMail</field>
+            <field name="placeholder">john.doe@test.com</field>
+            <field name="validation_rule">email</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="phone" model="website.checkout_billing_fields">
+            <field name="sequence">40</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_phone"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Mobile</field>
+            <field name="placeholder">+43 664 123456789</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="post_office_box_web" model="website.checkout_billing_fields">
+            <field name="sequence">50</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_post_office_box_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">P.O. Box</field>
+            <field name="placeholder">1242</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="street" model="website.checkout_billing_fields">
+            <field name="sequence">60</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_street"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Street</field>
+            <field name="placeholder">Main Street 52</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="street2" model="website.checkout_billing_fields">
+            <field name="sequence">60</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_street2"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Street Second Line</field>
+            <field name="placeholder">near the woods at pine cove</field>
+            <field name="css_classes">col-lg-6 hidden</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="street_number_web" model="website.checkout_billing_fields">
+            <field name="sequence">70</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_street_number_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Street Number</field>
+            <field name="placeholder">52a</field>
+            <field name="css_classes">col-lg-6 hidden</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="city" model="website.checkout_billing_fields">
+            <field name="sequence">80</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_city"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">City</field>
+            <field name="placeholder">New York</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="zip" model="website.checkout_billing_fields">
+            <field name="sequence">90</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_zip"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">ZIP</field>
+            <field name="placeholder">56382</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="country_id" model="website.checkout_billing_fields">
+            <field name="sequence">100</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_country_id"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Country</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="state_id" model="website.checkout_billing_fields">
+            <field name="sequence">110</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_state_id"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">State</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="vat" model="website.checkout_billing_fields">
+            <field name="sequence">120</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_vat"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">VAT</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="vat_subjected" model="website.checkout_billing_fields">
+            <field name="sequence">130</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="account.field_res_partner_vat_subjected"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">VAT Subjected</field>
+            <field name="css_classes">col-lg-6 hidden</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="newsletter_web" model="website.checkout_billing_fields">
+            <field name="sequence">140</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Newsletter</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="donation_receipt_web" model="website.checkout_billing_fields">
+            <field name="sequence">150</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_receipt_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Donation Receipt</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+
+        <!-- Checkout Shipping Fields -->
+        <record id="shipping_fore_name_web" model="website.checkout_shipping_fields">
+            <field name="sequence">5</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Fore Name</field>
+            <field name="placeholder">John</field>
+            <field name="css_classes">col-lg-6 hidden</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_name" model="website.checkout_shipping_fields">
+            <field name="sequence">10</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_name"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Name</field>
+            <field name="placeholder">Mr. John Doe</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_company_name_web" model="website.checkout_shipping_fields">
+            <field name="sequence">20</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_company_name_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Company</field>
+            <field name="placeholder">Company Name (optional)</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_email" model="website.checkout_shipping_fields">
+            <field name="sequence">30</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_email"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">EMail</field>
+            <field name="placeholder">john.doe@test.com</field>
+            <field name="validation_rule">email</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_phone" model="website.checkout_shipping_fields">
+            <field name="sequence">40</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_phone"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Mobile</field>
+            <field name="placeholder">+43 664 123456789</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_post_office_box_web" model="website.checkout_shipping_fields">
+            <field name="sequence">50</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_post_office_box_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">P.O. Box</field>
+            <field name="placeholder">1242</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_street" model="website.checkout_shipping_fields">
+            <field name="sequence">60</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_street"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Street</field>
+            <field name="placeholder">Main Street 52</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_street2" model="website.checkout_shipping_fields">
+            <field name="sequence">60</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_street2"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Street Second Line</field>
+            <field name="placeholder">near the woods at pine cove</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_street_number_web" model="website.checkout_shipping_fields">
+            <field name="sequence">70</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_street_number_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Street Number</field>
+            <field name="placeholder">52a</field>
+            <field name="css_classes">col-lg-6 hidden</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_city" model="website.checkout_shipping_fields">
+            <field name="sequence">80</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_city"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">City</field>
+            <field name="placeholder">New York</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_zip" model="website.checkout_shipping_fields">
+            <field name="sequence">90</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_zip"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">ZIP</field>
+            <field name="placeholder">56382</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_country_id" model="website.checkout_shipping_fields">
+            <field name="sequence">100</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_country_id"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Country</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="shipping_state_id" model="website.checkout_shipping_fields">
+            <field name="sequence">110</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_state_id"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">State</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        
     </data>
 </openerp>

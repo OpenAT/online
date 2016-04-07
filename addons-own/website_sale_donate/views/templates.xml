@@ -8,24 +8,46 @@
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css'/>
                 <!-- INFO: jquery validate is loaded in website_tools -->
                 <!-- DISABLED just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_product_price_form_validate.js"></script>-->
-                <!-- DISABLED just prepared: <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_contact_form_validate.js"></script> -->
+                <script type="text/javascript" src="/website_sale_donate/static/src/js/wsd_checkout_form_validate.js"/>
+                <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_small_cart.js"/>
+                <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_payment_opc.js"/>
             </xpath>
         </template>
 
-        <!-- INHERIT SUB-TEMPLATE total: Hide Tax if 0 -->
-        <template id="wsd_total" inherit_id="website_sale.total">
-            <xpath expr="//tr[@id='order_total_taxes']" position="attributes">
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_tax else 'text-muted hidden'</attribute>
-            </xpath>
+        <!-- SUBTEMPLATE: Login / Logout Button -->
+        <template id="wsd_button_login_logout" name="Login-Logout Button">
+            <t t-set="checkout" t-value="checkout"/>
+            <t t-if="not checkout">
+                <t t-set="checkout" t-value="dict()"/>
+            </t>
+            <!-- Login / Logout -->
+            <!-- HINT: user_id holds the public_user_id used by default for non logged in website visitors -->
+            <t t-if="website.user_id == user_id">
+                <!-- HINT: Button class must be set by template call -->
+                <a t-att-class="wsd_button_login_logout"
+                   t-attf-href="/web/login?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }&amp;name=#{ checkout.get('name') }">
+                    <t t-if="not website.button_login">Login</t>
+                    <t t-if="website.button_login"><span t-field="website.button_login"/></t>
+                </a>
+            </t>
+            <t t-if="website.user_id != user_id">
+                <a t-att-class="wsd_button_login_logout"
+                   t-attf-href="/web/session/logout?redirect=#{ request.httprequest.url }">
+                    <t t-if="not website.button_logout">Logout</t>
+                    <t t-if="website.button_logout"><span t-field="website.button_logout"/></t>
+                </a>
+            </t>
         </template>
 
-        <!-- INHERIT SUB-TEMPLATE cart_delivery: Hide Delivery if 0 -->
-        <template id="wsd_total_delivery" inherit_id="website_sale_delivery.cart_delivery">
-            <xpath expr="//tr[@id='order_delivery']" position="attributes">
-                <attribute name="class"></attribute>
-                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_delivery else 'text-muted hidden'</attribute>
-            </xpath>
+        <!-- SUBTEMPLATE: Back to Page Button -->
+        <template id="wsd_button_back_to_page" name="Back to Page Button">
+            <!-- HINT: Button class must be set by template call -->
+            <a t-att-class="wsd_button_back_to_page"
+               t-att-href="request.session.get('last_page') or '#'">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
+                <t t-if="not website.button_back_to_page">Back</t>
+                <t t-if="website.button_back_to_page"><span t-field="website.button_back_to_page"/></t>
+            </a>
         </template>
 
     </data>

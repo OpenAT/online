@@ -52,7 +52,8 @@ This addon depends on auth_signup for signup or account creation and can be used
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
-        'website_sale',
+        'web',
+        'website_sale_donate',
         'website_quote',
         'auth_signup',
     ],
