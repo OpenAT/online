@@ -16,9 +16,26 @@
             </xpath>
         </template>
 
+        <!-- Extend Products item image -->
+        <template id="wsd_products_item_image_extraboxes" inherit_id="website_sale.products_item">
+            <xpath expr="//div[@class='oe_product_image']" position="replace">
+                <div class="wrap_wsd_1">
+                    <div class="wrap_wsd_2">
+                        <div class="oe_product_image">
+                            <a itemprop="url" t-att-href="keep('/shop/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']>1 else None))">
+                                <img itemprop="image" class="img img-responsive" t-att-src="website.image_url(product, 'image', None if product_image_big else '300x300')" t-att-alt="product.name"/>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+
+
         <!-- INHERIT SUB-TEMPLATE products_item: Use Square Images -->
-        <template id="wsd_products_item_image" inherit_id="website_sale.products_item" name="Square Images" customize_show="True" active="False">
-            <xpath expr="//div[@class='oe_product_image']/a/img[@itemprop='image']" position="replace">
+        <template id="wsd_products_item_image" inherit_id="wsd_products_item_image_extraboxes" name="Square Images" customize_show="True" active="False">
+               <xpath expr="//div[@class='oe_product_image']/a/img[@itemprop='image']" position="replace">
                 <img itemprop="image" class="img img-responsive" t-att-src="website.image_url(product, 'image_square')" t-att-alt="product.name"/>
             </xpath>
         </template>
