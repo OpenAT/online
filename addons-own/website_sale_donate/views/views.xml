@@ -94,6 +94,14 @@
                                 <field name="hide_quantity"/>
                                 <field name="price_donate"/>
                                 <field name="price_donate_min" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                                <field name="price_suggested_ids" attrs="{'invisible': [('price_donate','=', False)]}">
+                                    <tree string="Suggested Donation-Values" default_order="sequence" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="amount"/>
+                                        <field name="css_classes"/>
+                                    </tree>
+                                </field>
                                 <field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>
                                 <field name="button_addtocart_text"/>
                                 <field name="hide_panelfooter"/>

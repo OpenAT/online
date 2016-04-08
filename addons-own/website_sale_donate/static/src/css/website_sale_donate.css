@@ -2,6 +2,7 @@
 .fa-shopping-cart:before {
     content: "\f004";
     /*content: "\f16b";*/
+    /*content: "\f16b";*/
     /*content: "\f067";*/
 }
 
@@ -59,11 +60,25 @@ body .oe_website_sale h1 {
 #wsd_checkout_form .billing-fields .form-control-feedback {
     right: 22px;
 }
+/* Checkout form check boxes */
+#wsd_checkout_form .checkbox {
+    min-height: 66.719px;
+    margin: 0;
+    margin-bottom: 15px;
+}
+#wsd_checkout_form .checkbox label {
+    line-height: 1em;
+}
+#wsd_checkout_form .checkbox label input {
+    line-height: 1em;
+}
 
 /* One-Page-Checkout */
-.tab-acquirer-image img {
+#wsd_checkout_form .tab-acquirer-image img,
+#wsd_checkout_form .tab-acquirer-image img.img-responsive {
     display: inline-block;
     max-height: 0.99em;
+    width: auto;
 }
 
 /* Payment Page */
@@ -83,25 +98,48 @@ body .oe_website_sale h1 {
     border-radius: 6px;
 }
 
-#website_sale_donate .oe_price_h4 {
-    font-size: 28px;
+h3.amount_title {
+    text-align: left;
 }
-#website_sale_donate .img-responsive {
+
+#website_sale_donate img.product-image {
     display: inline;
 }
-#wsd-checkout-box .img-responsive {
+#wsd-checkout-box img.product-image {
     width: 200px;
     height: 200px;
     box-shadow: 2px 1px 6px rgb(198, 198, 198);
     border: 3px solid rgb(255, 255, 255);
 }
+.ppt_opc #wsd-checkout-box img.product-image {
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+}
 #wsd-checkout-box .oe_website_spinner {
     width: 100%;
     padding: 0 24%
 }
+#website_sale_donate .oe_price_h4 {
+    font-size: 28px;
+}
 .price_donate,
 #description_sale {
     padding: 0 12%;
+}
+.ppt_opc .price_donate,
+.ppt_opc #description_sale {
+    padding: inherit;
+}
+.ppt_opc .payment_interval_ids small.text-muted {
+    display: block;
+    margin: 0.75em 0 0.25em 0;
+}
+.ppt_opc .payment_interval_ids .radio {
+    margin-top: 0.25em;
+    margin-right: 1em;
 }
 .price_donate .input-group-addon {
     background-color: transparent;
@@ -115,6 +153,18 @@ body .oe_website_sale h1 {
 .price_donate .input-group-addon {
     box-shadow: 0 1px 1px rgba(0, 0, 0, .075);
     color: rgb(119, 119, 119);
+    min-width: 70px;
+}
+.price_donate_suggested_currency {
+    position: absolute;
+    display: inline-block;
+    font-size: 8px;
+    color: grey;
+    line-height: 1em;
+    margin-top: 3px;
+    margin-left: 3px;
+}
+.ppt_opc .price_donate_suggested {
     min-width: 70px;
 }
 /* Crowdfunding */
@@ -178,15 +228,11 @@ body .oe_website_sale h1 {
     padding: 0.75em 0.25em;
     margin: 0;
     font-size: 12px;
-    /* Should be set to the line height of the product quantity input ! */
-    line-height: 1.5em;
+    line-height: 2em;
 }
 .small_cart td[name="product_image"] img {
-     width: 1.5em;
-     height: 1.5em;
-}
-.small_cart a.remove_product {
-    margin-right: 1em;
+     width: 2em;
+     height: 2em;
 }
 
 .small_cart #cart_products.table {
@@ -198,7 +244,7 @@ body .oe_website_sale h1 {
 }
 .small_cart .oe_website_spinner {
     width: auto;
-    display: inline;
+    /*display: inline;*/
 }
 .oe_website_sale .small_cart input.js_quantity {
     min-width: 2em;

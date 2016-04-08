@@ -28,6 +28,24 @@ class res_partner(osv.Model):
         'donation_receipt_web': fields.boolean(string='Donation Receipt Web'),
     }
 
+class product_website_price_buttons(osv.Model):
+    """Suggested Donations-Value-Buttons"""
+    _name = 'product.website_price_buttons'
+    _description = 'Product Website Price Buttons'
+    _order = 'sequence, name'
+
+    _columns = {
+        'sequence': fields.integer('Sequence'),
+        'product_id': fields.many2one('product.template', string='Product', required=True, ondelete='cascade'),
+        'name': fields.char(string='Name'),
+        'amount': fields.float(string='Amount', required=True),
+        'css_classes': fields.char(string='CSS classes'),
+    }
+
+    _defaults = {
+        'sequence': 1000,
+    }
+
 
 class website_checkout_billing_fields(osv.Model):
     """res.partner billing fields for the website checkout form"""
@@ -53,7 +71,7 @@ class website_checkout_billing_fields(osv.Model):
     _defaults = {
         'active': True,
         'sequence': 1000,
-        'class': 'col-lg-6',
+        'css_classes': 'col-lg-6',
     }
 
 class website_checkout_shipping_fields(osv.Model):
@@ -80,7 +98,7 @@ class website_checkout_shipping_fields(osv.Model):
     _defaults = {
         'active': True,
         'sequence': 1000,
-        'class': 'col-lg-6',
+        'css_classes': 'col-lg-6',
     }
 
 
@@ -103,9 +121,10 @@ class website_sale_donate_settings(osv.Model):
         # small-cart-header
         'small_cart_title': fields.char(string='Small Cart Title', translate=True),
         # Section h3's for the custom checkout form
-        'checkout_title': fields.char(string='Data Checkout-Form-Title', translate=True),
-        'payment_title': fields.char(string='Payment Checkout-Form-Title', translate=True),
-        'delivery_title': fields.char(string='Delivery Checkout-Form-Title', translate=True),
+        'amount_title': fields.char(string='Amount (Checkoutbox) Form-Title', translate=True),
+        'checkout_title': fields.char(string='Your Data Form-Title', translate=True),
+        'delivery_title': fields.char(string='Delivery-Option Form-Title', translate=True),
+        'payment_title': fields.char(string='Payment-Option Form-Title', translate=True),
         # Buttons
         'button_login': fields.char(string='Login Button', translate=True),
         'button_logout': fields.char(string='Logout Button', translate=True),
@@ -208,7 +227,8 @@ class product_template(osv.Model):
         # PRODUCT PAGE
         'product_page_template': fields.selection([('website_sale.product', 'Default Layout'),
                                                    ('website_sale_donate.ppt_donate', 'Donation Layout'),
-                                                   ('website_sale_donate.ppt_ahch', 'AHCH Layout')],
+                                                   ('website_sale_donate.ppt_opc', 'One-Page-Checkout Layout'),
+                                                   ('website_sale_donate.ppt_ahch', 'Simple Layout')],
                                                   string="Product Page Template"),
         'parallax_image': fields.binary(string='Background Parallax Image'),
         'parallax_speed': fields.selection([('static', 'Static'), ('slow', 'Slow')], string='Parallax Speed'),
@@ -227,6 +247,8 @@ class product_template(osv.Model):
         'hide_quantity': fields.boolean('Hide Product-Quantity-Selector in CP'),
         'price_donate': fields.boolean('Arbitrary Price'),
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
+        'price_suggested_ids': fields.one2many('product.website_price_buttons', 'product_id',
+                                               string='Suggested Donation-Values'),
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
         'button_addtocart_text': fields.char('Add-To-Cart Button Text', size=30, translate=True),
         'hide_panelfooter': fields.boolean('Hide Checkout Panel Footer'),

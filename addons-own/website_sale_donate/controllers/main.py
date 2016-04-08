@@ -34,7 +34,7 @@ class website_sale_donate(website_sale):
     #       ALSO i need to update the java script that loads the product variant pictures
     # /shop/product/<model("product.template"):product>
     @http.route()
-    def product(self, product, category='', search='', **kwargs):
+    def product(self, product, category='', search='', add_qty=1, set_qty=0, **kwargs):
 
         # Store the current request url in the session for possible returns
         # INFO: html escaping is done by request.redirect so not needed here!
@@ -43,6 +43,16 @@ class website_sale_donate(website_sale):
         request.session['last_page'] = request.httprequest.base_url + '?' + query
 
         cr, uid, context = request.cr, request.uid, request.context
+
+        # One-Page-Checkout - do cart_update on post data
+        if request.httprequest.method == 'POST' and product.product_page_template == u'website_sale_donate.ppt_opc':
+            # Create or Update sales Order and set the Quantity to the value of the qty selector in the checkoutbox
+            if not kwargs.get('set_qty'):
+                kwargs['set_qty'] = add_qty
+            if not kwargs.get('product_id'):
+                kwargs['product_id'] = product.id
+            self.cart_update(**kwargs)
+
 
         # this will basically pre-render the product page and store it in productpage
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
@@ -53,7 +63,15 @@ class website_sale_donate(website_sale):
         if product.product_page_template:
             productpage = request.website.render(product.product_page_template, productpage.qcontext)
 
-        # Add Warnings (e.g. by cart_update)
+            # One-Page-Checkout: If the template is ppt_opc
+            if product.product_page_template == u'website_sale_donate.ppt_opc':
+                if request.httprequest.method == 'POST':
+                    checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
+                else:
+                    checkoutpage = self.checkout(one_page_checkout=True)
+                productpage.qcontext.update(checkoutpage.qcontext)
+
+        # Add Warnings if the page is called (redirected from cart_update) with warnings in GET request
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
 
@@ -337,19 +355,20 @@ class website_sale_donate(website_sale):
 
     # Checkout Page
     @http.route()
-    def checkout(self, **post):
-
-        # Store or get Acquirer in/from Session (Payment-Method)
-        # if post.get('acquirer'):
-        #     request.session['last_acquirer_id'] = post.get('acquirer')
-        # elif request.session['last_acquirer_id']:
-        #     post['acquirer'] = request.session['last_acquirer_id']
+    def checkout(self, one_page_checkout=False, **post):
+        cr, uid, context = request.cr, request.uid, request.context
 
         # Render the Checkout Page
         checkout_page = super(website_sale_donate, self).checkout(**post)
 
-        # If One-Page-Checkout is enabled and checkout_page is not just a redirection
-        if request.website['one_page_checkout'] and hasattr(checkout_page, 'qcontext'):
+        if post and post.get('acquirer'):
+            checkout_page.qcontext.update({'acquirer_id': post.get('acquirer')})
+
+        # If One-Page-Checkout is enabled and checkout_page is not just a redirection or if one_page_checkout in post
+        if (request.website['one_page_checkout'] or one_page_checkout) and hasattr(checkout_page, 'qcontext'):
+
+            # Make sure one one_page_checkout is true and in the qcontext
+            checkout_page.qcontext['one_page_checkout'] = True
 
             # Checkout-Page was already called and now submits it's form data
             if post:
@@ -363,61 +382,80 @@ class website_sale_donate(website_sale):
                     post.pop('carrier_id')
 
                 # STEP 2: confirm_order
-                # Validate the checkout page form data and create or update partner and sales order
+                # confirm_order validates the form-data and creates or updates partner and sales-order
                 confirm_order = self.confirm_order(**post)
-                # Check for errors
-                if confirm_order.qcontext:
-                    if confirm_order.qcontext.get('error'):
-                        # Extend qcontext with acquirer data (populated with data from post)
-                        payment_page = self.opc_payment(**post)
-                        if payment_page.qcontext:
-                            # Add the qcontext of the payment page to the checkout page
-                            confirm_order.qcontext.update(payment_page.qcontext)
-                            # Render the checkout page to show the errors (errors from payment page would be included)
-                            # HINT: confirm_order controller renders the checkout page again on errors
-                            # HINT: confirm_order controller will not save or update any shippings on error
-                            #       therefore adding field_date to shippings is not needed here
-                            return confirm_order
-                        # On redirections caused by errors found by the payment controller
-                        else:
-                            return payment_page
-                # Check for a different redirection than '/shop/payment' caused by an error
-                if hasattr(confirm_order, 'location'):
-                    if confirm_order.location != '/shop/payment':
-                        # Return the redirection
-                        return confirm_order
-
-                # STEP 3: payment
-                # Validate the payment page after sale order and partner got created or updated in STEP 1
                 payment_page = self.opc_payment(**post)
-                # Check for redirections caused by errors
-                if not payment_page.qcontext:
-                    return payment_page
-
-                # Process the checkout controller again to include possible changes made in STEP 2
+                # Process the checkout controller again to include possible changes made by confirm_order
                 checkout_page = super(website_sale_donate, self).checkout(**post)
-
-                # ATTENTION: Add the qcontext of the payment page to the checkout page (not needed later on)
+                checkout_page.qcontext['one_page_checkout'] = True
+                checkout_page.qcontext.update(confirm_order.qcontext)
                 checkout_page.qcontext.update(payment_page.qcontext)
-
-                # Check for errors found by the payment controller
-                if payment_page.qcontext.get('errors'):
-                    # Render the checkout page to show the errors
+                # On errors return the checkout_page
+                if checkout_page.qcontext.get('error') \
+                        or confirm_order.location != '/shop/payment' \
+                        or payment_page.qcontext.get('errors'):
+                    print 'ERRORS FOUND :)'
                     return checkout_page
+                # STEP 2: END (SUCCESSFUL)
 
-                # STEP 4: payment_transaction
+                # STEP 3: payment_transaction
                 # Create or update the Payment-Transaction and update the Sales Order
                 # HINT: Normally done by a json request before the pay-now form get's auto submitted by Java Script
                 if not post.get('acquirer'):
-                    # HINT: payment qcontext was already added in STEP 2
+                    # TODO: Add error message to errors 'Please select a payment Method'
+                    # TODO: Check what happens if a 'wrong' acquirer was set at a product_page with ppt_opc
                     return checkout_page
-                # TODO: BUGFixing - Transaction is not updated after first creation ? Force update may be needed
-                pay_now = self.payment_transaction(int(post.get('acquirer')))
-                # Check for redirection caused by errors
-                if not isinstance(pay_now, int):
-                    return pay_now
 
-                # STEP 5: Open the payment provider page OR directly validate the sales order if amount.total is 0
+                # TODO: BUGFixing - Transaction is not updated after first creation ? Force update may be needed
+                #pay_now = self.payment_transaction(int(post.get('acquirer')))
+                # TESTING - SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
+                # now we have to create the tx manually here
+                acquirer_id = int(post.get('acquirer'))
+                request.session['acquirer_id'] = acquirer_id
+                checkout_page.qcontext.update({'acquirer_id': request.session.get('acquirer_id')})
+                transaction_obj = request.registry.get('payment.transaction')
+                order = request.website.sale_get_order(context=context)
+
+                if not order or not order.order_line or acquirer_id is None:
+                    return request.redirect("/shop/checkout")
+
+                assert order.partner_id.id != request.website.partner_id.id
+
+                # find an already existing transaction
+                tx = request.website.sale_get_transaction()
+                if tx:
+                    tx_id = tx.id
+                    if tx.reference != order.name:
+                        tx = False
+                        tx_id = False
+                    elif tx.state == 'draft':  # button clicked but no more info -> rewrite on tx or create a new one ?
+                        tx.write({
+                            'acquirer_id': acquirer_id,
+                            'amount': order.amount_total,
+                        })
+                if not tx:
+                    tx_id = transaction_obj.create(cr, SUPERUSER_ID, {
+                        'acquirer_id': acquirer_id,
+                        'type': 'form',
+                        'amount': order.amount_total,
+                        'currency_id': order.pricelist_id.currency_id.id,
+                        'partner_id': order.partner_id.id,
+                        'partner_country_id': order.partner_id.country_id.id,
+                        'reference': order.name,
+                        'sale_order_id': order.id,
+                    }, context=context)
+                    request.session['sale_transaction_id'] = tx_id
+
+                # update quotation
+                so_tx = request.registry['sale.order'].write(
+                        cr, SUPERUSER_ID, [order.id], {
+                            'payment_acquirer_id': acquirer_id,
+                            'payment_tx_id': request.session['sale_transaction_id']
+                        }, context=context)
+                # STEP 3: END (SUCCESSFUL)
+
+                # STEP 4: set sales order to "send" and redirect to the payment provider
+                # Open the payment provider page OR directly validate the sales order if amount.total is 0
                 # Return the checkout page and auto submit the correct Pay-Now_Button_Form by java script
                 # TODO: if amount.total == 0 Directly set sales order to done and redirect to /shop/payment/validate
                 # TODO: Also check this behaviour if not One-Page-Checkout !!!
@@ -429,15 +467,8 @@ class website_sale_donate(website_sale):
             # Checkout-Page is called for the first time (with no post data)
             else:
                 payment_page = self.opc_payment()
-                if hasattr(payment_page, 'qcontext'):
-                    # Add the qcontext of the payment page to the checkout page
-                    checkout_page.qcontext.update(payment_page.qcontext)
-                    # Render the checkout page
-                    return checkout_page
-                # On error
-                else:
-                    # Return the redirection caused by the payment controller
-                    return payment_page
+                checkout_page.qcontext.update(payment_page.qcontext)
+                return checkout_page
 
         return checkout_page
 

@@ -31,12 +31,14 @@ class website_sale_donate_config_settings(osv.osv_memory):
         'small_cart_title': fields.related('website_id', 'small_cart_title', type="char",
                                            string='Small Cart Title', translate=True),
         # Section h3's for the custom checkout form
+        'amount_title': fields.related('website_id', 'amount_title', type="char",
+                                         string='Amount (Checkoutbox) Form-Title', translate=True),
         'checkout_title': fields.related('website_id', 'checkout_title', type="char",
-                                         string='Data Checkout-Form-Title', translate=True),
-        'payment_title': fields.related('website_id', 'payment_title', type="char",
-                                        string='Payment Checkout-Form-Title', translate=True),
+                                         string='Your Data Form-Title', translate=True),
         'delivery_title': fields.related('website_id', 'delivery_title', type="char",
-                                         string='Delivery Checkout-Form-Title', translate=True),
+                                         string='Delivery-Option Form-Title', translate=True),
+        'payment_title': fields.related('website_id', 'payment_title', type="char",
+                                        string='Payment-Option Form-Title', translate=True),
         # Button Text
         'button_login': fields.related('website_id', 'button_login', type="char",
                                          string='Login Button', translate=True),

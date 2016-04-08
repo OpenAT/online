@@ -125,22 +125,28 @@
                     </group>
                     <!-- Section h3's for the custom checkout form -->
                     <group string="Checkout-Form Section Titles">
+                        <label for="amount_title"/>
+                        <div name="amount_title">
+                            <div class="oe_inline">
+                                <field name="amount_title"/>
+                            </div>
+                        </div>
                         <label for="checkout_title"/>
                         <div name="checkout_title">
                             <div class="oe_inline">
                                 <field name="checkout_title"/>
                             </div>
                         </div>
-                        <label for="payment_title"/>
-                        <div name="payment_title">
-                            <div class="oe_inline">
-                                <field name="payment_title"/>
-                            </div>
-                        </div>
                         <label for="delivery_title"/>
                         <div name="delivery_title">
                             <div class="oe_inline">
                                 <field name="delivery_title"/>
+                            </div>
+                        </div>
+                        <label for="payment_title"/>
+                        <div name="payment_title">
+                            <div class="oe_inline">
+                                <field name="payment_title"/>
                             </div>
                         </div>
                     </group>

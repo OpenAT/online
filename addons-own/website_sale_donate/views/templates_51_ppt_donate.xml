@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
+    <data noupdate="0">
 
         <!-- PRODUCT PAGE TEMPLATE: ppt_donate -->
         <template id="ppt_donate" name="Product Page Donate Layout">
@@ -15,7 +15,7 @@
                              t-att-data-scroll-background-offset="'0.6' if product.parallax_speed == 'slow' else 0"
                              data-scroll-background-ratio="0">
                         <div class="row">
-                            <div class="col-sm-16">
+                            <div class="col-md-12">
                                 <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.price) &gt; 0.1 and 'discount'}" id="product_detail">
 
                                     <!-- Categories, Search and Publish-Button Bar -->
@@ -27,7 +27,7 @@
                                     <!-- Top HTML Description Field -->
                                     <t t-if="product.show_desctop">
                                         <div class="row">
-                                            <div class="col-sm-16">
+                                            <div class="col-md-12">
                                                 <div t-field="product.desc_short_top" class="oe_structure" id="product_desc_short_top"/>
                                             </div>
                                         </div>
@@ -57,7 +57,7 @@
                                     <!-- Crowdfunding Info -->
                                     <t t-if="product.funding_goal">
                                         <div class="row">
-                                            <div class="col-sm-16">
+                                            <div class="col-md-12">
                                                 <t t-call="website_sale_donate.funding_page_text"/>
                                             </div>
                                         </div>
@@ -66,7 +66,7 @@
                                     <!-- Bottom HTML Description Field -->
                                     <t t-if="product.show_descbottom">
                                         <div class="row">
-                                            <div class="col-sm-16">
+                                            <div class="col-md-12">
                                                 <div t-field="product.desc_short_bottom" class="oe_structure" id="product_desc_short_bottom"/>
                                             </div>
                                         </div>
@@ -82,8 +82,10 @@
                     <!-- Footer Section (without parallax image) -->
                     <section>
                         <div class="row">
-                            <!-- Footer HTML Description Field -->
-                            <div itemprop="description" t-field="product.website_description" class="oe_structure" id="product_full_description"/>
+                            <div class="col-md-12">
+                                <!-- Footer HTML Description Field -->
+                                <div itemprop="description" t-field="product.website_description" class="oe_structure" id="product_full_description"/>
+                            </div>
                         </div>
                     </section>
 
@@ -113,7 +115,7 @@
         <!-- INHERIT PRODUCT PAGE TEMPLATE (PPT) ppt_donate: show shopping cart below checkoutbox full width -->
         <template id="ppt_donate_small_cart_full" inherit_id="website_sale_donate.ppt_donate" name="Show Cart" customize_show="True" active="False">
             <xpath expr="//div[@id='wsd-checkout-box']" position="after">
-                <div class="col-sm-16">
+                <div class="col-md-12">
                     <t t-call="website_sale_donate.checkoutbox_small_cart"/>
                 </div>
             </xpath>

@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     // Remove product from (small) cart
     $(".oe_cart a.remove_product").click( function () {
         var data_line_id = $(this).data('line-id');

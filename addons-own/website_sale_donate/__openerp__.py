@@ -76,7 +76,7 @@ Anpassungen des Online-Shops für NPOs
         'website_sale',
         'website_sale_delivery',
         'website_event',
-        'website_blog'
+        'website_blog',
     ],
     'installable': True,
     'data': [
@@ -90,6 +90,7 @@ Anpassungen des Online-Shops für NPOs
         'views/templates_50_ppt_subtemplates.xml',
         'views/templates_51_ppt_donate.xml',
         'views/templates_52_ppt_ahch.xml',
+        'views/templates_53_ppt_opc.xml',
         'views/templates_60_checkout_steps.xml',
         'views/views.xml',
         'views/res_config.xml',

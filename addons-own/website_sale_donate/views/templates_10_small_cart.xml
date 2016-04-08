@@ -77,12 +77,12 @@
                                           t-field-options='{"widget": "image", "class": "img-rounded"}'/>
                                 </td>
                                 <!-- Product Information -->
-                                <td t-if="line.product_id.product_tmpl_id" name="product_info" class="text-left">
+                                <td t-if="line.product_id.product_tmpl_id" name="product_info" class="text-left form-inline">
                                     <div class="text-muted">
                                         <!-- DISABLED: Unit of Sale -->
                                         <!--<small class="text-muted" t-raw="'{:.0f}'.format(int(line.product_uos_qty))"/>-->
                                         <!-- Remove Product -->
-                                        <a href="#" class="remove_product pull-left"
+                                        <a href="#" class="remove_product btn btn-sm btn-link"
                                            t-att-data-line-id="line.id">
                                             <span class="glyphicon glyphicon-remove"/>
                                         </a>

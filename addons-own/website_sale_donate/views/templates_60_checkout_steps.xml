@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
+    <data noupdate="0">
 
         <!-- SUBTEMPLATE: Checkout Pages Header -->
         <template id="wsd_checkout_pages_header" name="Checkout Pages Custom Header and Checkout-Step-Indicator">
+            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
+
             <!-- Page Header and Checkout-Step-Indicator -->
             <div class="row wsd_checkout_pages_header">
                 <div class="col-md-12" id="wsd_checkout_steps_nav">
@@ -12,19 +14,19 @@
                     <div class="navbar checkout_steps_navigation" role="navigation">
 
                         <!-- Checkout-Step-Indicator -->
-                        <t t-if="not website.one_page_checkout">
+                        <t t-if="not one_page_checkout">
                             <ul class="checkout_steps_indicator nav nav-tabs navbar-left">
                                 <li role="presentation" t-att-class="'cart active' if cart_page else 'cart'">
-                                    <a href="/shop/cart"><span t-esc="website.cart_page_header"/></a>
+                                    <a href="/shop/cart"><span t-esc="website.cart_indicator"/></a>
                                 </li>
                                 <li role="presentation" t-att-class="'checkout active' if checkout_page else 'checkout'">
-                                    <a href="/shop/checkout"><span t-esc="website.checkout_page_header"/></a>
+                                    <a href="/shop/checkout"><span t-esc="website.checkout_indicator"/></a>
                                 </li>
                                 <li role="presentation" t-att-class="'payment disabled active' if payment_page else 'payment disabled'">
-                                    <a href="#"><span t-esc="website.payment_page_header"/></a>
+                                    <a href="#"><span t-esc="website.payment_indicator"/></a>
                                 </li>
                                 <li role="presentation" t-att-class="'confirmation disabled active' if confirmation_page else 'confirmation disabled'">
-                                    <a href="#"><span t-esc="website.confirmation_page_header"/></a>
+                                    <a href="#"><span t-esc="website.confirmation_indicator"/></a>
                                 </li>
                             </ul>
                         </t>
@@ -70,7 +72,7 @@
         <template id="wsd_total" inherit_id="website_sale.total">
             <xpath expr="//tr[@id='order_total_taxes']" position="attributes">
                 <attribute name="class"></attribute>
-                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_tax else 'text-muted hidden'</attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order and website_sale_order.amount_tax else 'text-muted hidden'</attribute>
             </xpath>
         </template>
 
@@ -78,7 +80,7 @@
         <template id="wsd_total_delivery" inherit_id="website_sale_delivery.cart_delivery">
             <xpath expr="//tr[@id='order_delivery']" position="attributes">
                 <attribute name="class"></attribute>
-                <attribute name="t-att-class">'text-muted' if website_sale_order.amount_delivery else 'text-muted hidden'</attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order and website_sale_order.amount_delivery else 'text-muted hidden'</attribute>
             </xpath>
         </template>
 
@@ -198,6 +200,7 @@
 
         <!-- SUBTEMPLATE Checkout Billing Fields -->
         <template id="wsd_checkout_form_billing_fields" name="wsd checkout-form-billing-fields">
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
 
             <!-- GENERAL char and boolean fields -->
             <t t-foreach="billing_fields or []" t-as="billing_field">
@@ -289,7 +292,7 @@
             <!-- SHIPPING ADDRESS SELECTOR -->
             <t t-if="not website.hide_shipping_address">
                 <!-- Correct an odoo Bug? Shipping Address is always shown after the first call of payment -->
-                <t t-if="website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id">
+                <t t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">
                     <t t-set="shipping_id" t-value="0"/>
                 </t>
 
@@ -320,6 +323,7 @@
         <!-- SUBTEMPLATE Checkout Shipping Fields -->
         <!-- HINT: Field names are prefixed with shipping_ -->
         <template id="wsd_checkout_form_shipping_fields" name="wsd checkout-form-shipping-fields">
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
 
             <!-- GENERAL char and boolean fields -->
             <t t-foreach="shipping_fields or []" t-as="shipping_field">
@@ -405,14 +409,15 @@
         <!-- SUBTEMPLATE ONE-PAGE-CHECKOUT: Payment-Method (Acquirers) and Delivery-Method Selection -->
         <template id="wsd_opc_payment" name="Payment One-Page-Checkout">
             <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
 
             <!-- DELIVERY Options -->
             <div t-if="deliveries and not website.hide_delivery_methods"
                  class="row wsd_opc_delivery"
-                 t-att-id="'delivery_carrier' if not website.one_page_checkout else ''">
+                 t-att-id="'delivery_carrier' if not one_page_checkout else ''">
                 <!-- Header: Delivery -->
                 <div class="col-lg-12">
-                    <h3>
+                    <h3 class="delivery_title">
                         <t t-if="website.delivery_title"><span t-field="website.delivery_title"/></t>
                         <t t-if="not website.delivery_title">Delivery</t>
                     </h3>
@@ -443,7 +448,7 @@
             <div class="row js_payment wsd_opc_payment" t-if="acquirers" id="payment_method">
                 <!-- Header: Payment -->
                 <div class="col-lg-12">
-                    <h3>
+                    <h3 class="payment_title">
                         <t t-if="website.payment_title"><span t-field="website.payment_title"/></t>
                         <t t-if="not website.payment_title">Payment</t>
                     </h3>
@@ -463,19 +468,35 @@
                     <!-- http://getbootstrap.com/javascript/#buttons -->
                     <!-- http://getbootstrap.com/components/#nav-tabs -->
                     <!-- http://stackoverflow.com/questions/34677186/html-form-with-bootstrap-togglabe-tabs-by-radio-buttons -->
-                    <t t-set="acquirer_id" t-value="acquirer_id or acquirers[0].id"/>
+                    <!-- Get valid acquirer_id for default selection -->
+                    <t t-set="acquirer_id" t-value="acquirer or acquirer_id"/>
+                    <t t-set="first_valid_acquirer_id" t-value="False"/>
+                    <t t-foreach="acquirers or []" t-as="acquirer">
+                        <t t-if="acquirer.button and ((website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)))">
+                            <t t-if="(not first_valid_acquirer_id) or str(acquirer.id) == str(acquirer_id)">
+                                <t t-set="first_valid_acquirer_id" t-value="acquirer.id"/>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-set="acquirer_id" t-value="first_valid_acquirer_id"/>
                     <!-- Acquirer-Selection (Payment Method) Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <t t-foreach="acquirers or []" t-as="acquirer">
+                            <!--<t t-set="active_tab" t-value="'active ' if str(acquirer.id) == str(acquirer_id) else ''"/>-->
+                            <!--<t t-set="hidden_tab" t-value="'' if acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) ) else 'hidden'"/>-->
+                            <!--<t t-set="tab_class" t-value="active_tab + hidden_tab"/>-->
                             <!-- Only show correct acquirers (payment methods) -->
-                            <t t-if="acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))">
-                                <li role="presentation" t-att-class="'active' if str(acquirer.id) == str(acquirer_id) else False">
+                            <t t-if="acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) )">
+                                <li role="presentation"
+                                    t-att-class="'active' if str(acquirer.id) == str(acquirer_id) else ''"
+                                    t-att-data-recurring-transactions="'True' if acquirer.recurring_transactions else 'False'">
                                     <a t-att-href="'#aq' + str(acquirer.id)" t-att-aria-controls="'aq' + str(acquirer.id)" role="tab" data-toggle="tab">
                                         <!-- Hidden Input Radio Tag -->
                                         <input type="radio" name="acquirer" class="tab-acquirer-input hidden" autocomplete="off"
                                                t-att-data-input-id="'aq' + str(acquirer.id)"
                                                t-att-value="acquirer.id"
-                                               t-att-checked="str(acquirer.id) == str(acquirer_id)"/>
+                                               t-att-checked="str(acquirer.id) == str(acquirer_id)"
+                                        />
                                         <!-- Acquirer Icon or Default Image -->
                                         <span class="tab-acquirer-image">
                                             <t t-if="not acquirer.acquirer_icon">
@@ -487,7 +508,7 @@
                                             </t>
                                             <t t-if="acquirer.acquirer_icon">
                                                 <span t-field="acquirer.acquirer_icon"
-                                                   t-field-options='{"widget": "image", "class": "media-object"}'/>
+                                                      t-field-options='{"widget": "image", "class": "media-object"}'/>
                                             </t>
                                         </span>
                                         <!-- Acquirer Name -->
@@ -501,16 +522,17 @@
                     <div class="tab-content tab-equal-heights">
                         <t t-foreach="acquirers or []" t-as="acquirer">
                             <!-- Only show correct acquirers (payment methods) -->
-                            <t t-if="acquirer.button and ((website_sale_order.has_recurring and acquirer.recurring_transactions) or (not website_sale_order.has_recurring))">
+                            <t t-if="acquirer.button and ((website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)))">
                                 <div role="tabpanel"
                                      t-att-class="'tab-pane fade in active' if str(acquirer.id) == str(acquirer_id) else 'tab-pane fade'"
                                      t-att-id="'aq' + str(acquirer.id)"
-                                     t-att-data-id="acquirer.id">
+                                     t-att-data-id="acquirer.id"
+                                     t-att-data-recurring-transactions="'True' if acquirer.recurring_transactions else 'False'">
                                     <div t-field="acquirer.pre_msg"/>
-                                    <t t-if="website.one_page_checkout">
+                                    <t t-if="one_page_checkout">
                                         <div t-raw="acquirer.button_opc"/>
                                     </t>
-                                    <t t-if="not website.one_page_checkout">
+                                    <t t-if="not one_page_checkout">
                                         <div t-raw="acquirer.button"/>
                                     </t>
                                 </div>
@@ -523,7 +545,7 @@
             <!-- REDIRECT TO PAYMENT PROVIDER Auto-Submit-Form: Finally redirect to payment-provider if all data is correct -->
             <!-- TODO: Target of form should be _top if aswidget is true (do it with java script?) -->
             <!-- TODO: Hide all input fields with css? (only button remains) -->
-            <t t-if="acquirer_auto_submit and website.one_page_checkout">
+            <t t-if="acquirer_auto_submit and one_page_checkout">
                 <div class="row acquirer_auto_submit">
                     <div class="col-lg-12">
                         <div t-raw="acquirer_auto_submit.button" class="js_payment_auto_submit_form"/>
@@ -535,23 +557,24 @@
 
         <!-- SUBTEMPLATE: CHECKOUT FORM -->
         <template id="wsd_checkout_form" name="WSD Checkout Form">
+            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
 
-            <form t-att-action="'/shop/checkout' if website.one_page_checkout else '/shop/confirm_order'"
+            <form t-att-action="'/shop/checkout' if one_page_checkout else '/shop/confirm_order'"
                   method="post"
                   id="wsd_checkout_form">
 
                 <!-- Billing and Shipping -->
                 <div class="row">
                     <!-- Header: "Your Data" -->
-                    <div class="col-md-12 checkout_title">
-                        <h3>
+                    <div class="col-md-12">
+                        <h3 class="checkout_title">
                             <t t-if="website.checkout_title"><span t-field="website.checkout_title"/></t>
                             <t t-if="not website.checkout_title">Your Data</t>
                         </h3>
                     </div>
                     <!-- Billing Fields and Shipping-Address-Selector -->
                     <!-- HINT: the divs for the bootstrap columns are the fields div's -->
-                    <div class="col-md-12 oe_cart">
+                    <div class="col-md-12">
                         <div class="row billing-fields">
                             <t t-call="website_sale_donate.wsd_checkout_form_billing_fields"/>
                         </div>
@@ -559,7 +582,7 @@
                     <!-- Shipping Fields (hidden if ship to same address) -->
                     <div t-att-class="'col-md-12 hidden' if (website.hide_shipping_address) else 'col-md-12'">
                         <div class="row js_shipping shipping-fields"
-                             t-att-style="'display:none' if (not shipping_id) or  website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id else ''">
+                             t-att-style="'display:none' if (not shipping_id) or (website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)) else ''">
                             <!-- HINT: the divs for the bootstrap columns are the field div's -->
                             <t t-call="website_sale_donate.wsd_checkout_form_shipping_fields"/>
                         </div>
@@ -568,7 +591,7 @@
 
 
                 <!-- One-Page-Checkout: Acquirer, Delivery-Method, Auto-Submit-Form -->
-                <t t-if="website.one_page_checkout">
+                <t t-if="one_page_checkout">
                     <t t-call="website_sale_donate.wsd_opc_payment"/>
                 </t>
 
@@ -705,14 +728,14 @@
                             <t t-if="not website.hide_shipping_address">
                                 <div class="payment_shipping_address">
                                     <h4>Ship To:</h4>
-                                    <t t-if="website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id">
+                                    <t t-if="website_sale_order and (website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id)">
                                       <div t-field="order.partner_shipping_id"
                                            t-field-options='{
                                            "widget": "contact",
                                            "fields": ["address", "name", "phone"]
                                            }'/>
                                     </t>
-                                    <address t-if="website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id">Ship to the same address</address>
+                                    <address t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">Ship to the same address</address>
                                     <div>
                                       <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
                                     </div>

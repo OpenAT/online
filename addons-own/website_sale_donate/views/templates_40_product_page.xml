@@ -21,16 +21,39 @@
             <xpath expr="//span[@itemprop='price']" position="before">
                 <!-- Arbitrary price Input Field -->
                 <t t-if="product.price_donate">
-                    <div class="form-group price_donate">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.symbol"/>
-                            <label for="price_donate" class="sr-only">Arbitrary Donation</label>
-                            <input type="number" class="form-control" name="price_donate" id="price_donate" t-att-min="product.price_donate_min or '1'" t-att-value="price_donate or product.price"/>
-                            <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.name"/>
+                    <div t-att-class="'arbitrary_price form-inline' if product.price_suggested_ids else 'arbitrary_price'">
+                        <!-- Suggested-Donation-Buttons -->
+                        <t t-foreach="product.price_suggested_ids" t-as="ps_button">
+                            <t t-set="ps_button_classes" t-value="' '+ps_button.css_classes if ps_button.css_classes else ''"/>
+                            <span class="price_donate_suggested_outer">
+                                <span t-esc="user_id.partner_id.property_product_pricelist.currency_id.name"
+                                      class="price_donate_suggested_currency"
+                                />
+                                <input type="button"
+                                       t-att-value="ps_button.name or '{:.0f}'.format(ps_button.amount)"
+                                       t-att-class="'btn btn-lg btn-default price_donate_suggested'+ps_button_classes"
+                                       t-att-data-ps-id="ps_button.id">
+                                </input>
+                            </span>
+                        </t>
+                        <!-- Arbitrary price Input -->
+                        <div class="form-group price_donate">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.symbol"/>
+                                <label for="price_donate" class="sr-only">Arbitrary Donation</label>
+                                <input type="number"
+                                       class="form-control data-rule-ignore"
+                                       name="price_donate"
+                                       id="price_donate"
+                                       t-att-min="product.price_donate_min or '1'"
+                                       t-att-value="price_donate or product.price"/>
+                                <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.name"/>
+                            </div>
+                            <label id="price_donate-error" class="error" for="price_donate" style="font-size: 12px; display: none;"/>
                         </div>
-                        <label id="price_donate-error" class="error" for="price_donate" style="font-size: 12px; display: none;"/>
                     </div>
                 </t>
+
                 <!-- Simplecheckout: redirect directly to checkout instead of cart if simple_checkout is set -->
                 <t t-if="product.payment_interval_ids">
                     <input type="text" name="simple_checkout" t-att-value="product.simple_checkout" style="display: none;"/>
