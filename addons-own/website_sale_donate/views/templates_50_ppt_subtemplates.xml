@@ -176,32 +176,10 @@
 
                             <!-- One-Page-Checkout -->
                             <t t-if="show_one_page_checkout">
-                                <div id="wsd_checkout_form_test" class="text-left">
-                                    <!-- Billing and Shipping Header -->
-                                    <div class="checkout_title">
-                                        <h3>
-                                            <t t-if="website.checkout_title"><span t-field="website.checkout_title"/></t>
-                                            <t t-if="not website.checkout_title">Your Data</t>
-                                        </h3>
-                                    </div>
-                                    <!-- Billing Fields -->
-                                    <div class="oe_cart">
-                                        <div class="billing-fields">
-                                            <t t-call="website_sale_donate.wsd_checkout_form_billing_fields"/>
-                                        </div>
-                                    </div>
-                                    <!-- Shipping Fields -->
-                                    <div t-att-class="'hidden' if (website.hide_shipping_address) else ''">
-                                        <div class="js_shipping shipping-fields"
-                                             t-att-style="'display:none' if (not shipping_id) or (website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)) else ''">
-                                             <!--t-att-style="'display:none' if (not shipping_id) or  website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id else ''">-->
-                                            <!-- HINT: the divs for the bootstrap columns are the field div's -->
-                                            <t t-call="website_sale_donate.wsd_checkout_form_shipping_fields"/>
-                                        </div>
-                                    </div>
-                                    <!-- Acquirer, Delivery-Method, Auto-Submit-Form -->
-                                    <t t-call="website_sale_donate.wsd_opc_payment">
-                                        <t t-set="hide_wsd_opc_payment_buttons" t-value="True"/>
+                                <div class="text-left">
+                                    <t t-call="website_sale_donate.wsd_checkout_form_inside">
+                                        <t t-set="one_page_checkout" t-value="show_one_page_checkout"/>
+                                        <t t-set="hide_wsd_cfi_buttons" t-value="True"/>
                                     </t>
                                 </div>
                             </t>

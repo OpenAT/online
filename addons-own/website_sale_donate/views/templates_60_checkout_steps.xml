@@ -555,14 +555,8 @@
 
         </template>
 
-        <!-- SUBTEMPLATE: CHECKOUT FORM -->
-        <template id="wsd_checkout_form" name="WSD Checkout Form">
-            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
-
-            <form t-att-action="'/shop/checkout' if one_page_checkout else '/shop/confirm_order'"
-                  method="post"
-                  id="wsd_checkout_form">
-
+        <!-- SUBTEMPLATE: CHECKOUT FORM INSIDE -->
+        <template id="wsd_checkout_form_inside" name="WSD Checkout Form Inside">
                 <!-- Billing and Shipping -->
                 <div class="row">
                     <!-- Header: "Your Data" -->
@@ -596,7 +590,7 @@
                 </t>
 
                 <!-- Back and Submit Buttons -->
-                <t t-if="not acquirer_auto_submit">
+                <t t-if="not acquirer_auto_submit and not hide_wsd_cfi_buttons">
                     <div class="clearfix">
                         <!-- Back-To-Page Button -->
                         <t t-call="website_sale_donate.wsd_button_back_to_page">
@@ -615,9 +609,22 @@
                         </a>
                     </div>
                 </t>
-            </form>
         </template>
 
+        <!-- SUBTEMPLATE: CHECKOUT FORM -->
+        <template id="wsd_checkout_form" name="WSD Checkout Form">
+            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
+
+            <form t-att-action="'/shop/checkout' if one_page_checkout else '/shop/confirm_order'"
+                  method="post"
+                  id="wsd_checkout_form">
+
+                <!-- Separate template case we use it in checkout box too -->
+                <!-- HINT: one_page_checkout already set above -->
+                <t t-call="website_sale_donate.wsd_checkout_form_inside"/>
+
+            </form>
+        </template>
 
         <!-- INHERIT: CHECKOUT PAGE -->
         <template id="wsd_checkout" inherit_id="website_sale.checkout" name="WSD Checkout-Page Changes">
