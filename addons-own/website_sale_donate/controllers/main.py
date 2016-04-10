@@ -44,32 +44,33 @@ class website_sale_donate(website_sale):
 
         cr, uid, context = request.cr, request.uid, request.context
 
-        # One-Page-Checkout - do cart_update on post data
+        # One-Page-Checkout: call cart_update
+        # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
         if request.httprequest.method == 'POST' and product.product_page_template == u'website_sale_donate.ppt_opc':
-            # Create or Update sales Order and set the Quantity to the value of the qty selector in the checkoutbox
+            # Create or Update sales Order
+            # and set the Quantity to the value of the qty selector in the checkoutbox
             if not kwargs.get('set_qty'):
                 kwargs['set_qty'] = add_qty
             if not kwargs.get('product_id'):
                 kwargs['product_id'] = product.id
             self.cart_update(**kwargs)
 
-
-        # this will basically pre-render the product page and store it in productpage
+        # Render the regular product page
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
 
-        # Product Qweb Template based on the product_page_template field
-        # HINT: qcontext holds the initial values the qweb template was called with
-        # HINT: The first attribute of website.render is the template ID
+        # Render Custom Product Template based on the product_page_template field if any set
+        # Add One-Page-Checkout qcontext if template is ppt_opc
         if product.product_page_template:
             productpage = request.website.render(product.product_page_template, productpage.qcontext)
 
-            # One-Page-Checkout: If the template is ppt_opc
-            if product.product_page_template == u'website_sale_donate.ppt_opc':
-                if request.httprequest.method == 'POST':
-                    checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
-                else:
-                    checkoutpage = self.checkout(one_page_checkout=True)
-                productpage.qcontext.update(checkoutpage.qcontext)
+        # One-Page-Checkout: Only if the template is ppt_opc
+        if product.product_page_template == u'website_sale_donate.ppt_opc':
+            if request.httprequest.method == 'POST':
+                checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
+            else:
+                checkoutpage = self.checkout(one_page_checkout=True)
+            # One-Page-Checkout Qcontext
+            productpage.qcontext.update(checkoutpage.qcontext)
 
         # Add Warnings if the page is called (redirected from cart_update) with warnings in GET request
         productpage.qcontext['warnings'] = kwargs.get('warnings')
@@ -79,12 +80,12 @@ class website_sale_donate(website_sale):
         if product.payment_interval_ids:
             productpage.qcontext['payment_interval_id'] = product.payment_interval_ids[0].id
 
-        # Get values from sales order line
+        # Get values from sale-order-line for price_donate and payment_interval_id
         sale_order_id = request.session.sale_order_id
         if sale_order_id:
-            # Search for a sales order line for the current product in the sales order of the current session
+            # Search for a sale-order-line for the current product in the sales order of the current session
             sol_obj = request.registry['sale.order.line']
-            # Get sale order line id if product or variant of product is in active sale order
+            # Get sale-order-line id if product or variant of product is in active sale order
             sol = sol_obj.search(cr, SUPERUSER_ID,
                                  [['order_id', '=', sale_order_id],
                                   ['product_id', 'in', product.ids + product.product_variant_ids.ids]],
@@ -300,24 +301,33 @@ class website_sale_donate(website_sale):
         # Remove the form and submit button, uniquely prefix the acquirer input fields and set data from post
         for acquirer in payment_qcontext['acquirers']:
 
-            # Convert the Pay-Now button forms into input fields without surrounding form tag
-            # to insert them into the regular checkout form
-            # http://lxml.de/lxmlhtml.html
-            # http://lxml.de/tutorial.html
+            # UPDATE THE ORIGINAL PAY-NOW ACQUIRER.BUTTON FORM:
+            # set input-tags value to post-data-value
+            # and use target _top for aswidget
             button = etree.fromstring(acquirer.button)
             assert button.tag == 'form', "ERROR: One Page Checkout: Payment Button has not <form> as root tag!"
 
-            # Process input tags of original button to include post values
+            # Set input-tags value to post-data value if any (e.g.: payment_frst iban- and bic-field)
             for form_input in button.iter("input"):
                 if form_input.get('name'):
+                    # Create button_opc field name (see code below for button_opc)
                     prefixed_input_name = "aq" + str(acquirer.id) + '_' + str(form_input.get('name'))
-                    # Set values from post data if empty in template (e.g.: FRST IBAN and BIC)
+                    # Set value from post data if field has currently no value
                     if not form_input.get('value') and prefixed_input_name in post:
                         form_input.set('value', post.get(prefixed_input_name))
 
-            # Update the original acquirer.button
+            # Use target _top if aswidget is set in session
+            if request.session.get('aswidget'):
+                # HINT: Button is a form see assert button.tag above
+                button.set('target', '_top')
+
+            # Store the processed xml
             acquirer.button = etree.tostring(button, encoding='UTF-8', pretty_print=True)
 
+            # CREATE button_opc: CONVERT THE PAY-NOW BUTTON FORMS INTO INPUT FIELDS WITHOUT SURROUNDING FORM TAG:
+            # to insert them into the regular checkout form
+            # http://lxml.de/lxmlhtml.html
+            # http://lxml.de/tutorial.html
             # Process the One-Page-Checkout version of the Pay-Now Button (=no form and submit-button but just inputs)
             button = etree.fromstring(acquirer.button)
 
@@ -421,7 +431,7 @@ class website_sale_donate(website_sale):
 
                 assert order.partner_id.id != request.website.partner_id.id
 
-                # find an already existing transaction
+                # Find an already existing transaction
                 tx = request.website.sale_get_transaction()
                 if tx:
                     tx_id = tx.id
@@ -446,12 +456,14 @@ class website_sale_donate(website_sale):
                     }, context=context)
                     request.session['sale_transaction_id'] = tx_id
 
-                # update quotation
+                # Update sale order
                 so_tx = request.registry['sale.order'].write(
                         cr, SUPERUSER_ID, [order.id], {
                             'payment_acquirer_id': acquirer_id,
                             'payment_tx_id': request.session['sale_transaction_id']
                         }, context=context)
+                if not so_tx:
+                    _logger.error(_('Could not update sale order after creation or update of the payment transaction!'))
                 # STEP 3: END (SUCCESSFUL)
 
                 # STEP 4: set sales order to "send" and redirect to the payment provider

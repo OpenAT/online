@@ -185,15 +185,17 @@
                             </t>
 
                             <!-- Add to Cart Button -->
-                            <a id="add_to_cart" class="btn btn-primary btn-xl mt16 js_check_product a-submit" href="#">
-                                <t t-if="product.button_addtocart_text">
-                                    <span t-field="product.button_addtocart_text"/>
-                                </t>
-                                <t t-if="not product.button_addtocart_text">
-                                    <t t-if="product.simple_checkout">Donate Now!</t>
-                                    <t t-if="not product.simple_checkout">Add to Cart</t>
-                                </t>
-                            </a>
+                            <t t-if="not acquirer_auto_submit">
+                                <a id="add_to_cart" class="btn btn-primary btn-xl mt16 js_check_product a-submit" href="#">
+                                    <t t-if="product.button_addtocart_text">
+                                        <span t-field="product.button_addtocart_text"/>
+                                    </t>
+                                    <t t-if="not product.button_addtocart_text">
+                                        <t t-if="product.simple_checkout">Donate Now!</t>
+                                        <t t-if="not product.simple_checkout">Add to Cart</t>
+                                    </t>
+                                </a>
+                            </t>
 
                             <!-- Shopping Cart (small cart) -->
                             <t t-if="show_small_cart_in_checkoutbox">
@@ -202,6 +204,10 @@
 
                         </div>
                     </form>
+
+                    <!-- Include Payment-Provider Auto-Submit-Form -->
+                    <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
+
                 </div>
 
                 <!-- Panel Footer -->

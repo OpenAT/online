@@ -406,6 +406,17 @@
             </t>
         </template>
 
+        <!-- SUBTEMPLATE: Payment-Provider Auto Submit Form -->
+        <template id="wsd_pp_auto_submit_form" name="Payment Provider Auto-Submit-Form">
+            <!-- REDIRECT TO PAYMENT PROVIDER Auto-Submit-Form: Finally redirect to payment-provider if all data is correct -->
+            <t t-if="acquirer_auto_submit">
+                <div t-raw="acquirer_auto_submit.button"
+                     id="wsd_pp_auto_submit_form"
+                     class="js_auto_submit_form"
+                />
+            </t>
+        </template>
+
         <!-- SUBTEMPLATE ONE-PAGE-CHECKOUT: Payment-Method (Acquirers) and Delivery-Method Selection -->
         <template id="wsd_opc_payment" name="Payment One-Page-Checkout">
             <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
@@ -479,6 +490,7 @@
                         </t>
                     </t>
                     <t t-set="acquirer_id" t-value="first_valid_acquirer_id"/>
+
                     <!-- Acquirer-Selection (Payment Method) Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <t t-foreach="acquirers or []" t-as="acquirer">
@@ -518,6 +530,7 @@
                             </t>
                         </t>
                     </ul>
+
                     <!-- Acquirer-Selection Tab Content -->
                     <div class="tab-content tab-equal-heights">
                         <t t-foreach="acquirers or []" t-as="acquirer">
@@ -540,18 +553,8 @@
                         </t>
                     </div>
                 </div>
-            </div>
 
-            <!-- REDIRECT TO PAYMENT PROVIDER Auto-Submit-Form: Finally redirect to payment-provider if all data is correct -->
-            <!-- TODO: Target of form should be _top if aswidget is true (do it with java script?) -->
-            <!-- TODO: Hide all input fields with css? (only button remains) -->
-            <t t-if="acquirer_auto_submit and one_page_checkout">
-                <div class="row acquirer_auto_submit">
-                    <div class="col-lg-12">
-                        <div t-raw="acquirer_auto_submit.button" class="js_payment_auto_submit_form"/>
-                    </div>
-                </div>
-            </t>
+            </div>
 
         </template>
 
@@ -614,16 +617,15 @@
         <!-- SUBTEMPLATE: CHECKOUT FORM -->
         <template id="wsd_checkout_form" name="WSD Checkout Form">
             <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
-
             <form t-att-action="'/shop/checkout' if one_page_checkout else '/shop/confirm_order'"
                   method="post"
                   id="wsd_checkout_form">
-
                 <!-- Separate template case we use it in checkout box too -->
                 <!-- HINT: one_page_checkout already set above -->
                 <t t-call="website_sale_donate.wsd_checkout_form_inside"/>
-
             </form>
+            <!-- Include Payment-Provider Auto-Submit-Form -->
+            <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
         </template>
 
         <!-- INHERIT: CHECKOUT PAGE -->

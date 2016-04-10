@@ -48,7 +48,7 @@
                                 </div>
                             </div>
 
-                            <div class="row ppt_opc-checkout">
+                            <div class="row one-page-checkout ppt_opc-checkout">
                                 <!-- Product Info and One-Page-Checkout -->
                                 <div class="col-md-12">
                                     <div t-attf-class="#{(compute_currency(product.lst_price) - product.price) &gt; 0.1 and 'discount'}" id="product_detail">

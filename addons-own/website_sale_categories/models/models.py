@@ -38,6 +38,7 @@ class product_public_category_menu(models.Model):
 
     cat_hide = fields.Boolean(string="Hide Category from Navigation")
     cat_root = fields.Boolean(string="Start Navigation from this Category")
+    one_page_checkout = fields.Boolean(string="One-Page-Checkout")
     # Topmost parent category:
     # Store the nearest parent category in the field cat_root_id  that has cat_root=True or, if no parent category has
     # cat_root set to True, set the topmost parent category for cat_root_id. Use the current category for cat_root_id if
@@ -54,6 +55,8 @@ class product_public_category_menu(models.Model):
     cat_products_grid_ppg = fields.Integer(string="Products per Page")
     cat_products_grid_ppr = fields.Integer(string="Products per Row")
     # Grid Template selector
+    # HINT: Right now this is only used to select between the original grid and the original list layout
+    #       this is needed because the original xpath option would always set it for the complete shop
     grid_template = fields.Selection([('website_sale.products', 'Default Grid Layout'),
                                       ('website_sale_categories.products_listing', 'List Layout')],
                                      string="Shop Grid Template")

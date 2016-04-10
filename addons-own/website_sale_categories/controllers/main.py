@@ -43,13 +43,23 @@ class website_sale_categories(website_sale):
             if ppr:
                 main.PPR = ppr
 
+        # Render the category page
         page = super(website_sale_categories, self).shop(page=page, category=category, search=search, **post)
 
+        # Add One-Page-Checkout to qcontext if the current category or its root category has one-page-checkout set
+        if (category and category.one_page_checkout) \
+                or (category and category.cat_root_id and category.cat_root_id.one_page_checkout):
+            if request.httprequest.method == 'POST':
+                checkoutpage = self.checkout(one_page_checkout=True, **post)
+            else:
+                checkoutpage = self.checkout(one_page_checkout=True)
+            page.qcontext.update(checkoutpage.qcontext)
+            page.qcontext.update({'one_page_checkout': True})
+
+        # Custom product-list-view template by category
         if category:
             # Set Template for the shop grid (or list view)
             # Shop Grid Qweb Template based on the grid_template field
-            # HINT: qcontext holds the initial values the qweb template was called with
-            # HINT: The first attribute of website.render is the template ID
             template = self._find_attr_in_cat_tree(category, attribute='grid_template')
             if template:
                 page = request.website.render(template, page.qcontext)

@@ -41,13 +41,15 @@
 
         <!-- SUBTEMPLATE: Back to Page Button -->
         <template id="wsd_button_back_to_page" name="Back to Page Button">
-            <!-- HINT: Button class must be set by template call -->
-            <a t-att-class="wsd_button_back_to_page"
-               t-att-href="request.session.get('last_page') or '#'">
-                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
-                <t t-if="not website.button_back_to_page">Back</t>
-                <t t-if="website.button_back_to_page"><span t-field="website.button_back_to_page"/></t>
-            </a>
+            <t t-if="request.session.get('last_page')">
+                <!-- HINT: Button class must be set by template call -->
+                <a t-att-class="wsd_button_back_to_page"
+                   t-att-href="request.session.get('last_page') or '#'">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
+                    <t t-if="not website.button_back_to_page">Back</t>
+                    <t t-if="website.button_back_to_page"><span t-field="website.button_back_to_page"/></t>
+                </a>
+            </t>
         </template>
 
     </data>

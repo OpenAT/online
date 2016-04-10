@@ -42,6 +42,7 @@ website_sale_categories
         'sale',
         'website',
         'website_sale',
+        'website_sale_donate',
     ],
     'installable': True,
     'data': [
