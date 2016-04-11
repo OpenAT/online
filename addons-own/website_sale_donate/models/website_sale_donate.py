@@ -223,6 +223,7 @@ class product_template(osv.Model):
 
         # PRODUCT LISTINGS
         'hide_price': fields.boolean('Hide Price in Shop overview Pages'),
+        'do_not_link': fields.boolean('Do not link product in cart and product listings'),
 
         # PRODUCT PAGE
         'product_page_template': fields.selection([('website_sale.product', 'Default Layout'),

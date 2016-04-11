@@ -101,7 +101,7 @@
                                             <span>(<t t-esc="line.payment_interval_id.name"/>)</span>
                                         </t>
                                         <!-- Product Name -->
-                                        <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                        <a t-att-href="'' if line.product_id.do_not_link else '/shop/product/'+slug(line.product_id.product_tmpl_id)">
                                             <span t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
                                         </a>
                                     </div>

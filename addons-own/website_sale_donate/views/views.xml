@@ -69,6 +69,7 @@
 
                             <group string="Webshop: Product Listings" colspan="2">
                                 <field name="hide_price"/>
+                                <field name="do_not_link"/>
                             </group>
 
                             <group string="Webshop: Product Page" colspan="2">

@@ -398,13 +398,14 @@ class website_sale_donate(website_sale):
                 # Process the checkout controller again to include possible changes made by confirm_order
                 checkout_page = super(website_sale_donate, self).checkout(**post)
                 checkout_page.qcontext['one_page_checkout'] = True
+                checkout_page.qcontext['opc_warnings'] = list()
                 checkout_page.qcontext.update(confirm_order.qcontext)
                 checkout_page.qcontext.update(payment_page.qcontext)
                 # On errors return the checkout_page
                 if checkout_page.qcontext.get('error') \
                         or confirm_order.location != '/shop/payment' \
                         or payment_page.qcontext.get('errors'):
-                    print 'ERRORS FOUND :)'
+                    _logger.warning(_('Errors in checkout fields or from confirm_order or payment controller found!'))
                     return checkout_page
                 # STEP 2: END (SUCCESSFUL)
 
@@ -412,14 +413,14 @@ class website_sale_donate(website_sale):
                 # Create or update the Payment-Transaction and update the Sales Order
                 # HINT: Normally done by a json request before the pay-now form get's auto submitted by Java Script
                 if not post.get('acquirer'):
-                    # TODO: Add error message to errors 'Please select a payment Method'
+                    _logger.error(_('No Acquirer (Payment Method) selected!'))
                     # TODO: Check what happens if a 'wrong' acquirer was set at a product_page with ppt_opc
+                    checkout_page.qcontext['opc_warnings'].append(_('Please select a payment method.'))
                     return checkout_page
 
-                # TODO: BUGFixing - Transaction is not updated after first creation ? Force update may be needed
-                #pay_now = self.payment_transaction(int(post.get('acquirer')))
-                # TESTING - SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
-                # now we have to create the tx manually here
+                # HINT: SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
+                #       Therefore we have to create the tx manually here
+                # Todo: Make this a method and use it here and overwrite original controller to use this method
                 acquirer_id = int(post.get('acquirer'))
                 request.session['acquirer_id'] = acquirer_id
                 checkout_page.qcontext.update({'acquirer_id': request.session.get('acquirer_id')})
@@ -427,11 +428,14 @@ class website_sale_donate(website_sale):
                 order = request.website.sale_get_order(context=context)
 
                 if not order or not order.order_line or acquirer_id is None:
-                    return request.redirect("/shop/checkout")
+                    _logger.error(_('Sale Order is missing or it contains no products!'))
+                    checkout_page.qcontext['opc_warnings'].append(_('Please add products or donations.'))
+                    return checkout_page
 
                 assert order.partner_id.id != request.website.partner_id.id
 
                 # Find an already existing transaction
+                # TODO: BUGFixing - Transaction is not updated after first creation ? Force update may be needed
                 tx = request.website.sale_get_transaction()
                 if tx:
                     tx_id = tx.id
@@ -487,9 +491,12 @@ class website_sale_donate(website_sale):
     # Payment Page
     @http.route()
     def payment(self, **post):
-        res = super(website_sale_donate, self).payment(**post)
+
+        # For one page checkout redirect to checkout page
         if request.website['one_page_checkout']:
             return request.redirect("/shop/checkout")
-        return res
+
+        # Call super().payment and render correct payment provider buttons
+        return self.opc_payment(**post)
 
     # HINT: Shopping Cart Redirection is done above around line 92

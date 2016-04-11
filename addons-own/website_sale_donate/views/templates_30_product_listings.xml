@@ -31,7 +31,13 @@
             </xpath>
         </template>
 
-
+        <!-- Do not link product -->
+        <template id="wsd_products_no_link" inherit_id="website_sale.products_item">
+            <xpath expr="//a[@itemprop='name']" position="attributes">
+                <!-- /shop/product/%s' % slug(product) -->
+                <attribute name="t-att-href">'' if product.do_not_link else '/shop/product/'+slug(product)</attribute>
+            </xpath>
+        </template>
 
         <!-- INHERIT SUB-TEMPLATE products_item: Use Square Images -->
         <template id="wsd_products_item_image" inherit_id="wsd_products_item_image_extraboxes" name="Square Images" customize_show="True" active="False">

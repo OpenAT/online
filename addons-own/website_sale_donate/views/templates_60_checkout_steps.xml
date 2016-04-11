@@ -290,7 +290,7 @@
             </t>
 
             <!-- SHIPPING ADDRESS SELECTOR -->
-            <t t-if="not website.hide_shipping_address">
+            <div t-att-class="'hidden' if website.hide_shipping_address else ''">
                 <!-- Correct an odoo Bug? Shipping Address is always shown after the first call of payment -->
                 <t t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">
                     <t t-set="shipping_id" t-value="0"/>
@@ -317,7 +317,7 @@
                         </option>
                     </select>
                 </div>
-            </t>
+            </div>
         </template>
 
         <!-- SUBTEMPLATE Checkout Shipping Fields -->
@@ -423,8 +423,8 @@
             <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
 
             <!-- DELIVERY Options -->
-            <div t-if="deliveries and not website.hide_delivery_methods"
-                 class="row wsd_opc_delivery"
+            <div t-if="deliveries"
+                 class="'row wsd_opc_delivery hidden' if website.hide_delivery_methods else 'row wsd_opc_delivery'"
                  t-att-id="'delivery_carrier' if not one_page_checkout else ''">
                 <!-- Header: Delivery -->
                 <div class="col-lg-12">
@@ -560,58 +560,71 @@
 
         <!-- SUBTEMPLATE: CHECKOUT FORM INSIDE -->
         <template id="wsd_checkout_form_inside" name="WSD Checkout Form Inside">
-                <!-- Billing and Shipping -->
-                <div class="row">
-                    <!-- Header: "Your Data" -->
+            <!-- OPC Warnings -->
+            <t t-if="opc_warnings">
+                <div class="row opc_warnings">
                     <div class="col-md-12">
-                        <h3 class="checkout_title">
-                            <t t-if="website.checkout_title"><span t-field="website.checkout_title"/></t>
-                            <t t-if="not website.checkout_title">Your Data</t>
-                        </h3>
-                    </div>
-                    <!-- Billing Fields and Shipping-Address-Selector -->
-                    <!-- HINT: the divs for the bootstrap columns are the fields div's -->
-                    <div class="col-md-12">
-                        <div class="row billing-fields">
-                            <t t-call="website_sale_donate.wsd_checkout_form_billing_fields"/>
-                        </div>
-                    </div>
-                    <!-- Shipping Fields (hidden if ship to same address) -->
-                    <div t-att-class="'col-md-12 hidden' if (website.hide_shipping_address) else 'col-md-12'">
-                        <div class="row js_shipping shipping-fields"
-                             t-att-style="'display:none' if (not shipping_id) or (website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)) else ''">
-                            <!-- HINT: the divs for the bootstrap columns are the field div's -->
-                            <t t-call="website_sale_donate.wsd_checkout_form_shipping_fields"/>
-                        </div>
+                        <t t-foreach="opc_warnings" t-as="opc_warning">
+                            <h3>
+                                <t t-esc="opc_warning"/>
+                            </h3>
+                        </t>
                     </div>
                 </div>
+            </t>
 
-
-                <!-- One-Page-Checkout: Acquirer, Delivery-Method, Auto-Submit-Form -->
-                <t t-if="one_page_checkout">
-                    <t t-call="website_sale_donate.wsd_opc_payment"/>
-                </t>
-
-                <!-- Back and Submit Buttons -->
-                <t t-if="not acquirer_auto_submit and not hide_wsd_cfi_buttons">
-                    <div class="clearfix">
-                        <!-- Back-To-Page Button -->
-                        <t t-call="website_sale_donate.wsd_button_back_to_page">
-                            <t t-set="wsd_button_back_to_page" t-value="'btn btn-default'"/>
-                        </t>
-
-                        <!-- Button Submit-Checkout-Form (button_data_to_payment) -->
-                        <a class="btn btn-primary pull-right a-submit" id="wsd_checkout_form_submit_button">
-                            <t t-if="website.button_data_to_payment">
-                               <span t-field="website.button_data_to_payment"/>
-                            </t>
-                            <t t-if="not website.button_data_to_payment">
-                               Confirm
-                            </t>
-                            &amp;nbsp;<span class="glyphicon glyphicon-chevron-right"/>
-                        </a>
+            <!-- Billing and Shipping -->
+            <div class="row">
+                <!-- Header: "Your Data" -->
+                <div class="col-md-12">
+                    <h3 class="checkout_title">
+                        <t t-if="website.checkout_title"><span t-field="website.checkout_title"/></t>
+                        <t t-if="not website.checkout_title">Your Data</t>
+                    </h3>
+                </div>
+                <!-- Billing Fields and Shipping-Address-Selector -->
+                <!-- HINT: the divs for the bootstrap columns are the fields div's -->
+                <div class="col-md-12">
+                    <div class="row billing-fields">
+                        <t t-call="website_sale_donate.wsd_checkout_form_billing_fields"/>
                     </div>
-                </t>
+                </div>
+                <!-- Shipping Fields (hidden if ship to same address) -->
+                <div t-att-class="'col-md-12 hidden' if (website.hide_shipping_address) else 'col-md-12'">
+                    <div class="row js_shipping shipping-fields"
+                         t-att-style="'display:none' if (not shipping_id) or (website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)) else ''">
+                        <!-- HINT: the divs for the bootstrap columns are the field div's -->
+                        <t t-call="website_sale_donate.wsd_checkout_form_shipping_fields"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- One-Page-Checkout: Acquirer, Delivery-Method, Auto-Submit-Form -->
+            <t t-if="one_page_checkout">
+                <t t-call="website_sale_donate.wsd_opc_payment"/>
+            </t>
+
+            <!-- Back and Submit Buttons -->
+            <t t-if="not acquirer_auto_submit and not hide_wsd_cfi_buttons">
+                <div class="clearfix">
+                    <!-- Back-To-Page Button -->
+                    <t t-call="website_sale_donate.wsd_button_back_to_page">
+                        <t t-set="wsd_button_back_to_page" t-value="'btn btn-default'"/>
+                    </t>
+
+                    <!-- Button Submit-Checkout-Form (button_data_to_payment) -->
+                    <a class="btn btn-primary pull-right a-submit" id="wsd_checkout_form_submit_button">
+                        <t t-if="website.button_data_to_payment">
+                           <span t-field="website.button_data_to_payment"/>
+                        </t>
+                        <t t-if="not website.button_data_to_payment">
+                           Confirm
+                        </t>
+                        &amp;nbsp;<span class="glyphicon glyphicon-chevron-right"/>
+                    </a>
+                </div>
+            </t>
         </template>
 
         <!-- SUBTEMPLATE: CHECKOUT FORM -->
