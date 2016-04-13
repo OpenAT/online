@@ -2,3 +2,7 @@
 #frst .form-control-feedback {
     top: 33px;
 }
+[data-name='frst-submit-button'] {
+    max-width: 100px;
+}
+

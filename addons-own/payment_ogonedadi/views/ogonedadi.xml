@@ -49,10 +49,16 @@
                 <input type='hidden' name='CANCELURL' t-att-value='tx_values["CANCELURL"]'/>
 
                 <!-- submit -->
-                <button type="submit" width="100px"
-                    t-att-class="submit_class">
-                    <img t-if="not submit_txt" src="/payment_ogonedadi/static/src/img/ogonedadi_icon.png"/>
-                    <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                <button type="submit"
+                        data-name="ogonedadi-submit-button"
+                        t-att-class="acquirer.submit_button_class or submit_class">
+                    <t t-if="acquirer.submit_button_text">
+                        <span t-esc="acquirer.submit_button_text"/>
+                    </t>
+                    <t t-if="not acquirer.submit_button_text">
+                        <img t-if="not submit_txt" src="/payment_frst/static/src/img/frst_icon.png"/>
+                        <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                    </t>
                 </button>
             </form>
         </template>

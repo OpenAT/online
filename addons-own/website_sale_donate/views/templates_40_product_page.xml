@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
+    <data noupdate="0">
 
         <!-- ============================================================ -->
         <!-- DEFAULT PRODUCT PAGE AND RELATED SUBTEMPLATES MODIFICATIONS: -->
@@ -63,21 +63,19 @@
 
         <!-- SUBTEMPLATE: product_quantity -->
         <template id="product_quantity_selector" name="Product Quantity Selector">
-            <t t-if="not product.hide_quantity">
-                <div class="css_quantity input-group input-group-lg oe_website_spinner">
-                    <span class="input-group-addon">
-                        <a t-attf-href="#" class="mb8 js_add_cart_json">
-                            <i class="fa fa-minus"></i>
-                        </a>
-                    </span>
-                    <input type="text" class="js_quantity form-control" data-min="1" name="add_qty" value="1"/>
-                    <span class="input-group-addon">
-                        <a t-attf-href="#" class="mb8 float_left js_add_cart_json">
-                            <i class="fa fa-plus"></i>
-                        </a>
-                    </span>
-                </div>
-            </t>
+            <div t-att-class="'css_quantity input-group input-group-lg oe_website_spinner hidden' if product.hide_quantity else 'css_quantity input-group input-group-lg oe_website_spinner'">
+                <span class="input-group-addon">
+                    <a t-attf-href="#" class="mb8 js_add_cart_json">
+                        <i class="fa fa-minus"></i>
+                    </a>
+                </span>
+                <input type="text" class="js_quantity form-control" data-min="0" name="add_qty" value="1"/>
+                <span class="input-group-addon">
+                    <a t-attf-href="#" class="mb8 float_left js_add_cart_json">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </span>
+            </div>
         </template>
 
         <!-- INHERIT SUBTEMPLATE product_quantity: replace quantity selector -->

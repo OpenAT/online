@@ -465,6 +465,7 @@
                     </h3>
                 </div>
                 <div class="col-lg-12">
+
                     <!-- Payment Page Errors -->
                     <t t-foreach="errors" t-as="error">
                         <div class="alert alert-danger" t-if="error">
@@ -474,16 +475,23 @@
                             <t t-esc="error[1]"/>
                         </div>
                     </t>
+
                     <!-- Acquirer-Selection: input elements and images (icons) -->
                     <!-- http://getbootstrap.com/components/#btn-groups -->
                     <!-- http://getbootstrap.com/javascript/#buttons -->
                     <!-- http://getbootstrap.com/components/#nav-tabs -->
                     <!-- http://stackoverflow.com/questions/34677186/html-form-with-bootstrap-togglabe-tabs-by-radio-buttons -->
+
                     <!-- Get valid acquirer_id for default selection -->
                     <t t-set="acquirer_id" t-value="acquirer or acquirer_id"/>
                     <t t-set="first_valid_acquirer_id" t-value="False"/>
                     <t t-foreach="acquirers or []" t-as="acquirer">
                         <t t-if="acquirer.button and ((website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)))">
+                            <!-- Set default acquirer if set and valid -->
+                            <t t-if="website.acquirer_default and str(website.acquirer_default.id) == str(acquirer.id)">
+                                <t t-set="first_valid_acquirer_id" t-value="acquirer.id"/>
+                            </t>
+                            <!-- Overwrite default acquirer with acquirer from post -->
                             <t t-if="(not first_valid_acquirer_id) or str(acquirer.id) == str(acquirer_id)">
                                 <t t-set="first_valid_acquirer_id" t-value="acquirer.id"/>
                             </t>
@@ -494,9 +502,6 @@
                     <!-- Acquirer-Selection (Payment Method) Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <t t-foreach="acquirers or []" t-as="acquirer">
-                            <!--<t t-set="active_tab" t-value="'active ' if str(acquirer.id) == str(acquirer_id) else ''"/>-->
-                            <!--<t t-set="hidden_tab" t-value="'' if acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) ) else 'hidden'"/>-->
-                            <!--<t t-set="tab_class" t-value="active_tab + hidden_tab"/>-->
                             <!-- Only show correct acquirers (payment methods) -->
                             <t t-if="acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) )">
                                 <li role="presentation"

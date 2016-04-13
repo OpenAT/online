@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data noupdate="0">
 
         <template id="assets_frontend" inherit_id="website.assets_frontend" name="frst_pp_assets">
           <xpath expr="." position="inside">
@@ -36,10 +36,16 @@
                            t-att-value="partner_values['frst_bic']"/>
                 </div>
                 <!-- submit -->
-                <button type="submit" id="frst-submit-button" width="100px"
-                    t-att-class="submit_class">
-                    <img t-if="not submit_txt" src="/payment_frst/static/src/img/frst_icon.png"/>
-                    <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                <button type="submit"
+                        data-name="frst-submit-button"
+                        t-att-class="acquirer.submit_button_class or submit_class">
+                    <t t-if="acquirer.submit_button_text">
+                        <span t-esc="acquirer.submit_button_text"/>
+                    </t>
+                    <t t-if="not acquirer.submit_button_text">
+                        <img t-if="not submit_txt" src="/payment_frst/static/src/img/frst_icon.png"/>
+                        <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                    </t>
                 </button>
             </form>
         </template>

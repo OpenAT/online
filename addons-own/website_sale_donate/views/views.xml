@@ -103,7 +103,15 @@
                                         <field name="css_classes"/>
                                     </tree>
                                 </field>
-                                <field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>
+                                <!-- Deprecated and therefore disabled - only left here for reference -->
+                                <!--<field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>-->
+                                <field name="payment_interval_default"/>
+                                <field name="payment_interval_lines_ids">
+                                    <tree string="Payment Intervals" default_order="sequence" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="payment_interval_id"/>
+                                    </tree>
+                                </field>
                                 <field name="button_addtocart_text"/>
                                 <field name="hide_panelfooter"/>
                             </group>
@@ -194,6 +202,7 @@
             <field name="arch" type="xml">
                 <form string="Payment Intervals">
                     <group>
+                        <field name="sequence"/>
                         <field name="name"/>
                     </group>
                 </form>
@@ -203,7 +212,8 @@
             <field name="name">website_sale_donate.payment_interval_tree</field>
             <field name="model">product.payment_interval</field>
             <field name="arch" type="xml">
-                <tree string="Payment Intervals">
+                <tree string="Payment Intervals" default_order="sequence" editable="bottom">
+                    <field name="sequence" widget="handle"/>
                     <field name="name"/>
                 </tree>
             </field>
@@ -238,6 +248,8 @@
                 <!-- Replace the Name field and add recurring_transaction checkbox -->
                 <field name="name" position="replace">
                     <field name="recurring_transactions"/>
+                    <field name="submit_button_text"/>
+                    <field name="submit_button_class"/>
                 </field>
                 <!-- Add the Name and the Icon (used in website too) before group name="acquirer_base" -->
                 <xpath expr="//group[@name='acquirer_base']" position="before">
@@ -252,6 +264,21 @@
             </field>
         </record>
 
+        <!-- Payment Acquirer add a sequence to the tree view -->
+        <record model="ir.ui.view" id="payment_acquirer_tree_sequence">
+            <field name="name">payment_acquirer_tree_sequence</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_list"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="sequence" widget="handle"/>
+                </field>
+                <!-- Default ordering by sequence -->
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="default_order">sequence</attribute>
+                </xpath>
+            </field>
+        </record>
 
         <!-- WEBSITE CHECKOUT BILLING FIELDS: Create form, tree and list view for the checkout fields -->
         <record model="ir.ui.view" id="website_sale_donate_checkout_fields_form">

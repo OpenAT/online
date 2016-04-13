@@ -34,7 +34,7 @@ class website_sale_donate(website_sale):
     #       ALSO i need to update the java script that loads the product variant pictures
     # /shop/product/<model("product.template"):product>
     @http.route()
-    def product(self, product, category='', search='', add_qty=1, set_qty=0, **kwargs):
+    def product(self, product, category='', search='', **kwargs):
 
         # Store the current request url in the session for possible returns
         # INFO: html escaping is done by request.redirect so not needed here!
@@ -46,14 +46,21 @@ class website_sale_donate(website_sale):
 
         # One-Page-Checkout: call cart_update
         # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
-        if request.httprequest.method == 'POST' and product.product_page_template == u'website_sale_donate.ppt_opc':
+        if request.httprequest.method == 'POST' \
+                and product.product_page_template == u'website_sale_donate.ppt_opc' \
+                and 'json_cart_update' not in request.session:
             # Create or Update sales Order
             # and set the Quantity to the value of the qty selector in the checkoutbox
-            if not kwargs.get('set_qty'):
-                kwargs['set_qty'] = add_qty
+            if 'add_qty' in kwargs and not 'set_qty' in kwargs:
+                kwargs['set_qty'] = kwargs['add_qty']
             if not kwargs.get('product_id'):
                 kwargs['product_id'] = product.id
             self.cart_update(**kwargs)
+
+        # small_cart_update by json request: Remove json_cart_update in session
+        # HINT: See 'def cart_update_json' below
+        if 'json_cart_update' in request.session:
+            request.session.pop('json_cart_update')
 
         # Render the regular product page
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
@@ -76,9 +83,23 @@ class website_sale_donate(website_sale):
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
 
-        # Set a default payment_interval_id: will be rendered as checked in the product page
-        if product.payment_interval_ids:
-            productpage.qcontext['payment_interval_id'] = product.payment_interval_ids[0].id
+        # Find and Set default payment interval
+        # 1. Set from post
+        if kwargs.get('payment_interval_id'):
+            productpage.qcontext['payment_interval_id'] = kwargs.get('payment_interval_id')
+        # 2. Set from defaults
+        if not productpage.qcontext.get('payment_interval_id'):
+            if request.website.payment_interval_default:
+                productpage.qcontext['payment_interval_id'] = request.website.payment_interval_default.id
+            if product.payment_interval_default:
+                productpage.qcontext['payment_interval_id'] = product.payment_interval_default.id
+        # 3. Use first entry
+        if not productpage.qcontext.get('payment_interval_id'):
+            # Deprecated: payment_interval_ids
+            if product.payment_interval_ids:
+                productpage.qcontext['payment_interval_id'] = product.payment_interval_ids[0].id
+            if product.payment_interval_lines_ids:
+                productpage.qcontext['payment_interval_id'] = product.payment_interval_lines_ids[0].payment_interval_id.id
 
         # Get values from sale-order-line for price_donate and payment_interval_id
         sale_order_id = request.session.sale_order_id
@@ -113,12 +134,13 @@ class website_sale_donate(website_sale):
         cartpage = super(website_sale_donate, self).cart(**post)
         cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
 
+        # One-Page-Checkout
         if request.website['one_page_checkout']:
             return request.redirect("/shop/checkout")
 
         return cartpage
 
-    # SIMPLE CHECKOUT:
+    # NEW ROUTE: SIMPLE CHECKOUT:
     # Add an alternative route for products to directly add them to the shopping cart and DIRECTLY go to the checkout
     # This is useful if you want to create buttons to directly pay / donate for a product
     # HINT: We have to use product.product because otherwise we could not directly check out product variants AND
@@ -132,11 +154,23 @@ class website_sale_donate(website_sale):
 
     # SHOPPING CART UPDATE
     # /shop/cart/update
+    # HINT: can also be called by Products-Listing Category Page if add-to-cart is enabled
     @http.route(['/shop/cart/update'])
     def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
         cr, uid, context = request.cr, request.uid, request.context
 
         product = request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context)
+
+        # Redirect to the calling page (referrer) if the browser has added it
+        # HINT: Not every browser adds the referrer to the header
+        referrer = request.httprequest.referrer
+        if not referrer:
+            if request.session.get('last_page'):
+                referrer = request.session.get('last_page')
+            else:
+                referrer = '/shop/product/%s' % product.product_tmpl_id.id
+        if '?' not in referrer:
+            referrer = referrer + '?'
 
         # Validate (donation) Arbitrary Price
         warnings = None
@@ -150,9 +184,11 @@ class website_sale_donate(website_sale):
             warnings = _('Value must be a valid Number.')
             pass
         if warnings:
-            return request.redirect('/shop/product/%s?&warnings=%s' % (product.product_tmpl_id.id, warnings))
+            referrer = referrer + '&warnings=' + warnings
+            return request.redirect(referrer)
 
         # Check Payment Interval
+        # TODO add a default payment interval to the website and per product and set this here correctly
         # INFO: This is only needed if products are directly added to cart on shop pages (product listings)
         if 'payment_interval_id' not in kw:
             if product.payment_interval_ids:
@@ -176,11 +212,19 @@ class website_sale_donate(website_sale):
             return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
 
         # Stay on the current page if "Add to cart and stay on current page" is set
-        if request.session.get('last_page') and request.website['add_to_cart_stay_on_page']:
-            return request.redirect(request.session['last_page'])
+        if request.website['add_to_cart_stay_on_page']:
+            return request.redirect(referrer)
 
         # Redirect to the shopping cart
         return request.redirect("/shop/cart")
+
+    # /shop/cart/update_json
+    @http.route()
+    def cart_update_json(self, product_id, line_id, add_qty=None, set_qty=None, display=True):
+        request.session['json_cart_update'] = 'True'
+        return super(website_sale_donate, self).cart_update_json(product_id, line_id,
+                                                                 add_qty=add_qty, set_qty=set_qty, display=display)
+
 
     # Add Shipping and Billing Fields to values (= the qcontext for the checkout template)
     # HINT: The calculated values for the fields can be found in the qcontext dict in key 'checkout'
@@ -235,7 +279,7 @@ class website_sale_donate(website_sale):
         for field in billing_fields:
             if field.mandatory:
                 mandatory_bill.append(field.res_partner_field_id.name)
-        print "mandatory_bill %s" % mandatory_bill
+        #print "mandatory_bill %s" % mandatory_bill
         return mandatory_bill
 
     def _get_optional_billing_fields(self):
@@ -245,7 +289,7 @@ class website_sale_donate(website_sale):
         for field in billing_fields:
             if not field.mandatory:
                 optional_bill.append(field.res_partner_field_id.name)
-        print "optional_bill %s" % optional_bill
+        #print "optional_bill %s" % optional_bill
         return optional_bill
 
     def _get_mandatory_shipping_fields(self):
@@ -255,7 +299,7 @@ class website_sale_donate(website_sale):
         for field in shipping_fields:
             if field.mandatory:
                 mandatory_ship.append(field.res_partner_field_id.name)
-        print "mandatory_ship %s" % mandatory_ship
+        #print "mandatory_ship %s" % mandatory_ship
         return mandatory_ship
 
     def _get_optional_shipping_fields(self):
@@ -265,7 +309,7 @@ class website_sale_donate(website_sale):
         for field in shipping_fields:
             if not field.mandatory:
                 optional_ship.append(field.res_partner_field_id.name)
-        print "optional_ship %s" % optional_ship
+        #print "optional_ship %s" % optional_ship
         return optional_ship
 
     # =================
@@ -283,18 +327,13 @@ class website_sale_donate(website_sale):
 
         # Check for redirection caused by errors
         if not payment_qcontext:
+            _logger.error(_('Payment Page has no qcontext. It may be a redirection. No Acquirer-Buttons rendered!'))
             return payment_page
-
-        # Set the current acquirer to be correctly pre selected on subsequent renders of the checkout page
-        if post.get('acquirer'):
-            payment_qcontext['acquirer_id'] = post.get('acquirer')
-            # TODO: If an acquirer and post data is already present we could do form data validation
-            # TODO: Should add a new mehtod to payment providers: something like _[paymentmethod]_pre_send_form_validate()
-            # TODO: If errors are found we could add them to the errors dict
 
         # Check for errors in qcontext
         # HINT: If errors are present Pay-Now button forms will NOT! be rendered by payment controller
         if payment_qcontext.get('errors'):
+            _logger.warning(_('Errors found on the payment page! No Acquirer-Buttons rendered!'))
             return payment_page
 
         # Create alternative Pay-Now buttons (button_opc)
@@ -361,6 +400,25 @@ class website_sale_donate(website_sale):
             # print(etree.tostring(button, encoding='UTF-8', pretty_print=True))
             acquirer.button_opc = etree.tostring(button, encoding='UTF-8', pretty_print=True)
 
+        # Acquirer Validation
+        if post.get('acquirer'):
+
+            # Set the current acquirer to be correctly pre selected on subsequent renders of the checkout page
+            payment_qcontext['acquirer_id'] = post.get('acquirer')
+
+            # Validate if the current acquirer matches the sales order payment intervall
+            order = request.website.sale_get_order()
+            acquirer = request.env['payment.acquirer']
+            acquirer = acquirer.search([('id', '=', post.get('acquirer'))])
+            if order and acquirer and (order.has_recurring and not acquirer.recurring_transactions):
+                msg = _('The selected payment method does not support recurring payments!')
+                _logger.warning(msg)
+                # HINT that the qcontext has no errors is checked above already
+                payment_qcontext['errors'] = {'pm_recurring': [_('Wrong payment method'), msg]}
+
+            # TODO: Validate acquirer non-hidde input fields
+            # TODO: Should add a new mehtod to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
+
         return payment_page
 
     # Checkout Page
@@ -394,6 +452,7 @@ class website_sale_donate(website_sale):
                 # STEP 2: confirm_order
                 # confirm_order validates the form-data and creates or updates partner and sales-order
                 confirm_order = self.confirm_order(**post)
+                # HINT: opc_payment will also validate if the acquirer is correct for the payment interval of the so
                 payment_page = self.opc_payment(**post)
                 # Process the checkout controller again to include possible changes made by confirm_order
                 checkout_page = super(website_sale_donate, self).checkout(**post)

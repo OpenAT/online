@@ -133,6 +133,8 @@ class website_sale_donate_settings(osv.Model):
         'button_data_to_payment': fields.char(string='Data to Payment Button', translate=True),
         # Behaviour
         'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
+        'acquirer_default': fields.many2one('payment.acquirer', string='Default Payment Method'),
+        'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
         'add_to_cart_stay_on_page': fields.boolean(string='Add to Cart and stay on Page'),
         'checkout_show_login_button': fields.boolean(string='Show Login Button on Checkout Page'),
         'one_page_checkout': fields.boolean(string='One-Page-Checkout'),
@@ -160,12 +162,33 @@ class website_sale_donate_settings(osv.Model):
 
 class payment_interval(osv.Model):
     _name = 'product.payment_interval'
+    _order = 'sequence, name'
     _columns = {
+        'sequence': fields.integer('Sequence'),
         'name': fields.text('Payment Interval', required=True, translate=True),
+        # DEPRECATED product_template_ids only left here for downward compatibility
         'product_template_ids': fields.many2many('product.template', string='Products'),
+        'payment_interval_lines_ids': fields.one2many('product.payment_interval_lines', 'payment_interval_id',
+                                               string='Payment Interval Lines'),
+    }
+    _defaults = {
+        'sequence': 1000,
     }
 
 payment_interval()
+
+
+class payment_interval_lines(osv.Model):
+    _name = 'product.payment_interval_lines'
+    _order = 'sequence, payment_interval_id'
+    _columns = {
+        'sequence': fields.integer('Sequence'),
+        'payment_interval_id': fields.many2one('product.payment_interval', string='Payment Interval', required=True),
+        'product_id': fields.many2one('product.template', string='Product', required=True),
+    }
+    _defaults = {
+        'sequence': 1000,
+    }
 
 
 # HINT: Since we set this fields on product.template it is not possible to have different values for variants
@@ -250,7 +273,11 @@ class product_template(osv.Model):
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
         'price_suggested_ids': fields.one2many('product.website_price_buttons', 'product_id',
                                                string='Suggested Donation-Values'),
+        # DEPRECATED payment_interval_ids only left here for downward compatibility
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
+        'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
+        'payment_interval_lines_ids': fields.one2many('product.payment_interval_lines', 'product_id',
+                                               string='Payment Intervals'),
         'button_addtocart_text': fields.char('Add-To-Cart Button Text', size=30, translate=True),
         'hide_panelfooter': fields.boolean('Hide Checkout Panel Footer'),
 
@@ -449,22 +476,25 @@ class sale_order(osv.Model):
     }
 
 
-# Add the field - recurring_transactions to all payment providers and an image field for icons too
-# ToDo If this field is not enabled for a PP it will be hidden if there is any so line with
-#      a payment_interval_id in the current shopping cart. Seems that i have to do this by java script and not by
-#      the controller that renders the PP?!?
+# Add recurring_transactions, image_field and sequence to payment.acquirer
 # HINT: We also add a functional field to sale_order "has_recurring_transactions" type bool - This field is true
 #       if there are any recurring transaction products other than  "einmailig" which has an xml_id of
 #       "once_only" in this sale.order
 class PaymentAcquirer(osv.Model):
     _inherit = 'payment.acquirer'
+    _order = 'sequence, name'
     _columns = {
+        'sequence': fields.integer('Sequence'),
         'recurring_transactions': fields.boolean('Recurring Transactions'),
         'acquirer_icon': fields.binary("Acquirer Icon", help="Acquirer Icon 120x90 PNG 32Bit"),
+        'submit_button_text': fields.char(string='Submit Button Text', translate=True,
+                                          help='Only works in FS-Online Payment Methods'),
+        'submit_button_class': fields.char(string='Submit Button CSS classes',
+                                           help='Only works in FS-Online Payment Methods'),
     }
-
     _defaults = {
         'recurring_transactions': False,
+        'sequence': 1000,
     }
 
 

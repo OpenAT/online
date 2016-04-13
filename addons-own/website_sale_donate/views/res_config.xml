@@ -15,6 +15,18 @@
                                 <field name="country_default_value"/>
                             </div>
                         </div>
+                        <label for="acquirer_default"/>
+                        <div name="acquirer_default">
+                            <div class="oe_inline">
+                                <field name="acquirer_default"/>
+                            </div>
+                        </div>
+                        <label for="payment_interval_default"/>
+                        <div name="payment_interval_default">
+                            <div class="oe_inline">
+                                <field name="payment_interval_default"/>
+                            </div>
+                        </div>
                         <label for="add_to_cart_stay_on_page"/>
                         <div name="add_to_cart_stay_on_page">
                             <div class="oe_inline">
