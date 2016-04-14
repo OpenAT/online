@@ -7,11 +7,17 @@ $(document).ready(function () {
         $price_donate.val( $(this).val() );
     });
 
-    // Click radio button of the selected payment interval on first load of the page
+    // Click radio input of the selected payment interval on first load of the page
     $("input[name='payment_interval_id'][checked]").ready(function () {
-        console.log('On Load of Payment Intervalls');
+        //console.log('On Load of Payment Intervalls');
         $("input[name='payment_interval_id'][checked]").trigger('click');
     });
+    // Click select option of the selected payment interval on first load of the page
+    $("select[name='payment_interval_id']").ready(function () {
+        //console.log('On Load of Payment Intervalls Selection');
+        $("select[name='payment_interval_id'] option:selected").trigger('change');
+    });
+
 
     // Hide all tabs and related tab-content that are not recurring if recurring payment is selected
     var $radio_payint = $("input[name='payment_interval_id']");
@@ -23,7 +29,28 @@ $(document).ready(function () {
 
             // Check if active tab is now hidden and if 'click' the next non hidden tab
             if ( !($('#payment_method li.active:not(.hidden)').length) ) {
-                console.log('No Tab Active');
+                //console.log('No Tab Active');
+                // Select next non hidden tabs (li) link (a) and click it
+                $('#payment_method li:not(.hidden) a[role="tab"]:first').trigger('click');
+            };
+
+        } else {
+            // Unhide all tabs and its content if no recurring payment interval is selected
+            $( "[data-recurring-transactions='False']").removeClass('hidden');
+        }
+    });
+    // Hide all tabs and related tab-content that are not recurring if recurring payment is selected
+    var $select_payint = $("select[name='payment_interval_id']");
+    $select_payint.on("change", function (ev) {
+        var data_payment_interval_external_id = $( "select[name='payment_interval_id'] option:selected" ).attr('data-payment-interval-external-id');
+        if ( data_payment_interval_external_id != 'website_sale_donate.once_only' ) {
+
+            // hide all acquirer tabs that do not work with recurring transactions if any
+            $( "[data-recurring-transactions='False']").addClass('hidden');
+
+            // Check if active tab is now hidden and if 'click' the next non hidden tab
+            if ( !($('#payment_method li.active:not(.hidden)').length) ) {
+                //console.log('No Tab Active');
                 // Select next non hidden tabs (li) link (a) and click it
                 $('#payment_method li:not(.hidden) a[role="tab"]:first').trigger('click');
             };
@@ -34,7 +61,9 @@ $(document).ready(function () {
         }
     });
 
-    // Check radio input tag of the acquirer tab on tab click
+
+
+    // Select (check) radio input tag of the acquirer tab on tab click
     var $payment = $("#payment_method");
     $('#payment_method a[role="tab"]').on("click", function (e) {
 

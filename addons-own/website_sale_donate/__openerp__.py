@@ -21,10 +21,8 @@
 ##############################################################################
 
 {
-    'name': "FCOM Spendenshop",
-    'version': '1.1',
-    # Make sure this translation file is loaded last:
-    # also you should start the server once with --i18n-overwrite to make sure latest translations are loaded from files
+    'name': "FS-Online Spendenshop",
+    'version': '2.1',
     'summary': """Shoperweiterungen für Fundraising Studio Community""",
     'description': """
 
@@ -43,7 +41,7 @@ Anpassungen des Online-Shops für NPOs
 - Forced Fields der Kontaktdaten können geändert werden!
 - Standard Spendenprodukt wird angelegt (Donate)
 - Standard Lieferart wird angelegt (None)
-- VORBEREITET: Kontaktdaten werden auch mittels jquery validate überprüft! (Deaktiviert in templates.xml)
+- Kontaktdaten werden auch mittels jquery validate überprüft! (Deaktiviert in templates.xml)
 - Ausblenden der Steuer und Lieferkosten über Java Script wenn kleiner gleich 0 (nur in der cart page!)
 - Lieferart ausblendbar per Checkbox
 - Lieferadresse ausblendbar per Checkbox
@@ -59,16 +57,13 @@ Anpassungen des Online-Shops für NPOs
 - Neue Info Buttons beim Produkt für die gesamte Spendenhöhe
 
 ## Todo
-- Checkout and Payment on a single Form
-- Payment Snippet
-- User Form (contoller) to create new donation campaigns
+- User Form (contoler) to create new donation campaigns
 - store product images on disk and not in the db
 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
     'depends': [
         'product',
         'sale',

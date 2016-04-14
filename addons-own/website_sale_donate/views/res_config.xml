@@ -27,6 +27,12 @@
                                 <field name="payment_interval_default"/>
                             </div>
                         </div>
+                        <label for="payment_interval_as_selection"/>
+                        <div name="payment_interval_as_selection">
+                            <div class="oe_inline">
+                                <field name="payment_interval_as_selection"/>
+                            </div>
+                        </div>
                         <label for="add_to_cart_stay_on_page"/>
                         <div name="add_to_cart_stay_on_page">
                             <div class="oe_inline">

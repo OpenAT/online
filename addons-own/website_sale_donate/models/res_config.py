@@ -59,6 +59,8 @@ class website_sale_donate_config_settings(osv.osv_memory):
                                            relation="payment.acquirer", string="Default Payment Method"),
         'payment_interval_default': fields.related('website_id', 'payment_interval_default', type="many2one",
                                            relation="product.payment_interval", string="Default Payment Interval"),
+        'payment_interval_as_selection': fields.related('website_id', 'payment_interval_as_selection', type="boolean",
+                                                        string='FORCE Payment Interval as Selection List'),
         'add_to_cart_stay_on_page': fields.related('website_id', 'add_to_cart_stay_on_page', type="boolean",
                                                    string='Add to Cart and stay on the Page'),
         'checkout_show_login_button': fields.related('website_id', 'checkout_show_login_button', type="boolean",

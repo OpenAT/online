@@ -135,6 +135,7 @@ class website_sale_donate_settings(osv.Model):
         'country_default_value': fields.many2one('res.country', string='Default country for checkout page'),
         'acquirer_default': fields.many2one('payment.acquirer', string='Default Payment Method'),
         'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
+        'payment_interval_as_selection': fields.boolean(string='Payment Interval as Selection List'),
         'add_to_cart_stay_on_page': fields.boolean(string='Add to Cart and stay on Page'),
         'checkout_show_login_button': fields.boolean(string='Show Login Button on Checkout Page'),
         'one_page_checkout': fields.boolean(string='One-Page-Checkout'),
@@ -276,6 +277,7 @@ class product_template(osv.Model):
         # DEPRECATED payment_interval_ids only left here for downward compatibility
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
         'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
+        'payment_interval_as_selection': fields.boolean(string='Payment Interval as Selection List'),
         'payment_interval_lines_ids': fields.one2many('product.payment_interval_lines', 'product_id',
                                                string='Payment Intervals'),
         'button_addtocart_text': fields.char('Add-To-Cart Button Text', size=30, translate=True),

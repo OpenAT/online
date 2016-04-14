@@ -547,7 +547,8 @@ class website_sale_donate(website_sale):
 
         return checkout_page
 
-    # Payment Page
+    # One-Page-Checkout: Payment Page Redirection
+    # HINT: Shopping Cart Redirection is done above around line 92
     @http.route()
     def payment(self, **post):
 
@@ -558,4 +559,78 @@ class website_sale_donate(website_sale):
         # Call super().payment and render correct payment provider buttons
         return self.opc_payment(**post)
 
-    # HINT: Shopping Cart Redirection is done above around line 92
+    # Extra Route for Sales Order Information
+    @http.route('/shop/order/get_data/<int:sale_order_id>', type='json', auth="user", website=True)
+    def order_get_status(self, sale_order_id, **post):
+        #cr, uid, context = request.cr, request.uid, request.context
+
+        try:
+            order = request.env['sale.order'].search([('id', '=', sale_order_id)])
+            assert order.ensure_one(), 'Multiple Sales Order Found!'
+        except:
+            order = False
+
+        if not order:
+            return {
+                'error': 'None or multiple Sale Order found for the given id: %s' % sale_order_id,
+            }
+
+        try:
+            data = {
+                'id': order.id,
+                'name': order.name,
+                'state': order.state,
+                'amount_total': order.amount_total,
+                'order_lines': dict(),
+            }
+            if order.partner_id:
+                data.update(partner_id={
+                    'id': order.partner_id.id,
+                    'name': order.partner_id.name,
+                    'fore_name_web': order.partner_id.fore_name_web,
+                    'company_name_web': order.partner_id.company_name_web,
+                    'email': order.partner_id.email,
+                    'newsletter_web': order.partner_id.newsletter_web,
+                    'donation_receipt_web': order.partner_id.donation_receipt_web,
+                    'opt_out': order.partner_id.opt_out,
+                    'lang': order.partner_id.lang,
+                })
+            if order.partner_invoice_id:
+                data.update(partner_invoice_id={
+                    'id': order.partner_invoice_id.id,
+                    'name': order.partner_invoice_id.name,
+                    'fore_name_web': order.partner_invoice_id.fore_name_web,
+                    'company_name_web': order.partner_invoice_id.company_name_web,
+                    'email': order.partner_invoice_id.email,
+                    'newsletter_web': order.partner_invoice_id.newsletter_web,
+                    'donation_receipt_web': order.partner_invoice_id.donation_receipt_web,
+                    'opt_out': order.partner_invoice_id.opt_out,
+                    'lang': order.partner_invoice_id.lang,
+                })
+            if order.partner_shipping_id:
+                data.update(partner_shipping_id={
+                    'id': order.partner_shipping_id.id,
+                    'name': order.partner_shipping_id.name,
+                    'fore_name_web': order.partner_shipping_id.fore_name_web,
+                    'company_name_web': order.partner_shipping_id.company_name_web,
+                    'email': order.partner_shipping_id.email,
+                    'newsletter_web': order.partner_shipping_id.newsletter_web,
+                    'donation_receipt_web': order.partner_shipping_id.donation_receipt_web,
+                    'opt_out': order.partner_shipping_id.opt_out,
+                    'lang': order.partner_shipping_id.lang,
+                })
+            for line in order.order_line:
+                data['order_lines']['line_'+str(line.id)] = {
+                    'id': line.id,
+                    'name': line.name,
+                    'price_subtotal': line.price_subtotal,
+                    'price_unit': line.price_unit,
+                    'price_donate': line.price_donate,
+                    'product_id': line.product_id.id,
+                    'product_name': line.product_id.name,
+                }
+            return data
+        except:
+            return {
+                'error': 'Could not get Data for Sale-Order %s. Maybe you have the wrong user rights?' % sale_order_id,
+            }

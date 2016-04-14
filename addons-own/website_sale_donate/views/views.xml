@@ -106,6 +106,7 @@
                                 <!-- Deprecated and therefore disabled - only left here for reference -->
                                 <!--<field name="payment_interval_ids" widget="many2many_tags" placeholder="Payment Intervals..."/>-->
                                 <field name="payment_interval_default"/>
+                                <field name="payment_interval_as_selection"/>
                                 <field name="payment_interval_lines_ids">
                                     <tree string="Payment Intervals" default_order="sequence" editable="bottom">
                                         <field name="sequence" widget="handle"/>
