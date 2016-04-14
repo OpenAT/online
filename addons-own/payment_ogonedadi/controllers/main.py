@@ -5,6 +5,7 @@ import werkzeug
 
 from openerp import http, SUPERUSER_ID
 from openerp.http import request
+from openerp.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
@@ -30,8 +31,21 @@ class OgonedadiController(http.Controller):
         tx_obj = request.registry['payment.transaction']
         tx = getattr(tx_obj, '_ogonedadi_form_get_tx_from_data')(cr, SUPERUSER_ID, post, context=context)
         state_old = False
+        do_not_send_status_email = False
+        redirect_url_after_form_feedback = None
         if tx:
             state_old = tx.state
+            if tx.acquirer_id:
+                do_not_send_status_email = tx.acquirer_id.do_not_send_status_email
+                redirect_url_after_form_feedback = tx.acquirer_id.redirect_url_after_form_feedback
+                if redirect_url_after_form_feedback and '?' not in redirect_url_after_form_feedback:
+                    redirect_url_after_form_feedback += '?'
+        else:
+            _logger.error(_('Could not find correct Transaction for Ogonedadi Transaction-Form-Feedback!'))
+            if redirect_url_after_form_feedback:
+                return request.redirect(redirect_url_after_form_feedback)
+            else:
+                request.redirect(request.registry.get('last_shop_page') or request.registry.get('last_page') or '/')
 
         # Update the payment.transaction and the Sales Order:
         # form_feedback will call finally _ogonedadi_form_validate (call besides others) and return True or False
@@ -41,7 +55,7 @@ class OgonedadiController(http.Controller):
         # If the state changed send an E-Mail (have to do it here since we do not call /payment/validate for ogonedadi)
         # HINT: we call a special E-Mail template "email_template_webshop" defined in website_sale_payment_fix
         #       for this to work we extended "action_quotation_send" interface with email_template_modell and ..._name
-        if tx.state != state_old:
+        if tx.state != state_old and not do_not_send_status_email:
             _logger.info('Ogonedadi: Send E-Mail for Sales order: \n%s\n', pprint.pformat(tx.sale_order_id.name))
             email_act = request.registry['sale.order'].action_quotation_send(cr, SUPERUSER_ID,
                                                                              [tx.sale_order_id.id],
@@ -70,13 +84,14 @@ class OgonedadiController(http.Controller):
         # Redirect ot our own Confirmation page (instead of calling /payment/validate)
         # all the stuff that could be done by /payment/validate for SO was already done by website_sale_payment_fix
         # "form_feedback" so we are no longer session variable dependent!
-        if tx and tx.sale_order_id:
-            #return request.website.render("website_sale_payment_fix.confirmation_static", {'order': tx.sale_order_id})
-            return request.redirect('/shop/confirmation_static?order_id=%s' % tx.sale_order_id.id)
-
-        # If no tx or tx.sale_order_id was found simply return to the root page of the website
-        # return werkzeug.utils.redirect(post.pop('return_url', '/'))
-        return werkzeug.utils.redirect('/')
+        if tx:
+            order_id = '&order_id='
+            if tx.sale_order_id:
+                order_id += str(tx.sale_order_id.id)
+            if redirect_url_after_form_feedback:
+                return request.redirect(redirect_url_after_form_feedback + order_id)
+            else:
+                return request.redirect('/shop/confirmation_static?' + order_id)
 
     # ToDo by mike: add a new controller that will delete the payment.transaction and reset the sales order to draft
     #               so that the user can select an other payment provider - BUT only if he pressed just "back" on the

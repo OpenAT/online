@@ -11,12 +11,16 @@
                     <div class="container confirmation_static">
                         <div class="oe_structure"></div>
 
-                        <div class="col-md-12 text-center mb32 mt32">
+                        <div class="col-md-12 text-center">
                             <t t-if="order">
                                 <h1><em t-field="order.name"/></h1>
                                 <h1><em t-field="order.payment_tx_id.state"/></h1>
+                            <!-- TODO add hidden small cart for product ids -->
+                            <!-- TODO add hidden shipping address and delivery address -->
                             </t>
+                            <!-- TODO error message if not order ;) -->
                         </div>
+
 
                         <div class="oe_structure"></div>
                     </div>

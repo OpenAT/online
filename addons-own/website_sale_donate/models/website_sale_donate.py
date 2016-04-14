@@ -491,6 +491,10 @@ class PaymentAcquirer(osv.Model):
                                           help='Only works in FS-Online Payment Methods'),
         'submit_button_class': fields.char(string='Submit Button CSS classes',
                                            help='Only works in FS-Online Payment Methods'),
+        'redirect_url_after_form_feedback': fields.char(string='Redirect URL after PP Form-Feedback',
+                                                        help='Redirect to this URL after processing the Answer of the Payment Provider instead of /shop/confirmation_static'),
+        'do_not_send_status_email': fields.boolean('Do not send Confirmation E-Mails on TX-State changes.',
+                                                   help='Will not send website_sale_payment_fix.email_template_webshop'),
     }
     _defaults = {
         'recurring_transactions': False,
