@@ -58,25 +58,40 @@ class FRSTController(http.Controller):
         # Todo: Payment transaction should not be sucessfull if "_frst_form_validate" did not run because of
         # Todo: "_frst_form_get_invalid_parameters" had error fields and returned to early
 
-        # Get the Tx related to the post data of frst and store the current state of the tx
+        # Get the Tx related to the post data of ogone
         tx_obj = request.registry['payment.transaction']
         tx = getattr(tx_obj, '_frst_form_get_tx_from_data')(cr, SUPERUSER_ID, post, context=context)
+
+        # Prepare Variables
         state_old = False
         do_not_send_status_email = False
         redirect_url_after_form_feedback = None
+
+        # Get Redirect URL from website settings
+        if request.website:
+            redirect_url_after_form_feedback = request.website.redirect_url_after_form_feedback or None
+
         if tx:
+            # Store Current State of the transaction
             state_old = tx.state
             if tx.acquirer_id:
                 do_not_send_status_email = tx.acquirer_id.do_not_send_status_email
+
+                # Overwrite redirect URL from payment-provider setting
                 redirect_url_after_form_feedback = tx.acquirer_id.redirect_url_after_form_feedback
-                if redirect_url_after_form_feedback and '?' not in redirect_url_after_form_feedback:
-                    redirect_url_after_form_feedback += '?'
+
+                # Overwrite redirect URL from sales-order root_cat setting
+                if tx.sale_order_id \
+                        and tx.sale_order_id.cat_root_id \
+                        and tx.sale_order_id.cat_root_id.redirect_url_after_form_feedback:
+                    redirect_url_after_form_feedback = tx.sale_order_id.cat_root_id.redirect_url_after_form_feedback
+        # Error Transaction not found
         else:
-            _logger.error(_('Could not find correct Transaction for FRST Transaction-Form-Feedback!'))
+            _logger.error(_('Could not find correct Transaction for FRST PP!'))
             if redirect_url_after_form_feedback:
                 return request.redirect(redirect_url_after_form_feedback)
             else:
-                request.redirect(request.registry.get('last_shop_page') or request.registry.get('last_page') or '/')
+                return request.redirect(request.registry.get('last_shop_page') or request.registry.get('last_page') or '/')
 
         # Update the payment.transaction and the Sales Order:
         # The sales order state will be updated in website_sale_payment_fix "form_feedback" method
@@ -116,6 +131,9 @@ class FRSTController(http.Controller):
         # all the stuff that could be done by /payment/validate for SO was already done by website_sale_payment_fix
         # "form_feedback" so we are no longer session variable dependent!
         if tx:
+            if redirect_url_after_form_feedback and '?' not in redirect_url_after_form_feedback:
+                    redirect_url_after_form_feedback += '?'
+            # Add the order_id to the GET variables of the redirect URL
             order_id = '&order_id='
             if tx.sale_order_id:
                 order_id += str(tx.sale_order_id.id)

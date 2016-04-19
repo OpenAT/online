@@ -71,6 +71,13 @@ class website_sale_donate_config_settings(osv.osv_memory):
                                                 string='Hide Shipping Address'),
         'hide_delivery_methods': fields.related('website_id', 'hide_delivery_methods', type="boolean",
                                                 string='Hide Delivery Methods'),
+        'redirect_url_after_form_feedback': fields.related('website_id', 'redirect_url_after_form_feedback',
+                                                           type="char",
+                                                           string='Redirect URL after PP Form-Feedback',
+                                                           help='Redirect to this URL after processing the Answer of '
+                                                                'the Payment Provider instead of '
+                                                                '/shop/confirmation_static'),
+        # Images
         'square_image_x': fields.related('website_id', 'square_image_x', type="integer",
                                          string='Product SquareImage x-Size in Pixel'),
         'square_image_y': fields.related('website_id', 'square_image_y', type="integer",

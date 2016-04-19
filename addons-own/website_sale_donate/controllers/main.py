@@ -421,6 +421,91 @@ class website_sale_donate(website_sale):
 
         return payment_page
 
+    # payment_transaction controller method (json route) gets replaced with this method
+    # (see below for /shop/payment/transaction/<int:acquirer_id> and in checkout controller for one-page-checkout)
+    # This is called either by the json route after the pay-now button is pressed or during the one-page-checkout
+    # HINT: We do not directly overwrite the Json route because calling a json route will kill/replace current session
+    def payment_transaction_logic(self, acquirer_id, checkout_page=None, **post):
+
+        cr, uid, context = request.cr, request.uid, request.context
+        transaction_obj = request.registry.get('payment.transaction')
+        order = request.website.sale_get_order(context=context)
+
+        if not order or not order.order_line or acquirer_id is None:
+            _logger.error(_('Sale Order is missing or it contains no products!'))
+            if checkout_page:
+                if 'opc_warnings' not in checkout_page.qcontext:
+                    checkout_page.qcontext['opc_warnings'] = list()
+                checkout_page.qcontext['opc_warnings'].append(_('Please add products or donations.'))
+                return checkout_page
+            else:
+                return request.redirect("/shop/checkout")
+
+        assert order.partner_id.id != request.website.partner_id.id
+
+        # Find an already existing transaction or create a new one
+        # TODO: Transaction is not updated after first creation! We should do a force update here.
+        tx = request.website.sale_get_transaction()
+        if tx:
+            tx_id = tx.id
+            if tx.reference != order.name:
+                tx = False
+                tx_id = False
+            elif tx.state == 'draft':  # button clicked but no more info -> rewrite on tx or create a new one ?
+                tx.write({
+                    'acquirer_id': acquirer_id,
+                    'amount': order.amount_total,
+                })
+        if not tx:
+            tx_id = transaction_obj.create(cr, SUPERUSER_ID, {
+                'acquirer_id': acquirer_id,
+                'type': 'form',
+                'amount': order.amount_total,
+                'currency_id': order.pricelist_id.currency_id.id,
+                'partner_id': order.partner_id.id,
+                'partner_country_id': order.partner_id.country_id.id,
+                'reference': order.name,
+                'sale_order_id': order.id,
+            }, context=context)
+            request.session['sale_transaction_id'] = tx_id
+
+        # Update sale order
+        so_tx = request.registry['sale.order'].write(
+                cr, SUPERUSER_ID, [order.id], {
+                    'payment_acquirer_id': acquirer_id,
+                    'payment_tx_id': request.session['sale_transaction_id']
+                }, context=context)
+        if not so_tx:
+            _logger.error(_('Could not update sale order after creation or update of the payment transaction!'))
+
+        # Reset sales order of current session for Dadi Payment Providers
+        # HINT: THis is the integration of the former addon website_sale_payment_fix
+        # HINT: Since we have a transaction right now we reset the sale-order of the current session
+        #       for our own payment providers. Therefore it does not matter what happens by the PP
+        if tx_id:
+            # get the payment.transaction
+            tx = request.registry['payment.transaction'].browse(cr, SUPERUSER_ID,
+                                                                [tx_id], context=context)
+
+            # Only reset the current shop session for our own payment providers
+            if tx.acquirer_id.provider in ('ogonedadi', 'frst'):
+                # Confirm the sales order so no changes are allowed any more in the odoo backend
+                request.registry['sale.order'].action_button_confirm(cr, SUPERUSER_ID,
+                                                                     [tx.sale_order_id.id], context=context)
+                # Clear the session to restart SO in case we get no answer from the PP or browser back button is used
+                request.website.sale_reset(context=context)
+                # HINT: Maybe it is also needed to reset the sale_last_order_id? Disabled for now
+                # request.session.update({'sale_last_order_id': False})
+
+        return tx_id
+
+    # /shop/payment/transaction/<int:acquirer_id>
+    # Overwrite the Json controller for the pay now button
+    @http.route()
+    def payment_transaction(self, acquirer_id):
+        tx = self.payment_transaction_logic(acquirer_id)
+        return tx
+
     # Checkout Page
     @http.route()
     def checkout(self, one_page_checkout=False, **post):
@@ -457,6 +542,7 @@ class website_sale_donate(website_sale):
                 # Process the checkout controller again to include possible changes made by confirm_order
                 checkout_page = super(website_sale_donate, self).checkout(**post)
                 checkout_page.qcontext['one_page_checkout'] = True
+                # Add a additional warnings list to the qcontext for the payment_transaction controller
                 checkout_page.qcontext['opc_warnings'] = list()
                 checkout_page.qcontext.update(confirm_order.qcontext)
                 checkout_page.qcontext.update(payment_page.qcontext)
@@ -478,55 +564,15 @@ class website_sale_donate(website_sale):
                     return checkout_page
 
                 # HINT: SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
-                #       Therefore we have to create the tx manually here
-                # Todo: Make this a method and use it here and overwrite original controller to use this method
+                #       Because of this and to integrate website_sale_payment_fix the logic was added in a new mehtod
                 acquirer_id = int(post.get('acquirer'))
                 request.session['acquirer_id'] = acquirer_id
                 checkout_page.qcontext.update({'acquirer_id': request.session.get('acquirer_id')})
-                transaction_obj = request.registry.get('payment.transaction')
-                order = request.website.sale_get_order(context=context)
 
-                if not order or not order.order_line or acquirer_id is None:
-                    _logger.error(_('Sale Order is missing or it contains no products!'))
-                    checkout_page.qcontext['opc_warnings'].append(_('Please add products or donations.'))
+                self.payment_transaction_logic(acquirer_id, checkout_page=checkout_page)
+                # If any errors are found return the checkout_page
+                if checkout_page.qcontext.get('opc_warnings'):
                     return checkout_page
-
-                assert order.partner_id.id != request.website.partner_id.id
-
-                # Find an already existing transaction
-                # TODO: BUGFixing - Transaction is not updated after first creation ? Force update may be needed
-                tx = request.website.sale_get_transaction()
-                if tx:
-                    tx_id = tx.id
-                    if tx.reference != order.name:
-                        tx = False
-                        tx_id = False
-                    elif tx.state == 'draft':  # button clicked but no more info -> rewrite on tx or create a new one ?
-                        tx.write({
-                            'acquirer_id': acquirer_id,
-                            'amount': order.amount_total,
-                        })
-                if not tx:
-                    tx_id = transaction_obj.create(cr, SUPERUSER_ID, {
-                        'acquirer_id': acquirer_id,
-                        'type': 'form',
-                        'amount': order.amount_total,
-                        'currency_id': order.pricelist_id.currency_id.id,
-                        'partner_id': order.partner_id.id,
-                        'partner_country_id': order.partner_id.country_id.id,
-                        'reference': order.name,
-                        'sale_order_id': order.id,
-                    }, context=context)
-                    request.session['sale_transaction_id'] = tx_id
-
-                # Update sale order
-                so_tx = request.registry['sale.order'].write(
-                        cr, SUPERUSER_ID, [order.id], {
-                            'payment_acquirer_id': acquirer_id,
-                            'payment_tx_id': request.session['sale_transaction_id']
-                        }, context=context)
-                if not so_tx:
-                    _logger.error(_('Could not update sale order after creation or update of the payment transaction!'))
                 # STEP 3: END (SUCCESSFUL)
 
                 # STEP 4: set sales order to "send" and redirect to the payment provider
@@ -558,6 +604,21 @@ class website_sale_donate(website_sale):
 
         # Call super().payment and render correct payment provider buttons
         return self.opc_payment(**post)
+
+    # Alternative confirmation page for Dadi Payment-Providers (Acquirers ogonedadi and frst for now)
+    # HINT this rout is called by the payment_provider routes e.g.: ogonedadi_form_feedback or frst_form_feedback
+    @http.route(['/shop/confirmation_static'], type='http', auth="public", website=True)
+    def payment_confirmation_static(self, order_id=None, **post):
+        cr, uid, context = request.cr, request.uid, request.context
+        try:
+            order_id = int(order_id)
+            order = request.registry['sale.order'].browse(cr, SUPERUSER_ID, order_id, context=context)[0]
+            if order and order.name and order.payment_tx_id:
+                return request.website.render("website_sale_donate.confirmation_static", {'order': order})
+            else:
+                raise
+        except:
+            return request.website.render("website_sale_donate.confirmation_static", {'order': None})
 
     # Extra Route for Sales Order Information
     @http.route('/shop/order/get_data/<int:sale_order_id>', type='json', auth="user", website=True)

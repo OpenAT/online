@@ -9,7 +9,9 @@
     'author': 'OpenERP SA and DataDialog, Michael Karrer (michael.karrer@datadialog.net)',
     'depends': [
         'payment',
-        'website_sale_payment_fix'],
+        'website_sale_donate',
+        'website_sale_categories',
+    ],
     'data': [
         'views/ogonedadi.xml',
         'views/payment_acquirer.xml',

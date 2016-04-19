@@ -141,6 +141,9 @@ class website_sale_donate_settings(osv.Model):
         'one_page_checkout': fields.boolean(string='One-Page-Checkout'),
         'hide_shipping_address': fields.boolean(string='Hide Shipping Address'),
         'hide_delivery_methods': fields.boolean(string='Hide Delivery Methods'),
+        'redirect_url_after_form_feedback': fields.char(string='Redirect URL after PP Form-Feedback',
+                                                        help='Redirect to this URL after processing the Answer of the '
+                                                             'Payment Provider instead of /shop/confirmation_static'),
         # Global Fields for Snippets
         'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox'),
         'cart_page_top': fields.html(string='Cart Page Top Snippet Dropping Area'),
@@ -149,8 +152,8 @@ class website_sale_donate_settings(osv.Model):
         'checkout_page_bottom': fields.html(string='Checkout Page Bottom Snippet Dropping Area'),
         'payment_page_top': fields.html(string='Payment Page Top Snippet Dropping Area'),
         'payment_page_bottom': fields.html(string='Payment Page Bottom Snippet Dropping Area'),
-        'confirmation_page_top': fields.html(string='Payment Page Top Snippet Dropping Area'),
-        'confirmation_page_bottom': fields.html(string='Payment Page Bottom Snippet Dropping Area'),
+        'confirmation_page_top': fields.html(string='Confirmation Page Top Snippet Dropping Area'),
+        'confirmation_page_bottom': fields.html(string='Confirmation Page Bottom Snippet Dropping Area'),
         # Square Image Dimensions
         'square_image_x': fields.integer(string='Product SquareImage x-Size in Pixel'),
         'square_image_y': fields.integer(string='Product SquareImage y-Size in Pixel'),
@@ -241,6 +244,8 @@ class product_template(osv.Model):
     _columns = {
         # EXTRA FIELDS
         'format': fields.char(string="Format"),
+        'webshop_download_file': fields.binary(string="WebShop Download File"),
+        'webshop_download_file_name': fields.char(string="WebShop Download File Name"),
 
         # BEHAVIOUR
         'simple_checkout': fields.boolean('Simple Checkout'),
@@ -330,13 +335,13 @@ class product_template(osv.Model):
                 product.write({"product_page_template": 'website_sale_donate.ppt_donate'})
 
 
-    class product_template_onchange(osv.osv):
-        _inherit = 'product.template'
+class product_template_onchange(osv.osv):
+    _inherit = 'product.template'
 
-        @api.onchange('price_donate')
-        def _set_hide_quantity(self):
-            if self.price_donate:
-                self.hide_quantity = True
+    @api.onchange('price_donate')
+    def _set_hide_quantity(self):
+        if self.price_donate:
+            self.hide_quantity = True
 
 
 # Extend sale.order.line to be able to store price_donate and payment interval information
@@ -477,6 +482,27 @@ class sale_order(osv.Model):
                                          string='Has order lines with recurring transactions'),
     }
 
+    # Add the possibility of Custom E-Mail Templates Sales Order Confirmation E-Mails
+    # HINT: This integrates the website_sale_payment_fix addon
+    # HINT: action_quotation_send is already overwritten by addon "website_quote" and "portal_sale"!
+    def action_quotation_send(self, cr, uid, ids, context=None,
+                              email_template_modell=None,
+                              email_template_name=None):
+        """ extend the interface of action_quotation_send to call it for a custom email template """
+        action_dict = super(sale_order, self).action_quotation_send(cr, uid, ids, context=context)
+        try:
+            template_id = self.pool.get('ir.model.data').get_object_reference(cr, uid,
+                                                                              email_template_modell,
+                                                                              email_template_name)[1]
+            if template_id:
+                ctx = action_dict['context']
+                ctx['default_template_id'] = template_id
+                ctx['default_use_template'] = True
+        except Exception:
+            pass
+
+        return action_dict
+
 
 # Add recurring_transactions, image_field and sequence to payment.acquirer
 # HINT: We also add a functional field to sale_order "has_recurring_transactions" type bool - This field is true
@@ -494,14 +520,49 @@ class PaymentAcquirer(osv.Model):
         'submit_button_class': fields.char(string='Submit Button CSS classes',
                                            help='Only works in FS-Online Payment Methods'),
         'redirect_url_after_form_feedback': fields.char(string='Redirect URL after PP Form-Feedback',
-                                                        help='Redirect to this URL after processing the Answer of the Payment Provider instead of /shop/confirmation_static'),
+                                                        help='Redirect to this URL after processing the Answer of the '
+                                                             'Payment Provider instead of /shop/confirmation_static'),
         'do_not_send_status_email': fields.boolean('Do not send Confirmation E-Mails on TX-State changes.',
-                                                   help='Will not send website_sale_payment_fix.email_template_webshop'),
+                                                   help='Will not send website_sale_donate.email_template_webshop. Setting used in payment provider controllers!'),
     }
     _defaults = {
         'recurring_transactions': False,
         'sequence': 1000,
     }
+
+
+# Extend form_feedback to cancel the sales order on errors also
+# HINT: This integrates the former website_sale_payment_fix addon
+class PaymentTransaction(orm.Model):
+    _inherit = 'payment.transaction'
+
+    def form_feedback(self, cr, uid, data, acquirer_name, context=None):
+        """ Override to confirm the sale order, if defined, and if the transaction
+        is done. """
+        tx = None
+
+        # RES could be True, False or, just if implemented by the PP, the Transaction ID
+        res = super(PaymentTransaction, self).form_feedback(cr, uid, data, acquirer_name, context=context)
+
+        # Fetch the tx, check its state, confirm the potential SO
+        # (we have to do it this way since it is not sure that any PP returns the TX ID for _%s_form_validate but
+        #  the output of this method will normally be returned by form_feedback therefore we have to call
+        #  _%s_form_get_tx_from_data again to make sure to find the TX if any)
+        tx_find_method_name = '_%s_form_get_tx_from_data' % acquirer_name
+        if hasattr(self, tx_find_method_name):
+            tx = getattr(self, tx_find_method_name)(cr, uid, data, context=context)
+
+        # Payment Transaction States
+        # --------------------------
+        if tx and tx.sale_order_id:
+            # DONE state is already done in website_sale_payment but it does not harm to have it here again
+            # Normally at this point the SO should already be in a confirmed state (done when payment button is pressed)
+            if tx.state in ['pending', 'done'] and tx.sale_order_id.state in ['draft', 'sent']:
+                self.pool['sale.order'].action_button_confirm(cr, SUPERUSER_ID, [tx.sale_order_id.id], context=context)
+            if tx.state in ['cancel', 'error'] and tx.sale_order_id.state != 'cancel':
+                self.pool['sale.order'].action_cancel(cr, SUPERUSER_ID, [tx.sale_order_id.id], context=context)
+
+        return res
 
 
 # CROWD FUNDING EXTENSIONS
@@ -535,6 +596,9 @@ class product_product(osv.Model):
 
     _columns = {
         'sold_total': fields.function(_sold_total, string='# Sold Total', type='float'),
+        # Add Download Field and name for the product variant
+        'webshop_download_file': fields.binary(string="WebShop Download File"),
+        'webshop_download_file_name': fields.char(string="WebShop Download File Name"),
     }
 
 

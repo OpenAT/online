@@ -61,12 +61,13 @@ Please look at the example html file at website_as_widget/test_iframe.html
     'author': "Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
     'depends': [
         'base', 'website', 'website_tools',
     ],
     'installable': True,
     'data': [
+        'views/views.xml',
         'views/templates.xml',
     ],
 }

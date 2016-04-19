@@ -11,11 +11,12 @@
                     <attribute name="class"></attribute>
                 </xpath>
                 <field name="sequence" position="after">
-                    <field name="cat_hide"/>
                     <field name="cat_root"/>
                     <field name="cat_root_id" readonly="1"/>
-                    <field name="grid_template"/>
                     <field name="one_page_checkout"/>
+                    <field name="redirect_url_after_form_feedback" attrs="{'invisible': [('cat_root','=', False)]}"/>
+                    <field name="cat_hide"/>
+                    <field name="grid_template"/>
                     <field name="cat_products_grid_ppg" placeholder="9"/>
                     <field name="cat_products_grid_ppr" placeholder="3"/>
                     <field name="cat_products_grid_before" placeholder="col-md-3"/>
@@ -24,15 +25,55 @@
             </field>
         </record>
 
-        <!-- INHERIT: Add cat_root_id and cat_id to the sales-order-form sales-order-line Tree View -->
+        <!-- INHERIT: Add cat_root_id and cat_id to the sales-order-form_sales-order-line Tree View -->
         <record id="view_order_form" model="ir.ui.view">
-            <field name="name">sale.order.form categories from shop</field>
+            <field name="name">sale.order.form categories from web-shop</field>
             <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"></field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree[@string='Sales Order Lines']/field[@name='tax_id']" position="before">
                     <field name="cat_root_id" readonly="1"/>
                     <field name="cat_id" readonly="1"/>
+                </xpath>
+                <field name="currency_id" position="after">
+                    <field name="cat_root_id" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- INHERIT: Add cat_root_id to the sale-order-tree-views -->
+        <record id="view_order_tree" model="ir.ui.view">
+            <field name="name">view_order_tree cat_root_id from web-shop</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="cat_root_id" readonly="1"/>
+                </field>
+            </field>
+        </record>
+        <record id="view_quotation_tree" model="ir.ui.view">
+            <field name="name">view_quotation_tree cat_root_id from web-shop</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="cat_root_id" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- INHERIT: sale order search view -->
+        <record id="view_sales_order_filter" model="ir.ui.view">
+            <field name="name">view_sales_order_filter cat_root_id from web-shop</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="after">
+                    <field name="cat_root_id"/>
+                </field>
+                <xpath expr="//filter[@string='Order Month']" position="after">
+                    <filter string="Web-Shop Root-Category" domain="[]" context="{'group_by':'cat_root_id'}"/>
                 </xpath>
             </field>
         </record>

@@ -8,6 +8,7 @@
             <field name="inherit_id" ref="website.view_website_config_settings"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[@string='Domain']" position="after">
+                    <!-- Behaviour -->
                     <group string="Behaviour">
                         <label for="country_default_value"/>
                         <div name="country_default_value">
@@ -63,7 +64,14 @@
                                 <field name="hide_delivery_methods"/>
                             </div>
                         </div>
+                        <label for="redirect_url_after_form_feedback"/>
+                        <div name="redirect_url_after_form_feedback">
+                            <div class="oe_inline">
+                                <field name="redirect_url_after_form_feedback"/>
+                            </div>
+                        </div>
                     </group>
+                    <!-- Images -->
                     <group string="Images">
                         <label for="square_image_x"/>
                         <div name="square_image_x">

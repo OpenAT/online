@@ -86,6 +86,25 @@
                                            t-att-data-line-id="line.id">
                                             <span class="glyphicon glyphicon-remove"/>
                                         </a>
+                                        <!-- DOWNLOAD PRODUCT LINK -->
+                                        <!-- Set download link from product template -->
+                                        <t t-if="show_download_links">
+                                            <t t-set="webshop_download_file_link" t-value="False"/>
+                                            <t t-if="line.product_id.product_tmpl_id.webshop_download_file">
+                                                <t t-set="webshop_download_file_link" t-value="'/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % line.product_id.product_tmpl_id.id"/>
+                                            </t>
+                                            <!-- Overwrite download link from product variant -->
+                                            <t t-if="line.product_id.webshop_download_file">
+                                                <t t-set="webshop_download_file_link" t-value="'/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % line.product_id.id"/>
+                                            </t>
+                                            <!-- Create the download link as button -->
+                                            <t t-if="webshop_download_file_link">
+                                                <a t-att-href="webshop_download_file_link"
+                                                   class="webshop_download_file btn btn-sm btn-primary pull-right">
+                                                    <span class="glyphicon glyphicon-download"/><span> Download</span>
+                                                </a>
+                                            </t>
+                                        </t>
                                         <!-- Set Quantity -->
                                         <div class="input-group oe_website_spinner">
                                             <input type="text"

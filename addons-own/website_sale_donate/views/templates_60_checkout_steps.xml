@@ -795,5 +795,49 @@
             </xpath>
         </template>
 
+        <!-- ALTERNATIVE CHECKOUT PAGE for Dadi Payment Providers -->
+        <!-- HINT: the sales order gets confirmed before we redirect to the PP therefore the update is not important -->
+        <!--       = not monitored by website_sale_validate.js in website sales -->
+        <template id="confirmation_static">
+            <t t-call="website.layout">
+                <t t-set="additional_title">Shop - Confirmed</t>
+
+                <div id="wrap">
+                    <div class="container wsd_confirmation_page">
+                        <!-- Top Snippet-Dropping-Area -->
+                        <div class="row wsd_confirmation_page_top">
+                            <div class="col-md-12">
+                                <div t-field="website.confirmation_page_top"/>
+                            </div>
+                        </div>
+
+                        <div class="row wsd_confirmation_page_status">
+                            <div class="col-md-12">
+                                <!-- Order Status -->
+                                <t t-if="order">
+                                    <h1 class="order_name"><span t-field="order.name"/></h1>
+                                    <h1 class="order_status"><span t-field="order.payment_tx_id.state"/></h1>
+                                </t>
+                                <!-- Error -->
+                                <t t-if="not order">
+                                    <h1 class="order_error">
+                                        <span>No data received from the payment provider.</span>
+                                    </h1>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Snippet-Dropping-Area -->
+                        <div class="row wsd_confirmation_page_bottom">
+                            <div class="col-md-12">
+                                <div t-field="website.confirmation_page_bottom"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+        </template>
+
     </data>
 </openerp>

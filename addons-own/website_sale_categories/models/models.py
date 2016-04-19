@@ -36,8 +36,8 @@ class product_public_category_menu(models.Model):
     cat_descbottom_showatchilds = fields.Html(string="Bottom-Description shown at Child Categories")
     cat_descbottom = fields.Html(string="Bottom-Category-Description")
 
-    cat_hide = fields.Boolean(string="Hide Category from Navigation")
-    cat_root = fields.Boolean(string="Start Navigation from this Category")
+    cat_hide = fields.Boolean(string="Hide this Category from Cat-Navigation")
+    cat_root = fields.Boolean(string="RootCateg. (Start Cat-Navigation from here)")
     one_page_checkout = fields.Boolean(string="One-Page-Checkout")
     # Topmost parent category:
     # Store the nearest parent category in the field cat_root_id  that has cat_root=True or, if no parent category has
@@ -60,6 +60,10 @@ class product_public_category_menu(models.Model):
     grid_template = fields.Selection([('website_sale.products', 'Default Grid Layout'),
                                       ('website_sale_categories.products_listing', 'List Layout')],
                                      string="Shop Grid Template")
+    # Redirect Url after form feedback of the payment provider
+    redirect_url_after_form_feedback = fields.Char(string='Redirect URL after PP Form-Feedback',
+                                                   help='Redirect to this URL after processing the Answer of the'
+                                                        'Payment Provider instead of /shop/confirmation_static')
 
     # Update the field cat_root_id at addon installation or update
     def init(self, cr, context=None):
@@ -136,25 +140,6 @@ class product_public_category_menu(models.Model):
         else:
             raise Exception('Please change public categories one by one!')
 
-    # @api.multi
-    # def unlink(self):
-    #     if self.ensure_one():
-    #         # Find existing Child Categories
-    #         child_categories = self.env['product.public.category'].search(['&',
-    #                                                                  ('id', 'child_of', int(self.id)),
-    #                                                                  ('id', 'not in', self.ids)])
-    #
-    #         # Delete the category (so it could not be found anymore)
-    #         res = super(product_public_category_menu, self).unlink()
-    #
-    #         # Recalculate the RootCats for the child categories
-    #         for child_cat in child_categories:
-    #             child_cat.write({"parent_id": child_cat.parent_id.id or None})
-    #
-    #         return res
-    #     else:
-    #         raise Exception('Please delete public categories one by one!')
-
     @api.multi
     def unlink(self):
 
@@ -183,9 +168,11 @@ class sale_order_line(models.Model):
     cat_id = fields.Many2one(comodel_name='product.public.category', string='Categ.')
 
 
-# Store the cat_id and cat_root_id in the sales order line!
+# Store the cat_id and cat_root_id in the sale order line and in the sale order if all lines are similar!
 class sale_order(models.Model):
     _inherit = "sale.order"
+
+    cat_root_id = fields.Many2one(comodel_name='product.public.category', string='RootCateg.',)
 
     def _cart_update(self, cr, uid, ids, product_id=None, line_id=None, add_qty=0, set_qty=0, context=None, **kwargs):
 
@@ -201,6 +188,7 @@ class sale_order(models.Model):
         sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
 
         # Update the sale_order_line with cat_root_id and cat_id if in kwargs
+        # TODO: small_cart should also add cat_root_id - error reported by joe
         try:
             cat_root_id = int(kwargs.get('cat_root_id'))
             sol.cat_root_id = cat_root_id
@@ -211,5 +199,17 @@ class sale_order(models.Model):
             sol.cat_id = cat_id
         except:
             pass
+
+        # Set the Sale Order cat_root_id field
+        if sol.order_id:
+            if sol_obj.search(cr, SUPERUSER_ID,
+                              ['&',
+                               ('order_id.id', '=', sol.order_id.id),
+                               ('cat_root_id.id', '!=', sol.cat_root_id.id)], context=context):
+                # Order-lines with different root-cat found, reset cat_root_id of the sales-order
+                sol.order_id.cat_root_id = None
+            else:
+                # All order-lines have the same root-cat, set the cat_root_id of the sales-order
+                sol.order_id.cat_root_id = sol.cat_root_id.id
 
         return cu

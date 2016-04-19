@@ -159,11 +159,13 @@
                 </xpath>
                 <field name="active" position="after">
                     <field name="format"/>
+                    <field name="webshop_download_file_name" invisible="0"/>
+                    <field name="webshop_download_file" widget="binary" filename="webshop_download_file_name"/>
                 </field>
             </field>
         </record>
 
-        <!-- Extend the Product Variant view to show sold_total button-->
+        <!-- Extend the Product Variant from view to show sold_total button-->
         <record model="ir.ui.view" id="product_form_view_sold_total_button">
             <field name="name">product.product.sale.order.sold_total</field>
             <field name="model">product.product</field>
@@ -176,6 +178,19 @@
                         <field string="Sold Total" name="sold_total" widget="statinfo" />
                     </button>
                 </xpath>
+            </field>
+        </record>
+
+        <!-- Extend the Product Variant tree view to show webshop_download_file -->
+        <record model="ir.ui.view" id="product_product_tree_view_webshop_download_file">
+            <field name="name">product.product_product_tree_view webshop_download_file</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="product_tmpl_id" position="after">
+                    <field name="webshop_download_file_name" invisible="0"/>
+                    <field name="webshop_download_file" widget="binary" filename="webshop_download_file_name"/>
+                </field>
             </field>
         </record>
 
