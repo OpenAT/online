@@ -176,40 +176,63 @@ class sale_order(models.Model):
 
     def _cart_update(self, cr, uid, ids, product_id=None, line_id=None, add_qty=0, set_qty=0, context=None, **kwargs):
 
-        # Update Cart and get the sales_order_line
+        # Get sale order and sale order line
+        so = None
+        sol_obj = self.pool.get('sale.order.line')
+        if line_id:
+            sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
+            try:
+                so = sol.order_id
+            except:
+                pass
+
+        # Update sale order and sale order line (= product cart)
         cu = super(sale_order, self)._cart_update(cr, uid, ids,
                                                   product_id=product_id,
                                                   line_id=line_id,
                                                   add_qty=add_qty,
                                                   set_qty=set_qty,
                                                   context=context, **kwargs)
-        line_id = cu.get('line_id')
-        sol_obj = self.pool.get('sale.order.line')
-        sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
 
-        # Update the sale_order_line with cat_root_id and cat_id if in kwargs
-        # TODO: small_cart should also add cat_root_id - error reported by joe
-        try:
-            cat_root_id = int(kwargs.get('cat_root_id'))
-            sol.cat_root_id = cat_root_id
-        except:
-            pass
-        try:
-            cat_id = int(kwargs.get('cat_id'))
-            sol.cat_id = cat_id
-        except:
-            pass
+        # In case the order line just got created update the sol and so
+        if isinstance(cu, dict) and cu.get('quantity', 0) > 0 and cu.get('line_id'):
+            line_id = cu.get('line_id')
+            sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
+            try:
+                if sol.order_id:
+                    so = sol.order_id
+            except:
+                pass
+
+            # Update the sale_order_line with cat_root_id and cat_id
+            try:
+                cat_root_id = int(kwargs.get('cat_root_id'))
+                sol.cat_root_id = cat_root_id
+            except:
+                pass
+            try:
+                cat_id = int(kwargs.get('cat_id'))
+                sol.cat_id = cat_id
+            except:
+                pass
 
         # Set the Sale Order cat_root_id field
-        if sol.order_id:
-            if sol_obj.search(cr, SUPERUSER_ID,
-                              ['&',
-                               ('order_id.id', '=', sol.order_id.id),
-                               ('cat_root_id.id', '!=', sol.cat_root_id.id)], context=context):
-                # Order-lines with different root-cat found, reset cat_root_id of the sales-order
-                sol.order_id.cat_root_id = None
-            else:
-                # All order-lines have the same root-cat, set the cat_root_id of the sales-order
-                sol.order_id.cat_root_id = sol.cat_root_id.id
+        try:
+            if so and so.order_line:
+                # Search for the first sale order product line (the current one could be deleted)
+                first_sol = sol_obj.browse(cr, SUPERUSER_ID, so.order_line[0].id, context=context)
+                if first_sol:
+                    # search if any order line has a different cat_root_id than the first_sol
+                    if sol_obj.search(cr, SUPERUSER_ID,
+                                      ['&',
+                                       ('order_id.id', '=', first_sol.order_id.id),
+                                       ('cat_root_id.id', '!=', first_sol.cat_root_id.id)], context=context):
+                        # Reset sale order cat_root_id
+                        so.cat_root_id = None
+                    else:
+                        # All order-lines have the same root-cat, set the cat_root_id of the sales-order
+                        so.cat_root_id = first_sol.cat_root_id.id
+        except:
+            pass
 
         return cu

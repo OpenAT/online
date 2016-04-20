@@ -103,7 +103,7 @@
         <xpath expr="//body" position="attributes">
                 <!--<attribute name="t-att-data-rootcatid"> category.cat_root_id.id if category else 'False' </attribute>-->
                 <!--<attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>-->
-                <attribute name="t-att-data-rootcatid"> (category.cat_root_id.id if category else False) or (website.sale_get_order().cat_root_id.id if website.sale_get_order() else False) or 'False' </attribute>
+                <attribute name="t-att-data-rootcatid"> (category.cat_root_id.id if category else False) or (website.sale_get_order().cat_root_id.id if (website and website.sale_get_order()) else False) or 'False' </attribute>
                 <attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>
         </xpath>
     </template>
