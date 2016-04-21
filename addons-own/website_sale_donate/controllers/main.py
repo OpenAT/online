@@ -621,12 +621,13 @@ class website_sale_donate(website_sale):
             return request.website.render("website_sale_donate.confirmation_static", {'order': None})
 
     # Extra Route for Sales Order Information
-    @http.route('/shop/order/get_data/<int:sale_order_id>', type='json', auth="public", website=True)
+    @http.route('/shop/order/get_data/<int:sale_order_id>', type='json', auth="user", website=True)
     def order_get_status(self, sale_order_id, **post):
         #cr, uid, context = request.cr, request.uid, request.context
 
         try:
-            order = request.env['sale.order'].sudo().search([('id', '=', sale_order_id)])
+            #order = request.env['sale.order'].sudo().search([('id', '=', sale_order_id)])
+            order = request.env['sale.order'].search([('id', '=', sale_order_id)])
             assert order.ensure_one(), 'Multiple Sales Order Found!'
         except:
             order = False
