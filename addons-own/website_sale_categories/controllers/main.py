@@ -32,9 +32,16 @@ class website_sale_categories(website_sale):
         main.PPG = 20
         main.PPR = 4
 
-        # Set products grid raster and templates
+        # Add * to the session and set products grid raster and templates
         if category:
+
+            # Set category variable to the category object
             category = pool['product.public.category'].browse(cr, uid, int(category), context=context)
+
+            # Add last_visited_rootcatid to the session
+            if category.cat_root_id:
+                request.session['last_visited_rootcatid'] = category.cat_root_id.id
+
             # Search up the category tree
             ppg = self._find_attr_in_cat_tree(category, attribute='cat_products_grid_ppg')
             if ppg:
@@ -43,7 +50,7 @@ class website_sale_categories(website_sale):
             if ppr:
                 main.PPR = ppr
 
-        # Render the category page
+        # Call Super (Return = rendered page)
         page = super(website_sale_categories, self).shop(page=page, category=category, search=search, **post)
 
         # Add One-Page-Checkout to qcontext if the current category or its root category has one-page-checkout set
@@ -56,7 +63,7 @@ class website_sale_categories(website_sale):
             page.qcontext.update(checkoutpage.qcontext)
             page.qcontext.update({'one_page_checkout': True})
 
-        # Custom product-list-view template by category
+        # Render custom product-list-view template by category
         if category:
             # Set Template for the shop grid (or list view)
             # Shop Grid Qweb Template based on the grid_template field

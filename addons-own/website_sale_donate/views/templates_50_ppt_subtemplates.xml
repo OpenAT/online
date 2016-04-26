@@ -58,7 +58,7 @@
 
                     <!-- Product Image -->
                     <t t-if="not hide_image">
-                        <div t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle product-image", "alt-field": "name"}'/>
+                        <div><span itemprop="image" t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle product-image product_detail_img", "alt-field": "name"}'/></div>
                     </t>
 
                     <!-- Product Sales Text: description_sale -->

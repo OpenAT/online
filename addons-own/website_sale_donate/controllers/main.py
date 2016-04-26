@@ -690,6 +690,10 @@ class website_sale_donate(website_sale):
                     'price_donate': line.price_donate,
                     'product_id': line.product_id.id,
                     'product_name': line.product_id.name,
+                    'cat_root_id': line.cat_root_id.id if line.cat_root_id else 'None',
+                    'cat_root_id_name': line.cat_root_id.name if line.cat_root_id else 'None',
+                    'cat_id': line.cat_id.id if line.cat_id else 'None',
+                    'cat_id_name': line.cat_id.name if line.cat_id else 'None',
                 }
             return data
         except:

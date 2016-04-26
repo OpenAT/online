@@ -101,10 +101,12 @@
     <!-- INHERIT website.layout:  Set classes for the categories -->
     <template id="website_sale_categories_variables" inherit_id="website.layout" name="Set website_sale_categories variables">
         <xpath expr="//body" position="attributes">
-                <!--<attribute name="t-att-data-rootcatid"> category.cat_root_id.id if category else 'False' </attribute>-->
-                <!--<attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>-->
-                <attribute name="t-att-data-rootcatid"> (category.cat_root_id.id if category else False) or (website.sale_get_order().cat_root_id.id if (website and website.sale_get_order()) else False) or 'False' </attribute>
-                <attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>
+            <attribute name="t-att-data-rootcatid"> category.cat_root_id.id if category else 'False' </attribute>
+            <!--<attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>-->
+            <!--<attribute name="t-att-data-rootcatid"> (category.cat_root_id.id if category else False) or (website.sale_get_order().cat_root_id.id if (website and website.sale_get_order()) else False) or 'False' </attribute>-->
+            <attribute name="t-att-data-sale-order-rootcatid"> website.sale_get_order().cat_root_id.id if (website and website.sale_get_order()) else 'False' </attribute>
+            <attribute name="t-att-data-last-visited-rootcatid"> request.session.get('last_visited_rootcatid', 'False') </attribute>
+            <attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>
         </xpath>
     </template>
 
