@@ -1,4 +1,4 @@
-/*
+/* @preserve
  * File: iframeResizer.contentWindow.js
  * Desc: Include this file in any page being loaded into an iframe
  *       to force the iframe to resize to the content size.
@@ -31,6 +31,8 @@
 		initLock              = true,
 		initMsg               = '',
 		inPageLinks           = {},
+		inPageAnchors         = {},
+		addUrlParams		  = '',
 		interval              = 32,
 		intervalTimer         = null,
 		logging               = false,
@@ -162,6 +164,7 @@
 		setupPublicMethods();
 		startEventListeners();
 		inPageLinks = setupInPageLinks();
+		inPageAnchors = setupInPageAnchors();
 		sendSize('init','Init message from host page');
 		readyCallback();
 	}
@@ -188,6 +191,8 @@
 		inPageLinks.enable = (undefined !== data[12]) ? strBool(data[12]): false;
 		resizeFrom         = (undefined !== data[13]) ? data[13]         : resizeFrom;
 		widthCalcMode      = (undefined !== data[14]) ? data[14]         : widthCalcMode;
+		inPageAnchors.enable = (undefined !== data[15]) ? strBool(data[15]): false;
+		addUrlParams        = (undefined !== data[16]) ? data[16]         : '';
 	}
 
 	function readDataFromPage(){
@@ -446,6 +451,52 @@
 		return {
 			findTarget:findTarget
 		};
+	}
+
+	function setupInPageAnchors(){
+		
+		function bindInPageAnchors(){	
+			var baseUrl = window.location.hostname;
+			var anchors = document.getElementsByTagName("a");
+			var i,j;
+			for(i = 0, j = anchors.length; i < j; i += 1) {
+				if (anchors[i].hasAttribute('href')){
+					var linkHref = anchors[i].getAttribute('href');
+					if (linkHref.indexOf(baseUrl) > -1 || linkHref.match("^/")) {
+						if (addUrlParams != ''){
+					    	if(linkHref.indexOf('&') > -1 || linkHref.indexOf('?') > -1){
+					    		var newHref = linkHref + "&" + addUrlParams;
+					    		anchors[i].setAttribute("href", newHref);
+					    	} else {
+					    		var newHref = linkHref + "?" + addUrlParams;
+					    		anchors[i].setAttribute("href", newHref);
+					    	}
+				    	}
+					    anchors[i].addEventListener("click", function (event) {
+					        	var response = this.pathname;
+					        	sendMsg(0,0,'inPageAnchor','#'+response);
+					    });
+				   }
+				}
+			}			
+		}
+		
+		function enableInPageAnchors(){
+			if(Array.prototype.forEach && document.querySelectorAll){
+				log('Setting up In Page Anchors');
+				bindInPageAnchors();
+			} else {
+				warn('In page linking not fully supported in this browser! (See README.md for IE8 workaround)');
+			}
+		}
+
+		if(inPageAnchors.enable){
+			enableInPageAnchors();
+		} else {
+			log('In page Anchors not Enabled');
+		}
+
+		return {};
 	}
 
 	function setupPublicMethods(){

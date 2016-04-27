@@ -77,6 +77,23 @@ $(document).ready(function () {
         $("div.tab-content div[data-id='"+payment_id+"'] input", $payment).removeAttr("disabled");
     });
 
+    // Make the stuff from website_sale website_sale_payment.js work with our acquirer tabs if not OPC
+    // When clicking on payment button: create the tx using json then continue to the acquirer
+    $payment.on("click", 'button[type="submit"],button[name="submit"]', function (ev) {
+        console.log('Mike Acquirer Submit Button: preventDefault stopPropagation')
+        ev.preventDefault();
+        ev.stopPropagation();
+        var $form = $(ev.currentTarget).parents('form');
+        var acquirer_id = $(ev.currentTarget).parents('div.acquirer_button_not_opc').first().data('id');
+        if (!acquirer_id) {
+            console.log('Mike: No acquirer ID');
+            return false;
+        }
+        openerp.jsonRpc('/shop/payment/transaction/' + acquirer_id, 'call', {}).then(function (data) {
+            console.log('Mike: SUBMIT FORM');
+            $form.submit();
+        });
+    });
 
 
     // Equal content height tab boxes

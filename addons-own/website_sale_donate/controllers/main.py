@@ -406,7 +406,7 @@ class website_sale_donate(website_sale):
             # Set the current acquirer to be correctly pre selected on subsequent renders of the checkout page
             payment_qcontext['acquirer_id'] = post.get('acquirer')
 
-            # Validate if the current acquirer matches the sales order payment intervall
+            # Validate if the current acquirer matches the sales order payment interval
             order = request.website.sale_get_order()
             acquirer = request.env['payment.acquirer']
             acquirer = acquirer.search([('id', '=', post.get('acquirer'))])
@@ -416,7 +416,8 @@ class website_sale_donate(website_sale):
                 # HINT that the qcontext has no errors is checked above already
                 payment_qcontext['errors'] = {'pm_recurring': [_('Wrong payment method'), msg]}
 
-            # TODO: Validate acquirer non-hidde input fields
+            # TODO: Validate acquirer non-hidden input fields
+            # TODO: Validate acquirer non-hidden input fields
             # TODO: Should add a new mehtod to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
 
         return payment_page

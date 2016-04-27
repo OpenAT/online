@@ -1,4 +1,4 @@
-/*
+/* @preserve
  * File: iframeResizer.js
  * Desc: Force iframes to size to content.
  * Requires: iframeResizer.contentWindow.js to be loaded into the target frame.
@@ -48,6 +48,10 @@
 			scrolling                 : false,
 			sizeHeight                : true,
 			sizeWidth                 : false,
+			useGetParam		          : false, 	
+			baseUrl  		          : null, 	
+			inPageAnchors		      : false,
+			addUrlParams		      : '',
 			tolerance                 : 0,
 			widthCalculationMethod    : 'scroll',
 			closedCallback            : function(){},
@@ -118,6 +122,41 @@
 
 	function info(iframeId,msg){
 		output('info',iframeId,msg,isLogEnabled(iframeId));
+	}
+
+ 	function URLToArray() {
+		var request = {};
+		var pairs = window.location.search.substring(1).split('&');
+		for (var i = 0; i < pairs.length; i++) {
+			if(!pairs[i]) continue;
+			var pair = pairs[i].split('=')
+			request[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+		}
+		return request;
+	}
+
+	function updateUrl(iframeId,path){
+		var newParams = [];
+		var getParams = URLToArray();
+		var iframeMessage = path;
+		if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){	
+			if (iframeId in getParams){
+				getParams[iframeId] = iframeMessage;
+			};	
+		} else {
+			getParams[iframeId] = iframeMessage;
+		}
+		for (var d in getParams){
+			newParams.push(encodeURIComponent(d) + "=" + encodeURIComponent(getParams[d]));
+		};
+		if (settings[iframeId].baseUrl != null) {
+			var siteUrl = settings[iframeId].baseUrl;
+		} else {
+			var siteUrl = window.location.protocol + "//" + window.location.hostname + window.location.pathname;
+		}
+		var newUrl = siteUrl + "?" + newParams.join("&");
+	    history.pushState('', 'New Page Title', newUrl);
+	    	   
 	}
 
 	function warn(iframeId,msg){
@@ -384,6 +423,10 @@
 			}
 		}
 
+		function changeUrlToClickedAnchor(message){
+			updateUrl(iframeId,message);
+		}
+
 		function findTarget(location){
 			function jumpToTarget(){
 				var jumpPosition = getElementPosition(target);
@@ -450,6 +493,9 @@
 				break;
 			case 'inPageLink':
 				findTarget(getMsgBody(9));
+				break;
+			case 'inPageAnchor':
+				changeUrlToClickedAnchor(getMsgBody(12));
 				break;
 			case 'reset':
 				resetIFrame(messageData);
@@ -664,7 +710,9 @@
 			':' + settings[iframeId].tolerance +
 			':' + settings[iframeId].inPageLinks +
 			':' + settings[iframeId].resizeFrom +
-			':' + settings[iframeId].widthCalculationMethod;
+			':' + settings[iframeId].widthCalculationMethod +
+			':' + settings[iframeId].inPageAnchors +
+			':' + settings[iframeId].addUrlParams;
 	}
 
 	function setupIFrame(iframe,options){
@@ -740,7 +788,22 @@
 				resetIFrame({iframe:iframe, height:0, width:0, type:'init'});
 			}
 		}
-
+		
+	 	function checkForIframeGetParam() {
+			var getParams = URLToArray();
+			if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){	
+				if (iframeId in getParams){
+					document.getElementById(iframeId).src = settings[iframeId].targetOrigin + getParams[iframeId];
+				};	
+			}
+		}	
+			
+		function useGetParam(){
+			if (settings[iframeId].useGetParam === true ){
+				checkForIframeGetParam();
+			}
+		}
+		
 		function setupIFrameObject(){
 			if(Function.prototype.bind){ //Ignore unpolyfilled IE8.
 				settings[iframeId].iframe.iFrameResizer = {
@@ -819,6 +882,7 @@
 			setupBodyMarginValues();
 			init(createOutgoingMsg(iframeId));
 			setupIFrameObject();
+			useGetParam();
 		} else {
 			warn(iframeId,'Ignored iFrame, already setup.');
 		}
