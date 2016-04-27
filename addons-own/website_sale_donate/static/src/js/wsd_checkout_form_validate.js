@@ -10,12 +10,12 @@ $(document).ready(function () {
         $("#wsd_checkout_form").submit();
     });
 
-    // globally make submit buttons in forms work
+    // DISABLED: globally make submit buttons in forms work
     //$("form button[type='submit']").click(function(event) {
     //    $("button[type='submit']").closest("form").submit();
     //});
 
     // Auto Submit the payment provider form
-    //DISABLED FOR TESTING $(".js_auto_submit_form form").submit();
+    $(".js_auto_submit_form form").submit();
 
 });
