@@ -489,7 +489,7 @@ class website_sale_donate(website_sale):
                                                                 [tx_id], context=context)
 
             # Only reset the current shop session for our own payment providers
-            if tx.acquirer_id.provider in ('ogonedadi', 'frst'):
+            if tx.acquirer_id.provider in ('ogonedadi', 'frst', 'postfinance'):
                 # Confirm the sales order so no changes are allowed any more in the odoo backend
                 request.registry['sale.order'].action_button_confirm(cr, SUPERUSER_ID,
                                                                      [tx.sale_order_id.id], context=context)
