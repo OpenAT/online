@@ -110,6 +110,13 @@
             </xpath>
 
             <!-- SHOPPING CART ADJUSTMENTS -->
+            <!-- Add category to shopping cart products -->
+            <xpath expr="//a[@t-attf-href='/shop/product/#{ slug(line.product_id.product_tmpl_id) }']" position="replace">
+                <t t-set="line_cat" t-value="str(line.cat_id.id if line.cat_id else line.cat_root_id.id if line.cat_root_id else False)"/>
+                <a t-att-href="'' if line.product_id.do_not_link else '/shop/product/'+slug(line.product_id.product_tmpl_id)+('?category='+line_cat if line_cat else '')">
+                    <span t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                </a>
+            </xpath>
 
             <!-- Add payment interval as text under the product price -->
             <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">

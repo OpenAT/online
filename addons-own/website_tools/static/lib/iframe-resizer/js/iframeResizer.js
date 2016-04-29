@@ -1,4 +1,4 @@
-/* @preserver v3
+/*
  * File: iframeResizer.js
  * Desc: Force iframes to size to content.
  * Requires: iframeResizer.contentWindow.js to be loaded into the target frame.
@@ -48,8 +48,8 @@
 			scrolling                 : false,
 			sizeHeight                : true,
 			sizeWidth                 : false,
-			useGetParam		          : false,
-			baseUrl  		          : null,
+			useGetParam		          : false, 	
+			baseUrl  		          : null, 	
 			inPageAnchors		      : false,
 			addUrlParams		      : '',
 			tolerance                 : 0,
@@ -139,10 +139,10 @@
 		var newParams = [];
 		var getParams = URLToArray();
 		var iframeMessage = path;
-		if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){
+		if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){	
 			if (iframeId in getParams){
 				getParams[iframeId] = iframeMessage;
-			};
+			};	
 		} else {
 			getParams[iframeId] = iframeMessage;
 		}
@@ -152,7 +152,7 @@
 		var siteUrl = window.location.protocol + "//" + window.location.hostname + window.location.pathname;
 		var newUrl = siteUrl + "?" + newParams.join("&");
 	    history.pushState('', 'New Page Title', newUrl);
-
+	    	   
 	}
 
 	function warn(iframeId,msg){
@@ -306,8 +306,8 @@
 			function debouncedTrigger(){
 				trigger(
 					'Send Page Info',
-					'pageInfo:' + getPageInfo(),
-					iframe,
+					'pageInfo:' + getPageInfo(), 
+					iframe, 
 					iframeId
 				);
 			}
@@ -339,7 +339,7 @@
 			function start(){
 				setListener('Add ', addEventListener);
 			}
-
+			
 			var id = iframeId; //Create locally scoped copy of iFrame ID
 
 			start();
@@ -784,10 +784,10 @@
 				resetIFrame({iframe:iframe, height:0, width:0, type:'init'});
 			}
 		}
-
+		
 	 	function checkForIframeGetParam() {
 			var getParams = URLToArray();
-			if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){
+			if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){	
 				if (iframeId in getParams){
 					document.getElementById(iframeId).src = settings[iframeId].baseUrl + getParams[iframeId];
 				};	

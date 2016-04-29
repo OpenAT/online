@@ -91,5 +91,36 @@
             </xpath>
         </template>
 
+    <!-- INHERIT: website_sale.products (shop listings) -->
+    <template id="products_categories_opc" inherit_id="website_sale.products">
+        <!-- ONE-PAGE-CHECKOUT -->
+        <xpath expr="//div[@id='wrap']/div[@class='container oe_website_sale']" position="after">
+            <!-- Show the one-page-checkout form if the current category or its root category has one-page-checkout set -->
+            <t t-if="one_page_checkout">
+                <div class="oe_structure" contenteditable="false">
+                    <section name="one-page-checkout">
+                        <div class="container">
+                            <div class="row one-page-checkout">
+                                <!-- Product Info and One-Page-Checkout -->
+                                <div class="col-md-12">
+                                    <!-- Include One-Page-Checkout -->
+                                    <form t-att-action="keep(request.httprequest.path)"
+                                          id="wsd_checkout_form"
+                                          method="post">
+                                        <t t-call="website_sale_donate.wsd_checkout_form_inside">
+                                            <t t-set="hide_wsd_cfi_buttons" t-value="False"/>
+                                        </t>
+                                    </form>
+                                    <!-- Include Payment-Provider Auto-Submit-Form -->
+                                    <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
     </data>
 </openerp>

@@ -216,22 +216,24 @@ class sale_order(models.Model):
             except:
                 pass
 
-        # Set the Sale Order cat_root_id field
+        # Set the cat_root_id for Sale Order and for sale_order-deliver_lines
         try:
             if so and so.order_line:
-                # Search for the first sale order product line (the current one could be deleted)
-                first_sol = sol_obj.browse(cr, SUPERUSER_ID, so.order_line[0].id, context=context)
-                if first_sol:
-                    # search if any order line has a different cat_root_id than the first_sol
-                    if sol_obj.search(cr, SUPERUSER_ID,
-                                      ['&',
-                                       ('order_id.id', '=', first_sol.order_id.id),
-                                       ('cat_root_id.id', '!=', first_sol.cat_root_id.id)], context=context):
-                        # Reset sale order cat_root_id
-                        so.cat_root_id = None
-                    else:
-                        # All order-lines have the same root-cat, set the cat_root_id of the sales-order
-                        so.cat_root_id = first_sol.cat_root_id.id
+                # Get all cat_root_ids for non deliver so lines (or False if not cat_root exists)
+                cr_ids = [x.cat_root_id.id if x.cat_root_id else False for x in so.order_line if not x.is_delivery]
+                # Check if all cr_ids are the same
+                if cr_ids and False not in cr_ids and all(x == cr_ids[0] for x in cr_ids):
+                    # All order-lines have the same root-cat, set the cat_root_id of the sales-order
+                    so.cat_root_id = cr_ids[0]
+                    # Set the root cat also for the delivery line if any
+                    for line in [x for x in so.order_line if x.is_delivery]:
+                        line.cat_root_id = cr_ids[0]
+                else:
+                    # Reset sale order cat_root_id
+                    so.cat_root_id = None
+                    # Reset Delivery lines if any
+                    for line in [x for x in so.order_line if x.is_delivery]:
+                        line.cat_root_id = None
         except:
             pass
 

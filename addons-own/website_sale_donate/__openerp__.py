@@ -93,6 +93,7 @@ To solve this we did:
         'website_tools',
         'website_sale',
         'website_sale_delivery',
+        'website_sale_categories',
         'website_event',
         'website_blog',
     ],

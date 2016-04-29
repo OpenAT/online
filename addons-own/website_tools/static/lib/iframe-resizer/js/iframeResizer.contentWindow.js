@@ -1,4 +1,4 @@
-/* @preserve
+/*
  * File: iframeResizer.contentWindow.js
  * Desc: Include this file in any page being loaded into an iframe
  *       to force the iframe to resize to the content size.
@@ -165,6 +165,7 @@
 		startEventListeners();
 		inPageLinks = setupInPageLinks();
 		inPageAnchors = setupInPageAnchors();
+		setupAddUrlParams();
 		sendSize('init','Init message from host page');
 		readyCallback();
 	}
@@ -453,9 +454,9 @@
 		};
 	}
 
-	function setupInPageAnchors(){
+	function setupAddUrlParams(){
 		
-		function bindInPageAnchors(){	
+		function addParamsToUrl(){	
 			var baseUrl = window.location.hostname;
 			var anchors = document.getElementsByTagName("a");
 			var i,j;
@@ -472,8 +473,49 @@
 					    		anchors[i].setAttribute("href", newHref);
 					    	}
 				    	}
+				   }
+				}
+			}			
+		}
+		
+		function enableAddUrlParams(){
+			if(Array.prototype.forEach && document.querySelectorAll){
+				log('Adding Url Params');
+				addParamsToUrl();
+			} else {
+				warn('Adding Url Params not fully supported in this browser!');
+			}
+		}
+		//console.log(addUrlParams);
+		if(addUrlParams != ''){
+			enableAddUrlParams();
+		} else {
+			log('Adding Url Params not Enabled');
+		}
+
+		return {};
+	}
+
+	function setupInPageAnchors(){
+		
+		function bindInPageAnchors(){	
+			var baseUrl = window.location.hostname;
+			var anchors = document.getElementsByTagName("a");
+			var i,j;
+			for(i = 0, j = anchors.length; i < j; i += 1) {
+				if (anchors[i].hasAttribute('href')){
+					var linkHref = anchors[i].getAttribute('href');
+					if (linkHref.indexOf(baseUrl) > -1 || linkHref.match("^/")) {
 					    anchors[i].addEventListener("click", function (event) {
-					        	var response = this.pathname;
+					        	//event.preventDefault();
+					        	var params = this.search,
+					        		returnParams = '',
+					        	    response;
+					        	if (params.match(addUrlParams)) {
+					        		params = params.replace(addUrlParams,"");
+					        		returnParams = params.substring(0, params.length - 1);
+					        	}
+					        	response = this.pathname + returnParams;
 					        	sendMsg(0,0,'inPageAnchor','#'+response);
 					    });
 				   }

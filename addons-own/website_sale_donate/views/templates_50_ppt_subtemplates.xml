@@ -89,6 +89,10 @@
                           method="POST"
                           t-att-id="'wsd_checkout_form' if show_one_page_checkout else''">
 
+                        <!-- Hidden input fields for cat and root cat -->
+                        <input name="cat_root_id" t-att-value="category.cat_root_id.id if category else 'False'" type="hidden"/>
+                        <input name="cat_id" t-att-value="category.id if category else 'False'" type="hidden"/>
+
                         <div class="js_product">
 
                             <!-- Product Variants -->
