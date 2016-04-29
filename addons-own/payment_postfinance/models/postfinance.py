@@ -9,6 +9,7 @@ except ImportError:
 import logging
 import pprint
 from openerp.tools.misc import mod10r
+from openerp.tools.misc import mod10
 from openerp.addons.payment.models.payment_acquirer import ValidationError
 # Import the Postfinance Controller This is possible because we add payment_postfinance to the main class later on
 from openerp.addons.payment_postfinance.controllers.main import PostfinanceController
@@ -99,8 +100,8 @@ class AcquirerPostfinance(osv.Model):
         assert esr_customer_number, \
             'ERROR: Postfinance ESR Customer Number not found in %s Bank Accounts!' % currency_iso_code
 
-        # Check Postfinance ESR Number
-        # ----------------------------
+        # Check Postfinance ESR Customer-Number
+        # -------------------------------------
         # VV-XXX-P
         # VV = ESR Code ACHTUNG: ist NICHT das Selbe wie Transaktionsartcodes!
         # 01 = CHF
@@ -114,7 +115,7 @@ class AcquirerPostfinance(osv.Model):
             esr_customer_number_check = re.search(pattern, esr_customer_number).group(3)
         except:
             raise Exception('ERROR: Postfinance-ESR-Customer-Number %s has a wrong format!' % esr_customer_number)
-        assert mod10r(esr_code+esr_customer)[-1] == esr_customer_number_check, \
+        assert mod10r(esr_code + '{0:06d}'.format(int(esr_customer)))[-1] == esr_customer_number_check, \
             'ERROR: Postfinance-ESR-Customer-Number %s has a wrong check number! Should be %s' % \
             (esr_customer_number, mod10r(esr_code+esr_customer)[-1])
         if currency_iso_code == 'EUR':
