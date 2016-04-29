@@ -9,7 +9,6 @@ except ImportError:
 import logging
 import pprint
 from openerp.tools.misc import mod10r
-from openerp.tools.misc import mod10
 from openerp.addons.payment.models.payment_acquirer import ValidationError
 # Import the Postfinance Controller This is possible because we add payment_postfinance to the main class later on
 from openerp.addons.payment_postfinance.controllers.main import PostfinanceController
