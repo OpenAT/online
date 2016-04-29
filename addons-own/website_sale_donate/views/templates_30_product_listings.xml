@@ -35,7 +35,7 @@
         <template id="wsd_products_no_link" inherit_id="website_sale.products_item">
             <xpath expr="//a[@itemprop='name']" position="attributes">
                 <!-- /shop/product/%s' % slug(product) -->
-                <attribute name="t-att-href">'' if product.do_not_link else '/shop/product/'+slug(product)</attribute>
+                <attribute name="t-att-href">'' if product.do_not_link else keep('/shop/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']>1 else None))</attribute>
             </xpath>
         </template>
 

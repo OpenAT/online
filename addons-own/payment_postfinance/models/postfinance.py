@@ -149,7 +149,7 @@ class AcquirerPostfinance(osv.Model):
         #   AAAAA = Instance Base Port
         #   XXXXXXXXXXXXXXXXXXXXX = Sales Order Number
         port = salesorder.company_id.instance_base_port
-        assert len(port) == 5, "ERROR: Instance Base Port Missing or not 5 char long: %s" % port
+        assert len(port) == 5, "ERROR: Field instance_base_port for company not set or not 5 char long: %s" % port
         so_number = ''.join(re.findall(r'\d+', salesorder.name))
         so_number = '{0:021d}'.format(int(so_number))
         esr_reference_number = mod10r(port + so_number)
