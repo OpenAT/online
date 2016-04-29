@@ -114,9 +114,12 @@ class AcquirerPostfinance(osv.Model):
             esr_customer_number_check = re.search(pattern, esr_customer_number).group(3)
         except:
             raise Exception('ERROR: Postfinance-ESR-Customer-Number %s has a wrong format!' % esr_customer_number)
-        assert mod10r(esr_code + '{0:06d}'.format(int(esr_customer)))[-1] == esr_customer_number_check, \
+
+        esr_customer_number_standard = mod10r(esr_code + '{0:06d}'.format(int(esr_customer)))
+
+        assert esr_customer_number_standard[-1] == esr_customer_number_check, \
             'ERROR: Postfinance-ESR-Customer-Number %s has a wrong check number! Should be %s' % \
-            (esr_customer_number, mod10r(esr_code+esr_customer)[-1])
+            (esr_customer_number, esr_customer_number_standard[-1])
         if currency_iso_code == 'EUR':
             assert esr_code == '03', 'ERROR: esr_code %s but currency EUR. Must be 03!' % esr_code
         if currency_iso_code == 'CHF':
@@ -157,10 +160,7 @@ class AcquirerPostfinance(osv.Model):
         #   VV = ESR Typ (Code)
         #   XXXXXX = Ordnungsnummer !!!inkl. vorlaufende Nullen!!! (Kundennummer der Firma bei Postfinanze)
         #   P = Prüfziffer (MOD10r)
-        esr_code_line_end = esr_code + '{0:06d}'.format(int(esr_customer)) + esr_customer_number_check
-
-        # esr_code_line
-        esr_code_line = esr_code_line_start + '>' + esr_reference_number + '+ ' + esr_code_line_end + '>'
+        esr_code_line = esr_code_line_start + '>' + esr_reference_number + '+ ' + esr_customer_number_standard + '>'
         print esr_code_line
 
         # Update Dict
