@@ -428,5 +428,20 @@
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
         <menuitem action="wsd_checkout_shipping_fields_action" id="wsd_checkout_shipping_fields_menu" parent="base.menu_config" sequence="92"/>
 
+        <!-- Add some fields to the invoice form tree and search view -->
+        <record id="account_invoice_form" model="ir.ui.view">
+            <field name="name">Account Invoice Form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="wsd_so_id" readonly="1" attrs="{'invisible': [('wsd_so_id', '=', False)]}"/>
+                    <field name="wsd_cat_root_id" attrs="{'invisible': [('wsd_cat_root_id', '=', False)]}"/>
+                    <field name="wsd_payment_acquirer_id" readonly="1" attrs="{'invisible': [('wsd_payment_acquirer_id', '=', False)]}" options='{"no_open":True}'/>
+                    <field name="wsd_payment_tx_id" readonly="1" attrs="{'invisible': [('wsd_payment_tx_id', '=', False)]}" groups="base.group_no_one"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </openerp>

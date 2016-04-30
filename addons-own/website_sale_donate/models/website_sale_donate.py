@@ -343,6 +343,17 @@ class product_template_onchange(osv.osv):
         if self.price_donate:
             self.hide_quantity = True
 
+# Extra fields for the created invoices
+class account_invoice(osv.Model):
+    _inherit = 'account.invoice'
+
+    _columns = {
+        'wsd_cat_root_id': fields.many2one('product.public.category', 'RootCateg.', on_delete='set null', copy=False),
+        'wsd_so_id': fields.many2one('sale.order', 'Sale Order', on_delete='set null', copy=False),
+        'wsd_payment_acquirer_id': fields.many2one('payment.acquirer', 'Payment Acquirer', on_delete='set null', copy=False),
+        'wsd_payment_tx_id': fields.many2one('payment.transaction', 'Transaction', on_delete='set null', copy=False),
+    }
+
 
 # Extend sale.order.line to be able to store price_donate and payment interval information
 class sale_order_line(osv.Model):
@@ -357,6 +368,20 @@ class sale_order_line(osv.Model):
 
 class sale_order(osv.Model):
     _inherit = "sale.order"
+
+    # Todo extend _prepare_invoice to add extra fields for reports and statistics
+    def _prepare_invoice(self, cr, uid, order, lines, context=None):
+        res = super(sale_order, self)._prepare_invoice( cr=cr, uid=uid, order=order, lines=lines, context=context)
+        # TODO add cat_root_id, wsd_cat_id, wsd_so_id, wsd_payment_acquirer_id, wsd_payment_tx_id
+        if order:
+            invoice_vals = {
+                'wsd_cat_root_id': order.cat_root_id.id if order.cat_root_id else None,
+                'wsd_so_id': order.id,
+                'wsd_payment_acquirer_id': order.payment_acquirer_id.id if order.payment_acquirer_id else None,
+                'wsd_payment_tx_id': order.payment_tx_id.id if order.payment_tx_id else None,
+            }
+            res.update(invoice_vals)
+        return res
 
     def _website_product_id_change(self, cr, uid, ids, order_id, product_id, qty=0, line_id=None, context=None):
         context = context or {}
@@ -443,15 +468,6 @@ class sale_order(osv.Model):
                 if sol.payment_interval_id.exists():
                     sol.payment_interval_name = sol.payment_interval_id.name
                     sol.payment_interval_xmlid = sol.payment_interval_id.get_metadata()[0]['xmlid']
-
-                    # ToDo: Try to browse and write to the sales order to update relevant fields
-                    # so_obj = self.pool.get('sale.order')
-                    # so = so_obj.browse(cr, SUPERUSER_ID, sol.order_id.id, context=context)
-                    # so.write(cr, SUPERUSER_ID, {}, context=context)
-
-            # Add Root CatID and root cat id to the so-line if they are in kwargs
-            # TODO: this code should be in website_sale_categories!!!
-
 
         return cu
 
