@@ -70,3 +70,7 @@
 	path = odoo
 	url = https://github.com/OCA/OCB.git
 	branch = 8.0
+[submodule "addons-thirdparty/oca/reporting-engine"]
+	path = addons-thirdparty/oca/reporting-engine
+	url = https://github.com/OCA/reporting-engine.git
+	branch = 8.0

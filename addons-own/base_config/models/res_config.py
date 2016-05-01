@@ -88,6 +88,9 @@ class base_config_settings(osv.osv_memory):
         'module_mail_fix_553': fields.boolean('mail_fix_553 -- change Domain of FROM field for outgoing mails'),
         'module_inactive_session_timeout': fields.boolean('inactive_session_timeout -- Remove all inactive session after a given time'),
         'module_website_event_register_free': fields.boolean('website_event_register_free -- prevents sales order and shop payment on cost free event tickets'),
+        'module_report_custom_filename': fields.boolean('report_custom_filename -- Better Filename Setting for reports through download_filename field'),
+        'module_report_qweb_element_page_visibility': fields.boolean('report_qweb_element_page_visibility -- Add extra classes for qweb reports'),
+        'module_website_sale_autopay': fields.boolean('website_sale_autopay -- Auto create and validate invoice from webshop order'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',

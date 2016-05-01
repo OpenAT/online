@@ -82,6 +82,7 @@ You still need to do some things by Hand after installing this module:
         'base_location', 'base_location_geonames_import', 'dbfilter_from_header', 'disable_openerp_online',
         'web_export_view', 'base_iban',
         'website_crm_extended',
+        'report_custom_filename',
     ],
     'data': [
         # DATA

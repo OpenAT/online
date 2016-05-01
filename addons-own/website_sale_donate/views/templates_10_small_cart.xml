@@ -82,10 +82,12 @@
                                         <!-- DISABLED: Unit of Sale -->
                                         <!--<small class="text-muted" t-raw="'{:.0f}'.format(int(line.product_uos_qty))"/>-->
                                         <!-- Remove Product -->
-                                        <a href="#" class="remove_product btn btn-sm btn-link"
-                                           t-att-data-line-id="line.id">
-                                            <span class="glyphicon glyphicon-remove"/>
-                                        </a>
+                                        <t t-if="not disable_changing_products">
+                                            <a href="#" class="remove_product btn btn-sm btn-link"
+                                               t-att-data-line-id="line.id">
+                                                <span class="glyphicon glyphicon-remove"/>
+                                            </a>
+                                        </t>
                                         <!-- DOWNLOAD PRODUCT LINK -->
                                         <!-- Set download link from product template -->
                                         <t t-if="show_download_links">
@@ -106,14 +108,19 @@
                                             </t>
                                         </t>
                                         <!-- Set Quantity -->
-                                        <div class="input-group oe_website_spinner">
-                                            <input type="text"
-                                                   class="js_quantity form-control input-sm"
-                                                   t-att-disabled="line.product_id.hide_quantity"
-                                                   t-att-data-line-id="line.id"
-                                                   t-att-data-product-id="line.product_id.id"
-                                                   t-att-value="int(line.product_uom_qty)"/>
-                                        </div>
+                                        <t t-if="not disable_changing_products">
+                                            <div class="input-group oe_website_spinner">
+                                                <input type="text"
+                                                       class="js_quantity form-control input-sm"
+                                                       t-att-disabled="line.product_id.hide_quantity"
+                                                       t-att-data-line-id="line.id"
+                                                       t-att-data-product-id="line.product_id.id"
+                                                       t-att-value="int(line.product_uom_qty)"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="disable_changing_products">
+                                            <span t-esc="int(line.product_uom_qty)"/>
+                                        </t>
                                         <span>x</span>
                                         <!-- Payment Interval -->
                                         <t t-if="line.payment_interval_id">

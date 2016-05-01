@@ -130,6 +130,18 @@
                                     <field name="module_website_event_register_free" class="oe_inline" />
                                     <label for="module_website_event_register_free" />
                                 </div>
+                                <div>
+                                    <field name="module_report_custom_filename" class="oe_inline" />
+                                    <label for="module_report_custom_filename" />
+                                </div>
+                                <div>
+                                    <field name="module_report_qweb_element_page_visibility" class="oe_inline" />
+                                    <label for="module_report_qweb_element_page_visibility" />
+                                </div>
+                                <div>
+                                    <field name="module_website_sale_autopay" class="oe_inline" />
+                                    <label for="module_website_sale_autopay" />
+                                </div>
                             </div>
                         </div>
                     </group>
