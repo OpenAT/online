@@ -143,7 +143,8 @@ class website_sale_donate_settings(osv.Model):
         'hide_delivery_methods': fields.boolean(string='Hide Delivery Methods'),
         'redirect_url_after_form_feedback': fields.char(string='Redirect URL after PP Form-Feedback',
                                                         help='Redirect to this URL after processing the Answer of the '
-                                                             'Payment Provider instead of /shop/confirmation_static'),
+                                                             'Payment Provider instead of /shop/confirmation_static',
+                                                        translate=True),
         # Global Fields for Snippets
         'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox'),
         'cart_page_top': fields.html(string='Cart Page Top Snippet Dropping Area'),
@@ -537,7 +538,8 @@ class PaymentAcquirer(osv.Model):
                                            help='Only works in FS-Online Payment Methods'),
         'redirect_url_after_form_feedback': fields.char(string='Redirect URL after PP Form-Feedback',
                                                         help='Redirect to this URL after processing the Answer of the '
-                                                             'Payment Provider instead of /shop/confirmation_static'),
+                                                             'Payment Provider instead of /shop/confirmation_static',
+                                                        translate=True),
         'do_not_send_status_email': fields.boolean('Do not send Confirmation E-Mails on TX-State changes.',
                                                    help='Will not send website_sale_donate.email_template_webshop. Setting used in payment provider controllers!'),
     }

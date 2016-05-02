@@ -63,7 +63,8 @@ class product_public_category_menu(models.Model):
     # Redirect Url after form feedback of the payment provider
     redirect_url_after_form_feedback = fields.Char(string='Redirect URL after PP Form-Feedback',
                                                    help='Redirect to this URL after processing the Answer of the'
-                                                        'Payment Provider instead of /shop/confirmation_static')
+                                                        'Payment Provider instead of /shop/confirmation_static',
+                                                   translate=True)
 
     # Update the field cat_root_id at addon installation or update
     def init(self, cr, context=None):
