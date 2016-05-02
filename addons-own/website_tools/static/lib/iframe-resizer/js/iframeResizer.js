@@ -793,10 +793,40 @@
 				};	
 			}
 		}	
+
+	 	function checkGetParam() {
+			var getParams = URLToArray();
+			var iframeParams = URLToArray();
+			var getAllIframes = document.getElementsByTagName("iframe");
+			var newParams = [];
+			var iframe = document.getElementById(iframeId)
+			var newUrl = iframe.src;
+			
+			for (var i = 0; i < getAllIframes.length; i++){
+				if (getParams.hasOwnProperty(getAllIframes[i].id)) delete getParams[getAllIframes[i].id];	
+			}
+			console.log(getParams);
+			for (var prop in getParams){
+				newParams.push(encodeURIComponent(prop) + "=" + encodeURIComponent(getParams[prop]));
+			}
+
+			if (typeof iframeParams[iframeId] !== 'undefined' && iframeParams[iframeId] !== null){	
+				if (iframeId in iframeParams){
+					newUrl = settings[iframeId].baseUrl + iframeParams[iframeId];
+				};	
+			}
+			
+			if(newUrl.indexOf('&') > -1 || newUrl.indexOf('?') > -1){
+				newUrl = newUrl + "&" + newParams.join("&");
+			} else {
+				newUrl = newUrl + "?" + newParams.join("&");
+			}
+			iframe.src = newUrl;
+		}
 			
 		function useGetParam(){
 			if (settings[iframeId].useGetParam === true ){
-				checkForIframeGetParam();
+				checkGetParam();	
 			}
 		}
 		
