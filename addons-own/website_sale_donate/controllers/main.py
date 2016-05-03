@@ -5,6 +5,7 @@ from openerp import http
 from openerp.tools.translate import _
 from openerp.http import request
 from lxml import etree
+from urlparse import urlparse
 from openerp.addons.website.models.website import slug
 
 # import copy
@@ -25,7 +26,8 @@ class website_sale_donate(website_sale):
     # SHOP PAGE: Add last_shop_page to the session
     @http.route()
     def shop(self, page=0, category=None, search='', **post):
-        request.session['last_shop_page'] = request.httprequest.base_url + ('?category='+str(category.id) if category else '')
+        base_url = str(urlparse(request.httprequest.base_url).path)
+        request.session['last_shop_page'] = base_url + ('?category='+str(category.id) if category else '')
         request.session['last_page'] = request.session['last_shop_page']
         return super(website_sale_donate, self).shop(page=page, category=category, search=search, **post)
 
