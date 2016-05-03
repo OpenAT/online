@@ -40,6 +40,21 @@
                                                     <div class="field_label">Format:</div>
                                                     <div t-field="product.format"/>
                                                 </t>
+                                                <!-- Download Info -->
+                                                <t t-set="has_download_file" t-value="True if product.webshop_download_file else False"/>
+                                                <t t-if="len(product.product_variant_ids) > 1">
+                                                    <t t-foreach="product.product_variant_ids" t-as="variant_id">
+                                                        <t t-if="variant_id.webshop_download_file">
+                                                            <t t-set="has_download_file" t-value="True"/>
+                                                        </t>
+                                                    </t>
+                                                </t>
+                                                <t t-if="product.type == 'service' and has_download_file">
+                                                    <br/>
+                                                    <div class="product_download_info alert alert-success">
+                                                        You can download this item right after the checkout process!
+                                                    </div>
+                                                </t>
                                             </div>
                                         </div>
                                         <!-- (Right) CHECKOUTBOX (Add to Cart Box) -->

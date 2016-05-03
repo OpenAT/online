@@ -5,8 +5,10 @@ from openerp import http
 from openerp.tools.translate import _
 from openerp.http import request
 from lxml import etree
-import copy
-import requests
+from openerp.addons.website.models.website import slug
+
+# import copy
+# import requests
 
 # To get a new db connection:
 # from openerp.modules.registry import RegistryManager
@@ -23,7 +25,7 @@ class website_sale_donate(website_sale):
     # SHOP PAGE: Add last_shop_page to the session
     @http.route()
     def shop(self, page=0, category=None, search='', **post):
-        request.session['last_shop_page'] = request.httprequest.base_url + '?' + request.httprequest.query_string
+        request.session['last_shop_page'] = request.httprequest.base_url + ('?category='+str(category.id) if category else '')
         request.session['last_page'] = request.session['last_shop_page']
         return super(website_sale_donate, self).shop(page=page, category=category, search=search, **post)
 

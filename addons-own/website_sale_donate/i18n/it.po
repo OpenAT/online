@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-01 20:41+0000\n"
-"PO-Revision-Date: 2016-05-01 20:41+0000\n"
+"POT-Creation-Date: 2016-05-03 20:50+0000\n"
+"PO-Revision-Date: 2016-05-03 20:50+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,40 +19,65 @@ msgstr ""
 #: model:email.template,body_html:website_sale_donate.email_template_webshop
 msgid "\n"
 "\n"
-"\n"
 "<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
 "\n"
 "    <h2>\n"
-"        <br />\n"
-"        Hello ${object.partner_id.name},<br />\n"
-"        Thank you very much for your trust!\n"
+"        Hallo ${object.partner_id.name},<br/>\n"
+"        vielen Dank für ihr Vertrauen!\n"
 "    </h2>\n"
-"    <h3><br />Summary of your transaction:</h3>\n"
-"    <p style=\"padding-left: 14px;\">\n"
-"        ID: <strong>${object.name}</strong><br />\n"
-"        Total: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br />\n"
-"        Date: ${object.date_order}<br />\n"
-"        State: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
-"    </p>\n"
-"    <% set signup_url = object.get_signup_url() %>\n"
-"    % if signup_url:\n"
+"    <h3><br/>Ihre Persönlichen daten</h3>\n"
 "    <p>\n"
-"        <br />You could access your data online if you already have an account:\n"
-"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
-"            &#8226;&nbsp;Access Account\n"
-"        </a>\n"
-"        <br />Or you could create a new one:\n"
-"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
-"            &#8226;&nbsp;Register Account\n"
-"        </a>\n"
+"        % if object.partner_id.name:\n"
+"            ${object.partner_id.name}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.street:\n"
+"            ${object.partner_id.street}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.street2:\n"
+"            ${object.partner_id.street2}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.city or object.partner_id.zip:\n"
+"            ${object.partner_id.zip} ${object.partner_id.city}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.email:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.partner_id.email}\">${object.partner_id.email}</a><br/>\n"
+"        % endif\n"
+"\n"
+"     </p>\n"
+"    <h3><br/>Vorgangsübersicht:</h3>\n"
+"    <p style=\"padding-left: 14px;\">\n"
+"        Nummer: <strong>${object.name}</strong><br/>\n"
+"        Summe: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br/>\n"
+"        Datum: ${object.date_order}<br/>\n"
+"        Fortschritt: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
 "    </p>\n"
-"    % endif\n"
-"    <p>If you have any questions please contact:<br />\n"
-"        <a href=\"mailto:${object.user_id.email or object.company_id.email or ''}?subject=Question%20regarding%20${object.name}\" style=\"display:block; padding-left: 14px;\">\n"
-"            &#8226;&nbsp;&lt;${object.user_id.name or object.company_id.name or ''}&gt; ${object.user_id.email or object.company_id.email or ''}\n"
-"        </a>\n"
-"    </p>\n"
-"    <p>&nbsp;</p>\n"
+"\n"
+"        <p>Bei Fragen kontaktieren sie bitte:</p>\n"
+"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email or '') | safe}</a><br/>\n"
+"    <div style=\"display:table;\">\n"
+"        <div style=\"display:table-header-group;\">\n"
+"            <div style=\"display:table-row;\">\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Name</div>\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Anzahl</div>\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Download</div>\n"
+"            </div>\n"
+"        </div>\n"
+"        <div style=\"display:table-row-group;\">\n"
+"            % for line in object.order_line:\n"
+"                <div style=\"display:table-row;\">\n"
+"                    <div style=\"display:table-cell;\">${line.product_id.name}</div>\n"
+"                    <div style=\"display:table-cell;\">${line.product_uom_qty}</div>\n"
+"                    % if line.product_id.webshop_download_file:\n"
+"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_id.id}\">Download</a></div>\n"
+"                    % endif\n"
+"                    % if line.product_tmpl_id.webshop_download_file:\n"
+"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_tmpl_id.id}\">Download</a></div>\n"
+"                    % endif\n"
+"                </div>\n"
+"            % endfor\n"
+"        </div>\n"
+"    </div>\n"
+"        % if object.cat_root_id.id == False or object.cat_root_id.id == 55:\n"
 "    <h3>\n"
 "        <strong>${object.company_id.name}</strong>\n"
 "    </h3>\n"
@@ -70,59 +95,102 @@ msgid "\n"
 "            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
 "        % endif\n"
 "        % if object.company_id.phone:\n"
-"            Tel.:&nbsp;${object.company_id.phone}<br />\n"
+"            Tel.:&nbsp;${object.company_id.phone}<br/>\n"
 "        % endif\n"
 "        % if object.company_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br />\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br/>\n"
 "        % endif\n"
 "        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br />\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br/>\n"
 "        % endif\n"
 "        % if object.company_id.logo:\n"
 "            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
 "        % endif\n"
 "    </p>\n"
+"        % endif\n"
+"        % if object.cat_root_id.id == 80:\n"
+"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email_report_dd or '') | safe}</a>\n"
+"    <h3>\n"
+"        <strong>${Sante-Sexuelle}</strong>\n"
+"    </h3>\n"
+"    <p>\n"
+"        % if object.company_id.email_report_dd:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email_report_dd}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.website:\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website_report_dd}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.logo_report_dd:\n"
+"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo_report_dd}\" style=\"width: 120px;\"></div>\n"
+"        % endif\n"
+"    </p>\n"
+"        % endif\n"
+"    <p>&nbsp;</p>\n"
 "\n"
 "</div>\n"
-"\n"
 "\n"
 "            "
 msgstr "\n"
 "\n"
-"\n"
 "<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
 "\n"
 "    <h2>\n"
-"        <br />\n"
-"        Hello ${object.partner_id.name},<br />\n"
-"        Thank you very much for your trust!\n"
+"        Hallo ${object.partner_id.name},<br/>\n"
+"        vielen Dank für ihr Vertrauen!\n"
 "    </h2>\n"
-"    <h3><br />Summary of your transaction:</h3>\n"
-"    <p style=\"padding-left: 14px;\">\n"
-"        ID: <strong>${object.name}</strong><br />\n"
-"        Total: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br />\n"
-"        Date: ${object.date_order}<br />\n"
-"        State: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
-"    </p>\n"
-"    <% set signup_url = object.get_signup_url() %>\n"
-"    % if signup_url:\n"
+"    <h3><br/>Ihre Persönlichen daten</h3>\n"
 "    <p>\n"
-"        <br />You could access your data online if you already have an account:\n"
-"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
-"            &#8226;&nbsp;Access Account\n"
-"        </a>\n"
-"        <br />Or you could create a new one:\n"
-"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
-"            &#8226;&nbsp;Register Account\n"
-"        </a>\n"
+"        % if object.partner_id.name:\n"
+"            ${object.partner_id.name}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.street:\n"
+"            ${object.partner_id.street}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.street2:\n"
+"            ${object.partner_id.street2}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.city or object.partner_id.zip:\n"
+"            ${object.partner_id.zip} ${object.partner_id.city}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.email:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.partner_id.email}\">${object.partner_id.email}</a><br/>\n"
+"        % endif\n"
+"\n"
+"     </p>\n"
+"    <h3><br/>Vorgangsübersicht:</h3>\n"
+"    <p style=\"padding-left: 14px;\">\n"
+"        Nummer: <strong>${object.name}</strong><br/>\n"
+"        Summe: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br/>\n"
+"        Datum: ${object.date_order}<br/>\n"
+"        Fortschritt: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
 "    </p>\n"
-"    % endif\n"
-"    <p>If you have any questions please contact:<br />\n"
-"        <a href=\"mailto:${object.user_id.email or object.company_id.email or ''}?subject=Question%20regarding%20${object.name}\" style=\"display:block; padding-left: 14px;\">\n"
-"            &#8226;&nbsp;&lt;${object.user_id.name or object.company_id.name or ''}&gt; ${object.user_id.email or object.company_id.email or ''}\n"
-"        </a>\n"
-"    </p>\n"
-"    <p>&nbsp;</p>\n"
+"\n"
+"        <p>Bei Fragen kontaktieren sie bitte:</p>\n"
+"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email or '') | safe}</a><br/>\n"
+"    <div style=\"display:table;\">\n"
+"        <div style=\"display:table-header-group;\">\n"
+"            <div style=\"display:table-row;\">\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Name</div>\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Anzahl</div>\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Download</div>\n"
+"            </div>\n"
+"        </div>\n"
+"        <div style=\"display:table-row-group;\">\n"
+"            % for line in object.order_line:\n"
+"                <div style=\"display:table-row;\">\n"
+"                    <div style=\"display:table-cell;\">${line.product_id.name}</div>\n"
+"                    <div style=\"display:table-cell;\">${line.product_uom_qty}</div>\n"
+"                    % if line.product_id.webshop_download_file:\n"
+"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_id.id}\">Download</a></div>\n"
+"                    % endif\n"
+"                    % if line.product_tmpl_id.webshop_download_file:\n"
+"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_tmpl_id.id}\">Download</a></div>\n"
+"                    % endif\n"
+"                </div>\n"
+"            % endfor\n"
+"        </div>\n"
+"    </div>\n"
+"        % if object.cat_root_id.id == False or object.cat_root_id.id == 55:\n"
 "    <h3>\n"
 "        <strong>${object.company_id.name}</strong>\n"
 "    </h3>\n"
@@ -140,21 +208,39 @@ msgstr "\n"
 "            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
 "        % endif\n"
 "        % if object.company_id.phone:\n"
-"            Tel.:&nbsp;${object.company_id.phone}<br />\n"
+"            Tel.:&nbsp;${object.company_id.phone}<br/>\n"
 "        % endif\n"
 "        % if object.company_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br />\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br/>\n"
 "        % endif\n"
 "        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br />\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br/>\n"
 "        % endif\n"
 "        % if object.company_id.logo:\n"
 "            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
 "        % endif\n"
 "    </p>\n"
+"        % endif\n"
+"        % if object.cat_root_id.id == 80:\n"
+"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email_report_dd or '') | safe}</a>\n"
+"    <h3>\n"
+"        <strong>${Sante-Sexuelle}</strong>\n"
+"    </h3>\n"
+"    <p>\n"
+"        % if object.company_id.email_report_dd:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email_report_dd}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.website:\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website_report_dd}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.logo_report_dd:\n"
+"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo_report_dd}\" style=\"width: 120px;\"></div>\n"
+"        % endif\n"
+"    </p>\n"
+"        % endif\n"
+"    <p>&nbsp;</p>\n"
 "\n"
 "</div>\n"
-"\n"
 "\n"
 "            "
 
@@ -438,6 +524,12 @@ msgid "City"
 msgstr "città"
 
 #. module: website_sale_donate
+#: field:website.checkout_billing_fields,clearfix:0
+#: field:website.checkout_shipping_fields,clearfix:0
+msgid "Clearfix"
+msgstr "Clearfix"
+
+#. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.company_name_web
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_company_name_web
 msgid "Company"
@@ -625,7 +717,7 @@ msgstr "Download"
 #: model:website.checkout_billing_fields,label:website_sale_donate.email
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_email
 msgid "EMail"
-msgstr "EMail"
+msgstr "E-Mail"
 
 #. module: website_sale_donate
 #: code:addons/website_sale_donate/controllers/main.py:336
@@ -643,6 +735,13 @@ msgstr "Errors in checkout fields or from confirm_order or payment controller fo
 #: field:website.config.settings,payment_interval_as_selection:0
 msgid "FORCE Payment Interval as Selection List"
 msgstr "FORCE Payment Interval as Selection List"
+
+#. module: website_sale_donate
+#: view:website:website_sale.cart
+#: view:website:website_sale.checkout
+#: view:website:website_sale.payment
+msgid "False"
+msgstr "False"
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.fore_name_web
@@ -803,6 +902,15 @@ msgid "How frequent would you like to donate this amount:"
 msgstr "How frequent would you like to donate this amount:"
 
 #. module: website_sale_donate
+#: field:product.payment_interval,id:0
+#: field:product.payment_interval_lines,id:0
+#: field:product.website_price_buttons,id:0
+#: field:website.checkout_billing_fields,id:0
+#: field:website.checkout_shipping_fields,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: website_sale_donate
 #: view:website.config.settings:website_sale_donate.view_website_sale_donate_config_settings
 msgid "Images"
 msgstr "Images"
@@ -934,7 +1042,7 @@ msgstr "Minimum Arbitrary Price"
 #: model:website.checkout_billing_fields,label:website_sale_donate.phone
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_phone
 msgid "Mobile"
-msgstr "Mobile"
+msgstr "Cellulare"
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.name
@@ -949,8 +1057,6 @@ msgstr "My Items"
 
 #. module: website_sale_donate
 #: field:product.website_price_buttons,name:0
-#: model:website.checkout_billing_fields,label:website_sale_donate.name
-#: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_name
 msgid "Name"
 msgstr "Nome"
 
@@ -1231,6 +1337,11 @@ msgid "Redirect to this URL after processing the Answer of the Payment Provider 
 msgstr "Redirect to this URL after processing the Answer of the Payment Provider instead of /shop/confirmation_static"
 
 #. module: website_sale_donate
+#: field:account.invoice,wsd_cat_root_id:0
+msgid "RootCateg."
+msgstr "RootCateg."
+
+#. module: website_sale_donate
 #: field:account.invoice,wsd_so_id:0
 msgid "Sale Order"
 msgstr "Sale Order"
@@ -1275,6 +1386,12 @@ msgstr "Linea d'ordine di vendita"
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Sales Price"
 msgstr "Sales Price"
+
+#. module: website_sale_donate
+#: model:website.checkout_billing_fields,label:website_sale_donate.name
+#: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_name
+msgid "Salutation Vorname Lastname"
+msgstr "Salutation Vorname Lastname"
 
 #. module: website_sale_donate
 #: field:payment.acquirer,sequence:0
@@ -1470,6 +1587,13 @@ msgid "Transaction"
 msgstr "Transaction"
 
 #. module: website_sale_donate
+#: view:website:website_sale_donate.ppt_ahch
+#: view:website:website_sale_donate.ppt_donate
+#: view:website:website_sale_donate.ppt_opc
+msgid "True"
+msgstr "Vero"
+
+#. module: website_sale_donate
 #: view:website:website_sale_donate.small_cart
 msgid "Unit Price"
 msgstr "Prezzo unitario"
@@ -1605,6 +1729,16 @@ msgid "annually"
 msgstr "annualmente"
 
 #. module: website_sale_donate
+#: view:website:website_sale.products
+msgid "col-md-3"
+msgstr "col-md-3"
+
+#. module: website_sale_donate
+#: view:website:website_sale.products
+msgid "col-md-9"
+msgstr "col-md-9"
+
+#. module: website_sale_donate
 #: view:website:website_sale_donate.product_comment
 msgid "comment"
 msgstr "commento"
@@ -1642,14 +1776,35 @@ msgid "not line.product_id.price_donate"
 msgstr "not line.product_id.price_donate"
 
 #. module: website_sale_donate
+#: view:website:website_sale_donate.product_comment
+msgid "on"
+msgstr "il"
+
+#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.once_only
 msgid "once-only"
 msgstr "solo una volta"
 
 #. module: website_sale_donate
+#: view:website:website_sale.products_item
+msgid "product_price text-primary"
+msgstr "product_price text-primary"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.categories_search_publish
+msgid "pull-right"
+msgstr "pull-right"
+
+#. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.quarterly
 msgid "quarterly"
 msgstr "trimestrale"
+
+#. module: website_sale_donate
+#: field:website.checkout_billing_fields,res_partner_field_id:0
+#: field:website.checkout_shipping_fields,res_partner_field_id:0
+msgid "res.partner Field"
+msgstr "res.partner Field"
 
 #. module: website_sale_donate
 #: view:payment.acquirer:website_sale_donate.payment_acquirer_tree_sequence

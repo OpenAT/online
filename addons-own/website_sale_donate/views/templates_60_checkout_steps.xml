@@ -746,6 +746,7 @@
                             </t>
                             <t t-call="website_sale_donate.small_cart">
                                 <t t-set="disable_changing_products" t-value="True"/>
+                                <t t-set="show_download_links" t-value="True"/>
                             </t>
                             <!-- Acquirer (Payment-Method) and Delivery-Method -->
                             <t t-call="website_sale_donate.wsd_opc_payment"/>
