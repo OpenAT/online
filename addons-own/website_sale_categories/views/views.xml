@@ -11,10 +11,11 @@
                     <attribute name="class"></attribute>
                 </xpath>
                 <field name="sequence" position="after">
-                    <field name="cat_root"/>
                     <field name="cat_root_id" readonly="1"/>
-                    <field name="one_page_checkout"/>
+                    <field name="cat_root"/>
                     <field name="redirect_url_after_form_feedback" attrs="{'invisible': [('cat_root','=', False)]}"/>
+                    <field name="cat_section_id" attrs="{'invisible': [('cat_root','=', False)]}"/>
+                    <field name="one_page_checkout"/>
                     <field name="cat_hide"/>
                     <field name="grid_template"/>
                     <field name="cat_products_grid_ppg" placeholder="9"/>
@@ -32,11 +33,11 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree[@string='Sales Order Lines']/field[@name='tax_id']" position="before">
-                    <field name="cat_root_id" readonly="1"/>
-                    <field name="cat_id" readonly="1"/>
+                    <field name="cat_root_id"/>
+                    <field name="cat_id"/>
                 </xpath>
                 <field name="currency_id" position="after">
-                    <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_root_id"/>
                 </field>
             </field>
         </record>
@@ -48,7 +49,7 @@
             <field name="inherit_id" ref="sale.view_order_tree"/>
             <field name="arch" type="xml">
                 <field name="state" position="after">
-                    <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_root_id"/>
                 </field>
             </field>
         </record>
@@ -58,7 +59,7 @@
             <field name="inherit_id" ref="sale.view_quotation_tree"/>
             <field name="arch" type="xml">
                 <field name="state" position="after">
-                    <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_root_id"/>
                 </field>
             </field>
         </record>

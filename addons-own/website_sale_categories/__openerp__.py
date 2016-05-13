@@ -42,6 +42,8 @@ website_sale_categories
         'sale',
         'website',
         'website_sale',
+        'website_sale_delivery',
+        'crm',
     ],
     'installable': True,
     'data': [

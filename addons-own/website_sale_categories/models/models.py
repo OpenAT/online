@@ -65,6 +65,9 @@ class product_public_category_menu(models.Model):
                                                    help='Redirect to this URL after processing the Answer of the'
                                                         'Payment Provider instead of /shop/confirmation_static',
                                                    translate=True)
+    # Sales Team for Sales Orders
+    cat_section_id = fields.Many2one(comodel_name='crm.case.section', string='Sales Team')
+
 
     # Update the field cat_root_id at addon installation or update
     def init(self, cr, context=None):
@@ -222,10 +225,18 @@ class sale_order(models.Model):
             if so and so.order_line:
                 # Get all cat_root_ids for non deliver so lines (or False if not cat_root exists)
                 cr_ids = [x.cat_root_id.id if x.cat_root_id else False for x in so.order_line if not x.is_delivery]
-                # Check if all cr_ids are the same
+                # Check if all cat_root_ids are the same
                 if cr_ids and False not in cr_ids and all(x == cr_ids[0] for x in cr_ids):
                     # All order-lines have the same root-cat, set the cat_root_id of the sales-order
                     so.cat_root_id = cr_ids[0]
+                    # Set the Sales Team if set in root cat
+                    if so.cat_root_id.cat_section_id:
+                        so.section_id = so.cat_root_id.cat_section_id.id
+                        # Set the Team Leader of the Sales Team as the Sales-Man of the SO
+                        # HINT: This is not relevant for the followers of the SO only the followers of the sales team
+                        #       will be added to the follower list of the SO
+                        if so.cat_root_id.cat_section_id.user_id:
+                            so.user_id = so.cat_root_id.cat_section_id.user_id.id
                     # Set the root cat also for the delivery line if any
                     for line in [x for x in so.order_line if x.is_delivery]:
                         line.cat_root_id = cr_ids[0]
