@@ -67,6 +67,7 @@ Please look at the example html file at website_as_widget/test_iframe.html
     ],
     'installable': True,
     'data': [
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
     ],

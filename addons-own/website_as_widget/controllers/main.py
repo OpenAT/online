@@ -35,17 +35,14 @@ class ir_http(orm.AbstractModel):
                 request.session['aswidget'] = False if request.httprequest.args.get('aswidget') in ['False', 'false'] \
                     else True
 
-            # Global redirect if not called from a configuration URL
+            # Check for any aswidget domains
             base_url = str(urlparse(request.httprequest.base_url).hostname)
-            # localhost and datadialog.net are Added for safety reasons ;)
-            config_urls = 'localhost;datadialog.net;'
-            config_urls += request.website.global_configuration_urls or ''
-            # If a global redirect url is set
-            # and the base_url is not in the config_urls redirect to the global_redirection url
-            if request.website.global_redirect_url \
-                    and not request.session.get('aswidget') \
-                    and base_url not in config_urls:
-                # TODO: Check if there is a root_cat and if the root_cat has a global_redirect_url
-                #       if so - redirect to this url ;)
-                return request.redirect(request.website.global_redirect_url)
+            aswidget_domains = request.env['website.aswidget_domains']
+            aswidget_domains = aswidget_domains.search([])
+            for domain in aswidget_domains:
+                if domain.aswidget_domain and domain.aswidget_domain in base_url:
+                    request.session['aswidget'] = True
+                    if domain.redirect_url:
+                        request.session['aswidget_redirect_url'] = domain.redirect_url
+
         return response

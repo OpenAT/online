@@ -89,7 +89,7 @@ You still need to do some things by Hand after installing this module:
         'data/data_project.xml',
         'data/data_setup_css.xml',
         # SECURITY FILES
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         #'security/ir_ui_view.xml',
         # VIEWS AND TEMPLATES
         #'views/res_config.xml',
