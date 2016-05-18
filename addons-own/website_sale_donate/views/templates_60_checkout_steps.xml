@@ -327,6 +327,43 @@
             </div>
         </template>
 
+
+        <!-- SUBTEMPLATE Display Invoice Address Data based on Billing or Shipping Fields -->
+        <template id="wsd_fields_display" name="wsd_fields_display">
+            <t t-if="address_obj and fields_to_render">
+
+                <!-- Loop through the fields -->
+                <t t-foreach="fields_to_render or []" t-as="f">
+                    <t t-if="f.show">
+                        <t t-set="f_name" t-value="f.res_partner_field_id.name"/>
+                        <t t-set="f_type" t-value="f.res_partner_field_id.ttype"/>
+                        <t t-set="css_classes" t-value="f.css_classes"/>
+
+                        <t t-if="f_type == 'char' or f_name in ['country_id', 'state_id']">
+                            <!-- Get Field Value -->
+                            <t t-set="f_value" t-value="getattr(address_obj, f_name, '')"/>
+                            <!-- Overwrite with Country Name -->
+                            <t t-if="f_name == 'country_id'">
+                                <t t-set="f_value" t-value="address_obj.country_id.name"/>
+                            </t>
+                            <!-- Overwrite with State Name -->
+                            <t t-if="f_name == 'state_id'">
+                                <t t-set="f_value" t-value="address_obj.state_id.name"/>
+                            </t>
+                            <!-- Render the Field -->
+                            <span t-att-class="f_name" t-esc="f_value"/>
+                            <!-- CLEARFIX DIV -->
+                            <t t-if="f.clearfix">
+                                <div t-att-class="'clearfix ' + f_name"/>
+                            </t>
+                        </t>
+                    </t>
+                </t>
+
+            </t>
+        </template>
+
+
         <!-- SUBTEMPLATE Checkout Shipping Fields -->
         <!-- HINT: Field names are prefixed with shipping_ -->
         <template id="wsd_checkout_form_shipping_fields" name="wsd checkout-form-shipping-fields">
@@ -757,11 +794,19 @@
                             <!-- Billing Address -->
                             <div class="payment_billing_address">
                                 <h4>Bill To:</h4>
-                                <div t-field="order.partner_invoice_id"
-                                     t-field-options='{
-                                     "widget": "contact",
-                                     "fields": ["address", "name", "phone", "email"]
-                                     }'/>
+                                <!--<div t-field="order.partner_invoice_id"-->
+                                     <!--t-field-options='{-->
+                                     <!--"widget": "contact",-->
+                                     <!--"fields": ["address", "name", "phone", "email"]-->
+                                     <!--}'/>-->
+                                <div class="row billing_address">
+                                    <div class="col-sm-12">
+                                        <t t-call="website_sale_donate.wsd_fields_display">
+                                            <t t-set="address_obj" t-value="order.partner_invoice_id"/>
+                                            <t t-set="fields_to_render" t-value="billing_fields"/>
+                                        </t>
+                                    </div>
+                                </div>
                                 <div>
                                   <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
                                 </div>
@@ -771,11 +816,19 @@
                                 <div class="payment_shipping_address">
                                     <h4>Ship To:</h4>
                                     <t t-if="website_sale_order and (website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id)">
-                                      <div t-field="order.partner_shipping_id"
-                                           t-field-options='{
-                                           "widget": "contact",
-                                           "fields": ["address", "name", "phone"]
-                                           }'/>
+                                          <!--<div t-field="order.partner_shipping_id"-->
+                                               <!--t-field-options='{-->
+                                               <!--"widget": "contact",-->
+                                               <!--"fields": ["address", "name", "phone"]-->
+                                               <!--}'/>-->
+                                        <div class="row shipping_address">
+                                            <div class="col-sm-12">
+                                                <t t-call="website_sale_donate.wsd_fields_display">
+                                                    <t t-set="address_obj" t-value="order.partner_shipping_id"/>
+                                                    <t t-set="fields_to_render" t-value="shipping_fields"/>
+                                                </t>
+                                            </div>
+                                        </div>
                                     </t>
                                     <address t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">Ship to the same address</address>
                                     <div>

@@ -329,6 +329,7 @@ class website_sale_donate(website_sale):
         if hasattr(payment_page, 'qcontext'):
             payment_qcontext = payment_page.qcontext
 
+
         # Check for redirection caused by errors
         if not payment_qcontext:
             _logger.error(_('Payment Page has no qcontext. It may be a redirection. No Acquirer-Buttons rendered!'))
@@ -339,6 +340,18 @@ class website_sale_donate(website_sale):
         if payment_qcontext.get('errors'):
             _logger.warning(_('Errors found on the payment page! No Acquirer-Buttons rendered!'))
             return payment_page
+
+        # Add Billing Fields to qcontext for address display
+        billing_fields_obj = request.env['website.checkout_billing_fields']
+        payment_qcontext['billing_fields'] = billing_fields_obj.search([])
+        print "Billing: %s" % payment_qcontext['billing_fields']
+
+        # Add Shipping Fields qcontext for address display
+        shipping_fields_obj = request.env['website.checkout_shipping_fields']
+        payment_qcontext['shipping_fields'] = shipping_fields_obj.search([])
+
+        # Ugly hack to make getattr available in the payment page xml
+        payment_qcontext['getattr'] = getattr
 
         # Create alternative Pay-Now buttons (button_opc)
         # Remove the form and submit button, uniquely prefix the acquirer input fields and set data from post
