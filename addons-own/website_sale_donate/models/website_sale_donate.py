@@ -250,6 +250,10 @@ class product_template(osv.Model):
 
         # BEHAVIOUR
         'simple_checkout': fields.boolean('Simple Checkout'),
+        'fs_workflow': fields.selection([('product', 'Product'),
+                                        ('donation', 'Donation'),
+                                        ('godparenthood', 'Godparenthood (Sponsorship)')],
+                                        string="Fundraising Studio Workflow"),
 
         # PRODUCT LISTINGS
         'hide_price': fields.boolean('Hide Price in Shop overview Pages'),

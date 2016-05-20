@@ -65,6 +65,11 @@
                                     to the cart" will be ignored for products with "Simple Checkout" set!
                                 </p>
                                 <field name="simple_checkout"/>
+                                <p colspan="2" style="font-size: 12px; color: grey;">
+                                    The "Fundraising Studio Workflow" field links the corresponding workflow in your
+                                    Fundraising Studio database. Make sure this field is correctly set!
+                                </p>
+                                <field name="fs_workflow" required="True"/>
                             </group>
 
                             <group string="Webshop: Product Listings" colspan="2">
