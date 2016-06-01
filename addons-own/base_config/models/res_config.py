@@ -146,6 +146,7 @@ class base_config_settings(osv.osv_memory):
                                                          help='use aswidget in the url of the webpage or call it with route aswidget'),
         'module_website_tools': fields.boolean('website_tools -- Basic JS libs and css fixes',
                                                          help='Library to avoid double loading of java libs and css'),
+        'module_mail_delete_access_link_portal': fields.boolean('mail_delete_access_link_portal -- Delete Access-Document Link from odoo portal emails (see mail_delete_access_link too)'),
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',

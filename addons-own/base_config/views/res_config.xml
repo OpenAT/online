@@ -231,6 +231,10 @@
                                     <field name="module_website_tools" class="oe_inline" />
                                     <label for="module_website_tools" />
                                 </div>
+                                <div>
+                                    <field name="module_mail_delete_access_link_portal" class="oe_inline" />
+                                    <label for="module_mail_delete_access_link_portal" />
+                                </div>
                             </div>
                         </div>
                     </group>
