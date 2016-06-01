@@ -91,6 +91,7 @@ class base_config_settings(osv.osv_memory):
         'module_report_custom_filename': fields.boolean('report_custom_filename -- Better Filename Setting for reports through download_filename field'),
         'module_report_qweb_element_page_visibility': fields.boolean('report_qweb_element_page_visibility -- Add extra classes for qweb reports'),
         'module_website_sale_autopay': fields.boolean('website_sale_autopay -- Auto create and validate invoice from webshop order'),
+        'module_partner_firstname': fields.boolean('partner_firstname -- Add a firstname and lastname field to parnters and make name a function field'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',

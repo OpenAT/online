@@ -142,6 +142,10 @@
                                     <field name="module_website_sale_autopay" class="oe_inline" />
                                     <label for="module_website_sale_autopay" />
                                 </div>
+                                <div>
+                                    <field name="module_partner_firstname" class="oe_inline" />
+                                    <label for="module_partner_firstname" />
+                                </div>
                             </div>
                         </div>
                     </group>
