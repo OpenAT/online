@@ -52,16 +52,16 @@
         </record>
 
         <!-- Checkout Billing Fields -->
-        <record id="fore_name_web" model="website.checkout_billing_fields">
-            <field name="sequence">5</field>
-            <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>
-            <field name="mandatory" eval="False"/>
-            <field name="label">Fore Name</field>
-            <field name="placeholder">John</field>
-            <field name="css_classes">col-lg-6 hidden</field>
-            <field name="clearfix" eval="False"/>
-        </record>
+        <!--<record id="fore_name_web" model="website.checkout_billing_fields">-->
+            <!--<field name="sequence">5</field>-->
+            <!--<field name="show" eval="False"/>-->
+            <!--<field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>-->
+            <!--<field name="mandatory" eval="False"/>-->
+            <!--<field name="label">Fore Name</field>-->
+            <!--<field name="placeholder">John</field>-->
+            <!--<field name="css_classes">col-lg-6 hidden</field>-->
+            <!--<field name="clearfix" eval="False"/>-->
+        <!--</record>-->
         <record id="name" model="website.checkout_billing_fields">
             <field name="sequence">10</field>
             <field name="show" eval="True"/>
@@ -219,16 +219,16 @@
         </record>
 
         <!-- Checkout Shipping Fields -->
-        <record id="shipping_fore_name_web" model="website.checkout_shipping_fields">
-            <field name="sequence">5</field>
-            <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>
-            <field name="mandatory" eval="False"/>
-            <field name="label">Fore Name</field>
-            <field name="placeholder">John</field>
-            <field name="css_classes">col-lg-6 hidden</field>
-            <field name="clearfix" eval="False"/>
-        </record>
+        <!--<record id="shipping_fore_name_web" model="website.checkout_shipping_fields">-->
+            <!--<field name="sequence">5</field>-->
+            <!--<field name="show" eval="False"/>-->
+            <!--<field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>-->
+            <!--<field name="mandatory" eval="False"/>-->
+            <!--<field name="label">Fore Name</field>-->
+            <!--<field name="placeholder">John</field>-->
+            <!--<field name="css_classes">col-lg-6 hidden</field>-->
+            <!--<field name="clearfix" eval="False"/>-->
+        <!--</record>-->
         <record id="shipping_name" model="website.checkout_shipping_fields">
             <field name="sequence">10</field>
             <field name="show" eval="True"/>

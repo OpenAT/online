@@ -9,7 +9,7 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <field name="website" position="after">
-                    <field name="fore_name_web"/>
+                    <field name="title_web"/>
                     <field name="company_name_web"/>
                     <field name="street_number_web"/>
                     <field name="post_office_box_web"/>

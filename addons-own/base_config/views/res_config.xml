@@ -146,6 +146,10 @@
                                     <field name="module_partner_firstname" class="oe_inline" />
                                     <label for="module_partner_firstname" />
                                 </div>
+                                <div>
+                                    <field name="module_partner_contact_gender" class="oe_inline" />
+                                    <label for="module_partner_contact_gender" />
+                                </div>
                             </div>
                         </div>
                     </group>

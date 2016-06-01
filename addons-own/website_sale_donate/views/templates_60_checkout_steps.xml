@@ -289,6 +289,32 @@
                         </div>
                     </t>
 
+                    <!-- SELECTION Fields -->
+                    <t t-if="f_type == 'selection'">
+                        <!-- Get the selection field values -->
+                        <!--<div t-esc="request.env['res.partner']._columns['gender'].selection"/>-->
+                        <!-- Get the tranlsated label of a selection field value -->
+                        <!--<div t-esc="dict(request.env['res.partner'].fields_get(['gender'])['gender']['selection'])['male']"/>-->
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')">
+                                <t t-esc="billing_field.label"/><t t-if="billing_field.label">&amp;nbsp;</t>
+                            </label>
+                            <!-- Render a radio button for every selection option -->
+                            <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                <label class="radio-inline">
+                                    <input type="radio"
+                                           t-att-name="f_name"
+                                           t-att-value="option[0]"
+                                           t-att-id="f_name + '_' + option[0]"
+                                           t-att-checked="True if checkout.get(f_name) == option[0] else ''"
+                                           t-att-required="billing_field.mandatory"
+                                    />
+                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                </label>
+                            </t>
+                        </div>
+                    </t>
+
                     <!-- CLEARFIX DIV -->
                     <t t-if="billing_field.clearfix">
                         <div t-att-class="'clearfix f-' + f_name"/>
@@ -439,6 +465,28 @@
                                        t-att-name="f_name"
                                        t-att-value="checkout.get(f_name)"/><t t-esc="shipping_field.label"/>
                             </label>
+                        </div>
+                    </t>
+
+                    <!-- SELECTION Fields -->
+                    <t t-if="f_type == 'selection'">
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')">
+                                <t t-esc="shipping_field.label"/><t t-if="shipping_field.label">&amp;nbsp;</t>
+                            </label>
+                            <!-- Render a radio button for every selection option -->
+                            <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                <label class="radio-inline">
+                                    <input type="radio"
+                                           t-att-name="f_name"
+                                           t-att-value="option[0]"
+                                           t-att-id="f_name + '_' + option[0]"
+                                           t-att-checked="True if checkout.get(f_name) == option[0] else ''"
+                                           t-att-required="shipping_field.mandatory"
+                                    />
+                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                </label>
+                            </t>
                         </div>
                     </t>
 

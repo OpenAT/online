@@ -14,8 +14,10 @@ class res_partner(osv.Model):
     _inherit = 'res.partner'
 
     _columns = {
-        # Vorname (wird dann in das feld name geschrieben)
-        'fore_name_web': fields.char(string='Fore Name Web'),
+        # Vorname - DEPRECATED use partner_firstname addon
+        'fore_name_web': fields.char(string='Fore Name Web DEPRICATED use partner_firstname addon'),
+        # Title (akademisch) Web
+        'title_web': fields.char(string='Title Web'),
         # Firmenname
         'company_name_web': fields.char(string='Company Name Web'),
         # Hausnummer

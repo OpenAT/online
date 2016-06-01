@@ -92,6 +92,7 @@ class base_config_settings(osv.osv_memory):
         'module_report_qweb_element_page_visibility': fields.boolean('report_qweb_element_page_visibility -- Add extra classes for qweb reports'),
         'module_website_sale_autopay': fields.boolean('website_sale_autopay -- Auto create and validate invoice from webshop order'),
         'module_partner_firstname': fields.boolean('partner_firstname -- Add a firstname and lastname field to parnters and make name a function field'),
+        'module_partner_contact_gender': fields.boolean('partner_contact_gender -- Add a gender selection field to parnters'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',
