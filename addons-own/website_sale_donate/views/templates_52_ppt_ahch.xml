@@ -32,7 +32,8 @@
                                             <div t-field="product.description_sale" class="oe_structure" id="product_desc_short"/>
                                             <br/>
                                             <div id="product_data" class="oe_structure">
-                                                <t t-if="product.default_code">
+                                                <!-- HINT: Only show Code if no variants available -->
+                                                <t t-if="product.default_code and len(product.product_variant_ids) == 1">
                                                     <div class="field_label">Order Number:</div>
                                                     <div t-field="product.default_code"/>
                                                 </t>

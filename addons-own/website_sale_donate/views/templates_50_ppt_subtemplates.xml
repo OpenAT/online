@@ -47,8 +47,40 @@
             </t>
         </template>
 
+        <!-- SUBTEMPLATE Product Download Button -->
+        <template id="webshop_download_file_link" name="webshop_download_file_link">
+
+
+            <t t-if="show_download_link">
+                <!-- HINT: Call template with product_id as int and product_model as 'product.template' or 'product.product' -->
+                <!--<t t-if="not product_model" t-set="product_model" t-value="'product.product'"/>-->
+                <!--<t t-if="not current_product" t-set="current_product" t-value="variant_id"/>-->
+                <t t-set="button_size" t-value="button_size"/>
+                <t t-if="not button_size"><t t-set="button_size" t-value="'btn-xs mike1'"/></t>
+                <t t-set="button_text" t-value="button_text"/>
+                <t t-if="not button_text"><t t-set="button_text" t-value="'Download'"/></t>
+
+                <!-- Set Download Link -->
+                <t t-set="webshop_download_file_link" t-value="False"/>
+                <t t-if="current_product and current_product.webshop_download_file">
+                    <t t-set="webshop_download_file_link" t-value="'/web/binary/saveas?model='+product_model+'&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % current_product.id"/>
+                </t>
+
+                <t t-if="webshop_download_file_link">
+                    <!-- Download Button -->
+                    <a name="product_download_file_link"
+                       t-att-class="'webshop_download_file btn ' + button_size + ' btn-default'"
+                       t-att-href="webshop_download_file_link">
+                        <span class="glyphicon glyphicon-download"/><span t-esc="button_text"/>
+                    </a>
+                </t>
+            </t>
+        </template>
+
         <!-- SUBTEMPLATE CHECKOUT BOX (Add to cart box): checkoutbox -->
         <template id="checkoutbox" name="Checkout Box">
+            <t t-set="show_download_link" t-value="True"/>
+
             <div t-att-class="box_outer_class if box_outer_class else 'panel panel-default'">
                 <div t-att-class="box_inner_class if box_inner_class else 'panel-body text-center'">
 
@@ -107,32 +139,54 @@
                                 </t>
                                 <!-- Show all Product Variants as a List (from website_sale.product_variants)-->
                                 <t t-if="product.variants_as_list">
+
+                                    <!-- No Variants -->
                                     <input type="hidden" t-if="len(product.product_variant_ids) == 1" name="product_id"
                                            t-att-value="product.product_variant_ids[0].id"/>
+
+                                    <!-- Variants -->
                                     <t t-if="len(product.product_variant_ids) &gt; 1">
-                                        <label label-default="label-default" class="radio"
-                                               t-foreach="product.product_variant_ids" t-as="variant_id">
-                                            <input type="radio" name="product_id" class="js_product_change"
-                                                   t-att-checked="'checked' if variant_id_index == 0 else ''"
-                                                   t-att-value="variant_id.id"
-                                                   t-att-data-lst_price="variant_id.lst_price"
-                                                   t-att-data-price="variant_id.price"/>
-                                            <!--<span t-esc="variant_id.name_get()[0][1]"/>-->
-                                            <t t-foreach="variant_id.attribute_value_ids" t-as="attrib">
-                                                <span><t t-esc="attrib.name"/> </span>
-                                            </t>
-                                            <span class="text-muted" t-if="variant_id.default_code">(<t t-esc="variant_id.default_code"/>) </span>
-                                            <span class="badge" t-if="variant_id.price_extra">
-                                                <t t-esc="variant_id.price_extra > 0 and '+' or ''"/>
-                                                <span t-field="variant_id.price_extra" style="white-space: nowrap;"
-                                                      t-field-options='{
-                                                "widget": "monetary",
-                                                "from_currency": "product.company_id.currency_id",
-                                                "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                                              }'/>
-                                            </span>
-                                        </label>
+                                        <h4 class="product_variants_as_product_list text-left">
+                                            <div class="form-group">
+                                                <!-- Product Variants (product.product) -->
+                                                <t t-foreach="product.product_variant_ids" t-as="variant_id">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <!-- Radio Checkbox -->
+                                                            <input type="radio" name="product_id" class="js_product_change"
+                                                                   t-att-checked="'checked' if variant_id_index == 0 else ''"
+                                                                   t-att-value="variant_id.id"
+                                                                   t-att-data-lst_price="variant_id.lst_price"
+                                                                   t-att-data-price="variant_id.price"/>
+                                                            <!-- All Attributes Names -->
+                                                            <t t-foreach="variant_id.attribute_value_ids" t-as="attrib">
+                                                                <span><t t-esc="attrib.name"/> </span>
+                                                            </t>
+                                                            <!-- Product-Variant Code -->
+                                                            <span class="text-muted" t-if="variant_id.default_code">(<t t-esc="variant_id.default_code"/>) </span>
+                                                            <!-- Product Variant Extra Price -->
+                                                            <span class="badge" t-if="variant_id.price_extra">
+                                                                <t t-esc="variant_id.price_extra > 0 and '+' or ''"/>
+                                                                <span t-field="variant_id.price_extra" style="white-space: nowrap;"
+                                                                      t-field-options='{
+                                                                "widget": "monetary",
+                                                                "from_currency": "product.company_id.currency_id",
+                                                                "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                                                              }'/>
+                                                            </span>
+                                                            <!-- Product Variant Download Link -->
+                                                            <t t-call="website_sale_donate.webshop_download_file_link">
+                                                                <t t-set="show_download_link" t-value="show_download_link"/>
+                                                                <t t-set="product_model" t-value="'product.product'"/>
+                                                                <t t-set="current_product" t-value="variant_id"/>
+                                                            </t>
+                                                        </label>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </h4>
                                     </t>
+
                                 </t>
                             </t>
 
@@ -238,6 +292,17 @@
                                 </div>
                             </t>
 
+                            <!-- Download Link -->
+                            <t t-if="product and product.webshop_download_file">
+                                <h4>
+                                    <t t-call="website_sale_donate.webshop_download_file_link">
+                                        <t t-set="product_model" t-value="'product.template'"/>
+                                        <t t-set="current_product" t-value="product"/>
+                                        <t t-set="button_size" t-value="' '"/>
+                                    </t>
+                                </h4>
+                            </t>
+
                             <!-- Add to Cart Button -->
                             <t t-if="not acquirer_auto_submit">
                                 <a id="add_to_cart" class="btn btn-primary btn-xl mt16 js_check_product a-submit" href="#">
@@ -253,7 +318,9 @@
 
                             <!-- Shopping Cart (small cart) -->
                             <t t-if="show_small_cart_in_checkoutbox">
-                                <t t-call="website_sale_donate.checkoutbox_small_cart"/>
+                                <t t-call="website_sale_donate.checkoutbox_small_cart">
+                                    <!-- HINT: Written this way to allow setting options via xpath -->
+                                </t>
                             </t>
 
                         </div>

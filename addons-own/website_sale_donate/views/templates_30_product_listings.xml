@@ -8,11 +8,47 @@
                 <attribute name="class">product_price text-primary</attribute>
             </xpath>
             <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]/b" position="attributes">
-                <!--<attribute name="class"></attribute>-->
-                <attribute name="t-att-class">'hidden' if product.hide_price else ''</attribute>
+                <attribute name="t-att-class">'hidden' if product.hide_price or product.price == 0 else ''</attribute>
+            </xpath>
+            <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]/b" position="before">
+                <t t-if="product.hide_price or product.price == 0 ">
+                    <span class="product_price_free pull-right">free</span>
+                </t>
             </xpath>
             <xpath expr="//section" position="attributes">
-                <attribute name="t-att-style">'padding: 0 10px 0 10px' if product.hide_price else ''</attribute>
+                <attribute name="t-att-style">'padding: 0 10px 0 10px' if product.hide_price or product.price == 0 else ''</attribute>
+            </xpath>
+        </template>
+
+        <!-- TEMPLATE products_direct_download: Direct Download link if no variants -->
+        <template id="products_direct_download" inherit_id="website_sale.products_item" active="True"
+                  customize_show="True" name="Download Link">
+            <xpath expr="//div[@class='product_price']" position="inside">
+                <input name="product_id" t-att-value="product.product_variant_ids[0].id" type="hidden"/>
+                    <!-- No Variants: direct download if any -->
+                    <t t-if="len(product.product_variant_ids) == 1 and product.webshop_download_file">
+                        <t t-call="website_sale_donate.webshop_download_file_link">
+                            <t t-set="product_model" t-value="'product.template'"/>
+                            <t t-set="current_product" t-value="product"/>
+                            <t t-set="button_size" t-value="'btn-xs'"/>
+                            <t t-set="button_text" t-value="' '"/>
+                        </t>
+                    </t>
+                    <!-- Variants: open product page  -->
+                    <t t-if="len(product.product_variant_ids) &gt; 1">
+                        <!-- Check if there is at least one variant with a download file else hide -->
+                        <t t-set="variant_has_download_link" t-value="False"/>
+                        <t t-foreach="product.product_variant_ids" t-as="variant_id">
+                            <t t-if="variant_id.webshop_download_file">
+                                <t t-set="variant_has_download_link" t-value="True"/>
+                            </t>
+                        </t>
+                        <a class="btn btn-default btn-xs"
+                           t-if="variant_has_download_link"
+                           t-att-href="keep('/shop/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']>1 else None))">
+                            <span class="glyphicon glyphicon-download"/>
+                        </a>
+                    </t>
             </xpath>
         </template>
 
@@ -57,7 +93,9 @@
                 <!-- Small Cart Header -->
                 <t t-call="website_sale_donate.small_cart_header"/>
                 <!-- Small Cart -->
-                <t t-call="website_sale_donate.small_cart"/>
+                <t t-call="website_sale_donate.small_cart">
+                    <!-- HINT: written this way to allow settings for small cart -->
+                </t>
                 <!-- Checkout Button -->
                 <div class="text-left small_cart_buttons">
                     <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line" class="btn btn-primary pull-right" href="/shop/checkout">Checkout</a>

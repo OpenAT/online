@@ -135,6 +135,15 @@
                 <attribute name="t-if">not line.product_id.price_donate</attribute>
             </xpath>
 
+            <!-- Hide price if 0 and show word free instead -->
+            <xpath expr="//span[@t-field='line.discounted_price']" position="attributes">
+                <attribute name="style"/>
+                <attribute name="t-att-style">'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'</attribute>
+            </xpath>
+            <xpath expr="//span[@t-field='line.discounted_price']" position="after">
+                <span t-if="line.discounted_price == 0" class="line_discounted_price_free">free</span>
+            </xpath>
+
             <!-- Change the product quantity controls (oe_website_spinner) -->
             <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
                 <!-- Product Quantity Selector -->
@@ -757,7 +766,7 @@
                 <attribute name="t-if">False</attribute>
             </xpath>
 
-            <!-- INSERT Custom Checkout Page -->
+            <!-- CHECKOUT PAGE -->
             <xpath expr="//div[@class='container oe_website_sale']" position="inside">
 
                 <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
@@ -775,7 +784,9 @@
                             <!-- Always Show Small-Cart Header -->
                             <t t-set="show_small_cart_header" t-value="True"/>
                         </t>
-                        <t t-call="website_sale_donate.small_cart" />
+                        <t t-call="website_sale_donate.small_cart">
+                            <!-- HINT: Written this way to allow setting options via xpath -->
+                        </t>
                     </div>
                     <!-- Left Column: checkout form -->
                     <div class="col-md-8 col-md-pull-4" id="wsd_checkout_page_left_column">

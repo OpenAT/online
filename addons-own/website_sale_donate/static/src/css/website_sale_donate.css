@@ -1,10 +1,10 @@
 /* Heart for the shopping cart in top menu */
-.fa-shopping-cart:before {
-    content: "\f004";
-    /*content: "\f16b";*/
-    /*content: "\f16b";*/
-    /*content: "\f067";*/
-}
+/*.fa-shopping-cart:before {*/
+    /*content: "\f004";*/
+    /*!*content: "\f16b";*!*/
+    /*!*content: "\f16b";*!*/
+    /*!*content: "\f067";*!*/
+/*}*/
 
 /* Checkout-Pages Checkout-Step-Indicator */
 .wsd_checkout_pages_header .checkout_steps_navigation {
@@ -101,7 +101,9 @@ body .oe_website_sale h1 {
 h3.amount_title {
     text-align: left;
 }
-
+.product_variants_as_product_list {
+    padding: 0 1em;
+}
 #website_sale_donate img.product-image {
     display: inline;
 }
@@ -209,6 +211,11 @@ h3.amount_title {
 
 
 /* CART PAGE */
+/* reset odoo setting */
+.oe_cart table td:first-child {
+    min-width: inherit;
+}
+/* table settings */
 .oe_cart table {
     margin-bottom: 0;
 }
@@ -218,67 +225,86 @@ h3.amount_title {
 .cart_controls .remove_product{
     line-height: 2em;
 }
-
-/* SMALL CART */
-.oe_cart.small_cart table td:first-child {
-    min-width: 2em;
-}
-.oe_cart.small_cart table td {
-    width: auto;
-    padding: 0.75em 0.25em;
-    margin: 0;
-    font-size: 12px;
-    line-height: 2em;
-}
-.small_cart td[name="product_image"] img {
-     width: 2em;
-     height: 2em;
-}
-
-.small_cart #cart_products.table {
-    margin-bottom: 0;
-}
-.small_cart .form-control {
-    padding: 0;
-    height: auto;
-}
-.small_cart .oe_website_spinner {
-    width: auto;
-    /*display: inline;*/
-}
-.oe_website_sale .small_cart input.js_quantity {
-    min-width: 2em;
-    max-width: 4em;
-    width: auto;
-    border: none;
-    margin-right: 0.25em;
-}
-.small_cart_buttons a {
-    margin-top: 1em;
-    margin-bottom: 2em;
-}
-.small_cart #cart_total h3 {
-    font-size: 18px;
-    margin: 0.25em 0;
-}
-/* TODO: Check if still needed */
-#wsd-checkout-box .small_cart .img-responsive {
-     width: 30px;
-     height: auto;
-     border: none;
-}
-#wsd-checkout-box .small_cart_header {
-    /*text-align: left;*/
-    margin-top: 2.5em;
-    /*padding-top: 0.5em;*/
-    /*border-top: 1px dashed #ccc;*/
-}
-/* Custom Total for small_cart */
-.small_cart #cart_total {
+/* cart total */
+#cart_total {
+    line-height: 1.75em;
     border-top: 1px solid black;
 }
-.small_cart #cart_total td {
-    padding-left: 6px;
+#cart_total tr td:first-child {
+    padding-right: 1em;
+}
+#cart_total abbr[title],
+#cart_total abbr[data-original-title] {
+    border: none;
+}
+#order_total h3 {
+    margin-top: 0.25em;
+    margin-bottom: 0.75em;
+}
+
+/* SMALL CART */
+.oe_cart.small_cart {
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+/* Product Name (Text) */
+.oe_cart.small_cart a[name="product_name"] {
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    margin-right: 0.5em;
+    display: block;
+}
+/* Download Button */
+.oe_cart.small_cart a[name="product_download_file_link"] {
+    margin-top: 0.35em;
+    margin-bottom: 0.35em;
+}
+/* Payment Interval */
+.oe_cart.small_cart [name="product_payment_interval"] {
+    line-height: 1.6666em;
+}
+/* Quantity Input Field */
+#wsd-checkout-box .oe_cart.small_cart .oe_website_spinner,
+.oe_cart.small_cart .oe_website_spinner {
+    margin: 0;
+    margin-left: 0.5em;
+    padding: 0;
+    width: auto;
+}
+#wsd-checkout-box .oe_cart.small_cart .oe_website_spinner input,
+.oe_cart.small_cart .oe_website_spinner input {
+    margin: 0;
+    padding: 0;
+    width: 52px;
+    height: auto;
+    line-height: 1.9em;
+}
+/* Unit Price */
+.oe_cart.small_cart .small_cart_price_unit {
+    display: block;
+    line-height: 2em;
+    min-width: 74px;
+    margin-left: 6px;
+}
+/* Remove-Product-Link Garbage Icon */
+.oe_cart.small_cart .remove_product {
+    display: block;
+    line-height: 2em;
+    font-size: 12px;
+}
+/* Checkout Page Overwrites */
+.wsd_checkout_page_content .oe_cart.small_cart {
+    font-size: 12px;
+}
+.wsd_checkout_page_content .oe_cart.small_cart .small_cart_price_unit {
+    min-width: 60px;
+}
+/* Download Button */
+.wsd_checkout_page_content .oe_cart.small_cart a[name="product_download_file_link"] {
+    font-size: 10px;
+    margin-top: 0em;
+    margin-bottom: 0em;
+    line-height: 1.9em;
 }
 
 

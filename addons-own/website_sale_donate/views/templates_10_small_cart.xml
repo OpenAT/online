@@ -2,42 +2,56 @@
 <openerp>
     <data>
 
-        <!-- SUB-TEMPLATE: wsd_custom_total -->
-        <template id="wsd_custom_total" name="Website Sale Donate Custom Total Carts">
-            <table class='pull-right mb16' id="cart_total" t-if="website_sale_order and website_sale_order.website_order_line">
-                <!-- TAX -->
-                <tr id="order_total_taxes" t-att-class="'text-muted' if website_sale_order.amount_tax else 'hidden'">
-                    <td class="text-right"><abbr title="Taxes may be updated after providing shipping address">Taxes:</abbr></td>
-                    <td class="text-right">
-                        <span t-field="website_sale_order.amount_tax" style="white-space: nowrap;" t-field-options='{
-                            "widget": "monetary",
-                            "from_currency": "website_sale_order.pricelist_id.currency_id",
-                            "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                        }'/>
-                    </td>
-                </tr>
-                <!-- DELIVERY -->
-                <tr id="order_delivery" t-att-class="'text-muted' if website_sale_order.amount_delivery else 'hidden'">
-                    <td class="text-right"><abbr title="Delivery will be updated after choosing a new delivery method">Delivery:</abbr></td>
-                    <td class="text-right">
-                        <span t-field="website_sale_order.amount_delivery" t-field-options='{
-                            "widget": "monetary",
-                            "display_currency": "website.pricelist_id.currency_id"
-                        }'/>
-                    </td>
-                </tr>
-                <!-- TOTAL -->
-                <tr id="order_total" width="100" style="border-top: 1px solid #000">
-                    <th class="text-right"><h3>Total:</h3></th>
-                    <th class="text-right">
-                      <h3><span t-field="website_sale_order.amount_total" style="white-space: nowrap;" t-field-options='{
-                          "widget": "monetary",
-                          "from_currency": "website_sale_order.pricelist_id.currency_id",
-                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                        }'/></h3>
-                    </th>
-                </tr>
-            </table>
+        <!-- INHERIT: Replace order total table -->
+        <!-- HINT: Must be done this way cause the java script will render this template on cart updates -->
+        <template id="total" inherit_id="website_sale.total" name="WSD Cart Total Overwrite">
+            <xpath expr="//table[@id='cart_total']" position="replace">
+                <table class='pull-right' id="cart_total" t-if="website_sale_order and website_sale_order.website_order_line">
+                    <!-- DELIVERY -->
+                    <tr id="order_delivery"
+                        t-att-class="'text-muted' if website_sale_order.amount_delivery else 'hidden'">
+                        <td class="text-right"><abbr title="Delivery will be updated after choosing a new delivery method">Delivery:</abbr></td>
+                        <td class="text-right">
+                            <span t-field="website_sale_order.amount_delivery" t-field-options='{
+                                "widget": "monetary",
+                                "display_currency": "website.pricelist_id.currency_id"
+                            }'/>
+                        </td>
+                    </tr>
+                    <!-- TAX -->
+                    <tr id="order_total_taxes"
+                        t-att-class="'text-muted' if website_sale_order.amount_tax else 'hidden'">
+                        <td class="text-right"><abbr title="Taxes may be updated after providing shipping address">Taxes:</abbr></td>
+                        <td class="text-right">
+                            <span t-field="website_sale_order.amount_tax" style="white-space: nowrap;" t-field-options='{
+                                "widget": "monetary",
+                                "from_currency": "website_sale_order.pricelist_id.currency_id",
+                                "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
+                            }'/>
+                        </td>
+                    </tr>
+                    <!-- TOTAL -->
+                    <tr id="order_total">
+                        <td class="text-right">
+                            <h3>Total:</h3>
+                        </td>
+                        <td class="text-right">
+                            <h3>
+                                <span t-field="website_sale_order.amount_total"
+                                      t-att-style="'white-space: nowrap;' if website_sale_order.amount_total != 0 else 'display: none;'"
+                                      t-field-options='{
+                                      "widget": "monetary",
+                                      "from_currency": "website_sale_order.pricelist_id.currency_id",
+                                      "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"}'
+                                />
+                                <t t-if="website_sale_order.amount_total == 0">
+                                    <span class="so_amount_total_free">free</span>
+                                </t>
+                            </h3>
+                        </td>
+                    </tr>
+                </table>
+            </xpath>
         </template>
 
         <!-- SUB-TEMPLATE: Small Cart Header -->
@@ -57,99 +71,117 @@
         <template id="small_cart" name="Shopping Cart Small">
 
             <div class="small_cart oe_cart">
+                <!-- HINT: Table must have exactly three columns or total at the end will not fit! -->
                 <table class='table table-striped table-condensed' id="cart_products"
                        t-if="website_sale_order and website_sale_order.website_order_line">
                     <thead>
                         <tr>
-                            <th colspan="2">Item</th>
+                            <th>Item</th>
                             <th class="text-right">Unit Price</th>
+                            <th/>
                         </tr>
                     </thead>
                     <tbody>
                         <t t-foreach="website_sale_order.website_order_line" t-as="line">
                             <tr>
-                                <!-- Not a product.template but a product.product (= with variants) -->
+                                <!-- Col 1 and 2: Not a product.template but a product.product (= with variants) -->
+                                <!-- HINT: Check if still needed - maybe deprecated -->
                                 <td colspan="2" t-if="not line.product_id.product_tmpl_id"></td>
 
-                                <!-- Product Image -->
-                                <td t-if="line.product_id.product_tmpl_id" name="product_image">
-                                    <span t-field="line.product_id.image_square"
-                                          t-field-options='{"widget": "image", "class": "img-rounded"}'/>
-                                </td>
-                                <!-- Product Information -->
-                                <td t-if="line.product_id.product_tmpl_id" name="product_info" class="text-left form-inline">
+                                <!-- Col 1: Download Button and Product Text -->
+                                <td t-if="line.product_id.product_tmpl_id" name="product_info" class="text-left">
                                     <div class="text-muted">
-                                        <!-- DISABLED: Unit of Sale -->
-                                        <!--<small class="text-muted" t-raw="'{:.0f}'.format(int(line.product_uos_qty))"/>-->
-                                        <!-- Remove Product -->
-                                        <t t-if="not disable_changing_products">
-                                            <a href="#" class="remove_product btn btn-sm btn-link"
-                                               t-att-data-line-id="line.id">
-                                                <span class="glyphicon glyphicon-remove"/>
-                                            </a>
+
+                                        <!-- Product Image -->
+                                        <t t-if="show_product_image and line.product_id.product_tmpl_id" name="product_image">
+                                            <span t-field="line.product_id.image_square" t-field-options='{"widget": "image", "class": "img-rounded"}'/>
                                         </t>
-                                        <!-- DOWNLOAD PRODUCT LINK -->
-                                        <!-- Set download link from product template -->
+
+                                        <!-- Product Name -->
+                                        <t t-set="line_cat" t-value="str(line.cat_id.id if line.cat_id else line.cat_root_id.id if line.cat_root_id else False)"/>
+                                        <a name="product_name"
+                                           class="pull-left"
+                                            t-att-href="'' if line.product_id.do_not_link else '/shop/product/'+slug(line.product_id.product_tmpl_id)+('?category='+line_cat if line_cat else '')">
+                                            <span t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                                        </a>
+
+                                        <!-- Download Link -->
                                         <t t-if="show_download_links">
                                             <t t-set="webshop_download_file_link" t-value="False"/>
+                                            <!-- Set download link from product.template -->
                                             <t t-if="line.product_id.product_tmpl_id.webshop_download_file">
                                                 <t t-set="webshop_download_file_link" t-value="'/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % line.product_id.product_tmpl_id.id"/>
                                             </t>
-                                            <!-- Overwrite download link from product variant -->
+                                            <!-- Overwrite download link from product.product -->
                                             <t t-if="line.product_id.webshop_download_file">
                                                 <t t-set="webshop_download_file_link" t-value="'/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % line.product_id.id"/>
                                             </t>
-                                            <!-- Create the download link as button -->
                                             <t t-if="webshop_download_file_link">
-                                                <a t-att-href="webshop_download_file_link"
-                                                   class="webshop_download_file btn btn-sm btn-primary pull-right">
+                                                <!-- Download Button -->
+                                                <a name="product_download_file_link"
+                                                   class="webshop_download_file btn btn-xs btn-default pull-left"
+                                                   t-att-href="webshop_download_file_link">
                                                     <span class="glyphicon glyphicon-download"/><span> Download</span>
                                                 </a>
                                             </t>
                                         </t>
-                                        <!-- Set Quantity -->
-                                        <t t-if="not disable_changing_products">
-                                            <div class="input-group oe_website_spinner">
-                                                <input type="text"
-                                                       class="js_quantity form-control input-sm"
-                                                       t-att-disabled="line.product_id.hide_quantity"
-                                                       t-att-data-line-id="line.id"
-                                                       t-att-data-product-id="line.product_id.id"
-                                                       t-att-value="int(line.product_uom_qty)"/>
-                                            </div>
-                                        </t>
-                                        <t t-if="disable_changing_products">
-                                            <span t-esc="int(line.product_uom_qty)"/>
-                                        </t>
-                                        <span>x</span>
-                                        <!-- Payment Interval -->
-                                        <t t-if="line.payment_interval_id">
-                                            <span>(<t t-esc="line.payment_interval_id.name"/>)</span>
-                                        </t>
-                                        <!-- Product Name -->
-                                        <t t-set="line_cat" t-value="str(line.cat_id.id if line.cat_id else line.cat_root_id.id if line.cat_root_id else False)"/>
-                                        <a t-att-href="'' if line.product_id.do_not_link else '/shop/product/'+slug(line.product_id.product_tmpl_id)+('?category='+line_cat if line_cat else '')">
-                                            <span t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
-                                        </a>
+
                                     </div>
                                 </td>
 
-                                <!-- Unit Price and remove Product -->
-                                <td class="text-right" name="price">
-                                    <!-- Unit Price -->
-                                    <span t-field="line.price_unit" style="white-space: nowrap;"
+                                <!-- Col 2: Price per Unit, Quantity -->
+                                <td t-if="line.product_id.product_tmpl_id" name="product_price_quantity" class="text-right">
+
+                                    <!-- Unit Price = discounted_price -->
+                                    <span t-field="line.discounted_price"
+                                          t-att-style="'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'"
+                                          class="small_cart_price_unit pull-right"
                                           t-field-options='{
                                           "widget": "monetary",
                                           "from_currency": "website_sale_order.pricelist_id.currency_id",
-                                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"
-                                          }'/>
+                                          "display_currency": "user_id.partner_id.property_product_pricelist.currency_id"}'
+                                    />
+                                    <t t-if="line.discounted_price == 0">
+                                        <span class="small_cart_price_unit small_cart_price_unit_free pull-right">free</span>
+                                    </t>
 
+                                    <!-- Quantity -->
+                                    <div class="input-group oe_website_spinner pull-right">
+                                        <input type="text"
+                                               class="js_quantity form-control input-sm"
+                                               t-att-disabled="line.product_id.hide_quantity or disable_changing_products"
+                                               t-att-data-line-id="line.id"
+                                               t-att-data-product-id="line.product_id.id"
+                                               t-att-value="int(line.product_uom_qty)"/>
+                                    </div>
+
+                                    <!-- Payment Interval -->
+                                    <t t-if="line.payment_interval_id">
+                                        <div name="product_payment_interval" class="pull-right">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                                    </t>
+
+                                    <!-- DISABLED: Unit of Sale -->
+                                    <!--<small class="text-muted" t-raw="'{:.0f}'.format(int(line.product_uos_qty))"/>-->
+
+                                </td>
+
+
+                                <!-- Col 3: Remove Product -->
+                                <td t-if="line.product_id.product_tmpl_id" name="product_remove" class="text-right">
+                                    <!-- Remove Product -->
+                                    <t t-if="not disable_changing_products">
+                                        <a href="#" class="remove_product"
+                                           t-att-data-line-id="line.id">
+                                            <span class="glyphicon glyphicon-trash"/>
+                                        </a>
+                                    </t>
                                 </td>
                             </tr>
                         </t>
                     </tbody>
                 </table>
-                <t t-call="website_sale_donate.wsd_custom_total"/>
+                <!--<t t-call="website_sale_donate.wsd_custom_total"/>-->
+                <t t-call="website_sale.total"/>
                 <div class="clearfix"/>
             </div>
         </template>
