@@ -414,7 +414,8 @@
                 <t t-set="css_classes" t-value="shipping_field.css_classes"/>
                 <t t-set="validation_rule" t-value="{}"/>
                 <t t-if="shipping_field.validation_rule">
-                    <t t-set="validation_rule" t-value="{'data-rule-'+shipping_field.validation_rule: True}"/>
+                    <!--<t t-set="validation_rule" t-value="{'data-rule-'+shipping_field.validation_rule: True}"/>-->
+                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in shipping_field.validation_rule.split(';'))"/>
                 </t>
 
                 <t t-if="shipping_field.show">
