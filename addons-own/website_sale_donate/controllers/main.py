@@ -532,7 +532,7 @@ class website_sale_donate(website_sale):
         # Render the Checkout Page
         checkout_page = super(website_sale_donate, self).checkout(**post)
 
-        if post and post.get('acquirer'):
+        if post and post.get('acquirer') and hasattr(checkout_page, 'qcontext'):
             checkout_page.qcontext.update({'acquirer_id': post.get('acquirer')})
 
         # If One-Page-Checkout is enabled and checkout_page is not just a redirection or if one_page_checkout in post

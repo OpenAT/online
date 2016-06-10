@@ -42,7 +42,7 @@
                                 <span class="input-group-addon" t-esc="user_id.partner_id.property_product_pricelist.currency_id.symbol"/>
                                 <label for="price_donate" class="sr-only">Arbitrary Donation</label>
                                 <input type="number"
-                                       class="form-control"
+                                       class="form-control data-rule-ignore"
                                        name="price_donate"
                                        id="price_donate"
                                        t-att-min="product.price_donate_min or '1'"

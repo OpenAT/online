@@ -89,7 +89,7 @@
             <field name="mandatory" eval="True"/>
             <field name="label">EMail</field>
             <field name="placeholder">john.doe@test.com</field>
-            <field name="validation_rule">email</field>
+            <field name="validation_rule">data-rule-email=True</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="False"/>
         </record>
@@ -162,6 +162,7 @@
             <field name="placeholder">56382</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="False"/>
+            <field name="validation_rule">data-rule-digits=True;data-rule-minlength=4</field>
         </record>
         <record id="country_id" model="website.checkout_billing_fields">
             <field name="sequence">100</field>
@@ -256,7 +257,7 @@
             <field name="mandatory" eval="False"/>
             <field name="label">EMail</field>
             <field name="placeholder">john.doe@test.com</field>
-            <field name="validation_rule">email</field>
+            <field name="validation_rule">data-rule-email=True</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="False"/>
         </record>
@@ -329,6 +330,7 @@
             <field name="placeholder">56382</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="False"/>
+            <field name="validation_rule">data-rule-digits=True;data-rule-minlength=4</field>
         </record>
         <record id="shipping_country_id" model="website.checkout_shipping_fields">
             <field name="sequence">100</field>

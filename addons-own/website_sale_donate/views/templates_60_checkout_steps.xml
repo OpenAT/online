@@ -225,7 +225,10 @@
                 <t t-set="css_classes" t-value="billing_field.css_classes"/>
                 <t t-set="validation_rule" t-value="{}"/>
                 <t t-if="billing_field.validation_rule">
-                    <t t-set="validation_rule" t-value="{'data-rule-'+billing_field.validation_rule: True}"/>
+                    <!--<t t-set="validation_rule" t-value="{'data-rule-'+billing_field.validation_rule: True}"/>-->
+                    <!-- HINT: ast library was included in the checkout qcontext - search in main controller for ugly hack :) -->
+                    <!--<t t-set="validation_rule" t-value="ast.literal_eval(billing_field.validation_rule)"/>-->
+                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in billing_field.validation_rule.split(';'))"/>
                 </t>
 
                 <t t-if="billing_field.show">
@@ -478,13 +481,14 @@
                     </t>
 
                     <!-- SELECTION Fields -->
+                    <!-- TODO: Form will not go on if gender is selected -->
                     <t t-if="f_type == 'selection'">
                         <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
                             <label t-att-class="'f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')">
                                 <t t-esc="shipping_field.label"/><t t-if="shipping_field.label">&amp;nbsp;</t>
                             </label>
                             <!-- Render a radio button for every selection option -->
-                            <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                            <t t-foreach="request.env['res.partner']._columns[shipping_field.res_partner_field_id.name].selection or []" t-as="option">
                                 <label class="radio-inline">
                                     <input type="radio"
                                            t-att-name="f_name"
@@ -493,7 +497,7 @@
                                            t-att-checked="True if checkout.get(f_name) == option[0] else ''"
                                            t-att-required="shipping_field.mandatory"
                                     />
-                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                    <t t-esc="dict(request.env['res.partner'].fields_get([shipping_field.res_partner_field_id.name])[shipping_field.res_partner_field_id.name]['selection'])[option[0]]"/>
                                 </label>
                             </t>
                         </div>
