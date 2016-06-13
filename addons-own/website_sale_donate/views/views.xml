@@ -9,6 +9,7 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <field name="website" position="after">
+                    <field name="birthdate"/>
                     <field name="title_web"/>
                     <field name="company_name_web"/>
                     <field name="street_number_web"/>
@@ -17,6 +18,8 @@
                 <field name="email" position="after">
                     <field name="newsletter_web"/>
                     <field name="donation_receipt_web"/>
+                    <field name="donation_deduction_optout_web"/>
+                    <field name="legal_terms_web"/>
                 </field>
             </field>
         </record>

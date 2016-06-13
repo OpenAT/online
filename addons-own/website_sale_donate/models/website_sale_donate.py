@@ -24,10 +24,14 @@ class res_partner(osv.Model):
         'street_number_web': fields.char(string='Street Number Web'),
         # Postfach
         'post_office_box_web': fields.char(string='Post Office Box Web'),
-        # Newsletteranmeldung event. auch Opt Out
+        # Newsletteranmeldung = OptIn
         'newsletter_web': fields.boolean(string='Newsletter Web'),
-        # Spendenquittung, Spendenbestaetigung fuer die Steuer
+        # Spendenquittung/Spendenbestaetigung
         'donation_receipt_web': fields.boolean(string='Donation Receipt Web'),
+        # Meine Spenden nicht automatisch absetzen!
+        'donation_deduction_optout_web': fields.boolean(string='Donation Deduction OptOut Web'),
+        # Akzeptiere AGBs
+        'legal_terms_web': fields.boolean(string='Accept Legal Terms Web'),
     }
 
 class product_website_price_buttons(osv.Model):

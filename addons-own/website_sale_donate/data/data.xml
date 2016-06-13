@@ -52,16 +52,6 @@
         </record>
 
         <!-- Checkout Billing Fields -->
-        <!--<record id="fore_name_web" model="website.checkout_billing_fields">-->
-            <!--<field name="sequence">5</field>-->
-            <!--<field name="show" eval="False"/>-->
-            <!--<field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>-->
-            <!--<field name="mandatory" eval="False"/>-->
-            <!--<field name="label">Fore Name</field>-->
-            <!--<field name="placeholder">John</field>-->
-            <!--<field name="css_classes">col-lg-6 hidden</field>-->
-            <!--<field name="clearfix" eval="False"/>-->
-        <!--</record>-->
         <record id="name" model="website.checkout_billing_fields">
             <field name="sequence">10</field>
             <field name="show" eval="True"/>
@@ -72,6 +62,17 @@
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="False"/>
         </record>
+        <record id="birthdate" model="website.checkout_billing_fields">
+            <field name="sequence">10</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="base.field_res_partner_birthdate"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Birthdate</field>
+            <field name="placeholder">30.01.1980</field>
+            <field name="validation_rule">data-rule-dateISO=True</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="True"/>
+        </record>
         <record id="company_name_web" model="website.checkout_billing_fields">
             <field name="sequence">20</field>
             <field name="show" eval="True"/>
@@ -79,8 +80,8 @@
             <field name="mandatory" eval="False"/>
             <field name="label">Company</field>
             <field name="placeholder">Company Name (optional)</field>
-            <field name="css_classes">col-lg-6</field>
-            <field name="clearfix" eval="False"/>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
         </record>
         <record id="email" model="website.checkout_billing_fields">
             <field name="sequence">30</field>
@@ -101,7 +102,7 @@
             <field name="label">Mobile</field>
             <field name="placeholder">+43 664 123456789</field>
             <field name="css_classes">col-lg-6</field>
-            <field name="clearfix" eval="False"/>
+            <field name="clearfix" eval="True"/>
         </record>
         <record id="post_office_box_web" model="website.checkout_billing_fields">
             <field name="sequence">50</field>
@@ -216,20 +217,28 @@
             <field name="mandatory" eval="False"/>
             <field name="label">Donation Receipt</field>
             <field name="css_classes">col-lg-6</field>
-            <field name="clearfix" eval="False"/>
+            <field name="clearfix" eval="True"/>
+        </record>
+        <record id="donation_deduction_optout_web" model="website.checkout_billing_fields">
+            <field name="sequence">160</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_deduction_optout_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Meine Spenden nicht automatisch absetzen</field>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
+        </record>
+        <record id="legal_terms_web" model="website.checkout_billing_fields">
+            <field name="sequence">170</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_legal_terms_web"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Accept Terms and Conditions</field>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
         </record>
 
         <!-- Checkout Shipping Fields -->
-        <!--<record id="shipping_fore_name_web" model="website.checkout_shipping_fields">-->
-            <!--<field name="sequence">5</field>-->
-            <!--<field name="show" eval="False"/>-->
-            <!--<field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_fore_name_web"/>-->
-            <!--<field name="mandatory" eval="False"/>-->
-            <!--<field name="label">Fore Name</field>-->
-            <!--<field name="placeholder">John</field>-->
-            <!--<field name="css_classes">col-lg-6 hidden</field>-->
-            <!--<field name="clearfix" eval="False"/>-->
-        <!--</record>-->
         <record id="shipping_name" model="website.checkout_shipping_fields">
             <field name="sequence">10</field>
             <field name="show" eval="True"/>
