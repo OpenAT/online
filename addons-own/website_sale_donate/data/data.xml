@@ -68,7 +68,7 @@
             <field name="res_partner_field_id" ref="base.field_res_partner_birthdate"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Birthdate</field>
-            <field name="placeholder">30.01.1980</field>
+            <field name="placeholder">1980-01-30</field>
             <field name="validation_rule">data-rule-dateISO=True</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="True"/>
