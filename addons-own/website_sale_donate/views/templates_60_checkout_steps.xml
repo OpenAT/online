@@ -225,9 +225,6 @@
                 <t t-set="css_classes" t-value="billing_field.css_classes"/>
                 <t t-set="validation_rule" t-value="{}"/>
                 <t t-if="billing_field.validation_rule">
-                    <!--<t t-set="validation_rule" t-value="{'data-rule-'+billing_field.validation_rule: True}"/>-->
-                    <!-- HINT: ast library was included in the checkout qcontext - search in main controller for ugly hack :) -->
-                    <!--<t t-set="validation_rule" t-value="ast.literal_eval(billing_field.validation_rule)"/>-->
                     <t t-set="validation_rule" t-value="dict(item.split('=') for item in billing_field.validation_rule.split(';'))"/>
                 </t>
 
@@ -366,10 +363,119 @@
         </template>
 
 
+        <!-- SUBTEMPLATE Checkout Shipping Fields -->
+        <!-- HINT: Field names are prefixed with shipping_ -->
+        <template id="wsd_checkout_form_shipping_fields" name="wsd checkout-form-shipping-fields">
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+
+            <!-- SHIPPING ADDRESS FORM GENERATOR -->
+            <t t-foreach="shipping_fields or []" t-as="shipping_field">
+                <t t-set="f_name" t-value="'shipping_' + shipping_field.res_partner_field_id.name"/>
+                <t t-set="f_type" t-value="shipping_field.res_partner_field_id.ttype"/>
+                <t t-set="css_classes" t-value="shipping_field.css_classes"/>
+                <t t-set="validation_rule" t-value="{}"/>
+                <t t-if="shipping_field.validation_rule">
+                    <!--<t t-set="validation_rule" t-value="{'data-rule-'+shipping_field.validation_rule: True}"/>-->
+                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in shipping_field.validation_rule.split(';'))"/>
+                </t>
+
+                <t t-if="shipping_field.show">
+
+                    <!-- FIELD GENERATORS: SHIPPING FIELDS -->
+                    <!-- HINT: Because of a "stupid decision" in website_sale.js inputs must use readonly and selects must use disabled :( -->
+                    <t t-if="f_type in ('boolean', 'char', 'selection') or f_name in ['shipping_country_id', 'shipping_state_id']">
+                        <!-- FORM GROUP -->
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <!-- LABEL for all fields -->
+                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')"
+                                   t-att-for="f_name">
+                                <!-- BOOLEAN FIELDS -->
+                                <t t-if="f_type == 'boolean'">
+                                    <input type="checkbox"
+                                           t-att-name="f_name"
+                                           t-att-value="checkout.get(f_name)"
+                                           t-att-checked="True if checkout.get(f_name) else ''"
+                                           t-att-readonly="'readonly' if shipping_id &gt;= 0 else ''"
+                                           t-att-required="shipping_field.mandatory"/>
+                                </t>
+                                <t t-esc="shipping_field.label"/>
+                            </label>
+                            <!-- CHAR FIELDS -->
+                            <t t-if="f_type == 'char'">
+                                <input type="text"
+                                       t-att-name="f_name"
+                                       class="form-control"
+                                       t-att-value="checkout.get(f_name, '')"
+                                       t-att-placeholder="shipping_field.placeholder"
+                                       t-att-readonly="'readonly' if shipping_id &gt;= 0 else ''"
+                                       t-att-required="shipping_field.mandatory"
+                                       t-att="validation_rule"
+                                />
+                            </t>
+                            <!-- SELECTION FIELDS -->
+                            <!-- TODO: allow to render selection fields as radio buttons too
+                                 HINT: not possible for shipping address right now because website_sale.js resets value attribute of input fields
+                                       (look for look for: $(this).val( data[$(this).attr("name")] || "" );
+                            -->
+                            <t t-if="f_type == 'selection'">
+                                <select t-att-name="f_name" class="form-control"
+                                        t-att-required="shipping_field.mandatory"
+                                        t-att-disabled="'disabled' if shipping_id &gt;= 0 else ''">
+                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
+                                    <t t-foreach="request.env['res.partner']._columns[shipping_field.res_partner_field_id.name].selection or []" t-as="option">
+                                        <!-- Set default country from res.config if none selected -->
+                                        <option t-att-value="option[0]"
+                                                t-att-selected="True if checkout.get(f_name) == option[0] else ''">
+                                            <t t-esc="dict(request.env['res.partner'].fields_get([shipping_field.res_partner_field_id.name])[shipping_field.res_partner_field_id.name]['selection'])[option[0]]"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <!-- SPECIAL FIELD: SHIPPING COUNTRY -->
+                            <t t-if="f_name == 'shipping_country_id'">
+                                <select t-att-name="f_name" class="form-control"
+                                        t-att-required="shipping_field.mandatory"
+                                        t-att-disabled="'disabled' if shipping_id &gt;= 0 else ''">
+                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
+                                    <t t-foreach="countries or []" t-as="country">
+                                        <!-- Set default country from res.config if none selected -->
+                                        <option t-att-value="country.id"
+                                                t-att-selected="'True' if (country.id == checkout.get(f_name) or (country.id != checkout.get(f_name) and country.code == website.country_default_value.code)) else ''">
+                                            <t t-esc="country.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <!-- SPECIAL FIELD: SHIPPING STATE -->
+                            <t t-if="f_name == 'shipping_state_id'">
+                                <select t-att-name="f_name" class="form-control"
+                                        t-att-required="shipping_field.mandatory"
+                                        t-att-disabled="'disabled' if shipping_id &gt;= 0 else ''">
+                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
+                                    <t t-foreach="states or []" t-as="state">
+                                        <option t-att-value="state.id" style="display:none;"
+                                                t-att-data-country_id="state.country_id.id"
+                                                t-att-selected="state.id == checkout.get(f_name)">
+                                            <t t-esc="state.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- CLEARFIX DIV -->
+                    <t t-if="shipping_field.clearfix">
+                        <div t-att-class="'clearfix f-' + f_name"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
         <!-- SUBTEMPLATE Display Invoice Address Data based on Billing or Shipping Fields -->
         <template id="wsd_fields_display" name="wsd_fields_display">
             <t t-if="address_obj and fields_to_render">
-
                 <!-- Loop through the fields -->
                 <t t-foreach="fields_to_render or []" t-as="f">
                     <t t-if="f.show">
@@ -397,120 +503,9 @@
                         </t>
                     </t>
                 </t>
-
             </t>
         </template>
 
-
-        <!-- SUBTEMPLATE Checkout Shipping Fields -->
-        <!-- HINT: Field names are prefixed with shipping_ -->
-        <template id="wsd_checkout_form_shipping_fields" name="wsd checkout-form-shipping-fields">
-            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
-
-            <!-- GENERAL char and boolean fields -->
-            <t t-foreach="shipping_fields or []" t-as="shipping_field">
-                <t t-set="f_name" t-value="'shipping_' + shipping_field.res_partner_field_id.name"/>
-                <t t-set="f_type" t-value="shipping_field.res_partner_field_id.ttype"/>
-                <t t-set="css_classes" t-value="shipping_field.css_classes"/>
-                <t t-set="validation_rule" t-value="{}"/>
-                <t t-if="shipping_field.validation_rule">
-                    <!--<t t-set="validation_rule" t-value="{'data-rule-'+shipping_field.validation_rule: True}"/>-->
-                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in shipping_field.validation_rule.split(';'))"/>
-                </t>
-
-                <t t-if="shipping_field.show">
-
-                    <!-- CHAR AND SPECIAL FIELDS -->
-                    <t t-if="f_type == 'char' or f_name in ['shipping_country_id', 'shipping_state_id']">
-                        <!-- FORM GROUP -->
-                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <!-- LABEL -->
-                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')"
-                                   t-att-for="f_name">
-                                <t t-esc="shipping_field.label"/>
-                            </label>
-                            <!-- CHAR FIELDS -->
-                            <t t-if="f_name not in ['shipping_country_id', 'shipping_state_id']">
-                                <input type="text"
-                                       t-att-name="f_name"
-                                       class="form-control"
-                                       t-att-value="checkout.get(f_name, '')"
-                                       t-att-placeholder="shipping_field.placeholder"
-                                       t-att-readonly="'readonly' if shipping_id &gt;= 0 else ''"
-                                       t-att-required="shipping_field.mandatory"
-                                       t-att="validation_rule"
-                                />
-                            </t>
-                            <!-- COUNTRY -->
-                            <t t-if="f_name == 'shipping_country_id'">
-                                <select t-att-name="f_name" class="form-control" t-att-disabled="  'disabled' if shipping_id &gt;= 0 else ''">
-                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
-                                    <t t-foreach="countries or []" t-as="country">
-                                        <!-- Set default country from res.config if none selected -->
-                                        <option t-att-value="country.id"
-                                                t-att-selected="'True' if (country.id == checkout.get(f_name) or (country.id != checkout.get(f_name) and country.code == website.country_default_value.code)) else ''">
-                                            <t t-esc="country.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </t>
-                            <!-- STATE -->
-                            <t t-if="f_name == 'shipping_state_id'">
-                                <select t-att-name="f_name" class="form-control">
-                                    <option value=""><t t-esc="shipping_field.placeholder"/></option>
-                                    <t t-foreach="states or []" t-as="state">
-                                        <option t-att-value="state.id" style="display:none;"
-                                                t-att-data-country_id="state.country_id.id"
-                                                t-att-selected="state.id == checkout.get(f_name)">
-                                            <t t-esc="state.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </t>
-                        </div>
-                    </t>
-
-                    <!-- CHECKBOX FIELDS -->
-                    <t t-if="f_type == 'boolean'">
-                        <div t-att-class="'checkbox ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')">
-                                <input type="checkbox"
-                                       t-att-name="f_name"
-                                       t-att-value="checkout.get(f_name)"/><t t-esc="shipping_field.label"/>
-                            </label>
-                        </div>
-                    </t>
-
-                    <!-- SELECTION Fields -->
-                    <!-- TODO: Form will not go on if gender is selected -->
-                    <t t-if="f_type == 'selection'">
-                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if shipping_field.mandatory else '')">
-                                <t t-esc="shipping_field.label"/><t t-if="shipping_field.label">&amp;nbsp;</t>
-                            </label>
-                            <!-- Render a radio button for every selection option -->
-                            <t t-foreach="request.env['res.partner']._columns[shipping_field.res_partner_field_id.name].selection or []" t-as="option">
-                                <label class="radio-inline">
-                                    <input type="radio"
-                                           t-att-name="f_name"
-                                           t-att-value="option[0]"
-                                           t-att-id="f_name + '_' + option[0]"
-                                           t-att-checked="True if checkout.get(f_name) == option[0] else ''"
-                                           t-att-required="shipping_field.mandatory"
-                                    />
-                                    <t t-esc="dict(request.env['res.partner'].fields_get([shipping_field.res_partner_field_id.name])[shipping_field.res_partner_field_id.name]['selection'])[option[0]]"/>
-                                </label>
-                            </t>
-                        </div>
-                    </t>
-
-                    <!-- CLEARFIX DIV -->
-                    <t t-if="shipping_field.clearfix">
-                        <div t-att-class="'clearfix f-' + f_name"/>
-                    </t>
-                </t>
-            </t>
-        </template>
 
         <!-- SUBTEMPLATE: Payment-Provider Auto Submit Form -->
         <template id="wsd_pp_auto_submit_form" name="Payment Provider Auto-Submit-Form">

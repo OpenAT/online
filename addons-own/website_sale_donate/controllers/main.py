@@ -245,7 +245,7 @@ class website_sale_donate(website_sale):
         shipping_fields = shipping_fields.search([])
         values['shipping_fields'] = shipping_fields
 
-        # Set value to True or False for all boolean fields
+        # FIX: Set value to python True or False for all boolean fields (instead of true or false)
         for field in billing_fields:
             f_name = field.res_partner_field_id.name
             if field.res_partner_field_id.ttype == 'boolean':
