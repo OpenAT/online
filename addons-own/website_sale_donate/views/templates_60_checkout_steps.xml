@@ -218,7 +218,7 @@
         <template id="wsd_checkout_form_billing_fields" name="wsd checkout-form-billing-fields">
             <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
 
-            <!-- GENERAL char and boolean fields -->
+            <!-- BILLING ADDRESS FORM GENERATOR -->
             <t t-foreach="billing_fields or []" t-as="billing_field">
                 <t t-set="f_name" t-value="billing_field.res_partner_field_id.name"/>
                 <t t-set="f_type" t-value="billing_field.res_partner_field_id.ttype"/>
@@ -230,17 +230,60 @@
 
                 <t t-if="billing_field.show">
 
-                    <!-- CHAR AND SPECIAL FIELDS -->
-                    <t t-if="f_type == 'char' or f_name in ['country_id', 'state_id']">
+                    <!-- FIELD GENERATORS: BILLING FIELDS -->
+                    <t t-if="f_type in ('boolean', 'char', 'selection') or f_name in ['country_id', 'state_id']">
                         <!-- FORM GROUP -->
-                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <!-- LABEL -->
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                            <!-- LABEL for all fields -->
                             <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
                                    t-att-for="f_name">
+                                <!-- BOOLEAN FIELDS -->
+                                <t t-if="f_type == 'boolean'">
+                                    <input type="checkbox"
+                                           t-att-name="f_name"
+                                           t-att-value="checkout.get(f_name)"
+                                           t-att-checked="True if checkout.get(f_name) else ''"
+                                           t-att-required="billing_field.mandatory"/>
+                                </t>
                                 <t t-esc="billing_field.label"/>
+                                <!-- INFORMATION ICON AND MODAL-BOX -->
+                                <t t-if="billing_field.information">
+                                    <!-- Modal Box Button-Link -->
+                                    <href type="button"
+                                            class="btn-link information-modal-box-trigger"
+                                            data-toggle="modal"
+                                            t-att-data-target="'#information-'+f_name">
+                                        <span class="glyphicon glyphicon-info-sign"/>
+                                    </href>
+                                    <!-- Modal Box -->
+                                    <div class="modal fade"
+                                         t-att-id="'information-'+f_name"
+                                         role="dialog">
+                                        <div class="modal-dialog">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal">&amp;times;</button>
+                                                    <h4 class="modal-title">
+                                                        <t t-esc="billing_field.label"/>
+                                                    </h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <t t-raw="billing_field.information"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
                             </label>
                             <!-- CHAR FIELDS -->
-                            <t t-if="f_name not in ['country_id', 'state_id']">
+                            <t t-if="f_type == 'char'">
                                 <input type="text"
                                        t-att-name="f_name"
                                        class="form-control"
@@ -250,7 +293,24 @@
                                        t-att="validation_rule"
                                 />
                             </t>
-                            <!-- COUNTRY -->
+                            <!-- SELECTION FIELDS -->
+                            <!-- TODO: option to render selection fields as radio buttons -->
+                            <t t-if="f_type == 'selection'">
+                                <select t-att-name="f_name" class="form-control"
+                                        t-att-required="billing_field.mandatory">
+                                    <!-- Default empty option -->
+                                    <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                    <!-- Selection Values as options -->
+                                    <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                        <!-- Set default country from res.config if none selected -->
+                                        <option t-att-value="option[0]"
+                                                t-att-selected="True if checkout.get(f_name) == option[0] else ''">
+                                            <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </t>
+                            <!-- SPECIAL FIELD: BILLING COUNTRY -->
                             <t t-if="f_name == 'country_id'">
                                 <select t-att-name="f_name"
                                         class="form-control"
@@ -265,7 +325,7 @@
                                     </t>
                                 </select>
                             </t>
-                            <!-- STATE -->
+                            <!-- SPECIAL FIELD: BILLING STATE -->
                             <t t-if="f_name == 'state_id'">
                                 <select t-att-name="f_name"
                                         class="form-control"
@@ -283,50 +343,9 @@
                         </div>
                     </t>
 
-                    <!-- CHECKBOX FIELDS -->
-                    <t t-if="f_type == 'boolean'">
-                        <div t-att-class="'checkbox ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')">
-                                <input type="checkbox"
-                                       t-att-name="f_name"
-                                       t-att-value="checkout.get(f_name)"
-                                       t-att-checked="True if checkout.get(f_name) else ''"
-                                       t-att-required="billing_field.mandatory"
-                                />
-                                <t t-esc="billing_field.label"/>
-                            </label>
-                        </div>
-                    </t>
-
-                    <!-- SELECTION Fields -->
-                    <t t-if="f_type == 'selection'">
-                        <!-- Get the selection field values -->
-                        <!--<div t-esc="request.env['res.partner']._columns['gender'].selection"/>-->
-                        <!-- Get the tranlsated label of a selection field value -->
-                        <!--<div t-esc="dict(request.env['res.partner'].fields_get(['gender'])['gender']['selection'])['male']"/>-->
-                        <div t-att-class="'form-group has-feedback ' + css_classes + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <label t-att-class="'f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')">
-                                <t t-esc="billing_field.label"/><t t-if="billing_field.label">&amp;nbsp;</t>
-                            </label>
-                            <!-- Render a radio button for every selection option -->
-                            <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
-                                <label class="radio-inline">
-                                    <input type="radio"
-                                           t-att-name="f_name"
-                                           t-att-value="option[0]"
-                                           t-att-id="f_name + '_' + option[0]"
-                                           t-att-checked="True if checkout.get(f_name) == option[0] else ''"
-                                           t-att-required="billing_field.mandatory"
-                                    />
-                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
-                                </label>
-                            </t>
-                        </div>
-                    </t>
-
                     <!-- CLEARFIX DIV -->
                     <t t-if="billing_field.clearfix">
-                        <div t-att-class="'clearfix f-' + f_name"/>
+                        <div t-att-class="'clearfix clearfix-' + f_name"/>
                     </t>
                 </t>
             </t>
@@ -375,7 +394,6 @@
                 <t t-set="css_classes" t-value="shipping_field.css_classes"/>
                 <t t-set="validation_rule" t-value="{}"/>
                 <t t-if="shipping_field.validation_rule">
-                    <!--<t t-set="validation_rule" t-value="{'data-rule-'+shipping_field.validation_rule: True}"/>-->
                     <t t-set="validation_rule" t-value="dict(item.split('=') for item in shipping_field.validation_rule.split(';'))"/>
                 </t>
 
@@ -399,6 +417,7 @@
                                            t-att-required="shipping_field.mandatory"/>
                                 </t>
                                 <t t-esc="shipping_field.label"/>
+                                <!-- TODO: Info modal box -->
                             </label>
                             <!-- CHAR FIELDS -->
                             <t t-if="f_type == 'char'">
@@ -413,7 +432,7 @@
                                 />
                             </t>
                             <!-- SELECTION FIELDS -->
-                            <!-- TODO: allow to render selection fields as radio buttons too
+                            <!-- TODO: option to render selection fields as radio buttons too
                                  HINT: not possible for shipping address right now because website_sale.js resets value attribute of input fields
                                        (look for look for: $(this).val( data[$(this).attr("name")] || "" );
                             -->
@@ -466,7 +485,7 @@
 
                     <!-- CLEARFIX DIV -->
                     <t t-if="shipping_field.clearfix">
-                        <div t-att-class="'clearfix f-' + f_name"/>
+                        <div t-att-class="'clearfix clearfix-' + f_name"/>
                     </t>
                 </t>
             </t>

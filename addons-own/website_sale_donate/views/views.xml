@@ -322,6 +322,7 @@
                         <field name="validation_rule"/>
                         <field name="css_classes"/>
                         <field name="clearfix"/>
+                        <field name="information"/>
                     </group>
                 </form>
             </field>
@@ -387,6 +388,7 @@
                         <field name="validation_rule"/>
                         <field name="css_classes"/>
                         <field name="clearfix"/>
+                        <field name="information"/>
                     </group>
                 </form>
             </field>

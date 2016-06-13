@@ -1828,3 +1828,8 @@ msgstr " "
 #: view:website:website_sale_donate.small_cart
 msgid "free"
 msgstr "kostenlos"
+
+#. module: website_sale_donate
+#: model:website.checkout_billing_fields,label:website_sale_donate.legal_terms_web
+msgid "Accept Terms and Conditions"
+msgstr "Ich erkläre mich mit den AGB von XXX einverstanden"
