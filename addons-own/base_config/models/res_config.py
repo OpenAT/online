@@ -148,6 +148,8 @@ class base_config_settings(osv.osv_memory):
         'module_website_tools': fields.boolean('website_tools -- Basic JS libs and css fixes',
                                                          help='Library to avoid double loading of java libs and css'),
         'module_mail_delete_access_link_portal': fields.boolean('mail_delete_access_link_portal -- Delete Access-Document Link from odoo portal emails (see mail_delete_access_link too)'),
+        'module_partner_firstname_lastname': fields.boolean('partner_firstname_lastname -- Install partner_firstname and change order to firstname, lastname'),
+
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)
         'module_web_ckeditor4': fields.boolean('web_ckeditor4 -- DEPRECATED! CKeditor4 for any html/text field in the odoo backend!',

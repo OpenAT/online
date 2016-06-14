@@ -57,14 +57,15 @@ You still need to do some things by Hand after installing this module:
 - Create The Accounts for real-time warehouse moves and link them in the product-groups (maybe obsolete in v8.0?)
 
     """,
-    'author': "OpenAT",
-    'website': "http://www.openat.at/",
+    'author': "Datadialog - Michael Karrer",
+    'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.2',
     'installable': True,
     'application': True,
     'auto_install': False,
     'depends': [
+        # Odoo default addons
         'base', 'crm', 'mail',
         'account_voucher', 'project', 'note', 'project_issue', 'account_accountant', 'survey', 'sale','stock',
         'purchase', 'hr', 'hr_timesheet_sheet', 'hr_recruitment', 'hr_holidays', 'hr_expense', 'hr_evaluation',
@@ -78,45 +79,32 @@ You still need to do some things by Hand after installing this module:
         'website_event_track', 'website_forum_doc', 'website_gengo', 'website_google_map', 'website_hr',
         'website_hr_recruitment', 'website_mail', 'website_mail_group', 'website_membership', 'website_partner',
         'website_payment', 'website_project', 'website_quote', 'website_report', 'website_sale',
-        'website_sale_delivery', 'website_twitter',
-        'base_location', 'base_location_geonames_import', 'dbfilter_from_header', 'disable_openerp_online',
-        'web_export_view', 'base_iban',
-        'website_crm_extended',
+        'website_sale_delivery', 'website_twitter', 'base_iban',
+        # Forced Third Party Addons
+        'base_location',
+        'base_location_geonames_import',
+        'dbfilter_from_header',
+        'disable_openerp_online',
+        'web_export_view',
         'report_custom_filename',
+        'partner_contact_gender',
+        # Forced Own Addons
+        'website_sale_donate',
+        'website_crm_extended',
+        'website_blog_layouts',
+        'auth_doubleoptin',
+        'partner_fullhierarchy',
+        'website_as_widget',
+        'mail_follower_control',
+        'mail_global_bcc',
+        'payment_frst',
+        'payment_ogonedadi',
+        'payment_postfinance',
     ],
     'data': [
-        # DATA
         'data/data_project.xml',
         'data/data_setup_css.xml',
-        # SECURITY FILES
         'security/ir.model.access.csv',
-        #'security/ir_ui_view.xml',
-        # VIEWS AND TEMPLATES
-        #'views/res_config.xml',
-        #'views/ir_actions.xml',
-        #'views/templates.xml',
-        #'views/snippets.xml',
-        #'views/views.xml',
         'views/res_config.xml',
     ],
-    # only loaded in demonstration mode
-    'demo': [
-        #'data/demo.xml',
-    ],
-    'test': [
-        #'tests/access_group_users.yml',
-    ],
-    # This will NOT work for odoo v8.0!
-    # Load CSS and Java Script through XML!
-    #'css': [
-        #'static/src/css/chatter.css',
-        #'static/src/css/style.css',
-        #'static/src/css/addons.css',
-    #],
-    #'js': [
-        #'static/src/js/default.js',
-    #],
-    #'images': [
-        #'static/src/img/icon.png',
-    #],
 }

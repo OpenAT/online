@@ -239,6 +239,10 @@
                                     <field name="module_mail_delete_access_link_portal" class="oe_inline" />
                                     <label for="module_mail_delete_access_link_portal" />
                                 </div>
+                                <div>
+                                    <field name="module_partner_firstname_lastname" class="oe_inline" />
+                                    <label for="module_partner_firstname_lastname" />
+                                </div>
                             </div>
                         </div>
                     </group>
