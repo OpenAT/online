@@ -72,7 +72,7 @@ class website_checkout_billing_fields(osv.Model):
         'validation_rule': fields.char(string='Validation Rule'),
         'css_classes': fields.char(string='CSS classes'),
         'clearfix': fields.boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field'),
-        'information': fields.html(string='Information', help='Information Text'),
+        'information': fields.html(string='Information', help='Information Text', translate=True),
     }
 
     _defaults = {
