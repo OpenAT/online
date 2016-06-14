@@ -667,7 +667,13 @@ class website_sale_donate(website_sale):
                 data.update(partner_id={
                     'id': order.partner_id.id,
                     'name': order.partner_id.name,
-                    'fore_name_web': order.partner_id.fore_name_web,
+                    #
+                    'firstname': order.partner_id.firstname if hasattr(order.partner_id, 'firstname') else '',
+                    'lastname': order.partner_id.lastname if hasattr(order.partner_id, 'lastname') else '',
+                    'donation_deduction_optout_web': order.partner_id.donation_deduction_optout_web if hasattr(
+                        order.partner_id, 'donation_deduction_optout_web') else '',
+                    'gender': order.partner_id.gender if hasattr(order.partner_id, 'gender') else '',
+                    #
                     'company_name_web': order.partner_id.company_name_web,
                     'email': order.partner_id.email,
                     'newsletter_web': order.partner_id.newsletter_web,
@@ -679,7 +685,15 @@ class website_sale_donate(website_sale):
                 data.update(partner_invoice_id={
                     'id': order.partner_invoice_id.id,
                     'name': order.partner_invoice_id.name,
-                    'fore_name_web': order.partner_invoice_id.fore_name_web,
+                    #
+                    'firstname': order.partner_invoice_id.firstname if hasattr(order.partner_invoice_id,
+                                                                               'firstname') else '',
+                    'lastname': order.partner_invoice_id.lastname if hasattr(order.partner_invoice_id,
+                                                                             'lastname') else '',
+                    'donation_deduction_optout_web': order.partner_invoice_id.donation_deduction_optout_web if hasattr(
+                        order.partner_invoice_id, 'donation_deduction_optout_web') else '',
+                    'gender': order.partner_invoice_id.gender if hasattr(order.partner_invoice_id, 'gender') else '',
+                    #
                     'company_name_web': order.partner_invoice_id.company_name_web,
                     'email': order.partner_invoice_id.email,
                     'newsletter_web': order.partner_invoice_id.newsletter_web,
@@ -691,7 +705,15 @@ class website_sale_donate(website_sale):
                 data.update(partner_shipping_id={
                     'id': order.partner_shipping_id.id,
                     'name': order.partner_shipping_id.name,
-                    'fore_name_web': order.partner_shipping_id.fore_name_web,
+                    #
+                    'firstname': order.partner_shipping_id.firstname if hasattr(order.partner_shipping_id,
+                                                                                'firstname') else '',
+                    'lastname': order.partner_shipping_id.lastname if hasattr(order.partner_shipping_id,
+                                                                              'lastname') else '',
+                    'donation_deduction_optout_web': order.partner_invoice_id.donation_deduction_optout_web if hasattr(
+                        order.partner_shipping_id, 'donation_deduction_optout_web') else '',
+                    'gender': order.partner_shipping_id.gender if hasattr(order.partner_shipping_id, 'gender') else '',
+                    #
                     'company_name_web': order.partner_shipping_id.company_name_web,
                     'email': order.partner_shipping_id.email,
                     'newsletter_web': order.partner_shipping_id.newsletter_web,
