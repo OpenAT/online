@@ -27,6 +27,7 @@
                 'web_m2x_options',
                 ],
     'data': [
+        'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
     ],

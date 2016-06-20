@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_fs_groups,access_fs_groups,model_fs_group,,1,0,0,0
+access_fs_groups_all,access_fs_groups_all,model_fs_group,,1,0,0,0
+access_fs_groups_manager,access_fs_groups_manager,model_fs_group,fs_groups.group_fs_group_manager,1,1,1,1

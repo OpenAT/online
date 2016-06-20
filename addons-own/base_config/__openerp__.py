@@ -105,6 +105,7 @@ You still need to do some things by Hand after installing this module:
     'data': [
         'data/data_project.xml',
         'data/data_setup_css.xml',
+        'data/data_sosync_user.xml',
         'security/ir.model.access.csv',
         'views/res_config.xml',
     ],
