@@ -8,3 +8,27 @@
     font-size: 65%;
     margin-left: 1em;
 }
+
+/* Font-Size fixes for very small screens */
+@media (max-width: 414px) {
+    body h1 {
+        font-size: 10vm;
+        font-size: 10vmin;
+    }
+    body h2 {
+        font-size: 8vm;
+        font-size: 8vmin;
+    }
+    body h3 {
+        font-size: 7vm;
+        font-size: 7vmin;
+    }
+    body h4, body h5, body h6 {
+        font-size: 6vm;
+        font-size: 6vmin;
+    }
+    body p {
+        font-size: 5vm;
+        font-size: 5vmin;
+    }
+}

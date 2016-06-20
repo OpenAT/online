@@ -100,6 +100,7 @@ You still need to do some things by Hand after installing this module:
         'payment_frst',
         'payment_ogonedadi',
         'payment_postfinance',
+        'fs_groups',
     ],
     'data': [
         'data/data_project.xml',

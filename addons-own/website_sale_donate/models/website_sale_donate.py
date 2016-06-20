@@ -43,7 +43,7 @@ class product_website_price_buttons(osv.Model):
     _columns = {
         'sequence': fields.integer('Sequence'),
         'product_id': fields.many2one('product.template', string='Product', required=True, ondelete='cascade'),
-        'name': fields.char(string='Name'),
+        'name': fields.char(string='Name', translate=True),
         'amount': fields.float(string='Amount', required=True),
         'css_classes': fields.char(string='CSS classes'),
     }
@@ -100,7 +100,7 @@ class website_checkout_shipping_fields(osv.Model):
         'validation_rule': fields.char(string='Validation Rule'),
         'css_classes': fields.char(string='CSS classes'),
         'clearfix': fields.boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field'),
-        'information': fields.html(string='Information', help='Information Text'),
+        'information': fields.html(string='Information', help='Information Text', translate=True),
     }
 
     _defaults = {
@@ -154,15 +154,15 @@ class website_sale_donate_settings(osv.Model):
                                                              'Payment Provider instead of /shop/confirmation_static',
                                                         translate=True),
         # Global Fields for Snippets
-        'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox'),
-        'cart_page_top': fields.html(string='Cart Page Top Snippet Dropping Area'),
-        'cart_page_bottom': fields.html(string='Cart Page Bottom Snippet Dropping Area'),
-        'checkout_page_top': fields.html(string='Checkout Page Top Snippet Dropping Area'),
-        'checkout_page_bottom': fields.html(string='Checkout Page Bottom Snippet Dropping Area'),
-        'payment_page_top': fields.html(string='Payment Page Top Snippet Dropping Area'),
-        'payment_page_bottom': fields.html(string='Payment Page Bottom Snippet Dropping Area'),
-        'confirmation_page_top': fields.html(string='Confirmation Page Top Snippet Dropping Area'),
-        'confirmation_page_bottom': fields.html(string='Confirmation Page Bottom Snippet Dropping Area'),
+        'checkoutbox_footer': fields.html(string='Global Footer for the Checkoutbox', translate=True),
+        'cart_page_top': fields.html(string='Cart Page Top Snippet Dropping Area', translate=True),
+        'cart_page_bottom': fields.html(string='Cart Page Bottom Snippet Dropping Area', translate=True),
+        'checkout_page_top': fields.html(string='Checkout Page Top Snippet Dropping Area', translate=True),
+        'checkout_page_bottom': fields.html(string='Checkout Page Bottom Snippet Dropping Area', translate=True),
+        'payment_page_top': fields.html(string='Payment Page Top Snippet Dropping Area', translate=True),
+        'payment_page_bottom': fields.html(string='Payment Page Bottom Snippet Dropping Area', translate=True),
+        'confirmation_page_top': fields.html(string='Confirmation Page Top Snippet Dropping Area', translate=True),
+        'confirmation_page_bottom': fields.html(string='Confirmation Page Bottom Snippet Dropping Area', translate=True),
         # Square Image Dimensions
         'square_image_x': fields.integer(string='Product SquareImage x-Size in Pixel'),
         'square_image_y': fields.integer(string='Product SquareImage y-Size in Pixel'),
@@ -277,10 +277,10 @@ class product_template(osv.Model):
         'parallax_speed': fields.selection([('static', 'Static'), ('slow', 'Slow')], string='Parallax Speed'),
         'hide_categories': fields.boolean('Hide Categories Navigation'),
         'hide_search': fields.boolean('Hide Search Field'),
-        'desc_short_top': fields.html(string='Banner Product Description - Top'),
+        'desc_short_top': fields.html(string='Banner Product Description - Top', translate=True),
         'show_desctop': fields.boolean('Show additional Description above Checkout Panel'),
-        'desc_short': fields.html(string='Banner Product Description - Center'),
-        'desc_short_bottom': fields.html(string='Banner Product Description - Bottom'),
+        'desc_short': fields.html(string='Banner Product Description - Center', translate=True),
+        'desc_short_bottom': fields.html(string='Banner Product Description - Bottom', translate=True),
         'show_descbottom': fields.boolean('Show additional Description below Checkout Panel'),
         # Checkoutbox in Product Page
         'hide_payment': fields.boolean('Hide complete Checkout Panel'),

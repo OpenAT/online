@@ -306,6 +306,26 @@ h3.amount_title {
     margin-bottom: 0em;
     line-height: 1.9em;
 }
+/* Fix for very small screens */
+@media (max-width: 500px) {
+  .oe_cart table tr {
+    float: initial;
+    width: inherit;
+    display: block;
+  }
+  .oe_cart table td {
+    float: none;
+    width: auto;
+    display: table-cell !important;
+  }
+  .oe_cart table td:nth-child(2) {
+    border-top-style: solid;
+    border-top-width: 1px;
+  }
+  .oe_cart table#cart_total td:nth-child(2) {
+    border-top-style: none;
+  }
+}
 
 
 /* PRODUCT LISTINGS */

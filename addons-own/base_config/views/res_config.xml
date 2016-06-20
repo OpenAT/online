@@ -243,6 +243,10 @@
                                     <field name="module_partner_firstname_lastname" class="oe_inline" />
                                     <label for="module_partner_firstname_lastname" />
                                 </div>
+                                <div>
+                                    <field name="module_fs_groups" class="oe_inline" />
+                                    <label for="module_fs_groups" />
+                                </div>
                             </div>
                         </div>
                     </group>
