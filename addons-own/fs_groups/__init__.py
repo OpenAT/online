@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#    Author: Nicolas Bessi. Copyright Camptocamp SA
-#    Copyright (C)
-#       2014:       Agile Business Group (<http://www.agilebg.com>)
-#       2015:       Grupo ESOC <www.grupoesoc.es>
-#
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
 #    published by the Free Software Foundation, either version 3 of the
