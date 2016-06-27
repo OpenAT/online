@@ -74,6 +74,18 @@ class ProductTemplate(osv.osv):
     }
 
 
+    def create(self, cr, uid, vals, context=None):
+        product_template_id = super(ProductTemplate, self).create(cr, uid, vals, context=context)
+
+        related_vals = {}
+        if vals.get('fs_group_ids'):
+            related_vals['fs_group_ids'] = vals['fs_group_ids']
+        if related_vals:
+            self.write(cr, uid, product_template_id, related_vals, context=context)
+
+        return product_template_id
+
+
 class ProductProduct(osv.osv):
     _inherit = 'product.product'
 
