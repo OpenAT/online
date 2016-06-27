@@ -57,9 +57,12 @@ class ProductTemplate(osv.osv):
         if not template.attribute_line_ids:
             # No Variants
             # Update the product_variant_fs_group_ids field for related product.product default variant
-            product = self.pool['product.product'].browse(cr, uid,
-                                                          template.product_variant_ids.ids[0], context=context)
-            product.product_variant_fs_group_ids = value
+            # HINT: template.product_variant_ids must be checked in case the template is created just right now and
+            #       has no related product variant already
+            if template.product_variant_ids:
+                product = self.pool['product.product'].browse(cr, uid,
+                                                              template.product_variant_ids.ids[0], context=context)
+                product.product_variant_fs_group_ids = value
         else:
             raise osv.except_osv(_('Error!'), _('Product variants exist! Please set the FS-Groups there!'))
 
