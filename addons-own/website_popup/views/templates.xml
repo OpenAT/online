@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- LOAD Java Script and CSS -->
+    <template id="assets_frontend" inherit_id="website.assets_frontend" name="PopUp Box">
+        <xpath expr="." position="inside">
+            <link rel='stylesheet' href='/website_popup/static/src/css/website_popup.css'/>
+            <script type="text/javascript" src="/website_popup/static/src/js/website_popup.js"/>
+        </xpath>
+    </template>
+
+    <!-- SUB-TEMPLATE: popupbox_content -->
+    <template id="popupbox_content" name="PopUp Box">
+            <div class="container popup_box">
+                <div class="row">
+                    <!-- PopUpBox Content -->
+                    <div class="col-xs-12 popup_box_content">
+                        <div t-field="website.website_popup"/>
+                    </div>
+                    <!-- PopUpBox Hide/Cancel Button -->
+                    <div class="col-xs-12 text-center popup_box_cancel">
+                        <a class="btn btn-primary"
+                           t-attf-href="/website_popup/cancel?redirect=#{ request.httprequest.url }">
+                            <span t-field="website.website_popup_cancel_button" aria-label="Close"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+    </template>
+
+    <!-- TEMPLATE: popupbox_edit, Page to edit the PopUp Box Content -->
+    <template id="popupbox_edit">
+        <t t-call="website.layout">
+            <t t-set="additional_title">PopUpBox - Edit Content</t>
+            <div id="wrap">
+                <t t-call="website_popup.popupbox_content"/>
+            </div>
+        </t>
+    </template>
+
+    <!-- INHERIT: website.layout, add PopUp Box to every Page -->
+    <!-- HINT: The PopUpBox will not be shown without a start date, the end date is optional  -->
+    <template id="popupbox" inherit_id="website.layout">
+        <xpath expr="//header" position="before">
+            <t t-if="request
+            and not request.session.get('website_popup_cancel')
+            and not request.params.get('no_popup_box')
+            and ( False if not website.website_popup_start else datetime.datetime.strptime(website.website_popup_start, '%Y-%m-%d %H:%M:%S') &lt;= datetime.datetime.utcnow() )
+            and ( True if not website.website_popup_end else datetime.datetime.utcnow() &lt; datetime.datetime.strptime(website.website_popup_end, '%Y-%m-%d %H:%M:%S') )">
+
+                <!-- Modal Box -->
+                <div id="popupbox" class="modal fade modal-popupbox" role="dialog">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <t t-call="website_popup.popupbox_content"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+        </xpath>
+    </template>
+
+    <!-- User Navbar -->
+    <!--<template id="content_popupbox" inherit_id="website.user_navbar" groups="base.group_user">-->
+        <!--<xpath expr="//ul[@id='oe_systray']/li/ul[@class='dropdown-menu oe_content_menu']" position="inside">-->
+            <!--<li><a id="popupbox-edit" href="/website_popup/edit" data-action="website-popup-edit">Edit PopUpBox</a></li>-->
+            <!--<li><a id="popupbox-enable" href="/website_popup/enable" data-action="website-popup-enable">Enable PopUpBox</a></li>-->
+        <!--</xpath>-->
+    <!--</template>-->
+
+</data>
+</openerp>

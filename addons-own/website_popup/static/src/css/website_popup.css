@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+/* Set the fadeout strength and colour for the underlying page */
+.modal-backdrop.modal-backdrop-popupbox {
+    background-color: white;
+    opacity: 0.5;
+}
+
+/* Set the position of the modal box to the bottom */
+/* HINT: This will disable scrolling so be sure to disable this for smaller devices and widths */
+@media screen and (min-width: 768px) {
+    #popupbox.modal {
+        top: inherit;
+    }
+    #popupbox .modal-dialog {
+        margin-top: 100%;
+    }
+}
+
+/* Set the size of the modal box */
+/* HINT: Don't forget to set the sizes for the media queries too! */
+#popupbox .modal-dialog  {
+    width: 95%;
+}
+
+/* Remove padding and margin for the modal box */
+#popupbox .container.popup_box {
+    padding: 0;
+}
+#popupbox .modal-body {
+    padding: 0;
+}
+#popupbox .popup_box_content {
+    padding: 0;
+}
+
+/* Set the background of the modal box */
+#popupbox .modal-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+}
+

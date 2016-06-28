@@ -56,7 +56,10 @@ class website_sale_login(website_sale):
             name = values['checkout'].get('name') or postdict.get('name') or None
 
             # Update the checkout dict with name and email for qweb template rendering
-            values['checkout'].update({'email': email, 'name': name})
+            # TODO: Disabled because this will make problems if partner_firstname is used because in this
+            #       case there is no field "name". Therefore we have to use custom names like user_name and user_email
+            #       For the login information warning. Right now this is simply disabled
+            #values['checkout'].update({'email': email, 'name': name})
 
             if email:
 

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_website_popup_config_settings" model="ir.ui.view">
+            <field name="name">Website PopUp Config Settings</field>
+            <field name="model">website.config.settings</field>
+            <field name="inherit_id" ref="website.view_website_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@string='Domain']" position="before">
+                    <!-- Behaviour -->
+                    <group string="PopUp Box">
+                        <label for="website_popup_start"/>
+                        <div name="website_popup_start">
+                            <div class="oe_inline">
+                                <field name="website_popup_start"/>
+                            </div>
+                        </div>
+                        <label for="website_popup_end"/>
+                        <div name="website_popup_end">
+                            <div class="oe_inline">
+                                <field name="website_popup_end"/>
+                            </div>
+                        </div>
+                        <label for="website_popup_cancel_button"/>
+                        <div name="website_popup_cancel_button">
+                            <div class="oe_inline">
+                                <field name="website_popup_cancel_button"/>
+                            </div>
+                        </div>
+                        <div colspan="2" style="color:grey; margin-top: 0.75em; margin-bottom: 0.5em;">
+                            <a href="/website_popup/edit">EDIT PopUpBox content > /website_popup/edit</a>
+                        </div>
+                        <div colspan="2" style="color:grey; margin-bottom: 1em;">
+                            <a href="/website_popup/enable">DISPLAY PopUpBox > /website_popup/enable</a>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

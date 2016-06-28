@@ -30,6 +30,7 @@ class ResPartner(models.Model):
 
     @api.model
     def _get_inverse_name(self, name, is_company=False):
-        name = super(ResPartner, self)._get_inverse_name(name=name, is_company=is_company)
+        name_parts = super(ResPartner, self)._get_inverse_name(name=name, is_company=is_company)
         # Invert the original Result:
-        return {"lastname": name['firstname'], "firstname": name['lastname']}
+        return {"lastname": name_parts['firstname'], "firstname": name_parts['lastname']}
+
