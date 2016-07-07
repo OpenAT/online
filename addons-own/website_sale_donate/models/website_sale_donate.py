@@ -602,12 +602,13 @@ class product_product(osv.Model):
 
     def _sold_total(self, cr, uid, ids, field_name, arg, context=None):
         r = dict.fromkeys(ids, 0)
-        domain = [
-            ('state', 'in', ['waiting_date', 'progress', 'manual', 'shipping_except', 'invoice_except', 'done']),
-            ('product_id', 'in', ids),
-        ]
-        for group in self.pool['sale.report'].read_group(cr, SUPERUSER_ID, domain, ['product_id', 'price_total'],
-                                                         ['product_id'], context=context):
+
+        # HINT: sale.report is based on sale.order.lines. States are defined in sale.report at field state.
+        #       see: odoo/addons/sale/report/sale_report.py
+        domain = [('product_id', 'in', ids), ('state', 'in', ['confirmed', 'done'])]
+        fields = ['product_id', 'price_total']
+        groupby = ['product_id']
+        for group in self.pool['sale.report'].read_group(cr, SUPERUSER_ID, domain, fields, groupby, context=context):
             r[group['product_id'][0]] = group['price_total']
 
         # HINT: functional fields functions have to return a dict in form of {id: value}
