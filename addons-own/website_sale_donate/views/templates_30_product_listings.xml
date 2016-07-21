@@ -11,7 +11,7 @@
                 <attribute name="t-att-class">'hidden' if product.hide_price or product.price == 0 else ''</attribute>
             </xpath>
             <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')]/b" position="before">
-                <t t-if="product.hide_price or product.price == 0 ">
+                <t t-if="product.price == 0 and not product.hide_price">
                     <span class="product_price_free pull-right">free</span>
                 </t>
             </xpath>

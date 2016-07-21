@@ -191,35 +191,70 @@ class website_sale_donate(website_sale):
             referrer = referrer + '&warnings=' + warnings
             return request.redirect(referrer)
 
-        # Check Payment Interval
-        # TODO add a default payment interval to the website and per product and set this here correctly
+        # PAYMENT INTERVAL
         # INFO: This is only needed if products are directly added to cart on shop pages (product listings)
         if 'payment_interval_id' not in kw:
             if product.payment_interval_ids:
                 kw['payment_interval_id'] = product.payment_interval_ids[0].id
 
+        # ARBITRARY PRICE (price_donate)
+        # HINT: price_donate= can already be set! See _cart_update in website_sale_donate.py
+
         # Call Super
         # INFO: Pass kw to _cart_update to transfer all post variables to _cart_update
         #       This is needed to get the Value of the arbitrary price from the input field
-        request.website.sale_get_order(force_create=1, context=context)._cart_update(product_id=int(product_id),
-                                                                                     add_qty=float(add_qty),
-                                                                                     set_qty=float(set_qty),
-                                                                                     context=context,
-                                                                                     **kw)
+        order_line = request.website.sale_get_order(force_create=1, context=context)._cart_update(product_id=int(product_id),
+                                                                                             add_qty=float(add_qty),
+                                                                                             set_qty=float(set_qty),
+                                                                                             context=context,
+                                                                                             **kw)
+        order = request.website.sale_get_order(context=context)
+        print "cart_update order name: %s" % order
 
-        # If simple_checkout is set for the product redirect directly to checkout or confirm_order
+        # FS_PTOKEN: set sales order partner by fs_ptoken
+        # If fs_ptoken in kwargs add them to the kw and check if this selects the right user in _cart_update
+        if 'fs_ptoken' in kw and order:
+            print "fs_ptoken found :)"
+
+            # Only change partner if NOT logged in
+            if request.website.user_id.id == uid:
+                print "No one logged in still website default user"
+
+                # Find related res.partner for the token
+                fstoken_obj = request.registry['res.partner.fstoken']
+                fstoken_id = fstoken_obj.search(cr, SUPERUSER_ID,
+                                                [('name', '=', request.httprequest.args['fs_ptoken'])],
+                                                limit=1)
+                fstoken = fstoken_obj.browse(cr, SUPERUSER_ID, fstoken_id)
+
+                # Update the sale.order with the res.partner from fs_ptoken
+                if fstoken:
+                    print "fstoken res.partner found: %s" % fstoken.partner_id
+                    values = {'partner_id': fstoken.partner_id.id,
+                              'partner_invoice_id': fstoken.partner_id.id,
+                              }
+                    if order.partner_invoice_id == order.partner_shipping_id:
+                        values['partner_shipping_id'] = fstoken.partner_id.id
+                    order_obj = request.registry['sale.order']
+                    print "Try to update sale order with fs_ptoken res.user:"
+                    order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
+
+        # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):
             kw.pop('simple_checkout', None)
-            # This will redirect directly to the payment if confirm_order finds no errors
-            if kw.get('email') and kw.get('name') and kw.get('shipping_id'):
-                return request.redirect('/shop/confirm_order' + '?' + request.httprequest.query_string)
+
+            # Redirect to the product page if product-page-layout is one-page-checkout
+            if product.product_page_template == u'website_sale_donate.ppt_opc':
+                request.redirect('/shop/product/' + product.product_tmpl_id.id + '?' + request.httprequest.query_string)
+
+            # Redirect to the checkout page
             return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
 
-        # Stay on the current page if "Add to cart and stay on current page" is set
+        # EXIT B) Stay on the current page if "Add to cart and stay on current page" is set
         if request.website['add_to_cart_stay_on_page']:
             return request.redirect(referrer)
 
-        # Redirect to the shopping cart
+        # EXIT C) Redirect to the shopping cart
         return request.redirect("/shop/cart")
 
     # /shop/cart/update_json

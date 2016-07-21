@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Create form, tree and search view for the FS Partner Tokens -->
+        <record model="ir.ui.view" id="fstoken_form">
+            <field name="name">fstoken_form</field>
+            <field name="model">res.partner.fstoken</field>
+            <field name="arch" type="xml">
+                <form string="FS Partner Tokens">
+                    <group>
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="fstoken_tree">
+            <field name="name">fstoken_tree</field>
+            <field name="model">res.partner.fstoken</field>
+            <field name="arch" type="xml">
+                <tree string="FS Partner Tokens">
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="fstoken_search">
+            <field name="name">fstoken_search</field>
+            <field name="model">res.partner.fstoken</field>
+            <field name="arch" type="xml">
+                <search string="FS Partner Tokens">
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+        <!-- window action -->
+        <record model="ir.actions.act_window" id="fstoken_action">
+            <field name="name">FS Partner Tokens</field>
+            <field name="res_model">res.partner.fstoken</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="fstoken_tree"/>
+            <field name="search_view_id" ref="fstoken_search"/>
+        </record>
+        <!-- menuitem -->
+        <menuitem action="fstoken_action" id="fstoken_menu" parent="base.menu_config" sequence="96"/>
+
+    </data>
+</openerp>

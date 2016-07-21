@@ -156,8 +156,8 @@
                                                             <input type="radio" name="product_id" class="js_product_change"
                                                                    t-att-checked="'checked' if variant_id_index == 0 else ''"
                                                                    t-att-value="variant_id.id"
-                                                                   t-att-data-lst_price="variant_id.lst_price"
-                                                                   t-att-data-price="variant_id.price"/>
+                                                                   t-att-data-lst_price="variant_id.lst_price or '0'"
+                                                                   t-att-data-price="variant_id.price or '0'"/>
                                                             <!-- All Attributes Names -->
                                                             <t t-foreach="variant_id.attribute_value_ids" t-as="attrib">
                                                                 <span><t t-esc="attrib.name"/> </span>

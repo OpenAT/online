@@ -30,6 +30,7 @@
                                       class="price_donate_suggested_currency"
                                 />
                                 <input type="button"
+                                       t-att-data-price="ps_button.amount"
                                        t-att-value="ps_button.name or '{:.0f}'.format(ps_button.amount)"
                                        t-att-class="'btn btn-lg btn-default price_donate_suggested'+ps_button_classes"
                                        t-att-data-ps-id="ps_button.id">

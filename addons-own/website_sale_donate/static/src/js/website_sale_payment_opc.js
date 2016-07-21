@@ -4,7 +4,7 @@ $(document).ready(function () {
     var $price_donate = $("#price_donate");
     var $price_suggested = $(".price_donate_suggested");
     $price_suggested.on("click", function (ev1) {
-        $price_donate.val( $(this).val() );
+        $price_donate.val( $(this).data("price") );
     });
 
     // Click radio input of the selected payment interval on first load of the page
@@ -17,7 +17,6 @@ $(document).ready(function () {
         //console.log('On Load of Payment Intervalls Selection');
         $("select[name='payment_interval_id'] option:selected").trigger('change');
     });
-
 
     // Hide all tabs and related tab-content that are not recurring if recurring payment is selected
     var $radio_payint = $("input[name='payment_interval_id']");
@@ -60,8 +59,6 @@ $(document).ready(function () {
             $( "[data-recurring-transactions='False']").removeClass('hidden');
         }
     });
-
-
 
     // Select (check) radio input tag of the acquirer tab on tab click
     var $payment = $("#payment_method");
