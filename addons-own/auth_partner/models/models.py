@@ -18,7 +18,7 @@
 
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError
-
+from datetime import timedelta
 
 class ResPartnerFSToken(models.Model):
     _name = 'res.partner.fstoken'
@@ -26,6 +26,9 @@ class ResPartnerFSToken(models.Model):
     name = fields.Char(string='FS Partner Token', required=True)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner',
                                  required=True, ondelete='cascade')
+    expiration_date = fields.Date(string="Expiration Date",
+                                  default=fields.datetime.now() + timedelta(days=14))
+    fs_origin = fields.Char(string="FS Origin")
 
     # https://www.odoo.com/documentation/8.0/howtos/backend.html
     @api.constrains('name')

@@ -6,6 +6,10 @@ from openerp.tools.translate import _
 from openerp.http import request
 from lxml import etree
 from urlparse import urlparse
+
+from datetime import timedelta
+from openerp import fields
+
 from openerp.addons.website.models.website import slug
 
 # import copy
@@ -214,11 +218,9 @@ class website_sale_donate(website_sale):
         # FS_PTOKEN: set sales order partner by fs_ptoken
         # If fs_ptoken in kwargs add them to the kw and check if this selects the right user in _cart_update
         if 'fs_ptoken' in kw and order:
-            print "fs_ptoken found :)"
 
             # Only change partner if NOT logged in
             if request.website.user_id.id == uid:
-                print "No one logged in still website default user"
 
                 # Find related res.partner for the token
                 fstoken_obj = request.registry['res.partner.fstoken']
@@ -228,16 +230,22 @@ class website_sale_donate(website_sale):
                 fstoken = fstoken_obj.browse(cr, SUPERUSER_ID, fstoken_id)
 
                 # Update the sale.order with the res.partner from fs_ptoken
+                # https://www.odoo.com/documentation/8.0/reference/orm.html#fields (openerp.fields.Datetime)
                 if fstoken:
-                    print "fstoken res.partner found: %s" % fstoken.partner_id
-                    values = {'partner_id': fstoken.partner_id.id,
-                              'partner_invoice_id': fstoken.partner_id.id,
-                              }
-                    if order.partner_invoice_id == order.partner_shipping_id:
-                        values['partner_shipping_id'] = fstoken.partner_id.id
-                    order_obj = request.registry['sale.order']
-                    print "Try to update sale order with fs_ptoken res.user:"
-                    order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
+                    # Check if the token is still valid
+                    expiration_date = fields.datetime.now()
+                    if fstoken.expiration_date:
+                        expiration_date = fields.Datetime.from_string(fstoken.expiration_date)
+                    else:
+                        expiration_date = fields.Datetime.from_string(fstoken.create_date) + timedelta(days=14)
+
+                    if fields.datetime.now() <= expiration_date:
+                        values = {'partner_id': fstoken.partner_id.id,
+                                  'partner_invoice_id': fstoken.partner_id.id,
+                                  'partner_shipping_id': fstoken.partner_id.id,
+                                  }
+                        order_obj = request.registry['sale.order']
+                        order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
 
         # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):

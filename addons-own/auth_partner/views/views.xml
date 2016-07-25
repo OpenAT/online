@@ -11,6 +11,8 @@
                     <group>
                         <field name="name"/>
                         <field name="partner_id"/>
+                        <field name="expiration_date"/>
+                        <field name="fs_origin"/>
                     </group>
                 </form>
             </field>
@@ -22,6 +24,8 @@
                 <tree string="FS Partner Tokens">
                         <field name="name"/>
                         <field name="partner_id"/>
+                        <field name="expiration_date"/>
+                        <field name="fs_origin"/>
                 </tree>
             </field>
         </record>
@@ -32,6 +36,8 @@
                 <search string="FS Partner Tokens">
                         <field name="name"/>
                         <field name="partner_id"/>
+                        <field name="expiration_date"/>
+                        <field name="fs_origin"/>
                 </search>
             </field>
         </record>
