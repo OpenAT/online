@@ -3,11 +3,21 @@
     <data noupdate="1">
 
         <!-- Payment Intervals for Products -->
+        <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/data-noupdate-0-1-in-security-xml-13546 -->
         <record id="annually" model="product.payment_interval">
             <field name="name">annually</field>
         </record>
+        <record id="half_yearly" model="product.payment_interval">
+            <field name="name">half-yearly</field>
+        </record>
         <record id="quarterly" model="product.payment_interval">
             <field name="name">quarterly</field>
+        </record>
+        <record id="monthly_4" model="product.payment_interval">
+            <field name="name">4-monthly</field>
+        </record>
+        <record id="monthly_2" model="product.payment_interval">
+            <field name="name">2-monthly</field>
         </record>
         <record id="monthly" model="product.payment_interval">
             <field name="name">monthly</field>

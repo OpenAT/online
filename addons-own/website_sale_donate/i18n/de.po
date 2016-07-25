@@ -1833,3 +1833,18 @@ msgstr "kostenlos"
 #: model:website.checkout_billing_fields,label:website_sale_donate.legal_terms_web
 msgid "Accept Terms and Conditions"
 msgstr "Ich erkläre mich mit den AGB von XXX einverstanden"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.half_yearly
+msgid "half-yearly"
+msgstr "halbjährlich"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.monthly_2
+msgid "2-monthly"
+msgstr "zwei-monatlich"
+
+#. module: website_sale_donate
+#: model:product.payment_interval,name:website_sale_donate.monthly_4
+msgid "4-monthly"
+msgstr "vier-monatlich"
