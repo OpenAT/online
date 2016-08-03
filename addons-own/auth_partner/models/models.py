@@ -20,6 +20,7 @@ from openerp import api, models, fields
 from openerp.exceptions import ValidationError
 from datetime import timedelta
 
+
 class ResPartnerFSToken(models.Model):
     _name = 'res.partner.fstoken'
 

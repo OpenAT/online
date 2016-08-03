@@ -90,7 +90,7 @@
 
                     <!-- Product Image -->
                     <t t-if="not hide_image">
-                        <div><span itemprop="image" t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle product-image product_detail_img", "alt-field": "name"}'/></div>
+                        <div class="checkoutbox_product_image"><span itemprop="image" t-field="product.image_square" t-field-options='{"widget": "image", "class": "img-circle product-image product_detail_img", "alt-field": "name"}'/></div>
                     </t>
 
                     <!-- Product Sales Text: description_sale -->
@@ -215,12 +215,12 @@
                             <!-- HINT: payment_interval_ids is DEPRECATED use payment_interval_lines_ids instead -->
                             <t t-if="product.payment_interval_lines_ids or product.payment_interval_ids">
                                 <t t-set="payment_interval_as_selection" t-value="True if (website.payment_interval_as_selection or product.payment_interval_as_selection) else False"/>
-                                <h4 t-att-class="'payment_interval_ids payment_interval_lines_ids text-left' if not payment_interval_ids_class else 'payment_interval_ids payment_interval_lines_ids '+payment_interval_ids_class"
-                                    t-att-style="'padding: 0 1em;' if not payment_interval_ids_class else ''">
+                                <h4 t-att-class="'payment_interval_ids payment_interval_lines_ids text-left' if not payment_interval_ids_class else 'payment_interval_ids payment_interval_lines_ids '+payment_interval_ids_class">
                                     <hr />
                                     <small class="text-muted">How frequent would you like to donate this amount:</small>
                                     <div class="form-group">
 
+                                        <!-- DEPRECATED START -->
                                         <!-- payment_interval_ids: DEPRECATED Only left here for downward compatibility -->
                                         <t t-if="not product.payment_interval_lines_ids">
                                             <!-- radio buttons -->
@@ -249,6 +249,7 @@
                                                 </select>
                                             </t>
                                         </t>
+                                        <!-- DEPRECATED END -->
 
                                         <!-- payment_interval_lines_ids -->
                                         <t t-if="product.payment_interval_lines_ids">
