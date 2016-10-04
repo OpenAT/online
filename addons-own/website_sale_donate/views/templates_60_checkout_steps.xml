@@ -131,16 +131,16 @@
             </xpath>
 
             <!-- Hide list price in shopping cart if price_donate -->
-            <xpath expr="//del[@t-field='line.product_id.lst_price']" position="attributes">
+            <xpath expr="//td[@name='price']//del[@class='text-danger']" position="attributes">
                 <attribute name="t-if">not line.product_id.price_donate</attribute>
             </xpath>
 
             <!-- Hide price if 0 and show word free instead -->
-            <xpath expr="//span[@t-field='line.discounted_price']" position="attributes">
+            <xpath expr="//td[@name='price']//span[@t-field]" position="attributes">
                 <attribute name="style"/>
                 <attribute name="t-att-style">'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'</attribute>
             </xpath>
-            <xpath expr="//span[@t-field='line.discounted_price']" position="after">
+            <xpath expr="//td[@name='price']//span[@t-field]" position="after">
                 <span t-if="line.discounted_price == 0" class="line_discounted_price_free">free</span>
             </xpath>
 
