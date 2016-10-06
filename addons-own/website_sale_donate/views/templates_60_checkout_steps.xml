@@ -131,16 +131,16 @@
             </xpath>
 
             <!-- Hide list price in shopping cart if price_donate -->
-            <xpath expr="//del[@t-field='line.product_id.lst_price']" position="attributes">
+            <xpath expr="//td[@name='price']//del[@class='text-danger']" position="attributes">
                 <attribute name="t-if">not line.product_id.price_donate</attribute>
             </xpath>
 
             <!-- Hide price if 0 and show word free instead -->
-            <xpath expr="//span[@t-field='line.discounted_price']" position="attributes">
+            <xpath expr="//td[@name='price']//span[@t-field]" position="attributes">
                 <attribute name="style"/>
                 <attribute name="t-att-style">'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'</attribute>
             </xpath>
-            <xpath expr="//span[@t-field='line.discounted_price']" position="after">
+            <xpath expr="//td[@name='price']//span[@t-field]" position="after">
                 <span t-if="line.discounted_price == 0" class="line_discounted_price_free">free</span>
             </xpath>
 
@@ -246,42 +246,42 @@
                                            t-att-required="billing_field.mandatory"/>
                                 </t>
                                 <t t-esc="billing_field.label"/>
-                                <!-- INFORMATION ICON AND MODAL-BOX -->
-                                <t t-if="billing_field.information">
-                                    <!-- Modal Box Button-Link -->
-                                    <href type="button"
-                                            class="btn-link information-modal-box-trigger"
-                                            data-toggle="modal"
-                                            t-att-data-target="'#information-'+f_name">
-                                        <span class="glyphicon glyphicon-info-sign"/>
-                                    </href>
-                                    <!-- Modal Box -->
-                                    <div class="modal fade"
-                                         t-att-id="'information-'+f_name"
-                                         role="dialog">
-                                        <div class="modal-dialog">
-                                            <!-- Modal content-->
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close"
-                                                            data-dismiss="modal">&amp;times;</button>
-                                                    <h4 class="modal-title">
-                                                        <t t-esc="billing_field.label"/>
-                                                    </h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <t t-raw="billing_field.information"/>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                        Close
-                                                    </button>
-                                                </div>
+                            </label>
+                            <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
+                            <t t-if="billing_field.information">
+                                <!-- Modal Box Button-Link -->
+                                <href type="button"
+                                        class="btn-link information-modal-box-trigger"
+                                        data-toggle="modal"
+                                        t-att-data-target="'#information-'+f_name">
+                                    <span class="glyphicon glyphicon-info-sign"/>
+                                </href>
+                                <!-- Modal Box -->
+                                <div class="modal fade"
+                                     t-att-id="'information-'+f_name"
+                                     role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close"
+                                                        data-dismiss="modal">&amp;times;</button>
+                                                <h4 class="modal-title">
+                                                    <t t-esc="billing_field.label"/>
+                                                </h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <t t-raw="billing_field.information"/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                    Close
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                </t>
-                            </label>
+                                </div>
+                            </t>
                             <!-- CHAR FIELDS -->
                             <t t-if="f_type == 'char'">
                                 <input type="text"
@@ -544,7 +544,7 @@
 
             <!-- DELIVERY Options -->
             <div t-if="deliveries"
-                 class="'row wsd_opc_delivery hidden' if website.hide_delivery_methods else 'row wsd_opc_delivery'"
+                 t-att-class="'row wsd_opc_delivery hidden' if website.hide_delivery_methods else 'row wsd_opc_delivery'"
                  t-att-id="'delivery_carrier' if not one_page_checkout else ''">
                 <!-- Header: Delivery -->
                 <div class="col-lg-12">

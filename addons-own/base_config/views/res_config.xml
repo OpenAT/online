@@ -150,6 +150,43 @@
                                     <field name="module_partner_contact_gender" class="oe_inline" />
                                     <label for="module_partner_contact_gender" />
                                 </div>
+                                <!-- o8r35 -->
+                                <div>
+                                    <field name="module_website_blog_private" class="oe_inline" />
+                                    <label for="module_website_blog_private" />
+                                </div>
+                                <div>
+                                    <field name="module_website_forum_private" class="oe_inline" />
+                                    <label for="module_website_forum_private" />
+                                </div>
+                                <div>
+                                    <field name="module_website_cookie_notice" class="oe_inline" />
+                                    <label for="module_website_cookie_notice" />
+                                </div>
+                                <div>
+                                    <field name="module_website_legal_page" class="oe_inline" />
+                                    <label for="module_website_legal_page" />
+                                </div>
+                                <div>
+                                    <field name="module_website_seo_redirection" class="oe_inline" />
+                                    <label for="module_website_seo_redirection" />
+                                </div>
+                                <div>
+                                    <field name="module_website_snippet_anchor" class="oe_inline" />
+                                    <label for="module_website_snippet_anchor" />
+                                </div>
+                                <div>
+                                    <field name="module_website_snippet_contact_form" class="oe_inline" />
+                                    <label for="module_website_snippet_contact_form" />
+                                </div>
+                                <div>
+                                    <field name="module_website_snippet_image_gallery" class="oe_inline" />
+                                    <label for="module_website_snippet_image_gallery" />
+                                </div>
+                                <div>
+                                    <field name="module_web_groupby_expand" class="oe_inline" />
+                                    <label for="module_web_groupby_expand" />
+                                </div>
                             </div>
                         </div>
                     </group>

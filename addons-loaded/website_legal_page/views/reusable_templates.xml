@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+<!-- Base templates for submodules -->
+<template id="acceptance_full">
+    <t name="root">
+        <t name="accept">I accept the</t>
+        <a href="/page/legal">legal advice</a><t name="the1">, the</t>
+        <a href="/page/privacy">privacy policy</a><t name="the2">, and the</t>
+        <a href="/page/terms">terms of use</a>
+        <t name="website">of this website.</t>
+    </t>
+</template>
+
+</data>
+</openerp>

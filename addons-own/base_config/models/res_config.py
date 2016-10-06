@@ -93,6 +93,25 @@ class base_config_settings(osv.osv_memory):
         'module_website_sale_autopay': fields.boolean('website_sale_autopay -- Auto create and validate invoice from webshop order'),
         'module_partner_firstname': fields.boolean('partner_firstname -- Add a firstname and lastname field to parnters and make name a function field'),
         'module_partner_contact_gender': fields.boolean('partner_contact_gender -- Add a gender selection field to parnters'),
+        # o8r35
+        'module_website_blog_private': fields.boolean(
+            'website_blog_private -- Set odoo groups for blog access'),
+        'module_website_forum_private': fields.boolean(
+            'website_forum_private -- Set odoo groups for forum access'),
+        'module_website_cookie_notice': fields.boolean(
+            'website_cookie_notice -- Add a cooky notice to the webpage'),
+        'module_website_legal_page': fields.boolean(
+            'website_legal_page -- Add a legal page to the webpage'),
+        'module_website_seo_redirection': fields.boolean(
+            'website_seo_redirection -- Replace or redirect webpage URLS'),
+        'module_website_snippet_anchor': fields.boolean(
+            'website_snippet_anchor -- Add Anchors to page Elements'),
+        'module_website_snippet_contact_form': fields.boolean(
+            'website_snippet_contact_form -- Drag and Drop Contact Form'),
+        'module_website_snippet_image_gallery': fields.boolean(
+            'website_snippet_image_gallery -- Simple Image Wall'),
+        'module_web_groupby_expand': fields.boolean(
+            'web_groupby_expand -- Expand all grouped nodes at once in backend'),
 
         # Addons Own
         'module_website_crm_extended': fields.boolean('website_crm_extended -- Default sales group for lead from contact formular',
@@ -180,12 +199,6 @@ class base_config_settings(osv.osv_memory):
         'module_website_search': fields.boolean('website_search -- Global search box for the webpage',
                                                 help='Global search box for the webpage'
                                                      '\n Installs Module: website_search'),
-        'module_website_blog_private': fields.boolean('website_blog_private -- Private (internal) blogs on website',
-                                                      help='Private blogs'
-                                                           '\n Installs Module: website_blog_private'),
-        'module_website_forum_private': fields.boolean('website_forum_private -- Private (internal) forums on website',
-                                                       help='Private Forums'
-                                                            '\n Installs Module: website_forum_private'),
         'module_website_lang_flags': fields.boolean('website_lang_flags -- Language Flags for website lang selector',
                                                     help='Language Flags instead of just text for lang selector on website'
                                                          '\n Installs Module: website_lang_flags'),
