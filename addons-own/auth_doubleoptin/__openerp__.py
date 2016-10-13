@@ -18,7 +18,7 @@
 
 {
     'name': 'auth_doubleoptin',
-    'summary': """FCOM Double-Opt-In for account signup and newsletter subscription verification""",
+    'summary': """FS-Online Double-Opt-In for account signup and newsletter subscription verification""",
     'description': """
 FCOM Double-Opt-In System für User Account creation
 ===================================================
