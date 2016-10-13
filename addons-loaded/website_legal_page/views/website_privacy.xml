@@ -6,9 +6,9 @@
 <template id="privacy_policy_link"
           inherit_id="website.layout_footer_copyright"
           name="Privacy policy Link">
-    <xpath expr="//footer//span[contains(@t-field, 'res_company.name')]" position="after">
-        <span>- <a href="/page/privacy">Privacy policy</a></span>
-    </xpath>
+    <!--<xpath expr="//footer//span[contains(@t-field, 'res_company.name')]" position="after">-->
+        <!--<span>- <a href="/page/privacy">Privacy policy</a></span>-->
+    <!--</xpath>-->
 </template>
 
 <template id="website.privacy" name="Privacy policy" page="True">

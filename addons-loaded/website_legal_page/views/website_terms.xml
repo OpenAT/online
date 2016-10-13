@@ -6,9 +6,9 @@
 <template id="terms_of_use_link"
           inherit_id="website.layout_footer_copyright"
           name="Terms of use Link">
-    <xpath expr="//footer//span[contains(@t-field, 'res_company.name')]" position="after">
-        <span>- <a href="/page/legal">Legal advice</a></span>
-    </xpath>
+    <!--<xpath expr="//footer//span[contains(@t-field, 'res_company.name')]" position="after">-->
+        <!--<span>- <a href="/page/legal">Legal advice</a></span>-->
+    <!--</xpath>-->
 </template>
 
 <template id="website.terms" name="Terms of use" page="True">
