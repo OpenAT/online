@@ -29,7 +29,6 @@ o8_*/
 /*.log
 /*.pid
 data_dir
-devel/
 
 #pycharm
 .idea/
