@@ -27,6 +27,24 @@ _logger = logging.getLogger(__name__)
 
 class website_sale_donate(website_sale):
 
+    def _get_payment_interval_id(self, product):
+        payment_interval_id = False
+
+        # 1. Website-Settings global default payment interval
+        if request.website.payment_interval_default:
+            payment_interval_id = request.website.payment_interval_default.id
+        # 2. DEPRECATED! (but still there for old database-backups compatibility)
+        if product.payment_interval_ids:
+            payment_interval_id = product.payment_interval_ids[0].id
+        # 3. Products first payment_interval_line id
+        if product.payment_interval_lines_ids:
+            payment_interval_id = product.payment_interval_lines_ids[0].payment_interval_id.id
+        # 4. Products default payment interval
+        if product.payment_interval_default:
+            payment_interval_id = product.payment_interval_default.id
+
+        return payment_interval_id
+
     # SHOP PAGE: Add last_shop_page to the session
     @http.route()
     def shop(self, page=0, category=None, search='', **post):
@@ -91,25 +109,17 @@ class website_sale_donate(website_sale):
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
 
-        # Find and Set default payment interval
-        # 1. Set from post
+        # Find selected payment interval
+        # 1. Set payment interval from form post data
         if kwargs.get('payment_interval_id'):
             productpage.qcontext['payment_interval_id'] = kwargs.get('payment_interval_id')
-        # 2. Set from defaults
+        # 2. Or Set payment interval from defaults (only if not already set in productpage.qcontext)
         if not productpage.qcontext.get('payment_interval_id'):
-            if request.website.payment_interval_default:
-                productpage.qcontext['payment_interval_id'] = request.website.payment_interval_default.id
-            if product.payment_interval_default:
-                productpage.qcontext['payment_interval_id'] = product.payment_interval_default.id
-        # 3. Use first entry
-        if not productpage.qcontext.get('payment_interval_id'):
-            # Deprecated: payment_interval_ids
-            if product.payment_interval_ids:
-                productpage.qcontext['payment_interval_id'] = product.payment_interval_ids[0].id
-            if product.payment_interval_lines_ids:
-                productpage.qcontext['payment_interval_id'] = product.payment_interval_lines_ids[0].payment_interval_id.id
+            payment_interval_id = self._get_payment_interval_id(product)
+            if payment_interval_id:
+                productpage.qcontext['payment_interval_id'] = payment_interval_id
 
-        # Get values from sale-order-line for price_donate and payment_interval_id
+        # Get values from existing sale-order-line for price_donate and payment_interval_id
         sale_order_id = request.session.sale_order_id
         if sale_order_id:
             # Search for a sale-order-line for the current product in the sales order of the current session
@@ -198,8 +208,9 @@ class website_sale_donate(website_sale):
         # PAYMENT INTERVAL
         # INFO: This is only needed if products are directly added to cart on shop pages (product listings)
         if 'payment_interval_id' not in kw:
-            if product.payment_interval_ids:
-                kw['payment_interval_id'] = product.payment_interval_ids[0].id
+            payment_interval_id = self._get_payment_interval_id(product)
+            if payment_interval_id:
+                kw['payment_interval_id'] = payment_interval_id
 
         # ARBITRARY PRICE (price_donate)
         # HINT: price_donate= can already be set! See _cart_update in website_sale_donate.py
@@ -372,7 +383,6 @@ class website_sale_donate(website_sale):
         if hasattr(payment_page, 'qcontext'):
             payment_qcontext = payment_page.qcontext
 
-
         # Check for redirection caused by errors
         if not payment_qcontext:
             _logger.error(_('Payment Page has no qcontext. It may be a redirection. No Acquirer-Buttons rendered!'))
@@ -476,7 +486,6 @@ class website_sale_donate(website_sale):
                 # HINT that the qcontext has no errors is checked above already
                 payment_qcontext['errors'] = {'pm_recurring': [_('Wrong payment method'), msg]}
 
-            # TODO: Validate acquirer non-hidden input fields
             # TODO: Validate acquirer non-hidden input fields
             # TODO: Should add a new mehtod to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
 

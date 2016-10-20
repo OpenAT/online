@@ -458,7 +458,7 @@ msgstr "Warenkorb Oberer Snippet Bereich"
 #: field:website,button_cart_to_data:0
 #: field:website.config.settings,button_cart_to_data:0
 msgid "Cart to Data Button"
-msgstr "in den Warenkorb Knopf"
+msgstr "Cart > Checkout"
 
 #. module: website_sale_donate
 #: view:website:website_sale.payment
@@ -611,7 +611,7 @@ msgstr "SPENDEN EINSTELLUNGEN"
 #: field:website,button_data_to_payment:0
 #: field:website.config.settings,button_data_to_payment:0
 msgid "Data to Payment Button"
-msgstr "Daten zu Zahlung Knopf"
+msgstr "Checkout > Payment"
 
 #. module: website_sale_donate
 #: selection:product.template,product_page_template:0

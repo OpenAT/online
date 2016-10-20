@@ -24,6 +24,7 @@
     'name': "FS-Online Spendenshop",
     'version': '2.2',
     'summary': """Shoperweiterungen für Fundraising Studio Community""",
+    'sequence': 200,
     'description': """
 
 Anpassungen des Online-Shops für NPOs
@@ -57,7 +58,7 @@ Anpassungen des Online-Shops für NPOs
 - Neue Info Buttons beim Produkt für die gesamte Spendenhöhe
 
 ## Todo
-- User Form (contoler) to create new donation campaigns
+- User Form (controller) to create new donation campaigns
 - store product images on disk and not in the db
 
 ## website_sale_payment_fix was integrated here
@@ -67,7 +68,7 @@ payment_ogone_dadi payment provider which is a replacement of the odoo ogone pay
 The problem of the original odoo payment process is that the update of the payment transaction and the related sales
 order is dependent on the data of the current request.session. But it might be that the answer from ogone is received
 later and not related to the current session at all and also send by ogone multible times for the same or different
-states of the particullar payment.transaction.
+states of the particular payment.transaction.
 
 To solve this we did:
 - **clear the session variables** sale_order_id, sale_last_order_id, sale_transaction_id, sale_order_code_pricelist_id
