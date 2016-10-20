@@ -690,6 +690,22 @@ class website_sale_donate(website_sale):
         except:
             return request.website.render("website_sale_donate.confirmation_static", {'order': None})
 
+    # For (small) cart JSON updates use arbitrary price (price_donate) if set sale.order.line
+    @http.route()
+    def get_unit_price(self, product_ids, add_qty, use_order_pricelist=False, **kw):
+        product_prices = super(website_sale_donate,
+                               self).get_unit_price(product_ids, add_qty, use_order_pricelist, **kw)
+        # Get current Sales Order Lines for arbitrary price
+        order = request.website.sale_get_order()
+        if order and order.order_line:
+            order_line_prices = {line.product_id.id: line.price_donate
+                                 for line in order.order_line
+                                 if line.product_id.price_donate}
+            product_prices.update(order_line_prices)
+        # Cycle through products and return arbitrary price if set
+        return product_prices
+
+
     # Extra Route for Sales Order Information
     @http.route('/shop/order/get_data/<int:sale_order_id>', type='json', auth="user", website=True)
     def order_get_status(self, sale_order_id, **post):
