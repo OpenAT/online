@@ -76,7 +76,8 @@ class website_sale_donate_config_settings(osv.osv_memory):
                                                            string='Redirect URL after PP Form-Feedback',
                                                            help='Redirect to this URL after processing the Answer of '
                                                                 'the Payment Provider instead of '
-                                                                '/shop/confirmation_static'),
+                                                                '/shop/confirmation_static',
+                                                           translate=True),
         # Images
         'square_image_x': fields.related('website_id', 'square_image_x', type="integer",
                                          string='Product SquareImage x-Size in Pixel'),
