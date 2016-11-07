@@ -30,7 +30,7 @@ website_crm_sendmail
 
 A very simple addon to post an additional Chatter notification with better information on lead creation
 if someone uses the oddo cms contact form. Also it sets the sales team for the new lead to website sales so you could
-configure the follwoers and therefore the external mails send.
+configure the followers and therefore the external mails send.
 
 This is also the place to add additional extensions to the website.crm addon (the website contact form of odoo):
 

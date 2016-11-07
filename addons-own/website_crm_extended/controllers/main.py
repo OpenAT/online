@@ -37,12 +37,12 @@ class contactus_extended(main.contactus):
         # Post a New Message to this record
         # Todo use a Mail-Template (so translation would be working too!)
         recordtext = 'Neue Webanfrage: \n\nVon: %s\nE-Mail: %s\nPhone: %s\nFirma: %s\n\nBetreff: %s\nNachricht: %s' % (
-            values['contact_name'],
-            values['email_from'],
-            values['phone'],
-            values['partner_name'],
-            values['name'],
-            values['description'],
+            values.get('contact_name', ''),
+            values.get('email_from', ''),
+            values.get('phone', ''),
+            values.get('partner_name', ''),
+            values.get('name', ''),
+            values.get('description', ''),
         )
         leadrecord.message_post(body=recordtext, subject=values['name'], type='notification', subtype='mail.mt_comment',
                                 content_subtype='plaintext')
