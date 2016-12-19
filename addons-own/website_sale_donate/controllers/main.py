@@ -257,6 +257,11 @@ class website_sale_donate(website_sale):
                                   }
                         order_obj = request.registry['sale.order']
                         order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
+                        # Update the sale.order.line with the fstoken
+                        if order_line.get('line_id'):
+                            order_line_obj = request.registry['sale.order.line']
+                            order_line_obj.write(cr, SUPERUSER_ID, [order_line.get('line_id')],
+                                                 {'fs_ptoken': fstoken.name}, context=context)
 
         # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):

@@ -28,10 +28,13 @@
 Set Partner in Session by Token
 ===============================
 
-Use the parameter fs_ptoken on any url to set the res.partner of the current web session
-related to this token.
+Use the parameter fs_ptoken to set the res.partner for a sales order or for a form to update res.partner data
 
-EXAMPLE: http://www.test.com?fs_ptoken=abe050da5039e800
+EXAMPLES:
+
+Simple-Checkout-Product-Link with fs_ptoken attribute:
+http://localhost:8010/shop/simple_checkout/einmalige-spende-6?fs_ptoken=123456789
+
 
 ATTENTION: The token must be at least 6 chars long and alphanumeric.
 WARNING: The value of fs_ptoken is case sensitive!

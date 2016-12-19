@@ -97,6 +97,7 @@ To solve this we did:
         'website_sale_categories',
         'website_event',
         'website_blog',
+        'auth_partner',
     ],
     'installable': True,
     'data': [

@@ -375,6 +375,7 @@ class sale_order_line(osv.Model):
         'payment_interval_id': fields.many2one('product.payment_interval', string='Payment Interval ID'),
         'payment_interval_name': fields.text('Payment Interval Name'),
         'payment_interval_xmlid': fields.text('Payment Interval Name'),
+        'fs_ptoken': fields.text('FS Partner Token'),
     }
 
 
