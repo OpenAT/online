@@ -27,7 +27,7 @@ class ResPartnerFSToken(models.Model):
     name = fields.Char(string='FS Partner Token', required=True)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner',
                                  required=True, ondelete='cascade')
-    expiration_date = fields.Date(string="Expiration Date",
+    expiration_date = fields.Date(string="Expiration Date", required=True,
                                   default=fields.datetime.now() + timedelta(days=14))
     fs_origin = fields.Char(string="FS Origin")
 
@@ -49,4 +49,5 @@ class ResPartnerFSToken(models.Model):
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    fstoken_ids = fields.One2many(comodel_name='res.partner.fstoken', inverse_name='partner_id')
+    fstoken_ids = fields.One2many(string='FS Partner Tokens', comodel_name='res.partner.fstoken',
+                                  inverse_name='partner_id')

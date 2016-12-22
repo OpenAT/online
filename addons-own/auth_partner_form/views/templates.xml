@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- Load custom js and css -->
+        <template id="assets_frontend" inherit_id="website_tools.assets_frontend" name="Auth Partner Form">
+            <xpath expr="//script[last()]" position="after">
+                <link rel="stylesheet" href='/auth_partner_form/static/src/css/auth_partner_form.css'/>
+                <!-- INFO: jquery validate is loaded in website_tools -->
+                <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_validate.js"/>
+                <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_format_input.js"/>
+            </xpath>
+        </template>
+
+        <!-- TEMPLATE meinedaten -->
+        <template id="meinedaten" name="Auth Partner Form Website Template">
+            <t t-call="website.layout">
+                <t t-set="title">Meine Daten</t>
+                <div class="oe_structure auth_partner_form">
+                    <div class="container">
+                        <!-- Top snippet area -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <!-- START THE FORM -->
+                                <form id="auth_partner_form"
+                                      action="/meine-daten"
+                                      method="post">
+
+                                    <!-- Code -->
+                                    <!-- Only show token input field if user is NOT logged in -->
+                                    <t t-if="website.user_id == user_id">
+                                        <div class="row apf_token_data">
+                                            <div class="col-md-12">
+                                                <!-- Header for code input-->
+                                                <h2>
+                                                    <span t-field="website.apf_title_code"/>
+                                                </h2>
+                                                <!-- Code input (fs_ptoken) -->
+                                                <div class="form-group">
+                                                    <label class="control-label" for="fs_ptoken">
+                                                        <span t-field="website.apf_token_label"/>
+                                                    </label>
+                                                    <input name="fs_ptoken"
+                                                           type="text"
+                                                           class="form-control input-lg"
+                                                           t-att-value="fs_ptoken"
+                                                           t-att-placeholder="website.apf_token_placeholder"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+
+                                    <!-- TODO: Success/Error message(s) -->
+
+                                    <!-- Get res.partner data (if logged in or fs_ptoken was correct) -->
+                                    <t t-if="partner">
+                                        <div class="row apf_partner_data">
+                                            <div class="col-md-12">
+                                                <h2>
+                                                   <span t-field="website.apf_title_partner_data"/>
+                                                </h2>
+                                            </div>
+                                            <t t-foreach="apf_fields" t-as="field">
+                                                <t t-set="f_name" t-value="field.res_partner_field_id.name"/>
+                                                <t t-set="f_type" t-value="field.res_partner_field_id.ttype"/>
+                                                <t t-set="css_classes" t-value="field.css_classes"/>
+                                                <t t-set="validation_rule" t-value="{}"/>
+                                                <t t-if="field.validation_rule">
+                                                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
+                                                </t>
+                                                <t t-set="error" t-value="field_errors"/>
+
+                                                <!-- DEBUG -->
+                                                <!--<div><t t-raw="f_name"/> <t t-raw="f_type"/> Value: <t t-raw="partner[f_name]"/></div>-->
+                                                
+                                                <t t-if="field.show">
+                                
+                                                    <!-- FORM INPUT BY FIELD GENERATOR -->
+                                                    <t t-if="f_type in ('boolean', 'char', 'selection') or f_name in ['country_id', 'state_id']">
+                                                        <!-- FORM GROUP -->
+                                                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                                                            <!-- LABEL for all fields -->
+                                                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if field.mandatory else '')"
+                                                                   t-att-for="f_name">
+                                                                <!-- BOOLEAN FIELDS -->
+                                                                <t t-if="f_type == 'boolean'">
+                                                                    <input type="checkbox"
+                                                                           t-att-name="f_name"
+                                                                           t-att-value="partner[f_name]"
+                                                                           t-att-checked="True if partner[f_name] else ''"
+                                                                           t-att-required="field.mandatory"/>
+                                                                </t>
+                                                                <t t-esc="field.label"/>
+                                                            </label>
+                                                            <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
+                                                            <t t-if="field.information">
+                                                                <!-- Modal Box Button-Link -->
+                                                                <href type="button"
+                                                                        class="btn-link information-modal-box-trigger"
+                                                                        data-toggle="modal"
+                                                                        t-att-data-target="'#information-'+f_name">
+                                                                    <span class="glyphicon glyphicon-info-sign"/>
+                                                                </href>
+                                                                <!-- Modal Box -->
+                                                                <div class="modal fade"
+                                                                     t-att-id="'information-'+f_name"
+                                                                     role="dialog">
+                                                                    <div class="modal-dialog">
+                                                                        <!-- Modal content-->
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <button type="button" class="close"
+                                                                                        data-dismiss="modal">&amp;times;</button>
+                                                                                <h4 class="modal-title">
+                                                                                    <t t-esc="field.label"/>
+                                                                                </h4>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <t t-raw="field.information"/>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                                                    Close
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </t>
+
+                                                            <!-- CHAR FIELDS -->
+                                                            <t t-if="f_type == 'char'">
+                                                                <input type="text"
+                                                                       t-att-name="f_name"
+                                                                       class="form-control"
+                                                                       t-att-value="partner[f_name]"
+                                                                       t-att-placeholder="field.placeholder"
+                                                                       t-att-required="field.mandatory"
+                                                                       t-att="validation_rule"
+                                                                />
+                                                            </t>
+
+                                                            <!-- SELECTION FIELDS (NOT Many2One!) -->
+                                                            <t t-if="f_type == 'selection'">
+                                                                <select t-att-name="f_name"
+                                                                        class="form-control"
+                                                                        t-att-required="field.mandatory">
+                                                                    <!-- Default empty option -->
+                                                                    <option value=""><t t-esc="field.placeholder"/></option>
+                                                                    <!-- Selection Values as options -->
+                                                                    <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                                                        <!-- Create Option List -->
+                                                                        <option t-att-value="option[0]"
+                                                                                t-att-selected="True if partner[f_name] == option[0] else ''">
+                                                                            <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                                            </t>
+
+                                                            <!-- SPECIAL FIELD: country_id (Many2One) -->
+                                                            <t t-if="f_name == 'country_id'">
+                                                                <select t-att-name="f_name"
+                                                                        class="form-control"
+                                                                        t-att-required="field.mandatory">
+                                                                    <option value=""><t t-esc="field.placeholder"/></option>
+                                                                    <t t-foreach="countries or []" t-as="country">
+                                                                        <!-- Set default country from res.config if none selected -->
+                                                                        <option t-att-value="country.id"
+                                                                                t-att-selected="'True' if (country.id == partner['country_id'].id or (country.id != partner['country_id'].id and country.code == website.country_default_value.code)) else ''">
+                                                                            <t t-esc="country.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                                            </t>
+
+                                                            <!-- SPECIAL FIELD: state_id (Many2One) -->
+                                                            <t t-if="f_name == 'state_id'">
+                                                                <select t-att-name="f_name"
+                                                                        class="form-control"
+                                                                        t-att-required="field.mandatory">
+                                                                    <option value=""><t t-esc="field.placeholder"/></option>
+                                                                    <t t-foreach="states or []" t-as="state">
+                                                                        <option t-att-value="state.id" style="display:none;"
+                                                                                t-att-data-country_id="state.country_id.id"
+                                                                                t-att-selected="state.id == partner['state_id'].id">
+                                                                            <t t-esc="state.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                                            </t>
+                                                        </div>
+                                                    </t>
+                                
+                                                    <!-- CLEARFIX DIV -->
+                                                    <t t-if="field.clearfix">
+                                                        <div t-att-class="'clearfix clearfix-' + f_name"/>
+                                                    </t>
+                                                </t>
+
+                                            </t>
+                                        </div>
+                                    </t>
+
+                                    <!-- Submit Button -->
+                                    <a id="apf_submit_button" class="btn btn-primary btn-lg a-submit">
+                                        <t t-if="website.apf_submit_button">
+                                            <span t-field="website.apf_submit_button"/>
+                                        </t>
+                                    </a>
+                                </form>
+
+                            </div>
+                        </div>
+
+                        <!-- bottom snippet area -->
+
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</openerp>

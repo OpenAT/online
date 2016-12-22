@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Extend res.partner form to include extra fields -->
+        <record model="ir.ui.view" id="auth_partner_form">
+            <field name="name">auth_partner_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="website" position="before">
+                    <field name="fstoken_update" readonly="True"/>
+                    <field name="fstoken_update_date" readonly="True"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Extend the res.config website settings form -->
+        <record id="view_auth_partner_form_settings" model="ir.ui.view">
+            <field name="name">auth_partner_form Website Fields</field>
+            <field name="model">website.config.settings</field>
+            <field name="inherit_id" ref="website.view_website_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@string='Domain']" position="after">
+                    <!-- auth_partner_form -->
+                    <group string="Auth Partner Form (fstoken)">
+                        <label for="apf_title_code"/>
+                        <div name="apf_title_code">
+                            <div class="oe_inline">
+                                <field name="apf_title_code"/>
+                            </div>
+                        </div>
+                        <label for="apf_token_label"/>
+                        <div name="apf_token_label">
+                            <div class="oe_inline">
+                                <field name="apf_token_label"/>
+                            </div>
+                        </div>
+                        <label for="apf_token_placeholder"/>
+                        <div name="apf_token_placeholder">
+                            <div class="oe_inline">
+                                <field name="apf_token_placeholder"/>
+                            </div>
+                        </div>
+                        <label for="apf_title_partner_data"/>
+                        <div name="apf_title_partner_data">
+                            <div class="oe_inline">
+                                <field name="apf_title_partner_data"/>
+                            </div>
+                        </div>
+                        <label for="apf_submit_button"/>
+                        <div name="apf_submit_button">
+                            <div class="oe_inline">
+                                <field name="apf_submit_button"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- APF PARTNER FIELDS: Create form, tree and list view for the checkout fields -->
+        <record model="ir.ui.view" id="apf_partner_fields_form">
+            <field name="name">website.apf_partner_fields form</field>
+            <field name="model">website.apf_partner_fields</field>
+            <field name="arch" type="xml">
+                <form string="APF Partner Fields">
+                    <group>
+                        <field name="sequence"/>
+                        <field name="show"/>
+                        <field name="res_partner_field_id"/>
+                        <field name="mandatory"/>
+                        <field name="label"/>
+                        <field name="placeholder"/>
+                        <field name="validation_rule"/>
+                        <field name="css_classes"/>
+                        <field name="clearfix"/>
+                        <field name="information"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="apf_partner_fields_tree">
+            <field name="name">website.apf_partner_fields tree</field>
+            <field name="model">website.apf_partner_fields</field>
+            <field name="arch" type="xml">
+                <tree string="APF Partner Fields" default_order="sequence" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="show"/>
+                    <field name="res_partner_field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="apf_partner_fields_search">
+            <field name="name">website.apf_partner_fields search</field>
+            <field name="model">website.apf_partner_fields</field>
+            <field name="arch" type="xml">
+                <search string="APF Partner Fields">
+                    <field name="show"/>
+                    <field name="res_partner_field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="apf_partner_fields_action">
+            <field name="name">Website APF Fields</field>
+            <field name="res_model">website.apf_partner_fields</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="apf_partner_fields_tree"/>
+            <field name="search_view_id" ref="apf_partner_fields_search"/>
+        </record>
+        <!-- And we add the Action to a Menu with the shortcut menuitem -->
+        <menuitem action="apf_partner_fields_action" id="apf_partner_fields_menu" parent="base.menu_config" sequence="95"/>
+
+    </data>
+</openerp>
