@@ -151,7 +151,7 @@
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_legal_terms_web"/>
             <field name="mandatory" eval="True"/>
             <field name="label">Accept Terms and Conditions</field>
-            <field name="css_classes">col-lg-6</field>
+            <field name="css_classes">col-lg-12</field>
             <field name="clearfix" eval="True"/>
             <field name="information">
 <![CDATA[
@@ -171,8 +171,8 @@
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Newsletter</field>
-            <field name="css_classes">col-lg-6</field>
-            <field name="clearfix" eval="False"/>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
         </record>
         
     </data>

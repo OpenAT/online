@@ -54,6 +54,7 @@ ATTENTION: The token must be at least 6 chars long, is alphanumeric and case sen
         'partner_firstname',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
         'data/data.xml',

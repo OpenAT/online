@@ -5,12 +5,12 @@
     width: 600px;
 }
 
-/* Form */
+/* FORM */
 #auth_partner_form {
     margin-bottom: 2em;
 }
 
-/* Form Elements */
+/* FORM ELEMENTS */
 #auth_partner_form label {
     color: #909090;
     font-size: 85%;
@@ -29,4 +29,9 @@
 }
 #apf_submit_button {
     margin-top: 1em;
+}
+
+/* JQUERY VALIDATE */
+.form-control-feedback {
+    right: 12px;
 }

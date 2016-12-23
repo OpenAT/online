@@ -48,7 +48,7 @@ class AuthPartnerForm(http.Controller):
                 messages += _('Code is valid!')
             else:
                 # Token was given but not valid!
-                # TODO: add counter to session and wait 30s after 6 wrong tries with fs_token
+                # TODO: Add a waiting time and expand it with every wrong try
                 errors += 'Wrong or expired code!'
 
         # Check for logged in user
@@ -61,7 +61,7 @@ class AuthPartnerForm(http.Controller):
                 # HINT: This should never happen except the website is already called with a fs_ptoken in the url
                 warnings += _('You are logged in but your login does not match the person for the given code! '
                               'You will change the data for %s. '
-                              'If you want to change you data instead please press the reset button.' % partner.name)
+                              'If you want to change your data instead please press the reset button.' % partner.name)
             else:
                 partner = user.partner_id
 
@@ -77,6 +77,7 @@ class AuthPartnerForm(http.Controller):
                 fname = field.res_partner_field_id.name
                 ftype = field.res_partner_field_id.ttype
                 # TODO: Do some field validation (e.g. Mandatory, Format, ...)
+                # TODO: Add a honeypot field
                 # Search for field values  given by the form inputs
                 if fname in kwargs:
                     # Fix for Boolean fields: convert str() to boolean()

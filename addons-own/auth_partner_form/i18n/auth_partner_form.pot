@@ -1,0 +1,365 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* auth_partner_form
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-12-23 13:36+0000\n"
+"PO-Revision-Date: 2016-12-23 13:36+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: auth_partner_form
+#: view:website:auth_partner_form.meinedaten
+msgid "&times;"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:ir.model,name:auth_partner_form.model_website_apf_partner_fields
+msgid "/meine-daten Partner Fields"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.birthdate
+msgid "1980-01-30"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.street_number_web
+msgid "52a"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.zip
+msgid "56382"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,information:auth_partner_form.legal_terms_web
+msgid "<p>\n"
+"    Ich erkläre mich mit den AGB einverstanden\n"
+"    <br>\n"
+"    <a href=\"#\">\n"
+"        Link zu den AGB.\n"
+"    </a>\n"
+"</p>\n"
+"\n"
+"            "
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,information:auth_partner_form.donation_deduction_optout_web
+msgid "<p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.</p>\n"
+"                <p>Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.</p><p>\n"
+"                <br>\n"
+"                </p><p>\n"
+"                    <strong>Erklärung (Stand Juni 2016):</strong><br>\n"
+"                    Für bestimmte Sonderausgaben, nämlich u.a. Spenden im Sinne des § 4a Einkommensteuergesetz wird für Zahlungen ab dem Jahr 2017 ein verpflichtender automatischer Datenaustausch zwischen der empfangenden Organisation und der Finanzverwaltung eingeführt.<br>\n"
+"                    Möchte der Steuerpflichtige keine Datenübermittlung und automatische Berücksichtigung, ist er nicht gehindert, Spenden zu leisten; in diesem Fall ist allerdings die steuerliche Berücksichtigung als Sonderausgabe grundsätzlich ausgeschlossen.<br>\n"
+"                    Der Steuerpflichtige verzichtet damit auf die steuerliche Berücksichtigung, was ihm bisher auch frei gestanden ist.<br>\n"
+"                    Es ist daher auch nicht vorgesehen, die Sonderausgaben selbst über die Steuererklärung in der Veranlagung geltend zu machen.<br>\n"
+"                    <br>\n"
+"                    <a href=\"https://www.bmf.gv.at/steuern/selbststaendige-unternehmer/einkommensteuer/FAQ-automatische-Datenuebermittlung-SA.html\">\n"
+"                        FAQ automatische Datenübermittlung SA\n"
+"                    </a>\n"
+"                </p>\n"
+"                \n"
+"            "
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,information:auth_partner_form.birthdate
+msgid "<p>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.\n"
+"                \n"
+"            </p>"
+msgstr ""
+
+#. module: auth_partner_form
+#: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_form
+#: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_search
+#: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_tree
+msgid "APF Partner Fields"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website,apf_bottom_snippets:0
+#: field:website,apf_top_snippets:0
+msgid "APF Top Snippets"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.legal_terms_web
+msgid "Accept Terms and Conditions"
+msgstr ""
+
+#. module: auth_partner_form
+#: view:website.config.settings:auth_partner_form.view_auth_partner_form_settings
+msgid "Auth Partner Form (fstoken)"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.birthdate
+msgid "Birthdate"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,css_classes:0
+msgid "CSS classes"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.city
+msgid "City"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,clearfix:0
+msgid "Clearfix"
+msgstr ""
+
+#. module: auth_partner_form
+#: view:website:auth_partner_form.meinedaten
+msgid "Close"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website,apf_title_code:0
+msgid "Code Header"
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:48
+#, python-format
+msgid "Code is valid!"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.country_id
+msgid "Country"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,create_uid:0
+msgid "Created by"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,create_date:0
+msgid "Created on"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.email
+msgid "EMail"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.firstname
+msgid "Firstname"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,id:0
+msgid "ID"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,information:0
+msgid "Information"
+msgstr ""
+
+#. module: auth_partner_form
+#: help:website.apf_partner_fields,information:0
+msgid "Information Text"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,label:0
+msgid "Label"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,write_uid:0
+msgid "Last Updated by"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,write_date:0
+msgid "Last Updated on"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.lastname
+msgid "Lastname"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.street
+msgid "Main Street 52"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,mandatory:0
+msgid "Mandatory"
+msgstr ""
+
+#. module: auth_partner_form
+#: view:website:auth_partner_form.meinedaten
+msgid "Meine Daten"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.donation_deduction_optout_web
+msgid "Meine Spenden bitte nicht absetzen"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.lastname
+msgid "Nachname"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.city
+msgid "New York"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.newsletter_web
+msgid "Newsletter"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:ir.model,name:auth_partner_form.model_res_partner
+msgid "Partner"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,placeholder:0
+msgid "Placeholder Text"
+msgstr ""
+
+#. module: auth_partner_form
+#: help:website.apf_partner_fields,clearfix:0
+msgid "Places a DIV box with .clearfix after this field"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,sequence:0
+msgid "Sequence"
+msgstr ""
+
+#. module: auth_partner_form
+#: help:website.apf_partner_fields,sequence:0
+msgid "Sequence number for ordering"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,show:0
+msgid "Show"
+msgstr ""
+
+#. module: auth_partner_form
+#: help:website.apf_partner_fields,show:0
+msgid "Show field in webpage"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.street
+msgid "Street"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.street_number_web
+msgid "Street Number"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website,apf_submit_button:0
+msgid "Submit Button"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.title_web
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.title_web
+msgid "Titel"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website,apf_token_label:0
+msgid "Token Label"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website,apf_token_placeholder:0
+msgid "Token Placeholder"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:res.partner,fstoken_update:0
+msgid "Update by FS Token"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:res.partner,fstoken_update_date:0
+msgid "Update by FS Token Date"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,validation_rule:0
+msgid "Validation Rule"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.firstname
+msgid "Vorname"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:ir.model,name:auth_partner_form.model_website
+msgid "Website"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:ir.actions.act_window,name:auth_partner_form.apf_partner_fields_action
+#: model:ir.ui.menu,name:auth_partner_form.apf_partner_fields_menu
+msgid "Website APF Fields"
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:62
+#, python-format
+msgid "You are logged in but your login does not match the person for the given code! You will change the data for %s. If you want to change your data instead please press the reset button."
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:58
+#, python-format
+msgid "You are logged in but your user has no res.partner assigned!"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website,apf_title_partner_data:0
+msgid "Your-Data Header"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.zip
+msgid "ZIP"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.email
+msgid "meine.emailadresse@test.com"
+msgstr ""
+
+#. module: auth_partner_form
+#: field:website.apf_partner_fields,res_partner_field_id:0
+msgid "res.partner Field"
+msgstr ""
+
