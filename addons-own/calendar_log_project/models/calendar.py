@@ -201,10 +201,10 @@ class hr_timesheet_sheet_sheet_day_cat_detail(osv.osv):
         tools.drop_view_if_exists(cr, 'hr_timesheet_sheet_sheet_day_cat_detail')
         cr.execute(""" CREATE OR REPLACE VIEW hr_timesheet_sheet_sheet_day_cat_detail as (
             select
-                 ts.id * 100000 + ((period.day::date - ts.date_from::timestamp::date) + 1) AS id
-                ,ts.id timesheet_id
-                ,ts.employee_id
-                ,ts.user_id
+                 cast((cast(ts.id AS BIGINT) * 100000 + ((period.day::date - ts.date_from::timestamp::date) + 1)) AS BIGINT) AS id
+                ,cast(ts.id AS BIGINT) AS timesheet_id
+                ,cast(ts.employee_id AS BIGINT)
+                ,cast(ts.user_id AS BIGINT)
                 ,period.day as name
                 ,count(distinct e.id)
                 ,sum(case when cc.name = 'GENERAL ACTIVITY' then e.duration else 0 end) ga
