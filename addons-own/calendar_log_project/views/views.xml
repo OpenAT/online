@@ -8,28 +8,28 @@
             <field name="model">calendar.event</field>
             <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='duration']" position="after">
+                <xpath expr="//div[@class='oe_title']" position="after">
+                    <div>
+                        <group>
+                            <group>
+                                <field name="project_id" attrs="{'required':[('is_worklog', '==', True)]}"/>
+                                <field name="task_id"/>
+                            </group>
+                            <group>
+                                <field name="is_worklog"/>
+                                <field name="is_attendance"/>
+                            </group>
+                        </group>
+                    </div>
+                </xpath>
 
-                    <field name="project_id"/>
-                    <div style=" margin-bottom: 1em; color: grey; font-size: 10px" colspan="2">
-                        The tasks depends on the project!
-                        Clear the project if you want to search for all tasks!
-                    </div>
-                    <field name="task_id"/>
-                    <field name="is_worklog"/>
-                    <div style=" margin-bottom: 1em; color: grey; font-size: 10px" colspan="2">
-                        If ticked a worklog entry is automatically created for this meeting!
-                        Always change the meeting to change the worklog entry!
-                    </div>
+                <xpath expr="//page[@string='Meeting Details']" position="after">
+                    <page string="Worklog" attrs="{'invisible':[('is_worklog', '==', False)]}">
+                        <label for="worklog_text" string="Worklog Overwrite"/>
+                        <field name="worklog_text"/>
+                    </page>
                 </xpath>
-                <xpath expr="//label[@for='description']" position="before">
-                        <label for="worklog_text"/>
-                        <div style=" margin-top: 1em; color: grey; font-size: 10px">
-                            If "Is Worklog" is ticked this text will be used for the work log entry.
-                            If left empty the meeting title will be used for the worklog entry!
-                        </div>
-                        <field name="worklog_text" style=" margin-bottom: 1em;"/>
-                </xpath>
+
                 <xpath expr="//label[@for='description']" position="after">
                         <div style=" margin-top: 1em; color: grey; font-size: 10px">
                             This text will be used for invitation emails and therefore may be visible to customers!
@@ -48,7 +48,8 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='location']" position="after">
                     <field name="is_worklog"/>
-                    <field name="project_id"/>
+                    <field name="is_attendance"/>
+                    <field name="project_id" attrs="{'required':[('is_worklog', '==', True)]}"/>
                     <field name="task_id"/>
                 </xpath>
                 <xpath expr="//form[@string='Meetings']/group" position="after">
@@ -58,6 +59,7 @@
             </field>
         </record>
 
+
         <!-- INHERIT: CALENDAR SEARCH VIEW -->
         <record id="view_calendar_log_project_search" model="ir.ui.view">
             <field name="name">Calendar Search View</field>
@@ -66,6 +68,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="is_worklog"/>
+                    <field name="is_attendance"/>
                     <field name="project_id"/>
                     <field name="task_id"/>
                     <field name="worklog_text"/>
@@ -74,6 +77,8 @@
                     <separator/>
                     <filter name="is_worklog" string="Is Worklog"  domain="[('is_worklog','=',True)]"/>
                     <filter name="is_not_worklog" string="Is Not Worklog"  domain="[('is_worklog','=',False)]"/>
+                    <filter name="is_attendance" string="Is Attendance"  domain="[('is_attendance','=',True)]"/>
+                    <filter name="is_not_attendance" string="Is Not Attendance"  domain="[('is_attendance','=',False)]"/>
                     <separator/>
                 </xpath>
                 <xpath expr="//filter[@string='Privacy']" position="after">
@@ -104,6 +109,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="is_worklog"/>
+                    <field name="is_attendance"/>
                 </xpath>
             </field>
         </record>

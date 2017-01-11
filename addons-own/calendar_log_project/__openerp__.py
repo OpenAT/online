@@ -16,6 +16,7 @@ Use the calender as a simple work log.
     'version': '0.1',
     'depends': [
         'calendar',
+        'web_calendar',
         'project',
         'hr_timesheet_sheet',
         'project_timesheet',
