@@ -10,6 +10,7 @@
             <field name="arch" type="xml">
                 <field name="website" position="after">
                     <field name="birthdate"/>
+                    <field name="birthdate_web"/>
                     <field name="title_web"/>
                     <field name="company_name_web"/>
                     <field name="street_number_web"/>

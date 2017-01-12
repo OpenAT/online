@@ -32,6 +32,8 @@ class res_partner(osv.Model):
         'donation_deduction_optout_web': fields.boolean(string='Donation Deduction OptOut Web'),
         # Akzeptiere AGBs
         'legal_terms_web': fields.boolean(string='Accept Legal Terms Web'),
+        # Birthdate Web to have a real birthdate date format field
+        'birthdate_web': fields.date(string='Birthdate Web'),
     }
 
 class product_website_price_buttons(osv.Model):

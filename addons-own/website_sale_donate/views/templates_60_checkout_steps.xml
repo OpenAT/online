@@ -231,7 +231,7 @@
                 <t t-if="billing_field.show">
 
                     <!-- FIELD GENERATORS: BILLING FIELDS -->
-                    <t t-if="f_type in ('boolean', 'char', 'selection') or f_name in ['country_id', 'state_id']">
+                    <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
                         <!-- FORM GROUP -->
                         <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
                             <!-- LABEL for all fields -->
@@ -282,9 +282,9 @@
                                     </div>
                                 </div>
                             </t>
-                            <!-- CHAR FIELDS -->
-                            <t t-if="f_type == 'char'">
-                                <input type="text"
+                            <!-- CHAR AND DATE FIELDS -->
+                            <t t-if="f_type in ['char', 'date']">
+                                <input t-att-type="'text' if f_type == 'char' else 'date'"
                                        t-att-name="f_name"
                                        class="form-control"
                                        t-att-value="checkout.get(f_name)"
