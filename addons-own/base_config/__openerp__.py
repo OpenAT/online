@@ -101,6 +101,8 @@ You still need to do some things by Hand after installing this module:
         'payment_ogonedadi',
         'payment_postfinance',
         'fs_groups',
+        'auth_partner',
+        'auth_partner_form',
     ],
     'data': [
         'data/data_project.xml',

@@ -52,6 +52,7 @@ WARNING: The value of fs_ptoken is case sensitive!
         'web',
     ],
     'data': [
+        'security/fs_token_security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
     ],
