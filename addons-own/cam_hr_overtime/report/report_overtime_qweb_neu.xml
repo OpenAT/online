@@ -48,8 +48,8 @@
                                         <h3>Zeiterfassung.: <strong><span t-field="ts.employee_id.remaining_leaves"/></strong></h3>
                                         <h4>Status.: <span t-field="ts.state"/></h4>
                                     </div>
-                                    <div class="col-xs-2" style="margin-left:-15px;">
-                                        <img  t-if="ts.company_id.logo" t-att-src="'data:image/png;base64,%s' % ts.company_id.logo" style="max-height: 65px;" /><br/>
+                                    <div class="col-xs-2">
+                                        <img  t-if="ts.company_id.logo" t-att-src="'data:image/png;base64,%s' % ts.company_id.logo" style="max-height: 28px;" /><br/>
                                     </div>
                                 </div>
                             </div>

@@ -3,7 +3,7 @@
     <data>
 
         <record id="paperformat_dd" model="report.paperformat">
-            <field name="name">European A4 Hofer Timesheet</field>
+            <field name="name">European A4 DD Timesheet</field>
             <field name="default" eval="True" />
             <field name="format">A4</field>
             <field name="page_height">0</field>
