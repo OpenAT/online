@@ -126,11 +126,11 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Kommt/Geht:</td>
-                                                    <td style="text-align: right;"><span t-field="ts.total_attendance2" style="font-weight:bold;"/></td>
+                                                    <td style="text-align: right;"><span t-esc="'%.2f'%(ts.total_attendance2)" style="font-weight:bold;"/></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Berechnete Anwesenheit:</td>
-                                                    <td style="text-align: right;"><span t-field="ts.total_overtime" style="font-weight:bold; padding:1px;"/></td>
+                                                    <td style="text-align: right;"><span t-esc="'%.2f'%(ts.total_overtime)" style="font-weight:bold; padding:1px;"/></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Stundenkorrektur:</td>
@@ -138,7 +138,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Summe Mehrstunden:</td>
-                                                    <td style="text-align: right;"><span t-field="ts.total_overtime_and_correction" style="font-weight:bold; padding:1px;"/></td>
+                                                    <td style="text-align: right;"><span t-esc="'%.2f'%(ts.total_overtime_and_correction)" style="font-weight:bold; padding:1px;"/></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -189,8 +189,8 @@
                                                 <th style="width: 5%;">Abw.</th>
                                                 <th style="width: 5%;">K/G</th>
                                                 <th style="width: 5%;">Anw.</th>
-                                                <th style="width: 10%;">Anworg-t-field.</th>
-                                                <th style="width: 10%;">Anworg-t-esc.</th>
+                                                <!-- <th style="width: 10%;">Anworg-t-field.</th>
+                                                <th style="width: 10%;">Anworg-t-esc.</th> -->
 
                                             </tr>
                                         </thead>
@@ -205,8 +205,8 @@
                                                     <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.others).split('.')[0]), int(float(str('%.2f' % day.others).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
                                                     <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.attendance).split('.')[0]), int(float(str('%.2f' % day.attendance).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
                                                     <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), int(float(str('%.2f' % day.overtime).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
-                                                    <td style="padding:1px;"><span t-field="day.overtime" style="width: 10%; padding:1px;"/></td>
-                                                    <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td>
+                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" style="width: 10%; padding:1px;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
                                                     <!-- <td style="padding:1px;"><span t-esc="(Math.round((day.overtime %1) * 60))" style="width: 10%; padding:1px;"/></td> -->
                                                     <!-- <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), math.round(day.overtime.split('.')[1]) %1) *60))" style="width: 10%; padding:1px;"/></td> -->
                                                     <!-- <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
