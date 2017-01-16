@@ -61,6 +61,11 @@ class website_sale_donate(website_sale):
     # /shop/product/<model("product.template"):product>
     @http.route()
     def product(self, product, category='', search='', **kwargs):
+        # Make sure category is a valid int or an empty string!
+        try:
+            category = int(category)
+        except:
+            category = ''
 
         # Store the current request url in the session for possible returns
         # INFO: html escaping is done by request.redirect so not needed here!
