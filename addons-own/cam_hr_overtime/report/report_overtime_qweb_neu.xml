@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+         <!-- Qweb Report Action -->
+        <report
+            id="report_overtime_qweb_neu"
+            model="hr_timesheet_sheet.sheet"
+            string="Timesheet Report PDF"
+            report_type="qweb-pdf"
+            name="cam_hr_overtime.report_overtime_qweb_template"
+            file="cam_hr_overtime.report_overtime_qweb_template"
+            attachment_use="True"
+            attachment="(object.state in ('draft','Confirmed','done')) and ('Timesheet-'+(object.user_id.name or '')+'-'+(object.date_from or '').replace('/','')+'.pdf')"
+        />
+
+                <!-- Main Document Template -->
+        <template id="report_overtime_qweb_template">
+            <t t-call="report.html_container">
+                <t t-foreach="doc_ids" t-as="doc_id">
+                    <t t-raw="translate_doc(doc_id, doc_model, 'user_id.lang', 'cam_hr_overtime.report_overtime_qweb_document')"/>
+                </t>
+            </t>
+        </template>
+
+<!--        <template id="report_overtime_qweb_pdf">
+            <t t-call="cam_hr_overtime.report_overtime_qweb_document"/>
+        </template> -->
+                <!-- Qweb Report -->
+        <template id="report_overtime_qweb_document">
+             <t t-call="report.html_container">
+                 <!--<t t-call="report.external_layout">-->
+                    <t t-foreach="docs" t-as="ts">
+                        <div class="page">
+                            <style type="text/css">
+                                body {
+                                    font-size: 10pt;
+                                }
+                                td { padding: 1px !important; }
+                            </style>
+                            <div class="container">
+                                <div class="row" style="border-bottom: 4px solid rgba(0,0,0,.1);">
+                                    <div class="col-xs-5">
+                                        <h2><span t-field="ts.employee_id"/></h2>
+                                        <h4><span t-field="ts.date_from"/> bis <span t-field="ts.date_to"/></h4>
+                                    </div>
+                                    <div class="col-xs-5">
+                                        <h3>Zeiterfassung.: <strong><span t-field="ts.employee_id.remaining_leaves"/></strong></h3>
+                                        <h4>Status.: <span t-field="ts.state"/></h4>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <img  t-if="ts.company_id.logo" t-att-src="'data:image/png;base64,%s' % ts.company_id.logo" style="max-height: 28px;" /><br/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <table class="table table-condensed" style="padding:1px;">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2" style="width: 90%;">Summe bisheriger Zeiterfassungen:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Urlaub in Tagen:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.sum_vacation_days" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Urlaub (h):</td>
+                                                    <td style="text-align: right;"><span t-field="ts.sum_vacation" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Krankenstand:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.sum_illness" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Abwesenheit/Feiertage:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.sum_others" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kommt/Geht:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.sum_attendance" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Summe Überstunden:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.sum_overtime" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                            </tbody>
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2" style="width: 90%;">Urlaub aktuell:</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>Resturlaub abz. gen. Urlaub:</td>
+                                                    <td style="text-align: right;"><span t-esc="ts.sum_vacation_days-ts.total_vacation_days+ts.vacation_alloc_days" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <table class="table table-condensed" style="padding:1px;">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2" style="width: 85%;">Aktueller Monat:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Urlaub in Tagen:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_vacation_days" style="font-weight:bold;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Urlaub (h):</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_vacation" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Krankenstand:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_illness" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Abwesenheit/Feiertage:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_others" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kommt/Geht:</td>
+                                                    <td style="text-align: right;"><span t-esc="'%.2f'%(ts.total_attendance2)" style="font-weight:bold;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Berechnete Anwesenheit:</td>
+                                                    <td style="text-align: right;"><span t-esc="'%.2f'%(ts.total_overtime)" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Stundenkorrektur:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_overtime_correction" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Summe Mehrstunden:</td>
+                                                    <td style="text-align: right;"><span t-esc="'%.2f'%(ts.total_overtime_and_correction)" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <table class="table table-condensed" style="padding:1px;">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2" style="width: 85%;">Projekterfassung:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Kommt/Geht:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_attendance" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Projekterfassung:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_timesheet" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Differenz:</td>
+                                                    <td style="text-align: right;"><span t-field="ts.total_difference" style="font-weight:bold; padding:1px;"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3>Anwesenheit pro Tag</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container">
+                                <div class="row">
+                                    <table class="table table-condensed .small" style="padding:1px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%;">Tag</th>
+                                                <th style="width: 5%;">Gepl.</th>
+                                                <th style="width: 10%;">Urlaub</th>
+                                                <th style="width: 8%;">Krank.</th>
+                                                <th style="width: 5%;">Abw.</th>
+                                                <th style="width: 5%;">K/G</th>
+                                                <th style="width: 5%;">Anw.</th>
+                                                <!-- <th style="width: 10%;">Anworg-t-field.</th>
+                                                <th style="width: 10%;">Anworg-t-esc.</th> -->
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="ts.day_details" t-as="day">
+                                                <tr>
+                                                    <td style="padding:1px;"><span t-field="day.name" t-field-options='{"format": "dd"}' style="width: 5%;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.planned).split('.')[0]), int(float(str('%.2f' % day.planned).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                    <!-- <span t-field="track.duration" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}"/>-->
+                                                    <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.vacation).split('.')[0]), int(float(str('%.2f' % day.vacation).split('.')[1])/100*60))" style="width: 10%; padding:1px;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.illness).split('.')[0]), int(float(str('%.2f' % day.illness).split('.')[1])/100*60))" style="width: 8%; padding:1px;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.others).split('.')[0]), int(float(str('%.2f' % day.others).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.attendance).split('.')[0]), int(float(str('%.2f' % day.attendance).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), int(float(str('%.2f' % day.overtime).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" style="width: 10%; padding:1px;"/></td>
+                                                    <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-esc="(Math.round((day.overtime %1) * 60))" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), math.round(day.overtime.split('.')[1]) %1) *60))" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-esc="'%.5f'%day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-raw="day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-esc="formatLang('day.overtime', digits=2)" style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" t-field-options='{"widget": "float_time"}' style="width: 10%; padding:1px;"/></td> -->
+                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}" style="width: 5%; padding:1px;"/></td> -->
+                                                    <!-- <span t-field="track.duration" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}"/> -->
+                                                    <!-- TESTS console -->
+                                                    <!-- print "%02d:%02d" % (int(22.256), int(round(22.256 % 1  100 / 100  60,0)))-->
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                 <!--</t>-->
+             </t>
+        </template>
+
+    </data>
+</openerp>

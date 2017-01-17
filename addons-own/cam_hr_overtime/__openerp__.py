@@ -47,6 +47,8 @@
         'res_config_view.xml',
         'report/overtime_report_view.xml',
         'report/report_overtime_qweb.xml',
+        'report/report_overtime_qweb_neu.xml',
+        'report/paperformat_dd.xml',
     ],
     'installable': True,
     'active': False,
