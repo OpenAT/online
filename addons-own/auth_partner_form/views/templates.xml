@@ -17,7 +17,7 @@
             <t t-call="website.layout">
                 <t t-set="title">Meine Daten</t>
                 <div id="wrap">
-                    <div class="container auth_partner_form">
+                    <div class="container apf_container">
 
                         <!-- Top snippet area -->
                         <div class="row">

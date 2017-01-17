@@ -34,7 +34,7 @@
             <field name="mandatory" eval="False"/>
             <field name="label">Titel</field>
             <field name="placeholder">Titel</field>
-            <field name="css_classes">col-lg-2</field>
+            <field name="css_classes">col-lg-3</field>
             <field name="clearfix" eval="False"/>
         </record>
         <record id="firstname" model="website.apf_partner_fields">
@@ -44,7 +44,7 @@
             <field name="mandatory" eval="True"/>
             <field name="label">Firstname</field>
             <field name="placeholder">Firstname</field>
-            <field name="css_classes">col-lg-5</field>
+            <field name="css_classes">col-lg-4</field>
             <field name="clearfix" eval="False"/>
         </record>
         <record id="lastname" model="website.apf_partner_fields">

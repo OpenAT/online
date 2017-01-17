@@ -1,9 +1,12 @@
 @charset "utf-8";
 
-/* Set width of form */
-.auth_partner_form > .container {
-    width: 600px;
+/* SMALLER ON LARGE SCREENS */
+@media (min-width: 992px){
+    #wrap .apf_container.container {
+        width: 68%;
+    }
 }
+
 
 /* FORM */
 #auth_partner_form {
