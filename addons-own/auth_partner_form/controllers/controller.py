@@ -20,6 +20,8 @@ from openerp import http
 from openerp.http import request
 from openerp import fields
 from openerp.tools.translate import _
+import time
+import datetime
 
 
 class AuthPartnerForm(http.Controller):
@@ -33,11 +35,30 @@ class AuthPartnerForm(http.Controller):
         warnings = list()
         messages = list()
         fs_ptoken = kwargs.get('fs_ptoken')
+        countries = None
+        states = None
+
+        # Honey Pot Field Test
+        if kwargs.get('fs_hpf'):
+            if request.uid != request.website.user_id.id:
+                errors.append(_('Data found in field with label: "Do not enter data here please!"'))
+            return http.request.render('auth_partner_form.meinedaten',
+                                       {'kwargs': dict(),
+                                        'fs_ptoken': '',
+                                        'partner': '',
+                                        'apf_fields': list(),
+                                        'field_errors': dict(),
+                                        'errors': errors,
+                                        'warnings': warnings,
+                                        'messages': messages,
+                                        'countries': None,
+                                        'states': None,
+                                        })
 
         # Check for fs_ptoken
         if fs_ptoken:
             # Sanitize fs_ptoken (remove all non alphanumeric characters and convert all chars to uppercase)
-            fs_ptoken = ''.join(c.upper() for c in fs_ptoken if c.isalnum())
+            fs_ptoken = ''.join(c.upper() for c in fs_ptoken.strip() if c.isalnum())
             # Find related res.partner for the token
             fstoken_obj = request.env['res.partner.fstoken']
             fstoken = fstoken_obj.sudo().search([('name', '=', fs_ptoken)], limit=1)
@@ -45,11 +66,30 @@ class AuthPartnerForm(http.Controller):
             if fstoken and fields.Datetime.from_string(fstoken.expiration_date) >= fields.datetime.now():
                 # Valid Token was found!
                 partner = fstoken.partner_id
-                messages += _('Code is valid!')
+                messages.append(_('Your code is valid!'))
+
+            # Wrong or expired token was given
             else:
-                # Token was given but not valid!
-                # TODO: Add a waiting time and expand it with every wrong try
-                errors += 'Wrong or expired code!'
+                errors.append('Wrong or expired code!')
+                field_errors['fs_ptoken'] = 'fs_ptoken'
+
+                # Add a delay of a second for every wrong try for the same session in the last 24h
+                if request.session.get('wrong_token_date'):
+                    # Reset if last incorrect try is older than 24h
+                    if datetime.datetime.now() > request.session['wrong_token_date'] + datetime.timedelta(hours=24):
+                        request.session['wrong_token_date'] = datetime.datetime.now()
+                        request.session['wrong_token_tries'] = 1
+                    else:
+                        if request.session['wrong_token_tries'] > 3:
+                            time.sleep(2)
+                        request.session['wrong_token_tries'] += 1
+                # This is the first wrong try so initialize "wrong_token_day" and "wrong_token_tries"
+                else:
+                    request.session['wrong_token_date'] = datetime.datetime.now()
+                    request.session['wrong_token_tries'] = 1
+
+                # TODO: Maybe add protection for new sessions spamming from the same ip?
+                #       Problem: slow cause i need to store the ips in the database
 
         # Check for logged in user
         if request.uid != request.website.user_id.id:
@@ -59,45 +99,60 @@ class AuthPartnerForm(http.Controller):
             # Check if the res.partner of the logged in user matches the found partner by the fs_ptoken
             if partner and partner.id != user.partner_id.id:
                 # HINT: This should never happen except the website is already called with a fs_ptoken in the url
-                warnings += _('You are logged in but your login does not match the person for the given code! '
-                              'You will change the data for %s. '
-                              'If you want to change your data instead please press the reset button.' % partner.name)
+                warnings.append(_('You are logged in but your login does not match the person for the given code! '
+                                  'You will change the data for %s. '
+                                  'If you want to change your data instead please clear the token code' % partner.name))
             else:
                 partner = user.partner_id
 
-        # Update the partner with the values from the from inputs
+        # ON DATA POST: Update the partner with the values from the from inputs
+        # HINT: At this point a partner could only be found if the user had a valid code or is logged in
         if partner:
             apf_fields = request.env['website.apf_partner_fields']
             apf_fields = apf_fields.sudo().search([])
             fields_to_update = dict()
+
+            # Add countries and states
+            countries = request.env['res.country']
+            countries = countries.sudo().search([])
+            states = request.env['res.country.state']
+            states = states.sudo().search([])
 
             # Update the res.partner with the values from kwargs if any
             # HINT: Since we know that either the token or the login is correct at this point the update is ok
             for field in apf_fields:
                 fname = field.res_partner_field_id.name
                 ftype = field.res_partner_field_id.ttype
-                # TODO: Do some field validation (e.g. Mandatory, Format, ...)
-                # TODO: Add a honeypot field
+
+                # Field validation
+                # ToDo: Add date field validation for format dd.mm.YYYY
+                if field.mandatory and kwargs and not kwargs.get(fname):
+                    field_errors[fname] = fname
+
                 # Search for field values  given by the form inputs
                 if fname in kwargs:
                     # Fix for Boolean fields: convert str() to boolean()
                     if ftype == 'boolean':
                         fields_to_update[fname] = True if kwargs[fname] else False
                     else:
-                        fields_to_update[fname] = kwargs[fname]
-            # If we found any fields update the res.partner now
-            if fields_to_update:
-                partner.sudo().write(fields_to_update)
+                        value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
+                        fields_to_update[fname] = value
 
-        # Add countries and states
-        countries = request.env['res.country']
-        countries = countries.sudo().search([])
-        states = request.env['res.country.state']
-        states = states.sudo().search([])
+            # Update the res.partner if we did not found any errors
+            if fields_to_update and not field_errors:
+                if partner.sudo().write(fields_to_update):
+                    messages.append(_('Your data was successfully updated!'))
+                else:
+                    warnings.append(_('Your data could not be updated. Please try again.'))
+
+            # Field errors message
+            if field_errors:
+                errors.append(_('Missing or incorrect information! Please check your input.'))
+
 
         return http.request.render('auth_partner_form.meinedaten',
                                    {'kwargs': kwargs,
-                                    'fs_ptoken': kwargs.get('fs_ptoken'),
+                                    'fs_ptoken': fs_ptoken,
                                     'partner': partner,
                                     'apf_fields': apf_fields,
                                     'field_errors': field_errors,

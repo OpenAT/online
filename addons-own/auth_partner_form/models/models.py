@@ -16,6 +16,7 @@
 #
 ##############################################################################
 from openerp import models, fields
+from openerp.tools.translate import _
 
 
 class ResPartner(models.Model):
@@ -29,13 +30,14 @@ class WebsiteApfSettings(models.Model):
     _inherit = 'website'
 
     # Button Text and Headlines
-    apf_title_code = fields.Char(string='Code Header', default="Your Code", translate=True)
-    apf_token_label = fields.Char(string='Token Label', default="Code without dashes", translate=True)
+    apf_title_code = fields.Char(string='Code Header', default=_("Your Code"), translate=True)
+    apf_token_label = fields.Char(string='Token Label', default=_("Code without dashes"), translate=True)
     apf_token_placeholder = fields.Char(string='Token Placeholder', default="A4N - 53B - XH7 - 4J4", translate=False)
-    apf_title_partner_data = fields.Char(string='Your-Data Header', default="Your Data", translate=True)
-    apf_submit_button = fields.Char(string='Submit Button', default="Submit", translate=True)
+    apf_title_partner_data = fields.Char(string='Your-Data Header', default=_("Your Data"), translate=True)
+    apf_submit_button = fields.Char(string='Submit Button', default=_("Submit"), translate=True)
     # Snippet Areas
     apf_top_snippets = fields.Html(string='APF Top Snippets', translate=True)
+    apf_yourdata_snippets = fields.Html(string='APF Your Data Snippets', translate=True)
     apf_bottom_snippets = fields.Html(string='APF Top Snippets', translate=True)
 
 
@@ -49,6 +51,7 @@ class ResConfigApfSetting(models.Model):
     apf_token_placeholder = fields.Char(related='website_id.apf_token_placeholder')
     apf_title_partner_data = fields.Char(related='website_id.apf_title_partner_data')
     apf_submit_button = fields.Char(related='website_id.apf_submit_button')
+
 
 
 class ApfPartnerFields(models.Model):

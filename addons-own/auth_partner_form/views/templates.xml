@@ -13,13 +13,20 @@
         </template>
 
         <!-- TEMPLATE meinedaten -->
-        <template id="meinedaten" name="Auth Partner Form Website Template">
+        <template id="meinedaten" name="Auth Partner Form Website Template" page="True">
             <t t-call="website.layout">
                 <t t-set="title">Meine Daten</t>
-                <div class="oe_structure auth_partner_form">
-                    <div class="container">
-                        <!-- Top snippet area -->
+                <div id="wrap">
+                    <div class="container auth_partner_form">
 
+                        <!-- Top snippet area -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div t-field="website.apf_top_snippets" class="oe_structure apf_top_snippets"/>
+                            </div>
+                        </div>
+
+                        <!-- Token and partner data input -->
                         <div class="row">
                             <div class="col-md-12">
 
@@ -28,41 +35,90 @@
                                       action="/meine-daten"
                                       method="post">
 
-                                    <!-- Code -->
-                                    <!-- Only show token input field if user is NOT logged in -->
-                                    <t t-if="website.user_id == user_id">
-                                        <div class="row apf_token_data">
-                                            <div class="col-md-12">
-                                                <!-- Header for code input-->
+                                    <!-- Token Input -->
+                                    <!-- Hide the token Section if the user is logged in -->
+                                    <div class="row apf_token_data">
+                                        <div class="col-md-12">
+                                            <!-- Header for code input-->
+                                            <t t-if="website.apf_title_code">
                                                 <h2>
                                                     <span t-field="website.apf_title_code"/>
                                                 </h2>
-                                                <!-- Code input (fs_ptoken) -->
-                                                <div class="form-group">
-                                                    <label class="control-label" for="fs_ptoken">
-                                                        <span t-field="website.apf_token_label"/>
-                                                    </label>
-                                                    <input name="fs_ptoken"
-                                                           type="text"
-                                                           class="form-control input-lg"
-                                                           t-att-value="fs_ptoken"
-                                                           t-att-placeholder="website.apf_token_placeholder"
-                                                    />
-                                                </div>
+                                            </t>
+                                            <!-- Code input (fs_ptoken) -->
+                                            <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + field_errors.get('fs_ptoken')) if field_errors.get('fs_ptoken') else '')">
+                                                <label class="control-label" for="fs_ptoken">
+                                                    <span t-field="website.apf_token_label"/>
+                                                </label>
+                                                <input name="fs_ptoken"
+                                                       type="text"
+                                                       class="form-control input-lg"
+                                                       t-att-value="fs_ptoken"
+                                                       t-att-placeholder="website.apf_token_placeholder"
+                                                       t-att-disabled="website.user_id != user_id"
+                                                />
                                             </div>
                                         </div>
-                                    </t>
+                                    </div>
 
-                                    <!-- TODO: Success/Error message(s) -->
+                                    <!-- Honeypot Field (hidden by position) -->
+                                    <div class="row apf_hpf" style="position: absolute; left: -99999px; top: -99999px;">
+                                        <div class="col-md-12">
+                                            <!-- Code input (fs_ptoken) -->
+                                            <div class="form-group">
+                                                <label class="control-label" for="fs_hpf">
+                                                    <span>Do not enter data here please!</span>
+                                                </label>
+                                                <input name="fs_hpf"
+                                                       type="text"
+                                                       class="form-control"
+                                                       placeholder="Do not enter data here please!"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                    <!-- Get res.partner data (if logged in or fs_ptoken was correct) -->
+                                    <!-- Error, Warning and Success message(s) -->
+                                    <div class="row apf_messages">
+                                        <div class="col-md-12">
+                                            <t t-foreach="errors" t-as="error">
+                                                <div class="alert alert-danger" role="alert">
+                                                    <t t-esc="error"/>
+                                                </div>
+                                            </t>
+                                            <t t-foreach="warnings" t-as="warning">
+                                                <div class="alert alert-warning" role="alert">
+                                                    <t t-esc="warning"/>
+                                                </div>
+                                            </t>
+                                            <t t-foreach="messages" t-as="message">
+                                                <div class="alert alert-success" role="alert">
+                                                    <t t-esc="message"/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Data input for the partner -->
                                     <t t-if="partner">
                                         <div class="row apf_partner_data">
+
+                                            <!-- Your Data snippet area -->
                                             <div class="col-md-12">
-                                                <h2>
-                                                   <span t-field="website.apf_title_partner_data"/>
-                                                </h2>
+                                                <div t-field="website.apf_yourdata_snippets" class="oe_structure apf_yourdata_snippets"/>
                                             </div>
+
+                                            <!-- Header -->
+                                            <t t-if="website.apf_title_partner_data">
+                                                <div class="col-md-12">
+                                                    <h2>
+                                                       <span t-field="website.apf_title_partner_data"/>
+                                                    </h2>
+                                                </div>
+                                            </t>
+
+                                            <!-- Fields -->
                                             <t t-foreach="apf_fields" t-as="field">
                                                 <t t-set="f_name" t-value="field.res_partner_field_id.name"/>
                                                 <t t-set="f_type" t-value="field.res_partner_field_id.ttype"/>
@@ -75,13 +131,13 @@
 
                                                 <!-- DEBUG -->
                                                 <!--<div><t t-raw="f_name"/> <t t-raw="f_type"/> Value: <t t-raw="partner[f_name]"/></div>-->
-                                                
+
                                                 <t t-if="field.show">
-                                
+
                                                     <!-- FORM INPUT BY FIELD GENERATOR -->
-                                                    <t t-if="f_type in ('boolean', 'char', 'selection') or f_name in ['country_id', 'state_id']">
+                                                    <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
                                                         <!-- FORM GROUP -->
-                                                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                                                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + field_errors.get(f_name)) if field_errors.get(f_name) else '')">
                                                             <!-- LABEL for all fields -->
                                                             <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if field.mandatory else '')"
                                                                    t-att-for="f_name">
@@ -132,11 +188,23 @@
                                                             </t>
 
                                                             <!-- CHAR FIELDS -->
-                                                            <t t-if="f_type == 'char'">
+                                                            <t t-if="f_type in ['char',]">
                                                                 <input type="text"
                                                                        t-att-name="f_name"
                                                                        class="form-control"
                                                                        t-att-value="partner[f_name]"
+                                                                       t-att-placeholder="field.placeholder"
+                                                                       t-att-required="field.mandatory"
+                                                                       t-att="validation_rule"
+                                                                />
+                                                            </t>
+
+                                                            <!-- DATE FIELDS -->
+                                                            <t t-if="f_type in ['date',]">
+                                                                <input type="text"
+                                                                       t-att-name="f_name"
+                                                                       class="form-control"
+                                                                       t-att-value="datetime.datetime.strftime(datetime.datetime.strptime(partner[f_name],'%Y-%m-%d'), '%d.%m.%Y') if partner[f_name] else ''"
                                                                        t-att-placeholder="field.placeholder"
                                                                        t-att-required="field.mandatory"
                                                                        t-att="validation_rule"
@@ -194,13 +262,12 @@
                                                             </t>
                                                         </div>
                                                     </t>
-                                
+
                                                     <!-- CLEARFIX DIV -->
                                                     <t t-if="field.clearfix">
                                                         <div t-att-class="'clearfix clearfix-' + f_name"/>
                                                     </t>
                                                 </t>
-
                                             </t>
                                         </div>
                                     </t>
@@ -211,12 +278,17 @@
                                             <span t-field="website.apf_submit_button"/>
                                         </t>
                                     </a>
-                                </form>
 
+                                </form>
                             </div>
                         </div>
 
-                        <!-- bottom snippet area -->
+                        <!-- Bottom snippet area -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div t-field="website.apf_bottom_snippets" class="oe_structure apf_bottom_snippets"/>
+                            </div>
+                        </div>
 
                     </div>
                 </div>

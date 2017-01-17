@@ -5,19 +5,24 @@
         <!-- auth_partner_form res.partner default fields -->
 
         <!-- Birthdate -->
-        <record id="birthdate" model="website.apf_partner_fields">
+        <record id="birthdate_web" model="website.apf_partner_fields">
             <field name="sequence">10</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="base.field_res_partner_birthdate"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_birthdate_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Birthdate</field>
-            <field name="placeholder">1980-01-30</field>
-            <field name="validation_rule">data-rule-dateNL=True</field>
-            <field name="css_classes">col-lg-12</field>
+            <field name="placeholder">30.01.1981</field>
+            <field name="validation_rule">data-rule-dateDEBirthdate=True</field>
+            <field name="css_classes">col-lg-12 large-input</field>
             <field name="clearfix" eval="True"/>
             <field name="information">
                 <![CDATA[
-                Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.
+                <p><strong>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.</strong></p>
+
+                <p>
+                Wenn sie nicht möchten dass ihre Spenden ab 2017 automatisch an das Finanzamt übermittelt werden
+                haken sie bitte "Meine Spenden bitte nicht absetzen" an.
+                </p>
                 ]]>
             </field>
         </record>
@@ -38,7 +43,7 @@
             <field name="res_partner_field_id" ref="partner_firstname.field_res_partner_firstname"/>
             <field name="mandatory" eval="True"/>
             <field name="label">Firstname</field>
-            <field name="placeholder">Vorname</field>
+            <field name="placeholder">Firstname</field>
             <field name="css_classes">col-lg-5</field>
             <field name="clearfix" eval="False"/>
         </record>
@@ -48,7 +53,7 @@
             <field name="res_partner_field_id" ref="partner_firstname.field_res_partner_lastname"/>
             <field name="mandatory" eval="True"/>
             <field name="label">Lastname</field>
-            <field name="placeholder">Nachname</field>
+            <field name="placeholder">Lastname</field>
             <field name="css_classes">col-lg-5</field>
             <field name="clearfix" eval="True"/>
         </record>
@@ -59,7 +64,7 @@
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_deduction_optout_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Meine Spenden bitte nicht absetzen</field>
-            <field name="css_classes">col-lg-12</field>
+            <field name="css_classes">col-lg-12 mb32</field>
             <field name="clearfix" eval="True"/>
             <field name="information">
                 <![CDATA[
@@ -147,9 +152,9 @@
         <!-- accept legal terms, newsletter opt-in -->
         <record id="legal_terms_web" model="website.apf_partner_fields">
             <field name="sequence">80</field>
-            <field name="show" eval="True"/>
+            <field name="show" eval="False"/>
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_legal_terms_web"/>
-            <field name="mandatory" eval="True"/>
+            <field name="mandatory" eval="False"/>
             <field name="label">Accept Terms and Conditions</field>
             <field name="css_classes">col-lg-12</field>
             <field name="clearfix" eval="True"/>
@@ -167,7 +172,7 @@
         </record>
         <record id="newsletter_web" model="website.apf_partner_fields">
             <field name="sequence">90</field>
-            <field name="show" eval="True"/>
+            <field name="show" eval="False"/>
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Newsletter</field>

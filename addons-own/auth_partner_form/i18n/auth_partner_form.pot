@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-23 13:36+0000\n"
-"PO-Revision-Date: 2016-12-23 13:36+0000\n"
+"POT-Creation-Date: 2017-01-17 11:26+0000\n"
+"PO-Revision-Date: 2017-01-17 11:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,8 +26,8 @@ msgid "/meine-daten Partner Fields"
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,placeholder:auth_partner_form.birthdate
-msgid "1980-01-30"
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.birthdate_web
+msgid "30.01.1981"
 msgstr ""
 
 #. module: auth_partner_form
@@ -54,6 +54,18 @@ msgid "<p>\n"
 msgstr ""
 
 #. module: auth_partner_form
+#: model:website.apf_partner_fields,information:auth_partner_form.birthdate_web
+msgid "<p><strong>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.</strong></p>\n"
+"\n"
+"                <p>\n"
+"                Wenn sie nicht möchten dass ihre Spenden ab 2017 automatisch an das Finanzamt übermittelt werden\n"
+"                haken sie bitte \"Meine Spenden bitte nicht absetzen\" an.\n"
+"                </p>\n"
+"                \n"
+"            "
+msgstr ""
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,information:auth_partner_form.donation_deduction_optout_web
 msgid "<p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.</p>\n"
 "                <p>Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.</p><p>\n"
@@ -74,13 +86,6 @@ msgid "<p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanz
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,information:auth_partner_form.birthdate
-msgid "<p>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.\n"
-"                \n"
-"            </p>"
-msgstr ""
-
-#. module: auth_partner_form
 #: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_form
 #: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_search
 #: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_tree
@@ -94,6 +99,11 @@ msgid "APF Top Snippets"
 msgstr ""
 
 #. module: auth_partner_form
+#: field:website,apf_yourdata_snippets:0
+msgid "APF Your Data Snippets"
+msgstr ""
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.legal_terms_web
 msgid "Accept Terms and Conditions"
 msgstr ""
@@ -104,7 +114,7 @@ msgid "Auth Partner Form (fstoken)"
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,label:auth_partner_form.birthdate
+#: model:website.apf_partner_fields,label:auth_partner_form.birthdate_web
 msgid "Birthdate"
 msgstr ""
 
@@ -134,9 +144,9 @@ msgid "Code Header"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:48
+#: code:addons/auth_partner_form/models/models.py:34
 #, python-format
-msgid "Code is valid!"
+msgid "Code without dashes"
 msgstr ""
 
 #. module: auth_partner_form
@@ -155,12 +165,24 @@ msgid "Created on"
 msgstr ""
 
 #. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:44
+#, python-format
+msgid "Data found in field with label: \"Do not enter data here please!\""
+msgstr ""
+
+#. module: auth_partner_form
+#: view:website:auth_partner_form.meinedaten
+msgid "Do not enter data here please!"
+msgstr ""
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.email
 msgid "EMail"
 msgstr ""
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.firstname
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.firstname
 msgid "Firstname"
 msgstr ""
 
@@ -196,6 +218,7 @@ msgstr ""
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.lastname
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.lastname
 msgid "Lastname"
 msgstr ""
 
@@ -220,8 +243,9 @@ msgid "Meine Spenden bitte nicht absetzen"
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,placeholder:auth_partner_form.lastname
-msgid "Nachname"
+#: code:addons/auth_partner_form/controllers/controller.py:150
+#, python-format
+msgid "Missing or incorrect information! Please check your input."
 msgstr ""
 
 #. module: auth_partner_form
@@ -280,6 +304,12 @@ msgid "Street Number"
 msgstr ""
 
 #. module: auth_partner_form
+#: code:addons/auth_partner_form/models/models.py:37
+#, python-format
+msgid "Submit"
+msgstr ""
+
+#. module: auth_partner_form
 #: field:website,apf_submit_button:0
 msgid "Submit Button"
 msgstr ""
@@ -316,11 +346,6 @@ msgid "Validation Rule"
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,placeholder:auth_partner_form.firstname
-msgid "Vorname"
-msgstr ""
-
-#. module: auth_partner_form
 #: model:ir.model,name:auth_partner_form.model_website
 msgid "Website"
 msgstr ""
@@ -332,15 +357,45 @@ msgid "Website APF Fields"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:62
+#: code:addons/auth_partner_form/controllers/controller.py:102
 #, python-format
-msgid "You are logged in but your login does not match the person for the given code! You will change the data for %s. If you want to change your data instead please press the reset button."
+msgid "You are logged in but your login does not match the person for the given code! You will change the data for %s. If you want to change your data instead please clear the token code"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:58
+#: code:addons/auth_partner_form/controllers/controller.py:98
 #, python-format
 msgid "You are logged in but your user has no res.partner assigned!"
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/models/models.py:33
+#, python-format
+msgid "Your Code"
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/models/models.py:36
+#, python-format
+msgid "Your Data"
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:69
+#, python-format
+msgid "Your code is valid!"
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:146
+#, python-format
+msgid "Your data could not be updated. Please try again."
+msgstr ""
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:144
+#, python-format
+msgid "Your data was successfully updated!"
 msgstr ""
 
 #. module: auth_partner_form

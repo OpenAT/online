@@ -16,7 +16,7 @@
     font-size: 85%;
 }
 /* Birthday large */
-#auth_partner_form input[name='birthdate'] {
+.large-input input {
     height: 46px;
     padding: 10px 16px;
     font-size: 18px;
@@ -24,9 +24,7 @@
     /*border-radius: 6px;*/
     /*border-color: #ee9900;*/
 }
-#auth_partner_form label.f-donation_deduction_optout_web {
-    margin-bottom: 4em;
-}
+
 #apf_submit_button {
     margin-top: 1em;
 }
