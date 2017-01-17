@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-17 11:26+0000\n"
-"PO-Revision-Date: 2017-01-17 11:26+0000\n"
+"POT-Creation-Date: 2017-01-17 12:44+0000\n"
+"PO-Revision-Date: 2017-01-17 12:44+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -169,15 +169,15 @@ msgid "Close"
 msgstr "Schließen"
 
 #. module: auth_partner_form
+#: code:addons/auth_partner_form/models/models.py:34
+#, python-format
+msgid "Code"
+msgstr "Code"
+
+#. module: auth_partner_form
 #: field:website,apf_title_code:0
 msgid "Code Header"
 msgstr "Code Überschrift"
-
-#. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:34
-#, python-format
-msgid "Code without dashes"
-msgstr "Code without dashes"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.country_id
@@ -273,7 +273,7 @@ msgid "Meine Spenden bitte nicht absetzen"
 msgstr "Meine Spenden bitte nicht absetzen"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:150
+#: code:addons/auth_partner_form/controllers/controller.py:158
 #, python-format
 msgid "Missing or incorrect information! Please check your input."
 msgstr "Fehlende oder falsche Angaben! Bitte überprüfen sie ihre Eingabe."
@@ -334,7 +334,7 @@ msgid "Street Number"
 msgstr "Nr."
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:37
+#: code:addons/auth_partner_form/models/models.py:38
 #, python-format
 msgid "Submit"
 msgstr "Senden"
@@ -384,16 +384,22 @@ msgstr "Webseite"
 #: model:ir.actions.act_window,name:auth_partner_form.apf_partner_fields_action
 #: model:ir.ui.menu,name:auth_partner_form.apf_partner_fields_menu
 msgid "Website APF Fields"
-msgstr "Website APF Fields"
+msgstr "Webseite APF Felder"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:102
+#: code:addons/auth_partner_form/controllers/controller.py:74
+#, python-format
+msgid "Wrong or expired code!"
+msgstr "Der eingegebene Code ist ungültig oder abgelaufen!"
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:103
 #, python-format
 msgid "You are logged in but your login does not match the person for the given code! You will change the data for %s. If you want to change your data instead please clear the token code"
 msgstr "Sie sind angemeldet jedoch stimmt der Code nicht mit ihrer Anmeldung überein! Sie ändern daher die Daten für %s. Wenn sie stattdessen ihre eigenen Daten bearbeiten möchten entfernen sie bitte den Code und laden sie die Seite erneut"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:98
+#: code:addons/auth_partner_form/controllers/controller.py:99
 #, python-format
 msgid "You are logged in but your user has no res.partner assigned!"
 msgstr "Sie sind angemeldet jedoch hat ihr Benutzer keinen zugewiesenen Kontakt!"
@@ -405,25 +411,25 @@ msgid "Your Code"
 msgstr "Ihr Code"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:36
+#: code:addons/auth_partner_form/models/models.py:37
 #, python-format
 msgid "Your Data"
 msgstr "Ihre Daten"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:69
+#: code:addons/auth_partner_form/controllers/controller.py:70
 #, python-format
 msgid "Your code is valid!"
 msgstr "Ihr Code ist gültig!"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:146
+#: code:addons/auth_partner_form/controllers/controller.py:154
 #, python-format
 msgid "Your data could not be updated. Please try again."
 msgstr "Ihre Daten konnten nicht aktualisiert werden. Bitte versuchen sie es erneut."
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:144
+#: code:addons/auth_partner_form/controllers/controller.py:152
 #, python-format
 msgid "Your data was successfully updated!"
 msgstr "Ihre Daten wurden erfolgreich aktualisiert!"

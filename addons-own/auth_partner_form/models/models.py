@@ -31,7 +31,8 @@ class WebsiteApfSettings(models.Model):
 
     # Button Text and Headlines
     apf_title_code = fields.Char(string='Code Header', default=_("Your Code"), translate=True)
-    apf_token_label = fields.Char(string='Token Label', default=_("Code without dashes"), translate=True)
+    apf_token_label = fields.Char(string='Token Label', default=_("Code"),
+                                  translate=True)
     apf_token_placeholder = fields.Char(string='Token Placeholder', default="A4N - 53B - XH7 - 4J4", translate=False)
     apf_title_partner_data = fields.Char(string='Your-Data Header', default=_("Your Data"), translate=True)
     apf_submit_button = fields.Char(string='Submit Button', default=_("Submit"), translate=True)

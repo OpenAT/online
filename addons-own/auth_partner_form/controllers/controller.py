@@ -66,11 +66,12 @@ class AuthPartnerForm(http.Controller):
             if fstoken and fields.Datetime.from_string(fstoken.expiration_date) >= fields.datetime.now():
                 # Valid Token was found!
                 partner = fstoken.partner_id
-                messages.append(_('Your code is valid!'))
+                if len(kwargs) <= 2:
+                    messages.append(_('Your code is valid!'))
 
             # Wrong or expired token was given
             else:
-                errors.append('Wrong or expired code!')
+                errors.append(_('Wrong or expired code!'))
                 field_errors['fs_ptoken'] = 'fs_ptoken'
 
                 # Add a delay of a second for every wrong try for the same session in the last 24h
@@ -81,7 +82,7 @@ class AuthPartnerForm(http.Controller):
                         request.session['wrong_token_tries'] = 1
                     else:
                         if request.session['wrong_token_tries'] > 3:
-                            time.sleep(2)
+                            time.sleep(3)
                         request.session['wrong_token_tries'] += 1
                 # This is the first wrong try so initialize "wrong_token_day" and "wrong_token_tries"
                 else:
@@ -105,30 +106,23 @@ class AuthPartnerForm(http.Controller):
             else:
                 partner = user.partner_id
 
-        # ON DATA POST: Update the partner with the values from the from inputs
-        # HINT: At this point a partner could only be found if the user had a valid code or is logged in
+        # Update the partner with the values from the from inputs
+        # HINT: At this point a partner could only be found if the user had a valid code or a user is logged in
         if partner:
-            apf_fields = request.env['website.apf_partner_fields']
-            apf_fields = apf_fields.sudo().search([])
-            fields_to_update = dict()
-
             # Add countries and states
             countries = request.env['res.country']
             countries = countries.sudo().search([])
             states = request.env['res.country.state']
             states = states.sudo().search([])
 
-            # Update the res.partner with the values from kwargs if any
+            # Find fields_to_update
             # HINT: Since we know that either the token or the login is correct at this point the update is ok
+            fields_to_update = dict()
+            apf_fields = request.env['website.apf_partner_fields']
+            apf_fields = apf_fields.sudo().search([])
             for field in apf_fields:
                 fname = field.res_partner_field_id.name
                 ftype = field.res_partner_field_id.ttype
-
-                # Field validation
-                # ToDo: Add date field validation for format dd.mm.YYYY
-                if field.mandatory and kwargs and not kwargs.get(fname):
-                    field_errors[fname] = fname
-
                 # Search for field values  given by the form inputs
                 if fname in kwargs:
                     # Fix for Boolean fields: convert str() to boolean()
@@ -138,21 +132,35 @@ class AuthPartnerForm(http.Controller):
                         value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
                         fields_to_update[fname] = value
 
-            # Update the res.partner if we did not found any errors
-            if fields_to_update and not field_errors:
-                if partner.sudo().write(fields_to_update):
-                    messages.append(_('Your data was successfully updated!'))
-                else:
-                    warnings.append(_('Your data could not be updated. Please try again.'))
+            # Write to the res.partner (after field validation)
+            # HINT: Only validate fields and write the partner if we found fields_to_update
+            if fields_to_update:
 
-            # Field errors message
+                # Validate fields
+                # HINT: We do this here since fields_to_update indicates that something was entered in the
+                #       Your Data section of the form. (= a partner was already found before)
+                for field in apf_fields:
+                    fname = field.res_partner_field_id.name
+                    # Validate "mandatory" setting
+                    if field.mandatory and not kwargs.get(fname):
+                        field_errors[fname] = fname
+                    # ToDo: Valdidate "date" field format of dd.mm.YYYY
+
+                # Update res.partner
+                if not field_errors:
+                    if partner.sudo().write(fields_to_update):
+                        messages.append(_('Your data was successfully updated!'))
+                    else:
+                        warnings.append(_('Your data could not be updated. Please try again.'))
+
+            # Add error message for field_errors
             if field_errors:
                 errors.append(_('Missing or incorrect information! Please check your input.'))
 
-
+        # HINT: use kwargs.get('fs_ptoken', '') to get the format of the website corrected by java script
         return http.request.render('auth_partner_form.meinedaten',
                                    {'kwargs': kwargs,
-                                    'fs_ptoken': fs_ptoken,
+                                    'fs_ptoken': kwargs.get('fs_ptoken', ''),
                                     'partner': partner,
                                     'apf_fields': apf_fields,
                                     'field_errors': field_errors,
