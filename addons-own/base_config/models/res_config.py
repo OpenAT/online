@@ -169,6 +169,7 @@ class base_config_settings(osv.osv_memory):
         'module_mail_delete_access_link_portal': fields.boolean('mail_delete_access_link_portal -- Delete Access-Document Link from odoo portal emails (see mail_delete_access_link too)'),
         'module_partner_firstname_lastname': fields.boolean('partner_firstname_lastname -- Install partner_firstname and change order to firstname, lastname'),
         'module_fs_groups': fields.boolean('fs_groups -- Fundraising Studio Groups for product.product'),
+        'module_website_base_setup': fields.boolean('website_base_setup -- Website Basic Settings for all customers, robots.txt ...'),
 
 
         # Bugy Third Party Addons. Do not link or install (still there as reference)

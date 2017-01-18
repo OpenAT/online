@@ -284,6 +284,10 @@
                                     <field name="module_fs_groups" class="oe_inline" />
                                     <label for="module_fs_groups" />
                                 </div>
+                                <div>
+                                    <field name="module_website_base_setup" class="oe_inline" />
+                                    <label for="module_website_base_setup" />
+                                </div>
                             </div>
                         </div>
                     </group>
