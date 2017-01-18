@@ -40,17 +40,19 @@
                                     <div class="row apf_token_data">
                                         <div class="col-md-12">
                                             <!-- Header for code input-->
-                                            <t t-if="website.apf_title_code">
+                                            <t t-if="not website.apf_title_code_hide">
                                                 <h2>
                                                     <span t-field="website.apf_title_code"/>
                                                 </h2>
                                             </t>
                                             <!-- Code input (fs_ptoken) -->
                                             <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + field_errors.get('fs_ptoken')) if field_errors.get('fs_ptoken') else '')">
-                                                <label class="control-label" for="fs_ptoken">
+                                                <label class="control-label f-fs_ptoken mandatory text-danger"
+                                                       for="fs_ptoken">
                                                     <span t-field="website.apf_token_label"/>
                                                 </label>
-                                                <input name="fs_ptoken"
+                                                <input id="fs_ptoken"
+                                                       name="fs_ptoken"
                                                        type="text"
                                                        class="form-control input-lg"
                                                        t-att-value="fs_ptoken"
@@ -69,7 +71,8 @@
                                                 <label class="control-label" for="fs_hpf">
                                                     <span>Do not enter data here please!</span>
                                                 </label>
-                                                <input name="fs_hpf"
+                                                <input id="fs_hpf"
+                                                       name="fs_hpf"
                                                        type="text"
                                                        class="form-control"
                                                        placeholder="Do not enter data here please!"
@@ -83,22 +86,32 @@
                                         <div class="col-md-12">
                                             <t t-foreach="errors" t-as="error">
                                                 <div class="alert alert-danger" role="alert">
-                                                    <t t-esc="error"/>
+                                                    <t t-raw="error"/>
                                                 </div>
                                             </t>
                                             <t t-foreach="warnings" t-as="warning">
                                                 <div class="alert alert-warning" role="alert">
-                                                    <t t-esc="warning"/>
+                                                    <t t-raw="warning"/>
                                                 </div>
                                             </t>
                                             <t t-foreach="messages" t-as="message">
                                                 <div class="alert alert-success" role="alert">
-                                                    <t t-esc="message"/>
+                                                    <t t-raw="message"/>
                                                 </div>
                                             </t>
                                         </div>
                                     </div>
 
+                                    <!-- Special Success Message -->
+                                    <!--<t t-if="website.apf_update_success_message">-->
+                                        <!--<div class="row apf_success_messages">-->
+                                            <!--<div class="col-md-12">-->
+                                                <!--<div class="alert alert-success" role="alert">-->
+                                                    <!--<t t-raw="website.apf_update_success_message"/>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</t>-->
 
                                     <!-- Data input for the partner -->
                                     <t t-if="partner">
@@ -110,7 +123,7 @@
                                             </div>
 
                                             <!-- Header -->
-                                            <t t-if="website.apf_title_partner_data">
+                                            <t t-if="not website.apf_title_partner_data_hide">
                                                 <div class="col-md-12">
                                                     <h2>
                                                        <span t-field="website.apf_title_partner_data"/>
@@ -127,7 +140,6 @@
                                                 <t t-if="field.validation_rule">
                                                     <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
                                                 </t>
-                                                <t t-set="error" t-value="field_errors"/>
 
                                                 <!-- DEBUG -->
                                                 <!--<div><t t-raw="f_name"/> <t t-raw="f_type"/> Value: <t t-raw="partner[f_name]"/></div>-->
@@ -144,8 +156,9 @@
                                                                 <!-- BOOLEAN FIELDS -->
                                                                 <t t-if="f_type == 'boolean'">
                                                                     <input type="checkbox"
+                                                                           t-att-id="f_name"
                                                                            t-att-name="f_name"
-                                                                           t-att-value="partner[f_name]"
+                                                                           t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
                                                                            t-att-checked="True if partner[f_name] else ''"
                                                                            t-att-required="field.mandatory"/>
                                                                 </t>
@@ -190,9 +203,10 @@
                                                             <!-- CHAR FIELDS -->
                                                             <t t-if="f_type in ['char',]">
                                                                 <input type="text"
+                                                                       t-att-id="f_name"
                                                                        t-att-name="f_name"
                                                                        class="form-control"
-                                                                       t-att-value="partner[f_name]"
+                                                                       t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
                                                                        t-att-placeholder="field.placeholder"
                                                                        t-att-required="field.mandatory"
                                                                        t-att="validation_rule"
@@ -201,10 +215,14 @@
 
                                                             <!-- DATE FIELDS -->
                                                             <t t-if="f_type in ['date',]">
+                                                                <t t-set="date_de"
+                                                                   t-value="datetime.datetime.strftime(datetime.datetime.strptime(partner[f_name],'%Y-%m-%d'), '%d.%m.%Y') if partner[f_name] else None"
+                                                                />
                                                                 <input type="text"
+                                                                       t-att-id="f_name"
                                                                        t-att-name="f_name"
                                                                        class="form-control"
-                                                                       t-att-value="datetime.datetime.strftime(datetime.datetime.strptime(partner[f_name],'%Y-%m-%d'), '%d.%m.%Y') if partner[f_name] else ''"
+                                                                       t-att-value="kwargs.get(f_name) if field.nodata else date_de"
                                                                        t-att-placeholder="field.placeholder"
                                                                        t-att-required="field.mandatory"
                                                                        t-att="validation_rule"
@@ -213,7 +231,8 @@
 
                                                             <!-- SELECTION FIELDS (NOT Many2One!) -->
                                                             <t t-if="f_type == 'selection'">
-                                                                <select t-att-name="f_name"
+                                                                <select t-att-id="f_name"
+                                                                        t-att-name="f_name"
                                                                         class="form-control"
                                                                         t-att-required="field.mandatory">
                                                                     <!-- Default empty option -->
@@ -222,7 +241,7 @@
                                                                     <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
                                                                         <!-- Create Option List -->
                                                                         <option t-att-value="option[0]"
-                                                                                t-att-selected="True if partner[f_name] == option[0] else ''">
+                                                                                t-att-selected="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None">
                                                                             <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
                                                                         </option>
                                                                     </t>
@@ -231,14 +250,18 @@
 
                                                             <!-- SPECIAL FIELD: country_id (Many2One) -->
                                                             <t t-if="f_name == 'country_id'">
-                                                                <select t-att-name="f_name"
+                                                                <t t-set="cid"
+                                                                   t-value="(partner['country_id'].id or website.country_default_value.id) if not field.nodata else kwargs.get(f_name, '')"
+                                                                   />
+                                                                <select t-att-id="f_name"
+                                                                        t-att-name="f_name"
                                                                         class="form-control"
                                                                         t-att-required="field.mandatory">
                                                                     <option value=""><t t-esc="field.placeholder"/></option>
                                                                     <t t-foreach="countries or []" t-as="country">
                                                                         <!-- Set default country from res.config if none selected -->
                                                                         <option t-att-value="country.id"
-                                                                                t-att-selected="'True' if (country.id == partner['country_id'].id or (country.id != partner['country_id'].id and country.code == website.country_default_value.code)) else ''">
+                                                                                t-att-selected="True if str(country.id) == str(cid) else None">
                                                                             <t t-esc="country.name"/>
                                                                         </option>
                                                                     </t>
@@ -247,14 +270,15 @@
 
                                                             <!-- SPECIAL FIELD: state_id (Many2One) -->
                                                             <t t-if="f_name == 'state_id'">
-                                                                <select t-att-name="f_name"
+                                                                <select t-att-id="f_name"
+                                                                        t-att-name="f_name"
                                                                         class="form-control"
                                                                         t-att-required="field.mandatory">
                                                                     <option value=""><t t-esc="field.placeholder"/></option>
                                                                     <t t-foreach="states or []" t-as="state">
                                                                         <option t-att-value="state.id" style="display:none;"
                                                                                 t-att-data-country_id="state.country_id.id"
-                                                                                t-att-selected="state.id == partner['state_id'].id">
+                                                                                t-att-selected="True if (state.id == partner['state_id'].id and not field.nodata) or (kwargs.get(f_name) == str(state.id)) else None">
                                                                             <t t-esc="state.name"/>
                                                                         </option>
                                                                     </t>

@@ -67,11 +67,13 @@ class AuthPartnerForm(http.Controller):
                 # Valid Token was found!
                 partner = fstoken.partner_id
                 if len(kwargs) <= 2:
-                    messages.append(_('Your code is valid!'))
+                    success_message = request.website.apf_token_success_message or _('Your code is valid!')
+                    messages.append(success_message)
 
             # Wrong or expired token was given
             else:
-                errors.append(_('Wrong or expired code!'))
+                error_message = request.website.apf_token_error_message or _('Wrong or expired code!')
+                errors.append(error_message)
                 field_errors['fs_ptoken'] = 'fs_ptoken'
 
                 # Add a delay of a second for every wrong try for the same session in the last 24h
@@ -125,31 +127,51 @@ class AuthPartnerForm(http.Controller):
                 ftype = field.res_partner_field_id.ttype
                 # Search for field values  given by the form inputs
                 if fname in kwargs:
-                    # Fix for Boolean fields: convert str() to boolean()
-                    if ftype == 'boolean':
-                        fields_to_update[fname] = True if kwargs[fname] else False
-                    else:
-                        value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
-                        fields_to_update[fname] = value
+                    # NoData Fields can only be updated if there is something in the kwargs ELSE do NOT clear it!
+                    if not field.nodata or field.nodata and kwargs[fname].strip() or ftype == 'boolean':
+                        # Fix for Boolean fields: convert str() to boolean()
+                        # HINT boolean field will ignore field.nodata setting
+                        if ftype == 'boolean':
+                            fields_to_update[fname] = True if kwargs[fname] else False
+                        # Fix for Date fields: convert '' to None
+                        elif ftype == 'date':
+                            fields_to_update[fname] = kwargs[fname].strip() if kwargs[fname].strip() else None
+                        else:
+                            value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
+                            fields_to_update[fname] = value
 
             # Write to the res.partner (after field validation)
             # HINT: Only validate fields and write the partner if we found fields_to_update
             if fields_to_update:
 
-                # Validate fields
+                # Validate fields (before we update anything)
                 # HINT: We do this here since fields_to_update indicates that something was entered in the
                 #       Your Data section of the form. (= a partner was already found before)
                 for field in apf_fields:
                     fname = field.res_partner_field_id.name
+                    ftype = field.res_partner_field_id.ttype
                     # Validate "mandatory" setting
                     if field.mandatory and not kwargs.get(fname):
                         field_errors[fname] = fname
-                    # ToDo: Valdidate "date" field format of dd.mm.YYYY
+                    # Validate date fields
+                    if ftype == 'date' and kwargs[fname].strip():
+                        date_de = kwargs[fname].strip()
+                        try:
+                            datetime.datetime.strptime(date_de, '%d.%m.%Y')
+                        except:
+                            field_errors[fname] = fname
+                # Validate that birthdate_web is given if field donation_deduction is set to donation_deduction
+                donation_deduction = kwargs.get('donation_deduction') or partner.donation_deduction
+                birthdate_web = kwargs.get('birthdate_web') or partner.birthdate_web
+                if donation_deduction == 'donation_deduction' and not birthdate_web:
+                    field_errors['birthdate_web'] = 'birthdate_web'
 
-                # Update res.partner
+
+                # Update res.partner (if no errors where found)
                 if not field_errors:
                     if partner.sudo().write(fields_to_update):
-                        messages.append(_('Your data was successfully updated!'))
+                        success_message = request.website.apf_update_success_message or _('Your data was successfully updated!')
+                        messages.append(success_message)
                     else:
                         warnings.append(_('Your data could not be updated. Please try again.'))
 

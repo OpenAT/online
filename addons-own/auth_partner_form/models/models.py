@@ -17,6 +17,7 @@
 ##############################################################################
 from openerp import models, fields
 from openerp.tools.translate import _
+from openerp.tools import SUPERUSER_ID
 
 
 class ResPartner(models.Model):
@@ -24,6 +25,9 @@ class ResPartner(models.Model):
     # Fields for sosyncer to detect origin of res.partner updates by fstoken
     fstoken_update = fields.Char(string='Update by FS Token')
     fstoken_update_date = fields.Datetime(string='Update by FS Token Date')
+    donation_deduction = fields.Selection(selection=[('donation_deduction', 'Donation Deduction'),
+                                                     ('no_donation_deduction', 'No Donation Deduction')],
+                                          string='Donation Deduction')
 
 
 class WebsiteApfSettings(models.Model):
@@ -31,15 +35,20 @@ class WebsiteApfSettings(models.Model):
 
     # Button Text and Headlines
     apf_title_code = fields.Char(string='Code Header', default=_("Your Code"), translate=True)
+    apf_title_code_hide = fields.Boolean(string='Hide Code Header')
     apf_token_label = fields.Char(string='Token Label', default=_("Code"),
                                   translate=True)
     apf_token_placeholder = fields.Char(string='Token Placeholder', default="A4N - 53B - XH7 - 4J4", translate=False)
     apf_title_partner_data = fields.Char(string='Your-Data Header', default=_("Your Data"), translate=True)
+    apf_title_partner_data_hide = fields.Boolean(string='Hide Your-Data Header')
     apf_submit_button = fields.Char(string='Submit Button', default=_("Submit"), translate=True)
     # Snippet Areas
     apf_top_snippets = fields.Html(string='APF Top Snippets', translate=True)
     apf_yourdata_snippets = fields.Html(string='APF Your Data Snippets', translate=True)
     apf_bottom_snippets = fields.Html(string='APF Top Snippets', translate=True)
+    apf_update_success_message = fields.Html(string='Update Success Message', translate=True)
+    apf_token_success_message = fields.Html(string='Token Success Message', translate=True)
+    apf_token_error_message = fields.Html(string='Token Error Message', translate=True)
 
 
 class ResConfigApfSetting(models.Model):
@@ -48,10 +57,15 @@ class ResConfigApfSetting(models.Model):
     # 'website_id': fields.many2one('website', string="website", required=True),
     # defaults={'website_id': lambda self,cr,uid,c: self.pool.get('website').search(cr, uid, [], context=c)[0],}
     apf_title_code = fields.Char(related='website_id.apf_title_code')
+    apf_title_code_hide = fields.Boolean(related='website_id.apf_title_code_hide')
     apf_token_label = fields.Char(related='website_id.apf_token_label')
     apf_token_placeholder = fields.Char(related='website_id.apf_token_placeholder')
     apf_title_partner_data = fields.Char(related='website_id.apf_title_partner_data')
+    apf_title_partner_data_hide = fields.Boolean(related='website_id.apf_title_partner_data_hide')
     apf_submit_button = fields.Char(related='website_id.apf_submit_button')
+    apf_update_success_message = fields.Html(related='website_id.apf_update_success_message')
+    apf_token_success_message = fields.Html(related='website_id.apf_token_success_message')
+    apf_token_error_message = fields.Html(related='website_id.apf_token_error_message')
 
 
 
@@ -73,8 +87,25 @@ class ApfPartnerFields(models.Model):
     validation_rule = fields.Char(string='Validation Rule')
     css_classes = fields.Char(string='CSS classes', default='col-lg-6')
     clearfix = fields.Boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field')
+    nodata = fields.Boolean(string='NoData', help='Do not show res.partner data in the website form.')
     information = fields.Html(string='Information', help='Information Text', translate=True)
 
     _defaults = {
         'active': True,
     }
+
+    # Remove noupdate for view auth_partner_form.meinedaten on addon update
+    def init(self, cr, context=None):
+        # print "Init (Update) of auth_partner_form :)"
+        ir_model_data_obj = self.pool.get('ir.model.data')
+        meinedaten_view_id = ir_model_data_obj.search(cr, SUPERUSER_ID,
+                                                      ['&',
+                                                       ('module', '=', 'auth_partner_form'),
+                                                       ('name', '=', 'meinedaten')
+                                                       ])
+        # print "meinedaten_view_id %s" % meinedaten_view_id
+        if meinedaten_view_id and len(meinedaten_view_id) == 1:
+            meinedaten_view = ir_model_data_obj.browse(cr, SUPERUSER_ID, meinedaten_view_id)
+            meinedaten_view.write({"noupdate": False})
+
+

@@ -12,6 +12,9 @@
                     <field name="fstoken_update" readonly="True"/>
                     <field name="fstoken_update_date" readonly="True"/>
                 </field>
+                <field name="email" position="after">
+                    <field name="donation_deduction"/>
+                </field>
             </field>
         </record>
 
@@ -28,6 +31,12 @@
                         <div name="apf_title_code">
                             <div class="oe_inline">
                                 <field name="apf_title_code"/>
+                            </div>
+                        </div>
+                        <label for="apf_title_code_hide"/>
+                        <div name="apf_title_code_hide">
+                            <div class="oe_inline">
+                                <field name="apf_title_code_hide"/>
                             </div>
                         </div>
                         <label for="apf_token_label"/>
@@ -48,10 +57,34 @@
                                 <field name="apf_title_partner_data"/>
                             </div>
                         </div>
+                        <label for="apf_title_partner_data_hide"/>
+                        <div name="apf_title_partner_data_hide">
+                            <div class="oe_inline">
+                                <field name="apf_title_partner_data_hide"/>
+                            </div>
+                        </div>
                         <label for="apf_submit_button"/>
                         <div name="apf_submit_button">
                             <div class="oe_inline">
                                 <field name="apf_submit_button"/>
+                            </div>
+                        </div>
+                        <label for="apf_update_success_message"/>
+                        <div name="apf_update_success_message">
+                            <div class="oe_inline">
+                                <field name="apf_update_success_message"/>
+                            </div>
+                        </div>
+                        <label for="apf_token_success_message"/>
+                        <div name="apf_token_success_message">
+                            <div class="oe_inline">
+                                <field name="apf_token_success_message"/>
+                            </div>
+                        </div>
+                        <label for="apf_token_error_message"/>
+                        <div name="apf_token_error_message">
+                            <div class="oe_inline">
+                                <field name="apf_token_error_message"/>
                             </div>
                         </div>
                     </group>
@@ -75,6 +108,7 @@
                         <field name="validation_rule"/>
                         <field name="css_classes"/>
                         <field name="clearfix"/>
+                        <field name="nodata"/>
                         <field name="information"/>
                     </group>
                 </form>
@@ -94,6 +128,7 @@
                     <field name="validation_rule"/>
                     <field name="css_classes"/>
                     <field name="clearfix"/>
+                    <field name="nodata"/>
                 </tree>
             </field>
         </record>
@@ -110,6 +145,7 @@
                     <field name="validation_rule"/>
                     <field name="css_classes"/>
                     <field name="clearfix"/>
+                    <field name="nodata"/>
                 </search>
             </field>
         </record>

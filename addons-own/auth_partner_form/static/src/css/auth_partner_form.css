@@ -33,6 +33,6 @@
 }
 
 /* JQUERY VALIDATE */
-.form-control-feedback {
+.apf_container .form-control-feedback {
     right: 12px;
 }
