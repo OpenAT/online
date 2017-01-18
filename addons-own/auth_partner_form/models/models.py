@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields
+from openerp import models, fields, api
 from openerp.tools.translate import _
 from openerp.tools import SUPERUSER_ID
 
@@ -28,6 +28,13 @@ class ResPartner(models.Model):
     donation_deduction = fields.Selection(selection=[('donation_deduction', 'Donation Deduction'),
                                                      ('no_donation_deduction', 'No Donation Deduction')],
                                           string='Donation Deduction')
+
+    @api.onchange('donation_deduction')
+    def oc_donation_deduction(self):
+        if self.donation_deduction == 'donation_deduction':
+            self.donation_deduction_optout_web = True
+        if self.donation_deduction == 'no_donation_deduction':
+            self.donation_deduction_optout_web = False
 
 
 class WebsiteApfSettings(models.Model):
@@ -88,6 +95,10 @@ class ApfPartnerFields(models.Model):
     css_classes = fields.Char(string='CSS classes', default='col-lg-6')
     clearfix = fields.Boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field')
     nodata = fields.Boolean(string='NoData', help='Do not show res.partner data in the website form.')
+    style = fields.Selection(selection=[('selection', 'Selection'),
+                                        ('radio_selectnone', 'Radio + SelectNone'),
+                                        ('radio', 'Radio')],
+                             string='Field Style')
     information = fields.Html(string='Information', help='Information Text', translate=True)
 
     _defaults = {
@@ -108,4 +119,12 @@ class ApfPartnerFields(models.Model):
             meinedaten_view = ir_model_data_obj.browse(cr, SUPERUSER_ID, meinedaten_view_id)
             meinedaten_view.write({"noupdate": False})
 
+    @api.onchange('show', 'mandatory')
+    def oc_show(self):
+        if not self.show:
+            self.mandatory = False
 
+    @api.onchange('style', 'mandatory')
+    def oc_style(self):
+        if self.style == 'radio_selectnone':
+            self.mandatory = False

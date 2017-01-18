@@ -21,14 +21,14 @@
 
                         <!-- Top snippet area -->
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-lg-12">
                                 <div t-field="website.apf_top_snippets" class="oe_structure apf_top_snippets"/>
                             </div>
                         </div>
 
                         <!-- Token and partner data input -->
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-lg-12">
 
                                 <!-- START THE FORM -->
                                 <form id="auth_partner_form"
@@ -38,7 +38,7 @@
                                     <!-- Token Input -->
                                     <!-- Hide the token Section if the user is logged in -->
                                     <div class="row apf_token_data">
-                                        <div class="col-md-12">
+                                        <div class="col-lg-12">
                                             <!-- Header for code input-->
                                             <t t-if="not website.apf_title_code_hide">
                                                 <h2>
@@ -61,11 +61,12 @@
                                                 />
                                             </div>
                                         </div>
+                                        <div class="clearfix clearfix-apf_token_data"/>
                                     </div>
 
                                     <!-- Honeypot Field (hidden by position) -->
                                     <div class="row apf_hpf" style="position: absolute; left: -99999px; top: -99999px;">
-                                        <div class="col-md-12">
+                                        <div class="col-lg-12">
                                             <!-- Code input (fs_ptoken) -->
                                             <div class="form-group">
                                                 <label class="control-label" for="fs_hpf">
@@ -79,11 +80,12 @@
                                                 />
                                             </div>
                                         </div>
+                                        <div class="clearfix clearfix-apf_hpf"/>
                                     </div>
 
                                     <!-- Error, Warning and Success message(s) -->
                                     <div class="row apf_messages">
-                                        <div class="col-md-12">
+                                        <div class="col-lg-12">
                                             <t t-foreach="errors" t-as="error">
                                                 <div class="alert alert-danger" role="alert">
                                                     <t t-raw="error"/>
@@ -100,35 +102,29 @@
                                                 </div>
                                             </t>
                                         </div>
+                                        <div class="clearfix clearfix-apf_messages"/>
                                     </div>
 
-                                    <!-- Special Success Message -->
-                                    <!--<t t-if="website.apf_update_success_message">-->
-                                        <!--<div class="row apf_success_messages">-->
-                                            <!--<div class="col-md-12">-->
-                                                <!--<div class="alert alert-success" role="alert">-->
-                                                    <!--<t t-raw="website.apf_update_success_message"/>-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</t>-->
+                                    <!-- Your-Data Snippet Dropping Area -->
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div t-field="website.apf_yourdata_snippets" class="oe_structure apf_yourdata_snippets"/>
+                                        </div>
+                                        <div class="clearfix clearfix-apf_yourdata_snippets"/>
+                                    </div>
 
                                     <!-- Data input for the partner -->
                                     <t t-if="partner">
                                         <div class="row apf_partner_data">
 
-                                            <!-- Your Data snippet area -->
-                                            <div class="col-md-12">
-                                                <div t-field="website.apf_yourdata_snippets" class="oe_structure apf_yourdata_snippets"/>
-                                            </div>
-
                                             <!-- Header -->
                                             <t t-if="not website.apf_title_partner_data_hide">
-                                                <div class="col-md-12">
+                                                <div class="col-lg-12">
                                                     <h2>
                                                        <span t-field="website.apf_title_partner_data"/>
                                                     </h2>
                                                 </div>
+                                                <div class="clearfix clearfix-apf_title_partner_data"/>
                                             </t>
 
                                             <!-- Fields -->
@@ -231,21 +227,55 @@
 
                                                             <!-- SELECTION FIELDS (NOT Many2One!) -->
                                                             <t t-if="f_type == 'selection'">
-                                                                <select t-att-id="f_name"
-                                                                        t-att-name="f_name"
-                                                                        class="form-control"
-                                                                        t-att-required="field.mandatory">
-                                                                    <!-- Default empty option -->
-                                                                    <option value=""><t t-esc="field.placeholder"/></option>
-                                                                    <!-- Selection Values as options -->
-                                                                    <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
-                                                                        <!-- Create Option List -->
-                                                                        <option t-att-value="option[0]"
-                                                                                t-att-selected="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None">
-                                                                            <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
-                                                                        </option>
+
+                                                                <!-- Selection List Style -->
+                                                                <t t-if="field.style == 'selection' or not field.style">
+                                                                    <select t-att-id="f_name"
+                                                                            t-att-name="f_name"
+                                                                            class="form-control"
+                                                                            t-att-required="field.mandatory">
+                                                                        <!-- Default empty option -->
+                                                                        <option value=""><t t-esc="field.placeholder"/></option>
+                                                                        <!-- Selection Values as options -->
+                                                                        <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                                                            <!-- Create Option List -->
+                                                                            <option t-att-value="option[0]"
+                                                                                    t-att-selected="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None">
+                                                                                <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                            </option>
+                                                                        </t>
+                                                                    </select>
+                                                                </t>
+
+                                                                <!-- Radio Buttons Style -->
+                                                                <t t-if="field.style in ('radio', 'radio_selectnone')">
+                                                                    <t t-if="field.style == 'radio_selectnone'">
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio"
+                                                                                       t-att-id="f_name + '_noselection'"
+                                                                                       t-att-name="f_name"
+                                                                                       value=""
+                                                                                       t-att-checked="True if not partner[f_name] and not kwargs.get(f_name) else None"
+                                                                                />
+                                                                                <t t-esc="field.placeholder or 'No Selection'"/>
+                                                                            </label>
+                                                                        </div>
                                                                     </t>
-                                                                </select>
+                                                                    <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                                                        <div class="radio">
+                                                                            <label>
+                                                                                <input type="radio"
+                                                                                       t-att-id="option[0]"
+                                                                                       t-att-name="f_name"
+                                                                                       t-att-value="option[0]"
+                                                                                       t-att-checked="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None"
+                                                                                />
+                                                                                <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                            </label>
+                                                                        </div>
+                                                                    </t>
+                                                                </t>
                                                             </t>
 
                                                             <!-- SPECIAL FIELD: country_id (Many2One) -->
@@ -297,19 +327,22 @@
                                     </t>
 
                                     <!-- Submit Button -->
-                                    <a id="apf_submit_button" class="btn btn-primary btn-lg a-submit">
-                                        <t t-if="website.apf_submit_button">
-                                            <span t-field="website.apf_submit_button"/>
-                                        </t>
-                                    </a>
-
+                                    <div class="row apf_submit">
+                                        <div class="col-lg-12">
+                                            <a id="apf_submit_button" class="btn btn-primary btn-lg a-submit">
+                                                <t t-if="website.apf_submit_button">
+                                                    <span t-field="website.apf_submit_button"/>
+                                                </t>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
 
                         <!-- Bottom snippet area -->
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-lg-12">
                                 <div t-field="website.apf_bottom_snippets" class="oe_structure apf_bottom_snippets"/>
                             </div>
                         </div>

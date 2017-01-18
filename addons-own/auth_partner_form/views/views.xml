@@ -109,6 +109,7 @@
                         <field name="css_classes"/>
                         <field name="clearfix"/>
                         <field name="nodata"/>
+                        <field name="style"/>
                         <field name="information"/>
                     </group>
                 </form>
@@ -129,6 +130,7 @@
                     <field name="css_classes"/>
                     <field name="clearfix"/>
                     <field name="nodata"/>
+                    <field name="style"/>
                 </tree>
             </field>
         </record>

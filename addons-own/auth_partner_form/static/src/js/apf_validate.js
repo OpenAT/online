@@ -9,9 +9,16 @@ $(document).ready(function () {
         rules: {
             birthdate_web: {
                 required: function (element) {
-                    // console.log($("#donation_deduction").val());
-                    // console.log($("#donation_deduction option:checked").val());
-                    return $("#donation_deduction").val() === 'donation_deduction';
+                    var radio;
+                    var list;
+                    var test;
+                    radio = $("input:radio[name='donation_deduction']:checked").val();
+                    list = $("#donation_deduction option:checked").val();
+                    test = radio || list || '';
+                    // console.log(radio);
+                    // console.log(list);
+                    // console.log(test);
+                    return test === "donation_deduction";
                 }
             }
         }

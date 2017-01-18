@@ -10,7 +10,8 @@
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="auth_partner_form.field_res_partner_donation_deduction"/>
             <field name="mandatory" eval="True"/>
-            <field name="label">Spenden automatisch absetzen</field>
+            <field name="label">Keine Auswahl</field>
+            <field name="placeholder">30.01.1981</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="True"/>
             <field name="information">

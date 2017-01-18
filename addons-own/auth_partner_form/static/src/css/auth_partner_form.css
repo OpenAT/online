@@ -34,5 +34,10 @@
 
 /* JQUERY VALIDATE */
 .apf_container .form-control-feedback {
-    right: 12px;
+    right: 16px;
+    top: initial;
+    bottom: -1px;
+}
+.apf_container .large-input .form-control-feedback {
+    bottom: 5px;
 }
