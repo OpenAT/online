@@ -107,14 +107,12 @@ class ApfPartnerFields(models.Model):
 
     # Remove noupdate for view auth_partner_form.meinedaten on addon update
     def init(self, cr, context=None):
-        # print "Init (Update) of auth_partner_form :)"
         ir_model_data_obj = self.pool.get('ir.model.data')
         meinedaten_view_id = ir_model_data_obj.search(cr, SUPERUSER_ID,
                                                       ['&',
                                                        ('module', '=', 'auth_partner_form'),
                                                        ('name', '=', 'meinedaten')
                                                        ])
-        # print "meinedaten_view_id %s" % meinedaten_view_id
         if meinedaten_view_id and len(meinedaten_view_id) == 1:
             meinedaten_view = ir_model_data_obj.browse(cr, SUPERUSER_ID, meinedaten_view_id)
             meinedaten_view.write({"noupdate": False})
