@@ -25,10 +25,8 @@ class ResPartner(models.Model):
     # Fields for sosyncer to detect origin of res.partner updates by fstoken
     fstoken_update = fields.Char(string='Update by FS Token')
     fstoken_update_date = fields.Datetime(string='Update by FS Token Date')
-    donation_deduction = fields.Selection(selection=[('donation_deduction', 'Donation Deduction'),
-                                                     ('no_donation_deduction', 'No Donation Deduction')],
-                                          string='Donation Deduction')
 
+    # TODO: should be transfered to website_sale_donate
     @api.onchange('donation_deduction')
     def oc_donation_deduction(self):
         if self.donation_deduction == 'donation_deduction':
@@ -86,8 +84,7 @@ class ApfPartnerFields(models.Model):
     show = fields.Boolean(string='Show', help='Show field in webpage', default=True)
     res_partner_field_id = fields.Many2one('ir.model.fields',
                                            string="res.partner Field",
-                                           domain="[('model_id.model', '=', 'res.partner')]",
-                                           required=True)
+                                           domain="[('model_id.model', '=', 'res.partner')]")
     mandatory = fields.Boolean(string='Mandatory')
     label = fields.Char(string='Label', translate=True)
     placeholder = fields.Char(string='Placeholder Text', translate=True)

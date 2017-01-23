@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-/* SMALLER ON LARGE SCREENS */
+/* Narrow ON LARGE SCREENS */
 @media (min-width: 992px){
     #wrap .apf_container.container {
         width: 68%;
@@ -18,24 +18,19 @@
     color: #909090;
     font-size: 85%;
 }
-/* Birthday large */
-.large-input input {
-    height: 46px;
-    padding: 10px 16px;
-    font-size: 18px;
-    line-height: 1.33;
-    /*border-radius: 6px;*/
-    /*border-color: #ee9900;*/
-}
 
 #apf_submit_button {
     margin-top: 1em;
 }
 
 /* JQUERY VALIDATE */
-.apf_container .form-control-feedback {
-    right: 16px;
+/* reset bootstrap setting for auth_partner_form */
+.apf_container .has-feedback label ~ .form-control-feedback {
     top: initial;
+}
+/* set default values */
+.apf_container .form-control-feedback {
+    right: 18px;
     bottom: -1px;
 }
 .apf_container .large-input .form-control-feedback {

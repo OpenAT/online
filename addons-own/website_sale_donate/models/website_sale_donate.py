@@ -34,7 +34,13 @@ class res_partner(osv.Model):
         'legal_terms_web': fields.boolean(string='Accept Legal Terms Web'),
         # Birthdate Web to have a real birthdate date format field
         'birthdate_web': fields.date(string='Birthdate Web'),
+        # Fundraising Studio Felder
+        'anrede_individuell': fields.char(string='Individuelle Anrede',
+                                          help="Eine individuelle Anrede die für den Schriftverkehr verwendet wird."),
+        'name_zwei': fields.char(string='Name Zwei',
+                                 help="Name zweite Zeile für Fundraising Studio"),
     }
+
 
 class product_website_price_buttons(osv.Model):
     """Suggested Donations-Value-Buttons"""

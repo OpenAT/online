@@ -12,9 +12,6 @@
                     <field name="fstoken_update" readonly="True"/>
                     <field name="fstoken_update_date" readonly="True"/>
                 </field>
-                <field name="email" position="after">
-                    <field name="donation_deduction"/>
-                </field>
             </field>
         </record>
 

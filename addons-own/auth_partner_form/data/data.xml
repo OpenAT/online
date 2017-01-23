@@ -2,35 +2,83 @@
 <openerp>
     <data noupdate="1">
         
-        <!-- auth_partner_form res.partner default fields -->
-
-        <!-- DONATION DEDUCTION SELECTION FIELD -->
-        <record id="donation_deduction" model="website.apf_partner_fields">
-            <field name="sequence">5</field>
+        <!-- Birthdate -->
+        <record id="birthdate_web" model="website.apf_partner_fields">
+            <field name="sequence">10</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="auth_partner_form.field_res_partner_donation_deduction"/>
-            <field name="mandatory" eval="True"/>
-            <field name="label">Keine Auswahl</field>
-            <field name="placeholder">30.01.1981</field>
-            <field name="css_classes">col-lg-6</field>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_birthdate_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Birthdate</field>
+            <field name="placeholder">30.01.1980</field>
+            <field name="validation_rule">data-rule-dateDEBirthdate=True</field>
+            <field name="css_classes">col-lg-12 large-input</field>
             <field name="clearfix" eval="True"/>
             <field name="information">
                 <![CDATA[
-                <h3>Meine Spenden automatisch absetzen</h3>
-                <p>Ich erkläre mich damit einverstanden, daß meine Spenden automatisiert an das an das Finanzamt übermittelt werden und diese als Sonderausgabe von der Steuer absetzbar sind.<p>
-                <h3>Meine Spenden nicht absetzen</h3>
+                <p><strong>Um Ihre Spenden von der Steuer absetzten zu können ist die Angabe Ihres Geburtsdatums erforderlich.</strong></p>
+
                 <p>
-                   Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.
-                   Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.
+                Wenn Sie nicht möchten dass Ihre Spenden ab 2017 automatisch an das Finanzamt übermittelt werden
+                haken Sie bitte "Meine Spenden bitte nicht absetzen" an.
                 </p>
-                <br />
-                <h3>Erklärung</h3>
+                ]]>
+            </field>
+        </record>
+
+        <!-- Individuelle Anrede -->
+        <record id="anrede_individuell" model="website.apf_partner_fields">
+            <field name="sequence">20</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_anrede_individuell"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Individuelle Anrede</field>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
+        </record>
+
+        <!-- Firstname, Lastname -->
+        <record id="firstname" model="website.apf_partner_fields">
+            <field name="sequence">30</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="partner_firstname.field_res_partner_firstname"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Firstname</field>
+            <field name="placeholder">Firstname</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="False"/>
+        </record>
+        <record id="lastname" model="website.apf_partner_fields">
+            <field name="sequence">35</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="partner_firstname.field_res_partner_lastname"/>
+            <field name="mandatory" eval="True"/>
+            <field name="label">Lastname</field>
+            <field name="placeholder">Lastname</field>
+            <field name="css_classes">col-lg-6</field>
+            <field name="clearfix" eval="True"/>
+        </record>
+
+        <!-- Opt Out Spendenabsetzbarkeit -->
+        <record id="donation_deduction_optout_web" model="website.apf_partner_fields">
+            <field name="sequence">40</field>
+            <field name="show" eval="True"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_deduction_optout_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Meine Spenden bitte nicht absetzen</field>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
+            <field name="information">
+                <![CDATA[
+                <p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.</p>
+                <p>Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.<p>
+                <br/>
                 <p>
                     <strong>Erklärung (Stand Juni 2016):</strong><br/>
                     Für bestimmte Sonderausgaben, nämlich u.a. Spenden im Sinne des § 4a Einkommensteuergesetz wird für Zahlungen ab dem Jahr 2017 ein verpflichtender automatischer Datenaustausch zwischen der empfangenden Organisation und der Finanzverwaltung eingeführt.<br/>
                     Möchte der Steuerpflichtige keine Datenübermittlung und automatische Berücksichtigung, ist er nicht gehindert, Spenden zu leisten; in diesem Fall ist allerdings die steuerliche Berücksichtigung als Sonderausgabe grundsätzlich ausgeschlossen.<br/>
                     Der Steuerpflichtige verzichtet damit auf die steuerliche Berücksichtigung, was ihm bisher auch frei gestanden ist.<br/>
                     Es ist daher auch nicht vorgesehen, die Sonderausgaben selbst über die Steuererklärung in der Veranlagung geltend zu machen.<br/>
+                    <br/>
                     <a href="https://www.bmf.gv.at/steuern/selbststaendige-unternehmer/einkommensteuer/FAQ-automatische-Datenuebermittlung-SA.html">
                         FAQ automatische Datenübermittlung SA
                     </a>
@@ -39,77 +87,22 @@
             </field>
         </record>
 
-        <!-- Birthdate -->
-        <record id="birthdate_web" model="website.apf_partner_fields">
-            <field name="sequence">10</field>
-            <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_birthdate_web"/>
-            <field name="mandatory" eval="False"/>
-            <field name="label">Birthdate</field>
-            <field name="placeholder">30.01.1981</field>
-            <field name="validation_rule">data-rule-dateDEBirthdate=True</field>
-            <field name="css_classes">col-lg-12 large-input mb64</field>
-            <field name="clearfix" eval="True"/>
-            <field name="information">
-                <![CDATA[
-                <p><strong>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.</strong></p>
-
-                <p>
-                Wenn sie nicht möchten dass ihre Spenden ab 2017 automatisch an das Finanzamt übermittelt werden
-                haken sie bitte "Meine Spenden bitte nicht absetzen" an.
-                </p>
-                ]]>
-            </field>
-        </record>
-
-        <!-- title_web, Firstname, Lastname -->
-        <record id="title_web" model="website.apf_partner_fields">
-            <field name="sequence">14</field>
-            <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_title_web"/>
-            <field name="mandatory" eval="False"/>
-            <field name="label">Titel</field>
-            <field name="placeholder">Titel</field>
-            <field name="css_classes">col-lg-3</field>
-            <field name="clearfix" eval="False"/>
-        </record>
-        <record id="firstname" model="website.apf_partner_fields">
-            <field name="sequence">15</field>
-            <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="partner_firstname.field_res_partner_firstname"/>
-            <field name="mandatory" eval="True"/>
-            <field name="label">Firstname</field>
-            <field name="placeholder">Firstname</field>
-            <field name="css_classes">col-lg-4</field>
-            <field name="clearfix" eval="False"/>
-        </record>
-        <record id="lastname" model="website.apf_partner_fields">
-            <field name="sequence">16</field>
-            <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="partner_firstname.field_res_partner_lastname"/>
-            <field name="mandatory" eval="True"/>
-            <field name="label">Lastname</field>
-            <field name="placeholder">Lastname</field>
-            <field name="css_classes">col-lg-5</field>
-            <field name="clearfix" eval="True"/>
-        </record>
-
         <!-- E-Mail -->
         <record id="email" model="website.apf_partner_fields">
-            <field name="sequence">25</field>
+            <field name="sequence">50</field>
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="base.field_res_partner_email"/>
             <field name="mandatory" eval="False"/>
             <field name="label">EMail</field>
             <field name="placeholder">meine.emailadresse@test.com</field>
             <field name="validation_rule">data-rule-email=True</field>
-            <field name="css_classes">col-lg-12</field>
+            <field name="css_classes">col-lg-12 mt64</field>
             <field name="clearfix" eval="True"/>
         </record>
 
         <!-- street, street_number_web -->
         <record id="street" model="website.apf_partner_fields">
-            <field name="sequence">30</field>
+            <field name="sequence">60</field>
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="base.field_res_partner_street"/>
             <field name="mandatory" eval="False"/>
@@ -119,7 +112,7 @@
             <field name="clearfix" eval="False"/>
         </record>
         <record id="street_number_web" model="website.apf_partner_fields">
-            <field name="sequence">40</field>
+            <field name="sequence">70</field>
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_street_number_web"/>
             <field name="mandatory" eval="False"/>
@@ -131,7 +124,7 @@
 
         <!-- city, zip, country -->
         <record id="city" model="website.apf_partner_fields">
-            <field name="sequence">50</field>
+            <field name="sequence">80</field>
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="base.field_res_partner_city"/>
             <field name="mandatory" eval="False"/>
@@ -141,7 +134,7 @@
             <field name="clearfix" eval="False"/>
         </record>
         <record id="zip" model="website.apf_partner_fields">
-            <field name="sequence">60</field>
+            <field name="sequence">90</field>
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="base.field_res_partner_zip"/>
             <field name="mandatory" eval="False"/>
@@ -152,7 +145,7 @@
             <field name="validation_rule">data-rule-digits=True;data-rule-minlength=4</field>
         </record>
         <record id="country_id" model="website.apf_partner_fields">
-            <field name="sequence">70</field>
+            <field name="sequence">100</field>
             <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="base.field_res_partner_country_id"/>
             <field name="mandatory" eval="False"/>
@@ -161,9 +154,29 @@
             <field name="clearfix" eval="True"/>
         </record>
 
+
+        <!-- Newsletter opt in -->
+        <record id="newsletter_web" model="website.apf_partner_fields">
+            <field name="sequence">110</field>
+            <field name="show" eval="False"/>
+            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
+            <field name="mandatory" eval="False"/>
+            <field name="label">Ja, ich möchte Ihren Newsletter erhalten</field>
+            <field name="css_classes">col-lg-12</field>
+            <field name="clearfix" eval="True"/>
+            <field name="information">
+<![CDATA[
+<p>
+    Hiermit erkläre ich mich einverstanden, dass Sie uns Ihren Newsletter senden dürfen.<br />
+    Hinweis: Ihre Daten werden vertraulich behandelt und nicht an Dritte weitergegeben.
+</p>
+]]>
+            </field>
+        </record>
+
         <!-- accept legal terms, newsletter opt-in -->
         <record id="legal_terms_web" model="website.apf_partner_fields">
-            <field name="sequence">80</field>
+            <field name="sequence">120</field>
             <field name="show" eval="False"/>
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_legal_terms_web"/>
             <field name="mandatory" eval="False"/>
@@ -173,7 +186,7 @@
             <field name="information">
 <![CDATA[
 <p>
-    Ich erkläre mich mit den AGB einverstanden
+    Ich erkläre mich mit Ihren AGB einverstanden.
     <br/>
     <a href="#">
         Link zu den AGB.
@@ -183,16 +196,5 @@
             </field>
         </record>
 
-        <!-- Newsletter opt in -->
-        <record id="newsletter_web" model="website.apf_partner_fields">
-            <field name="sequence">90</field>
-            <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
-            <field name="mandatory" eval="False"/>
-            <field name="label">Newsletter</field>
-            <field name="css_classes">col-lg-12</field>
-            <field name="clearfix" eval="True"/>
-        </record>
-        
     </data>
 </openerp>

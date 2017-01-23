@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-18 11:04+0000\n"
-"PO-Revision-Date: 2017-01-18 11:04+0000\n"
+"POT-Creation-Date: 2017-01-19 12:40+0000\n"
+"PO-Revision-Date: 2017-01-19 12:40+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,22 +42,23 @@ msgstr ""
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,information:auth_partner_form.donation_deduction
-msgid "<h3>Meine Spenden automatisch absetzen</h3>\n"
-"                <p>Ich erkläre mich damit einverstanden, daß meine Spenden automatisiert an das an das Finanzamt übermittelt werden und diese als Sonderausgabe von der Steuer absetzbar sind.</p><p>\n"
+msgid "<h3>Meine Spenden bitte an das Finanzamt übermitteln</h3>\n"
+"                <p>\n"
+"                    Ich erkläre mich damit einverstanden, daß meine Spenden automatisiert an das an das Finanzamt übermittelt werden und diese als Sonderausgabe von der Steuer absetzbar sind.\n"
+"                </p><p>\n"
+"                </p><h3>Meine Spenden bitte nicht übermitteln</h3>\n"
+"                <p>\n"
+"                   Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.\n"
+"                   Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.\n"
+"                </p>\n"
 "                <br>\n"
-"                </p><h3>Meine Spenden nicht absetzen</h3>\n"
-"                <p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.</p>\n"
-"                <p>Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.</p><p>\n"
-"                <br>\n"
-"                <br>\n"
-"                </p><h3>Erklärung</h3>\n"
+"                <h3>Erklärung</h3>\n"
 "                <p>\n"
 "                    <strong>Erklärung (Stand Juni 2016):</strong><br>\n"
 "                    Für bestimmte Sonderausgaben, nämlich u.a. Spenden im Sinne des § 4a Einkommensteuergesetz wird für Zahlungen ab dem Jahr 2017 ein verpflichtender automatischer Datenaustausch zwischen der empfangenden Organisation und der Finanzverwaltung eingeführt.<br>\n"
 "                    Möchte der Steuerpflichtige keine Datenübermittlung und automatische Berücksichtigung, ist er nicht gehindert, Spenden zu leisten; in diesem Fall ist allerdings die steuerliche Berücksichtigung als Sonderausgabe grundsätzlich ausgeschlossen.<br>\n"
-"                    Der Steuerpflichtige verzichtet damit auf die steuerliche Berücksichtigung, was ihm bisher auch frei gestanden ist.<br>\n"
-"                    Es ist daher auch nicht vorgesehen, die Sonderausgaben selbst über die Steuererklärung in der Veranlagung geltend zu machen.<br>\n"
-"                    <br>\n"
+"                    Der Steuerpflichtige verzichtet damit auf die steuerliche Berücksichtigung, was ihm bisher auch frei gestanden ist.\n"
+"                    Es ist daher auch nicht vorgesehen, die Sonderausgaben selbst über die Steuererklärung in der Veranlagung geltend zu machen.\n"
 "                    <a href=\"https://www.bmf.gv.at/steuern/selbststaendige-unternehmer/einkommensteuer/FAQ-automatische-Datenuebermittlung-SA.html\">\n"
 "                        FAQ automatische Datenübermittlung SA\n"
 "                    </a>\n"
@@ -67,9 +68,19 @@ msgid "<h3>Meine Spenden automatisch absetzen</h3>\n"
 msgstr ""
 
 #. module: auth_partner_form
+#: model:website.apf_partner_fields,information:auth_partner_form.newsletter_web
+msgid "<p>\n"
+"    Hiermit erkläre ich mich einverstanden, dass Sie uns Ihren Newsletter senden dürfen.<br>\n"
+"    Hinweis: Ihre Daten werden vertraulich behandelt und nicht an Dritte weitergegeben.\n"
+"</p>\n"
+"\n"
+"            "
+msgstr ""
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,information:auth_partner_form.legal_terms_web
 msgid "<p>\n"
-"    Ich erkläre mich mit den AGB einverstanden\n"
+"    Ich erkläre mich mit Ihren AGB einverstanden.\n"
 "    <br>\n"
 "    <a href=\"#\">\n"
 "        Link zu den AGB.\n"
@@ -86,26 +97,6 @@ msgid "<p><strong>Um ihre Spenden von der Steuer absetzten zu können ist die An
 "                <p>\n"
 "                Wenn sie nicht möchten dass ihre Spenden ab 2017 automatisch an das Finanzamt übermittelt werden\n"
 "                haken sie bitte \"Meine Spenden bitte nicht absetzen\" an.\n"
-"                </p>\n"
-"                \n"
-"            "
-msgstr ""
-
-#. module: auth_partner_form
-#: model:website.apf_partner_fields,information:auth_partner_form.donation_deduction_optout_web
-msgid "<p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.</p>\n"
-"                <p>Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.</p><p>\n"
-"                <br>\n"
-"                </p><p>\n"
-"                    <strong>Erklärung (Stand Juni 2016):</strong><br>\n"
-"                    Für bestimmte Sonderausgaben, nämlich u.a. Spenden im Sinne des § 4a Einkommensteuergesetz wird für Zahlungen ab dem Jahr 2017 ein verpflichtender automatischer Datenaustausch zwischen der empfangenden Organisation und der Finanzverwaltung eingeführt.<br>\n"
-"                    Möchte der Steuerpflichtige keine Datenübermittlung und automatische Berücksichtigung, ist er nicht gehindert, Spenden zu leisten; in diesem Fall ist allerdings die steuerliche Berücksichtigung als Sonderausgabe grundsätzlich ausgeschlossen.<br>\n"
-"                    Der Steuerpflichtige verzichtet damit auf die steuerliche Berücksichtigung, was ihm bisher auch frei gestanden ist.<br>\n"
-"                    Es ist daher auch nicht vorgesehen, die Sonderausgaben selbst über die Steuererklärung in der Veranlagung geltend zu machen.<br>\n"
-"                    <br>\n"
-"                    <a href=\"https://www.bmf.gv.at/steuern/selbststaendige-unternehmer/einkommensteuer/FAQ-automatische-Datenuebermittlung-SA.html\">\n"
-"                        FAQ automatische Datenübermittlung SA\n"
-"                    </a>\n"
 "                </p>\n"
 "                \n"
 "            "
@@ -132,6 +123,11 @@ msgstr ""
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.legal_terms_web
 msgid "Accept Terms and Conditions"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.firstname_spak
+msgid "Anna Sophie"
 msgstr ""
 
 #. module: auth_partner_form
@@ -165,7 +161,7 @@ msgid "Close"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:39
+#: code:addons/auth_partner_form/models/models.py:44
 #, python-format
 msgid "Code"
 msgstr ""
@@ -207,20 +203,13 @@ msgid "Do not show res.partner data in the website form."
 msgstr ""
 
 #. module: auth_partner_form
-#: field:res.partner,donation_deduction:0
-#: selection:res.partner,donation_deduction:0
-msgid "Donation Deduction"
-msgstr ""
-
-#. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.email
 msgid "EMail"
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,label:auth_partner_form.firstname
-#: model:website.apf_partner_fields,placeholder:auth_partner_form.firstname
-msgid "Firstname"
+#: field:website.apf_partner_fields,style:0
+msgid "Field Style"
 msgstr ""
 
 #. module: auth_partner_form
@@ -249,6 +238,16 @@ msgid "Information Text"
 msgstr ""
 
 #. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.newsletter_web
+msgid "Ja, ich möchte Ihren Newsletter erhalten"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.donation_deduction
+msgid "Keine Auswahl"
+msgstr ""
+
+#. module: auth_partner_form
 #: field:website.apf_partner_fields,label:0
 msgid "Label"
 msgstr ""
@@ -261,12 +260,6 @@ msgstr ""
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,write_date:0
 msgid "Last Updated on"
-msgstr ""
-
-#. module: auth_partner_form
-#: model:website.apf_partner_fields,label:auth_partner_form.lastname
-#: model:website.apf_partner_fields,placeholder:auth_partner_form.lastname
-msgid "Lastname"
 msgstr ""
 
 #. module: auth_partner_form
@@ -285,29 +278,19 @@ msgid "Meine Daten"
 msgstr ""
 
 #. module: auth_partner_form
-#: model:website.apf_partner_fields,label:auth_partner_form.donation_deduction_optout_web
-msgid "Meine Spenden bitte nicht absetzen"
-msgstr ""
-
-#. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:180
+#: code:addons/auth_partner_form/controllers/controller.py:188
 #, python-format
 msgid "Missing or incorrect information! Please check your input."
 msgstr ""
 
 #. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.lastname_spak
+msgid "Nachname (laut Meldezettel)"
+msgstr ""
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,placeholder:auth_partner_form.city
 msgid "New York"
-msgstr ""
-
-#. module: auth_partner_form
-#: model:website.apf_partner_fields,label:auth_partner_form.newsletter_web
-msgid "Newsletter"
-msgstr ""
-
-#. module: auth_partner_form
-#: selection:res.partner,donation_deduction:0
-msgid "No Donation Deduction"
 msgstr ""
 
 #. module: auth_partner_form
@@ -328,6 +311,21 @@ msgstr ""
 #. module: auth_partner_form
 #: help:website.apf_partner_fields,clearfix:0
 msgid "Places a DIV box with .clearfix after this field"
+msgstr ""
+
+#. module: auth_partner_form
+#: selection:website.apf_partner_fields,style:0
+msgid "Radio"
+msgstr ""
+
+#. module: auth_partner_form
+#: selection:website.apf_partner_fields,style:0
+msgid "Radio + SelectNone"
+msgstr ""
+
+#. module: auth_partner_form
+#: selection:website.apf_partner_fields,style:0
+msgid "Selection"
 msgstr ""
 
 #. module: auth_partner_form
@@ -352,7 +350,12 @@ msgstr ""
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.donation_deduction
-msgid "Spenden automatisch absetzen"
+msgid "Sollen Ihre Spenden an das Finanzamt übermittelt werden?"
+msgstr ""
+
+#. module: auth_partner_form
+#: model:website.apf_partner_fields,placeholder:auth_partner_form.lastname_spak
+msgid "Steiner"
 msgstr ""
 
 #. module: auth_partner_form
@@ -366,7 +369,7 @@ msgid "Street Number"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:44
+#: code:addons/auth_partner_form/models/models.py:49
 #, python-format
 msgid "Submit"
 msgstr ""
@@ -378,7 +381,6 @@ msgstr ""
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.title_web
-#: model:website.apf_partner_fields,placeholder:auth_partner_form.title_web
 msgid "Titel"
 msgstr ""
 
@@ -423,6 +425,11 @@ msgid "Validation Rule"
 msgstr ""
 
 #. module: auth_partner_form
+#: model:website.apf_partner_fields,label:auth_partner_form.firstname_spak
+msgid "Vorname (laut Meldezettel)"
+msgstr ""
+
+#. module: auth_partner_form
 #: model:ir.model,name:auth_partner_form.model_website
 msgid "Website"
 msgstr ""
@@ -452,13 +459,13 @@ msgid "You are logged in but your user has no res.partner assigned!"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:37
+#: code:addons/auth_partner_form/models/models.py:42
 #, python-format
 msgid "Your Code"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/models/models.py:42
+#: code:addons/auth_partner_form/models/models.py:47
 #, python-format
 msgid "Your Data"
 msgstr ""
@@ -470,13 +477,13 @@ msgid "Your code is valid!"
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:176
+#: code:addons/auth_partner_form/controllers/controller.py:184
 #, python-format
 msgid "Your data could not be updated. Please try again."
 msgstr ""
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:173
+#: code:addons/auth_partner_form/controllers/controller.py:181
 #, python-format
 msgid "Your data was successfully updated!"
 msgstr ""

@@ -21,11 +21,11 @@ $(document).ready(function () {
         // Get the value of the input field and convert to upper case
         var $this = $( this );
         var input = $this.val();
-        var input = input.toUpperCase();
+        input = input.toUpperCase();
 
         // Sanitize input (Replace all characters that are not(^) 0-9 and A-Z with Nothing)
         // http://regexr.com
-        var input = input.replace(/([^0-9A-Z])/g, "");
+        input = input.replace(/([^0-9A-Z])/g, "");
 
         // Split input in junks of 3
         var split = 3;
@@ -38,29 +38,7 @@ $(document).ready(function () {
         $this.val(function() {
             return chunks.join(" - ");
         });
-    })
-
-    // Format the birthday date-input pickdate.js and jquery
-    // http://jqueryui.com/datepicker/
-    // https://codepen.io/amsul/pen/LhlAK
-    // http://amsul.ca/pickadate.js
-    // http://snipplr.com/view/58062/jquery-validation-additional-method-german-date/
-    // http://stackoverflow.com/questions/511439/custom-date-format-with-jquery-validation-plugin
-    // var $picker = $('.datepicker').pickadate({
-    //     format: 'yy-mm-dd',
-    //     formatSubmit: 'yy-mm-dd',
-    //     onSelect: function () {
-    //
-    //         // Remove the delimiters
-    //         var reformattedDate = this.getDate().replace(/-/g, '')
-    //
-    //         // Set the input value
-    //         this.$node.val(reformattedDate)
-    //
-    //         // Set the hidden input value
-    //         this.$node.siblings('input[type=hidden]').val(reformattedDate)
-    //     }
-    // })
+    });
 
 });
 

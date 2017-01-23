@@ -105,16 +105,20 @@
                                         <div class="clearfix clearfix-apf_messages"/>
                                     </div>
 
-                                    <!-- Your-Data Snippet Dropping Area -->
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div t-field="website.apf_yourdata_snippets" class="oe_structure apf_yourdata_snippets"/>
-                                        </div>
-                                        <div class="clearfix clearfix-apf_yourdata_snippets"/>
-                                    </div>
 
-                                    <!-- Data input for the partner -->
+
+                                    <!-- PARTNER WAS FOUND: Data input for the partner -->
                                     <t t-if="partner">
+
+                                        <!-- Your-Data Snippet Dropping Area -->
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div t-field="website.apf_yourdata_snippets" class="oe_structure apf_yourdata_snippets"/>
+                                            </div>
+                                            <div class="clearfix clearfix-apf_yourdata_snippets"/>
+                                        </div>
+
+                                        <!-- Partner Fields and Header -->
                                         <div class="row apf_partner_data">
 
                                             <!-- Header -->
@@ -127,201 +131,218 @@
                                                 <div class="clearfix clearfix-apf_title_partner_data"/>
                                             </t>
 
-                                            <!-- Fields -->
+                                            <!-- FIELDS -->
                                             <t t-foreach="apf_fields" t-as="field">
-                                                <t t-set="f_name" t-value="field.res_partner_field_id.name"/>
-                                                <t t-set="f_type" t-value="field.res_partner_field_id.ttype"/>
                                                 <t t-set="css_classes" t-value="field.css_classes"/>
-                                                <t t-set="validation_rule" t-value="{}"/>
-                                                <t t-if="field.validation_rule">
-                                                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
+
+                                                <!-- Render field as snippet-dropping-area -->
+                                                <t t-if="not field.res_partner_field_id">
+                                                    <div t-att-class="css_classes if css_classes else 'col-lg-12'">
+                                                        <div t-field="field.information" class="oe_structure apf_field_snippet"/>
+                                                        <t t-if="field.clearfix">
+                                                            <div class="clearfix"/>
+                                                        </t>
+                                                    </div>
+
                                                 </t>
 
-                                                <!-- DEBUG -->
-                                                <!--<div><t t-raw="f_name"/> <t t-raw="f_type"/> Value: <t t-raw="partner[f_name]"/></div>-->
+                                                <!-- Render field as field -->
+                                                <t t-if="field.res_partner_field_id">
+                                                    <t t-set="f_name" t-value="field.res_partner_field_id.name"/>
+                                                    <t t-set="f_type" t-value="field.res_partner_field_id.ttype"/>
+                                                    <t t-set="validation_rule" t-value="{}"/>
+                                                    <t t-if="field.validation_rule">
+                                                        <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
+                                                    </t>
 
-                                                <t t-if="field.show">
+                                                    <!-- DEBUG -->
+                                                    <!--<div><t t-raw="f_name"/> <t t-raw="f_type"/> Value: <t t-raw="partner[f_name]"/></div>-->
 
-                                                    <!-- FORM INPUT BY FIELD GENERATOR -->
-                                                    <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
-                                                        <!-- FORM GROUP -->
-                                                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + field_errors.get(f_name)) if field_errors.get(f_name) else '')">
-                                                            <!-- LABEL for all fields -->
-                                                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if field.mandatory else '')"
-                                                                   t-att-for="f_name">
-                                                                <!-- BOOLEAN FIELDS -->
-                                                                <t t-if="f_type == 'boolean'">
-                                                                    <input type="checkbox"
-                                                                           t-att-id="f_name"
-                                                                           t-att-name="f_name"
-                                                                           t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
-                                                                           t-att-checked="True if partner[f_name] else ''"
-                                                                           t-att-required="field.mandatory"/>
-                                                                </t>
-                                                                <t t-esc="field.label"/>
-                                                            </label>
-                                                            <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
-                                                            <t t-if="field.information">
-                                                                <!-- Modal Box Button-Link -->
-                                                                <href type="button"
-                                                                        class="btn-link information-modal-box-trigger"
-                                                                        data-toggle="modal"
-                                                                        t-att-data-target="'#information-'+f_name">
-                                                                    <span class="glyphicon glyphicon-info-sign"/>
-                                                                </href>
-                                                                <!-- Modal Box -->
-                                                                <div class="modal fade"
-                                                                     t-att-id="'information-'+f_name"
-                                                                     role="dialog">
-                                                                    <div class="modal-dialog">
-                                                                        <!-- Modal content-->
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <button type="button" class="close"
-                                                                                        data-dismiss="modal">&amp;times;</button>
-                                                                                <h4 class="modal-title">
-                                                                                    <t t-esc="field.label"/>
-                                                                                </h4>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <t t-raw="field.information"/>
-                                                                            </div>
-                                                                            <div class="modal-footer">
-                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                                                    Close
-                                                                                </button>
+                                                    <t t-if="field.show">
+
+                                                        <!-- FORM INPUT BY FIELD GENERATOR -->
+                                                        <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
+                                                            <!-- FORM GROUP -->
+                                                            <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + field_errors.get(f_name)) if field_errors.get(f_name) else '')">
+                                                                <!-- LABEL for all fields -->
+                                                                <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if field.mandatory else '')"
+                                                                       t-att-for="f_name">
+                                                                    <!-- BOOLEAN FIELDS -->
+                                                                    <t t-if="f_type == 'boolean'">
+                                                                        <input type="checkbox"
+                                                                               t-att-id="f_name"
+                                                                               t-att-name="f_name"
+                                                                               t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
+                                                                               t-att-checked="True if partner[f_name] else ''"
+                                                                               t-att-required="field.mandatory"/>
+                                                                    </t>
+                                                                    <t t-esc="field.label"/>
+                                                                </label>
+                                                                <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
+                                                                <t t-if="field.information">
+                                                                    <!-- Modal Box Button-Link -->
+                                                                    <href type="button"
+                                                                            class="btn-link information-modal-box-trigger"
+                                                                            data-toggle="modal"
+                                                                            t-att-data-target="'#information-'+f_name">
+                                                                        <span class="glyphicon glyphicon-info-sign"/>
+                                                                    </href>
+                                                                    <!-- Modal Box -->
+                                                                    <div class="modal fade"
+                                                                         t-att-id="'information-'+f_name"
+                                                                         role="dialog">
+                                                                        <div class="modal-dialog">
+                                                                            <!-- Modal content-->
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <button type="button" class="close"
+                                                                                            data-dismiss="modal">&amp;times;</button>
+                                                                                    <h4 class="modal-title">
+                                                                                        <t t-esc="field.label"/>
+                                                                                    </h4>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <t t-raw="field.information"/>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                                                        Close
+                                                                                    </button>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </t>
+                                                                </t>
 
-                                                            <!-- CHAR FIELDS -->
-                                                            <t t-if="f_type in ['char',]">
-                                                                <input type="text"
-                                                                       t-att-id="f_name"
-                                                                       t-att-name="f_name"
-                                                                       class="form-control"
-                                                                       t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
-                                                                       t-att-placeholder="field.placeholder"
-                                                                       t-att-required="field.mandatory"
-                                                                       t-att="validation_rule"
-                                                                />
-                                                            </t>
+                                                                <!-- CHAR FIELDS -->
+                                                                <t t-if="f_type in ['char',]">
+                                                                    <input type="text"
+                                                                           t-att-id="f_name"
+                                                                           t-att-name="f_name"
+                                                                           class="form-control"
+                                                                           t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
+                                                                           t-att-placeholder="field.placeholder"
+                                                                           t-att-required="field.mandatory"
+                                                                           t-att="validation_rule"
+                                                                    />
+                                                                </t>
 
-                                                            <!-- DATE FIELDS -->
-                                                            <t t-if="f_type in ['date',]">
-                                                                <t t-set="date_de"
-                                                                   t-value="datetime.datetime.strftime(datetime.datetime.strptime(partner[f_name],'%Y-%m-%d'), '%d.%m.%Y') if partner[f_name] else None"
-                                                                />
-                                                                <input type="text"
-                                                                       t-att-id="f_name"
-                                                                       t-att-name="f_name"
-                                                                       class="form-control"
-                                                                       t-att-value="kwargs.get(f_name) if field.nodata else date_de"
-                                                                       t-att-placeholder="field.placeholder"
-                                                                       t-att-required="field.mandatory"
-                                                                       t-att="validation_rule"
-                                                                />
-                                                            </t>
+                                                                <!-- DATE FIELDS -->
+                                                                <t t-if="f_type in ['date',]">
+                                                                    <t t-set="date_de"
+                                                                       t-value="datetime.datetime.strftime(datetime.datetime.strptime(partner[f_name],'%Y-%m-%d'), '%d.%m.%Y') if partner[f_name] else None"
+                                                                    />
+                                                                    <input type="text"
+                                                                           t-att-id="f_name"
+                                                                           t-att-name="f_name"
+                                                                           class="form-control"
+                                                                           t-att-value="kwargs.get(f_name) if field.nodata else date_de"
+                                                                           t-att-placeholder="field.placeholder"
+                                                                           t-att-required="field.mandatory"
+                                                                           t-att="validation_rule"
+                                                                    />
+                                                                </t>
 
-                                                            <!-- SELECTION FIELDS (NOT Many2One!) -->
-                                                            <t t-if="f_type == 'selection'">
+                                                                <!-- SELECTION FIELDS (NOT Many2One!) -->
+                                                                <t t-if="f_type == 'selection'">
 
-                                                                <!-- Selection List Style -->
-                                                                <t t-if="field.style == 'selection' or not field.style">
+                                                                    <!-- Selection List Style -->
+                                                                    <t t-if="field.style == 'selection' or not field.style">
+                                                                        <select t-att-id="f_name"
+                                                                                t-att-name="f_name"
+                                                                                class="form-control"
+                                                                                t-att-required="field.mandatory">
+                                                                            <!-- Default empty option -->
+                                                                            <option value=""><t t-esc="field.placeholder"/></option>
+                                                                            <!-- Selection Values as options -->
+                                                                            <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                                                                <!-- Create Option List -->
+                                                                                <option t-att-value="option[0]"
+                                                                                        t-att-selected="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None">
+                                                                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                                </option>
+                                                                            </t>
+                                                                        </select>
+                                                                    </t>
+
+                                                                    <!-- Radio Buttons Style -->
+                                                                    <t t-if="field.style in ('radio', 'radio_selectnone')">
+                                                                        <t t-if="field.style == 'radio_selectnone'">
+                                                                            <div class="radio">
+                                                                                <label>
+                                                                                    <input type="radio"
+                                                                                           t-att-id="f_name + '_noselection'"
+                                                                                           t-att-name="f_name"
+                                                                                           value=""
+                                                                                           t-att-checked="True if not partner[f_name] and not kwargs.get(f_name) else None"
+                                                                                    />
+                                                                                    <t t-esc="field.placeholder or 'No Selection'"/>
+                                                                                </label>
+                                                                            </div>
+                                                                        </t>
+                                                                        <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                                                            <div class="radio">
+                                                                                <label>
+                                                                                    <input type="radio"
+                                                                                           t-att-id="option[0]"
+                                                                                           t-att-name="f_name"
+                                                                                           t-att-value="option[0]"
+                                                                                           t-att-checked="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None"
+                                                                                    />
+                                                                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                                </label>
+                                                                            </div>
+                                                                        </t>
+                                                                    </t>
+                                                                </t>
+
+                                                                <!-- SPECIAL FIELD: country_id (Many2One) -->
+                                                                <t t-if="f_name == 'country_id'">
+                                                                    <t t-set="cid"
+                                                                       t-value="(partner['country_id'].id or website.country_default_value.id) if not field.nodata else kwargs.get(f_name, '')"
+                                                                       />
                                                                     <select t-att-id="f_name"
                                                                             t-att-name="f_name"
                                                                             class="form-control"
                                                                             t-att-required="field.mandatory">
-                                                                        <!-- Default empty option -->
                                                                         <option value=""><t t-esc="field.placeholder"/></option>
-                                                                        <!-- Selection Values as options -->
-                                                                        <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
-                                                                            <!-- Create Option List -->
-                                                                            <option t-att-value="option[0]"
-                                                                                    t-att-selected="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None">
-                                                                                <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                        <t t-foreach="countries or []" t-as="country">
+                                                                            <!-- Set default country from res.config if none selected -->
+                                                                            <option t-att-value="country.id"
+                                                                                    t-att-selected="True if str(country.id) == str(cid) else None">
+                                                                                <t t-esc="country.name"/>
                                                                             </option>
                                                                         </t>
                                                                     </select>
                                                                 </t>
 
-                                                                <!-- Radio Buttons Style -->
-                                                                <t t-if="field.style in ('radio', 'radio_selectnone')">
-                                                                    <t t-if="field.style == 'radio_selectnone'">
-                                                                        <div class="radio">
-                                                                            <label>
-                                                                                <input type="radio"
-                                                                                       t-att-id="f_name + '_noselection'"
-                                                                                       t-att-name="f_name"
-                                                                                       value=""
-                                                                                       t-att-checked="True if not partner[f_name] and not kwargs.get(f_name) else None"
-                                                                                />
-                                                                                <t t-esc="field.placeholder or 'No Selection'"/>
-                                                                            </label>
-                                                                        </div>
-                                                                    </t>
-                                                                    <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
-                                                                        <div class="radio">
-                                                                            <label>
-                                                                                <input type="radio"
-                                                                                       t-att-id="option[0]"
-                                                                                       t-att-name="f_name"
-                                                                                       t-att-value="option[0]"
-                                                                                       t-att-checked="True if (partner[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None"
-                                                                                />
-                                                                                <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
-                                                                            </label>
-                                                                        </div>
-                                                                    </t>
+                                                                <!-- SPECIAL FIELD: state_id (Many2One) -->
+                                                                <t t-if="f_name == 'state_id'">
+                                                                    <select t-att-id="f_name"
+                                                                            t-att-name="f_name"
+                                                                            class="form-control"
+                                                                            t-att-required="field.mandatory">
+                                                                        <option value=""><t t-esc="field.placeholder"/></option>
+                                                                        <t t-foreach="states or []" t-as="state">
+                                                                            <option t-att-value="state.id" style="display:none;"
+                                                                                    t-att-data-country_id="state.country_id.id"
+                                                                                    t-att-selected="True if (state.id == partner['state_id'].id and not field.nodata) or (kwargs.get(f_name) == str(state.id)) else None">
+                                                                                <t t-esc="state.name"/>
+                                                                            </option>
+                                                                        </t>
+                                                                    </select>
                                                                 </t>
-                                                            </t>
+                                                            </div>
+                                                        </t>
 
-                                                            <!-- SPECIAL FIELD: country_id (Many2One) -->
-                                                            <t t-if="f_name == 'country_id'">
-                                                                <t t-set="cid"
-                                                                   t-value="(partner['country_id'].id or website.country_default_value.id) if not field.nodata else kwargs.get(f_name, '')"
-                                                                   />
-                                                                <select t-att-id="f_name"
-                                                                        t-att-name="f_name"
-                                                                        class="form-control"
-                                                                        t-att-required="field.mandatory">
-                                                                    <option value=""><t t-esc="field.placeholder"/></option>
-                                                                    <t t-foreach="countries or []" t-as="country">
-                                                                        <!-- Set default country from res.config if none selected -->
-                                                                        <option t-att-value="country.id"
-                                                                                t-att-selected="True if str(country.id) == str(cid) else None">
-                                                                            <t t-esc="country.name"/>
-                                                                        </option>
-                                                                    </t>
-                                                                </select>
-                                                            </t>
+                                                        <!-- CLEARFIX DIV -->
+                                                        <t t-if="field.clearfix">
+                                                            <div t-att-class="'clearfix clearfix-' + f_name"/>
+                                                        </t>
 
-                                                            <!-- SPECIAL FIELD: state_id (Many2One) -->
-                                                            <t t-if="f_name == 'state_id'">
-                                                                <select t-att-id="f_name"
-                                                                        t-att-name="f_name"
-                                                                        class="form-control"
-                                                                        t-att-required="field.mandatory">
-                                                                    <option value=""><t t-esc="field.placeholder"/></option>
-                                                                    <t t-foreach="states or []" t-as="state">
-                                                                        <option t-att-value="state.id" style="display:none;"
-                                                                                t-att-data-country_id="state.country_id.id"
-                                                                                t-att-selected="True if (state.id == partner['state_id'].id and not field.nodata) or (kwargs.get(f_name) == str(state.id)) else None">
-                                                                            <t t-esc="state.name"/>
-                                                                        </option>
-                                                                    </t>
-                                                                </select>
-                                                            </t>
-                                                        </div>
-                                                    </t>
-
-                                                    <!-- CLEARFIX DIV -->
-                                                    <t t-if="field.clearfix">
-                                                        <div t-att-class="'clearfix clearfix-' + f_name"/>
                                                     </t>
                                                 </t>
+                                            <!-- END foreach for the fields -->
                                             </t>
                                         </div>
                                     </t>

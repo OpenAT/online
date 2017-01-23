@@ -111,6 +111,14 @@ class AuthPartnerForm(http.Controller):
         # Update the partner with the values from the from inputs
         # HINT: At this point a partner could only be found if the user had a valid code or a user is logged in
         if partner:
+
+            # Check if the partner changed
+            if request.session.get('apf_partner_id', partner.id) != partner.id:
+                # partner has changed by login or new code: therefore reset kwargs except fs_ptoken
+                kwargs = {'fs_ptoken': kwargs.get('fs_ptoken', '')}
+            request.session['apf_partner_id'] = partner.id
+
+
             # Add countries and states
             countries = request.env['res.country']
             countries = countries.sudo().search([])
@@ -123,49 +131,45 @@ class AuthPartnerForm(http.Controller):
             apf_fields = request.env['website.apf_partner_fields']
             apf_fields = apf_fields.sudo().search([])
             for field in apf_fields:
-                fname = field.res_partner_field_id.name
-                ftype = field.res_partner_field_id.ttype
-                # Search for field values  given by the form inputs
-                if fname in kwargs:
-                    # NoData Fields can only be updated if there is something in the kwargs ELSE do NOT clear it!
-                    if not field.nodata or field.nodata and kwargs[fname].strip() or ftype == 'boolean':
-                        # Fix for Boolean fields: convert str() to boolean()
-                        # HINT boolean field will ignore field.nodata setting
-                        if ftype == 'boolean':
-                            fields_to_update[fname] = True if kwargs[fname] else False
-                        # Fix for Date fields: convert '' to None
-                        elif ftype == 'date':
-                            fields_to_update[fname] = kwargs[fname].strip() if kwargs[fname].strip() else None
-                        else:
-                            value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
-                            fields_to_update[fname] = value
+                if field.res_partner_field_id:
+                    fname = field.res_partner_field_id.name
+                    ftype = field.res_partner_field_id.ttype
+                    # Search for field values  given by the form inputs
+                    if fname in kwargs:
+                        # NoData Fields can only be updated if there is something in the kwargs ELSE do NOT clear it!
+                        if not field.nodata or field.nodata and kwargs[fname].strip() or ftype == 'boolean':
+                            # Fix for Boolean fields: convert str() to boolean()
+                            # HINT boolean field will ignore field.nodata setting
+                            if ftype == 'boolean':
+                                fields_to_update[fname] = True if kwargs[fname] else False
+                            # Fix for Date fields: convert '' to None
+                            elif ftype == 'date':
+                                fields_to_update[fname] = kwargs[fname].strip() if kwargs[fname].strip() else None
+                            else:
+                                value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
+                                fields_to_update[fname] = value
 
             # Write to the res.partner (after field validation)
             # HINT: Only validate fields and write the partner if we found fields_to_update
             if fields_to_update:
 
-                # Validate fields (before we update anything)
+                # VALIDATE FIELDS (before we update anything)
                 # HINT: We do this here since fields_to_update indicates that something was entered in the
                 #       Your Data section of the form. (= a partner was already found before)
                 for field in apf_fields:
-                    fname = field.res_partner_field_id.name
-                    ftype = field.res_partner_field_id.ttype
-                    # Validate "mandatory" setting
-                    if field.mandatory and not kwargs.get(fname):
-                        field_errors[fname] = fname
-                    # Validate date fields
-                    if ftype == 'date' and kwargs[fname].strip():
-                        date_de = kwargs[fname].strip()
-                        try:
-                            datetime.datetime.strptime(date_de, '%d.%m.%Y')
-                        except:
+                    if field.res_partner_field_id:
+                        fname = field.res_partner_field_id.name
+                        ftype = field.res_partner_field_id.ttype
+                        # Validate "mandatory" setting
+                        if field.mandatory and not kwargs.get(fname):
                             field_errors[fname] = fname
-                # Validate that birthdate_web is given if field donation_deduction is set to donation_deduction
-                donation_deduction = kwargs.get('donation_deduction') or partner.donation_deduction
-                birthdate_web = kwargs.get('birthdate_web') or partner.birthdate_web
-                if donation_deduction == 'donation_deduction' and not birthdate_web:
-                    field_errors['birthdate_web'] = 'birthdate_web'
-
+                        # Validate date fields
+                        if ftype == 'date' and kwargs[fname].strip():
+                            date_de = kwargs[fname].strip()
+                            try:
+                                datetime.datetime.strptime(date_de, '%d.%m.%Y')
+                            except:
+                                field_errors[fname] = fname
 
                 # Update res.partner (if no errors where found)
                 if not field_errors:

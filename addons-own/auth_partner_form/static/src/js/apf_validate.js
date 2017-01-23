@@ -7,20 +7,23 @@ $(document).ready(function () {
     $( "#auth_partner_form" ).validate({
         // Special rule to make birthdate_web mandatory if donation_deduction (Spendenabsetzbarkeit) is selected
         rules: {
+
+            email: {
+                required: function (element) {
+                    return $("#newsletter_web").is(":checked");
+                }
+            },
+
             birthdate_web: {
                 required: function (element) {
-                    var radio;
-                    var list;
-                    var test;
-                    radio = $("input:radio[name='donation_deduction']:checked").val();
-                    list = $("#donation_deduction option:checked").val();
-                    test = radio || list || '';
-                    // console.log(radio);
-                    // console.log(list);
-                    // console.log(test);
-                    return test === "donation_deduction";
+                    // This makes the birthdate_web field mandatory if donation_deduction_optout_web is NOT checked
+                    // HINT: if "mandatory" is checked in apf fields the field will ALWAYS be mandatory
+                    //       by server side validation!
+                    console.log('TEST ' + !$("#donation_deduction_optout_web").is(':checked') );
+                    return !$("#donation_deduction_optout_web").is(':checked');
                 }
             }
+
         }
     });
 
