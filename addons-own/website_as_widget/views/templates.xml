@@ -26,7 +26,7 @@
         </xpath>
         <xpath expr="//main" position="attributes">
                 <!-- For I-Frame height calculation -->
-                <attribute name="t-att-data-iframe-height"> 'True' if request.session.get('aswidget', False) else '' </attribute>
+                <attribute name="t-att-data-iframe-height">True</attribute>
         </xpath>
         <xpath expr="//footer" position="attributes">
                 <attribute name="t-att-class"> 'hidden' if request.session.get('aswidget', False) else '' </attribute>
