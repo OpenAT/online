@@ -173,6 +173,10 @@ class AuthPartnerForm(http.Controller):
 
                 # Update res.partner (if no errors where found)
                 if not field_errors:
+                    # Add fstoken_update and fstoken_update_date
+                    if fs_ptoken:
+                        fields_to_update['fstoken_update'] = fs_ptoken
+                        fields_to_update['fstoken_update_date'] = fields.datetime.now()
                     if partner.sudo().write(fields_to_update):
                         success_message = request.website.apf_update_success_message or _('Your data was successfully updated!')
                         messages.append(success_message)
