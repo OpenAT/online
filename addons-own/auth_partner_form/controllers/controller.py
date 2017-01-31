@@ -31,6 +31,9 @@ class AuthPartnerForm(http.Controller):
         partner = None
         apf_fields = list()
         field_errors = dict()
+        errors_token = list()
+        warnings_token = list()
+        messages_token = list()
         errors = list()
         warnings = list()
         messages = list()
@@ -48,6 +51,9 @@ class AuthPartnerForm(http.Controller):
                                         'partner': '',
                                         'apf_fields': list(),
                                         'field_errors': dict(),
+                                        'errors_token': errors_token,
+                                        'warnings_token': warnings_token,
+                                        'messages_token': messages_token,
                                         'errors': errors,
                                         'warnings': warnings,
                                         'messages': messages,
@@ -68,12 +74,12 @@ class AuthPartnerForm(http.Controller):
                 partner = fstoken.partner_id
                 if len(kwargs) <= 2:
                     success_message = request.website.apf_token_success_message or _('Your code is valid!')
-                    messages.append(success_message)
+                    messages_token.append(success_message)
 
             # Wrong or expired token was given
             else:
                 error_message = request.website.apf_token_error_message or _('Wrong or expired code!')
-                errors.append(error_message)
+                errors_token.append(error_message)
                 field_errors['fs_ptoken'] = 'fs_ptoken'
 
                 # Add a delay of a second for every wrong try for the same session in the last 24h
@@ -146,7 +152,8 @@ class AuthPartnerForm(http.Controller):
                             elif ftype == 'date':
                                 fields_to_update[fname] = kwargs[fname].strip() if kwargs[fname].strip() else None
                             else:
-                                value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else kwargs[fname]
+                                value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else \
+                                    kwargs[fname]
                                 fields_to_update[fname] = value
 
             # Write to the res.partner (after field validation)
@@ -178,7 +185,8 @@ class AuthPartnerForm(http.Controller):
                         fields_to_update['fstoken_update'] = fs_ptoken
                         fields_to_update['fstoken_update_date'] = fields.datetime.now()
                     if partner.sudo().write(fields_to_update):
-                        success_message = request.website.apf_update_success_message or _('Your data was successfully updated!')
+                        success_message = request.website.apf_update_success_message or \
+                                          _('Your data was successfully updated!')
                         messages.append(success_message)
                     else:
                         warnings.append(_('Your data could not be updated. Please try again.'))
@@ -194,6 +202,9 @@ class AuthPartnerForm(http.Controller):
                                     'partner': partner,
                                     'apf_fields': apf_fields,
                                     'field_errors': field_errors,
+                                    'errors_token': errors_token,
+                                    'warnings_token': warnings_token,
+                                    'messages_token': messages_token,
                                     'errors': errors,
                                     'warnings': warnings,
                                     'messages': messages,

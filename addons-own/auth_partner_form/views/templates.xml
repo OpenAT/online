@@ -12,6 +12,7 @@
             </xpath>
         </template>
 
+
         <!-- TEMPLATE meinedaten -->
         <template id="meinedaten" name="Auth Partner Form Website Template" page="True">
             <t t-call="website.layout">
@@ -82,30 +83,6 @@
                                         </div>
                                         <div class="clearfix clearfix-apf_hpf"/>
                                     </div>
-
-                                    <!-- Error, Warning and Success message(s) -->
-                                    <div class="row apf_messages">
-                                        <div class="col-lg-12">
-                                            <t t-foreach="errors" t-as="error">
-                                                <div class="alert alert-danger" role="alert">
-                                                    <t t-raw="error"/>
-                                                </div>
-                                            </t>
-                                            <t t-foreach="warnings" t-as="warning">
-                                                <div class="alert alert-warning" role="alert">
-                                                    <t t-raw="warning"/>
-                                                </div>
-                                            </t>
-                                            <t t-foreach="messages" t-as="message">
-                                                <div class="alert alert-success" role="alert">
-                                                    <t t-raw="message"/>
-                                                </div>
-                                            </t>
-                                        </div>
-                                        <div class="clearfix clearfix-apf_messages"/>
-                                    </div>
-
-
 
                                     <!-- PARTNER WAS FOUND: Data input for the partner -->
                                     <t t-if="partner">
@@ -371,6 +348,100 @@
                     </div>
                 </div>
             </t>
+        </template>
+
+
+        <!-- SUBTEMPLATE for Message Display -->
+        <template id="messages" name="Auth Partner Form Message Subtemplate">
+            <!-- Message display -->
+            <div t-att-id="msg_block_id" class="row apf_messages">
+                <div class="col-lg-12">
+                    <t t-foreach="err" t-as="error">
+                        <div class="alert alert-danger" role="alert">
+                            <t t-raw="error"/>
+                        </div>
+                    </t>
+                    <t t-foreach="warn" t-as="warning">
+                        <div class="alert alert-warning" role="alert">
+                            <t t-raw="warning"/>
+                        </div>
+                    </t>
+                    <t t-foreach="msg" t-as="message">
+                        <div class="alert alert-success" role="alert">
+                            <t t-raw="message"/>
+                        </div>
+                    </t>
+                </div>
+                <div class="clearfix"/>
+            </div>
+        </template>
+
+
+        <!-- Show Messages: Customization Templates -->
+        <template id="apf_token_msg_top" inherit_id="auth_partner_form.meinedaten" name="Token Messages Top" customize_show="True" active="False">
+            <xpath expr="//form" position="before">
+                <t t-call="auth_partner_form.messages">
+                    <t t-set="msg_block_id" t-value="'apf-token-msg-top'"/>
+                    <t t-set="err" t-value="errors_token"/>
+                    <t t-set="warn" t-value="warnings_token"/>
+                    <t t-set="msg" t-value="messages_token"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="apf_data_msg_top" inherit_id="auth_partner_form.meinedaten" name="Data Messages Top" customize_show="True" active="False">
+            <xpath expr="//form" position="before">
+                <t t-call="auth_partner_form.messages">
+                    <t t-set="msg_block_id" t-value="'apf-data-msg-top'"/>
+                    <t t-set="err" t-value="errors"/>
+                    <t t-set="warn" t-value="warnings"/>
+                    <t t-set="msg" t-value="messages"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="apf_token_msg_aftertoken" inherit_id="auth_partner_form.meinedaten" name="Token Messages After Token" customize_show="True" active="True">
+            <xpath expr="//t[@t-if='partner']" position="before">
+                <t t-call="auth_partner_form.messages">
+                    <t t-set="msg_block_id" t-value="'apf-token-msg-aftertoken'"/>
+                    <t t-set="err" t-value="errors_token"/>
+                    <t t-set="warn" t-value="warnings_token"/>
+                    <t t-set="msg" t-value="messages_token"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="apf_data_msg_aftertoken" inherit_id="auth_partner_form.meinedaten" name="Data Messages After Token" customize_show="True" active="False">
+            <xpath expr="//t[@t-if='partner']" position="before">
+                <t t-call="auth_partner_form.messages">
+                    <t t-set="msg_block_id" t-value="'apf-data-msg-aftertoken'"/>
+                    <t t-set="err" t-value="errors"/>
+                    <t t-set="warn" t-value="warnings"/>
+                    <t t-set="msg" t-value="messages"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="apf_token_msg_bottom" inherit_id="auth_partner_form.meinedaten" name="Token Messages Bottom" customize_show="True" active="False">
+            <xpath expr="//form" position="after">
+                <t t-call="auth_partner_form.messages">
+                    <t t-set="msg_block_id" t-value="'apf-token-msg-bottom'"/>
+                    <t t-set="err" t-value="errors_token"/>
+                    <t t-set="warn" t-value="warnings_token"/>
+                    <t t-set="msg" t-value="messages_token"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="apf_data_msg_bottom" inherit_id="auth_partner_form.meinedaten" name="Data Messages Bottom" customize_show="True" active="True">
+            <xpath expr="//form" position="after">
+                <t t-call="auth_partner_form.messages">
+                    <t t-set="msg_block_id" t-value="'apf-data-msg-bottom'"/>
+                    <t t-set="err" t-value="errors"/>
+                    <t t-set="warn" t-value="warnings"/>
+                    <t t-set="msg" t-value="messages"/>
+                </t>
+            </xpath>
         </template>
 
     </data>
