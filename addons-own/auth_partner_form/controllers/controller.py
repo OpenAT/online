@@ -26,7 +26,7 @@ import datetime
 
 class AuthPartnerForm(http.Controller):
 
-    @http.route(['/meine-daten/', '/meinedaten/'], auth='public', website=True)
+    @http.route(['/meine-daten', '/meinedaten'], auth='public', website=True)
     def index(self, **kwargs):
         partner = None
         apf_fields = list()
