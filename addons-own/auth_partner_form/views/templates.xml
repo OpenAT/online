@@ -34,7 +34,8 @@
                                 <!-- START THE FORM -->
                                 <form id="auth_partner_form"
                                       action="/meine-daten"
-                                      method="post">
+                                      method="post"
+                                      autocomplete="off">
 
                                     <!-- Token Input -->
                                     <!-- Hide the token Section if the user is logged in -->
@@ -56,6 +57,7 @@
                                                        name="fs_ptoken"
                                                        type="text"
                                                        class="form-control input-lg"
+                                                       autocomplete="off"
                                                        t-att-value="fs_ptoken"
                                                        t-att-placeholder="website.apf_token_placeholder"
                                                        t-att-disabled="website.user_id != user_id"
@@ -78,6 +80,7 @@
                                                        type="text"
                                                        class="form-control"
                                                        placeholder="Do not enter data here please!"
+                                                       autocomplete="off"
                                                 />
                                             </div>
                                         </div>
