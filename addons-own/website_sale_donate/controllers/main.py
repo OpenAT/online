@@ -274,10 +274,11 @@ class website_sale_donate(website_sale):
 
             # Redirect to the product page if product-page-layout is one-page-checkout
             if product.product_page_template == u'website_sale_donate.ppt_opc':
-                request.redirect('/shop/product/' + product.product_tmpl_id.id + '?' + request.httprequest.query_string)
+                return request.redirect('/shop/product/' + str(product.product_tmpl_id.id))
 
             # Redirect to the checkout page
-            return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
+            #return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
+            return request.redirect('/shop/checkout')
 
         # EXIT B) Stay on the current page if "Add to cart and stay on current page" is set
         if request.website['add_to_cart_stay_on_page']:
@@ -604,7 +605,7 @@ class website_sale_donate(website_sale):
             checkout_page.qcontext['one_page_checkout'] = True
 
             # Checkout-Page was already called and now submits it's form data
-            if post:
+            if request.httprequest.method == 'POST':
 
                 # STEP 1: Update Delivery Method through payment controller
                 carrier_id = post.get('delivery_type')
