@@ -20,24 +20,26 @@ from openerp import http
 from openerp.http import request
 from openerp import fields
 from openerp.tools.translate import _
-import time
 import datetime
+from openerp.addons.auth_partner.fstoken_tools import fstoken
 
 
 class AuthPartnerForm(http.Controller):
 
     @http.route(['/meine-daten', '/meinedaten'], auth='public', website=True)
     def index(self, **kwargs):
+        # Token related
+        fs_ptoken = kwargs.get('fs_ptoken')
         partner = None
+        messages_token = list()
+        warnings_token = list()
+        errors_token = list()
+        # Form related
         apf_fields = list()
         field_errors = dict()
-        errors_token = list()
-        warnings_token = list()
-        messages_token = list()
-        errors = list()
-        warnings = list()
         messages = list()
-        fs_ptoken = kwargs.get('fs_ptoken')
+        warnings = list()
+        errors = list()
         countries = None
         states = None
 
@@ -61,69 +63,14 @@ class AuthPartnerForm(http.Controller):
                                         'states': None,
                                         })
 
-        # Check for fs_ptoken
-        if fs_ptoken:
-            # Sanitize fs_ptoken (remove all non alphanumeric characters and convert all chars to uppercase)
-            fs_ptoken = ''.join(c.upper() for c in fs_ptoken.strip() if c.isalnum())
-            # Find related res.partner for the token
-            fstoken_obj = request.env['res.partner.fstoken']
-            fstoken = fstoken_obj.sudo().search([('name', '=', fs_ptoken)], limit=1)
-            # HINT: fstoken expiration_date is a mandatory field.
-            if fstoken and fields.Datetime.from_string(fstoken.expiration_date) >= fields.datetime.now():
-                # Valid Token was found!
-                partner = fstoken.partner_id
-                if len(kwargs) <= 2:
-                    success_message = request.website.apf_token_success_message or _('Your code is valid!')
-                    messages_token.append(success_message)
+        # CHECK FSTOKEN
+        # HINT: if fs_ptoken=False fstoken() will search for a valid token in the session
+        partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=fs_ptoken)
 
-            # Wrong or expired token was given
-            else:
-                error_message = request.website.apf_token_error_message or _('Wrong or expired code!')
-                errors_token.append(error_message)
-                field_errors['fs_ptoken'] = 'fs_ptoken'
-
-                # Add a delay of a second for every wrong try for the same session in the last 24h
-                if request.session.get('wrong_token_date'):
-                    # Reset if last incorrect try is older than 24h
-                    if datetime.datetime.now() > request.session['wrong_token_date'] + datetime.timedelta(hours=24):
-                        request.session['wrong_token_date'] = datetime.datetime.now()
-                        request.session['wrong_token_tries'] = 1
-                    else:
-                        if request.session['wrong_token_tries'] > 3:
-                            time.sleep(3)
-                        request.session['wrong_token_tries'] += 1
-                # This is the first wrong try so initialize "wrong_token_day" and "wrong_token_tries"
-                else:
-                    request.session['wrong_token_date'] = datetime.datetime.now()
-                    request.session['wrong_token_tries'] = 1
-
-                # TODO: Maybe add protection for new sessions spamming from the same ip?
-                #       Problem: slow cause i need to store the ips in the database
-
-        # Check for logged in user
-        if request.uid != request.website.user_id.id:
-            user_obj = request.env['res.users']
-            user = user_obj.sudo().browse([request.uid])
-            assert user.partner_id, _('You are logged in but your user has no res.partner assigned!')
-            # Check if the res.partner of the logged in user matches the found partner by the fs_ptoken
-            if partner and partner.id != user.partner_id.id:
-                # HINT: This should never happen except the website is already called with a fs_ptoken in the url
-                warnings.append(_('You are logged in but your login does not match the person for the given code! '
-                                  'You will change the data for %s. '
-                                  'If you want to change your data instead please clear the token code' % partner.name))
-            else:
-                partner = user.partner_id
-
-        # Update the partner with the values from the from inputs
+        # UPDATE PARTNER
+        # Update the partner with the values from the form input fields
         # HINT: At this point a partner could only be found if the user had a valid code or a user is logged in
         if partner:
-
-            # Check if the partner changed
-            if request.session.get('apf_partner_id', partner.id) != partner.id:
-                # partner has changed by login or new code: therefore reset kwargs except fs_ptoken
-                kwargs = {'fs_ptoken': kwargs.get('fs_ptoken', '')}
-            request.session['apf_partner_id'] = partner.id
-
 
             # Add countries and states
             countries = request.env['res.country']
@@ -181,6 +128,9 @@ class AuthPartnerForm(http.Controller):
                 # Update res.partner (if no errors where found)
                 if not field_errors:
                     # Add fstoken_update and fstoken_update_date
+                    # DEPRECATION WARNING! This is only here for the auth_partner_form and was
+                    #                      replaced by field "last_date_of_use" in "res.partner.fstoken" in the
+                    #                      function fs_ptoken()
                     if fs_ptoken:
                         fields_to_update['fstoken_update'] = fs_ptoken
                         fields_to_update['fstoken_update_date'] = fields.datetime.now()
@@ -196,6 +146,8 @@ class AuthPartnerForm(http.Controller):
                 errors.append(_('Missing or incorrect information! Please check your input.'))
 
         # HINT: use kwargs.get('fs_ptoken', '') to get the format of the website corrected by java script
+        # HINT: Show only messages_token if the form is not submitting res.parnter field data from the form
+        messages_token = messages_token if kwargs.get('fs_ptoken') and 'lastname' not in kwargs else list()
         return http.request.render('auth_partner_form.meinedaten',
                                    {'kwargs': kwargs,
                                     'fs_ptoken': kwargs.get('fs_ptoken', ''),

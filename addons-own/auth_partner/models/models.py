@@ -30,6 +30,7 @@ class ResPartnerFSToken(models.Model):
     expiration_date = fields.Date(string="Expiration Date", required=True,
                                   default=fields.datetime.now() + timedelta(days=14))
     fs_origin = fields.Char(string="FS Origin")
+    last_date_of_use = fields.Date(string="Last Date of Use", readonly=True)
 
     # https://www.odoo.com/documentation/8.0/howtos/backend.html
     @api.constrains('name')
@@ -51,3 +52,4 @@ class ResPartner(models.Model):
 
     fstoken_ids = fields.One2many(string='FS Partner Tokens', comodel_name='res.partner.fstoken',
                                   inverse_name='partner_id')
+

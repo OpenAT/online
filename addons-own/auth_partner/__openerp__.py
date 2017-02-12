@@ -21,33 +21,51 @@
 ##############################################################################
 
 {
-    'name': "auth_partner",
-    'summary': """Set partner for current web session by token""",
+    'name': "FS-Online auth_partner",
+    'summary': """Set res.partner by fs_ptoken""",
     'description': """
 
 Set Partner in Session by Token
 ===============================
 
-Use the parameter fs_ptoken to set the res.partner for a sales order or for a form to update res.partner data
+Use the parameter fs_ptoken to set the res.partner for the current session.
+
+If a valid token is found it will stay valid until:
+    - the session is deleted
+    - an other token is used
+    - or a user logs in
+
+The fs_ptoken is currently used in:
+ - website_sale_donate and
+ - auth_partner_form.
 
 EXAMPLES:
 
 Simple-Checkout-Product-Link with fs_ptoken attribute:
 http://localhost:8010/shop/simple_checkout/einmalige-spende-6?fs_ptoken=123456789
 
-
 ATTENTION: The token must be at least 6 chars long and alphanumeric.
 WARNING: The value of fs_ptoken is case sensitive!
+
+
+FSTOKEN TOOLS FOR PROGRAMMERS:
+
+from openerp.addons.auth_partner.fstoken_tools import fstoken
+partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=kwargs.get('fsptoken', False))
+
+# HINT: You could use fstoken() without the fs_ptoken kwarg to check any valid token in the current session.
+
 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net",
     'category': 'Authentication',
-    'version': '1.0',
+    'version': '1.1',
     'installable': True,
     'application': False,
     'auto_install': False,
     'depends': [
+        'base',
         'base_setup',
         'web',
     ],

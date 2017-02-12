@@ -26,7 +26,7 @@ class ir_http(orm.AbstractModel):
     def _dispatch(self):
         response = super(ir_http, self)._dispatch()
 
-        if request.website:
+        if hasattr(request, 'website'):
 
             # Check for aswidget
             if 'aswidget' in request.httprequest.host:

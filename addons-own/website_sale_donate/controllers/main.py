@@ -6,10 +6,9 @@ from openerp.tools.translate import _
 from openerp.http import request
 from lxml import etree
 from urlparse import urlparse
-
 from datetime import timedelta
 from openerp import fields
-
+from openerp.addons.auth_partner.fstoken_tools import fstoken
 from openerp.addons.website.models.website import slug
 
 # import copy
@@ -231,42 +230,24 @@ class website_sale_donate(website_sale):
         order = request.website.sale_get_order(context=context)
         print "cart_update order name: %s" % order
 
-        # FS_PTOKEN: set sales order partner by fs_ptoken
-        # If fs_ptoken in kwargs add them to the kw and check if this selects the right user in _cart_update
-        if 'fs_ptoken' in kw and order:
-
-            # Only change partner if NOT logged in
-            if request.website.user_id.id == uid:
-
-                # Find related res.partner for the token
-                fstoken_obj = request.registry['res.partner.fstoken']
-                fstoken_id = fstoken_obj.search(cr, SUPERUSER_ID,
-                                                [('name', '=', request.httprequest.args['fs_ptoken'])],
-                                                limit=1)
-                fstoken = fstoken_obj.browse(cr, SUPERUSER_ID, fstoken_id)
-
-                # Update the sale.order with the res.partner from fs_ptoken
-                # https://www.odoo.com/documentation/8.0/reference/orm.html#fields (openerp.fields.Datetime)
-                if fstoken:
-                    # Check if the token is still valid
-                    expiration_date = fields.datetime.now()
-                    if fstoken.expiration_date:
-                        expiration_date = fields.Datetime.from_string(fstoken.expiration_date)
-                    else:
-                        expiration_date = fields.Datetime.from_string(fstoken.create_date) + timedelta(days=14)
-
-                    if fields.datetime.now() <= expiration_date:
-                        values = {'partner_id': fstoken.partner_id.id,
-                                  'partner_invoice_id': fstoken.partner_id.id,
-                                  'partner_shipping_id': fstoken.partner_id.id,
-                                  }
-                        order_obj = request.registry['sale.order']
-                        order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
-                        # Update the sale.order.line with the fstoken
-                        if order_line.get('line_id'):
-                            order_line_obj = request.registry['sale.order.line']
-                            order_line_obj.write(cr, SUPERUSER_ID, [order_line.get('line_id')],
-                                                 {'fs_ptoken': fstoken.name}, context=context)
+        # FSTOKEN: Set sales order partner by fs_ptoken
+        # HINT: Only use or check the token if there is an order and the user is NOT logged in!
+        # TODO: should we log the token to the sale.order.line also if logged in but different partner for valid token?
+        if order and request.website.user_id.id == uid:
+            fs_ptoken = kw.get('fs_ptoken', None)
+            partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=fs_ptoken)
+            if partner:
+                values = {'partner_id': partner.id,
+                          'partner_invoice_id': partner.id,
+                          'partner_shipping_id': partner.id,
+                          }
+                order_obj = request.registry['sale.order']
+                order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
+                # Update the sale.order.line with the fstoken for statistics
+                if order_line and order_line.get('line_id'):
+                    order_line_obj = request.registry['sale.order.line']
+                    order_line_obj.write(cr, SUPERUSER_ID, [order_line.get('line_id')],
+                                         {'fs_ptoken': fs_ptoken}, context=context)
 
         # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):

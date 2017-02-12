@@ -88,6 +88,7 @@ You still need to do some things by Hand after installing this module:
         'web_export_view',
         'report_custom_filename',
         'partner_contact_gender',
+        'partner_firstname',
         # Forced Own Addons
         'website_sale_donate',
         'website_crm_extended',
@@ -103,6 +104,7 @@ You still need to do some things by Hand after installing this module:
         'fs_groups',
         'auth_partner',
         'auth_partner_form',
+        'partner_firstname_lastname',
     ],
     'data': [
         'data/data_project.xml',

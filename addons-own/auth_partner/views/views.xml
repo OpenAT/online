@@ -13,6 +13,7 @@
                         <field name="partner_id"/>
                         <field name="expiration_date"/>
                         <field name="fs_origin"/>
+                        <field name="last_date_of_use"/>
                     </group>
                 </form>
             </field>
@@ -26,6 +27,7 @@
                         <field name="partner_id"/>
                         <field name="expiration_date"/>
                         <field name="fs_origin"/>
+                        <field name="last_date_of_use"/>
                 </tree>
             </field>
         </record>
@@ -38,6 +40,7 @@
                         <field name="partner_id"/>
                         <field name="expiration_date"/>
                         <field name="fs_origin"/>
+                        <field name="last_date_of_use"/>
                 </search>
             </field>
         </record>
