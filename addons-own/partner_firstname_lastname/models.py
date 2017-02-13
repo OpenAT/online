@@ -19,6 +19,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from openerp import api, fields, models
+from openerp import SUPERUSER_ID
+import logging
+
+
+_logger = logging.getLogger(__name__)
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -33,4 +39,16 @@ class ResPartner(models.Model):
         name_parts = super(ResPartner, self)._get_inverse_name(name=name, is_company=is_company)
         # Invert the original Result:
         return {"lastname": name_parts['firstname'], "firstname": name_parts['lastname']}
+
+    def init(self, cr, context=None):
+        # Update all res.partner.name fields on addon install or update if there is already a lastname
+        partners = self.search(cr, SUPERUSER_ID, [])
+        partner_updates = 0
+        for partner_id in partners:
+            partner = self.browse(cr, SUPERUSER_ID, [partner_id])
+            if partner:
+                if partner._get_computed_name(partner.lastname, partner.firstname) != partner.name:
+                    partner.write({"lastname": partner.lastname})
+                    partner_updates += 1
+        _logger.info('Recalculation of res.partner.name field was needed for %s partner(s)' % partner_updates)
 
