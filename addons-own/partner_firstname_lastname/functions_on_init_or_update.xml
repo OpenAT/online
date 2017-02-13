@@ -1,0 +1,6 @@
+<openerp>
+  <data noupdate="0">
+    <!-- Run this function on addon install or update -->
+    <function model="res.partner" name="_install_update_partner_firstname_lastname"/>
+  </data>
+</openerp>

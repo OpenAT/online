@@ -19,8 +19,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from openerp import api, fields, models
-from openerp import SUPERUSER_ID
 import logging
+import time
 
 
 _logger = logging.getLogger(__name__)
@@ -40,15 +40,48 @@ class ResPartner(models.Model):
         # Invert the original Result:
         return {"lastname": name_parts['firstname'], "firstname": name_parts['lastname']}
 
-    def init(self, cr, context=None):
-        # Update all res.partner.name fields on addon install or update if there is already a lastname
-        partners = self.search(cr, SUPERUSER_ID, [])
+    # Overwrite method to make it possible to update the name field without updating firstname and lastname
+    @api.one
+    def _inverse_name_after_cleaning_whitespace(self):
+        # Skip the inverse function (= do not update firstname lastname) and reset it for the next regular change
+        if self.env.context.get("partner_firstname_skip_inverse"):
+            # Do not skip next change
+            self.env.context = self.with_context(partner_firstname_skip_inverse=False).env.context
+        else:
+            super(ResPartner, self)._inverse_name_after_cleaning_whitespace()
+
+    # def init(self, cr, context=None):
+    #     # Check all res.partner.name field on addon install or update
+    #     partners = self.search(cr, SUPERUSER_ID, [])
+    #     partner_updates = 0
+    #     for partner_id in partners:
+    #         partner = self.browse(cr, SUPERUSER_ID, [partner_id])
+    #         if partner:
+    #             computed_name = partner._get_computed_name(partner.lastname, partner.firstname)
+    #             if computed_name != partner.name:
+    #                 # Avoid recursive update of firstname and lastname fields if field name changes
+    #                 if context:
+    #                     context['partner_firstname_skip_inverse'] = True
+    #                 else:
+    #                     context = {'partner_firstname_skip_inverse': True}
+    #                 partner.write(cr, SUPERUSER_ID, {"name": computed_name}, context=context)
+    #                 partner_updates += 1
+    #     _logger.info('Recalculation of res.partner.name field was needed for %s partner(s)' % partner_updates)
+
+    @api.model
+    def _install_update_partner_firstname_lastname(self):
         partner_updates = 0
-        for partner_id in partners:
-            partner = self.browse(cr, SUPERUSER_ID, [partner_id])
-            if partner:
-                if partner._get_computed_name(partner.lastname, partner.firstname) != partner.name:
-                    partner.write({"lastname": partner.lastname})
-                    partner_updates += 1
-        _logger.info('Recalculation of res.partner.name field was needed for %s partner(s)' % partner_updates)
+        start_time = time.time()
+        partners = self.search([])
+        _logger.info("Checking \"name\" field for %d res.partner on update of the addon.", len(partners))
+        for partner in partners:
+            computed_name = partner._get_computed_name(partner.lastname, partner.firstname)
+            if computed_name != partner.name:
+                # Avoid inverse function of the "name" field (= do not change firstname or lastname)
+                self.env.context = self.with_context(partner_firstname_skip_inverse=True).env.context
+                partner.name = computed_name
+                partner_updates += 1
+        # Log Result
+        total_time = time.time()-start_time
+        _logger.info('Update of %s partner(s) in %.0f sec (%.1f min)' % (partner_updates, total_time, total_time/60))
 

@@ -34,10 +34,12 @@ Change the default order of addon partner_firstname to firstname, lastname inste
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
     'depends': [
         'partner_firstname',
     ],
     'installable': True,
-    'data': [],
+    'data': [
+        'functions_on_init_or_update.xml',
+    ],
 }
