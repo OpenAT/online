@@ -24,25 +24,29 @@ class ir_http(orm.AbstractModel):
     _inherit = 'ir.http'
 
     def _dispatch(self):
+        # Process the request first
         response = super(ir_http, self)._dispatch()
 
-        if hasattr(request, 'website'):
+        # Check for aswidget before returning the response
+        if hasattr(request, 'website') and request.website:
 
-            # Check for aswidget
+            # Check for aswidget in the URI authority (http://aswidget.datadialog.net)
             if 'aswidget' in request.httprequest.host:
                 request.session['aswidget'] = True
+            # Check for aswidget in the URI query (http://www.datadialog.net/?aswidget=True)
             elif 'aswidget' in request.httprequest.args:
                 request.session['aswidget'] = False if request.httprequest.args.get('aswidget') in ['False', 'false'] \
                     else True
 
-            # Check for any aswidget domains
-            base_url = str(urlparse(request.httprequest.base_url).hostname)
-            aswidget_domains = request.env['website.aswidget_domains']
-            aswidget_domains = aswidget_domains.search([])
-            for domain in aswidget_domains:
-                if domain.aswidget_domain and domain.aswidget_domain in base_url:
-                    request.session['aswidget'] = True
-                    if domain.redirect_url:
-                        request.session['aswidget_redirect_url'] = domain.redirect_url
+            # Check aswidget_domains
+            if hasattr(request, 'env') and request.env:
+                aswidget_domains = request.env['website.aswidget_domains']
+                aswidget_domains = aswidget_domains.search([])
+                base_url = str(urlparse(request.httprequest.base_url).hostname)
+                for domain in aswidget_domains:
+                    if domain.aswidget_domain and domain.aswidget_domain in base_url:
+                        request.session['aswidget'] = True
+                        if domain.redirect_url:
+                            request.session['aswidget_redirect_url'] = domain.redirect_url
 
         return response

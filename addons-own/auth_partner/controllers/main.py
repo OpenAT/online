@@ -10,9 +10,11 @@ class ir_http(orm.AbstractModel):
     _inherit = 'ir.http'
 
     def _dispatch(self):
-        response = super(ir_http, self)._dispatch()
+        # Process the request first
+        # response = super(ir_http, self)._dispatch()
 
-        if hasattr(request, 'website'):
+        # Check for fs_ptoken before returning the requests response
+        if hasattr(request, 'website') and request.website:
             # CHECK for fs_ptoken in any URL to make a valid token permanent for this session
             #       (Valid tokens of the fs_ptoken in the request.session['valid_fstoken'])
             # HINT: The _dispatch() method will run LAST so there is a good chance fstoken() was already called
@@ -23,4 +25,4 @@ class ir_http(orm.AbstractModel):
                 # HINT: This will also store the token to request.session['valid_fstoken'] if token is valid
                 fstoken(fs_ptoken=fs_ptoken)
 
-        return response
+        return super(ir_http, self)._dispatch()
