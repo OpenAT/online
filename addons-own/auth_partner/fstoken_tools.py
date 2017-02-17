@@ -5,124 +5,114 @@ from openerp.http import request
 from openerp.tools.translate import _
 import datetime
 import time
+# from openerp.addons.web.controllers.main import login_and_redirect, set_cookie_and_redirect
 
 
-# fstoken cases:
-# ==============
-# HINT: if the token is in the session it will not show up in anywhere since we just return the partner but not
-#       the token fstoken()
-#
-#
-# 1.) No fs_ptoken, logged in user:
-# No Messages
-# res.partner from the res.users
-#
-# 2.) Wrong fs_ptoken, logged in user:
-# error_token = "Your token is wrong but you are already logged in."
-# res.partner des res.users
-#
-# 3.) Valid fs_ptoken, logged in user, same res.partner
-# messages_token =  "Valid Token"
-# res.partner from the res.users
-#
-# 4.) Valid fs_ptoken, logged in user, same res.partner
-# warnings_token "Valid token but different from logged in user! Please log off to use the token"
-# res.partner from the res.users
-#
-#
-# 5.) No fs_ptoken
-# No Messages
-# No Partner
-#
-# 6.) Wrong fs_ptoken
-# error_token = "Wrong token."
-# res.partner from the res.users
-#
-# 7.) Valid fs_ptoken
-# messages_token =  "Valid Token"
-# res.partner from the res.users
-#
-def fstoken(fs_ptoken=None):
-    token = fs_ptoken or request.session.get('valid_fstoken', None)
-    token_record = None
+def _delay_token_check(wrong_tries=6, delay=3, reset_time=1):
 
-    # Prepare return variables
-    partner = None
-    messages_token = list()
-    warnings_token = list()
-    errors_token = list()
+    # First time a wrong token was given for this session
+    if not request.session.get('wrong_fstoken_date'):
+        request.session['wrong_fstoken_date'] = datetime.datetime.now()
+        request.session['wrong_fstoken_tries'] = 1
 
-    # Check and sanitize token format
-    if token and isinstance(token, basestring):
-        # Sanitize fs_ptoken (remove non alpha numeric characters like spaces or dashes)
-        token = ''.join(c.upper() for c in token.strip() if c.isalnum())
-        # Check for minimum fs_ptoken length
-        if len(token) < 6:
-            errors_token.append(_('Your code is too short!'))
-    elif token:
-        errors_token.append(_('Your code is no string!'))
-
-    # TOKEN CHECK: Check token validity and find related res.partner
-    if token and not errors_token:
-        fstoken_obj = request.env['res.partner.fstoken']
-        token_record = fstoken_obj.sudo().search([('name', '=', token)], limit=1)
-        if token_record and fields.Datetime.from_string(token_record.expiration_date) >= fields.datetime.now():
-            # Valid token with related res.partner
-            if token_record.partner_id:
-                partner = token_record.partner_id
-                message = request.website.apf_token_success_message or _('Your code is valid!')
-                messages_token.append(message)
-            # Error: Valid token but res.partner is missing
-            else:
-                errors_token.append(_('The code was valid but the partner is missing!'))
-        # Error: Wrong or expired token
+    # Subsequent wrong token given for this session
+    else:
+        # Reset if last incorrect try is older than 1h
+        if datetime.datetime.now() > request.session['wrong_fstoken_date'] + datetime.timedelta(hours=reset_time):
+            request.session.pop('wrong_fstoken_date', False)
+            request.session.pop('wrong_fstoken_tries', False)
         else:
-            message = request.website.apf_token_error_message or _('Wrong or expired code!')
-            errors_token.append(message)
+            # SECURITY: Add a delay (Todo: Maybe we should close the connection?)
+            if request.session['wrong_fstoken_tries'] > wrong_tries:
+                time.sleep(delay)
+            request.session['wrong_fstoken_tries'] += 1
 
-    # USER CHECK: Check if a user is logged in and if use the res.partner of the logged in user
-    if request.uid != request.website.user_id.id:
-        user_obj = request.env['res.users']
-        user = user_obj.sudo().browse([request.uid])
-        assert user.partner_id, _('You are logged in but your user has no res.partner assigned!')
-        # Check if a fstoken res.partner was found but is different than the res.partner of the logged in user
-        # HINT: We do not append this warning if the token comes from a valid_fstoken in the session!
-        if fs_ptoken and partner and partner.id != user.partner_id.id:
-            warnings_token.append(_('You are logged in but your user does not match the partner of the given code!\n'
-                                    'Please log out if you want to use this code!'))
-        # Use the partner of the logged in user
-        partner = user.partner_id
 
-    # VALID TOKEN:
-    # Update session and statistic
-    if not errors_token and token:
-        # Write sanitized token to the current session for subsequent use
-        request.session['valid_fstoken'] = token
-        # Update "last_date_of_use" field of "res.partner.fstoken"
-        token_record.sudo().write({'last_date_of_use': fields.datetime.now()})
-        # TODO: Log any valid fs_ptoken use to the "res.partner.fstoken.usage" model
-    # WRONG TOKEN:
-    elif errors_token and token:
-        # Remove ANY valid token from the session
-        request.session.pop('valid_fstoken', None)
-        # Subsequent wrong token given for this session
-        if request.session.get('wrong_fstoken_date'):
-            # Reset if last incorrect try is older than 1h
-            if datetime.datetime.now() > request.session['wrong_fstoken_date'] + datetime.timedelta(hours=1):
-                request.session['wrong_fstoken_date'] = datetime.datetime.now()
-                request.session['wrong_fstoken_tries'] = 1
-            else:
-                # SECURITY: Add a delay on subsequent wrong token tries to prevent simple brute force attacks
-                # TODO: wrong_fstoken_tries >= 30: cancel connection to prevent a lot of open connections
-                if request.session['wrong_fstoken_tries'] > 5:
-                    time.sleep(4)
-                request.session['wrong_fstoken_tries'] += 1
-        # First time a wrong token was given for this session
-        else:
-            request.session['wrong_fstoken_date'] = datetime.datetime.now()
-            request.session['wrong_fstoken_tries'] = 1
-            # TODO: Log the first wrong token try of this session to the "res.partner.fstoken.usage" model
-            #       We may not log any wrong attempt but just the first one because of brute force attacks?
+def fstoken_sanitize(fs_ptoken):
+    token = fs_ptoken
+    errors = list()
 
-    # Return the partner and the messages, warnings and errors
-    return partner, messages_token, warnings_token, errors_token
+    if not isinstance(token, basestring):
+        errors.append(_('Your code is no string!'))
+        _delay_token_check()
+        return False, errors
+
+    # Remove non alphanumeric characters
+    token = ''.join(c for c in token.strip() if c.isalnum())
+
+    # Check minimum token length
+    if len(token) < 6:
+        errors.append(_('Your code is too short!'))
+        _delay_token_check()
+        return False, errors
+
+    # Return sanitized token-string and the empty error-messages-list
+    return token, errors
+
+
+def fstoken_check(fs_ptoken):
+    # Sanitize token
+    token_record, errors = fstoken_sanitize(fs_ptoken)
+    if errors:
+        # Return empty token and some error message
+        return False, False, errors
+
+    # Check if the token record exists and is still valid
+    token_record = request.env['res.partner.fstoken'].sudo().search([
+        ('name', '=', token_record),
+        ('expiration_date', '>=', fields.datetime.now())
+    ])
+    if not token_record:
+        errors.append(_('Wrong or expired code!'))
+        _delay_token_check()
+        return False, False, errors
+
+    # Check if the token has a res.partner assigned
+    partner = token_record.partner_id
+    if not partner:
+        errors.append(_('The code has no partner assigned!'))
+        return False, False, errors
+
+    # Check/Create the res.user for the token
+    user = token_record.partner_id.user_ids[0] if token_record.partner_id.user_ids else None
+    if not user:
+        user = request.env['res.users'].sudo().create({
+            'name': partner.name,
+            'partner_id': partner.id,
+            'email': partner.email,
+            'login': partner.email or str(partner.id),
+        })
+        # Directly commit changes to db in case of login right after this helper function
+        request.cr.commit()
+    if not user:
+        errors.append(_('The code has no user assigned!'))
+        return False, False, errors
+
+    # Return fstoken record and the empty error-messages-list
+    # ATTENTION: We pass the user on in case it was just created now and
+    return token_record, user, errors
+
+
+# def fstoken_login(fs_ptoken):
+#     # Get the token record
+#     token_record, user_record, errors = fstoken_check(fs_ptoken)
+#     if errors:
+#         return False, errors
+#
+#     # Login the fstoken related res.user
+#     user = user_record
+#     if request.uid != user.id:
+#         # Login
+#         # openerp/addons/base/res/res_users.py > authenticate
+#         # openerp/addons/web/controllers/main.py > login_and_redirect
+#         #uid = request.env['res.users'].authenticate(request.db, user.login, token_record.name)
+#         request.cr.commit()
+#         uid = request.session.authenticate(request.db, password=token_record.name, uid=user.id)
+#         request.cr.commit()
+#         # Check uid after login
+#         if request.uid != uid:
+#             errors.append(_('Login by fstoken failed!'))
+#             return False, errors
+#
+#     # Return fstoken record and the empty error-messages-list
+#     return token_record, errors

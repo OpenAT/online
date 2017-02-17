@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from openerp import http
 from openerp.http import request
 from openerp.osv import orm
-from openerp.addons.auth_partner.fstoken_tools import fstoken
+from openerp.addons.auth_partner.fstoken_tools import fstoken_check
+from openerp.addons.web.controllers.main import login_and_redirect
 
 
 # add fs_ptoken to the session if in URL or post args
@@ -11,18 +13,18 @@ class ir_http(orm.AbstractModel):
 
     def _dispatch(self):
         # Process the request first
-        # response = super(ir_http, self)._dispatch()
+        response = super(ir_http, self)._dispatch()
 
         # Check for fs_ptoken before returning the requests response
         if hasattr(request, 'website') and request.website:
-            # CHECK for fs_ptoken in any URL to make a valid token permanent for this session
-            #       (Valid tokens of the fs_ptoken in the request.session['valid_fstoken'])
-            # HINT: The _dispatch() method will run LAST so there is a good chance fstoken() was already called
-            # HINT: This will not get fs_ptoken from form submissions but just from URIs
             fs_ptoken = request.httprequest.args.get('fs_ptoken')
-            if fs_ptoken and fs_ptoken != request.session.get('valid_fstoken', ''):
-                # CHECK TOKEN
-                # HINT: This will also store the token to request.session['valid_fstoken'] if token is valid
-                fstoken(fs_ptoken=fs_ptoken)
+            if fs_ptoken:
+                # Check token and login if valid
+                # HINT: If the token is wrong or the login fails there is no message or hint at all
+                #       which is the intended behaviour
+                token_record, user, errors = fstoken_check(fs_ptoken)
+                if token_record and user and user.id != request.uid:
+                    return login_and_redirect(request.db, user.login, token_record.name,
+                                              redirect_url=request.httprequest.url)
 
-        return super(ir_http, self)._dispatch()
+        return response

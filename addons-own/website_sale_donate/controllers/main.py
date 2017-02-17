@@ -8,7 +8,6 @@ from lxml import etree
 from urlparse import urlparse
 from datetime import timedelta
 from openerp import fields
-from openerp.addons.auth_partner.fstoken_tools import fstoken
 from openerp.addons.website.models.website import slug
 
 # import copy
@@ -233,21 +232,21 @@ class website_sale_donate(website_sale):
         # FSTOKEN: Set sales order partner by fs_ptoken
         # HINT: Only use or check the token if there is an order and the user is NOT logged in!
         # TODO: should we log the token to the sale.order.line also if logged in but different partner for valid token?
-        if order and request.website.user_id.id == uid:
-            fs_ptoken = kw.get('fs_ptoken', None)
-            partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=fs_ptoken)
-            if partner:
-                values = {'partner_id': partner.id,
-                          'partner_invoice_id': partner.id,
-                          'partner_shipping_id': partner.id,
-                          }
-                order_obj = request.registry['sale.order']
-                order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
-                # Update the sale.order.line with the fstoken for statistics
-                if order_line and order_line.get('line_id'):
-                    order_line_obj = request.registry['sale.order.line']
-                    order_line_obj.write(cr, SUPERUSER_ID, [order_line.get('line_id')],
-                                         {'fs_ptoken': fs_ptoken}, context=context)
+        # if order and request.website.user_id.id == uid:
+        #     fs_ptoken = kw.get('fs_ptoken', None)
+        #     partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=fs_ptoken)
+        #     if partner:
+        #         values = {'partner_id': partner.id,
+        #                   'partner_invoice_id': partner.id,
+        #                   'partner_shipping_id': partner.id,
+        #                   }
+        #         order_obj = request.registry['sale.order']
+        #         order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
+        #         # Update the sale.order.line with the fstoken for statistics
+        #         if order_line and order_line.get('line_id'):
+        #             order_line_obj = request.registry['sale.order.line']
+        #             order_line_obj.write(cr, SUPERUSER_ID, [order_line.get('line_id')],
+        #                                  {'fs_ptoken': fs_ptoken}, context=context)
 
         # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):

@@ -15,10 +15,32 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-from openerp import api, models, fields
-from openerp.exceptions import ValidationError
+import datetime
 from datetime import timedelta
+import time
+
+import openerp
+from openerp import api, models, fields
+from openerp.exceptions import ValidationError, AccessDenied
+from openerp.http import request
+from openerp.tools.translate import _
+from openerp.addons.auth_partner.fstoken_tools import fstoken_check
+
+
+class res_users(models.Model):
+    _inherit = 'res.users'
+
+    # Extend the check_credentials method to work with FS-Tokens also
+    # HINT: check openerp/addons/base/res/res_users.py for more info
+    def check_credentials(self, cr, uid, password):
+        try:
+            # Try regular or other auth methods
+            return super(res_users, self).check_credentials(cr, uid, password)
+        except AccessDenied:
+            # Check for a valid FS-Token
+            token_record, user_record, errors = fstoken_check(password)
+            if errors:
+                raise openerp.exceptions.AccessDenied()
 
 
 class ResPartnerFSToken(models.Model):

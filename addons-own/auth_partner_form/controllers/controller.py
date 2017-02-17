@@ -21,7 +21,8 @@ from openerp.http import request
 from openerp import fields
 from openerp.tools.translate import _
 import datetime
-from openerp.addons.auth_partner.fstoken_tools import fstoken
+from openerp.addons.auth_partner.fstoken_tools import fstoken_check
+from openerp.addons.web.controllers.main import login_and_redirect
 
 
 class AuthPartnerForm(http.Controller):
@@ -63,13 +64,26 @@ class AuthPartnerForm(http.Controller):
                                         'states': None,
                                         })
 
-        # CHECK FSTOKEN
-        # HINT: if fs_ptoken=False fstoken() will search for a valid token in the session
-        partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=fs_ptoken)
+        # CHECK TOKEN
+        if fs_ptoken:
+            token_record, token_user, token_error = fstoken_check(fs_ptoken)
+
+            # Valid token
+            if token_record:
+                # Set the res.partner from the token
+                partner = token_record.parnter_id
+                # Login (only if not already logged in)
+                if token_user and token_user.id != request.uid:
+                    return login_and_redirect(request.db, token_user.login, token_record.name,
+                                              redirect_url=request.httprequest.url)
+            # Wrong token
+            if token_error:
+                errors_token += token_error
 
         # UPDATE PARTNER
-        # Update the partner with the values from the form input fields
-        # HINT: At this point a partner could only be found if the user had a valid code or a user is logged in
+        # Fill fields with Values from partner or update the res.partner with
+        # TODO: Change from "if partner" to "if logged in" now?
+        #       (since every correct token submission will login the user)
         if partner:
 
             # Add countries and states
@@ -79,7 +93,6 @@ class AuthPartnerForm(http.Controller):
             states = states.sudo().search([])
 
             # Find fields_to_update
-            # HINT: Since we know that either the token or the login is correct at this point the update is ok
             fields_to_update = dict()
             apf_fields = request.env['website.apf_partner_fields']
             apf_fields = apf_fields.sudo().search([])
