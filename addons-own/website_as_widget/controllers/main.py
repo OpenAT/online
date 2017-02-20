@@ -5,6 +5,38 @@ from openerp.http import request
 from openerp.osv import orm
 from urlparse import urlparse
 
+from openerp.addons.web.controllers.main import Session
+
+
+# Extend the logout method to not throw an exception if other kwargs than redirect are given! e.g.: aswidget=True
+class SessionAuthPartner(Session):
+
+    # addons/web/controllers/main.py around line 865
+    # '/web/session/logout', type='http', auth="none"
+    @http.route()
+    def logout(self, redirect='/web', **kwargs):
+
+        # CHECK FOR ASWIDGET (before logout)
+        # Check for aswidget in the current session
+        aswidget = request.session.get('aswidget', False)
+        # Check for an aswidget parameter in the kwargs
+        # HINT: kwargs have a higher priority than the aswidget parameter stored in the session if any
+        if kwargs.get('aswidget'):
+            if kwargs.get('aswidget') not in ('False', 'false'):
+                aswidget = True
+            else:
+                aswidget = False
+
+        # LOGOUT and create a new request, session and cookie
+        response = super(SessionAuthPartner, self).logout(redirect=redirect)
+
+        # RESTORE ASWIDGET for the new session
+        request.session['aswidget'] = aswidget
+
+        # Return the final response with the new session
+        return response
+
+
 # DEPRICATED! only there for downward compatibility
 class website_as_widget(http.Controller):
     @http.route(['/aswidget'], type='http', auth="public", website=True)
