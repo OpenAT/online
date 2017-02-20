@@ -20,17 +20,21 @@ from openerp import http
 from openerp.http import request
 from openerp import fields
 from openerp.tools.translate import _
-import datetime
 from openerp.addons.auth_partner.fstoken_tools import fstoken_check
 from openerp.addons.web.controllers.main import login_and_redirect
+
+import urllib2
+import datetime
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class AuthPartnerForm(http.Controller):
 
     @http.route(['/meine-daten', '/meinedaten'], auth='public', website=True)
-    def index(self, **kwargs):
+    def meine_daten(self, **kwargs):
         # Token related
-        fs_ptoken = kwargs.get('fs_ptoken')
+        fstoken = kwargs.get('fstoken')
         partner = None
         messages_token = list()
         warnings_token = list()
@@ -64,27 +68,33 @@ class AuthPartnerForm(http.Controller):
                                         'states': None,
                                         })
 
-        # CHECK TOKEN
-        if fs_ptoken:
-            token_record, token_user, token_error = fstoken_check(fs_ptoken)
+        # CHECK TOKEN AND LOGIN
+        token_record = None
+        if fstoken:
+            # Check token
+            token_record, token_user, token_error = fstoken_check(fstoken)
 
-            # Valid token
+            # Valid token (= Valid res.partner and valid res.user)
             if token_record:
-                # Set the res.partner from the token
-                partner = token_record.parnter_id
-                # Login (only if not already logged in)
+                # Login if token res.user is different from request user
                 if token_user and token_user.id != request.uid:
+                    redirect_url = '/meine-daten?fstoken=' + urllib2.quote(fstoken)
+                    _logger.info('Login by /meine-daten FS-Token input (%s): user.login %s (%s) and redirect to %s'
+                                 % (token_record.id, token_user.login, token_user.id, redirect_url))
                     return login_and_redirect(request.db, token_user.login, token_record.name,
-                                              redirect_url=request.httprequest.url)
-            # Wrong token
+                                              redirect_url=redirect_url)
+            # Wrong or invalid token
             if token_error:
+                field_errors['fstoken'] = fstoken
                 errors_token += token_error
 
         # UPDATE PARTNER
-        # Fill fields with Values from partner or update the res.partner with
-        # TODO: Change from "if partner" to "if logged in" now?
-        #       (since every correct token submission will login the user)
-        if partner:
+        # HINT: Only if logged in (so different from the default user request.website.user_id)
+        if request.website.user_id.id != request.uid:
+            _logger.debug('/meine-daten request.website.user_id %s, request.uid %s'
+                         % (request.website.user_id, request.uid))
+            user = request.env['res.users'].sudo().browse([request.uid])
+            partner = user.partner_id
 
             # Add countries and states
             countries = request.env['res.country']
@@ -143,9 +153,9 @@ class AuthPartnerForm(http.Controller):
                     # Add fstoken_update and fstoken_update_date
                     # DEPRECATION WARNING! This is only here for the auth_partner_form and was
                     #                      replaced by field "last_date_of_use" in "res.partner.fstoken" in the
-                    #                      function fs_ptoken()
-                    if fs_ptoken:
-                        fields_to_update['fstoken_update'] = fs_ptoken
+                    #                      function fstoken_check()
+                    if fstoken:
+                        fields_to_update['fstoken_update'] = fstoken
                         fields_to_update['fstoken_update_date'] = fields.datetime.now()
                     if partner.sudo().write(fields_to_update):
                         success_message = request.website.apf_update_success_message or \
@@ -158,12 +168,14 @@ class AuthPartnerForm(http.Controller):
             if field_errors:
                 errors.append(_('Missing or incorrect information! Please check your input.'))
 
-        # HINT: use kwargs.get('fs_ptoken', '') to get the format of the website corrected by java script
-        # HINT: Show only messages_token if the form is not submitting res.parnter field data from the form
-        messages_token = messages_token if kwargs.get('fs_ptoken') and 'lastname' not in kwargs else list()
+        # Show a token success message after login but before the first partner data form submission
+        if token_record and fstoken and len(kwargs) <= 2:
+            token_valid_message = request.website.apf_token_success_message or _('Your code is valid!')
+            messages_token.append(token_valid_message)
+
         return http.request.render('auth_partner_form.meinedaten',
                                    {'kwargs': kwargs,
-                                    'fs_ptoken': kwargs.get('fs_ptoken', ''),
+                                    'fstoken': fstoken,
                                     'partner': partner,
                                     'apf_fields': apf_fields,
                                     'field_errors': field_errors,

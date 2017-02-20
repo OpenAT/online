@@ -38,7 +38,7 @@
                                       autocomplete="off">
 
                                     <!-- Token Input -->
-                                    <!-- Hide the token Section if the user is logged in -->
+
                                     <div class="row apf_token_data">
                                         <div class="col-lg-12">
                                             <!-- Header for code input-->
@@ -48,21 +48,36 @@
                                                 </h2>
                                             </t>
                                             <!-- Code input (fs_ptoken) -->
-                                            <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + field_errors.get('fs_ptoken')) if field_errors.get('fs_ptoken') else '')">
+                                            <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + field_errors.get('fstoken')) if field_errors.get('fstoken') else '')">
                                                 <label class="control-label f-fs_ptoken mandatory text-danger"
-                                                       for="fs_ptoken">
+                                                       for="fstoken">
                                                     <span t-field="website.apf_token_label"/>
                                                 </label>
-                                                <input id="fs_ptoken"
-                                                       name="fs_ptoken"
+                                                <input id="fstoken"
+                                                       name="fstoken"
                                                        type="text"
                                                        class="form-control input-lg"
                                                        autocomplete="off"
-                                                       t-att-value="fs_ptoken"
+                                                       t-att-value="fstoken"
                                                        t-att-placeholder="website.apf_token_placeholder"
-                                                       t-att-disabled="website.user_id != user_id"
+                                                       t-att-readonly="website.user_id != user_id"
                                                 />
+                                                <!-- User is logged in: Show a logout button to enter a new code -->
+                                                <t t-if="website.user_id != user_id">
+                                                    <a id="apf_logout_button"
+                                                       class="btn btn-primary"
+                                                       href="/web/session/logout?redirect=/meine-daten">
+                                                        <t t-if="website.apf_logout_button">
+                                                            <span t-esc="website.apf_logout_button"/>
+                                                        </t>
+                                                        <t t-if="not website.apf_logout_button">
+                                                            <span>Logout <t t-esc="partner.name"/> to enter a new code</span>
+                                                        </t>
+                                                    </a>
+                                                </t>
                                             </div>
+
+
                                         </div>
                                         <div class="clearfix clearfix-apf_token_data"/>
                                     </div>

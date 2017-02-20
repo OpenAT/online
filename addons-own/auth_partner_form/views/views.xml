@@ -60,6 +60,12 @@
                                 <field name="apf_title_partner_data_hide"/>
                             </div>
                         </div>
+                        <label for="apf_logout_button"/>
+                        <div name="apf_logout_button">
+                            <div class="oe_inline">
+                                <field name="apf_logout_button"/>
+                            </div>
+                        </div>
                         <label for="apf_submit_button"/>
                         <div name="apf_submit_button">
                             <div class="oe_inline">

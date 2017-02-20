@@ -19,6 +19,10 @@
     font-size: 85%;
 }
 
+#apf_logout_button {
+    margin-top: 1em;
+}
+
 #apf_submit_button {
     margin-top: 1em;
 }

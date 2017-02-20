@@ -7,6 +7,9 @@ import datetime
 import time
 # from openerp.addons.web.controllers.main import login_and_redirect, set_cookie_and_redirect
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 def _delay_token_check(wrong_tries=6, delay=3, reset_time=1):
 
@@ -24,6 +27,8 @@ def _delay_token_check(wrong_tries=6, delay=3, reset_time=1):
         else:
             # SECURITY: Add a delay (Todo: Maybe we should close the connection?)
             if request.session['wrong_fstoken_tries'] > wrong_tries:
+                _logger.warning("Adding delay of %s sec. for session xx because of %s wrong FS-Token tries!"
+                                % (delay, request.session['wrong_fstoken_tries']))
                 time.sleep(delay)
             request.session['wrong_fstoken_tries'] += 1
 
@@ -41,7 +46,7 @@ def fstoken_sanitize(fs_ptoken):
     token = ''.join(c for c in token.strip() if c.isalnum())
 
     # Check minimum token length
-    if len(token) < 6:
+    if len(token) < 9:
         errors.append(_('Your code is too short!'))
         _delay_token_check()
         return False, errors
@@ -76,43 +81,25 @@ def fstoken_check(fs_ptoken):
     # Check/Create the res.user for the token
     user = token_record.partner_id.user_ids[0] if token_record.partner_id.user_ids else None
     if not user:
+        # Create new User
+        _logger.info('Create new res.user %s for valid fs_ptoken with id %s' % (partner.name, token_record.id))
+        # HINT: Group Partner Manager is needed to update and use the own res.partner e.g. for sales orders or forms
         user = request.env['res.users'].sudo().create({
             'name': partner.name,
             'partner_id': partner.id,
             'email': partner.email,
             'login': partner.email or str(partner.id),
+            'groups_id': [(6, 0, [request.env.ref('base.group_partner_manager').id])],
         })
-        # Directly commit changes to db in case of login right after this helper function
+        # Directly commit changes to db in case of login right after this helper function so that the user is already
+        # in the database and therefore available for all environments/caches of odoo.
         request.cr.commit()
-    if not user:
-        errors.append(_('The code has no user assigned!'))
-        return False, False, errors
+        if not user:
+            errors.append(_('The code has no user assigned!'))
+            _logger.error('Could not create res.user %s for the fs_ptoken with id %s' % (partner.name,
+                                                                                         token_record.id))
+            return False, False, errors
 
     # Return fstoken record and the empty error-messages-list
     # ATTENTION: We pass the user on in case it was just created now and
     return token_record, user, errors
-
-
-# def fstoken_login(fs_ptoken):
-#     # Get the token record
-#     token_record, user_record, errors = fstoken_check(fs_ptoken)
-#     if errors:
-#         return False, errors
-#
-#     # Login the fstoken related res.user
-#     user = user_record
-#     if request.uid != user.id:
-#         # Login
-#         # openerp/addons/base/res/res_users.py > authenticate
-#         # openerp/addons/web/controllers/main.py > login_and_redirect
-#         #uid = request.env['res.users'].authenticate(request.db, user.login, token_record.name)
-#         request.cr.commit()
-#         uid = request.session.authenticate(request.db, password=token_record.name, uid=user.id)
-#         request.cr.commit()
-#         # Check uid after login
-#         if request.uid != uid:
-#             errors.append(_('Login by fstoken failed!'))
-#             return False, errors
-#
-#     # Return fstoken record and the empty error-messages-list
-#     return token_record, errors

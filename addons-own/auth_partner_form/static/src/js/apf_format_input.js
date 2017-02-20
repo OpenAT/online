@@ -5,7 +5,7 @@ $(document).ready(function () {
 
     // Format the fs_ptoken code in rows of three with uppercase letters e.g. A4F - 3GH - 296
     // https://webdesign.tutsplus.com/tutorials/auto-formatting-input-value--cms-26745
-    var $token_input = $( "#auth_partner_form input[name='fs_ptoken']" );
+    var $token_input = $( "#auth_partner_form input[name='fstoken']" );
     $token_input.on( "keyup", function ( event ) {
 
         // Do nothing if input field is empty

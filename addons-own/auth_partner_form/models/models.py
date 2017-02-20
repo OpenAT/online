@@ -26,14 +26,6 @@ class ResPartner(models.Model):
     fstoken_update = fields.Char(string='Update by FS Token')
     fstoken_update_date = fields.Datetime(string='Update by FS Token Date')
 
-    # TODO: should be transfered to website_sale_donate
-    @api.onchange('donation_deduction')
-    def oc_donation_deduction(self):
-        if self.donation_deduction == 'donation_deduction':
-            self.donation_deduction_optout_web = True
-        if self.donation_deduction == 'no_donation_deduction':
-            self.donation_deduction_optout_web = False
-
 
 class WebsiteApfSettings(models.Model):
     _inherit = 'website'
@@ -46,6 +38,7 @@ class WebsiteApfSettings(models.Model):
     apf_token_placeholder = fields.Char(string='Token Placeholder', default="A4N - 53B - XH7 - 4J4", translate=False)
     apf_title_partner_data = fields.Char(string='Your-Data Header', default=_("Your Data"), translate=True)
     apf_title_partner_data_hide = fields.Boolean(string='Hide Your-Data Header')
+    apf_logout_button = fields.Char(string='Logout Button', translate=True)
     apf_submit_button = fields.Char(string='Submit Button', default=_("Submit"), translate=True)
     # Snippet Areas
     apf_top_snippets = fields.Html(string='APF Top Snippets', translate=True)
@@ -68,6 +61,7 @@ class ResConfigApfSetting(models.Model):
     apf_title_partner_data = fields.Char(related='website_id.apf_title_partner_data')
     apf_title_partner_data_hide = fields.Boolean(related='website_id.apf_title_partner_data_hide')
     apf_submit_button = fields.Char(related='website_id.apf_submit_button')
+    apf_logout_button = fields.Char(related='website_id.apf_logout_button')
     apf_update_success_message = fields.Html(related='website_id.apf_update_success_message')
     apf_token_success_message = fields.Html(related='website_id.apf_token_success_message')
     apf_token_error_message = fields.Html(related='website_id.apf_token_error_message')
