@@ -32,7 +32,7 @@
             </t>
             <t t-if="website.user_id != user_id">
                 <a t-att-class="wsd_button_login_logout"
-                   t-attf-href="/web/session/logout?redirect=#{ request.httprequest.url }">
+                   t-attf-href="/web/session/logout?redirect=#{ request.httprequest.base_url }">
                     <t t-if="not website.button_logout">Logout</t>
                     <t t-if="website.button_logout"><span t-field="website.button_logout"/></t>
                 </a>
