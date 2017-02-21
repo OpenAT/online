@@ -25,7 +25,7 @@
             <t t-if="website.user_id == user_id">
                 <!-- HINT: Button class must be set by template call -->
                 <a t-att-class="wsd_button_login_logout"
-                   t-attf-href="/web/login?redirect=#{ request.httprequest.url }&amp;login=#{ checkout.get('email') }&amp;name=#{ checkout.get('name') }">
+                   t-attf-href="/web/login?redirect=#{ request.httprequest.base_url }&amp;login=#{ checkout.get('email') }&amp;name=#{ checkout.get('name') }">
                     <t t-if="not website.button_login">Login</t>
                     <t t-if="website.button_login"><span t-field="website.button_login"/></t>
                 </a>

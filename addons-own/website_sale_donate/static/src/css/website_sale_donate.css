@@ -81,6 +81,11 @@ body .oe_website_sale h1 {
     width: auto;
 }
 
+/* One Page Checkout login button in Your Data header */
+.wsd_button_opc_logout {
+    float: right;
+}
+
 /* Payment Page */
 .wsd_payment_page_content address {
     margin-bottom: 0;
