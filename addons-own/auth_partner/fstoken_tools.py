@@ -84,11 +84,14 @@ def fstoken_check(fs_ptoken):
         # Create new User
         _logger.info('Create new res.user %s for valid fs_ptoken with id %s' % (partner.name, token_record.id))
         # HINT: Group Partner Manager is needed to update and use the own res.partner e.g. for sales orders or forms
+        login = str(partner.id)
+        if partner.email and not request.env['res.users'].sudo().search([('login', '=', partner.email)]):
+            login = partner.email
         user = request.env['res.users'].sudo().create({
             'name': partner.name,
             'partner_id': partner.id,
             'email': partner.email,
-            'login': partner.email or str(partner.id),
+            'login': login,
             'groups_id': [(6, 0, [request.env.ref('base.group_partner_manager').id])],
         })
         # Directly commit changes to db in case of login right after this helper function so that the user is already
@@ -104,14 +107,15 @@ def fstoken_check(fs_ptoken):
     # TODO: log every use to a new model e.g.: res.partner.fstoken.usage
     #       add a new kwarg to this function called "origin" and use this if filled for logging
     #       token usage to res.partner.fstoken.usage
+    time_now = fields.datetime.now()
     token_values = {
-        'last_date_of_use': fields.datetime.now(),
-        'last_datetime_of_use': fields.datetime.now(),
+        'last_date_of_use': time_now,
+        'last_datetime_of_use': time_now,
         'number_of_checks': token_record.number_of_checks + 1,
     }
     # Add first_datetime_of_use if not already set
     if not token_record.first_datetime_of_use:
-        token_values['first_datetime_of_use'] = fields.datetime.now()
+        token_values['first_datetime_of_use'] = time_now
     # Write to the token
     token_record.sudo().write(token_values)
 
