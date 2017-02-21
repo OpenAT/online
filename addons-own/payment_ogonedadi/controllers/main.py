@@ -71,7 +71,7 @@ class OgonedadiController(http.Controller):
         # HINT: we call a special E-Mail template "email_template_webshop" defined in website_sale_payment_fix
         #       for this to work we extended "action_quotation_send" interface with email_template_modell and ..._name
         if tx.state != state_old and not do_not_send_status_email:
-            _logger.info('Ogonedadi: Send E-Mail for Sales order: \n%s\n', pprint.pformat(tx.sale_order_id.name))
+            _logger.info('Ogonedadi: Send E-Mail for sales order: \n%s\n', pprint.pformat(tx.sale_order_id.name))
             email_act = request.registry['sale.order'].action_quotation_send(cr, SUPERUSER_ID,
                                                                              [tx.sale_order_id.id],
                                                                              context=context,

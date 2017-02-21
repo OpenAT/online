@@ -227,7 +227,7 @@ class website_sale_donate(website_sale):
                                                                                              context=context,
                                                                                              **kw)
         order = request.website.sale_get_order(context=context)
-        print "cart_update order name: %s" % order
+        _logger.info("cart_update() for sale order %s" % order.name)
 
         # FSTOKEN: Set sales order partner by fs_ptoken
         # HINT: Only use or check the token if there is an order and the user is NOT logged in!
@@ -388,7 +388,7 @@ class website_sale_donate(website_sale):
         # Add Billing Fields to qcontext for address display
         billing_fields_obj = request.env['website.checkout_billing_fields']
         payment_qcontext['billing_fields'] = billing_fields_obj.search([])
-        print "Billing: %s" % payment_qcontext['billing_fields']
+        _logger.debug("opc_payment() payment_qcontext['billing_fields'] %s" % payment_qcontext['billing_fields'])
 
         # Add Shipping Fields qcontext for address display
         shipping_fields_obj = request.env['website.checkout_shipping_fields']
@@ -504,8 +504,12 @@ class website_sale_donate(website_sale):
 
         assert order.partner_id.id != request.website.partner_id.id
 
+        _logger.info(_('Start payment_transaction_logic(acquirer_id=%s) for sale order %s')
+                     % (acquirer_id, order.name))
+
         # Find an already existing transaction or create a new one
         # TODO: Transaction is not updated after first creation! We should do a force update here.
+        tx_id = post.get('tx_id', False)
         tx = request.website.sale_get_transaction()
         if tx:
             tx_id = tx.id
@@ -537,7 +541,7 @@ class website_sale_donate(website_sale):
                     'payment_tx_id': request.session['sale_transaction_id']
                 }, context=context)
         if not so_tx:
-            _logger.error(_('Could not update sale order after creation or update of the payment transaction!'))
+            _logger.error(_('Could not update sale order %s after creation or update of the payment transaction!'))
 
         # Reset sales order of current session for Dadi Payment Providers
         # HINT: THis is the integration of the former addon website_sale_payment_fix
@@ -551,19 +555,32 @@ class website_sale_donate(website_sale):
             # Only reset the current shop session for our own payment providers
             if tx.acquirer_id.provider in ('ogonedadi', 'frst', 'postfinance'):
                 # Confirm the sales order so no changes are allowed any more in the odoo backend
+                _logger.info(_('payment_transaction_logic() Confirm Sale Order %s so no further changes are allowed!')
+                             % tx.sale_order_id.name)
                 request.registry['sale.order'].action_button_confirm(cr, SUPERUSER_ID,
                                                                      [tx.sale_order_id.id], context=context)
                 # Clear the session to restart SO in case we get no answer from the PP or browser back button is used
+                # TODO: Check if this works for if you cancel the payment and get redirected by the payment provider
+                _logger.info(_('payment_transaction_logic() Reset session variables: sale_order_id, sale_last_order_id '
+                               'sale_transaction_id, sale_order_code_pricelist_id (current sale order: %s)')
+                             % tx.sale_order_id.name)
                 request.website.sale_reset(context=context)
-                # HINT: Maybe it is also needed to reset the sale_last_order_id? Disabled for now
-                # request.session.update({'sale_last_order_id': False})
+                request.session.update({
+                    'sale_order_id': False,
+                    'sale_last_order_id': False,
+                    'sale_transaction_id': False,
+                    'sale_order_code_pricelist_id': False,
+                })
 
+        _logger.info(_('payment_transaction_logic() return tx_id %s') % tx_id)
         return tx_id
 
     # /shop/payment/transaction/<int:acquirer_id>
     # Overwrite the Json controller for the pay now button
     @http.route()
     def payment_transaction(self, acquirer_id):
+        _logger.info(_('Call of json route /shop/payment/transaction/%s will start payment_transaction_logic()')
+                     % acquirer_id)
         tx = self.payment_transaction_logic(acquirer_id)
         return tx
 
@@ -625,11 +642,12 @@ class website_sale_donate(website_sale):
                     return checkout_page
 
                 # HINT: SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
-                #       Because of this and to integrate website_sale_payment_fix the logic was added in a new mehtod
+                #       Because of this and to integrate website_sale_payment_fix the logic was added in a new method
                 acquirer_id = int(post.get('acquirer'))
                 request.session['acquirer_id'] = acquirer_id
                 checkout_page.qcontext.update({'acquirer_id': request.session.get('acquirer_id')})
-
+                _logger.info(_('Call payment_transaction_logic(acquirer_id=%s, ...) from checkout() route-method '
+                               'for one-page-checkout pages ') % acquirer_id)
                 self.payment_transaction_logic(acquirer_id, checkout_page=checkout_page)
                 # If any errors are found return the checkout_page
                 if checkout_page.qcontext.get('opc_warnings'):
