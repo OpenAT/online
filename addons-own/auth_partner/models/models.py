@@ -52,7 +52,10 @@ class ResPartnerFSToken(models.Model):
     expiration_date = fields.Date(string="Expiration Date", required=True,
                                   default=fields.datetime.now() + timedelta(days=14))
     fs_origin = fields.Char(string="FS Origin")
-    last_date_of_use = fields.Date(string="Last Date of Use", readonly=True)
+    last_date_of_use = fields.Date(string="DEPRICATED: Last Date of Use", readonly=True)
+    last_datetime_of_use = fields.Datetime(string="Last Date and Time of Use", readonly=True)
+    first_datetime_of_use = fields.Datetime(string="First Date and Time of Use", readonly=True)
+    number_of_checks = fields.Integer(string="Number of checks", default=0, redonly=True)
 
     # https://www.odoo.com/documentation/8.0/howtos/backend.html
     @api.constrains('name')

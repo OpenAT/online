@@ -100,6 +100,21 @@ def fstoken_check(fs_ptoken):
                                                                                          token_record.id))
             return False, False, errors
 
+    # Update token statistic fields
+    # TODO: log every use to a new model e.g.: res.partner.fstoken.usage
+    #       add a new kwarg to this function called "origin" and use this if filled for logging
+    #       token usage to res.partner.fstoken.usage
+    token_values = {
+        'last_date_of_use': fields.datetime.now(),
+        'last_datetime_of_use': fields.datetime.now(),
+        'number_of_checks': token_record.number_of_checks + 1,
+    }
+    # Add first_datetime_of_use if not already set
+    if not token_record.first_datetime_of_use:
+        token_values['first_datetime_of_use'] = fields.datetime.now()
+    # Write to the token
+    token_record.sudo().write(token_values)
+
     # Return fstoken record and the empty error-messages-list
     # ATTENTION: We pass the user on in case it was just created now and
     return token_record, user, errors

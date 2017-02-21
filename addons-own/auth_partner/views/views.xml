@@ -14,6 +14,9 @@
                         <field name="expiration_date"/>
                         <field name="fs_origin"/>
                         <field name="last_date_of_use"/>
+                        <field name="first_datetime_of_use"/>
+                        <field name="last_datetime_of_use"/>
+                        <field name="number_of_checks"/>
                     </group>
                 </form>
             </field>
@@ -27,7 +30,9 @@
                         <field name="partner_id"/>
                         <field name="expiration_date"/>
                         <field name="fs_origin"/>
-                        <field name="last_date_of_use"/>
+                        <field name="first_datetime_of_use"/>
+                        <field name="last_datetime_of_use"/>
+                        <field name="number_of_checks"/>
                 </tree>
             </field>
         </record>
@@ -41,6 +46,9 @@
                         <field name="expiration_date"/>
                         <field name="fs_origin"/>
                         <field name="last_date_of_use"/>
+                        <field name="first_datetime_of_use"/>
+                        <field name="last_datetime_of_use"/>
+                        <field name="number_of_checks"/>
                 </search>
             </field>
         </record>
