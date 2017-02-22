@@ -74,30 +74,30 @@
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="False"/>
         </record>
-        <record id="birthdate" model="website.checkout_billing_fields">
-            <field name="sequence">15</field>
-            <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="base.field_res_partner_birthdate"/>
-            <field name="mandatory" eval="False"/>
-            <field name="label">Birthdate</field>
-            <field name="placeholder">1980-01-30</field>
-            <field name="validation_rule">data-rule-dateNL=True</field>
-            <field name="css_classes">col-lg-6</field>
-            <field name="clearfix" eval="True"/>
-            <field name="information">
-<![CDATA[
-Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.
-]]>
-            </field>
-        </record>
+        <!--<record id="birthdate" model="website.checkout_billing_fields">-->
+            <!--<field name="sequence">15</field>-->
+            <!--<field name="show" eval="False"/>-->
+            <!--<field name="res_partner_field_id" ref="base.field_res_partner_birthdate"/>-->
+            <!--<field name="mandatory" eval="False"/>-->
+            <!--<field name="label">Birthdate</field>-->
+            <!--<field name="placeholder">1980-01-30</field>-->
+            <!--<field name="validation_rule">data-rule-dateNL=True</field>-->
+            <!--<field name="css_classes">col-lg-6</field>-->
+            <!--<field name="clearfix" eval="True"/>-->
+            <!--<field name="information">-->
+<!--<![CDATA[-->
+<!--Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.-->
+<!--]]>-->
+            <!--</field>-->
+        <!--</record>-->
         <record id="birthdate_web" model="website.checkout_billing_fields">
             <field name="sequence">16</field>
-            <field name="show" eval="False"/>
+            <field name="show" eval="True"/>
             <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_birthdate_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Birthdate</field>
             <field name="placeholder">30.01.1980</field>
-            <field name="validation_rule">data-rule-dateDE=True</field>
+            <field name="validation_rule">data-rule-dateDEBirthdate=True</field>
             <field name="css_classes">col-lg-6</field>
             <field name="clearfix" eval="True"/>
             <field name="information">
