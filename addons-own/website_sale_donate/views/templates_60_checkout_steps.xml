@@ -282,12 +282,26 @@
                                     </div>
                                 </div>
                             </t>
-                            <!-- CHAR AND DATE FIELDS -->
-                            <t t-if="f_type in ['char', 'date']">
-                                <input t-att-type="'text' if f_type == 'char' else 'date'"
+                            <!-- CHAR FIELDS -->
+                            <t t-if="f_type == 'char'">
+                                <input type="text"
                                        t-att-name="f_name"
                                        class="form-control"
                                        t-att-value="checkout.get(f_name)"
+                                       t-att-placeholder="billing_field.placeholder"
+                                       t-att-required="billing_field.mandatory"
+                                       t-att="validation_rule"
+                                />
+                            </t>
+                            <!-- DATE FIELDS -->
+                            <t t-if="f_type == 'date'">
+                                <t t-set="date_de"
+                                   t-value="datetime.datetime.strftime(datetime.datetime.strptime(checkout.get(f_name),'%Y-%m-%d'), '%d.%m.%Y') if checkout.get(f_name) else None"
+                                />
+                                <input type="text"
+                                       t-att-name="f_name"
+                                       class="form-control"
+                                       t-att-value="date_de"
                                        t-att-placeholder="billing_field.placeholder"
                                        t-att-required="billing_field.mandatory"
                                        t-att="validation_rule"
@@ -425,6 +439,21 @@
                                        t-att-name="f_name"
                                        class="form-control"
                                        t-att-value="checkout.get(f_name, '')"
+                                       t-att-placeholder="shipping_field.placeholder"
+                                       t-att-readonly="'readonly' if shipping_id &gt;= 0 else ''"
+                                       t-att-required="shipping_field.mandatory"
+                                       t-att="validation_rule"
+                                />
+                            </t>
+                            <!-- DATE FIELDS -->
+                            <t t-if="f_type == 'date'">
+                                <t t-set="date_de"
+                                   t-value="datetime.datetime.strftime(datetime.datetime.strptime(checkout.get(f_name),'%Y-%m-%d'), '%d.%m.%Y') if checkout.get(f_name) else ''"
+                                />
+                                <input type="text"
+                                       t-att-name="f_name"
+                                       class="form-control"
+                                       t-att-value="date_de"
                                        t-att-placeholder="shipping_field.placeholder"
                                        t-att-readonly="'readonly' if shipping_id &gt;= 0 else ''"
                                        t-att-required="shipping_field.mandatory"
