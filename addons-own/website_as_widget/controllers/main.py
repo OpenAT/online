@@ -76,7 +76,7 @@ class ir_http(orm.AbstractModel):
                 aswidget_domains = aswidget_domains.search([])
                 base_url = str(urlparse(request.httprequest.base_url).hostname)
                 for domain in aswidget_domains:
-                    if domain.aswidget_domain and domain.aswidget_domain in base_url:
+                    if domain.aswidget_domain and domain.aswidget_domain == base_url:
                         request.session['aswidget'] = True
                         if domain.redirect_url:
                             request.session['aswidget_redirect_url'] = domain.redirect_url
