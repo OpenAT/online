@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="FieldCode">
+        <div class="oe_form_field oe_form_field_code"
+             t-att-style="widget.node.attrs.style">
+            <div class="oe_form_code_editor"></div>
+        </div>
+    </t>
+</templates>
+
+

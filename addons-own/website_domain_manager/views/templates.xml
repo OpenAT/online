@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="website_domain_template_test"
+                  name="Website Domain Template EMPTY">
+            <div></div>
+        </template>
+
+        <template id="website_domain_template_landing"
+                  name="Website Domain Template LANDING">
+            <div></div>
+        </template>
+
+    </data>
+</openerp>

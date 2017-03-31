@@ -26,11 +26,11 @@ from PIL import Image
 #from random import randint
 
 
-def resize_to_thumbnail(img, box=(440, 440), fit=1):
+def resize_to_thumbnail(img, box=(440, 440), fit='mid'):
     """Downsample the image.
     @param img: Image - base64 Image Data
     @param box: tuple(x, y) - the bounding box of the result image
-    @param fit: boolean - crop the image to fill the box
+    @param fit: char - 'top' crops to the top, any other value crops to the middle
     """
 
     # DECODE the img to an base64 PIL object
@@ -52,6 +52,9 @@ def resize_to_thumbnail(img, box=(440, 440), fit=1):
         else:
             x1 = int(x2/2-box[0]*hRatio/2)
             x2 = int(x2/2+box[0]*hRatio/2)
+        if fit == 'top':
+            y2 -= y1
+            y1 = 0
         img = img.crop((x1, y1, x2, y2))
 
     # Resize the image

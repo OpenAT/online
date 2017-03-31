@@ -1,0 +1,1 @@
+../../odoo/openerp/release.py

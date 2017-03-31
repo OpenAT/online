@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="assets_backend" name="web_editor assets for backend" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/ace.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/mode-python.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/mode-xml.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/mode-html.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/mode-json.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/mode-javascript.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/mode-sh.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/theme-github.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script src="/web_widget_code/static/lib/ace-builds/src-min-noconflict/theme-tomorrow.js"
+                        type="text/javascript" charset="utf-8"/>
+                <script type="text/javascript" src="/web_widget_code/static/src/js/code_widget.js" />
+            </xpath>
+        </template>
+    </data>
+</openerp>
+

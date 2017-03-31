@@ -1,1 +1,1 @@
-import addons
+../../odoo/openerp/__init__.py
