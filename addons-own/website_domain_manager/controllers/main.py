@@ -40,10 +40,15 @@ class IrHttp(models.AbstractModel):
         # a.) A website domain with deactivated template was found for the requested domain (= deactivate former wdt)
         # b.) No website template domain was found for the request_domain (= deactivate all website domain templates)
         if domain_set or not domains.sudo().search([('name', '=', request_domain)]):
-            views = request.env['ir.ui.view'].search(['&', '&',
-                                                      ('active', '=', True),
-                                                      ('type', '=', 'qweb'),
-                                                      ('model_data_id.name', '=like', '%website_domain_template%')])
+            x_ids = request.env['ir.model.data'].sudo().search(['&',
+                                                               ('model', '=', 'ir.ui.view'),
+                                                               ('name', '=like', '%website_domain_template%')
+                                                                ])
+            x_ids = [x.res_id for x in x_ids if x.res_id]
+            views = request.env['ir.ui.view'].sudo().search(['&',
+                                                            ('active', '=', True),
+                                                            ('id', 'in', x_ids)])
+
             views.sudo().write({'active': False})
 
         # Activated website domain template for the request url

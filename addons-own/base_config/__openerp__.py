@@ -95,7 +95,7 @@ You still need to do some things by Hand after installing this module:
         'partner_fullhierarchy',
         'auth_doubleoptin',
         'web_logout_with_kwargs',
-        'website_widget_manager'
+        'website_widget_manager',
         'website_sale_donate',
         'website_crm_extended',
         'website_blog_layouts',
