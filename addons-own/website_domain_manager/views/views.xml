@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <form string="Website Domain Manager">
                     <group>
-                        <field name="domain"/>
+                        <field name="name"/>
                         <field name="template"/>
                         <field name="redirect_url"/>
                     </group>
@@ -21,7 +21,7 @@
             <field name="model">website.website_domains</field>
             <field name="arch" type="xml">
                 <tree string="Website Domain Manager" editable="bottom">
-                        <field name="domain"/>
+                        <field name="name"/>
                         <field name="template"/>
                         <field name="redirect_url"/>
                 </tree>
@@ -32,7 +32,7 @@
             <field name="model">website.website_domains</field>
             <field name="arch" type="xml">
                 <search string="Website Domain Manager">
-                        <field name="domain"/>
+                        <field name="name"/>
                         <field name="template"/>
                         <field name="redirect_url"/>
                 </search>

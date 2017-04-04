@@ -4,6 +4,7 @@ import logging
 import socket
 import validators
 import requests
+from furl import furl
 from lxml import html
 from urlparse import urlparse, urljoin, parse_qsl, urlunparse
 from string import Template
@@ -81,23 +82,25 @@ class WebsiteAsWidget(models.Model):
     """
     _name = 'website.widget_manager'
     _description = 'Widget Manager'
+    _rec_name = 'source_url'
+    _order = 'sequence'
 
     # TODO:
     # - Create Custom Widget for char fields (Source Path) called internal_url
     #   This widget will search for urls with the website.search_pages function just like the frontend
 
     # FIELD CONSTRAINS
-    @api.constrains('source_path')
-    def _validate_source_path(self):
-        if self.source_path == '/':
+    @api.constrains('source_page')
+    def _validate_source_page(self):
+        if self.source_page == '/':
             return
-        if not self.source_path[0] == '/':
-            raise ValidationError(_("Field source_path must be a relative path and therefore start with an '/'!"))
+        if not self.source_page[0] == '/':
+            raise ValidationError(_("Field source_page must be a relative path and therefore start with an '/'!"))
         # Check if the path can be found
-        path = self.source_path.strip().rsplit("?")[0]
+        path = self.source_page.strip().rsplit("?")[0]
         pages = self.env['website'].search_pages(needle=path)
         if not any(path == page.get('loc') for page in pages):
-            raise ValidationError(_("Field 'source_path' must be an existing relative page path!\n"
+            raise ValidationError(_("Field 'source_page' must be an existing relative page path!\n"
                                     "E.g.: /shop?category=12\n\n"
                                     "Pages found:\n%s\n") % pages)
 
@@ -123,65 +126,70 @@ class WebsiteAsWidget(models.Model):
         if screenshot:
             self.target_screenshot = screenshot
 
-    @api.onchange('source_path')
-    def _onchange_source_path(self):
-        if self.source_protocol and self.source_domain and self.source_path:
-            self.source_url = urljoin(self.source_protocol, self.source_domain, self.source_path)
+    @api.onchange('source_page')
+    def _onchange_source_page(self):
+        if self.source_protocol and self.source_domain and self.source_page:
+            # HINT: rec.source_protocol, rec.source_domain and rec.source_page are mandatory fields
+            # ATTENTION: To avoid recursion store result from furl in variable first
+            source_url = furl().set(scheme=self.source_protocol, host=self.source_domain.name).join(self.source_page)
+            source_url.args['noiframeredirect'] = 'True'
             # Store screen-shot
-            screenshot = _get_screenshot(self.source_url, tgt_width=320, tgt_height=240)
+            screenshot = _get_screenshot(source_url.url, tgt_width=320, tgt_height=240)
             if screenshot:
                 self.source_screenshot = screenshot
 
     # COMPUTED FIELDS
     _iframe_prefix = 'fso_if'
 
-    @api.depends('source_protocol', 'source_domain', 'source_path', 'target_url')
+    @api.depends('source_protocol', 'source_domain', 'source_page', 'target_url')
     def _widget_code(self):
         for rec in self:
+            if not rec.source_protocol or not rec.source_domain or not rec.source_page:
+                continue
 
             # Compose the source url
-            if rec.source_protocol and rec.source_domain and rec.source_path:
-                rec.source_url = urljoin(rec.source_protocol, rec.source_domain, rec.source_path)
-            else:
-                return
+            # HINT: rec.source_protocol, rec.source_domain and rec.source_page are mandatory fields
+            # ATTENTION: To avoid recursion store result from furl in variable first
+            source_url = furl().set(scheme=rec.source_protocol, host=rec.source_domain.name).join(rec.source_page)
+            source_url = str(source_url.url)
 
-            # Return if no target URL is set
-            # HINT: Only Source but no target means that this page is only an aswidget landing page
+            # Return if no target url was set
+            # HINT: No target url means that this page is a landing page (maybe with different website domain template)
             if not rec.target_url:
-                rec.sudo.write({
-                    'widget_code_header': None,
-                    'widget_code': None,
-                    'iframe_id': None
-                })
-                return
+                rec.source_url = source_url
+                continue
+
+            # Store the iframe id before we continue
+            rec.iframe_id = rec._iframe_prefix + str(rec.id)
 
             # Generate the widget html code
+            # TODO: replace dadi.datadialog.net with the customer service address e.g.: care.datadialog.net
+            #       Maybe this should be a new field for the company e.g.: internal_code
             code_header = """<!-- Insert this 'script' element ONLY ONCE inside your html header -->
-<script type="text/javascript" src="https://dadi.datadialog.net/website_tools/static/lib/iframe-resizer/js/iframeResizer.min.js" />
+<script type="text/javascript" src="https://dadi.datadialog.net/website_widget_manager/static/lib/iframe-resizer/js/iframeResizer.min.js" />
 """
-            code = Template("""<!-- Insert this code in your html body where you want the widget to appear -->
+            widget_code_template = Template("""<!-- Insert this code in your html body where you want the widget to appear -->
 <iframe id="$target_iframe_id" class="fso_iframe" src="$source_url" scrolling="no" frameborder="0" width="100%" style="width:100%; border:none; padding:0; margin:0;"></iframe>
 <script type="text/javascript">iFrameResize({log: false, enablePublicMethods: true, checkOrigin: false, inPageLinks: true, heightCalculationMethod: taggedElement,}, '#$target_iframe_id')</script>
 """)
-            code = str(code.substitute(target_iframe_id=self._iframe_prefix + str(rec.id), source_url=rec.source_url))
-            rec.sudo.write({
-                'widget_code_header': code_header,
-                'widget_code': code,
-                'iframe_id': self._iframe_prefix + str(rec.id)
-            })
+            # HINT: To avoid recursion (because of the iframe_id) we use single writes here instead of .write({})
+            rec.source_url = source_url
+            rec.widget_code_header = code_header
+            rec.widget_code = str(widget_code_template.substitute(target_iframe_id=rec.iframe_id,
+                                                                  source_url=source_url))
 
     # ACTIONS
     @api.multi
     def action_check_widget(self):
         for record in self:
             if record.state == 'nocheck' or not record.source_url or not record.target_url:
-                return
+                continue
             errors = []
             warnings = []
 
             # Check if FS-Online page exits
             try:
-                record._validate_source_path()
+                record._validate_source_page()
             except ValidationError:
                 errors.append(_('Source page can not be found!'))
 
@@ -192,7 +200,7 @@ class WebsiteAsWidget(models.Model):
             # Check iframeResizer.min.js
             # http://stackoverflow.com/questions/1390568/how-can-i-match-on-an-attribute-that-contains-a-certain-string
             script_iframeresizer = target_tree.xpath('//script[contains(@src, '
-                                                     '"website_tools/static/lib/iframe-resizer/js'
+                                                     '"website_widget_manager/static/lib/iframe-resizer/js'
                                                      '/iframeResizer")]')
             if len(script_iframeresizer) == 0:
                 errors.append(_("iframeResizer script not found at %s") % record.target_url)
@@ -208,31 +216,41 @@ class WebsiteAsWidget(models.Model):
             })
 
     @api.multi
+    def action_toggle_do_not_check(self):
+        for rec in self:
+            rec.check_log = ''
+            rec.state = 'nocheck' if rec.state != 'nocheck' else 'new'
+
+    # DEFAULTS
     def _first_widget_url(self):
-        assert self.ensure_one(), "_first_widget_url() works only on recordset with one record"
-        return self.env['website.website_domains'].search([('redirect_url', '!=', False)])[0]
+        domains = self.env['website.website_domains'].search([('redirect_url', '!=', False)])
+        return domains[0]
 
     # FIELD DEFINITIONS
     active = fields.Boolean(string="active", default=True)
+    sequence = fields.Integer(string='Order')
     notes = fields.Text(string="Notes", translate=True)
-    check_log = fields.Text(string="Check Widget Errors", translate=True, readonly=True)
+    check_log = fields.Text(string="Check Log", translate=True, readonly=True)
     # source
-    source_protocol = fields.Selection([('http://', "http://"),
-                                        ('https://', "https://")],
-                                       string="Protocol", default='https://', required=True)
+    source_protocol = fields.Selection([('http', "http://"),
+                                        ('https', "https://")],
+                                       string="Protocol", default='https', required=True)
     source_domain = fields.Many2one(string='Source Domain', comodel_name='website.website_domains', required=True,
-                                    domain=[('redirect_url', '!=', False)],
                                     default=_first_widget_url)
-    source_path = fields.Char(string="Source Path", required=True)
+    source_page = fields.Char(string="Source Page", required=True)
     source_screenshot = fields.Binary(string="Source Screenshot")
     # target
-    target_url = fields.Char(string="Target URL")
+    target_url = fields.Char(string="Target Page")
     target_screenshot = fields.Binary(string="Target Screenshot")
     # widget parameters
-    source_url = fields.Char(string='Source URL', compute='_widget_code', store=True, readonly=True)
-    iframe_id = fields.Char(string='iframe html id', compute='_widget_code', store=True, readonly=True)
-    widget_code = fields.Text(string='HTML-Body Embed Code', compute='_widget_code', store=True, readonly=True)
-    widget_code_header = fields.Text(string='HTML-Header Embed Code', compute='_widget_code', store=True, readonly=True)
+    source_url = fields.Char(string='Source URL',
+                             compute='_widget_code', compute_sudo=True, store=True, readonly=True)
+    iframe_id = fields.Char(string='iframe html id',
+                            compute='_widget_code', compute_sudo=True, store=True, readonly=True)
+    widget_code = fields.Text(string='HTML-Body Embed Code',
+                              compute='_widget_code', compute_sudo=True, store=True, readonly=True)
+    widget_code_header = fields.Text(string='HTML-Header Embed Code',
+                                     compute='_widget_code', compute_sudo=True, store=True, readonly=True)
     # state
     state = fields.Selection([
             ('new', "New"),
@@ -241,5 +259,3 @@ class WebsiteAsWidget(models.Model):
             ('warning', "Warning"),
             ('error', "Error"),
         ], default='new')
-
-#TODO: Remove website_as_widget and dependencies in other addons and make this one run :)

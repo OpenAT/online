@@ -2,109 +2,74 @@
 <openerp>
     <data>
 
-        <!-- WEBSITE AS WIDGET DOMAINS: Create form, tree and list view for the as widget domains -->
-        <record model="ir.ui.view" id="aswidget_domains_form">
-            <field name="name">aswidget_domains_form</field>
-            <field name="model">website.aswidget_domains</field>
-            <field name="arch" type="xml">
-                <form string="Website as Widget Domains">
-                    <group>
-                        <field name="aswidget_domain"/>
-                        <field name="redirect_url"/>
-                    </group>
-                </form>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="aswidget_domains_tree">
-            <field name="name">aswidget_domains_tree</field>
-            <field name="model">website.aswidget_domains</field>
-            <field name="arch" type="xml">
-                <tree string="Website as Widget Domains" editable="bottom">
-                        <field name="aswidget_domain"/>
-                        <field name="redirect_url"/>
-                </tree>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="aswidget_domains_search">
-            <field name="name">aswidget_domains_search</field>
-            <field name="model">website.aswidget_domains</field>
-            <field name="arch" type="xml">
-                <search string="Website as Widget Domains">
-                        <field name="aswidget_domain"/>
-                        <field name="redirect_url"/>
-                </search>
-            </field>
-        </record>
-        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
-        <record model="ir.actions.act_window" id="aswidget_domains_action">
-            <field name="name">Website AsWidget Domains</field>
-            <field name="res_model">website.aswidget_domains</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="aswidget_domains_tree"/>
-            <field name="search_view_id" ref="aswidget_domains_search"/>
-        </record>
-        <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem action="aswidget_domains_action" id="aswidget_domains_menu" parent="base.menu_config" sequence="95"/>
-        
-        
         <!-- WIDGET MANAGER : Create form, tree and list view for the widget manager -->
-        <record model="ir.ui.view" id="aswidget_form">
-            <field name="name">aswidget_form</field>
-            <field name="model">website.aswidget</field>
+        <record model="ir.ui.view" id="widget_manager_form">
+            <field name="name">widget_manager_form</field>
+            <field name="model">website.widget_manager</field>
             <field name="arch" type="xml">
-                <form string="Website AsWidget Integrations">
+                <form string="Widget Manager">
                     <header>
                         <button name="action_check_widget" type="object"
-                                string="Check Widget"/>
-                        <field name="state" widget="statusbar"/>
+                                string="Check Widget"
+                                attrs="{'invisible': [('state', '=', 'nocheck')]}"
+                        />
+                        <button name="action_toggle_do_not_check" type="object"
+                                string="Disable Widget Check"
+                                attrs="{'invisible': [('state', '=', 'nocheck')]}"
+                        />
+                        <button name="action_toggle_do_not_check" type="object"
+                                string="Enable Widget Check"
+                                attrs="{'invisible': [('state', '!=', 'nocheck')]}"
+                        />
+                        <field name="state" widget="statusbar" statusbar_visible="new,ok"/>
                     </header>
                     <h1>FS-Online Widget</h1>
                     <notebook>
                         <page string="Widget Configuration">
-                            <group>
-                                <group name="Source">
-                                    <field name="source_path"/>
+                            <group string="Locations" col="2">
+                                <label for="source_page"/>
+                                <div colspan="1">
+                                    <field name="source_protocol" class="oe_inline" style="padding-right: 0.5em;"/>
+                                    <field name="source_domain" class="oe_inline" style="padding-right: 0.5em;"
+                                           domain="[('redirect_url', '!=', False)]"/>
+                                    <field name="source_page" class="oe_inline" style="min-width:300px%"/>
+                                </div>
+                                <field name="target_url" required="True"/>
+                                <field name="notes"/>
+                                <field name="check_log" attrs="{'invisible': [('check_log', '=', False)]}"/>
+                            </group>
+                            <group string="Screenshots">
+                                <group>
                                     <field name="source_screenshot" widget="image"/>
                                 </group>
-                                <group name="Target">
-                                        <field name="target_url"/>
-                                        <field name="target_screenshot" widget="image"/>
+                                <group>
+                                    <field name="target_screenshot" widget="image"/>
                                 </group>
                             </group>
                         </page>
-                        <page string="Settings and Info">
+                        <page string="Technical">
                             <group col="2">
                                 <field name="active"/>
                                 <field name="iframe_id" readonly="True"/>
                                 <field name="source_url" readonly="True"/>
-                                <label colspan="2" for="notes"/>
-                                <div colspan="2"><field name="notes"/></div>
-                                <label colspan="2" for="error"/>
-                                <div colspan="2"><field name="error"/></div>
                             </group>
                         </page>
                     </notebook>
-                    <hr style="margin-top:64px; margin-bottom:32px;"/>
+                    <hr style="margin-top:0.5em; margin-bottom:2em;"/>
                     <h1 class="oe_read_only">Widget Embed Code</h1>
                     <p class="oe_read_only">
                         Please embed this html code into your website wherever you want the widget to appear.
-                        Multiple FS-Online widgets on one page of your webpage are supported!
+                        Multiple FS-Online widgets on one page are supported!
                     </p>
                     <!-- Header Code -->
                     <div class="oe_read_only" style="margin-top:2em;">
                         <label for="widget_code_header"/>
                     </div>
                     <p class="oe_read_only" style="color:grey; font-size:10px;">
-                        Place this code in the <![CDATA[<head>...</head>]]> section of any page on your
-                        webside where you want to embed FS-Online widgets.<br/>
-                        It is only needed once even if you place multiple FS-Online widgets on your page.
-                        This script is responsible to resize the iframe correctly and is mandatory for any
-                        FS-Online links generated by the Fundraising Studio newsletter tool.
-                        (If you do not want to load this java script directly from our webpage you can of course
-                        download the script and serve it from your servers directly. If you do so please
-                        keep in mind to update this script regularly or you will not get any updates for
-                        the iframe resizer script!)
+                        Please place this code in the <![CDATA[<head>...</head>]]> section of the
+                        website where you want to embed one or more FS-Online widget(s).<br/>
+                        If you can not include this script in the head section please include it only once in the body
+                        before the first widget element.
                     </p>
                     <div  class="oe_read_only">
                         <code>
@@ -116,11 +81,10 @@
                         <label for="widget_code"/>
                     </div>
                     <p class="oe_read_only" style="color:grey; font-size:10px;">
-                        Place this code inside the <![CDATA[<body>...</body>]]> section
-                        of your webpage!<br/>
-                        Please make sure to place this widget only in elements where the width is appropriate to
-                        make sure the sizing of the widget will be correct for mobile phone, tablets and
-                        other devices.
+                        Please place this code inside the <![CDATA[<body>...</body>]]> section
+                        of your website!<br/>
+                        Please make sure to place this widget only in elements where the width will match the base width
+                        for the agreed css media query widths.
                     </p>
                     <div colspan="2" class="oe_read_only">
                         <code>
@@ -130,39 +94,139 @@
                 </form>
             </field>
         </record>
-        <record model="ir.ui.view" id="aswidget_tree">
-            <field name="name">aswidget_tree</field>
-            <field name="model">website.aswidget</field>
+        <record model="ir.ui.view" id="widget_manager_tree">
+            <field name="name">widget_manager_tree</field>
+            <field name="model">website.widget_manager</field>
             <field name="arch" type="xml">
-                <tree string="Website AsWidget Integrations">
-                    <field name="source_path"/>
+                <tree string="Widget Manager" default_order="sequence,source_url">
+                    <field name="sequence" widget="handle"/>
+                    <field name="source_url"/>
                     <field name="source_screenshot" readonly="True" widget="image" display="thumbnail"/>
                     <field name="target_url"/>
                     <field name="target_screenshot" readonly="True" widget="image"/>
                 </tree>
             </field>
         </record>
-        <record model="ir.ui.view" id="aswidget_search">
-            <field name="name">aswidget_search</field>
-            <field name="model">website.aswidget</field>
+        <record model="ir.ui.view" id="widget_manager_search">
+            <field name="name">widget_manager_search</field>
+            <field name="model">website.widget_manager</field>
             <field name="arch" type="xml">
-                <search string="Website AsWidget Integrations">
-                        <field name="source_path"/>
-                        <field name="target_url"/>
-                        <field name="iframe_id"/>
+                <search string="Widget Manager">
+                    <field name="active"/>
+                    <field name="state"/>
+                    <field name="check_log"/>
+                    <field name="notes"/>
+                    <field name="source_protocol"/>
+                    <field name="source_domain"/>
+                    <field name="source_page"/>
+                    <field name="source_url"/>
+                    <field name="target_url"/>
+                    <field name="iframe_id"/>
                 </search>
             </field>
         </record>
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
-        <record model="ir.actions.act_window" id="aswidget_action">
-            <field name="name">Widget Manager</field>
-            <field name="res_model">website.aswidget</field>
-            <field name="view_type">form</field>
+        <record model="ir.actions.act_window" id="widget_manager_action">
+            <field name="name">Widgets Manager</field>
+            <field name="res_model">website.widget_manager</field>
+            <field name="views">[['website_widget_manager.widget_manager_form', 'form'], ['website_widget_manager.widget_manager_tree', 'tree']]</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="aswidget_tree"/>
-            <field name="search_view_id" ref="aswidget_search"/>
+            <field name="search_view_id" ref="widget_manager_search"/>
+            <field name="domain">[('target_url','!=',False)]</field>
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem action="aswidget_action" id="aswidget_menu" parent="base.menu_config" sequence="94"/>
+        <menuitem action="widget_manager_action" id="widget_manager_menu" parent="base.menu_config" sequence="95"/>
+
+
+
+
+
+
+
+        <!-- LANDING PAGE MANAGER : Create form, tree and list view for the widget manager -->
+        <record model="ir.ui.view" id="widget_manager_lp_form">
+            <field name="name">widget_manager_lp_form</field>
+            <field name="model">website.widget_manager</field>
+            <field name="arch" type="xml">
+                <form string="Landing Pages Manager">
+                    <header>
+                        <button name="action_check_widget" type="object"
+                                string="Check Page"
+                                attrs="{'invisible': [('state', '=', 'nocheck')]}"
+                        />
+                        <button name="action_toggle_do_not_check" type="object"
+                                string="Disable Page Check"
+                                attrs="{'invisible': [('state', '=', 'nocheck')]}"
+                        />
+                        <button name="action_toggle_do_not_check" type="object"
+                                string="Enable Page Check"
+                                attrs="{'invisible': [('state', '!=', 'nocheck')]}"
+                        />
+                        <field name="state" widget="statusbar" statusbar_visible="new,ok"/>
+                    </header>
+                    <h1>FS-Online Landing Pages</h1>
+                    <notebook>
+                        <page string="Landing Page">
+                            <group string="Landing Page" col="2">
+                                <label for="source_page"/>
+                                <div colspan="1">
+                                    <field name="source_protocol" class="oe_inline" style="padding-right: 0.5em;"/>
+                                    <field name="source_domain" class="oe_inline" style="padding-right: 0.5em;"
+                                           domain="[('redirect_url', '!=', False)]"/>
+                                    <field name="source_page" class="oe_inline" style="min-width:300px%"/>
+                                </div>
+                                <field name="notes"/>
+                                <field name="check_log" attrs="{'invisible': [('check_log', '=', False)]}"/>
+                                <field name="source_screenshot" widget="image"/>
+                            </group>
+                        </page>
+                        <page string="Technical">
+                            <group col="2">
+                                <field name="active"/>
+                                <field name="source_url" readonly="True"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="widget_manager_lp_tree">
+            <field name="name">widget_manager_lp_tree</field>
+            <field name="model">website.widget_manager</field>
+            <field name="arch" type="xml">
+                <tree string="Landing Pages" default_order="sequence,source_url">
+                    <field name="sequence" widget="handle"/>
+                    <field name="source_url"/>
+                    <field name="source_screenshot" readonly="True" widget="image" display="thumbnail"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="widget_manager_lp_search">
+            <field name="name">widget_manager_lp_search</field>
+            <field name="model">website.widget_manager</field>
+            <field name="arch" type="xml">
+                <search string="Landing Pages">
+                    <field name="active"/>
+                    <field name="state"/>
+                    <field name="check_log"/>
+                    <field name="notes"/>
+                    <field name="source_protocol"/>
+                    <field name="source_domain"/>
+                    <field name="source_page"/>
+                    <field name="source_url"/>
+                </search>
+            </field>
+        </record>
+        <!-- Now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="widget_manager_lp_action">
+            <field name="name">LandingPages Manager</field>
+            <field name="res_model">website.widget_manager</field>
+            <field name="views" eval="[[ref('website_widget_manager.widget_manager_lp_form'), 'form'], [ref('website_widget_manager.widget_manager_lp_tree'), 'tree']]"/>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="widget_manager_lp_search"/>
+            <field name="domain">[('target_url','=',False)]</field>
+        </record>
+        <!-- And we add the Action to a Menu with the shortcut menuitem -->
+        <menuitem id="widget_manager_lp_menu" action="widget_manager_lp_action" parent="base.menu_config" sequence="95"/>
     </data>
 </openerp>

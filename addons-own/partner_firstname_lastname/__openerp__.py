@@ -39,7 +39,5 @@ Change the default order of addon partner_firstname to firstname, lastname inste
         'partner_firstname',
     ],
     'installable': True,
-    'data': [
-        'functions_on_init_or_update.xml',
-    ],
+    'data': [],
 }

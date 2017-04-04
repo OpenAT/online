@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<openerp><data>
 
-        <template id="website_domain_template_test"
-                  name="Website Domain Template EMPTY">
-            <div></div>
-        </template>
+    <!-- REDIRECT by java script for noiframe_redirect_url if not called inside an iframe -->
+    <template id="iframe_redirect"
+              name="Website Domain Redirect if not opened in an iframe"
+              inherit_id="website.layout"
+              forcecreate="1" >
+        <xpath expr="//head" position="inside">
+            <t t-if="request.session.get('noiframe_redirect_url')">
+                <script type="text/javascript">
+                <![CDATA[
+                    $( 'meta[name=noiframe_redirect_url]' ).ready(function () {
+                        // Check if a redirection URL exists
+                        var noiframe_redirect_url = $( 'meta[name=noiframe_redirect_url]' ).attr('content');
+                        // Redirect if we are not in an (i) frame
+                        if ( noiframe_redirect_url && window.self == window.top ) {
+                            window.location.replace(noiframe_redirect_url);
+                        };
+                    });
+                ]]>
+                </script>
+                <meta name="noiframe_redirect_url" t-att-content="request.session.get('noiframe_redirect_url')"/>
+            </t>
+        </xpath>
+    </template>
 
-        <template id="website_domain_template_landing"
-                  name="Website Domain Template LANDING">
-            <div></div>
-        </template>
+    <!-- WEBSITE DOMAIN TEMPLATES (id must contain "website_domain_template" !) -->
+    <template id="website_domain_template_hide_menu_footer"
+              name="WDT Hide Menu and Footer"
+              inherit_id="website.layout"
+              forcecreate="1" >
+        <xpath expr="//footer" position="attributes">
+            <attribute name="style">display:none;</attribute>
+        </xpath>
+        <xpath expr="//header" position="attributes">
+            <attribute name="style">display:none;</attribute>
+        </xpath>
+    </template>
 
-    </data>
-</openerp>
+    <template id="website_domain_template_landing_pages"
+              name="WDT Landing Pages Header and Footer"
+              inherit_id="website.layout"
+              forcecreate="1">
+        <xpath expr="//header" position="attributes">
+            <attribute name="style">display:none;</attribute>
+        </xpath>
+        <xpath expr="//footer" position="attributes">
+            <attribute name="style">display:none;</attribute>
+        </xpath>
+        <xpath expr="//header" position="before">
+            <div id="c_header"> Custom HEADER </div>
+        </xpath>
+        <xpath expr="//footer" position="after">
+            <div id="c_footer"> Custom FOOTER </div>
+        </xpath>
+    </template>
+
+</data></openerp>

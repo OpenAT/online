@@ -21,38 +21,16 @@
 ##############################################################################
 
 {
-    'name': "FCOM website_as_widget",
-    'summary': """call webpages as widgets (without header or footer)""",
+    'name': "FS-Online website_widget_manager",
+    'summary': """Widget Manager: Generates the widget-embed-code, redirects to target page and checks widget status""",
     'description': """
 
-website_as_widget
-=================
+website_widget_manager
+======================
 
-Call webpages as widgets (without header or footer).
-
-**Call the page from a subdomain called aswidget:**
-
-http://aswidget.ahch.datadialog.net/shop
-
-**Call the page with aswidget=True and the page widgeturl=%2Fshop :**
-
-http://ahch.datadialog.net/?aswidget=True&widgeturl=%2Fshop
-
-**Show the page normally again (with header and footer):**
-
-http://ahch.datadialog.net/?aswidget=False
-This will remove the aswidget=True from the current session
-
-**Session and Domains:**
-
-It is always better to call the i-frame url from a sub-domain URL (ahch.datadialog.net) because this will generate a
-different session for the subdomain and so one could still call the website with header and footer (different session)
-from the other domain (ahch.datadialog.net)
-
-**HINT:** Keep in mind that session cookies can be shared from parent domains to child (sub) domains but not the
-other way around!
-
-**Embed the Page as an iFrame**
+- Generates the widget-embed-code
+- Redirects to target page
+- Checks widget status
 
 https://github.com/davidjbradshaw/iframe-resizer
 Please look at the example html file at website_as_widget/test_iframe.html
@@ -63,7 +41,7 @@ Please look at the example html file at website_as_widget/test_iframe.html
     'category': 'Uncategorized',
     'version': '0.2',
     'depends': [
-        'base', 'website', 'website_tools', 'web_tree_image',
+        'base', 'website', 'website_domain_manager', 'web_tree_image',
     ],
     'installable': True,
     'data': [

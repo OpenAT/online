@@ -1,37 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-<data>
+<openerp><data>
 
-    <!-- Load the i-Frame-Resizer Java Script -->
-    <template id="assets_frontend" inherit_id="website.assets_frontend" name="assets_frontend website_as_widget">
+    <!-- Load the i-Frame-Resizer Java Script for the page hosted inside the iframe -->
+    <template id="assets_frontend"
+              inherit_id="website.assets_frontend"
+              name="Load iframeResizer.contentWindow.js and css">
         <xpath expr="." position="inside">
-            <link rel="stylesheet" href='/website_as_widget/static/src/css/website_as_widget.css'/>
-            <script type="text/javascript" src="/website_tools/static/lib/iframe-resizer/js/iframeResizer.contentWindow.js"/>
-            <script type="text/javascript" src="/website_as_widget/static/src/js/redirect_if_not_in_iframe.js"/>
+            <link rel="stylesheet" href='/website_widget_manager/static/src/css/website_as_widget.css'/>
+            <script type="text/javascript" src="/website_widget_manager/static/lib/iframe-resizer/js/iframeResizer.contentWindow.js"/>
         </xpath>
     </template>
-
-    <!-- ADD class hidden to header and footer -->
-    <template id="aswidget" inherit_id="website.layout" name="aswidget remove footer">
-        <xpath expr="//html" position="attributes">
-                <attribute name="t-att-class"> 'aswidget' if request.session.get('aswidget', False) else '' </attribute>
-                <attribute name="t-att-data-aswidget-redirect-url"> request.session.get('aswidget_redirect_url') if request.session.get('aswidget_redirect_url', False) else '' </attribute>
-
-        </xpath>
-        <xpath expr="//head" position="inside">
-                <meta name="aswidget-redirect-url" t-att-content="request.session.get('aswidget_redirect_url') if request.session.get('aswidget_redirect_url', False) else ''"/>
-        </xpath>
-        <xpath expr="//header" position="attributes">
-                <attribute name="t-att-class"> 'hidden' if request.session.get('aswidget', False) else '' </attribute>
-        </xpath>
+   <!-- IFRAME HEIGHT CALCULATION: iframeResizer attribute for height calculation -->
+    <template id="widget_height"
+              inherit_id="website.layout"
+              name="Add data-iframe-height attribute to main element for iframeResizer script">
         <xpath expr="//main" position="attributes">
                 <!-- For I-Frame height calculation -->
                 <attribute name="t-att-data-iframe-height">True</attribute>
         </xpath>
-        <xpath expr="//footer" position="attributes">
-                <attribute name="t-att-class"> 'hidden' if request.session.get('aswidget', False) else '' </attribute>
-        </xpath>
     </template>
 
-</data>
-</openerp>
+</data></openerp>
