@@ -63,7 +63,7 @@ Please look at the example html file at website_as_widget/test_iframe.html
     'category': 'Uncategorized',
     'version': '0.2',
     'depends': [
-        'base', 'website', 'website_tools', 'web_tree_image',
+        'base', 'website', 'website_tools',
     ],
     'installable': True,
     'data': [
