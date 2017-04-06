@@ -4,6 +4,7 @@ import logging
 import socket
 import validators
 import requests
+import os
 from furl import furl
 from lxml import html
 from urlparse import urlparse, urljoin, parse_qsl, urlunparse
@@ -11,7 +12,7 @@ from string import Template
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
-from openerp.addons.base_tools.image import resize_to_thumbnail
+from openerp.addons.fso_base.tools.image import resize_to_thumbnail
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ def _get_screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_he
 
     # Load PhantomJS()
     try:
-        driver = webdriver.PhantomJS()
+        driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
     except Exception as error:
         logger.error(_('Could not load PhantomJS() for screen-shot generation of %s!\n\n%s\n') % (url, error))
         return False
@@ -124,6 +125,7 @@ class WebsiteAsWidget(models.Model):
         # Store screen-shot
         screenshot = _get_screenshot(self.target_url, tgt_width=320, tgt_height=240)
         if screenshot:
+            # return {'target_screenshot': screenshot}
             self.target_screenshot = screenshot
 
     @api.onchange('source_page')
@@ -131,16 +133,23 @@ class WebsiteAsWidget(models.Model):
         if self.source_protocol and self.source_domain and self.source_page:
             # HINT: rec.source_protocol, rec.source_domain and rec.source_page are mandatory fields
             # ATTENTION: To avoid recursion store result from furl in variable first
-            source_url = furl().set(scheme=self.source_protocol, host=self.source_domain.name).join(self.source_page)
+            source_base = furl().set(scheme=self.source_protocol,
+                                     host=self.source_domain.name,
+                                     port=self.source_domain.port)
+            source_url = source_base.join(self.source_page)
             source_url.args['noiframeredirect'] = 'True'
+            source_url = source_url.url
             # Store screen-shot
-            screenshot = _get_screenshot(source_url.url, tgt_width=320, tgt_height=240)
+            screenshot = _get_screenshot(source_url, tgt_width=320, tgt_height=240)
             if screenshot:
+                # return {'source_screenshot': screenshot}
                 self.source_screenshot = screenshot
 
-    # COMPUTED FIELDS
+    # CONSTANTS
     _iframe_prefix = 'fso_if'
+    _script_path = "/website_widget_manager/static/lib/iframe-resizer/js/iframeResizer.min.js"
 
+    # COMPUTED FIELDS
     @api.depends('source_protocol', 'source_domain', 'source_page', 'target_url')
     def _widget_code(self):
         for rec in self:
@@ -150,8 +159,10 @@ class WebsiteAsWidget(models.Model):
             # Compose the source url
             # HINT: rec.source_protocol, rec.source_domain and rec.source_page are mandatory fields
             # ATTENTION: To avoid recursion store result from furl in variable first
-            source_url = furl().set(scheme=rec.source_protocol, host=rec.source_domain.name).join(rec.source_page)
-            source_url = str(source_url.url)
+            source_base = furl().set(scheme=rec.source_protocol,
+                                     host=rec.source_domain.name,
+                                     port=rec.source_domain.port)
+            source_url = source_base.join(rec.source_page).url
 
             # Return if no target url was set
             # HINT: No target url means that this page is a landing page (maybe with different website domain template)
@@ -162,21 +173,22 @@ class WebsiteAsWidget(models.Model):
             # Store the iframe id before we continue
             rec.iframe_id = rec._iframe_prefix + str(rec.id)
 
-            # Generate the widget html code
-            # TODO: replace dadi.datadialog.net with the customer service address e.g.: care.datadialog.net
-            #       Maybe this should be a new field for the company e.g.: internal_code
-            code_header = """<!-- Insert this 'script' element ONLY ONCE inside your html header -->
-<script type="text/javascript" src="https://dadi.datadialog.net/website_widget_manager/static/lib/iframe-resizer/js/iframeResizer.min.js" />
-"""
-            widget_code_template = Template("""<!-- Insert this code in your html body where you want the widget to appear -->
+            # Generate the head embed code
+            script_url = source_base.join(rec._script_path).url
+            widget_code_header = Template("""<!-- Insert this 'script' element ONLY ONCE inside your html header -->
+<script type="text/javascript" src="$script_url" />
+""").substitute(script_url=script_url)
+
+            # Generate the widget embed code
+            widget_code = Template("""<!-- Insert this code in your html body where you want the widget to appear -->
 <iframe id="$target_iframe_id" class="fso_iframe" src="$source_url" scrolling="no" frameborder="0" width="100%" style="width:100%; border:none; padding:0; margin:0;"></iframe>
 <script type="text/javascript">iFrameResize({log: false, enablePublicMethods: true, checkOrigin: false, inPageLinks: true, heightCalculationMethod: taggedElement,}, '#$target_iframe_id')</script>
-""")
+""").substitute(target_iframe_id=rec.iframe_id, source_url=source_url)
+
             # HINT: To avoid recursion (because of the iframe_id) we use single writes here instead of .write({})
             rec.source_url = source_url
-            rec.widget_code_header = code_header
-            rec.widget_code = str(widget_code_template.substitute(target_iframe_id=rec.iframe_id,
-                                                                  source_url=source_url))
+            rec.widget_code_header = widget_code_header
+            rec.widget_code = widget_code
 
     # ACTIONS
     @api.multi
@@ -221,10 +233,6 @@ class WebsiteAsWidget(models.Model):
             rec.check_log = ''
             rec.state = 'nocheck' if rec.state != 'nocheck' else 'new'
 
-    # DEFAULTS
-    def _first_widget_url(self):
-        domains = self.env['website.website_domains'].search([('redirect_url', '!=', False)])
-        return domains[0]
 
     # FIELD DEFINITIONS
     active = fields.Boolean(string="active", default=True)
@@ -235,8 +243,7 @@ class WebsiteAsWidget(models.Model):
     source_protocol = fields.Selection([('http', "http://"),
                                         ('https', "https://")],
                                        string="Protocol", default='https', required=True)
-    source_domain = fields.Many2one(string='Source Domain', comodel_name='website.website_domains', required=True,
-                                    default=_first_widget_url)
+    source_domain = fields.Many2one(string='Source Domain', comodel_name='website.website_domains', required=True)
     source_page = fields.Char(string="Source Page", required=True)
     source_screenshot = fields.Binary(string="Source Screenshot")
     # target

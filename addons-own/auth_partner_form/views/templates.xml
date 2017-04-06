@@ -3,10 +3,10 @@
     <data noupdate="0">
 
         <!-- Load custom js and css -->
-        <template id="assets_frontend" inherit_id="website_tools.assets_frontend" name="Auth Partner Form">
+        <template id="assets_frontend" inherit_id="fso_base_website.assets_frontend" name="Auth Partner Form">
             <xpath expr="//script[last()]" position="after">
                 <link rel="stylesheet" href='/auth_partner_form/static/src/css/auth_partner_form.css'/>
-                <!-- INFO: jquery validate is loaded in website_tools -->
+                <!-- INFO: jquery-validate is loaded in fso_base_website -->
                 <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_validate.js"/>
                 <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_format_input.js"/>
             </xpath>

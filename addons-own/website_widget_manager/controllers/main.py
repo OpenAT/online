@@ -17,16 +17,22 @@ class ir_http(orm.AbstractModel):
                 or not hasattr(request, 'website') or not request.website:
             return dispatch
 
-        # Search if there is an widget redirect url for the requeste path
+        # REDIRECT
+        # For source_screenshot only ('noiframeredirect' should never be in url query except for the widget-screenshots)
+        if 'noiframeredirect' in request.params:
+            request.session.pop('noiframe_redirect_url', False)
+            return dispatch
+
         request_domain = request.httprequest.host.split(':', 1)[0]
-        request_path = request.httprequest.path
+        request_path = request.httprequest.path.split('?', 1)[0]
         widget = request.env['website.widget_manager'].sudo().search(['&', '&',
-                                                                      ('source_domain', '=like', 'request_domain'),
-                                                                      ('source_page', '=like', 'request_path'),
+                                                                      ('source_domain', '=', request_domain),
+                                                                      ('source_page', '=', request_path),
                                                                       ('target_url', '!=', False)
                                                                       ])
         if widget:
-            # TODO: Transfer all parameters from the request URI to target url iframe = source_url + source_page + request params
+            # TODO: Maybe we should transfer all parameters from the request URI to
+            #       the target url iframe parameter too ?!?
             request.session['noiframe_redirect_url'] = widget[0].target_url
 
         return dispatch

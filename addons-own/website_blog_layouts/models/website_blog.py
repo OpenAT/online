@@ -2,7 +2,7 @@
 
 from openerp import SUPERUSER_ID
 from openerp.osv import osv, fields
-from openerp.addons.base_tools.image import resize_to_thumbnail
+from openerp.addons.fso_base.tools.image import resize_to_thumbnail
 
 class BlogPost(osv.Model):
     _inherit = ['blog.post']

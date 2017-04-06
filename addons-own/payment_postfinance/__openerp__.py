@@ -48,9 +48,8 @@ Postfinanze ESR Payment Provider für FS-Online
     'version': '0.1',
     'depends': [
         'base_mod',
-        'website_tools',
+        'fso_base_website',
         'payment',
-        'website_sale_payment_fix',
     ],
     'installable': True,
     'data': [

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- ACTIVATE TECHNICAL FEATURES FOR ADMIN USER -->
+        <record id="base.user_root" model="res.users">
+            <field name="groups_id" eval="[(4, ref('base.group_no_one'))]"/>
+        </record>
+
+
+        <!-- Set Default Values for ir.values -->
+        <function model="ir.values" name="set_default">
+            <value>sale.order</value>
+            <value>order_policy</value>
+            <value>manual</value>
+        </function>
+        <function model="ir.values" name="set_default">
+            <value>purchase.order</value>
+            <value>invoice_method</value>
+            <value>picking</value>
+        </function>
+        <function model="ir.values" name="set_default">
+            <value>res.company</value>
+            <value>timesheet_range</value>
+            <value>month</value>
+        </function>
+
+    </data>
+</openerp>

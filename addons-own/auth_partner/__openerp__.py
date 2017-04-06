@@ -28,7 +28,7 @@
 Set Partner in Session by Token
 ===============================
 
-Use the parameter fs_ptoken to set the res.partner for the current session.
+Use the parameter fs_ptoken to set the res.user for the current session.
 
 If a valid token is found it will stay valid until:
     - the session is deleted

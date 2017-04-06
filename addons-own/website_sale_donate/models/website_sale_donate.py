@@ -6,40 +6,7 @@ from openerp import tools, api
 from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
-from openerp.addons.base_tools.image import resize_to_thumbnail
-
-
-# Additional fields for the web checkout
-class res_partner(osv.Model):
-    _inherit = 'res.partner'
-
-    _columns = {
-        # Vorname - DEPRECATED use partner_firstname addon
-        'fore_name_web': fields.char(string='Fore Name Web DEPRICATED use partner_firstname addon'),
-        # Title (akademisch) Web
-        'title_web': fields.char(string='Title Web'),
-        # Firmenname
-        'company_name_web': fields.char(string='Company Name Web'),
-        # Hausnummer
-        'street_number_web': fields.char(string='Street Number Web'),
-        # Postfach
-        'post_office_box_web': fields.char(string='Post Office Box Web'),
-        # Newsletteranmeldung = OptIn
-        'newsletter_web': fields.boolean(string='Newsletter Web'),
-        # Spendenquittung/Spendenbestaetigung
-        'donation_receipt_web': fields.boolean(string='Donation Receipt Web'),
-        # Meine Spenden nicht automatisch absetzen!
-        'donation_deduction_optout_web': fields.boolean(string='Donation Deduction OptOut Web'),
-        # Akzeptiere AGBs
-        'legal_terms_web': fields.boolean(string='Accept Legal Terms Web'),
-        # Birthdate Web to have a real birthdate date format field
-        'birthdate_web': fields.date(string='Birthdate Web'),
-        # Fundraising Studio Felder
-        'anrede_individuell': fields.char(string='Individuelle Anrede',
-                                          help="Eine individuelle Anrede die für den Schriftverkehr verwendet wird."),
-        'name_zwei': fields.char(string='Name Zwei',
-                                 help="Name zweite Zeile für Fundraising Studio"),
-    }
+from openerp.addons.fso_base.tools.image import resize_to_thumbnail
 
 
 class product_website_price_buttons(osv.Model):
@@ -88,6 +55,7 @@ class website_checkout_billing_fields(osv.Model):
         'sequence': 1000,
         'css_classes': 'col-lg-6',
     }
+
 
 class website_checkout_shipping_fields(osv.Model):
     """res.partner shipping fields for the website checkout form"""
@@ -266,6 +234,7 @@ class product_template(osv.Model):
 
         # BEHAVIOUR
         'simple_checkout': fields.boolean('Simple Checkout'),
+        # WARNING: DEPRECATED Will be replaced by fs_product_type in addon fso_base
         'fs_workflow': fields.selection([('product', 'Product'),
                                         ('donation', 'Donation')],
                                         string="Fundraising Studio Workflow"),

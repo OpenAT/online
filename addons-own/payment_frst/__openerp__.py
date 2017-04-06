@@ -21,8 +21,8 @@
 ##############################################################################
 
 {
-    'name': "FRST Payment Provider",
-    'summary': """Payment Provider: Bankeinzüge für FRST""",
+    'name': "FS-Online: payment_frst",
+    'summary': """payment_frst Payment Provider: Bankeinzug per IBAN/BIC """,
     'description': """
 
 Erlaubt es per Bankeinzug eine Dauerstpende oder Einmalspende zu tätigen
@@ -36,7 +36,7 @@ Bankeinzug (SEPA) Payment Provider für FRST
 
 - Neuer odoo PaymentProvider für SEPA Bankeinzug
 - Front End JS to show IBAN und BIC Felder wenn dieser PP ausgewählt wird.
-- Front End IBAN und BIC JS Überprüfung (website_tools jquery validate)
+- Front End IBAN und BIC JS Überprüfung (fso_base_website jquery validate)
 - Speichert IBAN und BIC direkt bei der payment.transactin
 - Legt ein neues Bankkonto für res.partner an sollte es noch keines für diesen IBAN und BIC geben
 
@@ -49,10 +49,10 @@ ToDo:
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
-        'website_tools',
+        'fso_base_website',
         'payment',
-        'website_sale_donate',
         'website_sale_categories',
+        'website_sale_donate',
     ],
     'installable': True,
     'data': [

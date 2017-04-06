@@ -10,6 +10,7 @@
                 <form string="Website Domain Manager">
                     <group>
                         <field name="name"/>
+                        <field name="port"/>
                         <field name="template"/>
                         <field name="redirect_url"/>
                     </group>
@@ -22,6 +23,7 @@
             <field name="arch" type="xml">
                 <tree string="Website Domain Manager" editable="bottom">
                         <field name="name"/>
+                        <field name="port"/>
                         <field name="template"/>
                         <field name="redirect_url"/>
                 </tree>
@@ -33,6 +35,7 @@
             <field name="arch" type="xml">
                 <search string="Website Domain Manager">
                         <field name="name"/>
+                        <field name="port"/>
                         <field name="template"/>
                         <field name="redirect_url"/>
                 </search>

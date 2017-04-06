@@ -91,7 +91,8 @@ To solve this we did:
     'depends': [
         'product',
         'sale',
-        'website_tools',
+        'fso_base',
+        'fso_base_website',
         'website_sale',
         'website_sale_delivery',
         'website_sale_categories',

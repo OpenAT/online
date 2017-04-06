@@ -6,6 +6,7 @@
         <record model="ir.ui.view" id="widget_manager_form">
             <field name="name">widget_manager_form</field>
             <field name="model">website.widget_manager</field>
+            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Widget Manager">
                     <header>
@@ -97,6 +98,7 @@
         <record model="ir.ui.view" id="widget_manager_tree">
             <field name="name">widget_manager_tree</field>
             <field name="model">website.widget_manager</field>
+            <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Widget Manager" default_order="sequence,source_url">
                     <field name="sequence" widget="handle"/>
@@ -110,6 +112,7 @@
         <record model="ir.ui.view" id="widget_manager_search">
             <field name="name">widget_manager_search</field>
             <field name="model">website.widget_manager</field>
+            <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Widget Manager">
                     <field name="active"/>
@@ -125,17 +128,29 @@
                 </search>
             </field>
         </record>
-        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
-        <record model="ir.actions.act_window" id="widget_manager_action">
+        <record id="widget_manager_action" model="ir.actions.act_window" >
             <field name="name">Widgets Manager</field>
             <field name="res_model">website.widget_manager</field>
-            <field name="views">[['website_widget_manager.widget_manager_form', 'form'], ['website_widget_manager.widget_manager_tree', 'tree']]</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="widget_manager_search"/>
             <field name="domain">[('target_url','!=',False)]</field>
         </record>
+        <record id="widget_manager_tree_viewaction" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="widget_manager_tree"/>
+            <field name="act_window_id" ref="widget_manager_action"/>
+        </record>
+        <record id="widget_manager_form_viewaction" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="widget_manager_form"/>
+            <field name="act_window_id" ref="widget_manager_action"/>
+        </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem action="widget_manager_action" id="widget_manager_menu" parent="base.menu_config" sequence="95"/>
+        <menuitem id="widget_manager_menu"  action="widget_manager_action" parent="base.menu_config" sequence="95"/>
 
 
 
@@ -147,6 +162,7 @@
         <record model="ir.ui.view" id="widget_manager_lp_form">
             <field name="name">widget_manager_lp_form</field>
             <field name="model">website.widget_manager</field>
+            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Landing Pages Manager">
                     <header>
@@ -172,7 +188,7 @@
                                 <div colspan="1">
                                     <field name="source_protocol" class="oe_inline" style="padding-right: 0.5em;"/>
                                     <field name="source_domain" class="oe_inline" style="padding-right: 0.5em;"
-                                           domain="[('redirect_url', '!=', False)]"/>
+                                           domain="[('redirect_url', '=', False)]"/>
                                     <field name="source_page" class="oe_inline" style="min-width:300px%"/>
                                 </div>
                                 <field name="notes"/>
@@ -193,6 +209,7 @@
         <record model="ir.ui.view" id="widget_manager_lp_tree">
             <field name="name">widget_manager_lp_tree</field>
             <field name="model">website.widget_manager</field>
+            <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Landing Pages" default_order="sequence,source_url">
                     <field name="sequence" widget="handle"/>
@@ -204,6 +221,7 @@
         <record model="ir.ui.view" id="widget_manager_lp_search">
             <field name="name">widget_manager_lp_search</field>
             <field name="model">website.widget_manager</field>
+            <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Landing Pages">
                     <field name="active"/>
@@ -217,14 +235,27 @@
                 </search>
             </field>
         </record>
-        <!-- Now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
-        <record model="ir.actions.act_window" id="widget_manager_lp_action">
+        <!-- Now we create actions for the new views -->
+        <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+        <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+        <record id="widget_manager_lp_action" model="ir.actions.act_window" >
             <field name="name">LandingPages Manager</field>
             <field name="res_model">website.widget_manager</field>
-            <field name="views" eval="[[ref('website_widget_manager.widget_manager_lp_form'), 'form'], [ref('website_widget_manager.widget_manager_lp_tree'), 'tree']]"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="widget_manager_lp_search"/>
             <field name="domain">[('target_url','=',False)]</field>
+        </record>
+        <record id="widget_manager_lp_tree_viewaction" model="ir.actions.act_window.view">
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="widget_manager_lp_tree"/>
+            <field name="act_window_id" ref="widget_manager_lp_action"/>
+        </record>
+        <record id="widget_manager_lp_form_viewaction" model="ir.actions.act_window.view">
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="widget_manager_lp_form"/>
+            <field name="act_window_id" ref="widget_manager_lp_action"/>
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
         <menuitem id="widget_manager_lp_menu" action="widget_manager_lp_action" parent="base.menu_config" sequence="95"/>

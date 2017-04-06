@@ -46,12 +46,10 @@ ATTENTION: The token must be at least 6 chars long, is alphanumeric and case sen
     'application': False,
     'auto_install': False,
     'depends': [
-        'base',
-        'auth_partner',
         'website',
-        'website_tools',
-        'website_sale_donate',
-        'partner_firstname',
+        'fso_base',
+        'fso_base_website',
+        'auth_partner',
     ],
     'data': [
         'security/ir.model.access.csv',
