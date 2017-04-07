@@ -22,15 +22,14 @@
 
 {
     'name': "FS-Online",
-    'summary': """fs_online: addons, menu and users""",
+    'summary': """fs_online: addons, settings, menus, user and groups""",
     'description': """
 
-FS-Online fso_base
-==================
+FS-Online fs_online
+===================
 REPLACES: 
-- base_config
-- base_mod (add instance port to res.company)
-- base_tools (image.py)
+- website_base_setup
+- parts of base_config (others are in fso_base)
 
 Module tasks:
 -------------
@@ -46,11 +45,11 @@ Module tasks:
   - fso_manager     (Access to the FS-Online Menus and related models)
   - fso_user        (Access to the FS-Online Menus and restricted write access to some models)
 - User Wizards
-  - Donate product creation
+  - Create donate product
     1. Type and Layout
     2. Settings
     3. SEO Url and LandingPage/Widget configuration
-  - Donate product listing creation and update
+  - Create donate products category
     1. Root-Category (new/existing) and Settings
     2. Select Products
 
@@ -73,10 +72,6 @@ Module tasks:
         'auth_partner_form',
     ],
     'data': [
-        'data/data_project.xml',
-        'data/data_setup_css.xml',
-        'data/data_sosync_user.xml',
-        'security/ir.model.access.csv',
-        'views/res_config.xml',
+        'data/user_sosync.xml',
     ],
 }

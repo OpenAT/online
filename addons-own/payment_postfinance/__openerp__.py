@@ -31,8 +31,8 @@ Erlaubt es per ESR eine Dauerspende oder Einmalspende zu tätigen
 Dieses Addon erlaubt es per ESR eine Dauerspende oder Einmalspende mit FS-Online durchzuführen. Es ist ein
 neuer Payment Provider für odoo der das addon payment als Basis nutzt.
 
-Postfinanze ESR Payment Provider für FS-Online
-----------------------------------------------
+Postfinanz ESR Payment Provider für FS-Online
+---------------------------------------------
 
 - Neuer odoo PaymentProvider für Postfinace ESR
 - Generiert ESR Referenz Nummer auf Basis der Sales Order Nummer
@@ -47,7 +47,7 @@ Postfinanze ESR Payment Provider für FS-Online
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
-        'base_mod',
+        'fso_base',
         'fso_base_website',
         'payment',
     ],

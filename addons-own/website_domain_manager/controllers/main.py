@@ -43,8 +43,9 @@ class IrHttp(models.AbstractModel):
             views = request.env['ir.ui.view'].sudo().search(['&',
                                                             ('active', '=', True),
                                                             ('id', 'in', domains.get_domain_template_ids())])
-
-            views.sudo().write({'active': False})
+            # ATTENTION: Do not use .write({}) here to avoid concurrent writes!
+            for view in views:
+                view.sudo().active = False
 
         # Activated website domain template for the request url
         if domain_set:

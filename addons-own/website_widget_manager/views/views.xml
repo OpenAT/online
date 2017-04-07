@@ -129,7 +129,7 @@
             </field>
         </record>
         <record id="widget_manager_action" model="ir.actions.act_window" >
-            <field name="name">Widgets Manager</field>
+            <field name="name">Widget Manager</field>
             <field name="res_model">website.widget_manager</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -138,19 +138,19 @@
             <field name="domain">[('target_url','!=',False)]</field>
         </record>
         <record id="widget_manager_tree_viewaction" model="ir.actions.act_window.view">
-            <field name="sequence" eval="1"/>
+            <field name="sequence" eval="10"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="widget_manager_tree"/>
             <field name="act_window_id" ref="widget_manager_action"/>
         </record>
         <record id="widget_manager_form_viewaction" model="ir.actions.act_window.view">
-            <field name="sequence" eval="2"/>
+            <field name="sequence" eval="20"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="widget_manager_form"/>
             <field name="act_window_id" ref="widget_manager_action"/>
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem id="widget_manager_menu"  action="widget_manager_action" parent="base.menu_config" sequence="95"/>
+        <menuitem id="widget_manager_menu"  action="widget_manager_action" parent="base.menu_config" sequence="1120"/>
 
 
 
@@ -239,7 +239,7 @@
         <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
         <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
         <record id="widget_manager_lp_action" model="ir.actions.act_window" >
-            <field name="name">LandingPages Manager</field>
+            <field name="name">LandingPage Manager</field>
             <field name="res_model">website.widget_manager</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -248,16 +248,18 @@
             <field name="domain">[('target_url','=',False)]</field>
         </record>
         <record id="widget_manager_lp_tree_viewaction" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="widget_manager_lp_tree"/>
             <field name="act_window_id" ref="widget_manager_lp_action"/>
         </record>
         <record id="widget_manager_lp_form_viewaction" model="ir.actions.act_window.view">
+            <field name="sequence" eval="20"/>
             <field name="view_mode">form</field>
             <field name="view_id" ref="widget_manager_lp_form"/>
             <field name="act_window_id" ref="widget_manager_lp_action"/>
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem id="widget_manager_lp_menu" action="widget_manager_lp_action" parent="base.menu_config" sequence="95"/>
+        <menuitem id="widget_manager_lp_menu" action="widget_manager_lp_action" parent="base.menu_config" sequence="1110"/>
     </data>
 </openerp>

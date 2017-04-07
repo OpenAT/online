@@ -51,7 +51,7 @@
             <field name="search_view_id" ref="website_domains_search"/>
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem action="website_domains_action" id="website_domains_menu" parent="base.menu_config" sequence="95"/>
+        <menuitem action="website_domains_action" id="website_domains_menu" parent="base.menu_config" sequence="1100"/>
         
     </data>
 </openerp>

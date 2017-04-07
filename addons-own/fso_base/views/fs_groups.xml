@@ -4,11 +4,11 @@
 
     <!-- INHERIT: website_sale_donate.product_template_form_view: show fs_group_ids -->
     <record id="fs_groups_product_template" model="ir.ui.view">
-        <field name="name">Add FS Groups product.template</field>
+        <field name="name">Add FS Groups tp product form</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="website_sale_donate.product_template_form_view"/>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='fs_workflow']" position="after">
+            <xpath expr="//field[@name='type']" position="after">
                 <!--HINT: m2x options: https://github.com/OCA/web/issues/342 -->
                 <field name="fs_group_ids"
                        widget="many2many_tags"
