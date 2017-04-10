@@ -68,7 +68,7 @@ Module tasks:
         'website_sale_donate',
         'payment_frst',
         'payment_ogonedadi',
-        'payment_postfinance',
+        # 'payment_postfinance', # DISABLED because only useful in CH
         'auth_partner_form',
     ],
     'data': [
