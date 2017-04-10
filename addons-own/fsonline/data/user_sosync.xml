@@ -52,7 +52,7 @@
                    (4, ref('base.group_survey_manager')),
                    (4, ref('base.group_website_designer')),
                    (4, ref('base.group_no_one')),
-                   (4, ref('fs_groups.group_fs_group_manager')),
+                   (4, ref('fso_base.group_fs_group_manager')),
                    (4, ref('auth_partner.group_fstoken_manager')),
                    ]"/>
         </record>
