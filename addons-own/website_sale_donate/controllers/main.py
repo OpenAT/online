@@ -290,21 +290,31 @@ class website_sale_donate(website_sale):
         shipping_fields = shipping_fields.search([])
         values['shipping_fields'] = shipping_fields
 
-        # FIX: Set value to python True or False for all boolean fields (instead of true or false)
         for field in billing_fields:
             f_name = field.res_partner_field_id.name
-            if field.res_partner_field_id.ttype == 'boolean':
+            f_type = field.res_partner_field_id.ttype
+            # FIX: Set value to python True or False for all boolean fields (instead of true or false)
+            if f_type == 'boolean':
                 if values['checkout'].get(f_name) == 'True' or values['checkout'].get(f_name):
                     values['checkout'][f_name] = True
                 else:
                     values['checkout'][f_name] = False
+            # Fix for Date fields: convert '' to None
+            elif f_type == 'date':
+                values['checkout'][f_name] = values['checkout'].get(f_name).strip() if values['checkout'].get(f_name)\
+                    else None
+
         for field in shipping_fields:
             f_name = 'shipping_' + field.res_partner_field_id.name
-            if field.res_partner_field_id.ttype == 'boolean':
+            f_type = field.res_partner_field_id.ttype
+            if f_type == 'boolean':
                 if values['checkout'].get(f_name) == 'True' or values['checkout'].get(f_name):
                     values['checkout'][f_name] = True
                 else:
                     values['checkout'][f_name] = False
+            elif f_type == 'date':
+                values['checkout'][f_name] = values['checkout'].get(f_name).strip() if values['checkout'].get(f_name) \
+                    else None
 
         # Add option-tag attributes for shipping-address-selector for wsd_checkout_form_billing_fields template
         if values.get('shippings'):
