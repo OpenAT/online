@@ -39,10 +39,8 @@ def _check_url(url):
 
 
 # Get a screen-shot for the target URL
-# TODO: add PhantomJS and selenium to the ubuntu1404 saltstack formula
-# http://rachbelaid.com/capturing-screenshots-of-website-with-python/
-# https://gist.github.com/tamaspap/f92a4725d56b2251a155f56b9612bf2e
-# https://joecodeswell.wordpress.com/2015/08/25/headless-selenium-on-ubuntu-14-04-with-phantomjs-2-0/
+# http://randomdotnext.com/selenium-phantomjs-on-aws-ec2-ubuntu-instance-headless-browser-automation/
+# TODO: Add Timeouts
 def _get_screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=int()):
     # Import selenium
     try:
@@ -70,8 +68,9 @@ def _get_screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_he
 
     # Resize Image
     if tgt_width or tgt_height:
-        #image = image_resize_image(image, size=(tgt_width, tgt_height), filetype='PNG')
-        image = resize_to_thumbnail(image, box=(320, 240), fit='top')
+        x = tgt_width or 320
+        y = tgt_height or 240
+        image = resize_to_thumbnail(image, box=(x, y), fit='top')
 
     # Return Image
     return image
