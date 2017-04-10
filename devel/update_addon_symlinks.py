@@ -45,12 +45,16 @@ if __name__ == "__main__":
                     if os.path.isdir(pj(target_path, f)) and os.path.islink(pj(target_path, f))]
 
     # Create new addon-symlinks
-    print "Creating symlinks for addons"
+    print "\nCreating symlinks for addons"
     os.chdir(target_path)
     for addon in rel_addon_paths:
-        os.symlink(addon, os.path.basename(addon))
+        try:
+            os.symlink(addon, os.path.basename(addon))
+        except Exception as e:
+            print "Error creating symlink %s \n%s" % (addon, e)
+            pass
 
-    print "Create symlinks for files and folders in odoo/openerp/* (excluding odoo/openerp/addons and .pyc files)"
+    print "\nCreate symlinks for files and folders in odoo/openerp/* (excluding odoo/openerp/addons and .pyc files)"
     openerp_folder = pj(base_path, 'odoo/openerp')
     os.chdir(pj(base_path, 'devel/openerp'))
     for f in os.listdir(openerp_folder):
@@ -58,5 +62,9 @@ if __name__ == "__main__":
             # Get the absolute path for the file
             abspath = pj(openerp_folder, f)
             relpath = os.path.relpath(abspath, pj(script_path, 'openerp'))
-            os.symlink(relpath, os.path.basename(relpath))
+            try:
+                os.symlink(relpath, os.path.basename(relpath))
+            except Exception as e:
+                print "Error creating symlink %s \n%s" % (relpath, e)
+                pass
             #print "ln -s %s %s" % (relpath, os.path.basename(relpath))
