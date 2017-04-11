@@ -15,6 +15,13 @@
 - stop odoo
 - start odoo with -u all
 
+## Wiederherzustellende/anzupassende Bereiche
+Wiederherstellen des Website Menüs
+apf-fields wiederherstellen
+Spendenformular Felder wiederherstellen bzw. Geburtstagsfeld web verwenden
+import export von fs_groups
+Berücksichtigen aswidget einbindung auf Fremddomain (iwannhelp)
+
 ## Test after update:
 - Öffnen alle backend views ohne Fehlermeldung (partner, product, ...)
 - Sind birthday_web und andere res.partner *_web felder noch mit ihren daten befüllt
