@@ -134,7 +134,7 @@ class WebsiteAsWidget(models.Model):
             # ATTENTION: To avoid recursion store result from furl in variable first
             source_base = furl().set(scheme=self.source_protocol,
                                      host=self.source_domain.name,
-                                     port=self.source_domain.port)
+                                     port=self.source_domain.port or None)
             source_url = source_base.join(self.source_page)
             source_url.args['noiframeredirect'] = 'True'
             source_url = source_url.url
@@ -160,7 +160,7 @@ class WebsiteAsWidget(models.Model):
             # ATTENTION: To avoid recursion store result from furl in variable first
             source_base = furl().set(scheme=rec.source_protocol,
                                      host=rec.source_domain.name,
-                                     port=rec.source_domain.port)
+                                     port=rec.source_domain.port or None)
             source_url = source_base.join(rec.source_page).url
 
             # Return if no target url was set
