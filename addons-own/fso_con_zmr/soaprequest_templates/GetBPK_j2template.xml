@@ -1,0 +1,73 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:SZRServices" xmlns:ns="http://reference.e-government.gv.at/namespace/persondata/20020228#" xmlns:sec="http://schemas.xmlsoap.org/ws/2002/04/secext">
+  <x:Header>
+    <sec:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/04/secext">
+      {% include "pvpToken_j2template.xml" %}
+    </sec:Security>
+  </x:Header>
+  <x:Body>
+    <urn:GetBPK>
+      <urn:PersonInfo>
+        <urn:Person>
+          <!--<ns:Identification>-->
+            <!--<ns:Value>{{ GetBPK['PersonInfo']['Person']['Identification']['Value'] }}</ns:Value>-->
+            <!--<ns:Type>{{ GetBPK['PersonInfo']['Person']['Identification']['Type'] }}</ns:Type>-->
+          <!--</ns:Identification>-->
+          <ns:Name>
+            <ns:PrefixedDegree>{{ GetBPK['PersonInfo']['Person']['Name']['PrefixedDegree'] }}</ns:PrefixedDegree>
+            <ns:GivenName>{{ GetBPK['PersonInfo']['Person']['Name']['GivenName'] }}</ns:GivenName>
+            <ns:FamilyName>{{ GetBPK['PersonInfo']['Person']['Name']['FamilyName'] }}</ns:FamilyName>
+            <ns:SuffixedDegree>{{ GetBPK['PersonInfo']['Person']['Name']['SuffixedDegree'] }}</ns:SuffixedDegree>
+          </ns:Name>
+          <ns:AlternativeName>
+            <ns:FamilyName>{{ GetBPK['PersonInfo']['Person']['AlternativeName']['FamilyName'] }}</ns:FamilyName>
+          </ns:AlternativeName>
+          <ns:Sex>{{ GetBPK['PersonInfo']['Person']['Sex'] }}</ns:Sex>
+          <ns:DateOfBirth>{{ GetBPK['PersonInfo']['Person']['DateOfBirth'] }}</ns:DateOfBirth>
+          <ns:PlaceOfBirth>{{ GetBPK['PersonInfo']['Person']['PlaceOfBirth'] }}</ns:PlaceOfBirth>
+          <ns:CountryOfBirth>{{ GetBPK['PersonInfo']['Person']['CountryOfBirth'] }}</ns:CountryOfBirth>
+          <ns:Nationality>{{ GetBPK['PersonInfo']['Person']['Nationality'] }}</ns:Nationality>
+        </urn:Person>
+        <urn:RegularDomicile>
+          <ns:PostalCode>{{ GetBPK['PersonInfo']['RegularDomicile']['PostalCode'] }}</ns:PostalCode>
+          <ns:Municipality>{{ GetBPK['PersonInfo']['RegularDomicile']['Municipality'] }}</ns:Municipality>
+          <ns:Locality>{{ GetBPK['PersonInfo']['RegularDomicile']['Locality'] }}</ns:Locality>
+          <ns:StateCode3>{{ GetBPK['PersonInfo']['RegularDomicile']['StateCode3'] }}</ns:StateCode3>
+          <ns:DeliveryAddress>
+            <ns:AddressLine>{{ GetBPK['PersonInfo']['RegularDomicile']['DeliveryAddress']['AddressLine'] }}</ns:AddressLine>
+            <ns:StreetName>{{ GetBPK['PersonInfo']['RegularDomicile']['DeliveryAddress']['StreetName'] }}</ns:StreetName>
+            <ns:BuildingNumber>{{ GetBPK['PersonInfo']['RegularDomicile']['DeliveryAddress']['BuildingNumber'] }}</ns:BuildingNumber>
+            <ns:Unit>{{ GetBPK['PersonInfo']['RegularDomicile']['DeliveryAddress']['Unit'] }}</ns:Unit>
+            <ns:DoorNumber>{{ GetBPK['PersonInfo']['RegularDomicile']['DeliveryAddress']['DoorNumber'] }}</ns:DoorNumber>
+          </ns:DeliveryAddress>
+          <ns:HistoricRecord>{{ GetBPK['PersonInfo']['RegularDomicile']['HistoricRecord'] if GetBPK['PersonInfo']['RegularDomicile']['HistoricRecord'] else 'false' }}</ns:HistoricRecord>
+        </urn:RegularDomicile>
+        <urn:AddressCodes>
+          <urn:GKZ>{{ GetBPK['PersonInfo']['AddressCodes']['GKZ'] }}</urn:GKZ>
+          <urn:OKZ>{{ GetBPK['PersonInfo']['AddressCodes']['OKZ'] }}</urn:OKZ>
+          <urn:SKZ>{{ GetBPK['PersonInfo']['AddressCodes']['SKZ'] }}</urn:SKZ>
+          <urn:ADRCD>{{ GetBPK['PersonInfo']['AddressCodes']['ADRCD'] }}</urn:ADRCD>
+          <urn:SUBCD>{{ GetBPK['PersonInfo']['AddressCodes']['SUBCD'] }}</urn:SUBCD>
+          <urn:OBJNR>{{ GetBPK['PersonInfo']['AddressCodes']['OBJNR'] }}</urn:OBJNR>
+          <urn:NTZLNR>{{ GetBPK['PersonInfo']['AddressCodes']['NTZLNR'] }}</urn:NTZLNR>
+        </urn:AddressCodes>
+        <urn:TravelDocument>
+          <urn:DocumentNumber>{{ GetBPK['PersonInfo']['TravelDocument']['DocumentNumber'] }}</urn:DocumentNumber>
+          <urn:DocumentType>{{ GetBPK['PersonInfo']['TravelDocument']['DocumentType'] }}</urn:DocumentType>
+          <urn:IssueDate>{{ GetBPK['PersonInfo']['TravelDocument']['IssueDate'] }}</urn:IssueDate>
+          <urn:IssuingAuthority>{{ GetBPK['PersonInfo']['TravelDocument']['IssuingAuthority'] }}</urn:IssuingAuthority>
+          <urn:IssuingCountry>{{ GetBPK['PersonInfo']['TravelDocument']['IssuingCountry'] }}</urn:IssuingCountry>
+        </urn:TravelDocument>
+        <urn:DateOfBirthWildcard>{{ GetBPK['PersonInfo']['DateOfBirthWildcard'] if GetBPK['PersonInfo']['DateOfBirthWildcard'] else 'false' }}</urn:DateOfBirthWildcard>
+        <urn:AuskunftssperreGesetzt>{{ GetBPK['PersonInfo']['AuskunftssperreGesetzt'] if GetBPK['PersonInfo']['AuskunftssperreGesetzt'] else 'false' }}</urn:AuskunftssperreGesetzt>
+      </urn:PersonInfo>
+      <urn:BereichsKennung>{{ GetBPK['BereichsKennung'] }}</urn:BereichsKennung>
+      <urn:VKZ>{{ GetBPK['VKZ'] }}</urn:VKZ>
+      <urn:Target>
+        <urn:BereichsKennung>{{ GetBPK['Target']['BereichsKennung'] }}</urn:BereichsKennung>
+        <urn:VKZ>{{ GetBPK['Target']['VKZ'] }}</urn:VKZ>
+      </urn:Target>
+      <urn:ListMultiplePersons>{{ GetBPK['ListMultiplePersons'] if GetBPK['ListMultiplePersons'] else 'false' }}</urn:ListMultiplePersons>
+      <urn:InsertERnP>{{ GetBPK['InsertERnP'] if GetBPK['InsertERnP'] else 'false' }}</urn:InsertERnP>
+    </urn:GetBPK>
+  </x:Body>
+</x:Envelope>

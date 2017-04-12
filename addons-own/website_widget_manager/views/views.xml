@@ -24,7 +24,9 @@
                         />
                         <field name="state" widget="statusbar" statusbar_visible="new,ok"/>
                     </header>
-                    <h1>FS-Online Widget</h1>
+                    <h1 style="margin-top:0.5em;margin-bottom:0.5em;">FS-Online Widget</h1>
+                    <label for="check_log" attrs="{'invisible': [('check_log', '=', False)]}"/>
+                    <h3 attrs="{'invisible': [('check_log', '=', False)]}" style="color:red"><field name="check_log"/></h3>
                     <notebook>
                         <page string="Widget Configuration">
                             <group string="Locations" col="2">
@@ -32,12 +34,13 @@
                                 <div colspan="1">
                                     <field name="source_protocol" class="oe_inline" style="padding-right: 0.5em;"/>
                                     <field name="source_domain" class="oe_inline" style="padding-right: 0.5em;"
-                                           domain="[('redirect_url', '!=', False)]"/>
+                                           domain="[('redirect_url', '!=', False)]"
+                                           options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                                           widget="selection"/>
                                     <field name="source_page" class="oe_inline" style="min-width:300px%"/>
                                 </div>
                                 <field name="target_url" required="True"/>
                                 <field name="notes"/>
-                                <field name="check_log" attrs="{'invisible': [('check_log', '=', False)]}"/>
                             </group>
                             <group string="Screenshots">
                                 <group>
@@ -188,7 +191,9 @@
                                 <div colspan="1">
                                     <field name="source_protocol" class="oe_inline" style="padding-right: 0.5em;"/>
                                     <field name="source_domain" class="oe_inline" style="padding-right: 0.5em;"
-                                           domain="[('redirect_url', '=', False)]"/>
+                                           domain="[('redirect_url', '=', False)]"
+                                           options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                                           widget="selection"/>
                                     <field name="source_page" class="oe_inline" style="min-width:300px%"/>
                                 </div>
                                 <field name="notes"/>

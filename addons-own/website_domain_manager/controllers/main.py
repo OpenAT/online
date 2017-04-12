@@ -39,6 +39,7 @@ class IrHttp(models.AbstractModel):
         # Search and deactivate other website domain templates if:
         # a.) A website domain with deactivated template was found for the requested domain (= deactivate former wdt)
         # b.) No website template domain was found for the request_domain (= deactivate all website domain templates)
+        # c.) TODO: what if all templates are active at first run
         if domain_set or not domains.sudo().search([('name', '=', request_domain)]):
             views = request.env['ir.ui.view'].sudo().search(['&',
                                                             ('active', '=', True),

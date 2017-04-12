@@ -1,0 +1,64 @@
+{
+    "VKZ": "", 
+    "Target": {
+        "BereichsKennung": "", 
+        "VKZ": ""
+    }, 
+    "ListMultiplePersons": "", 
+    "InsertERnP": "", 
+    "PersonInfo": {
+        "AuskunftssperreGesetzt": "", 
+        "TravelDocument": {
+            "IssuingCountry": "", 
+            "DocumentNumber": "", 
+            "IssuingAuthority": "", 
+            "IssueDate": "", 
+            "DocumentType": ""
+        }, 
+        "RegularDomicile": {
+            "Locality": "", 
+            "Municipality": "", 
+            "StateCode3": "", 
+            "DeliveryAddress": {
+                "DoorNumber": "", 
+                "Unit": "", 
+                "AddressLine": "", 
+                "StreetName": "", 
+                "BuildingNumber": ""
+            }, 
+            "PostalCode": "", 
+            "HistoricRecord": ""
+        }, 
+        "Person": {
+            "Name": {
+                "GivenName": "", 
+                "PrefixedDegree": "", 
+                "SuffixedDegree": "", 
+                "FamilyName": ""
+            }, 
+            "AlternativeName": {
+                "FamilyName": ""
+            }, 
+            "Sex": "", 
+            "DateOfBirth": "", 
+            "Identification": {
+                "Type": "", 
+                "Value": ""
+            }, 
+            "Nationality": "", 
+            "PlaceOfBirth": "", 
+            "CountryOfBirth": ""
+        }, 
+        "DateOfBirthWildcard": "", 
+        "AddressCodes": {
+            "ADRCD": "", 
+            "OBJNR": "", 
+            "NTZLNR": "", 
+            "OKZ": "", 
+            "SKZ": "", 
+            "SUBCD": "", 
+            "GKZ": ""
+        }
+    }, 
+    "BereichsKennung": ""
+}

@@ -85,25 +85,20 @@ class WebsiteAsWidget(models.Model):
     _rec_name = 'source_url'
     _order = 'sequence'
 
+    @api.model
+    def search_page(self, path):
+        if path == '/':
+            return path
+        for page in self.env['website'].enumerate_pages():
+            if page.get('loc') == path:
+                return page.get('loc')
+        return False
+
     # TODO:
     # - Create Custom Widget for char fields (Source Path) called internal_url
     #   This widget will search for urls with the website.search_pages function just like the frontend
 
     # FIELD CONSTRAINS
-    @api.constrains('source_page')
-    def _validate_source_page(self):
-        if self.source_page == '/':
-            return
-        if not self.source_page[0] == '/':
-            raise ValidationError(_("Field source_page must be a relative path and therefore start with an '/'!"))
-        # Check if the path can be found
-        path = self.source_page.strip().rsplit("?")[0]
-        pages = self.env['website'].search_pages(needle=path)
-        if not any(path == page.get('loc') for page in pages):
-            raise ValidationError(_("Field 'source_page' must be an existing relative page path!\n"
-                                    "E.g.: /shop?category=12\n\n"
-                                    "Pages found:\n%s\n") % pages)
-
     @api.constrains('target_url')
     def _validate_target_url(self):
         if self.target_url:
@@ -112,6 +107,7 @@ class WebsiteAsWidget(models.Model):
                                         "E.g.:\n"
                                         "https://www.google.at\nor\n"
                                         "https://www.google.at/search?q=datadialog&*&rct=j\n"))
+
     # ONCHANGE UI CHANGES
     @api.onchange('target_url')
     def _onchange_target_url(self):
@@ -127,8 +123,18 @@ class WebsiteAsWidget(models.Model):
             # return {'target_screenshot': screenshot}
             self.target_screenshot = screenshot
 
-    @api.onchange('source_page')
+    @api.onchange('source_protocol', 'source_domain', 'source_page')
     def _onchange_source_page(self):
+        # Check if the source page exits
+        if self.source_page:
+            if not self.search_page(self.source_page):
+                return {'warning': {'title': _('Warning!'),
+                                    'message': _('Source page %s not found! '
+                                                 'This may be ok but please check it to be sure.') % self.source_page
+                                    }
+                        }
+
+        # Create a screenshot
         if self.source_protocol and self.source_domain and self.source_page:
             # HINT: rec.source_protocol, rec.source_domain and rec.source_page are mandatory fields
             # ATTENTION: To avoid recursion store result from furl in variable first
@@ -199,9 +205,7 @@ class WebsiteAsWidget(models.Model):
             warnings = []
 
             # Check if FS-Online page exits
-            try:
-                record._validate_source_page()
-            except ValidationError:
+            if not record.search_page(record.source_page):
                 errors.append(_('Source page can not be found!'))
 
             # Get target page
@@ -237,7 +241,7 @@ class WebsiteAsWidget(models.Model):
     active = fields.Boolean(string="active", default=True)
     sequence = fields.Integer(string='Order')
     notes = fields.Text(string="Notes", translate=True)
-    check_log = fields.Text(string="Check Log", translate=True, readonly=True)
+    check_log = fields.Text(string="Widget Check", translate=True, readonly=True)
     # source
     source_protocol = fields.Selection([('http', "http://"),
                                         ('https', "https://")],

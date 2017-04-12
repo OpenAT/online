@@ -1,0 +1,16 @@
+{
+    "authorize": {
+        "role": ""
+    }, 
+    "authenticate": {
+        "userPrincipal": {
+            "cn": "", 
+            "gvGid": "", 
+            "userId": "", 
+            "gvOuId": "", 
+            "gvSecClass": "", 
+            "ou": ""
+        }, 
+        "participantId": ""
+    }
+}

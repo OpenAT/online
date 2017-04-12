@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- CompanyAustrianZMRSettings INHERIT: company form view -->
+    <record id="company_instance_settings" model="ir.ui.view">
+        <field name="name">Austrian ZMR Connection Settings</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Austrian ZMR Settings">
+                    <group col="2" string="ZMR Access">
+                        <field name="Stammzahl"/>
+                        <field name="pvpToken_userId"/>
+                        <field name="pvpToken_cn"/>
+                        <field name="pvpToken_gvOuId"/>
+                        <field name="pvpToken_ou"/>
+                        <field name="crt_pem"/>
+                        <field name="prvkey_pem"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>

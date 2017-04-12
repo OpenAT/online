@@ -11,8 +11,7 @@
                 <!--HINT: m2x options: https://github.com/OCA/web/issues/342 -->
                 <field name="fs_group_ids"
                        widget="many2many_tags"
-                       options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
-                />
+                       options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
             </xpath>
       </field>
     </record>
@@ -24,7 +23,9 @@
         <field name="inherit_id" ref="product.product_product_tree_view"/>
         <field name="arch" type="xml">
             <field name="product_tmpl_id" position="after">
-                <field name="product_variant_fs_group_ids" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                <field name="product_variant_fs_group_ids"
+                       widget="many2many_tags"
+                       options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
             </field>
         </field>
     </record>

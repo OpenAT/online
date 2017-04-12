@@ -1,0 +1,16 @@
+<pvp:pvpToken xmlns:pvp="http://egov.gv.at/pvp1.xsd" version="1.8">
+  <pvp:authenticate>
+    <pvp:participantId>{{ pvpToken['authenticate']['participantId'] if pvpToken['authenticate']['participantId'] else 'AT:VKZ:XZVR-593514598' }}</pvp:participantId>
+    <pvp:userPrincipal>
+      <pvp:userId>{{ pvpToken['authenticate']['userPrincipal']['userId'] if pvpToken['authenticate']['userPrincipal']['userId'] else 'andreas.temmer@global2000.at' }}</pvp:userId>
+      <pvp:cn>{{ pvpToken['authenticate']['userPrincipal']['cn'] if pvpToken['authenticate']['userPrincipal']['cn'] else 'Umweltschutzorganisation GLOBAL 2000' }}</pvp:cn>
+      <pvp:gvOuId>{{ pvpToken['authenticate']['userPrincipal']['gvOuId'] if pvpToken['authenticate']['userPrincipal']['gvOuId'] else 'DataDialog.NET DaDi EDV GmbH' }}</pvp:gvOuId>
+      <pvp:ou>{{ pvpToken['authenticate']['userPrincipal']['ou'] if pvpToken['authenticate']['userPrincipal']['ou'] else 'Marcus Forberich' }}</pvp:ou>
+      <pvp:gvSecClass>{{ pvpToken['authenticate']['userPrincipal']['gvSecClass'] if pvpToken['authenticate']['userPrincipal']['gvSecClass'] else '2' }}</pvp:gvSecClass>
+      <pvp:gvGid>{{ pvpToken['authenticate']['userPrincipal']['gvGid'] if pvpToken['authenticate']['userPrincipal']['gvGid'] else 'AT:VKZ:XZVR-593514598' }}</pvp:gvGid>
+    </pvp:userPrincipal>
+  </pvp:authenticate>
+  <pvp:authorize>
+    <pvp:role value="szr-bpk-abfrage">{{ pvpToken['authorize']['role'] }}</pvp:role>
+  </pvp:authorize>
+</pvp:pvpToken>

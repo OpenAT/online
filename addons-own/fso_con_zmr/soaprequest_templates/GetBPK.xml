@@ -1,0 +1,93 @@
+<x:Envelope
+        xmlns:x="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:urn="urn:SZRServices"
+        xmlns:ns="http://reference.e-government.gv.at/namespace/persondata/20020228#"
+        xmlns:sec="http://schemas.xmlsoap.org/ws/2002/04/secext">
+    <x:Header>
+            <sec:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/04/secext">
+                <pvp:pvpToken xmlns:pvp="http://egov.gv.at/pvp1.xsd" version="1.8">
+                    <pvp:authenticate>
+                        <pvp:participantId>AT:VKZ:XZVR-593514598</pvp:participantId>
+                        <pvp:userPrincipal>
+                            <pvp:userId>andreas.temmer@global2000.at</pvp:userId>
+                            <pvp:cn>Umweltschutzorganisation GLOBAL 2000</pvp:cn>
+                            <pvp:gvOuId>DataDialog.NET DaDi EDV GmbH</pvp:gvOuId>
+                            <pvp:ou>Marcus Forberich</pvp:ou>
+                            <pvp:gvSecClass>2</pvp:gvSecClass>
+                            <pvp:gvGid>AT:VKZ:XZVR-593514598</pvp:gvGid>
+                        </pvp:userPrincipal>
+                    </pvp:authenticate>
+                    <pvp:authorize>
+                        <pvp:role value="szr-bpk-abfrage">
+                        </pvp:role>
+                    </pvp:authorize>
+                </pvp:pvpToken>
+            </sec:Security>
+    </x:Header>
+    <x:Body>
+        <urn:GetBPK>
+            <urn:PersonInfo>
+                <urn:Person>
+                    <ns:Identification>
+                        <ns:Value>{{ PersonInfo['Person']['Identification']['Value'] }}</ns:Value>
+                        <ns:Type>{{ PersonInfo['Person']['Identification']['Type']  }}</ns:Type>
+                    </ns:Identification>
+                    <ns:Name>
+                        <ns:PrefixedDegree>{{   }}</ns:PrefixedDegree>
+                        <ns:GivenName>{{   }}</ns:GivenName>
+                        <ns:FamilyName>{{   }}</ns:FamilyName>
+                        <ns:SuffixedDegree>{{   }}</ns:SuffixedDegree>
+                    </ns:Name>
+                    <ns:AlternativeName>
+                        <ns:FamilyName>{{   }}</ns:FamilyName>
+                    </ns:AlternativeName>
+                    <ns:Sex>{{   }}</ns:Sex>
+                    <ns:DateOfBirth>{{   }}</ns:DateOfBirth>
+                    <ns:PlaceOfBirth>{{   }}</ns:PlaceOfBirth>
+                    <ns:CountryOfBirth>{{   }}</ns:CountryOfBirth>
+                    <ns:Nationality>{{   }}</ns:Nationality>
+                </urn:Person>
+                <urn:RegularDomicile>
+                    <ns:PostalCode>{{   }}</ns:PostalCode>
+                    <ns:Municipality>{{   }}</ns:Municipality>
+                    <ns:Locality>{{   }}</ns:Locality>
+                    <ns:StateCode3>{{   }}</ns:StateCode3>
+                    <ns:DeliveryAddress>
+                        <ns:AddressLine>{{   }}</ns:AddressLine>
+                        <ns:StreetName>{{   }}</ns:StreetName>
+                        <ns:BuildingNumber>{{   }}</ns:BuildingNumber>
+                        <ns:Unit>{{   }}</ns:Unit>
+                        <ns:DoorNumber>{{   }}</ns:DoorNumber>
+                    </ns:DeliveryAddress>
+                    <ns:HistoricRecord>false</ns:HistoricRecord>
+                </urn:RegularDomicile>
+                <urn:AddressCodes>
+                    <urn:GKZ>{{   }}</urn:GKZ>
+                    <urn:OKZ>{{   }}</urn:OKZ>
+                    <urn:SKZ>{{   }}</urn:SKZ>
+                    <urn:ADRCD>{{   }}</urn:ADRCD>
+                    <urn:SUBCD>{{   }}</urn:SUBCD>
+                    <urn:OBJNR>{{   }}</urn:OBJNR>
+                    <urn:NTZLNR>{{   }}</urn:NTZLNR>
+                </urn:AddressCodes>
+                <urn:TravelDocument>
+                    <urn:DocumentNumber>{{   }}</urn:DocumentNumber>
+                    <urn:DocumentType>{{   }}</urn:DocumentType>
+                    <urn:IssueDate>{{   }}</urn:IssueDate>
+                    <urn:IssuingAuthority>{{   }}</urn:IssuingAuthority>
+                    <urn:IssuingCountry>{{   }}</urn:IssuingCountry>
+                </urn:TravelDocument>
+                <urn:DateOfBirthWildcard>false</urn:DateOfBirthWildcard>
+                <urn:AuskunftssperreGesetzt>false</urn:AuskunftssperreGesetzt>
+            </urn:PersonInfo>
+            <urn:BereichsKennung>{{   }}</urn:BereichsKennung>
+            <urn:VKZ>{{   }}</urn:VKZ>
+            <urn:Target>
+                <urn:BereichsKennung>{{   }}</urn:BereichsKennung>
+                <urn:VKZ>{{   }}</urn:VKZ>
+            </urn:Target>
+            <urn:ListMultiplePersons>false</urn:ListMultiplePersons>
+            <urn:InsertERnP>false</urn:InsertERnP>
+        </urn:GetBPK>
+    </x:Body>
+</x:Envelope>

@@ -1,0 +1,17 @@
+<pvp:pvpToken xmlns:pvp="http://egov.gv.at/pvp1.xsd" version="1.8">
+    <pvp:authenticate>
+        <pvp:participantId>AT:VKZ:XZVR-593514598</pvp:participantId>
+        <pvp:userPrincipal>
+            <pvp:userId>andreas.temmer@global2000.at</pvp:userId>
+            <pvp:cn>Umweltschutzorganisation GLOBAL 2000</pvp:cn>
+            <pvp:gvOuId>DataDialog.NET DaDi EDV GmbH</pvp:gvOuId>
+            <pvp:ou>Marcus Forberich</pvp:ou>
+            <pvp:gvSecClass>2</pvp:gvSecClass>
+            <pvp:gvGid>AT:VKZ:XZVR-593514598</pvp:gvGid>
+        </pvp:userPrincipal>
+    </pvp:authenticate>
+    <pvp:authorize>
+        <pvp:role value="szr-bpk-abfrage">
+        </pvp:role>
+    </pvp:authorize>
+</pvp:pvpToken>

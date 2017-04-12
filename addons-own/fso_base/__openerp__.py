@@ -86,7 +86,6 @@ TODO (must be done manually right now):
         'base_location',
         'base_location_geonames_import',
         'web_export_view',
-        'web_m2x_options',
         'report_custom_filename',
         'partner_contact_gender',
         # Default Own Addons
