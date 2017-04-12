@@ -413,7 +413,7 @@ class website_sale_donate(website_sale):
 
             # UPDATE THE ORIGINAL PAY-NOW ACQUIRER.BUTTON FORM:
             # set input-tags value to post-data-value
-            # and use target _top for aswidget
+            # and use target _top
             button = etree.fromstring(acquirer.button)
             assert button.tag == 'form', "ERROR: One Page Checkout: Payment Button has not <form> as root tag!"
 
@@ -426,10 +426,9 @@ class website_sale_donate(website_sale):
                     if not form_input.get('value') and prefixed_input_name in post:
                         form_input.set('value', post.get(prefixed_input_name))
 
-            # Use target _top if aswidget is set in session
-            if request.session.get('aswidget'):
-                # HINT: Button is a form see assert button.tag above
-                button.set('target', '_top')
+            # Always set target _top (in case we are in an iframe)
+            # HINT: Button is a form see assert button.tag above
+            button.set('target', '_top')
 
             # Store the processed xml
             acquirer.button = etree.tostring(button, encoding='UTF-8', pretty_print=True)
