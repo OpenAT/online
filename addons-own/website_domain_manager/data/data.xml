@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+        
+        <!-- WEBSITE Domain Manager: Create form view, tree view, search view, view action and menu entry -->
+        <record model="website.domain_templates"
+                id="domain_template_hide_header_footer">
+            <field name="name">Hide Header and Footer</field>
+            <field name="frontend_css">
+<![CDATA[
+html body header:not(.domain_template_header) {display:None;}
+html body footer:not(.domain_template_footer) {display:None;}
+]]>
+            </field>
+        </record>
+
+    </data>
+</openerp>

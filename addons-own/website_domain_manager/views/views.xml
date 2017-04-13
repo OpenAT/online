@@ -1,57 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
-
-        <!-- WEBSITE Domain Manager: Create form view, tree view, search view, view action and menu entry -->
-        <record model="ir.ui.view" id="website_domains_form">
-            <field name="name">website_domains_form</field>
-            <field name="model">website.website_domains</field>
-            <field name="arch" type="xml">
-                <form string="Website Domain Manager">
-                    <group>
-                        <field name="name"/>
-                        <field name="port"/>
-                        <field name="template"/>
-                        <field name="redirect_url"/>
-                    </group>
-                </form>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="website_domains_tree">
-            <field name="name">website_domains_tree</field>
-            <field name="model">website.website_domains</field>
-            <field name="arch" type="xml">
-                <tree string="Website Domain Manager" editable="bottom">
-                        <field name="name"/>
-                        <field name="port"/>
-                        <field name="template"/>
-                        <field name="redirect_url"/>
-                </tree>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="website_domains_search">
-            <field name="name">website_domains_search</field>
-            <field name="model">website.website_domains</field>
-            <field name="arch" type="xml">
-                <search string="Website Domain Manager">
-                        <field name="name"/>
-                        <field name="port"/>
-                        <field name="template"/>
-                        <field name="redirect_url"/>
-                </search>
-            </field>
-        </record>
-        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
-        <record model="ir.actions.act_window" id="website_domains_action">
-            <field name="name">Domain Manager</field>
-            <field name="res_model">website.website_domains</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="website_domains_tree"/>
-            <field name="search_view_id" ref="website_domains_search"/>
-        </record>
-        <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem action="website_domains_action" id="website_domains_menu" parent="base.menu_config" sequence="1100"/>
+<openerp><data>
         
-    </data>
-</openerp>
+    <!-- WEBSITE Domain Templates: Create form view, tree view, search view, view action and menu entry -->
+    <record model="ir.ui.view" id="domain_templates_form">
+        <field name="name">domain_templates_form</field>
+        <field name="model">website.domain_templates</field>
+        <field name="arch" type="xml">
+            <form string="Domain Templates">
+                <div class="oe_edit_only"><label for="name"/></div>
+                <h1><field name="name"/></h1>
+                <div><label for="frontend_css"/></div>
+                <div><field name="frontend_css"/></div>
+                <div><label for="after_header"/></div>
+                <div><field name="after_header" attrs="{'readonly':True}"/></div>
+                <div><label for="after_footer"/></div>
+                <div><field name="after_footer" attrs="{'readonly':True}"/></div>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="domain_templates_tree">
+        <field name="name">domain_templates_tree</field>
+        <field name="model">website.domain_templates</field>
+        <field name="arch" type="xml">
+            <tree string="Domain Templates">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="domain_templates_search">
+        <field name="name">domain_templates_search</field>
+        <field name="model">website.domain_templates</field>
+        <field name="arch" type="xml">
+            <search string="Domain Templates">
+                <field name="name"/>
+                <field name="frontend_css"/>
+                <field name="after_header"/>
+                <field name="after_footer"/>
+            </search>
+        </field>
+    </record>
+    <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+    <record model="ir.actions.act_window" id="domain_templates_action">
+        <field name="name">Domain Templates</field>
+        <field name="res_model">website.domain_templates</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="domain_templates_tree"/>
+        <field name="search_view_id" ref="domain_templates_search"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem action="domain_templates_action" id="domain_templates_menu" parent="base.menu_config" sequence="1000"/>
+
+
+
+
+
+    <!-- WEBSITE Domain Manager: Create form view, tree view, search view, view action and menu entry -->
+    <record model="ir.ui.view" id="website_domains_form">
+        <field name="name">website_domains_form</field>
+        <field name="model">website.website_domains</field>
+        <field name="arch" type="xml">
+            <form string="Website Domain Manager">
+                <group>
+                    <field name="name"/>
+                    <field name="port"/>
+                    <field name="domain_template_id"/>
+                    <field name="redirect_url"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="website_domains_tree">
+        <field name="name">website_domains_tree</field>
+        <field name="model">website.website_domains</field>
+        <field name="arch" type="xml">
+            <tree string="Website Domain Manager" editable="bottom">
+                    <field name="name"/>
+                    <field name="port"/>
+                    <field name="domain_template_id"/>
+                    <field name="redirect_url"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="website_domains_search">
+        <field name="name">website_domains_search</field>
+        <field name="model">website.website_domains</field>
+        <field name="arch" type="xml">
+            <search string="Website Domain Manager">
+                    <field name="name"/>
+                    <field name="port"/>
+                    <field name="domain_template_id"/>
+                    <field name="redirect_url"/>
+            </search>
+        </field>
+    </record>
+    <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+    <record model="ir.actions.act_window" id="website_domains_action">
+        <field name="name">Domain Manager</field>
+        <field name="res_model">website.website_domains</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="website_domains_tree"/>
+        <field name="search_view_id" ref="website_domains_search"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem action="website_domains_action" id="website_domains_menu" parent="base.menu_config" sequence="1100"/>
+        
+</data></openerp>

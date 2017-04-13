@@ -20,4 +20,22 @@
         </xpath>
     </template>
 
+    <!-- REDIRECT by java script for if not opened inside an iframe -->
+    <!-- HINT: Base functionality is in the addon website_domain_manager -->
+    <template id="iframe_redirect"
+              name="Widget redirect if not opened in an iframe"
+              inherit_id="website_domain_manager.iframe_redirect">
+        <xpath expr="//t[@t-if='domain']" position="after">
+            <t t-set="request_path" t-value="request.httprequest.path.split('?', 1)[0]"/>
+            <t t-set="widget" t-value="request.env['website.widget_manager'].search(['&amp;', '&amp;',
+                                                                      ('source_domain', '=', request_domain),
+                                                                      ('source_page', '=', request_path),
+                                                                      ('target_url', '!=', False)
+                                                                      ])"/>
+            <t t-if="widget">
+                <t t-set="redirect_url" t-value="widget.target_url"/>
+            </t>
+        </xpath>
+    </template>
+
 </data></openerp>

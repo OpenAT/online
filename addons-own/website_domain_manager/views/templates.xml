@@ -3,68 +3,104 @@
 
     <!-- REDIRECT by java script for noiframe_redirect_url if not called inside an iframe -->
     <template id="iframe_redirect"
-              name="Website Domain Redirect if not opened in an iframe"
-              inherit_id="website.layout"
-              forcecreate="1" >
+              name="Website Domain redirect if not opened in an iframe"
+              inherit_id="website.layout">
         <xpath expr="//head" position="inside">
-            <t t-if="request.session.get('noiframe_redirect_url')">
-                <script type="text/javascript">
-                <![CDATA[
-                    function defer(method) {
-                        if (window.jQuery)
-                            method();
-                        else
-                            setTimeout(function() { defer(method) }, 100);
-                    }
-                    defer(function () {
-                        console.log("jQuery is now loaded");
-                        jQuery( 'meta[name=noiframe_redirect_url]' ).ready(function () {
-                            console.log('meta name="noiframe_redirect_url" is ready')
-                            // Check if a redirection URL exists
-                            var noiframe_redirect_url = jQuery( 'meta[name=noiframe_redirect_url]' ).attr('content');
-                            console.log("noiframe_redirect_url: " + noiframe_redirect_url)
-                            // Redirect if we are not in an (i) frame
-                            if ( noiframe_redirect_url && window.self == window.top ) {
-                                console.log('Page will redirect cause not loaded in iframe!')
-                                window.location.replace(noiframe_redirect_url);
-                            };
-                        });
-                    });
-                ]]>
-                </script>
-                <meta name="noiframe_redirect_url" t-att-content="request.session.get('noiframe_redirect_url')"/>
+            <t t-if="'noiframeredirect' not in request.httprequest.query_string">
+                <t t-set="redirect_url" t-value="False"/>
+                <t t-set="request_domain" t-value="request.httprequest.host.split(':', 1)[0]"/>
+                <t t-set="domain" t-value="request.env['website.website_domains'].search(['&amp;',
+                                             ('name', '=', request_domain),
+                                             ('redirect_url', '!=', False)])"/>
+                <t t-if="domain">
+                    <t t-set="redirect_url" t-value="domain.redirect_url"/>
+                </t>
+                <t t-if="redirect_url">
+                    <script type="text/javascript"><![CDATA[
+                        /* Redirect if not in an iframe: */
+                        if ( window.self == window.top ) {
+                           window.location.replace("]]><t t-raw="redirect_url"/><![CDATA[");
+                        }]]>
+                    </script>
+                </t>
             </t>
         </xpath>
     </template>
 
-    <!-- WEBSITE DOMAIN TEMPLATES (id must contain "website_domain_template" !) -->
-    <template id="website_domain_template_hide_menu_footer"
-              name="WDT Hide Menu and Footer"
-              inherit_id="website.layout"
+
+    <!-- DOMAIN TEMPLATE LOADERS -->
+    <template id="assets_frontend_domain_template_loader"
+              name="Assets Frontend Domain Template Loader"
+              inherit_id="website.assets_frontend"
               forcecreate="1" >
-        <xpath expr="//footer" position="attributes">
-            <attribute name="style">display:none;</attribute>
-        </xpath>
-        <xpath expr="//header" position="attributes">
-            <attribute name="style">display:none;</attribute>
+        <xpath expr="." position="inside">
+            <t t-set="request_domain" t-value="request.httprequest.host.split(':', 1)[0]"/>
+            <t t-set="domain" t-value="request.env['website.website_domains'].search(['&amp;',
+                                         ('name', '=', request_domain),
+                                         ('domain_template_id', '!=', False)])"/>
+            <t t-if="domain">
+                <meta t-att-name="domain_template"
+                      t-att-data-domain="domain.name"
+                      t-att-content="domain.domain_template_id.name"/>
+                <style type="text/css">
+                    <t t-raw="domain.domain_template_id.frontend_css"/>
+                </style>
+            </t>
         </xpath>
     </template>
-
-    <template id="website_domain_template_landing_pages"
-              name="WDT Landing Pages Header and Footer"
+    <template id="website_layout_domain_template_loader"
+              name="Website Layout Domain Template Loader"
               inherit_id="website.layout"
               forcecreate="1">
-        <xpath expr="//header" position="attributes">
-            <attribute name="style">display:none;</attribute>
-        </xpath>
-        <xpath expr="//footer" position="attributes">
-            <attribute name="style">display:none;</attribute>
-        </xpath>
-        <xpath expr="//header" position="before">
-            <div id="c_header"> Custom HEADER </div>
+        <xpath expr="//header" position="after">
+            <t t-set="request_domain" t-value="request.httprequest.host.split(':', 1)[0]"/>
+            <t t-set="domain" t-value="request.env['website.website_domains'].search(['&amp;',
+                                         ('name', '=', request_domain),
+                                         ('domain_template_id', '!=', False)])"/>
+            <t t-if="domain">
+                <header class="domain_template_header">
+                    <!-- Info-Box (for logged in users only)-->
+                    <t groups="base.group_website_publisher">
+                        <div class="oe_structure" contenteditable="false">
+                            <section>
+                                <div class="container">
+                                    <div class="row" >
+                                        <div class="col-md-12">
+                                            <div class="alert alert-info text-center clearfix" role="alert" style="padding: 3px 0;">Edit Domain Template Header:</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </t>
+                    <div t-field="domain.domain_template_id.after_header"/>
+                </header>
+            </t>
         </xpath>
         <xpath expr="//footer" position="after">
-            <div id="c_footer"> Custom FOOTER </div>
+            <t t-set="request_domain" t-value="request.httprequest.host.split(':', 1)[0]"/>
+            <t t-set="domain" t-value="request.env['website.website_domains'].search(['&amp;',
+                                         ('name', '=', request_domain),
+                                         ('domain_template_id', '!=', False)])"/>
+            <t t-if="domain">
+                <footer class="domain_template_footer">
+                    <!-- Info-Box (for logged in users only)-->
+                    <t groups="base.group_website_publisher">
+                        <div class="oe_structure" contenteditable="false">
+                            <section>
+                                <div class="container">
+                                    <div class="row" >
+                                        <div class="col-md-12">
+                                            <div class="alert alert-info text-center clearfix" role="alert" style="padding: 3px 0;">Edit Domain Template Footer:</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </t>
+                    <div t-field="domain.domain_template_id.after_footer"/>
+                </footer>
+            </t>
         </xpath>
     </template>
 

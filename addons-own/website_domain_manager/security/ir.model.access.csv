@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_website_website_domains,access_website_website_domains,model_website_website_domains,,1,0,0,0
+access_website_domain_templates,access_website_domain_templates,model_website_domain_templates,,1,0,0,0

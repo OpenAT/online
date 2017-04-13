@@ -1,6 +1,5 @@
 # -*- coding: utf-'8' "-*-"
 import logging
-import re
 from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import ValidationError
@@ -9,28 +8,20 @@ from openerp.addons.fso_base.tools.validate import is_valid_hostname
 logger = logging.getLogger(__name__)
 
 
+class WebsiteDomainTemplates(models.Model):
+    _name = "website.domain_templates"
+
+    name = fields.Char(string="Domain Template Name", required=True)
+    frontend_css = fields.Text(string="Frontend Assets CSS",
+                               help="Add style tags with css. "
+                                    "Style tag content Will be merged into frontend_assets css.")
+    after_header = fields.Html(string="After Header")
+    after_footer = fields.Html(string="After Footer")
+
+
 class WebsiteDomainManager(models.Model):
     _name = 'website.website_domains'
     _description = 'Website Domain Manager'
-
-    @api.model
-    def get_domain_template_ids(self):
-        # Get the ir.ui.view ids from the external_ids entries
-        # HINT: The ir.model.data records are always active even if the related record is not
-        x_ids = self.env['ir.model.data'].sudo().search(['&',
-                                                         ('model', '=', 'ir.ui.view'),
-                                                         ('name', '=like', '%website_domain_template%')
-                                                         ])
-        view_ids = [x.res_id for x in x_ids if x.res_id]
-        return view_ids
-
-    @api.model
-    def _get_wdt_domain(self):
-        domain = ['&',
-                  ('id', 'in', self.get_domain_template_ids()),
-                  '|', ('active', '=', False), ('active', '!=', False)
-                  ]
-        return domain
 
     @api.constrains('name')
     def _validate_name(self):
@@ -39,13 +30,10 @@ class WebsiteDomainManager(models.Model):
                                     "E.g.: www.test-bob.at\n"
                                     "':' '&' '/' '?' '&' characters are not allowed!"))
 
-
-
-
-    # TODO: check the domain (name) is a valid url
-    name = fields.Char(string='Domain', required=True, translate=True, help='E.g.: spenden.test.at')
+    name = fields.Char(string='Domain', required=True, help='E.g.: spenden.test.at')
     port = fields.Char(string='Port', help='Domain Port')
-    template = fields.Many2one(comodel_name='ir.ui.view', string="Domain Template", domain=_get_wdt_domain)
-    redirect_url = fields.Char(string='Redirect URL', translate=True, help='E.g.: https://www.test.at/de/shop')
+    # template = fields.Many2one(comodel_name='ir.ui.view', string="Domain Template", domain=_get_wdt_domain)
+    domain_template_id = fields.Many2one(comodel_name='website.domain_templates', string="Domain Template")
+    redirect_url = fields.Char(string='Redirect URL', help='E.g.: https://www.test.at/de/shop')
 
     _sql_constraints = [('domain_uniq', 'unique (name)', 'The domain must be unique!')]
