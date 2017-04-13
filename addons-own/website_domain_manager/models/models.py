@@ -16,9 +16,9 @@ class WebsiteDomainTemplates(models.Model):
                                help="Add style tags with css. "
                                     "Style tag content Will be merged into frontend_assets css.")
     after_header_enabled = fields.Boolean(string="Enable Custom Header", default=False)
-    after_header = fields.Html(string="After Header")
+    after_header = fields.Html(string="After Header", translate=True)
     after_footer_enabled = fields.Boolean(string="Enable Custom Footer", default=False)
-    after_footer = fields.Html(string="After Footer")
+    after_footer = fields.Html(string="After Footer", translate=True)
 
 
 class WebsiteDomainManager(models.Model):
