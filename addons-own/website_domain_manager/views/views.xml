@@ -11,10 +11,14 @@
                 <h1><field name="name"/></h1>
                 <div><label for="frontend_css"/></div>
                 <div><field name="frontend_css"/></div>
-                <div><label for="after_header"/></div>
-                <div><field name="after_header" attrs="{'readonly':True}"/></div>
-                <div><label for="after_footer"/></div>
-                <div><field name="after_footer" attrs="{'readonly':True}"/></div>
+                <!-- custom header -->
+                <div><label for="after_header_enabled"/></div>
+                <div><field name="after_header_enabled"/></div>
+                <div attrs="{'invisible':[('after_header_enabled', '=', False)]}"><field name="after_header" attrs="{'readonly':True}"/></div>
+                <!-- custom footer -->
+                <div><label for="after_footer_enabled"/></div>
+                <div><field name="after_footer_enabled"/></div>
+                <div attrs="{'invisible':[('after_footer_enabled', '=', False)]}"><field name="after_footer" attrs="{'readonly':True}"/></div>
             </form>
         </field>
     </record>
@@ -24,6 +28,8 @@
         <field name="arch" type="xml">
             <tree string="Domain Templates">
                 <field name="name"/>
+                <field name="after_header_enabled"/>
+                <field name="after_footer_enabled"/>
             </tree>
         </field>
     </record>
@@ -34,7 +40,9 @@
             <search string="Domain Templates">
                 <field name="name"/>
                 <field name="frontend_css"/>
+                <field name="after_header_enabled"/>
                 <field name="after_header"/>
+                <field name="after_footer_enabled"/>
                 <field name="after_footer"/>
             </search>
         </field>

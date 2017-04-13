@@ -6,6 +6,11 @@
               name="Website Domain redirect if not opened in an iframe"
               inherit_id="website.layout">
         <xpath expr="//head" position="inside">
+            <!-- Bugix/Hack: make sure alert boxes are not displayed -->
+            <style type="text/css">
+                html:not([data-editable]) body div.domain_template_alert { display:None; }
+            </style>
+            <!-- Not in iframe redirection -->
             <t t-if="'noiframeredirect' not in request.httprequest.query_string">
                 <t t-set="redirect_url" t-value="False"/>
                 <t t-set="request_domain" t-value="request.httprequest.host.split(':', 1)[0]"/>
@@ -29,6 +34,7 @@
 
 
     <!-- DOMAIN TEMPLATE LOADERS -->
+    <!-- Domain-Template css -->
     <template id="assets_frontend_domain_template_loader"
               name="Assets Frontend Domain Template Loader"
               inherit_id="website.assets_frontend"
@@ -48,6 +54,7 @@
             </t>
         </xpath>
     </template>
+    <!-- Domain-Template custom header and footer fields for snippet dropping -->
     <template id="website_layout_domain_template_loader"
               name="Website Layout Domain Template Loader"
               inherit_id="website.layout"
@@ -57,23 +64,16 @@
             <t t-set="domain" t-value="request.env['website.website_domains'].search(['&amp;',
                                          ('name', '=', request_domain),
                                          ('domain_template_id', '!=', False)])"/>
-            <t t-if="domain">
+            <t t-if="domain and domain.domain_template_id.after_header_enabled">
                 <header class="domain_template_header">
-                    <!-- Info-Box (for logged in users only)-->
-                    <t groups="base.group_website_publisher">
-                        <div class="oe_structure" contenteditable="false">
-                            <section>
-                                <div class="container">
-                                    <div class="row" >
-                                        <div class="col-md-12">
-                                            <div class="alert alert-info text-center clearfix" role="alert" style="padding: 3px 0;">Edit Domain Template Header:</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                    </t>
-                    <div t-field="domain.domain_template_id.after_header"/>
+                    <div class="domain_template_alert alert alert-info text-center clearfix"
+                         role="alert"
+                         style="padding: 3px 0;"
+                         contenteditable="false"
+                         groups="base.group_website_designer">
+                        Edit Domain-Template header:
+                    </div>
+                    <div t-field="domain.domain_template_id.after_header" class="domain_template_after_header"/>
                 </header>
             </t>
         </xpath>
@@ -82,23 +82,17 @@
             <t t-set="domain" t-value="request.env['website.website_domains'].search(['&amp;',
                                          ('name', '=', request_domain),
                                          ('domain_template_id', '!=', False)])"/>
-            <t t-if="domain">
+            <t t-if="domain and domain.domain_template_id.after_footer_enabled">
                 <footer class="domain_template_footer">
-                    <!-- Info-Box (for logged in users only)-->
-                    <t groups="base.group_website_publisher">
-                        <div class="oe_structure" contenteditable="false">
-                            <section>
-                                <div class="container">
-                                    <div class="row" >
-                                        <div class="col-md-12">
-                                            <div class="alert alert-info text-center clearfix" role="alert" style="padding: 3px 0;">Edit Domain Template Footer:</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                    </t>
-                    <div t-field="domain.domain_template_id.after_footer"/>
+                    <!-- Info-Box (for admin users only)-->
+                    <div class="domain_template_alert alert alert-info text-center clearfix"
+                         role="alert"
+                         style="padding: 3px 0;"
+                         contenteditable="false"
+                         groups="base.group_website_designer">
+                        Edit Domain-Template footer:
+                    </div>
+                    <div t-field="domain.domain_template_id.after_footer" class="domain_template_after_footer"/>
                 </footer>
             </t>
         </xpath>

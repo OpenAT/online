@@ -109,6 +109,7 @@
                     <field name="source_screenshot" readonly="True" widget="image" display="thumbnail"/>
                     <field name="target_url"/>
                     <field name="target_screenshot" readonly="True" widget="image"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
