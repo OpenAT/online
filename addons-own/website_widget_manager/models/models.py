@@ -186,9 +186,17 @@ class WebsiteAsWidget(models.Model):
 
             # Generate the widget embed code
             widget_code = Template("""<!-- Insert this code in your html body where you want the widget to appear -->
-<iframe id="$target_iframe_id" class="fso_iframe" src="$source_url" scrolling="no" frameborder="0" width="100%" style="width:100%; border:none; padding:0; margin:0;"></iframe>
-<script type="text/javascript">iFrameResize({log: false, enablePublicMethods: true, checkOrigin: false, inPageLinks: true, heightCalculationMethod: taggedElement,}, '#$target_iframe_id')</script>
-""").substitute(target_iframe_id=rec.iframe_id, source_url=source_url)
+<iframe id="$target_iframe_id" class="fso_iframe" src="$source_url" 
+        scrolling="no" frameborder="0" width="100%" style="width:100%; border:none; padding:0; margin:0;">
+</iframe>
+<script type="text/javascript">
+    //<![CDATA[
+    iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement',
+                  checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: true, inPageAnchors: true, log: false,
+                  }, '#$target_iframe_id')
+    //]]>
+</script>
+""").substitute(target_iframe_id=rec.iframe_id, base_url=source_base, source_url=source_url)
 
             # HINT: To avoid recursion (because of the iframe_id) we use single writes here instead of .write({})
             rec.source_url = source_url
