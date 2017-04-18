@@ -181,7 +181,7 @@ class WebsiteAsWidget(models.Model):
             # Generate the head embed code
             script_url = source_base.join(rec._script_path).url
             widget_code_header = Template("""<!-- Insert this 'script' element ONLY ONCE inside your html header -->
-<script type="text/javascript" src="$script_url" />
+<script type="text/javascript" src="$script_url"></script>
 """).substitute(script_url=script_url)
 
             # Generate the widget embed code
