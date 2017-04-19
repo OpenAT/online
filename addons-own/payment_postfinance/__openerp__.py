@@ -54,7 +54,7 @@ Postfinanz ESR Payment Provider für FS-Online
     'installable': True,
     'data': [
         'views/postfinance_acquirerbutton.xml',
-        'data/postfinance_data.xml',
+        # 'data/postfinance_data.xml',  # DISABLED because setting a payment method to postfinance ESR force requres and ESR Number in the bank account
         'views/postfinance_transaction.xml',
         'views/res_bank_partner.xml',
     ],

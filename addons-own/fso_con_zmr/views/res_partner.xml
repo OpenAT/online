@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend res.partner form to include set_bpk button -->
+    <record id="res_partner_set_bpk_button" model="ir.ui.view">
+        <field name="name">res_partner_set_bpk_button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="set_bpk" type="object" string="Set BPK"/>
+                </header>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="ZMR BPK">
+                    <group string="Force BPK Request Values (optional)">
+                        <field name="BPKForcedFirstname"/>
+                        <field name="BPKForcedLastname"/>
+                        <field name="BPKForcedBirthdate"/>
+                    </group>
+                    <group attrs="{'invisible': [('BPKRequestDate','!=',False), ('BPKErrorRequestDate','!=',False)]}">
+                        <group string="Last valid BPK-Request">
+                            <field name="BPKPrivate"/>
+                            <field name="BPKPublic"/>
+                            <field name="BPKRequestDate"/>
+                            <field name="BPKRequestFirstname"/>
+                            <field name="BPKRequestLastname"/>
+                            <field name="BPKRequestBirthdate"/>
+                            <field name="BPKRequestData"/>
+                            <field name="BPKResponseTime"/>
+                            <field name="BPKResponseData"/>
+                        </group>
+                        <group string="Last invalid BPK-Request">
+                            <field name="BPKErrorCode"/>
+                            <field name="BPKErrorText"/>
+                            <field name="BPKErrorRequestDate"/>
+                            <field name="BPKErrorRequestFirstname"/>
+                            <field name="BPKErrorRequestLastname"/>
+                            <field name="BPKErrorRequestBirthdate"/>
+                            <field name="BPKErrorRequestData"/>
+                            <field name="BPKErrorResponseTime"/>
+                            <field name="BPKErrorResponseData"/>
+                        </group>
+                    </group>
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</data></openerp>

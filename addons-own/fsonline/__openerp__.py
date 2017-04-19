@@ -66,9 +66,10 @@ Module tasks:
         'fso_base',
         'fso_base_website',
         'website_sale_donate',
+        'website_widget_manager',
         'payment_frst',
         'payment_ogonedadi',
-        # 'payment_postfinance', # DISABLED because only useful in CH
+        'payment_postfinance',
         'auth_partner_form',
     ],
     'data': [

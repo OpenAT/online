@@ -10,13 +10,19 @@
             <xpath expr="//notebook[last()]" position="inside">
                 <page string="Austrian ZMR Settings">
                     <group col="2" string="ZMR Access">
-                        <field name="Stammzahl"/>
+                        <field name="stammzahl"/>
                         <field name="pvpToken_userId"/>
                         <field name="pvpToken_cn"/>
                         <field name="pvpToken_gvOuId"/>
                         <field name="pvpToken_ou"/>
-                        <field name="crt_pem"/>
-                        <field name="prvkey_pem"/>
+
+                        <field name="pvpToken_crt_pem" widget="binary" filename="pvpToken_crt_pem_filename"/>
+                        <field name="pvpToken_crt_pem_filename" invisible="1"/>
+                        <field name="pvpToken_crt_pem_path" readonly="True"/>
+
+                        <field name="pvpToken_prvkey_pem" widget="binary" filename="pvpToken_prvkey_pem_filename"/>
+                        <field name="pvpToken_prvkey_pem_filename" invisible="1"/>
+                        <field name="pvpToken_prvkey_pem_path" readonly="True"/>
                     </group>
                 </page>
             </xpath>

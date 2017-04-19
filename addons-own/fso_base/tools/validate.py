@@ -2,7 +2,7 @@
 import re
 import validators
 import socket
-import urlparse
+from urlparse import urlparse
 from openerp.tools.translate import _
 import logging
 
@@ -19,23 +19,25 @@ def is_valid_hostname(hostname):
     return all(allowed.match(x) for x in hostname.split("."))
 
 
+class URLFormatError(Exception):
+    pass
+
+
+class URLDNSError(Exception):
+    pass
+
+
 def is_valid_url(url):
     assert isinstance(url, (str, unicode)), _("URL must be a string!")
 
     # Check for a valid URL
     if not validators.url(url):
-        message = _('The URL is not valid! \nURL: %s\n\n'
-                    'Please provide valid URL!\nE.g.: https://www.google.at/search?q=datadialog') % url
-        warning = {'warning': {'title': _('Warning'), 'message': message}}
-        return False, warning
+        raise URLFormatError(_('URL format is not valid: %s') % url)
 
     # Make a quick DNS check instead of a full HTTP GET request (because a request.get() can be really slow)
     try:
         socket.gethostbyname(urlparse(url).hostname)
-    except Exception:
-        message = _('DNS check failed for url %s!') % url
-        warning = {'warning': {'title': _('Warning'), 'message': message}}
-        return False, warning
+    except Exception as e:
+        raise URLDNSError(_('URL DNS check failed!\n%s\n%s\n') % (url, e))
 
-    return True, {}
-
+    return True

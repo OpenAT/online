@@ -2,7 +2,7 @@
 <openerp>
     <data noupdate="1">
 
-        <record id="payment_acquirer_postfinance" model="payment.acquirer">
+        <!-- record id="payment_acquirer_postfinance" model="payment.acquirer">
             <field name="name">Postfinance ESR</field>
             <field name="provider">postfinance</field>
             <field name="company_id" ref="base.main_company"/>
@@ -14,7 +14,7 @@
 <p>Postfinance ESR</p>
 ]]>
             </field>
-        </record>
+        </record -->
 
     </data>
 </openerp>

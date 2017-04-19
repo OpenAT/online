@@ -45,5 +45,6 @@ Abfragen zum Zentralen Melderegister in Österreich
     ],
     'data': [
         'views/res_company.xml',
+        'views/res_partner.xml',
     ],
 }
