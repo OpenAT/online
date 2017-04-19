@@ -24,12 +24,11 @@
     'name': "FS-Online fso_con_zmr",
     'summary': """FS-Online Austrian ZMR Connector""",
     'description': """
-
 FS-Online fso_con_zmr
 =====================
 
 Abfragen zum Zentralen Melderegister in Österreich
-- GetBPK
+  - GetBPK für die Spendenabsetzbarkeit
 
     """,
     'author': "Datadialog - Michael Karrer",
@@ -46,5 +45,6 @@ Abfragen zum Zentralen Melderegister in Österreich
     'data': [
         'views/res_company.xml',
         'views/res_partner.xml',
+        'views/res_partner_bpk.xml',
     ],
 }

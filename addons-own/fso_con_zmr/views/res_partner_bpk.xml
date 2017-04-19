@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- BPK REQUESTS: Create form, tree and list view for the BPK Requests -->
+    <record model="ir.ui.view" id="res_partner_bpk_form">
+        <field name="name">res_partner_bpk_form</field>
+        <field name="model">res.partner.bpk</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="BPK Request">
+                <group>
+                    <field name="BPKRequestCompanyID"/>
+                    <field name="BPKRequestPartnerID"/>
+                </group>
+                <group attrs="{'invisible': [('BPKRequestDate','!=',False), ('BPKErrorRequestDate','!=',False)]}">
+                    <group string="Last valid BPK-Request">
+                        <field name="BPKPrivate"/>
+                        <field name="BPKPublic"/>
+                        <field name="BPKRequestDate"/>
+                        <field name="BPKRequestFirstname"/>
+                        <field name="BPKRequestLastname"/>
+                        <field name="BPKRequestBirthdate"/>
+                        <field name="BPKRequestData"/>
+                        <field name="BPKResponseTime"/>
+                        <field name="BPKResponseData"/>
+                    </group>
+                    <group string="Last invalid BPK-Request">
+                        <field name="BPKErrorCode"/>
+                        <field name="BPKErrorText"/>
+                        <field name="BPKErrorRequestDate"/>
+                        <field name="BPKErrorRequestFirstname"/>
+                        <field name="BPKErrorRequestLastname"/>
+                        <field name="BPKErrorRequestBirthdate"/>
+                        <field name="BPKErrorRequestData"/>
+                        <field name="BPKErrorResponseTime"/>
+                        <field name="BPKErrorResponseData"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="res_partner_bpk_tree">
+        <field name="name">res_partner_bpk_tree</field>
+        <field name="model">res.partner.bpk</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="BPK Requests" default_order="BPKRequestCompanyID,BPKRequestPartnerID">
+                <field name="BPKRequestCompanyID"/>
+                <field name="BPKRequestPartnerID"/>
+                <field name="BPKRequestDate"/>
+                <field name="BPKPrivate"/>
+                <field name="BPKPublic"/>
+                <field name="BPKErrorRequestDate"/>
+                <field name="BPKErrorCode"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="res_partner_bpk_search">
+        <field name="name">res_partner_bpk_search</field>
+        <field name="model">res.partner.bpk</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="BPK Requests">
+                <field name="BPKRequestCompanyID"/>
+                <field name="BPKRequestPartnerID"/>
+                <field name="BPKPrivate"/>
+                <field name="BPKPublic"/>
+                <field name="BPKRequestDate"/>
+                <field name="BPKRequestFirstname"/>
+                <field name="BPKRequestLastname"/>
+                <field name="BPKRequestBirthdate"/>
+                <field name="BPKErrorCode"/>
+                <field name="BPKErrorText"/>
+                <field name="BPKErrorRequestDate"/>
+                <field name="BPKErrorRequestFirstname"/>
+                <field name="BPKErrorRequestLastname"/>
+                <field name="BPKErrorRequestBirthdate"/>
+            </search>
+        </field>
+    </record>
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="res_partner_bpk_action" model="ir.actions.act_window" >
+        <field name="name">BPK Requests</field>
+        <field name="res_model">res.partner.bpk</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="res_partner_bpk_search"/>
+    </record>
+    <record id="res_partner_bpk_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_bpk_tree"/>
+        <field name="act_window_id" ref="res_partner_bpk_action"/>
+    </record>
+    <record id="res_partner_bpk_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_bpk_form"/>
+        <field name="act_window_id" ref="res_partner_bpk_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="res_partner_bpk_menu" action="res_partner_bpk_action" parent="base.menu_config" sequence="1300"/>
+
+</data></openerp>

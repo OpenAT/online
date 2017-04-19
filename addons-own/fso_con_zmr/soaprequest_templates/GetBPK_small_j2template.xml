@@ -1,0 +1,28 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:SZRServices" xmlns:ns="http://reference.e-government.gv.at/namespace/persondata/20020228#" xmlns:sec="http://schemas.xmlsoap.org/ws/2002/04/secext">
+  <x:Header>
+    <sec:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/04/secext">
+      {% include "pvpToken_j2template.xml" %}
+    </sec:Security>
+  </x:Header>
+  <x:Body>
+    <urn:GetBPK>
+      <urn:PersonInfo>
+        <urn:Person>
+          <ns:Name>
+            <ns:GivenName>{{ GetBPK['PersonInfo']['Person']['Name']['GivenName']|empty_if_exception_filter }}</ns:GivenName>
+            <ns:FamilyName>{{ GetBPK['PersonInfo']['Person']['Name']['FamilyName']|empty_if_exception_filter }}</ns:FamilyName>
+          </ns:Name>
+          <ns:DateOfBirth>{{ GetBPK['PersonInfo']['Person']['DateOfBirth']|empty_if_exception_filter }}</ns:DateOfBirth>
+        </urn:Person>
+      </urn:PersonInfo>
+      <urn:BereichsKennung>{{ GetBPK['BereichsKennung']|empty_if_exception_filter }}</urn:BereichsKennung>
+      <urn:VKZ>{{ GetBPK['VKZ']|empty_if_exception_filter }}</urn:VKZ>
+      <urn:Target>
+        <urn:BereichsKennung>{{ GetBPK['Target']['BereichsKennung']|empty_if_exception_filter }}</urn:BereichsKennung>
+        <urn:VKZ>{{ GetBPK['Target']['VKZ']|empty_if_exception_filter }}</urn:VKZ>
+      </urn:Target>
+      <urn:ListMultiplePersons>{{ GetBPK['ListMultiplePersons'] if GetBPK['ListMultiplePersons'] else 'false' }}</urn:ListMultiplePersons>
+      <urn:InsertERnP>{{ GetBPK['InsertERnP'] if GetBPK['InsertERnP'] else 'false' }}</urn:InsertERnP>
+    </urn:GetBPK>
+  </x:Body>
+</x:Envelope>

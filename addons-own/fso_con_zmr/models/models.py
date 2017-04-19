@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 class CompanyAustrianZMRSettings(models.Model):
     _inherit = 'res.company'
 
+    # FIELDS
+    BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestCompanyID",
+                                    string="BPK Requests")
+
     # Basic Settings
     stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')
 
@@ -72,14 +76,17 @@ class CompanyAustrianZMRSettings(models.Model):
                 rec.pvpToken_prvkey_pem_path = prvkey_pem_file
 
 
-class ResPartnerZMRGetBPK(models.Model):
-    _inherit = 'res.partner'
+class ResPartnerBPK(models.Model):
+    _name = 'res.partner.bpk'
 
     # FIELDS
-    # BPK forced request values
-    BPKForcedFirstname = fields.Char(string="BPK Forced Firstname")
-    BPKForcedLastname = fields.Char(string="BPK Forced Lastname")
-    BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
+    # res.company
+    BPKRequestCompanyID = fields.Many2one(comodel_name='res.company', string="BPK Request Company",
+                                          required=True, readonly=True)
+
+    # res.partner
+    BPKRequestPartnerID = fields.Many2one(comodel_name='res.partner', string="BPK Request Partner",
+                                          required=True, readonly=True)
 
     # Successful BPK request
     # This set of fields gets only updated if private and public bpk was returned successfully
@@ -94,7 +101,6 @@ class ResPartnerZMRGetBPK(models.Model):
 
     BPKResponseData = fields.Text(string="BPK Response Data", readonly=True)
     BPKResponseTime = fields.Float(string="BPK Response Time", readonly=True)
-
 
     # Invalid BPK request
     # This set of field gets updated by every bpk request with an error (or a missing bpk)
@@ -111,13 +117,21 @@ class ResPartnerZMRGetBPK(models.Model):
     BPKErrorResponseTime = fields.Float(string="BPK-Error Response Time", readonly=True)
 
 
+class ResPartnerZMRGetBPK(models.Model):
+    _inherit = 'res.partner'
+
+    # FIELDS
+    BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
+                                    string="BPK Requests")
+    # BPK forced request values
+    BPKForcedFirstname = fields.Char(string="BPK Forced Firstname")
+    BPKForcedLastname = fields.Char(string="BPK Forced Lastname")
+    BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
+
     # MODEL ACTIONS
     @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str()):
-        result = {'organization': "", 'request_data': "", 'request_url': "",
-                  'response_http_error_code': "", 'response_content': "", 'response_time_sec': "",
-                  'private_bpk': "", 'public_bpk': "", 'faultcode': "", 'faulttext': ""
-                  }
+        responses = list()
 
         # Validate input
         if not all((firstname, lastname, birthdate)):
@@ -128,185 +142,197 @@ class ResPartnerZMRGetBPK(models.Model):
         soaprequest_templates = pj(addon_path, 'soaprequest_templates')
         assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at %s") \
                                                       % soaprequest_templates
-        getbpk_template = pj(soaprequest_templates, 'GetBPK_j2template.xml')
-        assert os.path.exists(soaprequest_templates), _("GetBPK_j2template.xml not found at %s") \
+        getbpk_template = pj(soaprequest_templates, 'GetBPK_small_j2template.xml')
+        assert os.path.exists(soaprequest_templates), _("GetBPK_small_j2template.xml not found at %s") \
                                                       % getbpk_template
 
         # Get current users company
-        cmp = self.env.user.company_id
-        result['organization'] = cmp.name
+        # TODO: Find all companies with filled pvpToken Header fields
+        companies = self.env['res.company'].sudo().search([('stammzahl', '!=', False),
+                                                           ('pvpToken_userId', '!=', False),
+                                                           ('pvpToken_cn', '!=', False),
+                                                           ('pvpToken_crt_pem', '!=', False),
+                                                           ('pvpToken_prvkey_pem', '!=', False)])
+        assert companies, _("No company with complete security header data found!")
 
-        # HINT: In der Anwenderbeschreibung steht das man fuer private und oeffentliche BPK Anfragen eine
-        #       unterschiedliche Bereichskennung und target Bereichskennung verwenden muss. Dies wird jedoch
-        #       in der selben Beschreibung im Beispiel nicht verwendet sondern immer urn:publicid:gv.at:cdid+SA
-        #       und urn:publicid:gv.at:wbpk+XZVR+123456789 um beide BPKs zu bekommen?!?
-        #       Gefunden in: szr-3.0-anwenderdokumentation_v3_4.pdf
-        # Private  BPK (unverschluesselt: Kann zur Dublettenerkennung verwendet werden)
-        #              target_bereichskennung_privatebpk = "urn:publicid:gv.at:cdid+SA"
-        #              bereichskennung_privatebpk = "urn:publicid:gv.at:cdid+" + cmp.stammzahl.replace('-', '+')
-        # Public BPK (verschluesselt: Fuer die Uebermittlung der Spendensumme an das Bundesministerium fuer Finanzen)
-        #            target_bereichskennung_publicbpk = "urn:publicid:gv.at:ecdid+BMF+SA"
-        #            bereichskennung_publicbpk = "urn:publicid:gv.at:ecdid+" + cmp.stammzahl.replace('-', '+')
-        # Daher wird hier die Bereichskennung und Target Bereichskennung so wie im Beispiel angegeben verwendet und
-        # nicht wie weiter vorher im Text beschrieben.
-        #
-        #       BMF = Bundesministerium fuer Finanzen
-        #       SA = Steuern und Abgaben
+        for c in companies:
+            result = {'company_id': c.id,
+                      'company_name': c.name,
+                      'request_date': datetime.datetime.now(),
+                      'request_data': "",
+                      'request_url': "",
+                      'response_http_error_code': "",
+                      'response_content': "",
+                      'response_time_sec': "",
+                      'private_bpk': "",
+                      'public_bpk': "",
+                      'faultcode': "",
+                      'faulttext': "",
+                      }
+            try:
+                # HINT: In der Anwenderbeschreibung steht das man fuer private und oeffentliche BPK Anfragen eine
+                #       unterschiedliche Bereichskennung und target Bereichskennung verwenden muss. Dies wird jedoch
+                #       in der selben Beschreibung im Beispiel nicht verwendet sondern immer urn:publicid:gv.at:cdid+SA
+                #       und urn:publicid:gv.at:wbpk+XZVR+123456789 um beide BPKs zu bekommen?!?
+                #       Gefunden in: szr-3.0-anwenderdokumentation_v3_4.pdf
+                # Private  BPK (unverschluesselt: Kann zur Dublettenerkennung verwendet werden)
+                #              target_bereichskennung_privatebpk = "urn:publicid:gv.at:cdid+SA"
+                #              bereichskennung_privatebpk = "urn:publicid:gv.at:cdid+" + cmp.stammzahl.replace('-', '+')
+                # Public BPK (verschluesselt: Fuer die Uebermittlung der Spendensumme an das Bundesministerium fuer Finanzen)
+                #            target_bereichskennung_publicbpk = "urn:publicid:gv.at:ecdid+BMF+SA"
+                #            bereichskennung_publicbpk = "urn:publicid:gv.at:ecdid+" + cmp.stammzahl.replace('-', '+')
+                # Daher wird hier die Bereichskennung und Target Bereichskennung so wie im Beispiel angegeben verwendet und
+                # nicht wie weiter vorher im Text beschrieben.
+                #
+                #       BMF = Bundesministerium fuer Finanzen
+                #       SA = Steuern und Abgaben
 
-        # TODO: Log Request attempt
-        start_time = time.time()
-        response = soap_request(url="https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR",
-                                template=getbpk_template,
-                                crt_pem=cmp.pvpToken_crt_pem_path, prvkey_pem=cmp.pvpToken_prvkey_pem_path,
-                                pvpToken={
-                                    "authorize": {
-                                        "role": ""
-                                    },
-                                    "authenticate": {
-                                        "userPrincipal": {
-                                            "cn": cmp.pvpToken_cn,
-                                            "gvGid": "AT:VKZ:" + cmp.stammzahl,
-                                            "userId": cmp.pvpToken_userId,
-                                            "gvOuId": cmp.pvpToken_gvOuId,
-                                            "gvSecClass": "2",
-                                            "ou": cmp.pvpToken_ou
-                                        },
-                                        "participantId": "AT:VKZ:" + cmp.stammzahl
-                                    }
-                                },
-                                GetBPK={
-                                    "VKZ": cmp.stammzahl,
-                                    "Target": {
-                                        "BereichsKennung": "urn:publicid:gv.at:cdid+SA",
-                                        "VKZ": "BMF"
-                                    },
-                                    "ListMultiplePersons": "",
-                                    "InsertERnP": "",
-                                    "PersonInfo": {
-                                        "AuskunftssperreGesetzt": "",
-                                        "TravelDocument": {
-                                            "IssuingCountry": "",
-                                            "DocumentNumber": "",
-                                            "IssuingAuthority": "",
-                                            "IssueDate": "",
-                                            "DocumentType": ""
-                                        },
-                                        "RegularDomicile": {
-                                            "Locality": "",
-                                            "Municipality": "",
-                                            "StateCode3": "",
-                                            "DeliveryAddress": {
-                                                "DoorNumber": "",
-                                                "Unit": "",
-                                                "AddressLine": "",
-                                                "StreetName": "",
-                                                "BuildingNumber": ""
+                # TODO: Log Request attempt
+                # TODO: Create a request for each found company
+                # TODO: The final return result should be a tuple with the result dicts ({}, {}, ...)
+                start_time = time.time()
+                response = soap_request(url="https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR",
+                                        template=getbpk_template,
+                                        crt_pem=c.pvpToken_crt_pem_path, prvkey_pem=c.pvpToken_prvkey_pem_path,
+                                        pvpToken={
+                                            "authorize": {
+                                                "role": ""
                                             },
-                                            "PostalCode": "",
-                                            "HistoricRecord": ""
+                                            "authenticate": {
+                                                "userPrincipal": {
+                                                    "cn": c.pvpToken_cn,
+                                                    "gvGid": "AT:VKZ:" + c.stammzahl,
+                                                    "userId": c.pvpToken_userId,
+                                                    "gvOuId": c.pvpToken_gvOuId,
+                                                    "gvSecClass": "2",
+                                                    "ou": c.pvpToken_ou
+                                                },
+                                                "participantId": "AT:VKZ:" + c.stammzahl
+                                            }
                                         },
-                                        "Person": {
-                                            "Name": {
-                                                "GivenName": firstname,
-                                                "PrefixedDegree": "",
-                                                "SuffixedDegree": "",
-                                                "FamilyName": lastname
+                                        GetBPK={
+                                            "VKZ": c.stammzahl,
+                                            "Target": {
+                                                "BereichsKennung": "urn:publicid:gv.at:cdid+SA",
+                                                "VKZ": "BMF"
                                             },
-                                            "AlternativeName": {
-                                                "FamilyName": ""
+                                            "PersonInfo": {
+                                                "Person": {
+                                                    "Name": {
+                                                        "GivenName": firstname,
+                                                        "FamilyName": lastname
+                                                    },
+                                                    "DateOfBirth": birthdate,
+                                                },
                                             },
-                                            "Sex": "",
-                                            "DateOfBirth": birthdate,
-                                            "Identification": {
-                                                "Type": "",
-                                                "Value": ""
-                                            },
-                                            "Nationality": "",
-                                            "PlaceOfBirth": "",
-                                            "CountryOfBirth": ""
+                                            "BereichsKennung": "urn:publicid:gv.at:wbpk+" + c.stammzahl.replace('-',
+                                                                                                                '+')
                                         },
-                                        "DateOfBirthWildcard": "",
-                                        "AddressCodes": {
-                                            "ADRCD": "",
-                                            "OBJNR": "",
-                                            "NTZLNR": "",
-                                            "OKZ": "",
-                                            "SKZ": "",
-                                            "SUBCD": "",
-                                            "GKZ": ""
-                                        }
-                                    },
-                                    "BereichsKennung": "urn:publicid:gv.at:wbpk+" + cmp.stammzahl.replace('-', '+')
-                                },
-                                )
-        assert response.content, _("GetBPK-Request response has no content!")
-        result['request_data'] = response.request.body
-        result['request_url'] = response.request.url
-        response_time = time.time() - start_time
-        result['response_time_sec'] = "%.3f" % response_time
-        result['response_content'] = response.content
-        # Todo: Log Request status (success, error and request time)
+                                        )
+                assert response.content, _("GetBPK-Request response has no content!")
+                result['request_data'] = response.request.body
+                result['request_url'] = response.request.url
+                response_time = time.time() - start_time
+                result['response_time_sec'] = "%.3f" % response_time
+                result['response_content'] = response.content
+                # Todo: Log Request status (success, error and request time)
 
-        # Process soap xml answer
-        parser = etree.XMLParser(remove_blank_text=True)
-        response_etree = etree.fromstring(response.content, parser=parser)
-        response_pprint = etree.tostring(response_etree, pretty_print=True)
+                # Process soap xml answer
+                parser = etree.XMLParser(remove_blank_text=True)
+                response_etree = etree.fromstring(response.content, parser=parser)
+                response_pprint = etree.tostring(response_etree, pretty_print=True)
 
-        # Validate xml response
-        if response.status_code != requests.codes.ok:
-            result['response_http_error_code'] = response.status_code
-            error_code = response_etree.find(".//faultcode")
-            result['faultcode'] = error_code.text if error_code is not None else result['faultcode']
-            error_text = response_etree.find(".//faultstring")
-            result['faulttext'] = error_text.text if error_text is not None else result['faulttext']
-            return result
+                # Response contains an error or is incomplete
+                if response.status_code != 200:
+                    result['response_http_error_code'] = response.status_code
+                    error_code = response_etree.find(".//faultcode")
+                    result['faultcode'] = error_code.text if error_code is not None else result['faultcode']
+                    error_text = response_etree.find(".//faultstring")
+                    result['faulttext'] = error_text.text if error_text is not None else result['faulttext']
+                    # Update answer and process GetBPK for next company
+                    responses.append(result)
+                    continue
 
-        # Extract BPKs
-        private_bpk = response_etree.find(".//GetBPKReturn")
-        result['private_bpk'] = private_bpk.text if private_bpk is not None else result['private_bpk']
-        public_bpk = response_etree.find(".//FremdBPK")
-        result['public_bpk'] = public_bpk.text if public_bpk is not None else result['public_bpk']
+                # Response is valid
+                private_bpk = response_etree.find(".//GetBPKReturn")
+                result['private_bpk'] = private_bpk.text if private_bpk is not None else result['private_bpk']
+                public_bpk = response_etree.find(".//FremdBPK")
+                result['public_bpk'] = public_bpk.text if public_bpk is not None else result['public_bpk']
+                # Update answer and process GetBPK for next company
+                responses.append(result)
 
-        return result
+            except Exception as e:
+                result['response_content'] = _("BPK Request Assertion:\n\n%s\n") % e
+                responses.append(result)
+
+        return responses
 
     # ACTIONS
     @api.multi
     def set_bpk(self):
         for p in self:
-            request_datetime = datetime.datetime.now()
+            # Prepare request values
+            firstname = p.firstname
+            lastname = p.lastname
+            birthdate_web = p.birthdate_web
+            if p.BPKForcedFirstname or p.BPKForcedLastname or p.BPKForcedBirthdate:
+                firstname = p.BPKForcedFirstname
+                lastname = p.BPKForcedLastname
+                birthdate_web = p.BPKForcedBirthdate
 
-            # Try to request a BPK
+            # Request BPK for every res.company with complete pvpToken header data
             try:
-                result = p.request_bpk(firstname=p.firstname, lastname=p.lastname, birthdate=p.birthdate_web)
+                responses = p.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web)
             except Exception as e:
-                # The request failed with an assertion. It is very likely that we have no request or response data
-                p.BPKErrorCode = ""
-                p.BPKErrorText = ""
-                p.BPKErrorRequestDate = request_datetime
-                p.BPKErrorRequestData = ""
-                p.BPKErrorResponseData = _("BPK Request Assertion:\n\n%s\n") % e
-                p.BPKErrorResponseTime = None
-                # If we have only one partner to check stop execution and return a warning
-                if self.ensure_one():
-                    return {"warning": _("BPK Request Error:\n%s\n") % e}
+                # If request_bpk throws an exception we log it and continue with the next partner
+                logger.warning(_("BPK Request Assertion:\n\n%s\n\n") % e)
+                continue
 
-            # Store the result of the BPK request
-            # request_bpk returned a valid and complete result
-            if not result['response_http_error_code'] and result['private_bpk'] and result['public_bpk']:
-                p.BPKPrivate = result['private_bpk']
-                p.BPKPublic = result['public_bpk']
-                p.BPKRequestDate = request_datetime
-                p.BPKRequestData = result['request_data']
-                p.BPKResponseData = result['response_content']
-                p.BPKResponseTime = float(result['response_time_sec'])
-            # request_bpk returned an error or an incomplete answer
-            else:
-                p.BPKErrorCode = result['faultcode']
-                p.BPKErrorText = result['faulttext']
-                p.BPKErrorRequestDate = request_datetime
-                p.BPKErrorRequestData = result['request_data']
-                p.BPKErrorResponseData = result['response_content']
-                p.BPKErrorResponseTime = float(result['response_time_sec'])
+            # Create or Update the res.partner.bpk records
+            for r in responses:
+                values = {}
+                # Process the response and transform it to a dict to create or update an res.partner.bpk record
+                if not r['response_http_error_code'] and r['private_bpk'] and r['public_bpk']:
+                    values = {
+                        'BPKRequestCompanyID': r['company_id'],
+                        'BPKRequestPartnerID': p.id,
+                        'BPKPrivate': r['private_bpk'],
+                        'BPKPublic': r['public_bpk'],
+                        'BPKRequestDate': r['request_date'],
+                        'BPKRequestData': r['request_data'],
+                        'BPKRequestFirstname': firstname,
+                        'BPKRequestLastname': lastname,
+                        'BPKRequestBirthdate': birthdate_web,
+                        'BPKResponseData': r['response_content'],
+                        'BPKResponseTime': float(r['response_time_sec']),
+                    }
+
+                else:
+                    values = {
+                        'BPKRequestCompanyID': r['company_id'],
+                        'BPKRequestPartnerID': p.id,
+                        'BPKErrorCode': r['faultcode'],
+                        'BPKErrorText': r['faulttext'],
+                        'BPKErrorRequestDate': r['request_date'],
+                        'BPKErrorRequestData': r['request_data'],
+                        'BPKErrorRequestFirstname': firstname,
+                        'BPKErrorRequestLastname': lastname,
+                        'BPKErrorRequestBirthdate': birthdate_web,
+                        'BPKErrorResponseData': r['response_content'],
+                        'BPKErrorResponseTime': float(r['response_time_sec']),
+                    }
+
+
+                # Crete new or update existing BPK record
+                bpk = self.env['res.partner.bpk'].sudo().search([('BPKRequestCompanyID.id', '=', r['company_id']),
+                                                                 ('BPKRequestPartnerID.id', '=', p.id),
+                                                                 ])
+                assert len(bpk) <= 1, _("More than one res.partner.bpk request found for one company!")
+                if bpk:
+                    bpk.write(values)
+                else:
+                    self.env['res.partner.bpk'].sudo().create(values)
+
 
     # TODO:
     # Create a Server Action to run set_bpk for every partner with missing bpk data or wrong bpk data and write date
