@@ -12,7 +12,7 @@
                     <field name="BPKRequestCompanyID"/>
                     <field name="BPKRequestPartnerID"/>
                 </group>
-                <group attrs="{'invisible': [('BPKRequestDate','!=',False), ('BPKErrorRequestDate','!=',False)]}">
+                <group>
                     <group string="Last valid BPK-Request">
                         <field name="BPKPrivate"/>
                         <field name="BPKPublic"/>
