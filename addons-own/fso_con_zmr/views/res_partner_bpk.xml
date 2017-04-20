@@ -48,9 +48,11 @@
         <field name="model">res.partner.bpk</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="BPK Requests" default_order="BPKRequestPartnerID,BPKRequestCompanyID">
-                <field name="BPKRequestCompanyID"/>
+            <tree string="BPK Requests"
+                  default_order="BPKRequestPartnerID,BPKRequestCompanyID"
+                  colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
                 <field name="BPKRequestPartnerID"/>
+                <field name="BPKRequestCompanyID"/>
                 <field name="BPKRequestDate"/>
                 <field name="BPKPrivate"/>
                 <field name="BPKErrorRequestDate"/>

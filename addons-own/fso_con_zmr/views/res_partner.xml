@@ -17,10 +17,10 @@
                     </group>
                     <group string="BPK Requests">
                         <button colspan="2" name="set_bpk" type="object" string="Request BPK(s) from ZMR"/>
-                        <field name="BPKRequestIDS" colspan="2" no_label="True">
+                        <field name="BPKRequestIDS" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="BPKRequestPartnerID,BPKRequestCompanyID"
-                                  colors="red:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                                  colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
                                 <field name="BPKRequestCompanyID"/>
                                 <field name="BPKRequestDate"/>
                                 <field name="BPKPrivate"/>

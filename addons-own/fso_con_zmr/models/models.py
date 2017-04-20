@@ -247,13 +247,14 @@ class ResPartnerZMRGetBPK(models.Model):
                 result['request_url'] = response.request.url
                 response_time = time.time() - start_time
                 result['response_time_sec'] = "%.3f" % response_time
-                result['response_content'] = response.content
+                #result['response_content'] = response.content
                 # Todo: Log Request status (success, error and request time)
 
                 # Process soap xml answer
                 parser = etree.XMLParser(remove_blank_text=True)
                 response_etree = etree.fromstring(response.content, parser=parser)
                 response_pprint = etree.tostring(response_etree, pretty_print=True)
+                result['response_content'] = response_pprint
 
                 # Response contains an error or is incomplete
                 if response.status_code != 200:
