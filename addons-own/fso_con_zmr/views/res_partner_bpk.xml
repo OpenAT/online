@@ -17,9 +17,11 @@
                         <field name="BPKPrivate"/>
                         <field name="BPKPublic"/>
                         <field name="BPKRequestDate"/>
+                        <field name="BPKRequestURL"/>
                         <field name="BPKRequestFirstname"/>
                         <field name="BPKRequestLastname"/>
                         <field name="BPKRequestBirthdate"/>
+                        <field name="BPKRequestZIP"/>
                         <field name="BPKRequestData"/>
                         <field name="BPKResponseTime"/>
                         <field name="BPKResponseData"/>
@@ -28,9 +30,11 @@
                         <field name="BPKErrorCode"/>
                         <field name="BPKErrorText"/>
                         <field name="BPKErrorRequestDate"/>
+                        <field name="BPKErrorRequestURL"/>
                         <field name="BPKErrorRequestFirstname"/>
                         <field name="BPKErrorRequestLastname"/>
                         <field name="BPKErrorRequestBirthdate"/>
+                        <field name="BPKErrorRequestZIP"/>
                         <field name="BPKErrorRequestData"/>
                         <field name="BPKErrorResponseTime"/>
                         <field name="BPKErrorResponseData"/>
@@ -44,12 +48,11 @@
         <field name="model">res.partner.bpk</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="BPK Requests" default_order="BPKRequestCompanyID,BPKRequestPartnerID">
+            <tree string="BPK Requests" default_order="BPKRequestPartnerID,BPKRequestCompanyID">
                 <field name="BPKRequestCompanyID"/>
                 <field name="BPKRequestPartnerID"/>
                 <field name="BPKRequestDate"/>
                 <field name="BPKPrivate"/>
-                <field name="BPKPublic"/>
                 <field name="BPKErrorRequestDate"/>
                 <field name="BPKErrorCode"/>
             </tree>
@@ -66,12 +69,14 @@
                 <field name="BPKPrivate"/>
                 <field name="BPKPublic"/>
                 <field name="BPKRequestDate"/>
+                <field name="BPKRequestURL"/>
                 <field name="BPKRequestFirstname"/>
                 <field name="BPKRequestLastname"/>
                 <field name="BPKRequestBirthdate"/>
                 <field name="BPKErrorCode"/>
                 <field name="BPKErrorText"/>
                 <field name="BPKErrorRequestDate"/>
+                <field name="BPKErrorRequestURL"/>
                 <field name="BPKErrorRequestFirstname"/>
                 <field name="BPKErrorRequestLastname"/>
                 <field name="BPKErrorRequestBirthdate"/>

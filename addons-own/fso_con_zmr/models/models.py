@@ -45,7 +45,9 @@ class CompanyAustrianZMRSettings(models.Model):
                                            compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
     # Get BPK request URLS
     BPKRequestURL = fields.Selection(selection=[('https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR',
-                                                 'https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
+                                                 'Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
+                                                ('https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR',
+                                                 'Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR'),
                                                 ],
                                      string="GetBPK Request URL",
                                      default="https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR")
@@ -100,10 +102,12 @@ class ResPartnerBPK(models.Model):
     BPKPublic = fields.Char(string="BPK Public", readonly=True)
 
     BPKRequestDate = fields.Datetime(string="BPK Request Date", readonly=True)
+    BPKRequestURL = fields.Char(string="BPK Request URL", readonly=True)
     BPKRequestData = fields.Text(string="BPK Request Data", readonly=True)
     BPKRequestFirstname = fields.Char(string="BPK Request Firstname", readonly=True)
     BPKRequestLastname = fields.Char(string="BPK Request Lastname", readonly=True)
     BPKRequestBirthdate = fields.Date(string="BPK Request Birthdate", readonly=True)
+    BPKRequestZIP = fields.Char(string="BPK Request ZIP", readonly=True)
 
     BPKResponseData = fields.Text(string="BPK Response Data", readonly=True)
     BPKResponseTime = fields.Float(string="BPK Response Time", readonly=True)
@@ -114,10 +118,12 @@ class ResPartnerBPK(models.Model):
     BPKErrorText = fields.Text(string="BPK-Error Text", readonly=True)
 
     BPKErrorRequestDate = fields.Datetime(string="BPK-Error Request Date", readonly=True)
+    BPKErrorRequestURL = fields.Char(string="BPK-Error Request URL", readonly=True)
     BPKErrorRequestData = fields.Text(string="BPK-Error Request Data", readonly=True)
     BPKErrorRequestFirstname = fields.Char(string="BPK-Error Request Firstname", readonly=True)
     BPKErrorRequestLastname = fields.Char(string="BPK-Error Request Lastname", readonly=True)
     BPKErrorRequestBirthdate = fields.Date(string="BPK-Error Request Birthdate", readonly=True)
+    BPKErrorRequestZIP = fields.Char(string="BPK-Error Request ZIP", readonly=True)
 
     BPKErrorResponseData = fields.Text(string="BPK-Error Response Data", readonly=True)
     BPKErrorResponseTime = fields.Float(string="BPK-Error Response Time", readonly=True)
@@ -134,14 +140,13 @@ class ResPartnerZMRGetBPK(models.Model):
     BPKForcedLastname = fields.Char(string="BPK Forced Lastname")
     BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
 
-    # MODEL ACTIONS
-    @api.model
-    def request_bpk(self, firstname=str(), lastname=str(), birthdate=str()):
+    # INTERNAL METHODS
+    def _request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
         responses = list()
 
         # Validate input
-        if not all((firstname, lastname, birthdate)):
-            raise ValidationError, _("Missing parameter! Mandatory are firstname, lastname and birthdate!")
+        if not (all((firstname, lastname, birthdate)) or all((firstname, lastname, zipcode))):
+            raise ValidationError, _("Missing parameter! Mandatory are firstname, lastname and birthdate or zip!")
 
         # Get the request_data_template path
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -195,8 +200,6 @@ class ResPartnerZMRGetBPK(models.Model):
                 #       SA = Steuern und Abgaben
 
                 # TODO: Log Request attempt
-                # TODO: Create a request for each found company
-                # TODO: The final return result should be a tuple with the result dicts ({}, {}, ...)
                 start_time = time.time()
                 response = soap_request(url=c.BPKRequestURL,
                                         template=getbpk_template,
@@ -230,6 +233,9 @@ class ResPartnerZMRGetBPK(models.Model):
                                                         "FamilyName": lastname
                                                     },
                                                     "DateOfBirth": birthdate,
+                                                },
+                                                "RegularDomicile": {
+                                                    "PostalCode": zipcode,
                                                 },
                                             },
                                             "BereichsKennung": "urn:publicid:gv.at:wbpk+" + c.stammzahl.replace('-',
@@ -280,6 +286,34 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return responses
 
+    # MODEL ACTIONS
+    @api.model
+    def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
+        # Try regular request without zipcode
+        responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
+
+        # First retry with only year of birth
+        # HINT: We use all() instead of any() because the partner data should get a valid record for all companies
+        #       The only exception to this rule would be if one company uses test url and the other the regular url
+        #       which is an irrelevant case.
+        if len(responses) >= 1 and all(r['response_http_error_code'] for r in responses):
+            try:
+                date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
+                year = date.strftime("%Y")
+            except:
+                try:
+                    year = str(birthdate).split("-", 1)[0]
+                except:
+                    year = None
+            if year:
+                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
+
+        # Second retry without birthdate but with zip code
+        if len(responses) >= 1 and all(r['response_http_error_code'] for r in responses) and zipcode:
+            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
+
+        return responses
+
     # ACTIONS
     @api.multi
     def set_bpk(self):
@@ -288,6 +322,7 @@ class ResPartnerZMRGetBPK(models.Model):
             firstname = p.firstname
             lastname = p.lastname
             birthdate_web = p.birthdate_web
+            zipcode = str(p.zip) if p.zip else ""
             if p.BPKForcedFirstname or p.BPKForcedLastname or p.BPKForcedBirthdate:
                 firstname = p.BPKForcedFirstname
                 lastname = p.BPKForcedLastname
@@ -295,7 +330,8 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Request BPK for every res.company with complete pvpToken header data
             try:
-                responses = p.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web)
+                responses = p.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web,
+                                          zipcode=zipcode)
             except Exception as e:
                 # If request_bpk throws an exception we log it and continue with the next partner
                 logger.warning(_("BPK Request Assertion:\n\n%s\n\n") % e)
@@ -316,10 +352,12 @@ class ResPartnerZMRGetBPK(models.Model):
                         'BPKPrivate': r['private_bpk'],
                         'BPKPublic': r['public_bpk'],
                         'BPKRequestDate': r['request_date'],
+                        'BPKRequestURL': r['request_url'],
                         'BPKRequestData': r['request_data'],
                         'BPKRequestFirstname': firstname,
                         'BPKRequestLastname': lastname,
                         'BPKRequestBirthdate': birthdate_web,
+                        'BPKRequestZIP': zipcode,
                         'BPKResponseData': r['response_content'],
                         'BPKResponseTime': response_time,
                     }
@@ -331,10 +369,12 @@ class ResPartnerZMRGetBPK(models.Model):
                         'BPKErrorCode': r['faultcode'],
                         'BPKErrorText': r['faulttext'],
                         'BPKErrorRequestDate': r['request_date'],
+                        'BPKErrorRequestURL': r['request_url'],
                         'BPKErrorRequestData': r['request_data'],
                         'BPKErrorRequestFirstname': firstname,
                         'BPKErrorRequestLastname': lastname,
                         'BPKErrorRequestBirthdate': birthdate_web,
+                        'BPKErrorRequestZIP': zipcode,
                         'BPKErrorResponseData': r['response_content'],
                         'BPKErrorResponseTime': response_time,
                     }

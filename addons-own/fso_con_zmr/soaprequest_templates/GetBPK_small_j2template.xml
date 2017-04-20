@@ -14,6 +14,9 @@
           </ns:Name>
           <ns:DateOfBirth>{{ GetBPK['PersonInfo']['Person']['DateOfBirth']|empty_if_exception_filter }}</ns:DateOfBirth>
         </urn:Person>
+        <urn:RegularDomicile>
+          <ns:PostalCode>{{ GetBPK['PersonInfo']['RegularDomicile']['PostalCode']|empty_if_exception_filter }}</ns:PostalCode>
+        </urn:RegularDomicile>
       </urn:PersonInfo>
       <urn:BereichsKennung>{{ GetBPK['BereichsKennung']|empty_if_exception_filter }}</urn:BereichsKennung>
       <urn:VKZ>{{ GetBPK['VKZ']|empty_if_exception_filter }}</urn:VKZ>
