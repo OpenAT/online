@@ -54,6 +54,7 @@
                    (4, ref('base.group_no_one')),
                    (4, ref('fso_base.group_fs_group_manager')),
                    (4, ref('auth_partner.group_fstoken_manager')),
+                   (4, ref('fso_con_zmr.group_res_partner_bpk_manager')),
                    ]"/>
         </record>
 

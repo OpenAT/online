@@ -3,6 +3,60 @@
 <openerp>
     <data noupdate="0">
 
+        <!-- Fundraising Studio requests PARTNER -->
+        <record model="res.partner" id="base.partner_studio">
+            <field name="name">studio studio</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="customer" eval="False"/>
+            <field name="email">studio@datadialog.net</field>
+        </record>
 
+        <!-- Fundraising Studio requests USER -->
+        <record model="res.users" id="base.user_studio">
+            <field name="name">studio studio</field>
+            <field name="login">studio</field>
+            <field name="partner_id" ref="base.partner_studio"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
+        </record>
+
+        <!-- Fundraising Studio requests GROUP -->
+        <record id="base.studio" model="res.groups">
+            <field name="name">studio group</field>
+            <field name="comment">
+                Group members of the studio group have access to most of the odoo models.
+                This is a technical group and should only be assigned to users that will never log in!
+            </field>
+            <!-- Add studio user to group -->
+            <field name="users" eval="[(4, ref('base.user_studio'))]"/>
+            <!-- Inherited Groups -->
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('account.group_account_manager')),
+                   (4, ref('base.group_erp_manager')),
+                   (4, ref('base.group_system')),
+                   (4, ref('base.group_user')),
+                   (4, ref('base.group_sale_manager')),
+                   (4, ref('base.group_document_user')),
+                   (4, ref('event.group_event_manager')),
+                   (4, ref('gamification.group_goal_manager')),
+                   (4, ref('base.group_hr_manager')),
+                   (4, ref('base.group_hr_attendance')),
+                   (4, ref('base.group_hr_user')),
+                   (4, ref('im_livechat.group_im_livechat_manager')),
+                   (4, ref('lunch.group_lunch_manager')),
+                   (4, ref('marketing.group_marketing_manager')),
+                   (4, ref('project.group_project_manager')),
+                   (4, ref('purchase.group_purchase_manager')),
+                   (4, ref('stock.group_stock_manager')),
+                   (4, ref('base.group_survey_manager')),
+                   (4, ref('base.group_website_designer')),
+                   (4, ref('base.group_no_one')),
+                   (4, ref('fso_base.group_fs_group_manager')),
+                   (4, ref('auth_partner.group_fstoken_manager')),
+                   (4, ref('fso_con_zmr.group_res_partner_bpk_manager')),
+                   ]"/>
+        </record>
+        
     </data>
 </openerp>

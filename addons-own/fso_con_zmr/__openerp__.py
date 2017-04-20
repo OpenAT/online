@@ -43,6 +43,8 @@ Abfragen zum Zentralen Melderegister in Österreich
         'fso_base',
     ],
     'data': [
+        'security/group_res_partner_bpk_manager.xml',
+        'security/ir.model.access.csv',
         'views/res_company.xml',
         'views/res_partner.xml',
         'views/res_partner_bpk.xml',

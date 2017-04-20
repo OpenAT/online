@@ -71,8 +71,10 @@ Module tasks:
         'payment_ogonedadi',
         'payment_postfinance',
         'auth_partner_form',
+        'fso_con_zmr',
     ],
     'data': [
         'data/user_sosync.xml',
+        'data/user_studio.xml',
     ],
 }

@@ -43,6 +43,12 @@ class CompanyAustrianZMRSettings(models.Model):
     pvpToken_prvkey_pem_filename = fields.Char(string="Private Key Name", help="prvkey_pem without password!")
     pvpToken_prvkey_pem_path = fields.Char(string="Private Key Path",
                                            compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
+    # Get BPK request URLS
+    BPKRequestURL = fields.Selection(selection=[('https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR',
+                                                 'https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
+                                                ],
+                                     string="GetBPK Request URL",
+                                     default="https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR")
 
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
     # https://www.odoo.com/de_DE/forum/hilfe-1/question/
@@ -152,7 +158,8 @@ class ResPartnerZMRGetBPK(models.Model):
                                                            ('pvpToken_userId', '!=', False),
                                                            ('pvpToken_cn', '!=', False),
                                                            ('pvpToken_crt_pem', '!=', False),
-                                                           ('pvpToken_prvkey_pem', '!=', False)])
+                                                           ('pvpToken_prvkey_pem', '!=', False),
+                                                           ('BPKRequestURL', '!=', False)])
         assert companies, _("No company with complete security header data found!")
 
         for c in companies:
@@ -160,7 +167,7 @@ class ResPartnerZMRGetBPK(models.Model):
                       'company_name': c.name,
                       'request_date': datetime.datetime.now(),
                       'request_data': "",
-                      'request_url': "",
+                      'request_url': c.BPKRequestURL,
                       'response_http_error_code': "",
                       'response_content': "",
                       'response_time_sec': "",
@@ -191,7 +198,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 # TODO: Create a request for each found company
                 # TODO: The final return result should be a tuple with the result dicts ({}, {}, ...)
                 start_time = time.time()
-                response = soap_request(url="https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR",
+                response = soap_request(url=c.BPKRequestURL,
                                         template=getbpk_template,
                                         crt_pem=c.pvpToken_crt_pem_path, prvkey_pem=c.pvpToken_prvkey_pem_path,
                                         pvpToken={
@@ -254,9 +261,15 @@ class ResPartnerZMRGetBPK(models.Model):
                     continue
 
                 # Response is valid
-                private_bpk = response_etree.find(".//GetBPKReturn")
+                # HINT: There is a namespace attached which needs to be ignored added or removed before .find()
+                # http://stackoverflow.com/questions/4440451/how-to-ignore-namespaces-with-xpath
+                private_bpk = response_etree.xpath(".//*[local-name() = 'GetBPKReturn']")
+                assert len(private_bpk) == 1, _("More than one GetBPKReturn node found!")
+                private_bpk = private_bpk[0]
                 result['private_bpk'] = private_bpk.text if private_bpk is not None else result['private_bpk']
-                public_bpk = response_etree.find(".//FremdBPK")
+                public_bpk = response_etree.xpath(".//*[local-name() = 'FremdBPK']/*[local-name() = 'FremdBPK']")
+                assert len(public_bpk) == 1, _("More than one FremdBPK node found!")
+                public_bpk = public_bpk[0]
                 result['public_bpk'] = public_bpk.text if public_bpk is not None else result['public_bpk']
                 # Update answer and process GetBPK for next company
                 responses.append(result)

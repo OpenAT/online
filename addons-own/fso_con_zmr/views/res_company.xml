@@ -23,6 +23,8 @@
                         <field name="pvpToken_prvkey_pem" widget="binary" filename="pvpToken_prvkey_pem_filename"/>
                         <field name="pvpToken_prvkey_pem_filename" invisible="1"/>
                         <field name="pvpToken_prvkey_pem_path" readonly="True"/>
+
+                        <field name="BPKRequestURL"/>
                     </group>
                 </page>
             </xpath>
