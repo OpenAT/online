@@ -7,6 +7,8 @@ from requests import Session
 import os
 import ntpath
 import logging
+# https://pypi.python.org/pypi/timeout-decorator
+import timeout_decorator
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +23,14 @@ def empty_if_exception_filter(value):
         return ""
 
 
+class GenericTimeoutError(Exception):
+    def __init__(self):
+        Exception.__init__(self, "Execution stopped because of global timeout and not the request.Session() timeout!"
+                                 "There may be a passphrase in your private key.")
+
+
+# Multithreaded enabled timeout strategy
+@timeout_decorator.timeout(14, use_signals=False, timeout_exception=GenericTimeoutError)
 def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="", **template_args):
     # Validate the input
     assert all((url, template)), _("Parameters missing! Required are url and template.")
@@ -55,8 +65,8 @@ def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="",
         session.cert = (crt_pem, prvkey_pem)
 
     # Send the request (POST)
-    # TODO: set some sort of timeout
-    response = session.post(url, data=request_data, headers=http_header)
+    # http://docs.python-requests.org/en/master/user/advanced/
+    response = session.post(url, data=request_data, headers=http_header, timeout=(3.05, 12))
 
     # Check for response errors
     # DISABLED: Because in most cases one would still want to process the response content to check error in

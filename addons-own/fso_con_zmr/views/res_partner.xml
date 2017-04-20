@@ -7,19 +7,16 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="before">
-                <header>
-                    <button name="set_bpk" type="object" string="Set BPK"/>
-                </header>
-            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="ZMR BPK">
+
                     <group string="Force BPK Request Values (optional)">
                         <field name="BPKForcedFirstname"/>
                         <field name="BPKForcedLastname"/>
                         <field name="BPKForcedBirthdate"/>
                     </group>
                     <group string="BPK Requests">
+                        <button colspan="2" name="set_bpk" type="object" string="Request BPK(s) from ZMR"/>
                         <field name="BPKRequestIDS">
                             <tree string="BPK Requests">
                                 <field name="BPKRequestCompanyID"/>

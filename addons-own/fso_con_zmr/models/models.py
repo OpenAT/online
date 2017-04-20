@@ -291,6 +291,10 @@ class ResPartnerZMRGetBPK(models.Model):
             # Create or Update the res.partner.bpk records
             for r in responses:
                 values = {}
+                try:
+                    response_time = float(r['response_time_sec'])
+                except:
+                    response_time = float()
                 # Process the response and transform it to a dict to create or update an res.partner.bpk record
                 if not r['response_http_error_code'] and r['private_bpk'] and r['public_bpk']:
                     values = {
@@ -304,7 +308,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         'BPKRequestLastname': lastname,
                         'BPKRequestBirthdate': birthdate_web,
                         'BPKResponseData': r['response_content'],
-                        'BPKResponseTime': float(r['response_time_sec']),
+                        'BPKResponseTime': response_time,
                     }
 
                 else:
@@ -319,11 +323,10 @@ class ResPartnerZMRGetBPK(models.Model):
                         'BPKErrorRequestLastname': lastname,
                         'BPKErrorRequestBirthdate': birthdate_web,
                         'BPKErrorResponseData': r['response_content'],
-                        'BPKErrorResponseTime': float(r['response_time_sec']),
+                        'BPKErrorResponseTime': response_time,
                     }
 
-
-                # Crete new or update existing BPK record
+                # Create new or update existing BPK record
                 bpk = self.env['res.partner.bpk'].sudo().search([('BPKRequestCompanyID.id', '=', r['company_id']),
                                                                  ('BPKRequestPartnerID.id', '=', p.id),
                                                                  ])
