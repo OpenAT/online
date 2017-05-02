@@ -146,12 +146,10 @@
 .openerp thead th {
     border-left: none;
 }
-.openerp .oe_list_content thead th {
-    /*line-height: 3em;*/
-    line-height: normal;
+.openerp .oe_list_content thead .oe_list_header_columns th {
     vertical-align: initial;
-    padding-top: 9px;
-    padding-bottom: 9px;
+    line-height: normal;
+    padding: 8px 6px;
 }
 .openerp .oe_list_content > tbody > tr {
     border-top: 1px solid #ececec;

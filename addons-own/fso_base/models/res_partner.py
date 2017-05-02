@@ -15,6 +15,7 @@ class ResPartner(models.Model):
     post_office_box_web = fields.Char(string='Post Office Box Web')
     newsletter_web = fields.Boolean(string='Newsletter Web')
     donation_receipt_web = fields.Boolean(string='Donation Receipt Web')
+    # This field is here because international usage of FSO would not use Austrian ZMR but could use this field also
     donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web')
     legal_terms_web = fields.Boolean(string='Accept Legal Terms Web')
     birthdate_web = fields.Date(string='Birthdate Web')
