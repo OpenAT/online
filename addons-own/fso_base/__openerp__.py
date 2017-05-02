@@ -104,6 +104,7 @@ TODO (must be done manually right now):
         'data/project_task_stages.xml',
         'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
+        'views/fsonline_menu.xml',
         'views/templates_backend_css.xml',
         'views/res_company.xml',
         'views/fs_groups.xml',

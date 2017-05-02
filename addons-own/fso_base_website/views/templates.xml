@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data noupdate="0">
+<openerp><data noupdate="0">
 
-        <template id="fso_base_website.assets_frontend" inherit_id="website.assets_frontend" name="fso_base_website_assets_frontend">
-            <xpath expr="." position="inside">
-                <!-- Moment.js to validate and calculate with dates e.g.: for jquery validate custom methods -->
-                <script type="text/javascript" src="/fso_base_website/static/lib/moment/moment-with-locales.js"/>
+    <!-- Load default java script libraries and css -->
+    <template id="fso_base_website.assets_frontend" inherit_id="website.assets_frontend" name="fso_base_website_assets_frontend">
+        <xpath expr="." position="inside">
+            <!-- Moment.js to validate and calculate with dates e.g.: for jquery validate custom methods -->
+            <script type="text/javascript" src="/fso_base_website/static/lib/moment/moment-with-locales.js"/>
 
-                <!-- jquery-validation -->
-                <!--  HINT:
-                  Odoo comes with its own jquery.validate.js /web/static/lib/jquery.validate/jquery.validate.js
-                  but since it is only loaded in the backend we can safely load our own newer version for the frontend ;)
-                -->
-                <!-- https://github.com/jzaefferer/jquery-validation/tree/master/src/additional -->
-                <!-- Additional Validation Methods for FS-Online -->
-                <!-- Default Settings to make jquery validate work nicely with bootstrap 3 (removes error messages uses icons instead) -->
-                <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/jquery.validate.js"/>
-                <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/additional-methods.js"/>
-                <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/localization/methods_de.js"/>
-                <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/localization/messages_de.js"/>
-                <script type="text/javascript" src="/fso_base_website/static/src/js/additional-methods-fso.js"/>
-                <script type="text/javascript" src="/fso_base_website/static/src/js/jquery-validate-defaults.js"/>
+            <!-- jquery-validation -->
+            <!--  HINT:
+              Odoo comes with its own jquery.validate.js /web/static/lib/jquery.validate/jquery.validate.js
+              but since it is only loaded in the backend we can safely load our own newer version for the frontend ;)
+            -->
+            <!-- https://github.com/jzaefferer/jquery-validation/tree/master/src/additional -->
+            <!-- Additional Validation Methods for FS-Online -->
+            <!-- Default Settings to make jquery validate work nicely with bootstrap 3 (removes error messages uses icons instead) -->
+            <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/jquery.validate.js"/>
+            <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/additional-methods.js"/>
+            <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/localization/methods_de.js"/>
+            <script type="text/javascript" src="/fso_base_website/static/lib/jquery-validation-1.15.0/dist/localization/messages_de.js"/>
+            <script type="text/javascript" src="/fso_base_website/static/src/js/additional-methods-fso.js"/>
+            <script type="text/javascript" src="/fso_base_website/static/src/js/jquery-validate-defaults.js"/>
 
-                <!-- Load custom css for smaller fixes -->
-                <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
-            </xpath>
-        </template>
+            <!-- Load custom css for smaller fixes -->
+            <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
+        </xpath>
+    </template>
 
-    </data>
-</openerp>
+</data></openerp>

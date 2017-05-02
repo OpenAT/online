@@ -26,17 +26,22 @@
     'description': """
 FS-Online fso_base_website
 ==========================
+Basic addon for all FS-Online website related addons
 
+## Load default Java Script libraries and css
 Add java script libraries to assets_frontend:
-  
 - jquery.validate.js
     - additional-methods.js
     - methods_de.js
     - messages_de.js
     - additional-methods-fso.js
     - jquery-validate-defaults.js
-  
 - moment-with-locales.min.js
+
+## robots.txt
+Better default robots.txt view
+- Update robots.txt view with better default settings and noupdate = 1
+- Show robots.txt view arch field in website settings
 
     """,
     'author': "Datadialog - Michael Karrer",
@@ -44,10 +49,15 @@ Add java script libraries to assets_frontend:
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
+        'fso_base',
         'website',
     ],
     'installable': True,
     'data': [
+        'data/robots_txt.xml',
+        'views/res_config.xml',
         'views/templates.xml',
+        'views/website.xml',
+        'views/fsonline_menu.xml',
     ],
 }

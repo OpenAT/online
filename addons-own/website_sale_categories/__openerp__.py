@@ -39,6 +39,7 @@ website_sale_categories
     'category': 'Uncategorized',
     'version': '0.2',
     'depends': [
+        'fso_base',
         'sale',
         'website',
         'website_sale',

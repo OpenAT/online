@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
-        <template id="dd_robots" inherit_id="website.robots" name="ModifiedRobots.txt">
+    <data noupdate="1">
+
+        <!-- default values for robots.txt -->
+        <template id="robots_txt"
+                  inherit_id="website.robots"
+                  name="FS-Online default robots.txt">
             <xpath expr="." position="replace">
                 <t t-name="website.robots">
                     User-agent: *
@@ -59,5 +63,6 @@
                 </t>
             </xpath>
         </template>
+
     </data>
 </openerp>

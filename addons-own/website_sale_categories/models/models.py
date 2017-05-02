@@ -36,8 +36,8 @@ class product_public_category_menu(models.Model):
     cat_descbottom_showatchilds = fields.Html(string="Bottom-Description shown at Child Categories")
     cat_descbottom = fields.Html(string="Bottom-Category-Description")
 
-    cat_hide = fields.Boolean(string="Hide this Category from Cat-Navigation")
-    cat_root = fields.Boolean(string="RootCateg. (Start Cat-Navigation from here)")
+    cat_hide = fields.Boolean(string="Hide in Menu")
+    cat_root = fields.Boolean(string="Is Root Category")
     one_page_checkout = fields.Boolean(string="One-Page-Checkout")
     # Topmost parent category:
     # Store the nearest parent category in the field cat_root_id  that has cat_root=True or, if no parent category has
@@ -47,7 +47,7 @@ class product_public_category_menu(models.Model):
     #       each category (domain filter in main.py)
     # ATTENTION: Hidden categories are treated like root categories even if root_cat is not set!
     cat_root_id = fields.Many2one(comodel_name='product.public.category',
-                                  string='Nearest Root Category or UpMost Parent')
+                                  string='Parent Root Category')
     # DIV boxes classes
     cat_products_grid_before = fields.Char(string="CSS classes for div#products_grid_before")
     cat_products_grid = fields.Char(string="CSS classes for div#products_grid")
@@ -61,7 +61,7 @@ class product_public_category_menu(models.Model):
                                       ('website_sale_categories.products_listing', 'List Layout')],
                                      string="Shop Grid Template")
     # Redirect Url after form feedback of the payment provider
-    redirect_url_after_form_feedback = fields.Char(string='Redirect URL after PP Form-Feedback',
+    redirect_url_after_form_feedback = fields.Char(string='Redirect URL after Payment',
                                                    help='Redirect to this URL after processing the Answer of the'
                                                         'Payment Provider instead of /shop/confirmation_static',
                                                    translate=True)

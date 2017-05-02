@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- INHERIT: WEBSITE SETTINGS FORM: -->
+        <record model="ir.ui.view" id="website_form">
+            <field name="name">website_form</field>
+            <field name="model">website</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="fso_base_website.website_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Social Media Accounts']" position="after">
+                    <page string="Donation Shop">
+                        <group>
+                            <group>
+                                <p colspan="2"></p>
+                                <field name="one_page_checkout"/>
+                                <label string=""/>
+                                <div style="color:grey;">
+                                    <small>
+                                        TIP: If this is enabled only the checkout page will be shown including the cart
+                                        and the payment method after a donation product is added. It is also possible to
+                                        enable one page checkout individually by product.
+                                    </small>
+                                </div>
+                                <field name="add_to_cart_stay_on_page"/>
+                                <label string=""/>
+                                <div style="color:grey;">
+                                    <small>
+                                        TIP: If this is enabled you will stay on product listing pages after you add a
+                                        donation product to your donation cart. This is useful if "Add to cart" is
+                                        enabled for product listing pages.
+                                    </small>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="button_login"/>
+                                <field name="button_logout"/>
+                                <field name="button_back_to_page"/>
+                            </group>
+                        </group>
+                        <notebook name="Donation Shop">
+                            <page string="Donation Product">
+                                <group string="Product Image">
+                                    <div colspan="2" style="color:grey;margin-bottom:1em;">
+                                        <small>
+                                            All Donate Product images will be automatically resized and cropped to this
+                                            dimension for the checkout box and for product listing pages.
+                                        </small>
+                                    </div>
+                                    <field name="square_image_x"/>
+                                    <field name="square_image_y"/>
+                                </group>
+                                <group string="Payment Intervals">
+                                    <field name="payment_interval_default"/>
+                                    <label string=""/>
+                                    <div style="color:grey;">
+                                        <small>
+                                            TIP: The default payment interval can also be set by donation product. If
+                                            nothing is set at the donation product this setting will be used if the selected
+                                            default payment interval is available for the donation product.
+                                        </small>
+                                    </div>
+                                    <field name="payment_interval_as_selection"/>
+                                    <div colspan="2" style="margin-top:1em;">
+                                        <div><label string="All Available Payment Intervals"/></div>
+                                        <button string="Edit Payment Intervals"
+                                                type="action"
+                                                name="website_sale_donate.website_sale_donate_payment_interval_action"/>
+                                    </div>
+                                    <field name="PaymentIntervals" colspan="2" nolabel="1"
+                                           options="{'no_create': True, 'no_delete': True, 'no_create_edit': True, 'no_quick_create': True}">
+                                        <tree string="Payment Intervals">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="name"/>
+                                            <field name="product_template_ids"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Cart">
+                                <group string="Cart Page">
+                                    <div colspan="2">
+                                        <p>
+                                            <strong><a href="/shop/cart" target="_blank">&gt; Open Cart Page</a></strong>
+                                        </p>
+                                    </div>
+                                    <field name="cart_indicator"/>
+                                    <field name="cart_page_header"/>
+                                    <field name="amount_title"/>
+                                    <field name="button_cart_to_data"/>
+                                </group>
+                                <group string="Small Cart">
+                                    <field name="small_cart_title"/>
+                                </group>
+                            </page>
+                            <page string="Checkout">
+                                <group string="Checkout Page">
+                                    <div colspan="2">
+                                        <p>
+                                            <strong><a href="/shop/checkout" target="_blank">&gt; Open Checkout Page</a></strong>
+                                        </p>
+                                    </div>
+                                    <field name="checkout_show_login_button"/>
+                                    <field name="checkout_indicator"/>
+                                    <field name="checkout_page_header"/>
+                                    <field name="checkout_title"/>
+                                    <field name="country_default_value"/>
+                                    <field name="button_data_to_payment"/>
+                                </group>
+                                <notebook>
+                                    <page string="Checkout Fields">
+                                        <group string="Checkout Fields">
+                                            <div colspan="2" style="margin-top:1em;">
+                                                <div><label for="CheckoutFields"/></div>
+                                                <button string="Edit Checkout Fields"
+                                                        type="action"
+                                                        name="website_sale_donate.website_sale_donate_checkout_fields_action"/>
+                                            </div>
+                                            <field name="CheckoutFields" colspan="2" nolabel="1" readonly="True"
+                                                   options="{'no_create': True, 'no_delete': True, 'no_create_edit': True, 'no_quick_create': True}">
+                                                <tree string="Checkout Fields" create="false" delete="false">
+                                                    <field name="sequence" widget="handle"/>
+                                                    <field name="show"/>
+                                                    <field name="res_partner_field_id"/>
+                                                    <field name="label"/>
+                                                    <field name="mandatory"/>
+                                                    <field name="validation_rule"/>
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </page>
+                                    <page string="Shipping and Delivery">
+                                        <group>
+                                            <field name="hide_shipping_address"/>
+                                            <field name="hide_delivery_methods"/>
+                                            <field name="delivery_title"/>
+                                        </group>
+                                        <group string="Shipping Fields">
+                                         <div colspan="2" style="margin-top:1em;">
+                                            <div><label for="ShippingFields"/></div>
+                                                <button string="Edit Shipping Fields"
+                                                        type="action"
+                                                        name="website_sale_donate.wsd_checkout_shipping_fields_action"/>
+                                            </div>
+                                            <field name="ShippingFields" colspan="2" nolabel="1" readonly="True"
+                                                   options="{'no_create': True, 'no_delete': True, 'no_create_edit': True, 'no_quick_create': True}">
+                                                <tree string="Checkout Fields" create="false" delete="false">
+                                                    <field name="sequence" widget="handle"/>
+                                                    <field name="show"/>
+                                                    <field name="res_partner_field_id"/>
+                                                    <field name="label"/>
+                                                    <field name="mandatory"/>
+                                                    <field name="validation_rule"/>
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </page>
+                                </notebook>
+                            </page>
+                            <page string="Payment">
+                                <group string="Payment Page">
+                                        <div colspan="2">
+                                            <p>
+                                            <strong><a href="/shop/payment" target="_blank">&gt; Open Payment Page</a></strong>
+                                            </p>
+                                        </div>
+                                    <field name="payment_indicator"/>
+                                    <field name="payment_page_header"/>
+                                    <field name="payment_title"/>
+                                </group>
+                                <group string="Payment Methods">
+                                    <field name="acquirer_default"/>
+                                    <field name="redirect_url_after_form_feedback"/>
+                                    <label string=""/>
+                                    <div style="color:grey;">
+                                        <small>
+                                            TIP: If set this url will be opened when the donor returns from the external
+                                            payment provider page. Can also be set individually by Payment Method and
+                                            by donation shop category.
+                                        </small>
+                                    </div>
+                                    <div colspan="2" style="margin-top:1em;">
+                                        <div><label for="PaymentAcquirers"/></div>
+                                        <button string="Edit Payment Acquirers"
+                                                type="action"
+                                                name="payment.action_payment_acquirer"/>
+                                    </div>
+                                    <field name="PaymentAcquirers" colspan="2" nolabel="1" readonly="True"
+                                           options="{'no_create': True, 'no_delete': True, 'no_create_edit': True, 'no_quick_create': True}">
+                                        <tree string="Payment Methods" create="false" delete="false">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="website_published" string="Enabled"/>
+                                            <field name="name"/>
+                                            <field name="provider"/>
+                                            <field name="environment"/>
+                                            <field name="recurring_transactions"/>
+                                            <field name="do_not_send_status_email" string="No Payment-Status E-Mails"/>
+                                            <field name="submit_button_text" string="Button Text"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Confirmation">
+                                <group string="Confirmation Page">
+                                        <div colspan="2">
+                                            <p>
+                                                <strong><a href="/shop/confirmation_static" target="_blank">&gt; Open Confirmation Page for FS-Online Payment Providers</a></strong><br />
+                                                <small>
+                                                    <a href="/shop/confirmation" target="_blank">Open Confirmation Page for all other Payment Providers (only possible if product in cart)</a>
+                                                </small>
+                                            </p>
+                                        </div>
+                                    <field name="confirmation_indicator"/>
+                                    <field name="confirmation_page_header"/>
+                                </group>
+                                <!-- TODO -->
+                                <group string="Payment Status E-Mail Template">
+                                    <div colspan="2" style="color:grey;margin-bottom:1em;">
+                                        <small>
+                                            TIP: This E-Mail is send to the donor every time the payment status of
+                                            his or her donation changes. So the first time (and in most cases the only
+                                            time) it is send if the payment transaction changes from draft to e.g.:
+                                            done.<br />
+                                            You can suppress this email for a payment method with the setting:
+                                            "Do not send status e-mails". Which is useful if you want to send a more
+                                            advanced confirmation E-Mail by a Fundraising Studio Workflow rather than
+                                            directly by FS-Online.
+                                        </small>
+                                    </div>
+                                    <field name="StatusEmail"/>
+                                    <field name="StatusEmailPartnerTo"/>
+                                    <field name="StatusEmailSubject"/>
+                                    <field name="StatusEmailBody"/>
+                                </group>
+                                <group string="Sale Order Status E-Mail Template">
+                                    <div colspan="2" style="color:grey;margin-bottom:1em;">
+                                        <small>
+                                            TIP: This E-Mail together with most other e-mails from FS-Online is
+                                            normally suppressed by default by the setting "Do not add as follower automatically"
+                                            for the default public res.partner used by the website.
+                                            (The public res.partner serves as a template for all partners created by the website.)<br/>
+                                            If adding the donor as a follower is enabled this E-Mail is send to the
+                                            donor for every sale order status change!
+                                        </small>
+                                    </div>
+                                    <field name="OrderEmail"/>
+                                    <field name="OrderEmailPartnerTo"/>
+                                    <field name="OrderEmailSubject"/>
+                                    <field name="OrderEmailBody"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

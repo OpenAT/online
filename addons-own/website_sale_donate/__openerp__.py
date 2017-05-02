@@ -116,6 +116,6 @@ To solve this we did:
         'views/templates_53_ppt_opc.xml',
         'views/templates_60_checkout_steps.xml',
         'views/views.xml',
-        'views/res_config.xml',
+        'views/website.xml',
     ],
 }

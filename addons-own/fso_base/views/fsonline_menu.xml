@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem id="menu_fsonline" name="FS-Online" sequence="0" groups="base.group_user"/>
+
+        <menuitem id="menu_fsonline_overview" parent="menu_fsonline" name="Overview" sequence="1000"/>
+        <menuitem id="menu_fsonline_partner" parent="menu_fsonline" name="Partner" sequence="2000"/>
+        <menuitem id="menu_fsonline_fundraising" parent="menu_fsonline" name="Online Fundraising" sequence="3000"/>
+        <menuitem id="menu_fsonline_settings" parent="menu_fsonline" name="Settings" sequence="10000"/>
+    </data>
+</openerp>

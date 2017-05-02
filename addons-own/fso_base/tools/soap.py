@@ -66,7 +66,7 @@ def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="",
 
     # Send the request (POST)
     # http://docs.python-requests.org/en/master/user/advanced/
-    response = session.post(url, data=request_data, headers=http_header, timeout=(3.05, 12))
+    response = session.post(url, data=request_data, headers=http_header, timeout=(6, 15))
 
     # Check for response errors
     # DISABLED: Because in most cases one would still want to process the response content to check error in

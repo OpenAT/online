@@ -1,83 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<openerp><data>
 
-        <record id="product_public_category_form_view_extras" model="ir.ui.view">
-            <field name="name">product.public.category.form.menu</field>
-            <field name="model">product.public.category</field>
-            <field name="inherit_id" ref="website_sale.product_public_category_form_view"></field>
-            <field name="arch" type="xml">
-                <xpath expr="//div[@class='oe_left']" position="attributes">
-                    <attribute name="class"></attribute>
-                </xpath>
-                <field name="sequence" position="after">
-                    <field name="cat_root_id" readonly="1"/>
+    <record id="product_public_category_form_view_extras" model="ir.ui.view">
+        <field name="name">product.public.category.form.menu</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="website_sale.product_public_category_form_view"></field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_left']" position="attributes">
+                <attribute name="class"></attribute>
+            </xpath>
+            <field name="sequence" position="after">
+                <field name="cat_root_id" readonly="1"/>
+                <field name="cat_root"/>
+                <field name="redirect_url_after_form_feedback" attrs="{'invisible': [('cat_root','=', False)]}"/>
+                <field name="cat_section_id" attrs="{'invisible': [('cat_root','=', False)]}"/>
+                <field name="one_page_checkout"/>
+                <field name="cat_hide"/>
+                <field name="grid_template"/>
+                <field name="cat_products_grid_ppg" placeholder="9"/>
+                <field name="cat_products_grid_ppr" placeholder="3"/>
+                <field name="cat_products_grid_before" placeholder="col-md-3"/>
+                <field name="cat_products_grid" placeholder="col-md-9"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- INHERIT: Add cat_root_id and cat_id to the sales-order-form_sales-order-line Tree View -->
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form categories from web-shop</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[@string='Sales Order Lines']/field[@name='tax_id']" position="before">
+                <field name="cat_root_id"/>
+                <field name="cat_id"/>
+            </xpath>
+            <field name="currency_id" position="after">
+                <field name="cat_root_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- INHERIT: Add cat_root_id to the sale-order-tree-views -->
+    <record id="view_order_tree" model="ir.ui.view">
+        <field name="name">view_order_tree cat_root_id from web-shop</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="cat_root_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_quotation_tree" model="ir.ui.view">
+        <field name="name">view_quotation_tree cat_root_id from web-shop</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="cat_root_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- INHERIT: sale order search view -->
+    <record id="view_sales_order_filter" model="ir.ui.view">
+        <field name="name">view_sales_order_filter cat_root_id from web-shop</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="cat_root_id"/>
+            </field>
+            <xpath expr="//filter[@string='Order Month']" position="after">
+                <filter string="Web-Shop Root-Category" domain="[]" context="{'group_by':'cat_root_id'}"/>
+            </xpath>
+        </field>
+    </record>
+        
+    
+    <!-- FS-ONLINE MENUS -->
+    <!-- PUBLIC WEBSITE CATEGORIES: Create form, tree and search view -->
+    <record model="ir.ui.view" id="product_public_category_form">
+        <field name="name">product_public_category_form</field>
+        <field name="model">product.public.category</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Shop Category">
+                <group string="Basic Settings">
+                    <field name="name"/>
+                    <field name="parent_id"/>
+                    <field name="sequence"/>
+                </group>
+                <group string="Root Category (Start new shop)">
                     <field name="cat_root"/>
-                    <field name="redirect_url_after_form_feedback" attrs="{'invisible': [('cat_root','=', False)]}"/>
-                    <field name="cat_section_id" attrs="{'invisible': [('cat_root','=', False)]}"/>
-                    <field name="one_page_checkout"/>
+                    <field name="cat_root_id" readonly="1"/>
+                </group>
+                <group string="Category Menu">
                     <field name="cat_hide"/>
+                </group>
+                <group string="Category Page">
                     <field name="grid_template"/>
                     <field name="cat_products_grid_ppg" placeholder="9"/>
                     <field name="cat_products_grid_ppr" placeholder="3"/>
                     <field name="cat_products_grid_before" placeholder="col-md-3"/>
                     <field name="cat_products_grid" placeholder="col-md-9"/>
-                </field>
-            </field>
-        </record>
+                </group>
+                <group string="Confirmation Page after Payment">
+                    <div colspan="2">
+                        <p>
+                            This will overwrite the global setting of the shop but only if all products
+                            in the order have the same redirect url based on their categories. If not the redirect
+                            url from the shop settings will be used if set. If neither is set the
+                            <a href="/shop/confirmation_static" target="_blank">default FS-Online confirmation page</a>
+                            for FS-Online payment providers is shown.
 
-        <!-- INHERIT: Add cat_root_id and cat_id to the sales-order-form_sales-order-line Tree View -->
-        <record id="view_order_form" model="ir.ui.view">
-            <field name="name">sale.order.form categories from web-shop</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//tree[@string='Sales Order Lines']/field[@name='tax_id']" position="before">
-                    <field name="cat_root_id"/>
-                    <field name="cat_id"/>
-                </xpath>
-                <field name="currency_id" position="after">
-                    <field name="cat_root_id"/>
-                </field>
-            </field>
-        </record>
+                        </p>
+                    </div>
+                    <field name="redirect_url_after_form_feedback"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="product_public_category_tree">
+        <field name="name">product_public_category_tree</field>
+        <field name="model">product.public.category</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Website Product Category"
+                  default_order="cat_root_id,parent_id,sequence"
+                  colors="blue:cat_root == True;orange: cat_hide == True">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="cat_root"/>
+                <field name="cat_root_id"/>
+                <field name="parent_id"/>
+                <field name="cat_hide"/>
+                <field name="grid_template"/>
+                <field name="redirect_url_after_form_feedback"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="product_public_category_search">
+        <field name="name">product_public_category_search</field>
+        <field name="model">product.public.category</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Website Product Categorys">
+                <field name="name"/>
+                <field name="cat_root"/>
+                <field name="cat_root_id"/>
+                <field name="parent_id"/>
+                <field name="cat_hide"/>
+                <field name="grid_template"/>
+                <field name="redirect_url_after_form_feedback"/>
+            </search>
+        </field>
+    </record>
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="product_public_category_action" model="ir.actions.act_window" >
+        <field name="name">Website Categories</field>
+        <field name="res_model">product.public.category</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="product_public_category_search"/>
+    </record>
+    <record id="product_public_category_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="product_public_category_tree"/>
+        <field name="act_window_id" ref="product_public_category_action"/>
+    </record>
+    <record id="product_public_category_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="product_public_category_form"/>
+        <field name="act_window_id" ref="product_public_category_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="product_public_category_menu" action="product_public_category_action" parent="fso_base.menu_fsonline_settings" sequence="10200"/>
+        
 
-        <!-- INHERIT: Add cat_root_id to the sale-order-tree-views -->
-        <record id="view_order_tree" model="ir.ui.view">
-            <field name="name">view_order_tree cat_root_id from web-shop</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_tree"/>
-            <field name="arch" type="xml">
-                <field name="state" position="after">
-                    <field name="cat_root_id"/>
-                </field>
-            </field>
-        </record>
-        <record id="view_quotation_tree" model="ir.ui.view">
-            <field name="name">view_quotation_tree cat_root_id from web-shop</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_quotation_tree"/>
-            <field name="arch" type="xml">
-                <field name="state" position="after">
-                    <field name="cat_root_id"/>
-                </field>
-            </field>
-        </record>
-
-        <!-- INHERIT: sale order search view -->
-        <record id="view_sales_order_filter" model="ir.ui.view">
-            <field name="name">view_sales_order_filter cat_root_id from web-shop</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
-            <field name="arch" type="xml">
-                <field name="product_id" position="after">
-                    <field name="cat_root_id"/>
-                </field>
-                <xpath expr="//filter[@string='Order Month']" position="after">
-                    <filter string="Web-Shop Root-Category" domain="[]" context="{'group_by':'cat_root_id'}"/>
-                </xpath>
-            </field>
-        </record>
-
-    </data>
-</openerp>
+</data></openerp>

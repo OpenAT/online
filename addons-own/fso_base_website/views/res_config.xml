@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+        <!-- record id="view_website_sale_donate_config_settings" model="ir.ui.view">
+            <field name="name">fso_base_website Website Settings</field>
+            <field name="model">website.config.settings</field>
+            <field name="inherit_id" ref="website.view_website_config_settings"/>
+            <field name="arch" type="xml">
+               <xpath expr="//group[@string='Domain']" position="after">
+                    <group string="Behaviour">
+                        <label for="RobotsViewId"/>
+                        <div name="RobotsViewId">
+                            <div class="oe_inline">
+                                <field name="RobotsViewId"/>
+                            </div>
+                        </div>
+                        <label for="RobotsArch"/>
+                        <div name="RobotsArch">
+                            <div class="oe_inline">
+                                <field name="RobotsArch"/>
+                            </div>
+                        </div>
+                    </group>
+               </xpath>
+            </field>
+        </record -->
+
+</data></openerp>

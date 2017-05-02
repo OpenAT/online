@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem id="menu_fsonline_website" parent="fso_base.menu_fsonline" name="Website" sequence="4000"/>
+    </data>
+</openerp>
