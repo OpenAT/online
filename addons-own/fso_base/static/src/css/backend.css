@@ -18,6 +18,18 @@
     min-height: 600px;
 }
 
+/* modal boxes min width */
+@media (min-width: 992px) {
+   .modal-lg {
+        width: 92%;
+    }
+}
+@media (min-width: 768px) {
+    .modal-dialog {
+        width: 92%;
+    }
+}
+
 
 /* kanban views */
 .openerp .oe_kanban_view .oe_kanban_vignette {
