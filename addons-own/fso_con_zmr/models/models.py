@@ -169,6 +169,8 @@ class ResPartnerZMRGetBPK(models.Model):
                                                            ('BPKRequestURL', '!=', False)])
         assert companies, _("No company with complete security header data found!")
 
+        # TODO: Assert that all companies have the same BPKRequestURL Setting (Either test or Live)
+
         for c in companies:
             result = {'company_id': c.id,
                       'company_name': c.name,
@@ -292,27 +294,31 @@ class ResPartnerZMRGetBPK(models.Model):
     # MODEL ACTIONS
     @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
-        # Try regular request without zipcode
-        responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
+        responses = list()
+        assert any((birthdate, zipcode)), _("Birthdate and zipcode missing! "
+                                            "You need to specify at least one them or both!")
+        if birthdate:
+            # 1.) Regular request BPK attempt with full birthdate
+            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
 
-        # First retry with only year of birth
-        # HINT: We use all() instead of any() because the partner data should get a valid record for all companies
-        #       The only exception to this rule would be if one company uses test url and the other the regular url
-        #       which is an irrelevant case.
-        if len(responses) >= 1 and all(r['response_http_error_code'] for r in responses):
-            try:
-                date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
-                year = date.strftime("%Y")
-            except:
+            # 2.) If nothing was found we try another search with birth YEAR only
+            # HINT: We use all() instead of any() because the partner data should get a valid record for all companies
+            #       The only exception to this rule would be if one company uses test url and the other the regular url
+            #       which is an irrelevant/erroneous case.
+            if len(responses) >= 1 and all(r['response_http_error_code'] for r in responses):
                 try:
-                    year = str(birthdate).split("-", 1)[0]
+                    date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
+                    year = date.strftime("%Y")
                 except:
-                    year = None
-            if year:
-                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
-
-        # Second retry without birthdate but with zip code
-        if len(responses) >= 1 and all(r['response_http_error_code'] for r in responses) and zipcode:
+                    try:
+                        year = str(birthdate).split("-", 1)[0]
+                    except:
+                        year = None
+                if year:
+                    responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
+        elif zipcode and (not responses
+                          or (len(responses) >= 1 and all(r['response_http_error_code'] for r in responses))):
+            # 3.) If no birthdate was given or no valid response was found with the birthdate try with zipcode only
             responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
 
         return responses
