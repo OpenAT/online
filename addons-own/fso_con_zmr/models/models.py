@@ -172,6 +172,11 @@ class ResPartnerZMRGetBPK(models.Model):
         # TODO: Assert that all companies have the same BPKRequestURL Setting (Either test or Live)
 
         for c in companies:
+            # Check if the certificate files still exists at given path and restore them if not
+            if not os.path.exists(c.pvpToken_crt_pem_path) or not os.path.exists(c.pvpToken_prvkey_pem_path):
+                logger.warning(_("_request_bpk: Certificate data found but files on drive missing. "
+                                 "Trying to restore files."))
+                c._certs_to_file()
             result = {'company_id': c.id,
                       'company_name': c.name,
                       'request_date': datetime.datetime.now(),
