@@ -45,13 +45,21 @@
     background-color: #f49800;
 }
 
-#oe_main_menu_navbar ul:first-child li:first-child a,
-#oe_main_menu_navbar ul:first-child li:first-child button {
+#oe_main_menu_navbar #oe_main_menu_placeholder ul.oe_application_menu_placeholder > li:first-child a,
+#oe_main_menu_navbar #oe_main_menu_placeholder ul.oe_application_menu_placeholder > li:first-child button {
     font-size: 20px;
     padding: 10px 18px 4px 18px;
     min-width: 220px;
     text-align: center;
 }
+/* For Mobile (collapsed) Menu View */
+@media (max-width: 768px)
+{
+   .navbar-nav {
+       margin: 0;
+    }
+}
+
 
 /* LEFT MENU */
 .openerp .oe_leftbar {
@@ -196,4 +204,10 @@
 }
 .openerp .oe_view_manager table.oe_view_manager_header h2 a {
     color: #b6008d;
+}
+.openerp .oe_stat_button .stat_button_icon {
+    color: #b6008d;
+}
+.openerp .oe_stat_button:hover {
+    background: #b6008d;
 }

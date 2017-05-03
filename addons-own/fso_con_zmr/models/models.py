@@ -50,7 +50,7 @@ class CompanyAustrianZMRSettings(models.Model):
                                                  'Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR'),
                                                 ],
                                      string="GetBPK Request URL",
-                                     default="https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR")
+                                     default="https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR")
 
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
     # https://www.odoo.com/de_DE/forum/hilfe-1/question/
