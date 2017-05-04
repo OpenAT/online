@@ -135,21 +135,6 @@ class ResPartnerBPK(models.Model):
 class ResPartnerZMRGetBPK(models.Model):
     _inherit = 'res.partner'
 
-    # COMPUTED FIELDS METHODS
-    @api.multi
-    @api.depends('firstname', 'lastname', 'birthdate_web', 'zip')
-    def _compute_bpk_request_needed(self):
-        """ If any of the depending-on fields changes set BPKRequestNeeded if all data available """
-        for p in self:
-            if all((p.firstname, p.lastname, p.birthdate)) or all((p.firstname, p.lastname, p.zip)):
-                p.BPKRequestNeeded = fields.datetime.now()
-                # just for Testing:
-                logger.warning("Set BPKRequestNeeded for %s" % p.name)
-            else:
-                p.BPKRequestNeeded = None
-                # just for Testing:
-                logger.warning("Unset BPKRequestNeeded for %s" % p.name)
-
     # FIELDS
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
                                     string="BPK Requests")
@@ -161,10 +146,45 @@ class ResPartnerZMRGetBPK(models.Model):
 
     # BPK Fields for request processing and optimization
     BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=True)
-    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=True,
-                                       default=fields.datetime.now(),
-                                       compute=_compute_bpk_request_needed, store=True)
+    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=True)
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
+
+    # Compute BPKRequestNeeded on in 'res.partner'.write() method
+    @api.multi
+    def _compute_bpk_request_needed(self):
+        """ If any of the depending-on fields changes set BPKRequestNeeded if all data available """
+        start_time = None
+        if len(self) >= 10:
+            logger.info(_("Computing BPKRequestNeeded for %s partner!") % len(self))
+            start_time = time.time()
+
+        for p in self:
+            if not p.donation_deduction_optout_web and (
+                        all((p.firstname, p.lastname, p.birthdate_web)) or all((p.firstname, p.lastname, p.zip))):
+                if not p.BPKRequestNeeded:
+                    logger.warning("TESTING ONLY: Set BPKRequestNeeded for %s" % p.name)
+                    p.BPKRequestNeeded = fields.datetime.now()
+                continue
+            # Data is missing or donation_deduction_optout_web set
+            if p.BPKRequestNeeded:
+                logger.warning("TESTING ONLY: Unset BPKRequestNeeded for %s" % p.name)
+                p.BPKRequestNeeded = None
+
+        if start_time:
+            processing_time = time.time() - start_time
+            logger.info(_("Computed BPKRequestNeeded for %s in %.3f") % (len(self), processing_time))
+
+    # Compute BPKRequestNeeded
+    @api.multi
+    def write(self, vals):
+        """Override write to check for BPKRequestNeeded"""
+        # Write to partners
+        # HINT: Returns only True or False!
+        result = super(ResPartnerZMRGetBPK, self).write(vals)
+        # Check if any relevant field for BPKRequestNeeded is in vals
+        if result and any(key in vals for key in ['firstname', 'lastname', 'birthdate_web', 'zip']):
+            self._compute_bpk_request_needed()
+        return result
 
     # INTERNAL METHODS
     def _find_bpk_companies(self):
@@ -337,17 +357,18 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return responses
 
+    @api.model
+    def response_ok(self, responses):
+        if len(responses) >= 1 and not any(r['faulttext'] for r in responses):
+            return True
+        else:
+            return False
+
     # MODEL ACTIONS
     @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
         assert any((birthdate, zipcode)), _("Birthdate and zipcode missing! "
                                             "You need to specify at least one them or both!")
-
-        def response_ok(responses):
-            if len(responses) >= 1 and not any(r['faulttext'] for r in responses):
-                return True
-            else:
-                return False
 
         # Process Lastname
         lastnames_to_check = [lastname]
@@ -388,9 +409,21 @@ class ResPartnerZMRGetBPK(models.Model):
         # BPK not found
         return responses
 
+    @api.model
+    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
+        try:
+            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
+            check_response = self.response_ok(responses)
+            return check_response
+        except Exception as e:
+            logger.error(_("Exception in fso_con_zmr check_bpk():\n%s\n") % e)
+            return False
+
+    # --------------
     # RECORD ACTIONS
+    # --------------
     @api.multi
-    def set_bpk(self, request_in_progress_limit=1):
+    def set_bpk(self):
         partners = self
         warning_messages = ""
 
@@ -405,10 +438,11 @@ class ResPartnerZMRGetBPK(models.Model):
         # Check partners if they are already in processing
         # ATTENTION: Ignore the BPKRequestInProgress field if older than 'request_in_progress_limit' days to recover
         #            from terminated processes or exceptions.
+        # TODO: set timedelate days value from res.config setting
         brip = self.env['res.partner'].search(
             [('id', 'in', self.ids),
              ('BPKRequestInProgress', '!=', False),
-             ('BPKRequestInProgress', '>', fields.datetime.now() - timedelta(days=request_in_progress_limit))
+             ('BPKRequestInProgress', '>', str(fields.datetime.now() - timedelta(days=1)))
              ])
         if brip:
             warning_messages += _("BPK request in progress for partners:\n%s\n "
@@ -538,6 +572,8 @@ class ResPartnerZMRGetBPK(models.Model):
                             This is useful for memory / speed optimization
         :return: recordset # res.partner
         """
+        # TODO: BPKRequestInProgress should be honored in Regular and Full search - maybe days selectable by option and
+        #       not honored if option is 0 or none like limit
         # --------------
         # REGULAR SEARCH
         # --------------
@@ -651,13 +687,20 @@ class ResPartnerZMRGetBPK(models.Model):
 
     @api.multi
     def tester(self):
-        self.find_bpk_partners_to_update(limit=5, skip_no_bpk=True)
+        start_time = time.time()
+        logger.warning("START FULL find_bpk_partners_to_update but with no limit and skip_no_bpk=True")
+        partners = self.find_bpk_partners_to_update(full_search=True, limit=0, skip_no_bpk=False)
+        end_time = start_time - time.time()
+        logger.warning("END FULL find_bpk_partners_to_update in %.3f: %s partners found" % (end_time, len(partners)))
 
-
-    # TODO: Create a scheduled server action which runs set_bpk_automated
+    # TODO: Create a scheduled server action which runs regular bpk updates
     #       Should run every hour and therefore set_bpk_automated(self, limit=800, timeout=3540)
     #       which means a maximum request amount of 800*24 = 19200 in 24 hours leaving enough space for non stored
     #       gui requests from FS and FSO
+
+    # TODO: Create a server actions which "checks" all res.partner for BPKRequestNeeded and scedule this action
+    #       every week. Make sure the method find_bpk_partners_to_update with full search also finds records with
+    #       BPKRequestInProgress older than .. value!
 
     # Server Action Example:
     # if context.get('active_model') == 'res.partner':
