@@ -9,6 +9,7 @@ from openerp.addons.fso_base.tools.soap import soap_request
 from lxml import etree
 import requests
 import time
+from datetime import timedelta
 import logging
 import datetime
 from openerp.tools import config
@@ -134,13 +135,36 @@ class ResPartnerBPK(models.Model):
 class ResPartnerZMRGetBPK(models.Model):
     _inherit = 'res.partner'
 
+    # COMPUTED FIELDS METHODS
+    @api.multi
+    @api.depends('firstname', 'lastname', 'birthdate_web', 'zip')
+    def _compute_bpk_request_needed(self):
+        """ If any of the depending-on fields changes set BPKRequestNeeded if all data available """
+        for p in self:
+            if all((p.firstname, p.lastname, p.birthdate)) or all((p.firstname, p.lastname, p.zip)):
+                p.BPKRequestNeeded = fields.datetime.now()
+                # just for Testing:
+                logger.warning("Set BPKRequestNeeded for %s" % p.name)
+            else:
+                p.BPKRequestNeeded = None
+                # just for Testing:
+                logger.warning("Unset BPKRequestNeeded for %s" % p.name)
+
     # FIELDS
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
                                     string="BPK Requests")
     # BPK forced request values
+    # TODO: Make sure Forced BPK Fields are always all filled or none (use also attr in the form view)
     BPKForcedFirstname = fields.Char(string="BPK Forced Firstname")
     BPKForcedLastname = fields.Char(string="BPK Forced Lastname")
     BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
+
+    # BPK Fields for request processing and optimization
+    BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=True)
+    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=True,
+                                       default=fields.datetime.now(),
+                                       compute=_compute_bpk_request_needed, store=True)
+    LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
 
     # INTERNAL METHODS
     def _find_bpk_companies(self):
@@ -188,8 +212,10 @@ class ResPartnerZMRGetBPK(models.Model):
             # Check if the certificate files still exists at given path and restore them if not
             if not os.path.exists(c.pvpToken_crt_pem_path) or not os.path.exists(c.pvpToken_prvkey_pem_path):
                 logger.warning(_("_request_bpk: Certificate data found but files on drive missing. "
-                                 "Trying to restore files."))
+                                 "Trying to restore files!"))
                 c._certs_to_file()
+
+            # Result interface
             result = {'company_id': c.id,
                       'company_name': c.name,
                       'request_date': datetime.datetime.now(),
@@ -284,9 +310,9 @@ class ResPartnerZMRGetBPK(models.Model):
                 if response.status_code != 200:
                     result['response_http_error_code'] = response.status_code
                     error_code = response_etree.find(".//faultcode")
-                    result['faultcode'] = error_code.text if error_code is not None else result['faultcode']
+                    result['faultcode'] = error_code.text if error_code is not None else ""
                     error_text = response_etree.find(".//faultstring")
-                    result['faulttext'] = error_text.text if error_text is not None else result['faulttext']
+                    result['faulttext'] = error_text.text if error_text is not None else "ERROR"
                     # Update answer and process GetBPK for next company
                     responses.append(result)
                     continue
@@ -306,7 +332,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 responses.append(result)
 
             except Exception as e:
-                result['response_content'] = _("BPK Request Assertion:\n\n%s\n") % e
+                result['faulttext'] = _("BPK Request Assertion:\n\n%s\n") % e
                 responses.append(result)
 
         return responses
@@ -314,18 +340,32 @@ class ResPartnerZMRGetBPK(models.Model):
     # MODEL ACTIONS
     @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
-        responses = list()
         assert any((birthdate, zipcode)), _("Birthdate and zipcode missing! "
                                             "You need to specify at least one them or both!")
-        if birthdate:
-            # 1.) Regular request BPK attempt with full birthdate
-            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
 
-            # 2.) If nothing was found we try another search with birth YEAR only
-            # HINT: We use all() instead of any() because the partner data should get a valid record for all companies
-            #       The only exception to this rule would be if one company uses test url and the other the regular url
-            #       which is an irrelevant/erroneous case.
-            if len(responses) >= 1 and all(r['response_http_error_code'] for r in responses):
+        def response_ok(responses):
+            if len(responses) >= 1 and not any(r['faulttext'] for r in responses):
+                return True
+            else:
+                return False
+
+        # Process Lastname
+        lastnames_to_check = [lastname]
+        split_lastname = lastname.split('-')[0] if '-' in lastname else lastname.split(' ')[0] if ' ' in lastname \
+            else ''
+        if split_lastname:
+            lastnames_to_check.append(split_lastname)
+
+        # Start BPK Request(s)
+        responses = list()
+        for lastname in lastnames_to_check:
+            if birthdate:
+                # BPK Request attempt with full birthdate
+                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
+                if response_ok(responses):
+                    return responses
+
+                # BPK Request attempt with birth YEAR only
                 try:
                     date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
                     year = date.strftime("%Y")
@@ -336,25 +376,50 @@ class ResPartnerZMRGetBPK(models.Model):
                         year = None
                 if year:
                     responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
-        elif zipcode and (not responses
-                          or (len(responses) >= 1 and all(r['response_http_error_code'] for r in responses))):
-            # 3.) If no birthdate was given or no valid response was found with the birthdate try with zipcode only
-            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
+                    if response_ok(responses):
+                        return responses
 
+            if zipcode:
+                # BPK Request attempt with zipcode only
+                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
+                if response_ok(responses):
+                    return responses
+
+        # BPK not found
         return responses
 
     # RECORD ACTIONS
     @api.multi
-    def set_bpk(self):
+    def set_bpk(self, request_in_progress_limit=1):
+        partners = self
         warning_messages = ""
-        for p in self:
 
-            # Check for donation deduction opt out
-            if p.donation_deduction_optout_web:
-                warning_messages += _("Donation Deduction Opt Out is set for partner %s %s with id %s! "
-                                      "BPK check skipped!\n\n") % (p.firstname, p.lastname, p.id)
-                continue
+        # Check partners for donation donation_deduction_optout_web
+        ddow = self.env['res.partner'].search([('id', 'in', self.ids),
+                                               ('donation_deduction_optout_web', '!=', False)])
+        if ddow:
+            warning_messages += _("Donation Deduction Opt Out is set for partners:\n%s\n "
+                                  "BPK check skipped for them!\n\n") % ddow.ids
+            partners = partners - ddow
 
+        # Check partners if they are already in processing
+        # ATTENTION: Ignore the BPKRequestInProgress field if older than 'request_in_progress_limit' days to recover
+        #            from terminated processes or exceptions.
+        brip = self.env['res.partner'].search(
+            [('id', 'in', self.ids),
+             ('BPKRequestInProgress', '!=', False),
+             ('BPKRequestInProgress', '>', fields.datetime.now() - timedelta(days=request_in_progress_limit))
+             ])
+        if brip:
+            warning_messages += _("BPK request in progress for partners:\n%s\n "
+                                  "BPK check skipped for them!\n\n") % brip.ids
+            partners = partners - brip
+
+        # Mark all remaining partners with 'BPK Request In Progress' to avoid double calls of different workers
+        partners.write({'BPKRequestInProgress': fields.datetime.now()})
+
+        # Process BPK Requests
+        for p in partners:
             # Prepare request values
             firstname = p.firstname
             lastname = p.lastname
@@ -363,8 +428,10 @@ class ResPartnerZMRGetBPK(models.Model):
             if p.BPKForcedFirstname or p.BPKForcedLastname or p.BPKForcedBirthdate:
                 # Check for complete set of Force-BPK-Fields
                 if not all((p.BPKForcedFirstname, p.BPKForcedLastname, p.BPKForcedBirthdate)):
-                    warning_messages += _("Forced BPK Fields are not completely set for partner %s %s with id %s! "
-                                          "BPK check skipped!\n\n") % (p.firstname, p.lastname, p.id)
+                    message = _("Forced BPK Fields are not completely set for partner %s %s with id %s! "
+                                "BPK check skipped!\n\n") % (p.firstname, p.lastname, p.id)
+                    warning_messages += message
+                    logger.error(message)
                     continue
                 # Overwrite BPK request data with forced settings
                 firstname = p.BPKForcedFirstname
@@ -431,101 +498,160 @@ class ResPartnerZMRGetBPK(models.Model):
                     message = _("More than one res.partner.bpk request record found "
                                 "for partner %s: %s %s and company %s") % (p.id, p.firstname, p.lastname,
                                                                            r['company_id'])
+                    warning_messages += message
+                    logger.error(message)
                     continue
                 if bpk:
                     bpk.write(values)
                 else:
                     self.env['res.partner.bpk'].sudo().create(values)
 
-        # Raise warnings exception if any
+            # Mark partner as DONE for BPK
+            # HINT: We add two seconds of safety to LastBPKRequest Date to avoid conflicts with write_date in domains
+            p.write({'BPKRequestInProgress': None,
+                     'BPKRequestNeeded': None,
+                     'LastBPKRequest': fields.datetime.now() + timedelta(seconds=2)})
+
+        # Raise warning exception if any warning_messages exits
         if warning_messages:
             raise Warning(warning_messages)
 
     # (MODEL) ACTIONS FOR AUTOMATED BPK PROCESSING
     @api.model
-    def set_bpk_automated(self, limit=1, timeout=60):
+    def find_bpk_partners_to_update(self, full_search=False, skip_no_bpk=False,
+                                    limit=1, order='write_date DESC', batch=10000):
         """
-        :param limit: int # maximum quantity of partners to process 
-        :param timeout: int # maximum time in seconds to run this method 
-        :return: list # ids of res.partner with an answer from ZMR (no matter if error or found)
+        # HINT: LIFO: As an optimization we reverse the order to latest first because it is very likely that we want the 
+        #       latest updated records to be processed first and also that these records would most likely have relevant
+        #       changes. In the circumstance that there is not enough time to process all bpk records the oldest ones
+        #       would never be processed but this is just as bad or even worse as that youngest ones will never be
+        #       processed.
+        #
+        :param full_search: bool # If True ignore BPKRequestNeeded and do a full search
+        :param limit: int # maximum quantity of partners to process, use 0 or None for no limit!
+        :param order: char # field to sort by and sort order (DESC or ASC) e.g.: 'write_date ASC' 
+                             ASC=regular DESC=reverse for .sorted() record set operation
+                             ASC on date fields means oldest first (Ascend from oldest date to newest date)
+                             DESC on date fields means newest first (Descend from newest date to oldest date)
+        :param skip_no_bpk: bool # Do not check for res.partner without bpk requests
+        :param batch: int # Batch size for the processing of partners with bpk records.
+                            This is useful for memory / speed optimization
+        :return: recordset # res.partner
         """
-        try:
-            # Find all companies with fully filled ZMR access fields
-            companies = self._find_bpk_companies()
-        except Exception as e:
-            logger.warning(_("set_bpk_automated: Exception while fetching companies:\n%s\n") % e)
-            return
+        # --------------
+        # REGULAR SEARCH
+        # --------------
+        if not full_search:
+            domain = [('BPKRequestNeeded', '!=', False)]
+            if skip_no_bpk:
+                domain.append(('BPKRequestIDS', '!=', False))
+            partners_to_update = self.env['res.partner'].search(domain, limit=limit, order=order)
+            return partners_to_update
 
+        # -----------
+        # FULL SEARCH
+        # -----------
         # Create an empty record set
         partners_to_update = self.env['res.partner']
 
-        # Find res.partner without res.partner.bpk
-        partner_without_bpks = self.env['res.partner'].sudo().search([
-            ('donation_deduction_optout_web', '=', False),
-            ('firstname', '!=', False),
-            ('lastname', '!=', False),
-            '|',
-                ('birthdate_web', '!=', False),
-                ('zip', '!=', False),
-            ('BPKRequestIDS', '=', False)
-        ])
-        if partner_without_bpks:
-            partners_to_update = partners_to_update | partner_without_bpks
+        # Find all companies with fully filled ZMR access fields
+        try:
+            companies = self._find_bpk_companies()
+        except Exception as e:
+            logger.error(_("_find_bpk_partners: Exception while fetching companies:\n%s\n") % e)
+            return partners_to_update
 
-        # Find res.partner with existing res.partner.bpk
-        partner_with_bpks = self.env['res.partner'].sudo().search([
-            ('donation_deduction_optout_web', '=', False),
-            ('firstname', '!=', False),
-            ('lastname', '!=', False),
-            '|',
-                ('birthdate_web', '!=', False),
-                ('zip', '!=', False),
-            ('BPKRequestIDS', '!=', False)
-        ])
+        # 1.) Find res.partner without res.partner.bpk
+        if skip_no_bpk:
+            partner_without_bpks = partners_to_update
+        else:
+            partner_without_bpks = self.env['res.partner'].search([
+                ('donation_deduction_optout_web', '=', False),
+                ('BPKRequestIDS', '=', False),
+                ('firstname', '!=', False),
+                ('lastname', '!=', False),
+                '|',
+                    ('birthdate_web', '!=', False),
+                    ('zip', '!=', False)], order=order, limit=limit)
+            # Return if we have already enough partners found
+            if limit and len(partner_without_bpks) >= limit:
+                return partner_without_bpks
+            else:
+                partners_to_update = partners_to_update | partner_without_bpks
 
-        # Check partner_with_bpks if a new BPK request is needed
-        for p in partner_with_bpks:
-            bpk_company_ids = list()
-            for r in p.BPKRequestIDS:
-                bpk_company_ids.append(r.BPKRequestCompanyID.id)
+        # 2.) Find res.partner(s) to update with existing res.partner.bpk(s)
+        # HINT: Must use all partners without limit for further checks!
+        # HINT: To load 1.000.000 res.partner from database to memory takes approximately 30 seconds
+        # HINT: remaining -1 means No Limit = Find all partners with bpks to update
+        offset = 0
+        remaining = -1 if not limit else limit - len(partner_without_bpks)
+        while remaining:
+            # TODO: A good optimization would be to check if write_date is older than LastBPKRequest
+            #       with a direct database select instead of a domain search - should ask sebi or try it my self :)
+            # http://stackoverflow.com/questions/27346751/openerp-domain-filters-how-to-compare-2-fields-in-object
+            partner_with_bpks = self.env['res.partner'].search([
+                ('donation_deduction_optout_web', '=', False),
+                ('BPKRequestIDS', '!=', False),
+                ('firstname', '!=', False),
+                ('lastname', '!=', False),
+                '|',
+                    ('birthdate_web', '!=', False),
+                    ('zip', '!=', False)], order=order, limit=batch, offset=offset)
+            offset = offset + batch
 
-                # 1.) Check if bpk request data is different from current partner data
-                if not ((p.firstname == r.BPKRequestFirstname and
-                         p.lastname == r.BPKRequestLastname and
-                         p.birthdate_web != r.BPKRequestBirthdate and
-                         p.zip != r.BPKRequestZIP)
-                        or
-                        (p.firstname == r.BPKErrorRequestFirstname and
-                         p.lastname == r.BPKErrorRequestLastname and
-                         p.birthdate_web != r.BPKErrorRequestBirthdate and
-                         p.zip != r.BPKErrorRequestZIP)
-                       ):
-                    # Add partner to recordset and continue with next partner
-                    partners_to_update = partners_to_update | self.browse(p.ids)
+            for p in partner_with_bpks:
+                # Stop if enough partners are found
+                if remaining == 0:
+                    break
+
+                # 2.1.) Check if there are missing or too many BPK request
+                bpk_company_ids = [r.BPKRequestCompanyID.id for r in p.BPKRequestIDS]
+                # Check if bpk_company_ids contains ids not in current companies
+                # HINT: s - t = new set with elements in s but not in t
+                orphan_records = set(bpk_company_ids) - set(companies.ids)
+                if orphan_records:
+                    logger.error(_("BPK Records %s found for non existing companies "
+                                   "or companies where the ZMR BPK access data was removed "
+                                   "for partner %s: %s %s") % (orphan_records, p.id, p.firstname, p.lastname))
+                # Check if any bpk records are missing for current companies
+                # HINT: s - t = new set with elements in s but not in t
+                if set(companies.ids) - set(bpk_company_ids):
+                    partners_to_update = partners_to_update | p
+                    remaining = remaining - 1
                     continue
-            # 2.) Check if there are missing or to many BPK request for the found companies
-            assert set(bpk_company_ids).issubset(set(companies.ids)), _(
-                "BPK Records found for a non existing company or a company where the ZMR BPK access data was removed "
-                "for partner %s: %s %s") % (p.id, p.firstname, p.lastname)
-            if set(bpk_company_ids) != set(companies.ids):
-                # Add partner to recordset and continue with next partner
-                partners_to_update = partners_to_update | self.browse(p.ids)
-                continue
 
-        # TODO: Sort partners_to_update by update date (oldest first)
+                # 2.2.) Check if in any BPK request the bpk request data neither for regular nor for error request
+                #       matches the current partner request data and therefore was changed and must be requested again.
+                for r in p.BPKRequestIDS:
+                    if r.BPKRequestCompanyID.id in companies.ids and (
+                        not ((p.firstname == r.BPKRequestFirstname and
+                             p.lastname == r.BPKRequestLastname and
+                             p.birthdate_web == r.BPKRequestBirthdate and
+                             p.zip == r.BPKRequestZIP)
+                            or
+                            (p.firstname == r.BPKErrorRequestFirstname and
+                             p.lastname == r.BPKErrorRequestLastname and
+                             p.birthdate_web == r.BPKErrorRequestBirthdate and
+                             p.zip == r.BPKErrorRequestZIP)
+                           )):
+                        partners_to_update = partners_to_update | p
+                        remaining = remaining - 1
+                        break
 
-        # TODO: Discard all partners_to_update greater than the limit
+            # Stop while loop if all partners are processed
+            remaining = None
 
-        # TODO: Run for every partner in partners_to_update set_bpk() until timeout is reached
+        # Sort partners_to_update
+        sort_field = order.split(' ', 1)[0]
+        reverse = False if order.endswith('ASC') else True
+        partners_to_update = partners_to_update.sorted(key=lambda l: getattr(l, sort_field), reverse=reverse)
 
-        # TODO: Return the list of processed partner ids
-
-
-
+        # Return the res.partner recordset
+        return partners_to_update
 
     @api.multi
     def tester(self):
-        self.set_bpk_automated()
+        self.find_bpk_partners_to_update(limit=5, skip_no_bpk=True)
 
 
     # TODO: Create a scheduled server action which runs set_bpk_automated
@@ -541,29 +667,3 @@ class ResPartnerZMRGetBPK(models.Model):
     #     elif context.get('active_ids'):
     #         ids = context['active_ids']
     #     self.set_bpk(cr, uid, ids, context=context)
-
-
-    # Domain tries > Not really working as expected
-    # p = self.env['res.partner'].sudo().search([
-    #         ('donation_deduction_optout_web', '=', False),
-    #         ('firstname', '!=', False),
-    #         ('lastname', '!=', False),
-    #         '|',
-    #             ('birthdate_web', '!=', False),
-    #             ('zip', '!=', False),
-    #         '|', '&',
-    #             ('BPKRequestIDS', '=', False),
-    #             # '&' from above
-    #             ('BPKRequestIDS', '!=', False),
-    #             '!', '|',    '&', '&', '&',   '&', '&', '&',
-    #                     # First three '&' from above
-    #                     ('BPKRequestIDS.BPKRequestFirstname', '=', self.firstname),
-    #                     ('BPKRequestIDS.BPKRequestLastname', '=', self.lastname),
-    #                     ('BPKRequestIDS.BPKRequestBirthdate', '=', self.birthdate_web),
-    #                     ('BPKRequestIDS.BPKRequestZIP', '=', self.zip),
-    #                     # Second three '&' from above
-    #                     ('BPKRequestIDS.BPKErrorRequestFirstname', '=', self.firstname),
-    #                     ('BPKRequestIDS.BPKErrorRequestLastname', '=', self.lastname),
-    #                     ('BPKRequestIDS.BPKErrorRequestBirthdate', '=', self.birthdate_web),
-    #                     ('BPKRequestIDS.BPKErrorRequestZIP', '=', self.zip)
-    #        ])

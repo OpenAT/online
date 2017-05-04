@@ -9,11 +9,17 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="ZMR BPK">
-
-                    <group string="Force BPK Request Values (optional)">
-                        <field name="BPKForcedFirstname"/>
-                        <field name="BPKForcedLastname"/>
-                        <field name="BPKForcedBirthdate"/>
+                    <group>
+                        <group string="Force BPK Request Values (optional)">
+                            <field name="BPKForcedFirstname" attrs="{'required': ['|', ('BPKForcedLastname', '!=', 'False'), ('BPKForcedBirthdate', '!=', 'False')]}"/>
+                            <field name="BPKForcedLastname" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', 'False'), ('BPKForcedBirthdate', '!=', 'False')]}"/>
+                            <field name="BPKForcedBirthdate" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', 'False'), ('BPKForcedLastname', '!=', 'False')]}"/>
+                        </group>
+                        <group string="BPK Processing Status">
+                            <field name="BPKRequestInProgress"/>
+                            <field name="BPKRequestNeeded"/>
+                            <field name="LastBPKRequest"/>
+                        </group>
                     </group>
                     <group string="BPK Requests">
                         <button colspan="2" name="set_bpk" type="object" string="Request BPK(s) from ZMR"/>
