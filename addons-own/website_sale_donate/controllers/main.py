@@ -379,6 +379,8 @@ class website_sale_donate(website_sale):
     def opc_payment(self, **post):
 
         # Render the payment page and therefore get all Pay-Now Button forms
+        _logger.warning("website_sale_donate: opc_payment(): call super payment() "
+                        "HINT: payment() is derived in website_delivery and calls _check_carrier_quotation()")
         payment_page = super(website_sale_donate, self).payment(**post)
         payment_qcontext = None
         if hasattr(payment_page, 'qcontext'):
@@ -617,8 +619,11 @@ class website_sale_donate(website_sale):
                 carrier_id = post.get('delivery_type')
                 if carrier_id:
                     post['carrier_id'] = int(carrier_id)
+                    _logger.warning("website_sale_donate: checkout() OPC STEP 1: 'delivery_type' found in post kwargs! "
+                                    "Calling self.payment(**post)")
                     self.payment(**post)
                     # HINT: carrier_id must be removed or payment will always return a redirection to /shop/payment
+                    _logger.warning("website_sale_donate: checkout() OPC STEP 1: remove 'carrier_id' from post kwargs")
                     post.pop('carrier_id')
 
                 # STEP 2: confirm_order
@@ -685,9 +690,13 @@ class website_sale_donate(website_sale):
     # HINT: Shopping Cart Redirection is done above around line 92
     @http.route()
     def payment(self, **post):
+        if 'carrier_id' in post:
+            _logger.warning("website_sale_donate: payment(): 'carrier_id' in post kwargs!")
 
         # For one page checkout redirect to checkout page
         if request.website['one_page_checkout']:
+            _logger.warning("website_sale_donate: payment(): request.website['one_page_checkout'] is True: "
+                            "Redirecting to /shop/checkout")
             return request.redirect("/shop/checkout")
 
         # Call super().payment and render correct payment provider buttons

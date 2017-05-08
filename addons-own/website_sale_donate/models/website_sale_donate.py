@@ -1,12 +1,14 @@
 # -*- coding: utf-'8' "-*-"
 __author__ = 'mkarrer'
-
+import logging
 from openerp import SUPERUSER_ID
 from openerp import tools, api
 from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
 from openerp.addons.fso_base.tools.image import resize_to_thumbnail
+
+_logger = logging.getLogger(__name__)
 
 
 # HINT: Since we set this fields on product.template it is not possible to have different values for variants
@@ -474,3 +476,16 @@ class product_template(osv.Model):
         'hide_fundingbar': fields.boolean('Hide Funding-Bar in Page'),
         'hide_fundingdesc': fields.boolean('Hide Funding-Description in Page'),
     }
+
+
+# TODO: Just a test for concurrent writes ;)
+class SaleOrder(orm.Model):
+    _inherit = 'sale.order'
+
+    def _check_carrier_quotation(self, cr, uid, order, force_carrier_id=None, context=None):
+        _logger.warning("website_sale_donate: _check_carrier_quotation(): "
+                        "call super website_sale_delivery _check_carrier_quotation() "
+                        "HINT: force_carrier_id = %s, order = %s" % (force_carrier_id, order))
+        return super(SaleOrder, self)._check_carrier_quotation(cr, uid, order=order,
+                                                               force_carrier_id=force_carrier_id,
+                                                               context=context)
