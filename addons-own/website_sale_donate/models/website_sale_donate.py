@@ -486,6 +486,10 @@ class SaleOrder(orm.Model):
         _logger.warning("website_sale_donate: _check_carrier_quotation(): "
                         "call super website_sale_delivery _check_carrier_quotation() "
                         "HINT: force_carrier_id = %s, order = %s" % (force_carrier_id, order))
-        return super(SaleOrder, self)._check_carrier_quotation(cr, uid, order=order,
-                                                               force_carrier_id=force_carrier_id,
-                                                               context=context)
+        result = super(SaleOrder, self)._check_carrier_quotation(cr, uid, order=order,
+                                                                 force_carrier_id=force_carrier_id, context=context)
+        if result:
+            _logger.warning("website_sale_donate: _check_carrier_quotation(): "
+                            "AFTER call of super website_sale_delivery _check_carrier_quotation(): "
+                            "carrier_id: %s" % str(result))
+        return result
