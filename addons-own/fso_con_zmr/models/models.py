@@ -383,7 +383,7 @@ class ResPartnerZMRGetBPK(models.Model):
             if birthdate:
                 # BPK Request attempt with full birthdate
                 responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
-                if response_ok(responses):
+                if self.response_ok(responses):
                     return responses
 
                 # BPK Request attempt with birth YEAR only
@@ -397,13 +397,13 @@ class ResPartnerZMRGetBPK(models.Model):
                         year = None
                 if year:
                     responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
-                    if response_ok(responses):
+                    if self.response_ok(responses):
                         return responses
 
             if zipcode:
                 # BPK Request attempt with zipcode only
                 responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
-                if response_ok(responses):
+                if self.response_ok(responses):
                     return responses
 
         # BPK not found
