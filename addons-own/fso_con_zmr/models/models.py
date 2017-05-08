@@ -13,6 +13,7 @@ from datetime import timedelta
 import logging
 import datetime
 from openerp.tools import config
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -368,43 +369,56 @@ class ResPartnerZMRGetBPK(models.Model):
     @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
         assert any((birthdate, zipcode)), _("Birthdate and zipcode missing! "
-                                            "You need to specify at least one them or both!")
+                                            "You need to specify at least one of them or both!")
 
-        # Process Lastname
-        lastnames_to_check = [lastname]
-        split_lastname = lastname.split('-')[0] if '-' in lastname else lastname.split(' ')[0] if ' ' in lastname \
-            else ''
-        if split_lastname:
-            lastnames_to_check.append(split_lastname)
+        # PROCESS FIRSTNAME
+        # Example: "   Lila+Örüm/Harkan-&Stefan1234567890§$%/()=+Gerwin   "
+        #          "Lila ÖrumHarkan-"
+        #
+        # Remove leading and/or trailing whitespace, remove '/' and replace '+' with 'space'
+        #firstname = firstname.strip().replace('+', ' ')
+        # Split name to first ' ' then to first '&' if any
+        #firstname = firstname.split(' ', 1)[0] if ' ' in firstname \
+            #else firstname.split('&', 1)[0] if '&' in firstname \
+            #else firstname
+        # Todo: Allow only 'alpha' inkl. 'acents' and 'umlauts' and '-' (Remove special chars like '$%&/()?' and alike)
 
-        # Start BPK Request(s)
+        # PROCESS LASTNAME
+        # Example: " jUn.   Holzknecht jun. SeN. Mußtermann-Müller sen. 1234567890§$%&/()=+   "
+        #          "Holzknecht Mußtermann-Müller 1234567890§$%&/()=+"
+        #
+        # Todo: Replace 'jun.' inclusive leading and/or trailing spaces case insensitive with 'space'
+        # Todo: Replace 'sen.' inclusive leading and/or trailing spaces case insensitive with 'space'
+        # Todo: Convert multiple spaces to exactly one space
+        # Todo: Remove leading or trailing spaces
+
+        # BPK REQUESTS
         responses = list()
-        for lastname in lastnames_to_check:
-            if birthdate:
-                # BPK Request attempt with full birthdate
-                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
-                if self.response_ok(responses):
-                    return responses
+        if birthdate:
+            # BPK Request attempt with full birthdate
+            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
+            if self.response_ok(responses):
+                return responses
 
-                # BPK Request attempt with birth YEAR only
+            # BPK Request attempt with birth YEAR only
+            try:
+                date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
+                year = date.strftime("%Y")
+            except:
                 try:
-                    date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
-                    year = date.strftime("%Y")
+                    year = str(birthdate).split("-", 1)[0]
                 except:
-                    try:
-                        year = str(birthdate).split("-", 1)[0]
-                    except:
-                        year = None
-                if year:
-                    responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
-                    if self.response_ok(responses):
-                        return responses
-
-            if zipcode:
-                # BPK Request attempt with zipcode only
-                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
+                    year = None
+            if year:
+                responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
                 if self.response_ok(responses):
                     return responses
+
+        if zipcode:
+            # BPK Request attempt with zipcode only
+            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
+            if self.response_ok(responses):
+                return responses
 
         # BPK not found
         return responses
