@@ -18,6 +18,42 @@ import re
 logger = logging.getLogger(__name__)
 
 
+def clean_name(name, split=False):
+    # ATTENTION: Flags like re.UNICODE do NOT work all the time!
+    #            Use (?u) instead in the start of any regex pattern!
+
+    # Decode name from utf-8 to unicode for regex processing
+    #name = name.decode('utf-8')
+
+    # Remove unwanted words case insensitive (?i)
+    # HINT: This may leave spaces or dots after the words but these get cleaned later on anyway
+    name = re.sub(ur"(?iu)\b(fam|familie|sen|jun|und|u|persönlich|privat|c[/]o|anonym|e[.]u)\b", "", name)
+    # Remove Numbers
+    name = ''.join(re.findall(ur"(?u)[^0-9]+", name))
+    # Replace & and + with -
+    name = re.sub(ur"(?u)[&+]+", "-", name, re.UNICODE)
+    # Keep only unicode alphanumeric-characters (keeps chars like e.g.: Öö ỳ Ṧ), dash and space
+    # HINT: This removes the left over dots from e.g.: Sen. or u.
+    name = ''.join(re.findall(ur"(?u)[\w\- ]+", name))
+    # Remove leading and trailing: whitespace and non alphanumeric characters
+    name = re.sub(ur"(?u)^[\W]*|[\W]*$", "", name)
+    # Replace multiple dashes with one dash
+    name = re.sub(ur"(?u)-[\s\-]*-+", "-", name)
+    # Replace multiple spaces with one space
+    name = re.sub(ur"(?u)\s\s+", " ", name)
+
+    # Use only first word of name
+    if split:
+        # Search from start until first non unicode alphanumeric-character is reached
+        # HINT: Can only be space or dash at this point ;)
+        name = ''.join(re.findall(ur"(?u)^[\w]+", name))
+
+    assert name, _("Name is empty after clean_name()")
+
+    #return name.encode('utf-8')
+    return name
+
+
 class CompanyAustrianZMRSettings(models.Model):
     _inherit = 'res.company'
 
@@ -372,25 +408,10 @@ class ResPartnerZMRGetBPK(models.Model):
                                             "You need to specify at least one of them or both!")
 
         # PROCESS FIRSTNAME
-        # Example: "   Lila+Örüm/Harkan-&Stefan1234567890§$%/()=+Gerwin   "
-        #          "Lila ÖrumHarkan-"
-        #
-        # Remove leading and/or trailing whitespace, remove '/' and replace '+' with 'space'
-        #firstname = firstname.strip().replace('+', ' ')
-        # Split name to first ' ' then to first '&' if any
-        #firstname = firstname.split(' ', 1)[0] if ' ' in firstname \
-            #else firstname.split('&', 1)[0] if '&' in firstname \
-            #else firstname
-        # Todo: Allow only 'alpha' inkl. 'acents' and 'umlauts' and '-' (Remove special chars like '$%&/()?' and alike)
+        firstname = clean_name(firstname, split=True)
 
         # PROCESS LASTNAME
-        # Example: " jUn.   Holzknecht jun. SeN. Mußtermann-Müller sen. 1234567890§$%&/()=+   "
-        #          "Holzknecht Mußtermann-Müller 1234567890§$%&/()=+"
-        #
-        # Todo: Replace 'jun.' inclusive leading and/or trailing spaces case insensitive with 'space'
-        # Todo: Replace 'sen.' inclusive leading and/or trailing spaces case insensitive with 'space'
-        # Todo: Convert multiple spaces to exactly one space
-        # Todo: Remove leading or trailing spaces
+        lastname = clean_name(lastname, split=False)
 
         # BPK REQUESTS
         responses = list()

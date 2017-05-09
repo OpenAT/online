@@ -66,6 +66,7 @@ def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="",
 
     # Send the request (POST)
     # http://docs.python-requests.org/en/master/user/advanced/
+    request_data = request_data.encode('utf-8')
     response = session.post(url, data=request_data, headers=http_header, timeout=15)
 
     # Check for response errors
