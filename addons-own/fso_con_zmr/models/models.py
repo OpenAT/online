@@ -22,16 +22,13 @@ def clean_name(name, split=False):
     # ATTENTION: Flags like re.UNICODE do NOT work all the time!
     #            Use (?u) instead in the start of any regex pattern!
 
-    # Decode name from utf-8 to unicode for regex processing
-    #name = name.decode('utf-8')
-
     # Remove unwanted words case insensitive (?i)
     # HINT: This may leave spaces or dots after the words but these get cleaned later on anyway
     name = re.sub(ur"(?iu)\b(fam|familie|sen|jun|und|u|persönlich|privat|c[/]o|anonym|e[.]u)\b", "", name)
     # Remove Numbers
     name = ''.join(re.findall(ur"(?u)[^0-9]+", name))
     # Replace & and + with -
-    name = re.sub(ur"(?u)[&+]+", "-", name, re.UNICODE)
+    name = re.sub(ur"(?u)[&+]+", "-", name)
     # Keep only unicode alphanumeric-characters (keeps chars like e.g.: Öö ỳ Ṧ), dash and space
     # HINT: This removes the left over dots from e.g.: Sen. or u.
     name = ''.join(re.findall(ur"(?u)[\w\- ]+", name))
@@ -50,7 +47,6 @@ def clean_name(name, split=False):
 
     assert name, _("Name is empty after clean_name()")
 
-    #return name.encode('utf-8')
     return name
 
 
@@ -219,7 +215,11 @@ class ResPartnerZMRGetBPK(models.Model):
         # HINT: Returns only True or False!
         result = super(ResPartnerZMRGetBPK, self).write(vals)
         # Check if any relevant field for BPKRequestNeeded is in vals
-        if result and any(key in vals for key in ['firstname', 'lastname', 'birthdate_web', 'zip']):
+        # HINT: If BPKRequestNeeded is in vals we do nothing because this can only be from the sosyncer indicating
+        #       that a BPK request is not needed for this res.partner most likely because there are already related
+        #       BPK requests in FS created by an file import (but maybe not synced already).
+        if result and 'BPKRequestNeeded' not in vals \
+                and any(key in vals for key in ['firstname', 'lastname', 'birthdate_web', 'zip']):
             self._compute_bpk_request_needed()
         return result
 
@@ -462,15 +462,15 @@ class ResPartnerZMRGetBPK(models.Model):
         partners = self
         warning_messages = ""
 
-        # Check partners for donation donation_deduction_optout_web
+        # Remove all partner with donation deduction opt out set from the record set
         ddow = self.env['res.partner'].search([('id', 'in', self.ids),
                                                ('donation_deduction_optout_web', '!=', False)])
         if ddow:
-            warning_messages += _("Donation Deduction Opt Out is set for partners:\n%s\n "
+            warning_messages += _("Donation Deduction Opt Out is set for partner:\n%s\n "
                                   "BPK check skipped for them!\n\n") % ddow.ids
             partners = partners - ddow
 
-        # Check partners if they are already in processing
+        # Remove all partner that are marked as "BPK request in progress" from the record set
         # ATTENTION: Ignore the BPKRequestInProgress field if older than 'request_in_progress_limit' days to recover
         #            from terminated processes or exceptions.
         # TODO: set timedelate days value from res.config setting
@@ -484,7 +484,7 @@ class ResPartnerZMRGetBPK(models.Model):
                                   "BPK check skipped for them!\n\n") % brip.ids
             partners = partners - brip
 
-        # Mark all remaining partners with 'BPK Request In Progress' to avoid double calls of different workers
+        # Mark all remaining partners with 'BPK Request In Progress' to avoid double processing
         partners.write({'BPKRequestInProgress': fields.datetime.now()})
 
         # Process BPK Requests
