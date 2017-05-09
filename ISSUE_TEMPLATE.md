@@ -1,7 +1,7 @@
 # Bug Summary
 A very short facts-summary of the bug **without any personal assumptions or conjectures**.
 If posting logs please make sure to only post the relevant parts and post it under *Additiona Information*. It is even benefitial to delete unnecessary information from the log.
-You can of course delete all of this issue template text if you describe a new fetaure instead of a bug.
+You can of course delete all of this issue template text if you describe a new feature instead of a bug.
 
 ## How to Reproduce
 *Example text 1:*
