@@ -18,8 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 def clean_name(name, split=False):
+    # HINT: Char fields are always unicode in odoo which is good therefore do not convert any Char fields with str()!
     # ATTENTION: Flags like re.UNICODE do NOT work all the time!
     #            Use (?u) instead in the start of any regex pattern!
+
 
     # Remove unwanted words case insensitive (?i)
     # HINT: This may leave spaces or dots after the words but these get cleaned later on anyway
@@ -177,34 +179,39 @@ class ResPartnerZMRGetBPK(models.Model):
     BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
 
     # BPK Fields for request processing and optimization and filtering
-    BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=True)
-    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=True)
-    LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
+    BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=False)
+    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=False)
+    LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=False)
+    # TODO: computed state field
+    # HINT: colors="red:BPKRequestDate == False and BPKErrorRequestDate;
+    #               orange:BPKRequestDate &lt; BPKErrorRequestDate;
+    #               green:BPKRequestDate &gt; BPKErrorRequestDate"
+    # HINT: This field shows only the state of the current bpk requests and does not check if current data is still
+    # ATTENTION: Date fields are in char format - make sure greater than or lower than comparison works as expected
+    # BPKRequestState = fields.Selection(
+    #     selection=[('pending', 'Pending'),                    # BPKRequestNeeded is set
+    #                ('found', 'Found'),                        # any(BPKRequestDate > BPKErrorRequestDate)
+    #                ('found_outdated', 'Found but outdated'),  # any(BPKRequestDate < BPKErrorRequestDate)
+    #                ('notfound', 'Not Found')],                # any(Not BPKRequestDate and BPKErrorRequestDate)
+    #     string="BPK Request(s) State", compute=_compute_bpk_request_state, store=True)
 
     # Compute BPKRequestNeeded on in 'res.partner'.write() method
     @api.multi
     def _compute_bpk_request_needed(self):
         """ If any of the depending-on fields changes set BPKRequestNeeded if all data available """
-        start_time = None
         if len(self) >= 10:
             logger.info(_("Computing BPKRequestNeeded for %s partner!") % len(self))
-            start_time = time.time()
 
         for p in self:
+            # Set BPKRequestNeeded if currently not set and all data is available and not donation_deduction_optout_web
             if not p.donation_deduction_optout_web and (
                         all((p.firstname, p.lastname, p.birthdate_web)) or all((p.firstname, p.lastname, p.zip))):
                 if not p.BPKRequestNeeded:
-                    logger.warning("TESTING ONLY: Set BPKRequestNeeded for %s" % p.name)
                     p.BPKRequestNeeded = fields.datetime.now()
                 continue
-            # Data is missing or donation_deduction_optout_web set
+            # Unset BPKRequestNeeded if currently set and data is missing or donation_deduction_optout_web is set
             if p.BPKRequestNeeded:
-                logger.warning("TESTING ONLY: Unset BPKRequestNeeded for %s" % p.name)
                 p.BPKRequestNeeded = None
-
-        if start_time:
-            processing_time = time.time() - start_time
-            logger.info(_("Computed BPKRequestNeeded for %s in %.3f") % (len(self), processing_time))
 
     # Compute BPKRequestNeeded
     @api.multi
@@ -228,12 +235,11 @@ class ResPartnerZMRGetBPK(models.Model):
         :return: res.company recordset
         """
         # Find all companies with fully filled pvpToken Header fields
-        # ATTENTION: In odoo domains you MUST USE '' to check for character fields e.g.: ('firstname', '!=', '')
-        #            !!! Using False or True WILL NOT WORK e.g.: ('firstname', '!=', False) !!!
-        #            For date fields or ids using True or False is no problem!
-        companies = self.env['res.company'].sudo().search([('stammzahl', '!=', ''),
-                                                           ('pvpToken_userId', '!=', ''),
-                                                           ('pvpToken_cn', '!=', ''),
+        # ATTENTION: Char Fields (and ONLY Char fields) in odoo domains should be checked with 'not in', [False, '']
+        #            Because the sosyncer or the website may wrote empty strings "" to Char fields instead of False
+        companies = self.env['res.company'].sudo().search([('stammzahl', 'not in', [False, '']),
+                                                           ('pvpToken_userId', 'not in', [False, '']),
+                                                           ('pvpToken_cn', 'not in', [False, '']),
                                                            ('pvpToken_crt_pem', '!=', False),
                                                            ('pvpToken_prvkey_pem', '!=', False),
                                                            ('BPKRequestURL', '!=', False)])
@@ -357,7 +363,6 @@ class ResPartnerZMRGetBPK(models.Model):
                 result['request_url'] = response.request.url
                 response_time = time.time() - start_time
                 result['response_time_sec'] = "%.3f" % response_time
-                # Todo: Log Request status (success, error and request time)
 
                 # Process soap xml answer
                 parser = etree.XMLParser(remove_blank_text=True)
@@ -461,7 +466,7 @@ class ResPartnerZMRGetBPK(models.Model):
     # --------------
     @api.multi
     def set_bpk(self):
-        partners = self
+        partner = self
         warning_messages = ""
 
         # Find partner with donation_deduction_optout_web set
@@ -472,7 +477,7 @@ class ResPartnerZMRGetBPK(models.Model):
         if ddow:
             warning_messages += _("Donation Deduction Opt Out is set for partner:\n%s\n "
                                   "BPK check skipped for them!\n\n") % ddow.ids
-            partners = partners - ddow
+            partner = partner - ddow
 
         # Find partners that are currently processed
         brip_domain = [('id', 'in', self.ids),
@@ -482,19 +487,21 @@ class ResPartnerZMRGetBPK(models.Model):
         if brip:
             warning_messages += _("BPK request in progress for partners:\n%s\n "
                                   "BPK check skipped for them!\n\n") % brip.ids
-            partners = partners - brip
+            partner = partner - brip
 
         # Mark all remaining partners with 'BPK Request In Progress' to avoid double processing
-        partners.write({'BPKRequestInProgress': fields.datetime.now()})
+        if partner and len(partner) >= 10:
+            logger.info(_("set_bpk() Set BPKRequestInProgress for %s partner") % len(partner))
+        partner.write({'BPKRequestInProgress': fields.datetime.now()})
 
         # Process BPK Requests
         processed_partner_count = 0
-        for p in partners:
+        for p in partner:
             # Prepare request values
             firstname = p.firstname
             lastname = p.lastname
             birthdate_web = p.birthdate_web
-            zipcode = str(p.zip) if p.zip else ""
+            zipcode = p.zip
             if p.BPKForcedFirstname or p.BPKForcedLastname or p.BPKForcedBirthdate:
                 # Check for complete set of Force-BPK-Fields
                 if not all((p.BPKForcedFirstname, p.BPKForcedLastname, p.BPKForcedBirthdate)):
@@ -539,35 +546,35 @@ class ResPartnerZMRGetBPK(models.Model):
                 # Process the response and transform it to a dict to create or update an res.partner.bpk record
                 if not r['response_http_error_code'] and r['private_bpk'] and r['public_bpk']:
                     values = {
-                        'BPKRequestCompanyID': r['company_id'],
-                        'BPKRequestPartnerID': p.id,
-                        'BPKPrivate': r['private_bpk'],
-                        'BPKPublic': r['public_bpk'],
-                        'BPKRequestDate': r['request_date'],
-                        'BPKRequestURL': r['request_url'],
-                        'BPKRequestData': r['request_data'],
-                        'BPKRequestFirstname': firstname,
-                        'BPKRequestLastname': lastname,
-                        'BPKRequestBirthdate': birthdate_web,
-                        'BPKRequestZIP': zipcode,
-                        'BPKResponseData': r['response_content'],
+                        'BPKRequestCompanyID': r['company_id'] or False,
+                        'BPKRequestPartnerID': p.id or False,
+                        'BPKPrivate': r['private_bpk'] or False,
+                        'BPKPublic': r['public_bpk'] or False,
+                        'BPKRequestDate': r['request_date'] or False,
+                        'BPKRequestURL': r['request_url'] or False,
+                        'BPKRequestData': r['request_data'] or False,
+                        'BPKRequestFirstname': firstname or False,
+                        'BPKRequestLastname': lastname or False,
+                        'BPKRequestBirthdate': birthdate_web or False,
+                        'BPKRequestZIP': zipcode or False,
+                        'BPKResponseData': r['response_content'] or False,
                         'BPKResponseTime': response_time,
                     }
 
                 else:
                     values = {
-                        'BPKRequestCompanyID': r['company_id'],
-                        'BPKRequestPartnerID': p.id,
-                        'BPKErrorCode': r['faultcode'],
-                        'BPKErrorText': r['faulttext'],
-                        'BPKErrorRequestDate': r['request_date'],
-                        'BPKErrorRequestURL': r['request_url'],
-                        'BPKErrorRequestData': r['request_data'],
-                        'BPKErrorRequestFirstname': firstname,
-                        'BPKErrorRequestLastname': lastname,
-                        'BPKErrorRequestBirthdate': birthdate_web,
-                        'BPKErrorRequestZIP': zipcode,
-                        'BPKErrorResponseData': r['response_content'],
+                        'BPKRequestCompanyID': r['company_id'] or False,
+                        'BPKRequestPartnerID': p.id or False,
+                        'BPKErrorCode': r['faultcode'] or False,
+                        'BPKErrorText': r['faulttext'] or False,
+                        'BPKErrorRequestDate': r['request_date'] or False,
+                        'BPKErrorRequestURL': r['request_url'] or False,
+                        'BPKErrorRequestData': r['request_data'] or False,
+                        'BPKErrorRequestFirstname': firstname or False,
+                        'BPKErrorRequestLastname': lastname or False,
+                        'BPKErrorRequestBirthdate': birthdate_web or False,
+                        'BPKErrorRequestZIP': zipcode or False,
+                        'BPKErrorResponseData': r['response_content'] or False,
                         'BPKErrorResponseTime': response_time,
                     }
 
@@ -629,26 +636,26 @@ class ResPartnerZMRGetBPK(models.Model):
                             This is useful for memory / speed optimization
         :return: recordset # res.partner
         """
-        # TODO: BPKRequestInProgress should be honored in Regular and Full search - maybe days selectable by option and
-        #       not honored if option is 0 or none like limit
-
         # Common Search-Domain-Parts
-        # ATTENTION: In odoo domains you MUST USE '' to check for character fields e.g.: ('firstname', '!=', '')
-        #            Using False or True WILL NOT WORK e.g.: ('firstname', '!=', False) !!!
-        #            For date fields or ids using True or False is no problem!
+        # ATTENTION: Char Fields (and ONLY Char fields) in odoo domains should be checked with '(not) in', [False, '']
+        #            Because the sosyncer or the website may wrote empty strings "" to Char fields instead of False
         domain = [('donation_deduction_optout_web', '=', False),
-                  ('firstname', '!=', ''),
-                  ('lastname', '!=', ''),
+                  ('firstname', 'not in', [False, '']),
+                  ('lastname', 'not in', [False, '']),
                   '|',
                       ('birthdate_web', '!=', False),
-                      ('zip', '!=', '')
+                      ('zip', 'not in', [False, '']),
+                  '|',
+                      ('BPKRequestInProgress', '=', False),
+                      ('BPKRequestInProgress', '<', str(fields.datetime.now() -
+                                                        timedelta(hours=in_progress_limit)))
                   ]
 
         # REGULAR SEARCH
         # --------------
         # Searches for all partners where BPKRequestNeeded is set that are not already in processing
         if not full_search:
-            domain = [('BPKRequestNeeded', '!=', False), ('BPKRequestInProgress', '=', False)] + domain
+            domain = [('BPKRequestNeeded', '!=', False),] + domain
             if skip_no_bpk:
                 # Search only for partners with existing BPK records
                 domain = [('BPKRequestIDS', '!=', False)] + domain
@@ -659,15 +666,8 @@ class ResPartnerZMRGetBPK(models.Model):
         # -----------
         # Do a full search for all partners and return any partner where a BPK request is needed
 
-        # Exclude all partner that are already in processing,
-        # except if they are 'in processing' for longer than (now - in_progress_limit)
-        domain = ['|',
-                      ('BPKRequestInProgress', '=', False),
-                      ('BPKRequestInProgress', '<', str(fields.datetime.now() -
-                                                    timedelta(hours=in_progress_limit)))] + domain
-
-        # Exclude partners with BPKRequestNeeded = True
-        # HINT: This is useful to speed up cleanup runs.
+        # Exclude partners with BPKRequestNeeded = True if full_search_skip_bpk_request_needed is set
+        # HINT: This is only useful to speed up cleanup runs.
         if full_search_skip_bpk_request_needed:
             domain = [('BPKRequestNeeded', '=', False)] + domain
 
@@ -682,6 +682,7 @@ class ResPartnerZMRGetBPK(models.Model):
             return partners_to_update
 
         # 1.) CHECK PARTNERS WITH NO BPK RECORDS
+        partner_without_bpks = list()
         if not skip_no_bpk:
             no_bpk_domain = [('BPKRequestIDS', '=', False)] + domain
             logger.info("Full search: Find partners without BPK records: %s" % no_bpk_domain)
