@@ -48,5 +48,6 @@ Abfragen zum Zentralen Melderegister in Österreich
         'views/res_company.xml',
         'views/res_partner.xml',
         'views/res_partner_bpk.xml',
+        'data/bpk_actions.xml',
     ],
 }

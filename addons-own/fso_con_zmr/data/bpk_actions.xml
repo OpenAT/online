@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Server Action to run set_bpk() -->
+    <record id="action_set_bpk" model="ir.actions.server">
+        <field name="name">Set BPK</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_model') == 'res.partner':
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+                self.set_bpk(cr, uid, ids, context=context)
+        </field>
+    </record>
+
+    <!-- Add Server Action to More menu of res.partner -->
+    <record id="ir_set_bpk" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner'"/>
+        <field name="name">Set BPK</field>
+        <field name="value" eval="'ir.actions.server,%d'%action_set_bpk"/>
+    </record>
+
+    <!-- Scheduled fetch of BPK Records for res.partner -->
+    <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
+        <field name="name">BPK: Fetch BPK Records</field>
+        <field name="priority" eval="2000" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">res.partner</field>
+        <field name="function">scheduled_set_bpk</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+   <!-- Scheduled run to check BPKRequestNeeded -->
+    <record id="ir_cron_check_bpk_request_needed" model="ir.cron">
+        <field name="name">BPK: Check BPKRequestNeeded</field>
+        <field name="priority" eval="2100" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">res.partner</field>
+        <field name="function">check_bpk_request_needed</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+</data></openerp>

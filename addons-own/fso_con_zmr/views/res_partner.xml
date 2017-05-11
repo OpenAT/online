@@ -22,8 +22,8 @@
                         </group>
                     </group>
                     <group string="BPK Requests">
-                        <button colspan="2" name="set_bpk" type="object" string="Request BPK(s) from ZMR"/>
-                        <button colspan="2" name="tester" type="object" string="set_bpk_automated"/>
+                        <button colspan="2" name="set_bpk" type="object" string="Set BPK"/>
+                        <!-- button colspan="2" name="tester" type="object" string="check bpk request needed"/ -->
                         <field name="BPKRequestIDS" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="BPKRequestPartnerID,BPKRequestCompanyID"
