@@ -23,7 +23,7 @@
                     </group>
                     <group string="BPK Requests">
                         <button colspan="2" name="set_bpk" type="object" string="Set BPK"/>
-                        <button colspan="2" name="tester" type="object" string="check bpk request needed"/>
+                        <!-- button colspan="2" name="tester" type="object" string="TESTER: check bpk request needed"/ -->
                         <field name="BPKRequestIDS" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="BPKRequestPartnerID,BPKRequestCompanyID"
@@ -40,5 +40,136 @@
             </xpath>
         </field>
     </record>
+    <!-- Extend res.partner search view to include custom filters for 'Next BPK-Requests', 'BPK-Requests in Progress' -->
+    <record id="res_partner_search_inherit_bpk" model="ir.ui.view">
+        <field name="name">res_partner_search_inherit_bpk</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="BPKRequestInProgress"/>
+                <field name="BPKRequestNeeded"/>
+                <field name="LastBPKRequest"/>
+                <field name="write_date"/>
+                <separator/>
+                <!-- filter string="Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc',}"/ -->
+                <filter string="Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]"/>
+                <filter string="BPK-Requests in progress" name="bpk_requests_in_progress" domain="[('BPKRequestInProgress','!=',False)]"/>
+                <separator/>
+            </field>
+        </field>
+    </record>
+
+
+    <!-- NEW VIEW SET TO FILTER PARTNERS BY BPK REQUESTS -->
+    <!-- BPK REQUESTS: Create form, tree and list view for the res.partner -->
+    <record model="ir.ui.view" id="res_partner_bpk_res_partner_form">
+        <field name="name">res_partner_bpk_res_partner_form</field>
+        <field name="model">res.partner</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Partner">
+                <group>
+                    <group>
+                        <field name="firstname"/>
+                        <field name="lastname"/>
+                        <field name="birthdate_web"/>
+                        <field name="zip"/>
+                    </group>
+                    <group string="Force BPK Request Values (optional)">
+                        <field name="BPKForcedFirstname" attrs="{'required': ['|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
+                        <field name="BPKForcedLastname" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
+                        <field name="BPKForcedBirthdate" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False)]}"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="BPKRequestInProgress"/>
+                    <field name="BPKRequestNeeded"/>
+                    <field name="LastBPKRequest"/>
+                    <field name="write_date"/>
+                    <button colspan="2" name="set_bpk" type="object" string="Set BPK"/>
+                    <field name="BPKRequestIDS" colspan="2" nolabel="1">
+                        <tree string="BPK Requests"
+                              default_order="BPKRequestPartnerID,BPKRequestCompanyID"
+                              colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                            <field name="BPKRequestCompanyID"/>
+                            <field name="BPKRequestDate"/>
+                            <field name="BPKPrivate"/>
+                            <field name="BPKErrorRequestDate"/>
+                            <field name="BPKErrorCode"/>
+                        </tree>
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="res_partner_bpk_res_partner_tree">
+        <field name="name">res_partner_bpk_res_partner_tree</field>
+        <field name="model">res.partner</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Partner" default_order="write_date desc">
+                <field name="firstname"/>
+                <field name="lastname"/>
+                <field name="birthdate_web"/>
+                <field name="zip"/>
+                <field name="BPKRequestInProgress"/>
+                <field name="BPKRequestNeeded"/>
+                <field name="LastBPKRequest"/>
+                <field name="write_date"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="res_partner_bpk_res_partner_search">
+        <field name="name">res_partner_bpk_res_partner_search</field>
+        <field name="model">res.partner</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="BPK Requests">
+                <field name="firstname"/>
+                <field name="lastname"/>
+                <field name="birthdate_web"/>
+                <field name="zip"/>
+                <field name="BPKRequestInProgress"/>
+                <field name="BPKRequestNeeded"/>
+                <field name="LastBPKRequest"/>
+                <field name="write_date"/>
+                <!-- WARNING: 'order_by' is ignored in filters: https://github.com/odoo/odoo/issues/11610 -->
+                <group string="BPK">
+                    <filter string="Next Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc'}"/>
+                    <filter string="Last BPK-Requests" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
+                    <filter string="BPK-Requests in progress" name="bpk_requests_in_progress" domain="[('BPKRequestInProgress','!=',False)]" context="{'order_by':'write_date desc'}"/>
+                </group>
+                <separator/>
+            </search>
+        </field>
+    </record>
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="res_partner_bpk_res_partner_action" model="ir.actions.act_window" >
+        <field name="name">BPK Partner</field>
+        <field name="res_model">res.partner</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="res_partner_bpk_res_partner_search"/>
+        <field name="filter" eval="True"/>
+        <field name="context">{'search_default_next_bpk_requests':True}</field>
+    </record>
+    <record id="res_partner_bpk_res_partner_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_bpk_res_partner_tree"/>
+        <field name="act_window_id" ref="res_partner_bpk_res_partner_action"/>
+    </record>
+    <record id="res_partner_bpk_res_partner_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_bpk_res_partner_form"/>
+        <field name="act_window_id" ref="res_partner_bpk_res_partner_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="res_partner_bpk_res_partner_menu" action="res_partner_bpk_res_partner_action" parent="base.menu_config" sequence="1305"/>
 
 </data></openerp>
