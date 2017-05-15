@@ -7,5 +7,7 @@
         <menuitem id="menu_fsonline_partner" parent="menu_fsonline" name="Partner" sequence="2000"/>
         <menuitem id="menu_fsonline_fundraising" parent="menu_fsonline" name="Online Fundraising" sequence="3000"/>
         <menuitem id="menu_fsonline_settings" parent="menu_fsonline" name="Settings" sequence="10000"/>
+
+        <menuitem id="menu_fsonline_scheduledactions" action="base.ir_cron_act" parent="menu_fsonline_settings" sequence="10900"/>
     </data>
 </openerp>

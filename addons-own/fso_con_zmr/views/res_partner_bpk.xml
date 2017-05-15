@@ -111,4 +111,5 @@
     <!-- And we add the Action to a Menu with the shortcut menuitem -->
     <menuitem id="res_partner_bpk_menu" action="res_partner_bpk_action" parent="base.menu_config" sequence="1300"/>
 
+
 </data></openerp>

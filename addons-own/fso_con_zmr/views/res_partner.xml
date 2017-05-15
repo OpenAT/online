@@ -70,19 +70,19 @@
         <field name="arch" type="xml">
             <form string="Partner">
                 <group>
-                    <group>
+                    <group string="Partner Data">
                         <field name="firstname"/>
                         <field name="lastname"/>
                         <field name="birthdate_web"/>
                         <field name="zip"/>
                     </group>
-                    <group string="Force BPK Request Values (optional)">
+                    <group string="Forced BPK Request Values (optional)">
                         <field name="BPKForcedFirstname" attrs="{'required': ['|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
                         <field name="BPKForcedLastname" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
                         <field name="BPKForcedBirthdate" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False)]}"/>
                     </group>
                 </group>
-                <group>
+                <group string="BPK Requests">
                     <field name="BPKRequestInProgress"/>
                     <field name="BPKRequestNeeded"/>
                     <field name="LastBPKRequest"/>
