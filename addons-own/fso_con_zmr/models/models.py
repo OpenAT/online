@@ -178,8 +178,8 @@ class ResPartnerZMRGetBPK(models.Model):
     BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
 
     # BPK Fields for request processing and optimization and filtering
-    BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=False)
-    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=False)
+    BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=True)
+    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=True)
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
     # TODO optional: computed state field
     # HINT: colors="red:BPKRequestDate == False and BPKErrorRequestDate;
