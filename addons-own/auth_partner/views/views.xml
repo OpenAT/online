@@ -54,7 +54,7 @@
         </record>
         <!-- window action -->
         <record model="ir.actions.act_window" id="fstoken_action">
-            <field name="name">FS Partner Tokens</field>
+            <field name="name">FS Login Token</field>
             <field name="res_model">res.partner.fstoken</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
