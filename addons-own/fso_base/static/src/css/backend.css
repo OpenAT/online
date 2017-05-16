@@ -43,3 +43,10 @@
 .openerp .oe_kanban_view .oe_kanban_group_title .oe_kanban_group_title_text {
     font-size: 10px;
 }
+
+/* Date Picker and Date Input Fields */
+.ui-datepicker,
+.openerp .oe_form_editable .oe_form .oe_form_field_date input,
+.openerp .oe_form_editable .oe_form .oe_form_field_datetime input {
+    width: 240px;
+}

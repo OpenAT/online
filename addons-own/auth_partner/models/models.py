@@ -25,6 +25,7 @@ from openerp.exceptions import ValidationError, AccessDenied
 from openerp.http import request
 from openerp.tools.translate import _
 from openerp.addons.auth_partner.fstoken_tools import fstoken_check
+from openerp.exceptions import Warning
 
 
 class res_users(models.Model):
@@ -78,3 +79,38 @@ class ResPartner(models.Model):
     fstoken_ids = fields.One2many(string='FS Partner Tokens', comodel_name='res.partner.fstoken',
                                   inverse_name='partner_id')
 
+
+class FSTokenWizard(models.TransientModel):
+    _name = 'res.partner.fstoken.wizard'
+
+    expiration_date = fields.Date(string="Expiration Date", required=True,
+                                  default=fields.datetime.now() + timedelta(days=14))
+
+    @api.multi
+    def set_expiration_date(self):
+        # Get context
+        ctx = self.env.context
+        if not ctx:
+            return {}
+        if ctx.get('active_model') != 'res.partner.fstoken':
+            raise Warning(_("Active model must be res.partner.fstoken!"))
+
+        # Check expiration date set in wizard form view
+        expiration_date = fields.datetime.strptime(self.expiration_date, "%Y-%m-%d")
+        max_date = fields.datetime.now() + timedelta(weeks=30)
+
+        if expiration_date > max_date:
+            raise Warning(_("Expiration Date is not allowed to be more than 7 months (30 weeks) in the future!"))
+
+        # Get res.parter.fstoken ids
+        fstokens = self.env['res.partner.fstoken']
+        if ctx.get('active_domain'):
+            fstokens = fstokens.search(ctx['active_domain'])
+        elif ctx.get('active_ids'):
+            fstokens = fstokens.browse(ctx['active_ids'])
+
+        # Set expiration_date for fstoken(s)
+        if fstokens:
+            fstokens.write({'expiration_date': self.expiration_date})
+
+        return {}
