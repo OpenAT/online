@@ -46,9 +46,16 @@ class website_sale_donate(website_sale):
     # SHOP PAGE: Add last_shop_page to the session
     @http.route()
     def shop(self, page=0, category=None, search='', **post):
+        try:
+            _logger.warning("shop(): START %s" % request.httprequest)
+        except:
+            _logger.warning("shop(): START")
+
         base_url = str(urlparse(request.httprequest.base_url).path)
         request.session['last_shop_page'] = base_url + ('?category='+str(category.id) if category else '')
         request.session['last_page'] = request.session['last_shop_page']
+
+        _logger.warning("shop(): END, return super(website_sale_donate, self).shop(...)")
         return super(website_sale_donate, self).shop(page=page, category=category, search=search, **post)
 
     # PRODUCT PAGE: Extend the product page render request to include price_donate and payment_interval
@@ -59,6 +66,11 @@ class website_sale_donate(website_sale):
     # /shop/product/<model("product.template"):product>
     @http.route()
     def product(self, product, category='', search='', **kwargs):
+        try:
+            _logger.warning("product(): START %s" % request.httprequest)
+        except:
+            _logger.warning("product(): START")
+
         # Make sure category is a valid int or an empty string!
         try:
             category = int(category)
@@ -84,6 +96,7 @@ class website_sale_donate(website_sale):
                 kwargs['set_qty'] = kwargs['add_qty']
             if not kwargs.get('product_id'):
                 kwargs['product_id'] = product.id
+            _logger.warning("product(): self.cart_update(**kwargs)")
             self.cart_update(**kwargs)
 
         # small_cart_update by json request: Remove json_cart_update in session
@@ -101,6 +114,7 @@ class website_sale_donate(website_sale):
 
         # One-Page-Checkout: Only if the template is ppt_opc
         if product.product_page_template == u'website_sale_donate.ppt_opc':
+            _logger.warning("product(): self.checkout(one_page_checkout=True ...")
             if request.httprequest.method == 'POST':
                 checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
             else:
@@ -145,20 +159,28 @@ class website_sale_donate(website_sale):
                     if sol.payment_interval_id and sol.payment_interval_id in sol.product_id.payment_interval_ids:
                         productpage.qcontext['payment_interval_id'] = sol.payment_interval_id.id
 
+        _logger.warning("product(): END")
         return productpage
 
     # SHOPPING CART: add keep to the values of qcontext
     # /shop/cart
     @http.route()
     def cart(self, **post):
+        try:
+            _logger.warning("cart(): START %s" % request.httprequest)
+        except:
+            _logger.warning("cart(): START")
 
         cartpage = super(website_sale_donate, self).cart(**post)
         cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
 
         # One-Page-Checkout
         if request.website['one_page_checkout']:
+
+            _logger.warning("cart(): END, opc redirect to /shop/checkout")
             return request.redirect("/shop/checkout")
 
+        _logger.warning("cart(): END")
         return cartpage
 
     # NEW ROUTE: SIMPLE CHECKOUT:
@@ -170,7 +192,13 @@ class website_sale_donate(website_sale):
                  '/shop/simple_checkout/<model("product.product"):product>'],
                 auth="public", website=True)
     def simple_checkout(self, product, **kw):
+        try:
+            _logger.warning("simple_checkout(): START %s" % request.httprequest)
+        except:
+            _logger.warning("simple_checkout(): START")
+
         kw.update(simple_checkout=True)
+        _logger.warning("simple_checkout(): END, return self.cart_update(product, **kw)")
         return self.cart_update(product, **kw)
 
     # SHOPPING CART UPDATE
@@ -178,6 +206,11 @@ class website_sale_donate(website_sale):
     # HINT: can also be called by Products-Listing Category Page if add-to-cart is enabled
     @http.route(['/shop/cart/update'])
     def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+        try:
+            _logger.warning("cart_update(): START %s" % request.httprequest)
+        except:
+            _logger.warning("cart_update(): START")
+
         cr, uid, context = request.cr, request.uid, request.context
 
         product = request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context)
@@ -206,6 +239,7 @@ class website_sale_donate(website_sale):
             pass
         if warnings:
             referrer = referrer + '&warnings=' + warnings
+            _logger.warning("cart_update(): END, arbitrary price error")
             return request.redirect(referrer)
 
         # PAYMENT INTERVAL
@@ -227,7 +261,7 @@ class website_sale_donate(website_sale):
                                                                                              context=context,
                                                                                              **kw)
         order = request.website.sale_get_order(context=context)
-        _logger.info("cart_update() for sale order %s" % order.name)
+        _logger.warning("cart_update(): sale order number %s" % order.name)
 
         # FSTOKEN: Set sales order partner by fs_ptoken
         # HINT: Only use or check the token if there is an order and the user is NOT logged in!
@@ -254,23 +288,33 @@ class website_sale_donate(website_sale):
 
             # Redirect to the product page if product-page-layout is one-page-checkout
             if product.product_page_template == u'website_sale_donate.ppt_opc':
+                _logger.warning("cart_update(): END, EXIT A) Simple Checkout, redirect to /shop/product/... ")
                 return request.redirect('/shop/product/' + str(product.product_tmpl_id.id))
 
             # Redirect to the checkout page
-            #return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
+            # return request.redirect('/shop/checkout' + '?' + request.httprequest.query_string)
+            _logger.warning("cart_update(): END, EXIT A) Simple Checkout, redirect to /shop/checkout")
             return request.redirect('/shop/checkout')
 
         # EXIT B) Stay on the current page if "Add to cart and stay on current page" is set
         if request.website['add_to_cart_stay_on_page']:
+            _logger.warning("cart_update(): END, EXIT B) Stay on the current page")
             return request.redirect(referrer)
 
         # EXIT C) Redirect to the shopping cart
+        _logger.warning("cart_update(): END, EXIT C) Redirect to the shopping cart")
         return request.redirect("/shop/cart")
 
     # /shop/cart/update_json
     @http.route()
     def cart_update_json(self, product_id, line_id, add_qty=None, set_qty=None, display=True):
+        try:
+            _logger.warning("cart_update_json(): START %s" % request.httprequest)
+        except:
+            _logger.warning("cart_update_json(): START")
+
         request.session['json_cart_update'] = 'True'
+        _logger.warning("cart_update_json(): END, super(website_sale_donate, self).cart_update_json(...)")
         return super(website_sale_donate, self).cart_update_json(product_id, line_id,
                                                                  add_qty=add_qty, set_qty=set_qty, display=display)
 
@@ -377,10 +421,12 @@ class website_sale_donate(website_sale):
 
     # Render the payment page with an additional dictionary acquirers_opc for One-Page-Checkout
     def opc_payment(self, **post):
+        try:
+            _logger.warning("opc_payment(): START %s" % request.httprequest)
+        except:
+            _logger.warning("opc_payment(): START")
 
         # Render the payment page and therefore get all Pay-Now Button forms
-        _logger.warning("website_sale_donate: opc_payment(): call super payment() "
-                        "HINT: payment() is derived in website_delivery and calls _check_carrier_quotation()")
         payment_page = super(website_sale_donate, self).payment(**post)
         payment_qcontext = None
         if hasattr(payment_page, 'qcontext'):
@@ -389,18 +435,19 @@ class website_sale_donate(website_sale):
         # Check for redirection caused by errors
         if not payment_qcontext:
             _logger.error(_('Payment Page has no qcontext. It may be a redirection. No Acquirer-Buttons rendered!'))
+            _logger.warning("opc_payment(): END, no qcontext from payment page")
             return payment_page
 
         # Check for errors in qcontext
         # HINT: If errors are present Pay-Now button forms will NOT! be rendered by payment controller
         if payment_qcontext.get('errors'):
             _logger.warning(_('Errors found on the payment page! No Acquirer-Buttons rendered!'))
+            _logger.warning("opc_payment(): END, errors in qcontext of payment page")
             return payment_page
 
         # Add Billing Fields to qcontext for address display
         billing_fields_obj = request.env['website.checkout_billing_fields']
         payment_qcontext['billing_fields'] = billing_fields_obj.search([])
-        _logger.debug("opc_payment() payment_qcontext['billing_fields'] %s" % payment_qcontext['billing_fields'])
 
         # Add Shipping Fields qcontext for address display
         shipping_fields_obj = request.env['website.checkout_shipping_fields']
@@ -491,6 +538,7 @@ class website_sale_donate(website_sale):
             # TODO: Validate acquirer non-hidden input fields
             # TODO: Should add a new mehtod to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
 
+        _logger.warning("opc_payment(): END")
         return payment_page
 
     # payment_transaction controller method (json route) gets replaced with this method
@@ -498,6 +546,7 @@ class website_sale_donate(website_sale):
     # This is called either by the json route after the pay-now button is pressed or during the one-page-checkout
     # HINT: We do not directly overwrite the Json route because calling a json route will kill/replace current session
     def payment_transaction_logic(self, acquirer_id, checkout_page=None, **post):
+        _logger.warning("payment_transaction_logic(): START")
 
         cr, uid, context = request.cr, request.uid, request.context
         transaction_obj = request.registry.get('payment.transaction')
@@ -590,6 +639,8 @@ class website_sale_donate(website_sale):
     # Overwrite the Json controller for the pay now button
     @http.route()
     def payment_transaction(self, acquirer_id):
+        _logger.warning("payment_transaction(): START")
+
         _logger.info(_('Call of json route /shop/payment/transaction/%s will start payment_transaction_logic()')
                      % acquirer_id)
         tx = self.payment_transaction_logic(acquirer_id)
@@ -598,6 +649,11 @@ class website_sale_donate(website_sale):
     # Checkout Page
     @http.route()
     def checkout(self, one_page_checkout=False, **post):
+        try:
+            _logger.warning("checkout(): START %s" % request.httprequest)
+        except:
+            _logger.warning("checkout(): START")
+
         cr, uid, context = request.cr, request.uid, request.context
 
         # Render the Checkout Page
@@ -608,6 +664,7 @@ class website_sale_donate(website_sale):
 
         # If One-Page-Checkout is enabled and checkout_page is not just a redirection or if one_page_checkout in post
         if (request.website['one_page_checkout'] or one_page_checkout) and hasattr(checkout_page, 'qcontext'):
+            _logger.warning("checkout(): One-Page-Checkout is enabled and checkout_page is not just a redirection")
 
             # Make sure one one_page_checkout is true and in the qcontext
             checkout_page.qcontext['one_page_checkout'] = True
@@ -616,17 +673,16 @@ class website_sale_donate(website_sale):
             if request.httprequest.method == 'POST':
 
                 # STEP 1: Update Delivery Method through payment controller
+                _logger.warning("checkout(): STEP 1: Update Delivery Method through payment controller")
                 carrier_id = post.get('delivery_type')
                 if carrier_id:
                     post['carrier_id'] = int(carrier_id)
-                    _logger.warning("website_sale_donate: checkout() OPC STEP 1: 'delivery_type' found in post kwargs! "
-                                    "Calling self.payment(**post)")
                     self.payment(**post)
                     # HINT: carrier_id must be removed or payment will always return a redirection to /shop/payment
-                    _logger.warning("website_sale_donate: checkout() OPC STEP 1: remove 'carrier_id' from post kwargs")
                     post.pop('carrier_id')
 
                 # STEP 2: confirm_order
+                _logger.warning("checkout(): STEP 2: confirm_order")
                 # confirm_order validates the form-data and creates or updates partner and sales-order
                 confirm_order = self.confirm_order(**post)
                 # HINT: opc_payment will also validate if the acquirer is correct for the payment interval of the so
@@ -642,17 +698,19 @@ class website_sale_donate(website_sale):
                 if checkout_page.qcontext.get('error') \
                         or confirm_order.location != '/shop/payment' \
                         or payment_page.qcontext.get('errors'):
-                    _logger.warning(_('Errors in checkout fields or from confirm_order or payment controller found!'))
+                    _logger.warning("checkout(): END at STEP 2, error in qcontext")
                     return checkout_page
                 # STEP 2: END (SUCCESSFUL)
 
                 # STEP 3: payment_transaction
+                _logger.warning("checkout(): STEP 3: payment_transaction")
                 # Create or update the Payment-Transaction and update the Sales Order
                 # HINT: Normally done by a json request before the pay-now form get's auto submitted by Java Script
                 if not post.get('acquirer'):
                     _logger.error(_('No Acquirer (Payment Method) selected!'))
                     # TODO: Check what happens if a 'wrong' acquirer was set at a product_page with ppt_opc
                     checkout_page.qcontext['opc_warnings'].append(_('Please select a payment method.'))
+                    _logger.warning("checkout(): END at STEP 3, no acquirer selected")
                     return checkout_page
 
                 # HINT: SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
@@ -665,10 +723,12 @@ class website_sale_donate(website_sale):
                 self.payment_transaction_logic(acquirer_id, checkout_page=checkout_page)
                 # If any errors are found return the checkout_page
                 if checkout_page.qcontext.get('opc_warnings'):
+                    _logger.warning("checkout(): END at STEP 3, opc_warnings")
                     return checkout_page
                 # STEP 3: END (SUCCESSFUL)
 
                 # STEP 4: set sales order to "send" and redirect to the payment provider
+                _logger.warning("checkout(): STEP 4: Set sales order to 'send' and redirect to the payment provider")
                 # Open the payment provider page OR directly validate the sales order if amount.total is 0
                 # Return the checkout page and auto submit the correct Pay-Now_Button_Form by java script
                 # TODO: if amount.total == 0 Directly set sales order to done and redirect to /shop/payment/validate
@@ -676,36 +736,43 @@ class website_sale_donate(website_sale):
                 for acquirer in payment_page.qcontext['acquirers']:
                     if int(acquirer.id) == int(post.get('acquirer')):
                         checkout_page.qcontext['acquirer_auto_submit'] = acquirer
+                _logger.warning("checkout(): END at STEP 4, opc POST request")
                 return checkout_page
 
             # Checkout-Page is called for the first time (with no post data)
             else:
                 payment_page = self.opc_payment()
                 checkout_page.qcontext.update(payment_page.qcontext)
+                _logger.warning("checkout(): END, opc GET request")
                 return checkout_page
 
+        _logger.warning("checkout(): END")
         return checkout_page
 
     # One-Page-Checkout: Payment Page Redirection
     # HINT: Shopping Cart Redirection is done above around line 92
     @http.route()
     def payment(self, **post):
-        if 'carrier_id' in post:
-            _logger.warning("website_sale_donate: payment(): 'carrier_id' in post kwargs!")
+        try:
+            _logger.warning("payment(): START %s" % request.httprequest)
+        except:
+            _logger.warning("payment(): START")
 
         # For one page checkout redirect to checkout page
         if request.website['one_page_checkout']:
-            _logger.warning("website_sale_donate: payment(): request.website['one_page_checkout'] is True: "
-                            "Redirecting to /shop/checkout")
+            _logger.warning("payment(): END, opc in session therefore redirect to /shop/checkout")
             return request.redirect("/shop/checkout")
 
         # Call super().payment and render correct payment provider buttons
+        _logger.warning("payment(): END, return self.opc_payment(**post)")
         return self.opc_payment(**post)
 
     # Alternative confirmation page for Dadi Payment-Providers (Acquirers ogonedadi and frst for now)
     # HINT this rout is called by the payment_provider routes e.g.: ogonedadi_form_feedback or frst_form_feedback
     @http.route(['/shop/confirmation_static'], type='http', auth="public", website=True)
     def payment_confirmation_static(self, order_id=None, **post):
+        _logger.warning("payment_confirmation_static(): START")
+
         cr, uid, context = request.cr, request.uid, request.context
         try:
             order_id = int(order_id)
