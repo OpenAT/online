@@ -22,6 +22,9 @@
             <script type="text/javascript" src="/fso_base_website/static/src/js/additional-methods-fso.js"/>
             <script type="text/javascript" src="/fso_base_website/static/src/js/jquery-validate-defaults.js"/>
 
+            <!-- Prevent double click on a tags (links) -->
+            <script type="text/javascript" src="/fso_base_website/static/src/js/prevent_double_click.js"/>
+
             <!-- Load custom css for smaller fixes -->
             <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
         </xpath>
