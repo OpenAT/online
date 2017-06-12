@@ -11,7 +11,13 @@
 
                     <!-- Payment-Provider Auto-Submit-Form -->
                     <t t-if="acquirer_auto_submit">
-                        <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
+                        <div class="container">
+                            <div class="row one-page-checkout ppt_opc-checkout">
+                                <div class="col-md-12">
+                                    <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
+                                </div>
+                            </div>
+                        </div>
                     </t>
 
                     <!-- Regular OPC Product Page -->

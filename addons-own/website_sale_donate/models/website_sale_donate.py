@@ -478,14 +478,19 @@ class product_template(osv.Model):
     }
 
 
-# TODO: Just a test for concurrent writes ;)
+# TODO: Just a brute force test to track down the sale order concurrent write source
 class SaleOrder(orm.Model):
     _inherit = 'sale.order'
 
     def _check_carrier_quotation(self, cr, uid, order, force_carrier_id=None, context=None):
         _logger.warning("_check_carrier_quotation(): START force_carrier_id = %s, order = %s" % (force_carrier_id,
                                                                                                  order))
-        #_logger.warning("_check_carrier_quotation(): END !!! DISABLED FOR TESTING !!!")
-        result = super(SaleOrder, self)._check_carrier_quotation(cr, uid, order=order, force_carrier_id=force_carrier_id, context=context)
-        _logger.warning("_check_carrier_quotation(): END result = %s" % result)
+        result = True
+        _logger.warning("_check_carrier_quotation(): DISABLED TO CHECK IF CONCURRENT WRITES DISAPPEAR")
+
+        # result = super(SaleOrder, self)._check_carrier_quotation(cr, uid, order=order,
+        #                                                                   force_carrier_id=force_carrier_id,
+        #                                                                   context=context)
+
+        _logger.warning("_check_carrier_quotation(): END")
         return result
