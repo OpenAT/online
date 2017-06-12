@@ -260,8 +260,8 @@ class ResPartnerZMRGetBPK(models.Model):
         responses = list()
 
         # Validate input
-        if not (all((firstname, lastname, birthdate)) or all((firstname, lastname, zipcode))):
-            raise ValidationError(_("Missing input data! Mandatory are firstname, lastname and birthdate or zip!"))
+        if not all((firstname, lastname, birthdate)):
+            raise ValidationError(_("Missing input data! Mandatory are firstname, lastname and birthdate!"))
 
         # Get the request_data_template path
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -387,11 +387,11 @@ class ResPartnerZMRGetBPK(models.Model):
                 # HINT: There is a namespace attached which needs to be ignored added or removed before .find()
                 # http://stackoverflow.com/questions/4440451/how-to-ignore-namespaces-with-xpath
                 private_bpk = response_etree.xpath(".//*[local-name() = 'GetBPKReturn']")
-                assert len(private_bpk) == 1, _("More than one GetBPKReturn node found!")
+                assert len(private_bpk) == 1, _("More than one GetBPKReturn xml node found!")
                 private_bpk = private_bpk[0]
                 result['private_bpk'] = private_bpk.text if private_bpk is not None else result['private_bpk']
                 public_bpk = response_etree.xpath(".//*[local-name() = 'FremdBPK']/*[local-name() = 'FremdBPK']")
-                assert len(public_bpk) == 1, _("More than one FremdBPK node found!")
+                assert len(public_bpk) == 1, _("More than one FremdBPK xml node found!")
                 public_bpk = public_bpk[0]
                 result['public_bpk'] = public_bpk.text if public_bpk is not None else result['public_bpk']
                 # Update answer and process GetBPK for next company
@@ -413,8 +413,8 @@ class ResPartnerZMRGetBPK(models.Model):
     # MODEL ACTIONS
     @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
-        if not (firstname and lastname and any((birthdate, zipcode))):
-            raise ValueError(_("Firstname, Lastname and Birthdate or Zip are needed for a BPK request!"))
+        if not all((firstname, lastname, birthdate)):
+            raise ValueError(_("Firstname, Lastname and Birthdate are needed for a BPK request!"))
 
         # PROCESS FIRSTNAME
         firstname = clean_name(firstname, split=True)
@@ -423,14 +423,16 @@ class ResPartnerZMRGetBPK(models.Model):
         lastname = clean_name(lastname, split=False)
 
         # BPK REQUESTS
-        responses = list()
-        if birthdate:
-            # BPK Request attempt with full birthdate
-            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
-            if self.response_ok(responses):
-                return responses
+        responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate)
 
-            # BPK Request attempt with birth YEAR only
+        # Valid Request or an empty list was returned
+        if self.response_ok(responses) or len(responses) < 1:
+            return responses
+
+        # Person not found: retry with birth-year only
+        faultcode = responses[0].get('faultcode', "")
+        year = False
+        if 'F230' in faultcode:
             try:
                 date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
                 year = date.strftime("%Y")
@@ -441,16 +443,16 @@ class ResPartnerZMRGetBPK(models.Model):
                     year = None
             if year:
                 responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year)
-                if self.response_ok(responses):
+                # Valid Request or an empty list was returned
+                if self.response_ok(responses) or len(responses) < 1:
                     return responses
 
-        if zipcode:
-            # BPK Request attempt with zipcode only
-            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate="", zipcode=zipcode)
-            if self.response_ok(responses):
-                return responses
+        # Multiple Persons found: Retry with zipcode
+        faultcode = responses[0].get('faultcode', "")
+        if zipcode and any(code in faultcode for code in ('F231', 'F233')):
+            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year or birthdate,
+                                          zipcode=zipcode)
 
-        # BPK not found
         return responses
 
     @api.model
@@ -641,9 +643,7 @@ class ResPartnerZMRGetBPK(models.Model):
         domain = [('donation_deduction_optout_web', '=', False),
                   ('firstname', 'not in', [False, '']),
                   ('lastname', 'not in', [False, '']),
-                  '|',
-                      ('birthdate_web', '!=', False),
-                      ('zip', 'not in', [False, '']),
+                  ('birthdate_web', '!=', False),
                   '|', '|',
                       ('BPKRequestInProgress', '=', False),
                       ('BPKRequestInProgress', '<', str(fields.datetime.now() -
@@ -746,13 +746,14 @@ class ResPartnerZMRGetBPK(models.Model):
                     if r.BPKRequestCompanyID.id in companies.ids and (
                         not (((p.firstname or '') == (r.BPKRequestFirstname or '') and
                               (p.lastname or '') == (r.BPKRequestLastname or '') and
-                              (p.birthdate_web or '') == (r.BPKRequestBirthdate or '') and
-                              (p.zip or '') == (r.BPKRequestZIP or ''))
+                              (p.birthdate_web or '') == (r.BPKRequestBirthdate or '')
+                              )
                              or
                              ((p.firstname or '') == (r.BPKErrorRequestFirstname or '') and
                               (p.lastname or '') == (r.BPKErrorRequestLastname or '') and
-                              (p.birthdate_web or '') == (r.BPKErrorRequestBirthdate or '') and
-                              (p.zip or '') == (r.BPKErrorRequestZIP or '')))
+                              (p.birthdate_web or '') == (r.BPKErrorRequestBirthdate or '')
+                              )
+                             )
                     ):
                         partners_to_update = partners_to_update | p
                         remaining = remaining - 1
