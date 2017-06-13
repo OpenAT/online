@@ -68,8 +68,7 @@
                         <label for="widget_code"/>
                     </div -->
                     <p class="oe_read_only" style="color:grey; font-size:12px;">
-                        Please place this widget embed code inside your webpage.
-                        of your website!<br/>
+                        Please place this widget embed code inside your webpage.<br/>
                         Please make sure to place this widget only in elements where the width will match the base width
                         for the agreed css media query widths!<br/>
                     </p>
