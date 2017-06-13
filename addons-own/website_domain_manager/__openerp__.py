@@ -46,6 +46,7 @@ aktuell.care.at = Landing Page Domain
     ],
     'installable': True,
     'data': [
+        'security/group_website_domain_manager.xml',
         'security/ir.model.access.csv',
         'data/data.xml',
         'views/views.xml',

@@ -22,7 +22,7 @@
 
         <!-- sosync GROUP -->
         <record id="base.sosync" model="res.groups">
-            <field name="name">sosync group</field>
+            <field name="name">sosync (Do not assign to regular user)</field>
             <field name="comment">
                 Group members of the sosync group have access to most of the odoo models.
                 This is a technical group and should only be assigned to users that will never log in!
@@ -55,6 +55,8 @@
                    (4, ref('fso_base.group_fs_group_manager')),
                    (4, ref('auth_partner.group_fstoken_manager')),
                    (4, ref('fso_con_zmr.group_res_partner_bpk_manager')),
+                   (4, ref('website_domain_manager.group_website_domain_manager')),
+                   (4, ref('website_widget_manager.group_website_widget_manager')),
                    ]"/>
         </record>
 

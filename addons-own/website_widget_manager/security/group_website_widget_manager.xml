@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data noupdate="0">
+
+    <record id="group_website_widget_manager" model="res.groups">
+        <field name="name">Website Widget and Landing Page Manager</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+</data>
+</openerp>
