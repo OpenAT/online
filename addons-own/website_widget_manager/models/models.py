@@ -5,6 +5,7 @@ import socket
 import validators
 import requests
 import os
+import copy
 from furl import furl
 from lxml import html
 from urlparse import urlparse, urljoin, parse_qsl, urlunparse
@@ -167,7 +168,7 @@ class WebsiteAsWidget(models.Model):
             source_base = furl().set(scheme=rec.source_protocol,
                                      host=rec.source_domain.name,
                                      port=rec.source_domain.port or None)
-            source_url = source_base.join(rec.source_page).url
+            source_url = copy.deepcopy(source_base).join(rec.source_page).url
 
             # Return if no target url was set
             # HINT: No target url means that this page is a landing page (maybe with different website domain template)
@@ -178,25 +179,23 @@ class WebsiteAsWidget(models.Model):
             # Store the iframe id before we continue
             rec.iframe_id = rec._iframe_prefix + str(rec.id)
 
-            # Generate the head embed code
-            script_url = source_base.join(rec._script_path).url
-            widget_code_header = Template("""<!-- Insert this 'script' element ONLY ONCE inside your html header -->
+            # Generate the widget resize script code
+            resize_script_url = copy.deepcopy(source_base).join(rec._script_path).url
+            widget_code_header = Template("""<!-- FS-Online widgets-resize-scripts -->
 <script type="text/javascript" src="$script_url"></script>
-""").substitute(script_url=script_url)
-
-            # Generate the widget embed code
-            widget_code = Template("""<!-- Insert this code in your html body where you want the widget to appear -->
-<iframe id="$target_iframe_id" class="fso_iframe" src="$source_url" 
-        scrolling="no" frameborder="0" width="100%" style="width:100%; border:none; padding:0; margin:0;">
-</iframe>
 <script type="text/javascript">
-    //<![CDATA[
-    iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement',
-                  checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: true, inPageAnchors: true, log: false,
-                  }, '#$target_iframe_id')
+    //<![CDATA[ 
+        document.addEventListener("DOMContentLoaded", function(event) {
+            iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: true, inPageAnchors: true, log: false}, '.fso_iframe') 
+        });
     //]]>
 </script>
-""").substitute(target_iframe_id=rec.iframe_id, base_url=source_base, source_url=source_url)
+""").substitute(script_url=resize_script_url, base_url=source_base)
+
+            # Generate the widget embed code
+            widget_code = Template("""<!-- FS-Online widget embed code -->
+<iframe id="$target_iframe_id" class="fso_iframe" src="$source_url" scrolling="no" frameborder="0" width="100%" style="width:100%; border:none; padding:0; margin:0;"></iframe>
+""").substitute(target_iframe_id=rec.iframe_id, source_url=source_url)
 
             # HINT: To avoid recursion (because of the iframe_id) we use single writes here instead of .write({})
             rec.source_url = source_url

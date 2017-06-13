@@ -59,42 +59,46 @@
                             </group>
                         </page>
                     </notebook>
-                    <hr style="margin-top:0.5em; margin-bottom:2em;"/>
-                    <h1 class="oe_read_only">Widget Embed Code</h1>
-                    <p class="oe_read_only">
-                        Please embed this html code into your website wherever you want the widget to appear.
-                        Multiple FS-Online widgets on one page are supported!
-                    </p>
-                    <!-- Header Code -->
-                    <div class="oe_read_only" style="margin-top:2em;">
-                        <label for="widget_code_header"/>
-                    </div>
-                    <p class="oe_read_only" style="color:grey; font-size:10px;">
-                        Please place this code in the <![CDATA[<head>...</head>]]> section of the
-                        website where you want to embed one or more FS-Online widget(s).<br/>
-                        If you can not include this script in the head section please include it only once in the body
-                        before the first widget element.
-                    </p>
-                    <div  class="oe_read_only">
-                        <code>
-                            <field name="widget_code_header" widget="code" ace-mode="html"/>
-                        </code>
-                    </div>
-                    <!-- Body Code -->
-                    <div class="oe_read_only" style="margin-top:2em;">
+
+                    <hr style="margin-top:0.5em; margin-bottom:1em;"/>
+
+                    <!-- Widget Code -->
+                    <h1 class="oe_read_only" style="margin-top: 2em;">Widget Embed Code</h1>
+                    <!-- div class="oe_read_only" style="margin-top:2em;">
                         <label for="widget_code"/>
-                    </div>
-                    <p class="oe_read_only" style="color:grey; font-size:10px;">
+                    </div -->
+                    <p class="oe_read_only" style="color:grey; font-size:12px;">
                         Please place this code inside the <![CDATA[<body>...</body>]]> section
                         of your website!<br/>
                         Please make sure to place this widget only in elements where the width will match the base width
-                        for the agreed css media query widths.
+                        for the agreed css media query widths.<br/>
                     </p>
                     <div colspan="2" class="oe_read_only">
-                        <code>
+                        <code style="border: 1px solid #e4e4e4; padding: 9px 12px; display: block; background-color: #fdfdfd;">
                             <field name="widget_code" widget="code" ace-mode="html"/>
                         </code>
                     </div>
+
+                     <!-- Widget Resize Script -->
+                    <h1 class="oe_read_only" style="margin-top:2em;">Global Widget Resize Script</h1>
+                    <!-- div class="oe_read_only" style="margin-top:2em;">
+                        <label for="widget_code_header"/>
+                    </div -->
+                    <p class="oe_read_only" style="color:grey; font-size:12px;">
+                        Please embed these two java scripts in the <![CDATA[<head>...</head>]]> section of any page
+                        where you want to embed one or more FS-Online widget(s). <br/>
+                        It will dynamically resize all embedded FS-Online widgets if the browser window size changes.<br/><br/>
+                        It is recommended to include these scripts always in your head tag so you only need to include
+                        the Widget Embed Code later on.<br/>
+                        You could also download and serve this script from your own servers if want but this is not
+                        recommended because you will not get any updates for the script.<br/>
+                    </p>
+                    <div  class="oe_read_only" style="margin-bottom: 4em;">
+                        <code style="border: 1px solid #e4e4e4; padding: 9px 12px; display: block; background-color: #fdfdfd;">
+                            <field name="widget_code_header" widget="code" ace-mode="html"/>
+                        </code>
+                    </div>
+
                 </form>
             </field>
         </record>
