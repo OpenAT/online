@@ -175,7 +175,7 @@ class ResPartnerZMRGetBPK(models.Model):
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
                                     string="BPK Requests")
     # BPK forced request values
-    # TODO: Make sure Forced BPK Fields are always all filled or none (now done by attr in the form view)
+    # TODO: Make sure Forced BPK Fields are always all filled or none (now only done by attr in the form view)
     BPKForcedFirstname = fields.Char(string="BPK Forced Firstname")
     BPKForcedLastname = fields.Char(string="BPK Forced Lastname")
     BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
@@ -201,13 +201,18 @@ class ResPartnerZMRGetBPK(models.Model):
     @api.multi
     def _compute_bpk_request_needed(self):
         """ If any of the depending-on fields changes set BPKRequestNeeded if all data available """
+
+        # Only show an info in the log if more than 10 partners are found
         if len(self) >= 10:
             logger.info(_("Computing BPKRequestNeeded for %s partner!") % len(self))
 
         for p in self:
-            # Set BPKRequestNeeded if currently not set and all data is available and not donation_deduction_optout_web
-            if not p.donation_deduction_optout_web and (
-                        all((p.firstname, p.lastname, p.birthdate_web)) or all((p.firstname, p.lastname, p.zip))):
+            # Set BPKRequestNeeded if currently not set and full request date is available
+            if not p.donation_deduction_optout_web and \
+                    (all((p.firstname, p.lastname, p.birthdate_web))
+                     or
+                     all((p.BPKForcedFirstname, p.BPKForcedLastname, p.BPKForcedBirthdate))
+                     ):
                 if not p.BPKRequestNeeded:
                     p.BPKRequestNeeded = fields.datetime.now()
                 continue
@@ -227,7 +232,8 @@ class ResPartnerZMRGetBPK(models.Model):
         #       that a BPK request is not needed for this res.partner most likely because there are already related
         #       BPK requests in FS created by an file import (but maybe not synced already).
         if result and 'BPKRequestNeeded' not in vals \
-                and any(key in vals for key in ['firstname', 'lastname', 'birthdate_web', 'zip']):
+                and any(key in vals for key in ['firstname', 'lastname', 'birthdate_web', 'zip',
+                                                'BPKForcedFirstname', 'BPKForcedLastname', 'BPKForcedBirthdate']):
             self._compute_bpk_request_needed()
         return result
 
@@ -744,14 +750,14 @@ class ResPartnerZMRGetBPK(models.Model):
                 #       ATTENTION: False == u'' will resolve to False! Therefore we use (False or '') == ...
                 for r in p.BPKRequestIDS:
                     if r.BPKRequestCompanyID.id in companies.ids and (
-                        not (((p.firstname or '') == (r.BPKRequestFirstname or '') and
-                              (p.lastname or '') == (r.BPKRequestLastname or '') and
-                              (p.birthdate_web or '') == (r.BPKRequestBirthdate or '')
+                        not (((p.BPKForcedFirstname or p.firstname or '') == (r.BPKRequestFirstname or '') and
+                              (p.BPKForcedLastname or p.lastname or '') == (r.BPKRequestLastname or '') and
+                              (p.BPKForcedBirthdate or p.birthdate_web or '') == (r.BPKRequestBirthdate or '')
                               )
                              or
-                             ((p.firstname or '') == (r.BPKErrorRequestFirstname or '') and
-                              (p.lastname or '') == (r.BPKErrorRequestLastname or '') and
-                              (p.birthdate_web or '') == (r.BPKErrorRequestBirthdate or '')
+                             ((p.BPKForcedFirstname or p.firstname or '') == (r.BPKErrorRequestFirstname or '') and
+                              (p.BPKForcedLastname or p.lastname or '') == (r.BPKErrorRequestLastname or '') and
+                              (p.BPKForcedBirthdate or p.birthdate_web or '') == (r.BPKErrorRequestBirthdate or '')
                               )
                              )
                     ):
