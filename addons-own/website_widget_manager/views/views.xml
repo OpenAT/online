@@ -26,6 +26,10 @@
                     </header>
                     <h1 style="margin-top:0.5em;margin-bottom:0.5em;">FS-Online Widget</h1>
                     <label for="check_log" attrs="{'invisible': [('check_log', '=', False)]}"/>
+                    <p class="oe_read_only" style="color:grey; font-size:12px;">
+                        This check is just a rough indicator. Even if it shows an error the embedded widget may
+                        work perfectly!<br/>
+                    </p>
                     <h3 attrs="{'invisible': [('check_log', '=', False)]}" style="color:red"><field name="check_log"/></h3>
                     <notebook>
                         <page string="Widget Configuration">

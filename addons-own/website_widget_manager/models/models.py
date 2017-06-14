@@ -119,9 +119,9 @@ class WebsiteAsWidget(models.Model):
         if warning:
             return warning
         # Store screen-shot
+        logger.info('Target screenshot URL: %s' % self.target_url)
         screenshot = _get_screenshot(self.target_url, tgt_width=320, tgt_height=240)
         if screenshot:
-            # return {'target_screenshot': screenshot}
             self.target_screenshot = screenshot
 
     @api.onchange('source_protocol', 'source_domain', 'source_page')
@@ -145,10 +145,10 @@ class WebsiteAsWidget(models.Model):
             source_url = source_base.join(self.source_page)
             source_url.args['noiframeredirect'] = 'True'
             source_url = source_url.url
+            logger.info('Source screenshot URL: %s' % source_url)
             # Store screen-shot
             screenshot = _get_screenshot(source_url, tgt_width=320, tgt_height=240)
             if screenshot:
-                # return {'source_screenshot': screenshot}
                 self.source_screenshot = screenshot
 
     # CONSTANTS
