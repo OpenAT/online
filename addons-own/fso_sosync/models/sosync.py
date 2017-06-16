@@ -24,10 +24,10 @@ class SosyncJob(models.Model):
     end = fields.Datetime(string="Job End")
     duration = fields.Integer(string="Job Duration (ms)", compute='_job_duration')
     state = fields.Selection(selection=[("new", "New"),
-                                            ("inprogress", "In Progress"),
-                                            ("done", "Done"),
-                                            ("error", "Error")],
-                                 string="State")
+                                        ("inprogress", "In Progress"),
+                                        ("done", "Done"),
+                                        ("error", "Error")],
+                             string="State")
     error_code = fields.Selection(selection=[("timeout", "Job timed out"),
                                              ("run_counter", "Run count exceeded"),
                                              ("child_job_creation", "Child job creation error"),
@@ -88,7 +88,7 @@ class SosyncJob(models.Model):
 
 class SosyncJobQueue(models.Model):
     """
-    This is the que of jobs that will be fetched by the sosyncer on ever run.
+    This is the queue of jobs that will be fetched by the sosyncer from FS-Online on every run.
     Jobs that are successfully fetched will be marked done.
     HINT: Fetched jobs older than one month will be removed by an automated action.
     """
@@ -96,4 +96,4 @@ class SosyncJobQueue(models.Model):
     _inherit = 'sosync.job'
 
     # FIELDS
-    job_fetched = fields.Boolean(string="Job Fetched", default=False)
+    job_fetched = fields.Datetime(string="Job Fetched")
