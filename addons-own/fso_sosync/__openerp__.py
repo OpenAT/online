@@ -33,6 +33,14 @@ FS-Online fso_sosync
 Additional Information
 ----------------------
 
+New instance pillar options:
+----------------------------
+sosync_enabled: True
+sosync_skipped_flows: SaleOrder,Partner,BPK|None
+
+host_sosyncgw: sosync1
+host_sosyncdb: sosync1
+
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
@@ -42,13 +50,13 @@ Additional Information
     'application': True,
     'auto_install': False,
     'depends': [
-        'fso_base',
+        'fsonline',
     ],
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
-        'views/fsonline_menu.xml',
-        'views/syncjob.xml',
-        'views/syncjobqueue.xml',
+        'views/sosync_job.xml',
+        'views/sosync_job_queue.xml',
+        #'views/fsonline_menu.xml',
     ],
 }

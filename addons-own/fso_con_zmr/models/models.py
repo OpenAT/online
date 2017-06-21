@@ -456,7 +456,8 @@ class ResPartnerZMRGetBPK(models.Model):
         # Multiple Persons found: Retry with zipcode
         faultcode = responses[0].get('faultcode', "")
         if zipcode and any(code in faultcode for code in ('F231', 'F233')):
-            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=year or birthdate,
+            birthdate = year or birthdate
+            responses = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate,
                                           zipcode=zipcode)
 
         return responses

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- SOSYNC SYNC JOB QUEUE: Create form, tree and list view -->
+    <record model="ir.ui.view" id="sosync_job_queue_form">
+        <field name="name">sosync_job_queue_form</field>
+        <field name="model">sosync.job.queue</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Sosync Job Queue">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="new,submitted"/>
+                </header>
+                <group string="Job Info">
+                    <group string="Job Basics">
+                        <field name="id" readonly="True"/>
+                        <field name="date"/>
+                        <field name="submission"/>
+                        <field name="submission_error"/>
+                    </group>
+                    <group string="Job Source">
+                        <field name="source_system"/>
+                        <field name="source_model"/>
+                        <field name="source_record_id"/>
+                    </group>
+                </group>
+                <group string="Submission">
+                    <field name="submission_response_code"/>
+                    <field name="submission_response_body"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sosync_job_queue_tree">
+        <field name="name">sosync_job_queue_tree</field>
+        <field name="model">sosync.job.queue</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Sosync Job Queue"
+                  default_order="date,submission"
+                  colors="
+                      red:state in ('submission_failed',);
+                      green:state in ('submitted',)">
+                <field name="id"/>
+                <field name="date"/>
+                <field name="submission"/>
+                <field name="submission_error"/>
+                <field name="source_system"/>
+                <field name="source_model"/>
+                <field name="source_record_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sosync_job_queue_search">
+        <field name="name">sosync_job_queue_search</field>
+        <field name="model">sosync.job.queue</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Sosync Job Queue">
+                <field name="date"/>
+                <field name="submission"/>
+                <field name="submission_error"/>
+                <field name="source_system"/>
+                <field name="source_model"/>
+                <field name="source_record_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="sosync_job_queue_action" model="ir.actions.act_window" >
+        <field name="name">Sosync Job Queue</field>
+        <field name="res_model">sosync.job.queue</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="sosync_job_queue_search"/>
+    </record>
+    <record id="sosync_job_queue_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="sosync_job_queue_tree"/>
+        <field name="act_window_id" ref="sosync_job_queue_action"/>
+    </record>
+    <record id="sosync_job_queue_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sosync_job_queue_form"/>
+        <field name="act_window_id" ref="sosync_job_queue_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="sosync_job_queue_menu" action="sosync_job_queue_action" parent="base.menu_config" sequence="1300"/>    
+
+</data></openerp>

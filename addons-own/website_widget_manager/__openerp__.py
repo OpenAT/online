@@ -29,8 +29,23 @@ website_widget_manager
 ======================
 
 - Generates the widget-embed-code
-- Redirects to target page
+- Redirects to the target page if the widget page is called directly
 - Checks widget status
+- Holds the custom iframe-resizer java script library
+
+iframe-resizer script extensions
+--------------------------------
+The iframe resizer script has been extended by Samo Lajtinger from Abaton 
+to make it possible to load custom source urls by HOST-URL parameters.
+
+- The iframe "src" parameter can be overwritten by a HOST-URL parameter if it matches the iframe id
+  e.g.: https://www.care.at/spenden/pakete-mit-zukunft/?ifcare1=%2Fpage%2Fcontactus%3Ftest%3Dno
+  will load the page ".../page/contactus?test=no" into <iframe id="ifcare1" src="http://test.com/shop">
+  instead of the original page "/shop"
+- HOST-URL parameters will be passed to all managed iframe src urls
+  e.g.: https://www.care.at/spenden/pakete-mit-zukunft/?load=ok&ifcare1=%2Fpage%2Fcontactus%3Ftest%3Dno
+  will load the page ".../page/contactus?test=no&load=ok" into <iframe id="ifcare1" src="http://test.com/shop">
+  The parameter "load=ok" is added to all ALL managed iframe src urls!
 
 https://github.com/davidjbradshaw/iframe-resizer
 Please look at the example html file at website_as_widget/test_iframe.html
