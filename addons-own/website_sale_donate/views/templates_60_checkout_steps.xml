@@ -743,20 +743,21 @@
 
 
                     <!-- Header: "Your Data" -->
-                    <div class="col-md-12">
-                        <h3 class="checkout_title">
-                            <t t-if="website.checkout_title"><span t-field="website.checkout_title"/></t>
-                            <t t-if="not website.checkout_title">Your Data</t>
-                            <!-- Logout Button for OPC Pages -->
-                            <t t-if="website.user_id != user_id and one_page_checkout">
-                                <a class="btn btn-default wsd_button_opc_logout"
-                                   t-attf-href="/web/session/logout?redirect=#{ request.httprequest.base_url }">
-                                    <t t-if="not website.button_logout">Logout</t>
-                                    <t t-if="website.button_logout"><span t-field="website.button_logout"/></t>
-                                </a>
-                            </t>
-                        </h3>
-                    </div>
+                    <t t-if="website.checkout_title">
+                        <div class="col-md-12">
+                            <h3 class="checkout_title">
+                                <span t-field="website.checkout_title"/>
+                                <!-- Logout Button for OPC Pages -->
+                                <t t-if="website.user_id != user_id and one_page_checkout">
+                                    <a class="btn btn-default wsd_button_opc_logout"
+                                       t-attf-href="/web/session/logout?redirect=#{ request.httprequest.base_url }">
+                                        <t t-if="not website.button_logout">Logout</t>
+                                        <t t-if="website.button_logout"><span t-field="website.button_logout"/></t>
+                                    </a>
+                                </t>
+                            </h3>
+                        </div>
+                    </t>
                     <!-- Billing Fields and Shipping-Address-Selector -->
                     <!-- HINT: the divs for the bootstrap columns are the fields div's -->
                     <div class="col-md-12">
