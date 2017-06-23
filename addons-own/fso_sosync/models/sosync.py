@@ -1,8 +1,19 @@
 # -*- coding: utf-'8' "-*-"
 import logging
 from openerp import api, models, fields
+from openerp.addons.fso_base.tools.validate import is_valid_url
+import requests
+from requests import Session
+import timeout_decorator
 
 logger = logging.getLogger(__name__)
+
+
+# CUSTOM EXCEPTION CLASSES
+class GenericTimeoutError(Exception):
+    def __init__(self):
+        Exception.__init__(self, "Execution stopped because of global timeout and not the request.Session() timeout!"
+                                 "There may be a passphrase in your private key.")
 
 
 # HELPER FUNCTIONS
@@ -11,6 +22,7 @@ def _duration_in_ms(start_datetime, end_datetime):
     return int(duration.total_seconds() * 1000)
 
 
+# NEW ODOO MODEL: sosync.job
 class SosyncJob(models.Model):
     """
     sosync sync jobs
@@ -22,13 +34,13 @@ class SosyncJob(models.Model):
 
     # FIELDS
     # SyncJob Basics
-    job_id = fields.Integer(string="Job ID")
-    date = fields.Datetime(string="Creation")
-    job_fetched = fields.Datetime(string="Fetched")
-    start = fields.Datetime(string="Start")
-    end = fields.Datetime(string="End")
-    duration = fields.Integer(string="Duration (ms)", compute='_job_duration')
-    run_count = fields.Integer(string="Run Count")
+    job_id = fields.Integer(string="Sosync Job ID", readonly=True)
+    job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True)
+    fetched = fields.Datetime(string="Fetched Date", readonly=True)
+    start = fields.Datetime(string="Start", readonly=True)
+    end = fields.Datetime(string="End", readonly=True)
+    duration = fields.Integer(string="Duration (ms)", compute='_job_duration', readonly=True)
+    run_count = fields.Integer(string="Run Count", readonly=True)
     # HINT: If a sync job is related to a flow listed in the instance pillar option "sosync_skipped_flows"
     #       the job and any related parent-job will get the state "skipped" from the sosyncer service
     state = fields.Selection(selection=[("new", "New"),
@@ -36,7 +48,7 @@ class SosyncJob(models.Model):
                                         ("done", "Done"),
                                         ("error", "Error"),
                                         ("skipped", "Skipped")],
-                             string="State", default="new")
+                             string="State", default="new", readonly=True)
     error_code = fields.Selection(selection=[("timeout", "Job timed out"),
                                              ("run_counter", "Run count exceeded"),
                                              ("child_job_creation", "Child job creation error"),
@@ -44,37 +56,37 @@ class SosyncJob(models.Model):
                                              ("source_data", "Source data error"),
                                              ("target_request", "Target request error"),
                                              ("cleanup", "Job finalization error")],
-                                  string="Error Code")
-    error_text = fields.Text(string="Error")
+                                  string="Error Code", readonly=True)
+    error_text = fields.Text(string="Error", readonly=True)
 
     # ChildJobs
-    parent_job_id = fields.Integer(string="Parent Job ID", help="Parent Job ID (from field job_id)")
-    parent_id = fields.Many2one(comodel_name="sosync.job", string="Parent Job")
-    child_ids = fields.One2many(comodel_name="sosync.job", inverse_name="parent_id", string="Child Jobs")
-    child_start = fields.Datetime(string="Child Processing Start")
-    child_end = fields.Datetime(string="Child Processing End")
-    child_duration = fields.Integer(string="Child Processing Duration", compute="_child_duration")
+    parent_job_id = fields.Integer(string="Parent Job ID", help="Parent Job ID (from field job_id)", readonly=True)
+    parent_id = fields.Many2one(comodel_name="sosync.job", string="Parent Job", readonly=True)
+    child_ids = fields.One2many(comodel_name="sosync.job", inverse_name="parent_id", string="Child Jobs", readonly=True)
+    child_start = fields.Datetime(string="Child Processing Start", readonly=True)
+    child_end = fields.Datetime(string="Child Processing End", readonly=True)
+    child_duration = fields.Integer(string="Child Processing Duration", compute="_child_duration", readonly=True)
 
     # SyncJob Source
-    source_system = fields.Selection(selection=_systems, string="Source System")
-    source_model = fields.Char(string="Source Model")
-    source_record_id = fields.Integer(string="Source Record ID")
+    source_system = fields.Selection(selection=_systems, string="Source System", readonly=True)
+    source_model = fields.Char(string="Source Model", readonly=True)
+    source_record_id = fields.Integer(string="Source Record ID", readonly=True)
 
     # SyncJob Target
     # ATTENTION: Calculated during job processing by its SyncFlow based on write_date (or existence) of the records.
     # HINT: target_model always shows only the "main model" even if the SyncFlow updates multiple models in the target.
-    target_system = fields.Selection(selection=_systems, string="Target System")
-    target_model = fields.Char(string="Target Model")
-    target_record_id = fields.Integer(string="Target Record ID")
+    target_system = fields.Selection(selection=_systems, string="Target System", readonly=True)
+    target_model = fields.Char(string="Target Model", readonly=True)
+    target_record_id = fields.Integer(string="Target Record ID", readonly=True)
 
     # SyncJob Synchronization
-    source_data = fields.Text(string="Source Data")
-    target_request = fields.Text(string="Target Request(s)")
-    target_request_start = fields.Datetime(string="Target Request(s) Start")
-    target_request_end = fields.Datetime(string="Target Request(s) End")
+    source_data = fields.Text(string="Source Data", readonly=True)
+    target_request = fields.Text(string="Target Request(s)", readonly=True)
+    target_request_start = fields.Datetime(string="Target Request(s) Start", readonly=True)
+    target_request_end = fields.Datetime(string="Target Request(s) End", readonly=True)
     target_request_duration = fields.Integer(string="Target Request(s) Duration (ms)",
-                                             compute="_target_request_duration")
-    target_request_answer = fields.Text("Target Request(s) Answer(s)")
+                                             compute="_target_request_duration", readonly=True)
+    target_request_answer = fields.Text(string="Target Request(s) Answer(s)", readonly=True)
 
     # SyncJob Fetching
 
@@ -99,6 +111,7 @@ class SosyncJob(models.Model):
                 rec.child_duration = _duration_in_ms(rec.child_start, rec.child_end)
 
 
+# NEW ODOO MODEL: sosync.job.queue
 class SosyncJobQueue(models.Model):
     """
     This is the queue of jobs that needs to be submitted to the sosyncer.
@@ -109,19 +122,78 @@ class SosyncJobQueue(models.Model):
     _name = 'sosync.job.queue'
     _inherit = 'sosync.job'
 
-    state = fields.Selection(selection_add=([("submitted", "Submitted"), ("submission_failed", "Submission Failed")]))
+    # FIELDS
+    # Remove of readonly attribute for testing purposes and manual sync job creation in the queue
+    date = fields.Datetime(readonly=False)
+    source_system = fields.Selection(readonly=False)
+    source_model = fields.Char(readonly=False)
+    source_record_id = fields.Integer(readonly=False)
 
-    submission = fields.Datetime(string="Submission")
-    submission_response_code = fields.Char(string="Response Code", help="HTTP Response Code")
-    submission_response_body = fields.Text(string="Response Body")
+    state = fields.Selection(selection_add=([("submitted", "Submitted"),
+                                             ("submission_failed", "Submission Failed")]),
+                             readonly=True)
+
+    submission = fields.Datetime(string="Submission", readonly=True)
+    submission_response_code = fields.Char(string="Response Code", help="HTTP Response Code", readonly=True)
+    submission_response_body = fields.Text(string="Response Body", readonly=True)
 
     submission_error = fields.Selection(selection=[("timeout", "Request timed out"),
                                                    ("not_available", "Service not available"),
                                                    ("error", "Request error")],
-                                        string="Submission Error")
+                                        string="Submission Error", readonly=True)
+
+    # METHODS
+    @api.multi
+    def submit_sync_job(self, url="", http_header={}, crt_pem="", prvkey_pem="", user="", pwd=""):
+        # TODO: get instance id e.g.: care
+        # TODO: build correct url
+        is_valid_url(url=url)
+
+        # Create a Session Object (just like a regular UA e.g. Firefox or Chrome)
+        session = Session()
+        session.verify = True
+        if crt_pem and prvkey_pem:
+            session.cert = (crt_pem, prvkey_pem)
+        if user and pwd:
+            session.auth(user, pwd)
+
+        # Submit every sync Job as a REST URL call to the sosyncer
+        for record in self:
+            submission = fields.Datetime.now()
+            try:
+                response = session.get(url, headers=http_header, timeout=12,
+                                       params={'job_date': record.job_date,
+                                               'source_system': record.source_system,
+                                               'source_model': record.source_model,
+                                               'source_record_id': record.source_record_id})
+            except Exception as e:
+                record.sudo().write({'state': 'submission_failed',
+                                     'submission': submission,
+                                     'submission_error': 'error',
+                                     'submission_response_body': "GET Request Exception:\n%s" % e})
+                # Continue with next record
+                continue
+
+            # HTTP Error Code returned
+            if response.status_code != requests.codes.ok:
+                record.sudo().write({'state': 'submission_failed',
+                                     'submission': submission,
+                                     'submission_error': 'error',
+                                     'submission_response_code': response.status_code,
+                                     'submission_response_body': response.content})
+                continue
+
+            # Submission was successful
+            record.sudo().write({'state': 'submitted',
+                                 'submission': submission,
+                                 'submission_response_code': response.status_code,
+                                 'submission_response_body': response.content})
+
+        return
 
 
-# Abstract sosyncer mixin
+# NEW ABSTRACT MODEL: base.sosync
+# Use this for all models where yout want to enable sosync sync job creation
 class BaseSosync(models.AbstractModel):
     _name = "base.sosync"
 
@@ -142,7 +214,7 @@ class BaseSosync(models.AbstractModel):
         date = fields.Datetime.now()
         model = self._name
         for record in self:
-            job = job_queue.create({"date": date,
+            job = job_queue.create({"job_date": date,
                                     "state": "new",
                                     "source_system": "fso",
                                     "source_model": model,
@@ -150,7 +222,6 @@ class BaseSosync(models.AbstractModel):
                                     })
             logger.info("Sosync SyncJob %s created for %s with id %s" % (job.id, model, record.id))
 
-    # METHODS
     @api.multi
     def write(self, values, create_sync_job=True):
         # Perform original write

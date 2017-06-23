@@ -11,12 +11,11 @@
                 <header>
                     <field name="state" widget="statusbar" statusbar_visible="new,submitted"/>
                 </header>
-                <group string="Job Info">
+                <group>
                     <group string="Job Basics">
                         <field name="id" readonly="True"/>
-                        <field name="date"/>
-                        <field name="submission"/>
-                        <field name="submission_error"/>
+                        <field name="job_date"/>
+
                     </group>
                     <group string="Job Source">
                         <field name="source_system"/>
@@ -25,6 +24,8 @@
                     </group>
                 </group>
                 <group string="Submission">
+                    <field name="submission"/>
+                    <field name="submission_error"/>
                     <field name="submission_response_code"/>
                     <field name="submission_response_body"/>
                 </group>
@@ -38,12 +39,12 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Sosync Job Queue"
-                  default_order="date,submission"
+                  default_order="job_date,submission"
                   colors="
                       red:state in ('submission_failed',);
                       green:state in ('submitted',)">
                 <field name="id"/>
-                <field name="date"/>
+                <field name="job_date"/>
                 <field name="submission"/>
                 <field name="submission_error"/>
                 <field name="source_system"/>
@@ -60,7 +61,7 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="Sosync Job Queue">
-                <field name="date"/>
+                <field name="job_date"/>
                 <field name="submission"/>
                 <field name="submission_error"/>
                 <field name="source_system"/>
@@ -74,7 +75,7 @@
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
     <record id="sosync_job_queue_action" model="ir.actions.act_window" >
-        <field name="name">Sosync Job Queue</field>
+        <field name="name">Sosync Jobs Queue</field>
         <field name="res_model">sosync.job.queue</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>

@@ -14,10 +14,8 @@
                 <group string="Job Basics">
                     <group>
                         <field name="job_id"/>
-                        <field name="date"/>
-                        <field name="job_fetched"/>
-                        <field name="error_code"/>
-                        <field name="error_text"/>
+                        <field name="job_date"/>
+                        <field name="fetched"/>
                     </group>
                     <group>
                         <field name="start"/>
@@ -26,36 +24,35 @@
                         <field name="run_count"/>
                     </group>
                 </group>
-                <group string="Child Jobs">
-                    <group>
-                        <field name="parent_id"/>
-                        <field name="child_ids"/>
-                    </group>
-                    <group>
-                        <field name="child_start"/>
-                        <field name="child_end"/>
-                        <field name="child_duration"/>
-                    </group>
-                </group>
                 <group string="Job Info">
-                    <group string="Source">
+                    <group>
                         <field name="source_system"/>
                         <field name="source_model"/>
                         <field name="source_record_id"/>
                     </group>
-                    <group string="Target">
+                    <group>
                         <field name="target_system"/>
                         <field name="target_model"/>
                         <field name="target_record_id"/>
                     </group>
                 </group>
+                <group string="Child Jobs">
+                    <field name="parent_job_id"/>
+                    <field name="child_start"/>
+                    <field name="child_end"/>
+                    <field name="child_duration"/>
+                    <field name="parent_id"/>
+                    <field name="child_ids"/>
+                </group>
                 <group string="Sync Info">
                     <field name="source_data"/>
-                    <field name="target_request"/>
                     <field name="target_request_start"/>
                     <field name="target_request_end"/>
                     <field name="target_request_duration"/>
+                    <field name="target_request"/>
                     <field name="target_request_answer"/>
+                    <field name="error_code"/>
+                    <field name="error_text"/>
                 </group>
             </form>
         </field>
@@ -67,14 +64,14 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Sosync Job"
-                  default_order="date,job_fetched"
+                  default_order="job_date,fetched"
                   colors="
                       red:state in ('error', 'skipped');
                       orange:state in ('inprogress',);
                       green:state in ('done',)">
                 <field name="job_id"/>
-                <field name="date"/>
-                <field name="job_fetched"/>
+                <field name="job_date"/>
+                <field name="fetched"/>
                 <field name="source_system"/>
                 <field name="source_model"/>
                 <field name="source_record_id"/>
@@ -93,8 +90,8 @@
         <field name="arch" type="xml">
             <search string="Sosync Job">
                 <field name="job_id"/>
-                <field name="date"/>
-                <field name="job_fetched"/>
+                <field name="job_date"/>
+                <field name="fetched"/>
                 <field name="start"/>
                 <field name="end"/>
                 <field name="run_count"/>
@@ -120,7 +117,7 @@
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
     <record id="sosync_job_action" model="ir.actions.act_window" >
-        <field name="name">Sosync Job</field>
+        <field name="name">Sosync Jobs</field>
         <field name="res_model">sosync.job</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
