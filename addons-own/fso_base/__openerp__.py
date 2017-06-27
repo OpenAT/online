@@ -95,6 +95,7 @@ TODO (must be done manually right now):
         'partner_fullhierarchy',
         'auth_doubleoptin',
         'auth_partner',
+        'auth_partner_form',
         'web_logout_with_kwargs',
         'website_crm_extended',
         'website_blog_layouts',
