@@ -27,7 +27,7 @@ class URLDNSError(Exception):
     pass
 
 
-def is_valid_url(url):
+def is_valid_url(url, dns_check=True):
     assert isinstance(url, (str, unicode)), _("URL must be a string!")
 
     # Check for a valid URL
@@ -35,9 +35,10 @@ def is_valid_url(url):
         raise URLFormatError(_('URL format is not valid: %s') % url)
 
     # Make a quick DNS check instead of a full HTTP GET request (because a request.get() can be really slow)
-    try:
-        socket.gethostbyname(urlparse(url).hostname)
-    except Exception as e:
-        raise URLDNSError(_('URL DNS check failed!\n%s\n%s\n') % (url, e))
+    if dns_check:
+        try:
+            socket.gethostbyname(urlparse(url).hostname)
+        except Exception as e:
+            raise URLDNSError(_('URL DNS check failed!\n%s\n%s\n') % (url, e))
 
     return True

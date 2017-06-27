@@ -58,5 +58,6 @@ host_sosyncdb: sosync1
         'views/sosync_job.xml',
         'views/sosync_job_queue.xml',
         #'views/fsonline_menu.xml',
+        'data/actions.xml',
     ],
 }

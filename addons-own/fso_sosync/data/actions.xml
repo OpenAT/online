@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Server Action to run create_sync_job -->
+    <record id="create_sync_job" model="ir.actions.server">
+        <field name="name">Create Sync Job</field>
+        <field name="model_id" ref="model_base_sosync"/>
+        <field name="state">code</field>
+        <field name="code">
+            ids = []
+            if context.get('active_domain'):
+                ids = self.search(cr, uid, context['active_domain'], context=context)
+            elif context.get('active_ids'):
+                ids = context['active_ids']
+            self.create_sync_job(cr, uid, ids, context=context)
+        </field>
+    </record>
+
+    <!-- Add Server Action create_sync_job to the More menu -->
+    <record id="ir_create_sync_job" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'base.sosync'"/>
+        <field name="name">Create Sync Job</field>
+        <field name="value" eval="'ir.actions.server,%d'%create_sync_job"/>
+    </record>
+
+    <!-- Scheduled submission of new sync jobs in the sosync job queue -->
+    <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
+        <field name="name">SOSYNC: Submit new sync jobs in the sosync job queue</field>
+        <field name="priority" eval="3000" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">sosync.job.queue</field>
+        <field name="function">scheduled_job_queue_submission</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+</data></openerp>

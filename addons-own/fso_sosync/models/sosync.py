@@ -144,10 +144,14 @@ class SosyncJobQueue(models.Model):
 
     # METHODS
     @api.multi
-    def submit_sync_job(self, url="", http_header={}, crt_pem="", prvkey_pem="", user="", pwd=""):
-        # TODO: get instance id e.g.: care
-        # TODO: build correct url
-        is_valid_url(url=url)
+    def submit_sync_job(self, instance="", url="", http_header={}, crt_pem="", prvkey_pem="", user="", pwd=""):
+        # Instance ID from first company (e.g.: care)
+        instance = instance or self.env['res.company'].sudo().search([], limit=1).instance_id
+        assert instance, "Instance ID for the default (first) company is missing!"
+
+        # Sosync service url (in internal network)
+        url = url or "http://sosync."+instance+".datadialog.net/job/create"
+        is_valid_url(url=url, dns_check=False)
 
         # Create a Session Object (just like a regular UA e.g. Firefox or Chrome)
         session = Session()
@@ -159,6 +163,7 @@ class SosyncJobQueue(models.Model):
 
         # Submit every sync Job as a REST URL call to the sosyncer
         for record in self:
+            logger.info("Submitting sosync sync-job %s from queue to %s!" % (record.id, url))
             submission = fields.Datetime.now()
             try:
                 response = session.get(url, headers=http_header, timeout=12,
@@ -181,6 +186,7 @@ class SosyncJobQueue(models.Model):
                                      'submission_error': 'error',
                                      'submission_response_code': response.status_code,
                                      'submission_response_body': response.content})
+                # Continue with next record
                 continue
 
             # Submission was successful
@@ -190,6 +196,36 @@ class SosyncJobQueue(models.Model):
                                  'submission_response_body': response.content})
 
         return
+
+    # --------------------------------------------------
+    # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE SUBMISSION
+    # --------------------------------------------------
+    @api.model
+    def scheduled_job_queue_submission(self, limit=60):
+        logger.info("Scheduled sosync sync-job-queue submission!")
+
+        # Limit the number of submissions per scheduled run to the interval length in seconds
+        # HINT: This suggests that a submission should time-out after one second
+        scheduled_action = self.env.ref('fso_sosync.ir_cron_scheduled_job_queue_submission')
+        interval_to_seconds = {
+            "weeks": 7 * 24 * 60 * 60,
+            "days": 24 * 60 * 60,
+            "hours": 60 * 60,
+            "minutes": 60,
+            "seconds": 1
+        }
+        if scheduled_action and scheduled_action.interval_type in interval_to_seconds:
+            limit = int(scheduled_action.interval_number * interval_to_seconds[scheduled_action.interval_type])
+            limit = 1 if limit <= 0 else limit
+
+        # Search for new sync jobs to submit
+        new_jobs_in_queue = self.search([('state', '=', 'new')], limit=limit)
+
+        # Submit jobs to sosync service
+        if new_jobs_in_queue:
+            new_jobs_in_queue.submit_sync_job()
+        else:
+            logger.info("No sosync sync-jobs in queue to submit!")
 
 
 # NEW ABSTRACT MODEL: base.sosync
@@ -220,7 +256,7 @@ class BaseSosync(models.AbstractModel):
                                     "source_model": model,
                                     "source_record_id": record.id,
                                     })
-            logger.info("Sosync SyncJob %s created for %s with id %s" % (job.id, model, record.id))
+            logger.info("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
 
     @api.multi
     def write(self, values, create_sync_job=True):
