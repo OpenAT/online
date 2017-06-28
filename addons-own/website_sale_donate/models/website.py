@@ -80,7 +80,7 @@ class Website(models.Model):
 
     @api.model
     def _default_status_email(self):
-        return self.env.ref('website_sale_donate.email_template_webshop')
+        return self.env.ref('fso_base.email_template_webshop')
 
     StatusEmail = fields.Many2one(comodel_name="email.template", string="Payment Status E-Mail Template",
                                   default=_default_status_email, readonly=True)

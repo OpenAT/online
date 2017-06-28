@@ -106,7 +106,7 @@ class FRSTController(http.Controller):
             email_act = request.registry['sale.order'].action_quotation_send(cr, SUPERUSER_ID,
                                                                              [tx.sale_order_id.id],
                                                                              context=context,
-                                                                             email_template_modell='website_sale_payment_fix',
+                                                                             email_template_addon='fso_base',
                                                                              email_template_name='email_template_webshop')
             if email_act and email_act.get('context'):
                 composer_obj = request.registry['mail.compose.message']

@@ -3,7 +3,7 @@
          so users can freely customize/delete them -->
     <data noupdate="1">
 
-        <!-- Webshop Email template -->
+        <!-- Custom Sale-Order-Payment-Status e-mail template for website_sale_donate and dadi payment providers -->
         <record id="email_template_webshop" model="email.template">
             <field name="name">Webshop Sales Order Transaction-State-Info</field>
             <field name="email_from">${(object.user_id.email or '')|safe}</field>

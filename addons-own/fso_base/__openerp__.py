@@ -102,6 +102,7 @@ TODO (must be done manually right now):
     'data': [
         'data/setup.xml',
         'data/project_task_stages.xml',
+        'data/email_templates.xml',
         'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
         'views/fsonline_menu.xml',

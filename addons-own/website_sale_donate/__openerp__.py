@@ -103,7 +103,7 @@ To solve this we did:
     'installable': True,
     'data': [
         'data/data.xml',
-        'data/email_template_data.xml',
+        #'data/email_template_data.xml', # moved to fso_base
         'security/ir.model.access.csv',
         'views/templates.xml',
         'views/templates_10_small_cart.xml',
