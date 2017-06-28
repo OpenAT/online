@@ -38,9 +38,6 @@ New instance pillar options:
 sosync_enabled: True
 sosync_skipped_flows: SaleOrder,Partner,BPK|None
 
-host_sosyncgw: sosync1
-host_sosyncdb: sosync1
-
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",

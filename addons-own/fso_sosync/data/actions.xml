@@ -26,7 +26,7 @@
 
     <!-- Scheduled submission of new sync jobs in the sosync job queue -->
     <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
-        <field name="name">SOSYNC: Submit new sync jobs in the sosync job queue</field>
+        <field name="name">SOSYNC: Submit sync jobs in the sosync job queue</field>
         <field name="priority" eval="3000" />
         <field name="active" eval="False"/>
         <field name="interval_number">1</field>
