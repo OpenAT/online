@@ -93,7 +93,7 @@
         <record id="birthdate_web" model="website.checkout_billing_fields">
             <field name="sequence">16</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_birthdate_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_birthdate_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Birthdate</field>
             <field name="placeholder">30.01.1980</field>
@@ -109,7 +109,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="company_name_web" model="website.checkout_billing_fields">
             <field name="sequence">20</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_company_name_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_company_name_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Company</field>
             <field name="placeholder">Company Name (optional)</field>
@@ -140,7 +140,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="post_office_box_web" model="website.checkout_billing_fields">
             <field name="sequence">50</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_post_office_box_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_post_office_box_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">P.O. Box</field>
             <field name="placeholder">1242</field>
@@ -170,7 +170,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="street_number_web" model="website.checkout_billing_fields">
             <field name="sequence">70</field>
             <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_street_number_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_street_number_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Street Number</field>
             <field name="placeholder">52a</field>
@@ -237,7 +237,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="newsletter_web" model="website.checkout_billing_fields">
             <field name="sequence">140</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_newsletter_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Newsletter</field>
             <field name="css_classes">col-lg-6</field>
@@ -246,7 +246,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="donation_receipt_web" model="website.checkout_billing_fields">
             <field name="sequence">150</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_receipt_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_donation_receipt_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Donation Receipt</field>
             <field name="css_classes">col-lg-6</field>
@@ -255,7 +255,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="donation_deduction_optout_web" model="website.checkout_billing_fields">
             <field name="sequence">160</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_deduction_optout_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_donation_deduction_optout_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Meine Spenden nicht absetzen</field>
             <field name="css_classes">col-lg-12</field>
@@ -282,7 +282,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="legal_terms_web" model="website.checkout_billing_fields">
             <field name="sequence">170</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_legal_terms_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_legal_terms_web"/>
             <field name="mandatory" eval="True"/>
             <field name="label">Accept Terms and Conditions</field>
             <field name="css_classes">col-lg-12</field>
@@ -314,7 +314,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="shipping_company_name_web" model="website.checkout_shipping_fields">
             <field name="sequence">20</field>
             <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_company_name_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_company_name_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Company</field>
             <field name="placeholder">Company Name (optional)</field>
@@ -345,7 +345,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="shipping_post_office_box_web" model="website.checkout_shipping_fields">
             <field name="sequence">50</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_post_office_box_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_post_office_box_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">P.O. Box</field>
             <field name="placeholder">1242</field>
@@ -375,7 +375,7 @@ Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburts
         <record id="shipping_street_number_web" model="website.checkout_shipping_fields">
             <field name="sequence">70</field>
             <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_street_number_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_street_number_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Street Number</field>
             <field name="placeholder">52a</field>
