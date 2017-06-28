@@ -4,7 +4,7 @@
     <!-- Server Action to run create_sync_job -->
     <record id="create_sync_job" model="ir.actions.server">
         <field name="name">Create Sync Job</field>
-        <field name="model_id" ref="model_base_sosync"/>
+        <field name="model_id" ref="model_res_partner"/>
         <field name="state">code</field>
         <field name="code">
             ids = []
@@ -19,13 +19,13 @@
     <!-- Add Server Action create_sync_job to the More menu -->
     <record id="ir_create_sync_job" model="ir.values">
         <field name="key2" eval="'client_action_multi'"/>
-        <field name="model" eval="'base.sosync'"/>
+        <field name="model" eval="'res.partner'"/>
         <field name="name">Create Sync Job</field>
         <field name="value" eval="'ir.actions.server,%d'%create_sync_job"/>
     </record>
 
     <!-- Scheduled submission of new sync jobs in the sosync job queue -->
-    <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
+    <record id="ir_cron_scheduled_job_queue_submission" model="ir.cron">
         <field name="name">SOSYNC: Submit sync jobs in the sosync job queue</field>
         <field name="priority" eval="3000" />
         <field name="active" eval="False"/>
