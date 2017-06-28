@@ -202,9 +202,10 @@
                             </t>
 
                             <!-- Header Amount -->
-                            <t t-if="website.amount_title">
+                            <t t-if="not product.hide_amount_title and (product.amount_title or website.amount_title)">
                                 <h3 class="amount_title">
-                                    <span t-field="website.amount_title"/>
+                                    <t t-if="product.amount_title"><span t-field="product.amount_title"/></t>
+                                    <t t-if="not product.amount_title"><span t-field="website.amount_title"/></t>
                                 </h3>
                             </t>
                             <!-- Product Quantity Selector -->

@@ -102,6 +102,8 @@
                                 <field name="hide_salesdesc"/>
                                 <field name="variants_as_list"/>
                                 <field name="hide_quantity"/>
+                                <field name="hide_amount_title"/>
+                                <field name="amount_title"/>
                                 <field name="price_donate"/>
                                 <field name="price_donate_min" attrs="{'invisible': [('price_donate','=', False)]}"/>
                                 <field name="price_suggested_ids" attrs="{'invisible': [('price_donate','=', False)]}">

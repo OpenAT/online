@@ -95,6 +95,8 @@ class product_template(osv.Model):
         'hide_salesdesc': fields.boolean('Hide Text in Checkout Panel'),
         'variants_as_list': fields.boolean('Show Variants as a List of Products'),
         'hide_quantity': fields.boolean('Hide Product-Quantity-Selector in CP'),
+        'hide_amount_title': fields.boolean('Hide Amount Title'),
+        'amount_title': fields.char('Amount Title Overwrite', translate=True),
         'price_donate': fields.boolean('Arbitrary Price'),
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
         'price_suggested_ids': fields.one2many('product.website_price_buttons', 'product_id',
