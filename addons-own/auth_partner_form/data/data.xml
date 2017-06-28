@@ -6,7 +6,7 @@
         <record id="birthdate_web" model="website.apf_partner_fields">
             <field name="sequence">10</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_birthdate_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_birthdate_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Birthdate</field>
             <field name="placeholder">30.01.1980</field>
@@ -29,7 +29,7 @@
         <record id="anrede_individuell" model="website.apf_partner_fields">
             <field name="sequence">20</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_anrede_individuell"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_anrede_individuell"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Individuelle Anrede</field>
             <field name="css_classes">col-lg-12</field>
@@ -62,7 +62,7 @@
         <record id="donation_deduction_optout_web" model="website.apf_partner_fields">
             <field name="sequence">40</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_donation_deduction_optout_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_donation_deduction_optout_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Meine Spenden bitte nicht absetzen</field>
             <field name="css_classes">col-lg-12</field>
@@ -114,7 +114,7 @@
         <record id="street_number_web" model="website.apf_partner_fields">
             <field name="sequence">70</field>
             <field name="show" eval="True"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_street_number_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_street_number_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Street Number</field>
             <field name="placeholder">52a</field>
@@ -159,7 +159,7 @@
         <record id="newsletter_web" model="website.apf_partner_fields">
             <field name="sequence">110</field>
             <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_newsletter_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_newsletter_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Ja, ich möchte Ihren Newsletter erhalten</field>
             <field name="css_classes">col-lg-12</field>
@@ -178,7 +178,7 @@
         <record id="legal_terms_web" model="website.apf_partner_fields">
             <field name="sequence">120</field>
             <field name="show" eval="False"/>
-            <field name="res_partner_field_id" ref="website_sale_donate.field_res_partner_legal_terms_web"/>
+            <field name="res_partner_field_id" ref="fso_base.field_res_partner_legal_terms_web"/>
             <field name="mandatory" eval="False"/>
             <field name="label">Accept Terms and Conditions</field>
             <field name="css_classes">col-lg-12</field>
