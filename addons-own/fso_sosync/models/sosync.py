@@ -240,8 +240,8 @@ class BaseSosync(models.AbstractModel):
     sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True)
     sosync_write_date = fields.Datetime(string="Sosync Write Date", readonly=True,
                                         help="Last change of one or more sosync-tracked-fields.")
-    sosync_sync_date = fields.Datetime(string="Last sosync sync", readonly=True,
-                                       help="Exact datetime of source-data-readout for the sync job!")
+    sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
+                                   help="Exact datetime of source-data-readout for the sync job!")
 
     @api.model
     def _get_sosync_tracked_fields(self, updated_fields=list()):

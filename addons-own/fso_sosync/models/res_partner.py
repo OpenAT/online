@@ -16,7 +16,7 @@ class ResPartnerSosync(models.Model):
     state_id = fields.Many2one(sosync="True")
     country_id = fields.Many2one(sosync="True")
     gender = fields.Selection(sosync="True")        # TODO: extend selection List based on FS Values
-    lang = fields.Selection(sosync="True")          # ATTENTION:
+    lang = fields.Selection(sosync="True")          # ATTENTION: All langs that are used by Fundrasing Studio must be installed manually in FS-Online!
     BPKRequestIDS = fields.One2many(sosync="True")
 
     # Standard basic fields
