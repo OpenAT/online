@@ -57,6 +57,7 @@
                    (4, ref('fso_con_zmr.group_res_partner_bpk_manager')),
                    (4, ref('website_domain_manager.group_website_domain_manager')),
                    (4, ref('website_widget_manager.group_website_widget_manager')),
+                   (4, ref('fso_sosync.group_sosync_manager')),
                    ]"/>
         </record>
 

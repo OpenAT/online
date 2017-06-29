@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend res.partner form to include extra fields -->
+    <record model="ir.ui.view" id="sosync_res_partner_form_fields">
+        <field name="name">sosync_res_partner_form_fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="title" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+</data></openerp>

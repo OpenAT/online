@@ -144,7 +144,8 @@ class SosyncJobQueue(models.Model):
 
     # METHODS
     @api.multi
-    def submit_sync_job(self, instance="", url="", http_header={}, crt_pem="", prvkey_pem="", user="", pwd=""):
+    def submit_sync_job(self, instance="", url="", http_header={},
+                        crt_pem="", prvkey_pem="", user="", pwd="", timeout=4):
         # Instance ID from first company (e.g.: care)
         instance = instance or self.env['res.company'].sudo().search([], limit=1).instance_id
         assert instance, "Instance ID for the default (first) company is missing!"
@@ -166,7 +167,7 @@ class SosyncJobQueue(models.Model):
             logger.info("Submitting sosync sync-job %s from queue to %s!" % (record.id, url))
             submission = fields.Datetime.now()
             try:
-                response = session.get(url, headers=http_header, timeout=12,
+                response = session.get(url, headers=http_header, timeout=timeout,
                                        params={'job_date': record.job_date,
                                                'source_system': record.source_system,
                                                'source_model': record.source_model,
@@ -175,6 +176,7 @@ class SosyncJobQueue(models.Model):
                 record.sudo().write({'state': 'submission_failed',
                                      'submission': submission,
                                      'submission_error': 'error',
+                                     'submission_response_code': '',
                                      'submission_response_body': "GET Request Exception:\n%s" % e})
                 # Continue with next record
                 continue
@@ -192,6 +194,7 @@ class SosyncJobQueue(models.Model):
             # Submission was successful
             record.sudo().write({'state': 'submitted',
                                  'submission': submission,
+                                 'submission_error': '',
                                  'submission_response_code': response.status_code,
                                  'submission_response_body': response.content})
 
@@ -233,6 +236,13 @@ class SosyncJobQueue(models.Model):
 class BaseSosync(models.AbstractModel):
     _name = "base.sosync"
 
+    # NEW COMMON FIELDS
+    sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True)
+    sosync_write_date = fields.Datetime(string="Sosync Write Date", readonly=True,
+                                        help="Last change of one or more sosync-tracked-fields.")
+    sosync_sync_date = fields.Datetime(string="Last sosync sync", readonly=True,
+                                       help="Exact datetime of source-data-readout for the sync job!")
+
     @api.model
     def _get_sosync_tracked_fields(self, updated_fields=list()):
         sosync_tracked_fields = list()
@@ -264,17 +274,21 @@ class BaseSosync(models.AbstractModel):
         result = super(BaseSosync, self).write(values)
 
         # CREATE SYNC JOBS
-        field_dict = values or dict()
-
+        # ----------------
         # HINT: Switch in context dict to suppress sync job generation
         #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation
         # ATTENTION: "create_sync_job" is not passed on to subsequent writes!
         #            Therefore possible updates in other models can still create sync jobs which is the intended
         #            behaviour!
+        field_dict = values or dict()
         if create_sync_job:
             # Check for sosync tracked fields
             if any(field_key in field_dict for field_key in self._get_sosync_tracked_fields()):
+                # Create Sync Job
                 self.create_sync_job()
+                # Update sosync_write_date
+                for record in self:
+                    record.sosync_write_date = fields.datetime.now()
 
         # Continue with write method
         return result
