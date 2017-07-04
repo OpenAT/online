@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Company "Not Mandatory" Option  -->
+        <template id="contactus_form_company_name_not_mandatory"
+                  inherit_id="website_crm.contactus_form_company_name"
+                  name="Company Name not mandatory"
+                  customize_show="True" active="False">
+            <xpath expr='//input[@name="partner_name"]' position="attributes">
+
+                <attribute name="required"/>
+
+            </xpath>
+        </template>
+
+        <!-- Address Data Option  -->
+        <template id="contactus_form_address_data"
+                  inherit_id="website_crm.contactus_form"
+                  name="Show Address Fields"
+                  customize_show="True" active="False">
+            <xpath expr="//div[@name='email_from_container']" position="after">
+
+                <div name="street_container" t-attf-class="form-group #{error and 'street' in error and 'has-error' or ''}">
+                    <label class="col-md-3 col-sm-4 control-label" for="street">Street</label>
+                    <div class="col-md-7 col-sm-8"><input name="street" class="form-control" t-attf-value="#{street or ''}"/></div>
+                </div>
+                <div name="city_container" t-attf-class="form-group #{error and 'city' in error and 'has-error' or ''}">
+                    <label class="col-md-3 col-sm-4 control-label" for="city">City</label>
+                    <div class="col-md-7 col-sm-8"><input name="city" class="form-control" t-attf-value="#{city or ''}"/></div>
+                </div>
+                <!-- HINT: zip is already a native python function therefore we only show a value if zip is already overwritten by a string -->
+                <div name="zip_container" t-attf-class="form-group #{error and 'zip' in error and 'has-error' or ''}">
+                    <label class="col-md-3 col-sm-4 control-label" for="zip">Zip</label>
+                    <div class="col-md-7 col-sm-8"><input name="zip" class="form-control" t-att-value="zip if zip and isinstance(zip, (str, unicode)) else ''"/></div>
+                </div>
+
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

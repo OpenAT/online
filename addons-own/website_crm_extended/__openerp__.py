@@ -22,27 +22,36 @@
 
 {
     'name': "website_crm_extended",
-    'summary': """Send E-Mail to company mail address for contact form of website""",
+    'summary': """Website Contact Form Extensions""",
     'description': """
-
-website_crm_sendmail
+website_crm_extended
 ====================
+Extensions to the website contact form and the leads created by it.
 
-A very simple addon to post an additional Chatter notification with better information on lead creation
-if someone uses the oddo cms contact form. Also it sets the sales team for the new lead to website sales so you could
-configure the followers and therefore the external mails send.
+- Add a frontend option to make the Company Name (partner_name) an optional field in the Form if enabled 
+- Add website sales team to the new lead
+- Add existing res.partner to the new lead
+- Post a new chatter message based on an e-mail Template (normally send to the sales team members)
+  HINT: Normally the e-mail will NOT be send to the res.partner because the default
+  setting is "Do not add as follower automatically"
 
-This is also the place to add additional extensions to the website.crm addon (the website contact form of odoo):
-
-- Added: Add res.partner to lead if E-Mail or name matches
+ATTENTION
+=========
+If you use the addon **website_snippet_contact_form** you must disable the Company Name (partner_name) as a 
+mandatory field for the drag and drop snippet of the *contact form* also!
+Look at the customer-addon of the pfot instance to see how it is done!
 
     """,
-    'author': "OpenAT",
-    'website': "http://www.openat.at/",
+    'author': "Michael Karrer",
+    'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
-        'base', 'website_crm',
+        'website_crm',
+    ],
+    'data': [
+        'data/email_templates.xml',
+        'views/templates.xml',
     ],
     'installable': True,
 }

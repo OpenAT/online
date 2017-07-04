@@ -1,0 +1,58 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* website_crm_extended
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-04 13:16+0000\n"
+"PO-Revision-Date: 2017-07-04 13:16+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_crm_extended
+#: model:email.template,body_html:website_crm_extended.email_template_contact_us_request
+msgid "\n"
+"\n"
+"\n"
+"<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
+"    <h2>\n"
+"        ${object.name}\n"
+"    </h2>\n"
+"    <p>\n"
+"        ${object.description}\n"
+"        <br />\n"
+"        <br />\n"
+"    </p>\n"
+"    <h3>\n"
+"        Contact Data:\n"
+"    </h3>\n"
+"    <p style=\"padding-left: 14px;\">\n"
+"        <strong>Name:</strong> ${object.contact_name}<br />\n"
+"        <strong>Email:</strong> ${object.email_from}<br />\n"
+"        <strong>Phone:</strong> ${object.phone}<br />\n"
+"        <strong>Company:</strong> ${object.partner_name}<br />\n"
+"        <strong>Website Language:</strong> ${object.env.context.get('lang', '')}<br />\n"
+"    </p>\n"
+"</div>\n"
+"\n"
+"\n"
+"            "
+msgstr ""
+
+#. module: website_crm_extended
+#: model:email.template,subject:website_crm_extended.email_template_contact_us_request
+msgid "ContactUs Form Request: ${object.name}"
+msgstr ""
+
+#. module: website_crm_extended
+#: code:addons/website_crm_extended/controllers/main.py:45
+#, python-format
+msgid "ContactUs-Form Request from %s"
+msgstr ""
+
