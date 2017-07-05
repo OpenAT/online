@@ -9,50 +9,51 @@
         <field name="arch" type="xml">
             <form string="Sosync Job">
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="new,inprogress,done"/>
+                    <field name="job_state" widget="statusbar" statusbar_visible="new,inprogress,done"/>
                 </header>
-                <group string="Job Basics">
+                <group string="SyncJob Basics">
                     <group>
                         <field name="job_id"/>
                         <field name="job_date"/>
-                        <field name="fetched"/>
+                        <field name="job_fetched"/>
                     </group>
                     <group>
-                        <field name="start"/>
-                        <field name="end"/>
-                        <field name="duration"/>
-                        <field name="run_count"/>
+                        <field name="job_start"/>
+                        <field name="job_end"/>
+                        <field name="job_duration"/>
+                        <field name="job_run_count"/>
                     </group>
                 </group>
                 <group string="Job Info">
                     <group>
-                        <field name="source_system"/>
-                        <field name="source_model"/>
-                        <field name="source_record_id"/>
+                        <field name="job_source_system"/>
+                        <field name="job_source_model"/>
+                        <field name="job_source_record_id"/>
                     </group>
                     <group>
-                        <field name="target_system"/>
-                        <field name="target_model"/>
-                        <field name="target_record_id"/>
+                        <field name="sync_target_system"/>
+                        <field name="sync_target_model"/>
+                        <field name="sync_target_record_id"/>
                     </group>
                 </group>
                 <group string="Child Jobs">
                     <field name="parent_job_id"/>
-                    <field name="child_start"/>
-                    <field name="child_end"/>
-                    <field name="child_duration"/>
-                    <field name="parent_id"/>
-                    <field name="child_ids"/>
+                    <field name="child_job_start"/>
+                    <field name="child_job_end"/>
+                    <field name="child_job_duration"/>
+                    <field name="parent_job_odoo"/>
+                    <field name="child_jobs_odoo"/>
                 </group>
                 <group string="Sync Info">
-                    <field name="source_data"/>
-                    <field name="target_request_start"/>
-                    <field name="target_request_end"/>
-                    <field name="target_request_duration"/>
-                    <field name="target_request"/>
-                    <field name="target_request_answer"/>
-                    <field name="error_code"/>
-                    <field name="error_text"/>
+                    <field name="sync_source_data"/>
+                    <field name="sync_start"/>
+                    <field name="sync_end"/>
+                    <field name="sync_duration"/>
+                    <field name="sync_target_request"/>
+                    <field name="sync_target_answer"/>
+                    <field name="job_error_code"/>
+                    <field name="job_error_text"/>
+                    <field name="job_log"/>
                 </group>
             </form>
         </field>
@@ -64,21 +65,21 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Sosync Job"
-                  default_order="job_date,fetched"
+                  default_order="job_date,job_fetched"
                   colors="
-                      red:state in ('error', 'skipped');
-                      orange:state in ('inprogress',);
-                      green:state in ('done',)">
+                      red:job_state in ('error', 'skipped');
+                      orange:job_state in ('inprogress',);
+                      green:job_state in ('done',)">
                 <field name="job_id"/>
                 <field name="job_date"/>
-                <field name="fetched"/>
-                <field name="source_system"/>
-                <field name="source_model"/>
-                <field name="source_record_id"/>
-                <field name="target_system"/>
-                <field name="target_model"/>
-                <field name="target_record_id"/>
-                <field name="state"/>
+                <field name="job_fetched"/>
+                <field name="job_source_system"/>
+                <field name="job_source_model"/>
+                <field name="job_source_record_id"/>
+                <field name="sync_target_system"/>
+                <field name="sync_target_model"/>
+                <field name="sync_target_record_id"/>
+                <field name="job_state"/>
             </tree>
         </field>
     </record>
@@ -91,24 +92,24 @@
             <search string="Sosync Job">
                 <field name="job_id"/>
                 <field name="job_date"/>
-                <field name="fetched"/>
-                <field name="start"/>
-                <field name="end"/>
-                <field name="run_count"/>
-                <field name="state"/>
-                <field name="error_code"/>
-                <field name="error_text"/>
+                <field name="job_fetched"/>
+                <field name="job_start"/>
+                <field name="job_end"/>
+                <field name="job_run_count"/>
+                <field name="job_state"/>
+                <field name="job_error_code"/>
+                <field name="job_error_text"/>
                 <field name="parent_job_id"/>
-                <field name="parent_id"/>
-                <field name="child_ids"/>
-                <field name="child_start"/>
-                <field name="child_end"/>
-                <field name="source_system"/>
-                <field name="source_model"/>
-                <field name="source_record_id"/>
-                <field name="target_system"/>
-                <field name="target_model"/>
-                <field name="target_record_id"/>
+                <field name="parent_job_odoo"/>
+                <field name="child_jobs_odoo"/>
+                <field name="child_job_start"/>
+                <field name="child_job_end"/>
+                <field name="job_source_system"/>
+                <field name="job_source_model"/>
+                <field name="job_source_record_id"/>
+                <field name="sync_target_system"/>
+                <field name="sync_target_model"/>
+                <field name="sync_target_record_id"/>
             </search>
         </field>
     </record>

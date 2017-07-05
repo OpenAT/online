@@ -74,7 +74,6 @@ Module tasks:
         'fso_con_zmr',
     ],
     'data': [
-        'data/user_sosync.xml',
         'data/user_studio.xml',
     ],
 }
