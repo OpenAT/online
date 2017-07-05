@@ -187,9 +187,9 @@ class SosyncJobQueue(models.Model):
             try:
                 response = session.get(url, headers=http_header, timeout=timeout,
                                        params={'job_date': record.job_date,
-                                               'job_source_system': record.source_system,
-                                               'source_model': record.source_model,
-                                               'source_record_id': record.source_record_id})
+                                               'job_source_system': record.job_source_system,
+                                               'source_model': record.job_source_model,
+                                               'source_record_id': record.job_source_record_id})
             except Exception as e:
                 record.sudo().write({'job_state': 'submission_failed',
                                      'submission': submission,
