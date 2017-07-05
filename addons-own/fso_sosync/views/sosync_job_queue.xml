@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
             <form string="Sosync Job Queue">
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="new,submitted"/>
+                    <field name="job_state" widget="statusbar" statusbar_visible="new,submitted"/>
                 </header>
                 <group>
                     <group string="Job Basics">
@@ -18,9 +18,9 @@
 
                     </group>
                     <group string="Job Source">
-                        <field name="source_system"/>
-                        <field name="source_model"/>
-                        <field name="source_record_id"/>
+                        <field name="job_source_system"/>
+                        <field name="job_source_model"/>
+                        <field name="job_source_record_id"/>
                     </group>
                 </group>
                 <group string="Submission">
@@ -41,16 +41,16 @@
             <tree string="Sosync Job Queue"
                   default_order="job_date,submission"
                   colors="
-                      red:state in ('submission_failed',);
-                      green:state in ('submitted',)">
+                      red:job_state in ('submission_failed',);
+                      green:job_state in ('submitted',)">
                 <field name="id"/>
                 <field name="job_date"/>
                 <field name="submission"/>
                 <field name="submission_error"/>
-                <field name="source_system"/>
-                <field name="source_model"/>
-                <field name="source_record_id"/>
-                <field name="state"/>
+                <field name="job_source_system"/>
+                <field name="job_source_model"/>
+                <field name="job_source_record_id"/>
+                <field name="job_state"/>
             </tree>
         </field>
     </record>
@@ -64,9 +64,9 @@
                 <field name="job_date"/>
                 <field name="submission"/>
                 <field name="submission_error"/>
-                <field name="source_system"/>
-                <field name="source_model"/>
-                <field name="source_record_id"/>
+                <field name="job_source_system"/>
+                <field name="job_source_model"/>
+                <field name="job_source_record_id"/>
             </search>
         </field>
     </record>

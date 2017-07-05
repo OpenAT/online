@@ -78,7 +78,7 @@ class SosyncJob(models.Model):
     # ODOO ONLY (to show a hierarchy view later on in the odoo gui)
     #           (TODO: must be computed fields based on job id and parent_job_id)
     parent_job_odoo = fields.Many2one(comodel_name="sosync.job", string="Parent Job", readonly=True)
-    child_jobs_odoo = fields.One2many(comodel_name="sosync.job", inverse_name="parent_id", string="Child Jobs",
+    child_jobs_odoo = fields.One2many(comodel_name="sosync.job", inverse_name="parent_job_odoo", string="Child Jobs",
                                       readonly=True)
 
     # CHILD JOBS PROCESSING TIME
@@ -110,19 +110,19 @@ class SosyncJob(models.Model):
 
 
     # COMPUTED FIELDS METHODS
-    @api.depends('start', 'end')
+    @api.depends('job_start', 'job_end')
     def _job_duration(self):
         for rec in self:
             if rec.start and rec.end:
                 rec.duration = _duration_in_ms(rec.start, rec.end)
 
-    @api.depends('target_request_start', 'target_request_end')
+    @api.depends('sync_start', 'sync_end')
     def _target_request_duration(self):
         for rec in self:
             if rec.target_request_start and rec.target_request_end:
                 rec.duration = _duration_in_ms(rec.target_request_start, rec.target_request_end)
 
-    @api.depends('child_start', 'child_end')
+    @api.depends('child_job_start', 'child_job_end')
     def _child_duration(self):
         for rec in self:
             if rec.child_start and rec.child_end:
