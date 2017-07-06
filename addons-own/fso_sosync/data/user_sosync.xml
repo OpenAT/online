@@ -22,7 +22,7 @@
 
         <!-- sosync GROUP -->
         <record id="base.sosync" model="res.groups">
-            <field name="name">sosync (Do not assign to regular user)</field>
+            <field name="name">sosync (Do not assign to a regular user)</field>
             <field name="comment">
                 Group members of the sosync group have access to most of the odoo models.
                 This is a technical group and should only be assigned to users that will never log in!

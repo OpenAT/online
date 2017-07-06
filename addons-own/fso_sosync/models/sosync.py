@@ -65,8 +65,8 @@ class SosyncJob(models.Model):
                                              ("run_counter", "Run count exceeded"),
                                              ("child_job_creation", "Child job creation error"),
                                              ("child_job_processing", "Child job processing error"),
-                                             ("source_data", "Source data error"),
-                                             ("target_request", "Target request error"),
+                                             ("source_data", "Sync Source error"),
+                                             ("target_request", "Sync Target error"),
                                              ("cleanup", "Job finalization error")],
                                   string="Error Code", readonly=True)
     job_error_text = fields.Text(string="Error", readonly=True)

@@ -60,4 +60,4 @@ class ResPartnerSosync(models.Model):
     # BKP Forced Fields
     BPKForcedFirstname = fields.Char(sosync="True")
     BPKForcedLastname = fields.Char(sosync="True")
-    BPKForcedBirthdate = fields.Char(sosync="True")
+    BPKForcedBirthdate = fields.Date(sosync="True")
