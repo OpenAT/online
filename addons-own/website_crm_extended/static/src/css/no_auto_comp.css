@@ -1,0 +1,5 @@
+/* Class for HP Fields */
+.moveoffscreen {
+    position: absolute;
+    left: -10000px;
+}

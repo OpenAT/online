@@ -27,6 +27,10 @@
 
             <!-- Load custom css for smaller fixes -->
             <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
+
+            <!-- Browser form auto-completion fix for honeypot fields -->
+            <!-- HINT: Disabled by now cause only used in website_crm_extended and there it is included anyway -->
+            <!-- script type="text/javascript" src="addons-own/fso_base_website/static/src/js/no_auto_comp.js"/ -->
         </xpath>
     </template>
 

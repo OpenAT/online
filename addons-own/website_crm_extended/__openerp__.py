@@ -47,6 +47,7 @@ Look at the customer-addon of the pfot instance to see how it is done!
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
+        'website',
         'website_crm',
     ],
     'data': [
