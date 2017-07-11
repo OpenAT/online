@@ -31,7 +31,9 @@
         <strong>Name:</strong> ${object.contact_name}<br />
         <strong>Email:</strong> ${object.email_from}<br />
         <strong>Phone:</strong> ${object.phone}<br />
+        % if object.partner_name:
         <strong>Company:</strong> ${object.partner_name}<br />
+        % endif
         % if object.street:
         <strong>Street:</strong> ${object.street}<br />
         % endif

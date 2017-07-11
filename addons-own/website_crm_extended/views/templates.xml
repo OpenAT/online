@@ -68,21 +68,22 @@
                   inherit_id="website_crm.contactus_form"
                   name="Spam Protection: Honey Pot"
                   customize_show="True" active="False">
-            <xpath expr="//div[@name='email_from_container']" position="after">
+            <!-- https://stackoverflow.com/questions/9199415/getting-first-node-in-xpath-result-set -->
+            <xpath expr="//form/div[1]" position="before">
                 <!-- ATTENTION: Please see script fso_base_website/static/src/js/no_auto_comp.js
                                 Since most bots will not click a button but just submit the form data we empty hp fields on button submission of the form
                 -->
                 <div name="surname_container" t-attf-class="form-group moveoffscreen #{error and 'surnamedadi' in error and 'has-error' or ''}">
                     <label class="col-md-3 col-sm-4 control-label" for="surname_x">Surname</label>
                     <div class="col-md-7 col-sm-8">
-                        <input name="surname_x" class="form-control" type="text" autocomplete="false" t-attf-value="#{surname or ''}"/>
-                        <input name="surname" class="form-control no-auto-comp"  autocomplete="false" type="text" t-attf-value="#{surname or ''}"/>
+                        <input name="surname_x" class="form-control" type="text" autocomplete="false" tabindex="-1" t-attf-value="#{surname or ''}"/>
+                        <input name="surname" class="form-control no-auto-comp"  autocomplete="false" tabindex="-1" type="text" t-attf-value="#{surname or ''}"/>
                     </div>
                 </div>
                 <div name="hpfdadi_container" t-attf-class="form-group moveoffscreen #{error and 'hpfdadi' in error and 'has-error' or ''}">
                     <label class="col-md-3 col-sm-4 control-label" for="hpfdadi">HPF Datadialog</label>
                     <div class="col-md-7 col-sm-8">
-                        <input name="hpfdadi" class="form-control" type="text" autocomplete="off" t-attf-value="#{hpfdadi or ''}"/>
+                        <input name="hpfdadi" class="form-control" type="text" tabindex="-1" autocomplete="off" t-attf-value="#{hpfdadi or ''}"/>
                     </div>
                 </div>
 
