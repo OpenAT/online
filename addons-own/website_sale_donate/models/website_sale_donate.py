@@ -489,12 +489,67 @@ class SaleOrder(orm.Model):
     def _check_carrier_quotation(self, cr, uid, order, force_carrier_id=None, context=None):
         _logger.warning("_check_carrier_quotation(): START force_carrier_id = %s, order = %s" % (force_carrier_id,
                                                                                                  order))
-        result = True
-        _logger.warning("_check_carrier_quotation(): DISABLED TO CHECK IF CONCURRENT WRITES DISAPPEAR")
 
-        # result = super(SaleOrder, self)._check_carrier_quotation(cr, uid, order=order,
-        #                                                                   force_carrier_id=force_carrier_id,
-        #                                                                   context=context)
+        # Basically website_sale_deliver will reload the payment page on every change of the delivery method
+        # A Java Script is called on every click to an delivery method and this executes
+        # window.location.href = '/shop/payment?carrier_id=' + carrier_id;
+        # which ultimately runs the payment() of website_dale_delivery again which will simply run
+        # _check_carrier_quotation() with "force_carrier_id" set to carrier_id from post and rerender the payment page.
+        #
+        # This is pretty much useless for OPC and it also triggers a lot of concurrent update errors on page reloads
+        # cause _check_carrier_quotation() will always write to the sale order no matter if something has changed or
+        # not.
 
-        _logger.warning("_check_carrier_quotation(): END")
-        return result
+        # If there is no sale order return False
+        if not order:
+            return False
+
+        # Get available carriers
+        # HINT: _get_delivery_methods(): Gets a list of enabled and for the website published carriers
+        enabled_carriers = self._get_delivery_methods(cr, uid, order, context=context)
+
+        # Check if the current sale order carrier must be unset
+        if order.carrier_id:
+            # Check if target carrier or current sale order carrier is still enabled
+            target_carrier = force_carrier_id or order.carrier_id.id
+            if not enabled_carriers or target_carrier not in enabled_carriers:
+                _logger.warning("Removing Carrier from sale order: Carrier not enabled or available for the website!")
+                order.write({'carrier_id': None})
+                self.pool['sale.order']._delivery_unset(cr, SUPERUSER_ID, [order.id], context=context)
+                return True
+
+            # Check if all products are services
+            if all(line.product_id.type == "service" for line in order.website_order_line):
+                _logger.warning("Removing carrier from sale order: All products are services!")
+                order.write({'carrier_id': None})
+                self.pool['sale.order']._delivery_unset(cr, SUPERUSER_ID, [order.id], context=context)
+                return True
+
+        # Check if we need to set a new carrier
+        order_carrier_id = order.carrier_id.id if order.carrier_id else None
+        if force_carrier_id:
+            new_carrier_id = False
+
+            # Try to find an enabled carrier
+            if force_carrier_id in enabled_carriers:
+                new_carrier_id = force_carrier_id
+            # Try to find an enabled carrier by grid
+            else:
+                carrier_obj = self.pool.get('delivery.carrier')
+                for carrier in enabled_carriers:
+                    if carrier_obj.grid_get(cr, SUPERUSER_ID, [carrier], order.partner_shipping_id.id):
+                        if force_carrier_id != carrier.id:
+                            _logger.warning("A grid carrier was found!")
+                            new_carrier_id = carrier.id
+                        break
+
+            # Set the new carrier
+            if new_carrier_id and new_carrier_id != order_carrier_id:
+                _logger.warning("A new carrier was selected and will be set for the sale order")
+                order.write({'carrier_id': new_carrier_id})
+                order.delivery_set()
+                return True
+
+        # Nothing changed
+        _logger.info("Carrier did not change.")
+        return True

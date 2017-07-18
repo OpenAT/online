@@ -113,6 +113,7 @@ class website_sale_donate(website_sale):
             productpage = request.website.render(product.product_page_template, productpage.qcontext)
 
         # One-Page-Checkout: Only if the template is ppt_opc
+        #
         if product.product_page_template == u'website_sale_donate.ppt_opc':
             _logger.warning("product(): self.checkout(one_page_checkout=True ...")
             if request.httprequest.method == 'POST':
@@ -421,29 +422,22 @@ class website_sale_donate(website_sale):
 
     # Render the payment page with an additional dictionary acquirers_opc for One-Page-Checkout
     def opc_payment(self, **post):
-        try:
-            _logger.warning("opc_payment(): START %s" % request.httprequest)
-        except:
-            _logger.warning("opc_payment(): START")
-
-        # Render the payment page and therefore get all Pay-Now Button forms
+        _logger.warning("opc_payment(): START")
+        # Call payment()
         payment_page = super(website_sale_donate, self).payment(**post)
-        payment_qcontext = None
-        if hasattr(payment_page, 'qcontext'):
-            payment_qcontext = payment_page.qcontext
 
-        # Check for redirection caused by errors
-        if not payment_qcontext:
-            _logger.error(_('Payment Page has no qcontext. It may be a redirection. No Acquirer-Buttons rendered!'))
-            _logger.warning("opc_payment(): END, no qcontext from payment page")
+        # Check for Errors or just redirect triggered by payment() overwrite from website_sale_delivery
+        if not hasattr(payment_page, 'qcontext') or not payment_page.qcontext:
+            _logger.warning(_('Payment Page has no qcontext. It may be a redirection. Returning orig. payment page'))
+            return payment_page
+        if payment_page.qcontext.get('errors'):
+            _logger.warning(_('Errors found while rendering the original payment page! Returning orig. payment page'))
             return payment_page
 
-        # Check for errors in qcontext
-        # HINT: If errors are present Pay-Now button forms will NOT! be rendered by payment controller
-        if payment_qcontext.get('errors'):
-            _logger.warning(_('Errors found on the payment page! No Acquirer-Buttons rendered!'))
-            _logger.warning("opc_payment(): END, errors in qcontext of payment page")
-            return payment_page
+        # ---------------------------------------------------
+        # ADD EXTRA INFORMATION TO QCONTEXT FOR OPC TEMPLATES
+        # ---------------------------------------------------
+        payment_qcontext = payment_page.qcontext
 
         # Add Billing Fields to qcontext for address display
         billing_fields_obj = request.env['website.checkout_billing_fields']
@@ -453,55 +447,55 @@ class website_sale_donate(website_sale):
         shipping_fields_obj = request.env['website.checkout_shipping_fields']
         payment_qcontext['shipping_fields'] = shipping_fields_obj.search([])
 
-        # Ugly hack to make getattr available in the payment page xml
+        # Ugly hack to make getattr available in the payment page qweb templates
         payment_qcontext['getattr'] = getattr
 
-        # Create alternative Pay-Now buttons (button_opc)
-        # Remove the form and submit button, uniquely prefix the acquirer input fields and set data from post
+        # ------------------------------------------------------------------------------------------------------
+        # CHANGE ORIGINAL ACQUIRER BUTTON FORMS AND ADD A SECOND SET OF BUTTONS WITHOUT A FORM FOR OPC TEMPLATES
+        # ------------------------------------------------------------------------------------------------------
         for acquirer in payment_qcontext['acquirers']:
 
-            # UPDATE THE ORIGINAL PAY-NOW ACQUIRER.BUTTON FORM:
-            # set input-tags value to post-data-value
-            # and use target _top
+            # SET ORIGINAL INPUT TAGS TO POST DATA IF ANY
+            # HINT: right now this is only useful for the iban and bic field from the pp "payment_frst"
+            # HINT: "target"="_top" for iframes is already set in website_sale_donate.payment_acquirer.xml
+            # HINT: The values of the input fields would only be available in **post as the prefixed names
+            # HINT: We do change the content of the "value" attribute but NOT the content of the "name" attribute here!
             button = etree.fromstring(acquirer.button)
             assert button.tag == 'form', "ERROR: One Page Checkout: Payment Button has not <form> as root tag!"
-
-            # Set input-tags value to post-data value if any (e.g.: payment_frst iban- and bic-field)
             for form_input in button.iter("input"):
                 if form_input.get('name'):
-                    # Create button_opc field name (see code below for button_opc)
                     prefixed_input_name = "aq" + str(acquirer.id) + '_' + str(form_input.get('name'))
-                    # Set value from post data if field has currently no value
                     if not form_input.get('value') and prefixed_input_name in post:
                         form_input.set('value', post.get(prefixed_input_name))
-
-            # Always set target _top (in case we are in an iframe)
-            # HINT: Button is a form see assert button.tag above
-            button.set('target', '_top')
-
-            # Store the processed xml
             acquirer.button = etree.tostring(button, encoding='UTF-8', pretty_print=True)
 
-            # CREATE button_opc: CONVERT THE PAY-NOW BUTTON FORMS INTO INPUT FIELDS WITHOUT SURROUNDING FORM TAG:
-            # to insert them into the regular checkout form
+            # CREATE A SECOND VERSION OFF THE ACQUIRER BUTTONS FOR OPC (stored in 'button_opc' instead of 'button')
             # http://lxml.de/lxmlhtml.html
             # http://lxml.de/tutorial.html
-            # Process the One-Page-Checkout version of the Pay-Now Button (=no form and submit-button but just inputs)
+            # Changes:
+            #   - Prefix the content of the "name" attribute for input tags with aq[id]_[originalname]
+            #   - Set post value (The value of input fields from **post was already set above. So nothing to do here.)
+            #   - Remove surrounding "form" tag
+            #   - Remove submit button
+            # HINT: See templates_60_checkout_steps.xml > wsd_opc_payment for details
+            # HINT: We have to do it this way because any PP inherits from the template payment.acquirer_form.xml
+            #       Therefore we can not just change one template but would need to modificate all templates of PP's.
+            #       To avoid this we change the rendered content here after all template merging and rendering is done.
             button = etree.fromstring(acquirer.button)
-
-            # Prefix the name attribute of the input tags
+            # Prefix input tag 'name' attribute value with aq[id]_[originalname]
+            # HINT: This is needed because for OPC Pages all input fields of all acquirer buttons are in one form
+            #       Therefore we have to make sure that all input tag names are unique
             for form_input in button.iter("input"):
                 if form_input.get('name'):
-                    # ATTENTION: Must be the same than above
                     form_input.set('name', "aq" + str(acquirer.id) + '_' + str(form_input.get('name')))
-
             # Remove the Pay-Now button
-            # HINT: element tree functions will return  None if an element is not found, but an empty element
+            # HINT: Element tree functions will return  None if an element is not found, but an empty element
             #       will have a boolean value of False because it acts like a container
             if button.find(".//button") is not None:
                 button.find(".//button").getparent().remove(button.find(".//button"))
 
-            # Store the form tag attributes in extra input fields (which is not used right now but nice to have)
+            # Store the form tag attributes in extra input fields
+            # HINT: For debug only right now. Maybe we need them in them in the future e.g.: in java script
             for item in ['action', 'method', 'target']:
                 child = etree.SubElement(button, "input")
                 child.set('name', "aq" + str(acquirer.id) + '_form_' + item)
@@ -519,7 +513,9 @@ class website_sale_donate(website_sale):
             # print(etree.tostring(button, encoding='UTF-8', pretty_print=True))
             acquirer.button_opc = etree.tostring(button, encoding='UTF-8', pretty_print=True)
 
-        # Acquirer Validation
+        # ---------------------------------
+        # ACQUIRER SELECTION AND VALIDATION
+        # ---------------------------------
         if post.get('acquirer'):
 
             # Set the current acquirer to be correctly pre selected on subsequent renders of the checkout page
@@ -535,8 +531,8 @@ class website_sale_donate(website_sale):
                 # HINT that the qcontext has no errors is checked above already
                 payment_qcontext['errors'] = {'pm_recurring': [_('Wrong payment method'), msg]}
 
-            # TODO: Validate acquirer non-hidden input fields
-            # TODO: Should add a new mehtod to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
+            # TODO: Validate acquirer input fields e.g.: iban and bic
+            #       Maybe add a new method to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
 
         _logger.warning("opc_payment(): END")
         return payment_page
@@ -544,107 +540,31 @@ class website_sale_donate(website_sale):
     # payment_transaction controller method (json route) gets replaced with this method
     # (see below for /shop/payment/transaction/<int:acquirer_id> and in checkout controller for one-page-checkout)
     # This is called either by the json route after the pay-now button is pressed or during the one-page-checkout
-    # HINT: We do not directly overwrite the Json route because calling a json route will kill/replace current session
+    # HINT: We can not directly call payment_transaction e.g.:
     def payment_transaction_logic(self, acquirer_id, checkout_page=None, **post):
         _logger.warning("payment_transaction_logic(): START")
 
-        cr, uid, context = request.cr, request.uid, request.context
-        transaction_obj = request.registry.get('payment.transaction')
-        order = request.website.sale_get_order(context=context)
+        # ATTENTION: This call to the json controller may destroy the session: Carefully test this !!!
+        # HINT: If there was no order or no order-line or no acquirer_id "pt" would be a redirect to "/shop/checkout"
+        _logger.info("payment_transaction_logic(): call original payment_transaction()")
+        pt = super(website_sale_donate, self).payment_transaction(acquirer_id=acquirer_id)
 
-        if not order or not order.order_line or acquirer_id is None:
-            _logger.error(_('Sale Order is missing or it contains no products!'))
-            if checkout_page:
-                if 'opc_warnings' not in checkout_page.qcontext:
-                    checkout_page.qcontext['opc_warnings'] = list()
-                checkout_page.qcontext['opc_warnings'].append(_('Please add products or donations.'))
-                return checkout_page
-            else:
-                return request.redirect("/shop/checkout")
-
-        assert order.partner_id.id != request.website.partner_id.id
-
-        _logger.info(_('Start payment_transaction_logic(acquirer_id=%s) for sale order %s')
-                     % (acquirer_id, order.name))
-
-        # Find an already existing transaction or create a new one
-        # TODO: Transaction is not updated after first creation! We should do a force update here.
-        tx_id = post.get('tx_id', False)
-        tx = request.website.sale_get_transaction()
-        if tx:
-            tx_id = tx.id
-            if tx.reference != order.name:
-                tx = False
-                tx_id = False
-            elif tx.state == 'draft':  # button clicked but no more info -> rewrite on tx or create a new one ?
-                tx.write({
-                    'acquirer_id': acquirer_id,
-                    'amount': order.amount_total,
-                })
-        if not tx:
-            tx_id = transaction_obj.create(cr, SUPERUSER_ID, {
-                'acquirer_id': acquirer_id,
-                'type': 'form',
-                'amount': order.amount_total,
-                'currency_id': order.pricelist_id.currency_id.id,
-                'partner_id': order.partner_id.id,
-                'partner_country_id': order.partner_id.country_id.id,
-                'reference': order.name,
-                'sale_order_id': order.id,
-            }, context=context)
-            request.session['sale_transaction_id'] = tx_id
-
-        # Update sale order
-        so_tx = request.registry['sale.order'].write(
-                cr, SUPERUSER_ID, [order.id], {
-                    'payment_acquirer_id': acquirer_id,
-                    'payment_tx_id': request.session['sale_transaction_id']
-                }, context=context)
-        if not so_tx:
-            _logger.error(_('Could not update sale order %s after creation or update of the payment transaction!'))
-
-        # Reset sales order of current session for Dadi Payment Providers
-        # HINT: THis is the integration of the former addon website_sale_payment_fix
-        # HINT: Since we have a transaction right now we reset the sale-order of the current session
-        #       for our own payment providers. Therefore it does not matter what happens by the PP
-        if tx_id:
-            # get the payment.transaction
-            tx = request.registry['payment.transaction'].browse(cr, SUPERUSER_ID,
-                                                                [tx_id], context=context)
-
-            # Only reset the current shop session for our own payment providers
-            if tx.acquirer_id.provider in ('ogonedadi', 'frst', 'postfinance'):
-                # Confirm the sales order so no changes are allowed any more in the odoo backend
-                _logger.info(_('payment_transaction_logic() Confirm Sale Order %s so no further changes are allowed!')
-                             % tx.sale_order_id.name)
-                request.registry['sale.order'].action_button_confirm(cr, SUPERUSER_ID,
-                                                                     [tx.sale_order_id.id], context=context)
-                # Clear the session to restart SO in case we get no answer from the PP or browser back button is used
-                # TODO: Check if this works for if you cancel the payment and get redirected by the payment provider
-                _logger.info(_('payment_transaction_logic() Reset session variables: sale_order_id, sale_last_order_id '
-                               'sale_transaction_id, sale_order_code_pricelist_id (current sale order: %s)')
-                             % tx.sale_order_id.name)
-                request.website.sale_reset(context=context)
-                request.session.update({
-                    'sale_order_id': False,
-                    'sale_last_order_id': False,
-                    'sale_transaction_id': False,
-                    'sale_order_code_pricelist_id': False,
-                })
-
-        _logger.info(_('payment_transaction_logic() return tx_id %s') % tx_id)
-        return tx_id
+        # TODO: 'return_url': '/shop/payment/validate', check if this prevents our custom return urls!
+        return pt
 
     # /shop/payment/transaction/<int:acquirer_id>
     # Overwrite the Json controller for the pay now button
     @http.route()
     def payment_transaction(self, acquirer_id):
         _logger.warning("payment_transaction(): START")
-
         _logger.info(_('Call of json route /shop/payment/transaction/%s will start payment_transaction_logic()')
                      % acquirer_id)
-        tx = self.payment_transaction_logic(acquirer_id)
-        return tx
+        # HINT: payment_transaction_logic() will only run the original payment_transaction().
+        #       This is only done so "akward" not to kill the session if the checkout page needs to call this logic
+        #       on the server instead of the browser of the user calling it. With this trick the call to
+        #       payment_transaction_logic() inside of checkout (see step 3) will not create a new session.
+        pay_now_button_form = self.payment_transaction_logic(acquirer_id)
+        return pay_now_button_form
 
     # Checkout Page
     @http.route()
@@ -658,96 +578,139 @@ class website_sale_donate(website_sale):
 
         # Render the Checkout Page
         checkout_page = super(website_sale_donate, self).checkout(**post)
+        if not hasattr(checkout_page, 'qcontext'):
+            _logger.warning("checkout(): END, checkout_page has no qcontext. Most likely a redirection after error!")
+            return checkout_page
 
-        if post and post.get('acquirer') and hasattr(checkout_page, 'qcontext'):
+        # Add the acquirer id to the checkoutpage qcontext
+        if post and post.get('acquirer'):
             checkout_page.qcontext.update({'acquirer_id': post.get('acquirer')})
 
-        # If One-Page-Checkout is enabled and checkout_page is not just a redirection or if one_page_checkout in post
-        if (request.website['one_page_checkout'] or one_page_checkout) and hasattr(checkout_page, 'qcontext'):
-            _logger.warning("checkout(): One-Page-Checkout is enabled and checkout_page is not just a redirection")
+        # -----------------------
+        # NOT A ONE PAGE CHECKOUT
+        # -----------------------
+        if not (request.website['one_page_checkout'] or one_page_checkout):
+            _logger.warning("checkout(): END")
+            return checkout_page
 
-            # Make sure one one_page_checkout is true and in the qcontext
+        # -----------------
+        # ONE PAGE CHECKOUT
+        # -----------------
+        _logger.warning("checkout(): One-Page-Checkout is enabled and checkout_page is not just a redirection")
+
+        # Make sure one one_page_checkout is true and in the qcontext
+        checkout_page.qcontext['one_page_checkout'] = True
+
+        # Checkout-Page was called for the first time
+        # -------------------------------------------
+        if request.httprequest.method != 'POST':
+            payment_page = self.opc_payment()
+            checkout_page.qcontext.update(payment_page.qcontext)
+            _logger.warning("checkout(): END, GET request (without post data)")
+            return checkout_page
+
+        # Checkout-Page was already called and now submits it's form data
+        # ---------------------------------------------------------------
+        if request.httprequest.method == 'POST':
+
+            # STEP 1: Update Delivery
+            # HINT: self.payment(**post) will basically just call _check_carrier_quotation() ir a carrier_id is in post
+            #       and return just a redirection to the payment page again. This redirection is never done because
+            # ATTENTION: _check_carrier_quotation() was completely rewritten to avoid unecessary writes to the SO
+            # TODO: Test if we should directly call _check_carrier_quotation() instead of self.payment(**post)
+            _logger.warning("checkout(): OPC POST STEP 1: Update Delivery Method through payment controller")
+            carrier_id = post.get('delivery_type')
+            if carrier_id:
+                post['carrier_id'] = int(carrier_id)
+                self.payment(**post)
+                # ATTENTION: carrier_id must be removed or payment() will always return the redirection to /shop/payment
+                post.pop('carrier_id')
+
+            # STEP 2: confirm_order
+            _logger.warning("checkout(): OPC POST STEP 2: confirm_order()")
+            # Validate form-data and create or update partner and sale order
+            # HINT: will not change the sale order state
+            confirm_order = self.confirm_order(**post)
+
+            # Render the opc payment page
+            # ATTENTION: since carrier_id is already removed now we get the payment page and not just a redirection
+            # HINT: opc_payment() will also validate if the acquirer is correct for the payment interval of the so
+            payment_page = self.opc_payment(**post)
+
+            # Process the checkout controller again to include possible changes made by confirm_order
+            checkout_page = super(website_sale_donate, self).checkout(**post)
             checkout_page.qcontext['one_page_checkout'] = True
 
-            # Checkout-Page was already called and now submits it's form data
-            if request.httprequest.method == 'POST':
+            # Add a additional warnings list to the qcontext for the payment_transaction controller
+            checkout_page.qcontext['opc_warnings'] = list()
+            checkout_page.qcontext.update(confirm_order.qcontext)
+            checkout_page.qcontext.update(payment_page.qcontext)
 
-                # STEP 1: Update Delivery Method through payment controller
-                _logger.warning("checkout(): STEP 1: Update Delivery Method through payment controller")
-                carrier_id = post.get('delivery_type')
-                if carrier_id:
-                    post['carrier_id'] = int(carrier_id)
-                    self.payment(**post)
-                    # HINT: carrier_id must be removed or payment will always return a redirection to /shop/payment
-                    post.pop('carrier_id')
+            # On errors return the checkout_page
+            if checkout_page.qcontext.get('error') \
+                    or confirm_order.location != '/shop/payment' \
+                    or payment_page.qcontext.get('errors'):
+                _logger.warning("checkout(): END at STEP 2, error in qcontext")
+                return checkout_page
+            # STEP 2: END (SUCCESSFUL)
 
-                # STEP 2: confirm_order
-                _logger.warning("checkout(): STEP 2: confirm_order")
-                # confirm_order validates the form-data and creates or updates partner and sales-order
-                confirm_order = self.confirm_order(**post)
-                # HINT: opc_payment will also validate if the acquirer is correct for the payment interval of the so
-                payment_page = self.opc_payment(**post)
-                # Process the checkout controller again to include possible changes made by confirm_order
-                checkout_page = super(website_sale_donate, self).checkout(**post)
-                checkout_page.qcontext['one_page_checkout'] = True
-                # Add a additional warnings list to the qcontext for the payment_transaction controller
-                checkout_page.qcontext['opc_warnings'] = list()
-                checkout_page.qcontext.update(confirm_order.qcontext)
-                checkout_page.qcontext.update(payment_page.qcontext)
-                # On errors return the checkout_page
-                if checkout_page.qcontext.get('error') \
-                        or confirm_order.location != '/shop/payment' \
-                        or payment_page.qcontext.get('errors'):
-                    _logger.warning("checkout(): END at STEP 2, error in qcontext")
-                    return checkout_page
-                # STEP 2: END (SUCCESSFUL)
+            # STEP 3: payment_transaction() Create or update the Payment-Transaction and update the Sales Order
+            _logger.warning("checkout(): OPC POST STEP 3: payment_transaction()")
 
-                # STEP 3: payment_transaction
-                _logger.warning("checkout(): STEP 3: payment_transaction")
-                # Create or update the Payment-Transaction and update the Sales Order
-                # HINT: Normally done by a json request before the pay-now form get's auto submitted by Java Script
-                if not post.get('acquirer'):
-                    _logger.error(_('No Acquirer (Payment Method) selected!'))
-                    # TODO: Check what happens if a 'wrong' acquirer was set at a product_page with ppt_opc
-                    checkout_page.qcontext['opc_warnings'].append(_('Please select a payment method.'))
-                    _logger.warning("checkout(): END at STEP 3, no acquirer selected")
-                    return checkout_page
-
-                # HINT: SEEMS THAT THE JSON REQUEST KILLS THE SESSION AND THEREFORE THE SALES ORDER
-                #       Because of this and to integrate website_sale_payment_fix the logic was added in a new method
-                acquirer_id = int(post.get('acquirer'))
-                request.session['acquirer_id'] = acquirer_id
-                checkout_page.qcontext.update({'acquirer_id': request.session.get('acquirer_id')})
-                _logger.info(_('Call payment_transaction_logic(acquirer_id=%s, ...) from checkout() route-method '
-                               'for one-page-checkout pages ') % acquirer_id)
-                self.payment_transaction_logic(acquirer_id, checkout_page=checkout_page)
-                # If any errors are found return the checkout_page
-                if checkout_page.qcontext.get('opc_warnings'):
-                    _logger.warning("checkout(): END at STEP 3, opc_warnings")
-                    return checkout_page
-                # STEP 3: END (SUCCESSFUL)
-
-                # STEP 4: set sales order to "send" and redirect to the payment provider
-                _logger.warning("checkout(): STEP 4: Set sales order to 'send' and redirect to the payment provider")
-                # Open the payment provider page OR directly validate the sales order if amount.total is 0
-                # Return the checkout page and auto submit the correct Pay-Now_Button_Form by java script
-                # TODO: if amount.total == 0 Directly set sales order to done and redirect to /shop/payment/validate
-                # TODO: Also check this behaviour if not One-Page-Checkout !!!
-                for acquirer in payment_page.qcontext['acquirers']:
-                    if int(acquirer.id) == int(post.get('acquirer')):
-                        checkout_page.qcontext['acquirer_auto_submit'] = acquirer
-                _logger.warning("checkout(): END at STEP 4, opc POST request")
+            # Check if an acquirer was selected
+            if not post.get('acquirer'):
+                _logger.error(_('No Acquirer (Payment Method) selected!'))
+                checkout_page.qcontext['opc_warnings'].append(_('Please select a payment method.'))
+                _logger.warning("checkout(): END at STEP 3, no acquirer selected")
                 return checkout_page
 
-            # Checkout-Page is called for the first time (with no post data)
-            else:
-                payment_page = self.opc_payment()
-                checkout_page.qcontext.update(payment_page.qcontext)
-                _logger.warning("checkout(): END, opc GET request")
+            # Store the selected acquirer in the session and update the qcontext of the checkoutpage
+            acquirer_id = int(post.get('acquirer'))
+            request.session['acquirer_id'] = acquirer_id
+            checkout_page.qcontext.update({'acquirer_id': request.session.get('acquirer_id')})
+
+            # Find the currently selected acquirer in the payment page qcontext
+            acquirer_active = False
+            for acquirer in payment_page.qcontext['acquirers']:
+                if int(acquirer.id) == acquirer_id:
+                    acquirer_active = acquirer
+                    break
+            if not acquirer_active:
+                _logger.error('Selected Acquirer was not found in the payment page qcontext')
+                checkout_page.qcontext['opc_warnings'].append(_('Please select an other acquirer.'))
+                _logger.warning("checkout(): END at STEP 3, acquirer not found in payment page qcontext")
                 return checkout_page
 
-        _logger.warning("checkout(): END")
-        return checkout_page
+            # TODO: Directly confirm a sale order with an amount total of 0
+            #       This makes it possible to use the shop as as a pet agency or alike
+            #       Also check this behaviour if not One-Page-Checkout !!!
+
+            # Rerender the Pay-Now-Button for for the active acquirer
+            # HINT: This creates or updates the Payment-Transaction and updates the Sale Order
+            # ATTENTION: Normally payment_transaction() is a json controller called by java script when the user
+            #            clicks on a pay-now button on the payment page:
+            #            - It will create a new payment transaction and update the sale order respectively
+            #            - It will NOT change the state of the sale order
+            #              (The SO state is only changed by an answer from the pp to /shop/payment/validate)
+            #            - Finally it will return the rerendered button with the correct reference and pp data
+            #              and submits itself to the payment provider
+            # TODO: remove checkout_page after tests - seems no longer needed
+            final_pp_submission_form = self.payment_transaction_logic(acquirer_id, checkout_page=checkout_page)
+            # Check for errors in payment_transaction()
+            # ATTENTION: If qcontext missing it means no sale order or no sale order line exists at this point
+            if not final_pp_submission_form:
+                checkout_page.qcontext['opc_warnings'].append(_('Please add at least one product'))
+                _logger.warning("checkout(): END at STEP 3, payment_transaction() returned no rendered Pay-Now-Button!")
+                return checkout_page
+
+            # Add "acquirer_auto_submit" to checkoutpage qcontext which is captured in all relevant OPC templates
+            # HINT: This will render only the template "wsd_pp_auto_submit_form" on most OPC pages which will be
+            #       automatically submitted
+            _logger.warning("checkout(): final_pp_submission_form: \n%s\n" % final_pp_submission_form)
+            acquirer_active.button = final_pp_submission_form
+            checkout_page.qcontext['acquirer_auto_submit'] = acquirer_active
+            _logger.warning("checkout(): END at STEP 3, Submit payment info to payment provider")
+            return checkout_page
 
     # One-Page-Checkout: Payment Page Redirection
     # HINT: Shopping Cart Redirection is done above around line 92
@@ -758,12 +721,16 @@ class website_sale_donate(website_sale):
         except:
             _logger.warning("payment(): START")
 
-        # For one page checkout redirect to checkout page
+        # OPC enabled for the whole website = redirect to checkout page
+        # HINT: If one_page_checkout is enabled globally for the webshop the payment page is not
+        #       used because the payment templates are displayed already on the checkout page (= shop OPC)
         if request.website['one_page_checkout']:
             _logger.warning("payment(): END, opc in session therefore redirect to /shop/checkout")
             return request.redirect("/shop/checkout")
 
-        # Call super().payment and render correct payment provider buttons
+        # HINT: The call to the original payment controller is done in opc_payment()
+        # HINT: The original payment page is fully replaced in templates_60_checkout_steps.xml
+        #       Therefore we always call opc_payment()
         _logger.warning("payment(): END, return self.opc_payment(**post)")
         return self.opc_payment(**post)
 
