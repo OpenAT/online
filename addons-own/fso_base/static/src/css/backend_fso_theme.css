@@ -103,7 +103,7 @@
     color: #fff;
     font-weight: bold;
     background-color: #bc2a30;
-    background-image: inherit;
+    background-image: none;
     -moz-box-shadow: initial;
     -webkit-box-shadow: initial;
     box-shadow: initial;
