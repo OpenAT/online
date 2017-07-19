@@ -12,8 +12,8 @@ class ResPartnerSosync(models.Model):
     active = fields.Boolean(sosync="True")          # Record is hidden (will not show up by default in any search)
 
     # RELATED FIELDS
-    parent_id = fields.Many2one(sosync="True")      # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner
-    state_id = fields.Many2one(sosync="True")       # Wird derzeit im FS nicht verwendet - daher kentte es ausgelassen werden.
+    #parent_id = fields.Many2one(sosync="True")      # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner
+    #state_id = fields.Many2one(sosync="True")       # Wird derzeit im FS nicht verwendet - daher kentte es ausgelassen werden.
     country_id = fields.Many2one(sosync="True")     # Country wird nicht gesynced da alle Codes bereits in FS vorhanden sind
     gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values
     # ATTENTION: All languages that are used by FS must be installed manually in FS-O!
@@ -29,13 +29,13 @@ class ResPartnerSosync(models.Model):
     lastname = fields.Char(sosync="True")
     phone = fields.Char(sosync="True")
     mobile = fields.Char(sosync="True")
-    fax = fields.Char(sosync="True")
+    #fax = fields.Char(sosync="True")                  # Not used in FS
     email = fields.Char(sosync="True")
     opt_out = fields.Boolean(sosync="True")            # No communication wanted by the partner: All channels?
 
     # Standard address fields
     street = fields.Char(sosync="True")
-    street2 = fields.Char(sosync="True")
+    #street2 = fields.Char(sosync="True")
     city = fields.Char(sosync="True")
     zip = fields.Char(sosync="True")
 
