@@ -1,0 +1,8 @@
+
+#fsotransfer .form-control-feedback {
+    top: 33px;
+}
+[data-name='fsotransfer-submit-button'] {
+    max-width: 100px;
+}
+

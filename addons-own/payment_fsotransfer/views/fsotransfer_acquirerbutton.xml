@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="fsotransfer_pp_assets">
+          <xpath expr="." position="inside">
+              <link rel="stylesheet" href='/payment_fsotransfer/static/src/css/payment_fsotransfer.css'/>
+          </xpath>
+        </template>
+
+        <template id="fsotransfer_acquirer_button">
+            <form id="fsotransfer" t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
+                <t t-if="tx_values.get('return_url')">
+                    <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>
+                </t>
+                <input type='hidden' name='reference' t-att-value='reference'/>
+                <input type='hidden' name='amount' t-att-value='amount or "0.0"'/>
+                <input type='hidden' name='currency' t-att-value='currency.name'/>
+                <!-- submit -->
+                <button type="submit"
+                        data-name="fsotransfer-submit-button"
+                        t-att-class="acquirer.submit_button_class or submit_class">
+                    <t t-if="acquirer.submit_button_text">
+                        <span t-esc="acquirer.submit_button_text"/>
+                    </t>
+                    <t t-if="not acquirer.submit_button_text">
+                        <img t-if="not submit_txt" src="/payment_fsotransfer/static/src/img/fsotransfer_icon.png"/>
+                        <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                    </t>
+                </button>
+            </form>
+        </template>
+
+    </data>
+</openerp>
