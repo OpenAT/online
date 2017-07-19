@@ -4,6 +4,7 @@
 __author__ = 'mkarrer'
 
 import payment_acquirer
+import payment_transaction
 import product_website_price_buttons
 import product_payment_interval
 import website_checkout_billing_fields

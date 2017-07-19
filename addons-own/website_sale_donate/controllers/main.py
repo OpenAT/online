@@ -734,6 +734,69 @@ class website_sale_donate(website_sale):
         _logger.warning("payment(): END, return self.opc_payment(**post)")
         return self.opc_payment(**post)
 
+    # Override of /shop/payment/validate
+    # ATTENTION: All payment providers will redirect after its [name]_form_feedback() to /shop/payment/validate
+    # HINT: Overwrite was necessarc because of unwanted redirects e.g.: to /shop in orig. controller
+    @http.route()
+    def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
+        cr, uid, context = request.cr, request.uid, request.context
+        sale_order_obj = request.registry['sale.order']
+
+        # Redirect URL
+        # TODO: check if last_shop_page and last_page is really a good idea or if /shop/confirmation_static is enough
+        redirect_url_after_form_feedback = (request.registry.get('last_shop_page') or
+                                            request.registry.get('last_page') or '/shop/confirmation_static')
+
+        # Update redirect_url_after_form_feedback from global website setting
+        if request.website and request.website.redirect_url_after_form_feedback:
+            redirect_url_after_form_feedback = request.website.redirect_url_after_form_feedback
+
+        # Find payment transaction (from current session)
+        if transaction_id is None:
+            tx = request.website.sale_get_transaction()
+        else:
+            tx = request.registry['payment.transaction'].browse(cr, uid, transaction_id, context=context)
+
+        # Update redirect_url_after_form_feedback from payment provider if set
+        if tx and tx.acquirer_id and tx.acquirer_id.redirect_url_after_form_feedback:
+            # From Payment Provider
+            redirect_url_after_form_feedback = tx.acquirer_id.redirect_url_after_form_feedback
+
+        # Update redirect_url_after_form_feedback from sale-order-root_cat
+        if tx and tx.sale_order_id \
+                and tx.sale_order_id.cat_root_id \
+                and tx.sale_order_id.cat_root_id.redirect_url_after_form_feedback:
+            redirect_url_after_form_feedback = tx.sale_order_id.cat_root_id.redirect_url_after_form_feedback
+
+        # Find sale order (from current session)
+        if sale_order_id is None:
+            order = request.website.sale_get_order(context=context)
+        else:
+            order = request.registry['sale.order'].browse(cr, SUPERUSER_ID, sale_order_id, context=context)
+            assert order.id == request.session.get('sale_last_order_id')
+
+        # EXIT if no sale order can be found
+        if not order:
+            return request.redirect(redirect_url_after_form_feedback)
+
+        # Confirm free sale orders
+        # HINT: No payment transaction BUT a sale order with 0 total amount
+        if (not order.amount_total and not tx) or tx.state in ['pending', 'done']:
+            if (not order.amount_total and not tx):
+                # Orders are confirmed by payment transactions, but there is none for free orders,
+                # (e.g. free events), so confirm immediately
+                order.action_button_confirm()
+                # TODO: Send e-mail like in addons-own/website_sale_donate/models/payment_transaction.py
+        elif tx and tx.state == 'cancel' and order.state != 'cancel':
+            sale_order_obj.action_cancel(cr, SUPERUSER_ID, [order.id], context=request.context)
+
+        # CLEAN CURRENT SESSION
+        request.website.sale_reset(context=context)
+
+        # Redirect
+        divider = '?' if '?' not in redirect_url_after_form_feedback else '&'
+        return request.redirect(redirect_url_after_form_feedback+divider+'order_id='+str(order.id))
+
     # Alternative confirmation page for Dadi Payment-Providers (Acquirers ogonedadi and frst for now)
     # HINT this rout is called by the payment_provider routes e.g.: ogonedadi_form_feedback or frst_form_feedback
     @http.route(['/shop/confirmation_static'], type='http', auth="public", website=True)
