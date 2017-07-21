@@ -67,7 +67,7 @@ class website_sale_donate(website_sale):
     @http.route()
     def product(self, product, category='', search='', **kwargs):
         try:
-            _logger.warning("product(): START %s" % request.httprequest)
+            _logger.warning("product(): START %s kwargs: \n%s\n" % (request.httprequest, kwargs or None))
         except:
             _logger.warning("product(): START")
 
@@ -78,14 +78,16 @@ class website_sale_donate(website_sale):
             category = ''
 
         # Store the current request url in the session for possible returns
-        # INFO: html escaping is done by request.redirect so not needed here!
+        # HINT: html escaping is done by request.redirect so not needed here!
         query = {'category': category, 'search': search}
         query = '&'.join("%s=%s" % (key, val) for (key, val) in query.iteritems() if val)
         request.session['last_page'] = request.httprequest.base_url + '?' + query
 
         cr, uid, context = request.cr, request.uid, request.context
 
-        # One-Page-Checkout: call cart_update
+        # -----------------
+        # ONE PAGE CHECKOUT Start
+        # -----------------
         # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
         if request.httprequest.method == 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
@@ -97,7 +99,26 @@ class website_sale_donate(website_sale):
             if not kwargs.get('product_id'):
                 kwargs['product_id'] = product.id
             _logger.warning("product(): self.cart_update(**kwargs)")
+            # TODO: Check if self works here - this is product.template not sale.order ?!?
+            _logger.error("TODO: Why can it be self should be sale order if cart_update is run or?")
             self.cart_update(**kwargs)
+
+        # Remove all other products from the so if there is an individual payment acquirer config for this product
+        if product.product_page_template == u'website_sale_donate.ppt_opc' and product.product_acquirer_lines_ids:
+                order = request.website.sale_get_order()
+                if order and order.order_line:
+                    so_lines = order.order_line
+                    if len(so_lines) > 1 or so_lines[0].product_id.id != product.id:
+                        # TODO: Swap Sale Orders instead of cleaning products from this one
+                        #       Even better would be to check if the current so works with the product acquirer config!
+                        # TODO: remove all products from SO except this one!
+                        for line in so_lines:
+                            if line.product_id.id != product.id:
+                                _logger.error("TODO: Remove sale order line %s because of product acquirer config" %
+                                              line.id)
+        # -----------------
+        # ONE PAGE CHECKOUT End
+        # -----------------
 
         # small_cart_update by json request: Remove json_cart_update in session
         # HINT: See 'def cart_update_json' below
@@ -112,16 +133,44 @@ class website_sale_donate(website_sale):
         if product.product_page_template:
             productpage = request.website.render(product.product_page_template, productpage.qcontext)
 
-        # One-Page-Checkout: Only if the template is ppt_opc
-        #
+        # -----------------
+        # ONE PAGE CHECKOUT Start
+        # -----------------
         if product.product_page_template == u'website_sale_donate.ppt_opc':
             _logger.warning("product(): self.checkout(one_page_checkout=True ...")
+
+            # Render the checkout page
+            # -------------------------------------------------
             if request.httprequest.method == 'POST':
                 checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
             else:
                 checkoutpage = self.checkout(one_page_checkout=True)
-            # One-Page-Checkout Qcontext
+
+            # INDIVIDUAL ACQUIRER CONFIG FOR THIS PRODUCT START
+            # -------------------------------------------------
+            if product.product_acquirer_lines_ids:
+                _logger.info("One page checkout product %s (ID %s) with individual payment acquirer config!" %
+                             (product.name, product.id))
+
+                # HINT: all acquirers with "globally_hidden" set are moved to acquirers_hidden in opc_payment()
+                acquirers = checkoutpage.qcontext.get('acquirers', [])
+                acquirers_hidden = checkoutpage.qcontext.get('acquirers_hidden', [])
+                all_acquires = acquirers + acquirers_hidden
+
+                product_acquirers = []
+                acquirer_dict = {acq.id: acq for acq in all_acquires}
+                # HINT: product_acquirer_lines_ids is already correctly sorted by sequence
+                for line in product.product_acquirer_lines_ids:
+                    if line.acquirer_id.id in acquirer_dict:
+                        product_acquirers.append(acquirer_dict[line.acquirer_id.id])
+                checkoutpage.qcontext['acquirers'] = product_acquirers
+
+            # ADD THE CHECKOUTPAGE QCONTEXT TO THE PRODUCTPAGE
+            # ------------------------------------------------
             productpage.qcontext.update(checkoutpage.qcontext)
+        # -----------------
+        # ONE PAGE CHECKOUT End
+        # -----------------
 
         # Add Warnings if the page is called (redirected from cart_update) with warnings in GET request
         productpage.qcontext['warnings'] = kwargs.get('warnings')
@@ -534,6 +583,14 @@ class website_sale_donate(website_sale):
             # TODO: Validate acquirer input fields e.g.: iban and bic
             #       Maybe add a new method to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
 
+        # -------------------------------------------------------
+        # MOVE ACQUIRERS WITH globally_hidden TO acquirers_hidden
+        # -------------------------------------------------------
+        # HINT: This is for individual payment acquirer configuration per one page checkout product
+        # https://stackoverflow.com/questions/1207406/remove-items-from-a-list-while-iterating
+        payment_qcontext['acquirers_hidden'] = [acq for acq in payment_qcontext['acquirers'] if acq.globally_hidden]
+        payment_qcontext['acquirers'][:] = [acq for acq in payment_qcontext['acquirers'] if not acq.globally_hidden]
+
         _logger.warning("opc_payment(): END")
         return payment_page
 
@@ -555,8 +612,8 @@ class website_sale_donate(website_sale):
     # /shop/payment/transaction/<int:acquirer_id>
     # Overwrite the Json controller for the pay now button
     @http.route()
-    def payment_transaction(self, acquirer_id):
-        _logger.warning("payment_transaction(): START")
+    def payment_transaction(self, acquirer_id, **post):
+        _logger.warning("payment_transaction(): START post data: \n%s\n" % post or None)
         _logger.info(_('Call of json route /shop/payment/transaction/%s will start payment_transaction_logic()')
                      % acquirer_id)
         # HINT: payment_transaction_logic() will only run the original payment_transaction().
@@ -671,7 +728,11 @@ class website_sale_donate(website_sale):
 
             # Find the currently selected acquirer in the payment page qcontext
             acquirer_active = False
-            for acquirer in payment_page.qcontext['acquirers']:
+            # HINT: all acquirers with "globally_hidden" set are moved to acquirers_hidden in opc_payment()
+            acquirers = checkout_page.qcontext.get('acquirers', [])
+            acquirers_hidden = checkout_page.qcontext.get('acquirers_hidden', [])
+            all_acquires = acquirers + acquirers_hidden
+            for acquirer in all_acquires:
                 if int(acquirer.id) == acquirer_id:
                     acquirer_active = acquirer
                     break
@@ -680,10 +741,6 @@ class website_sale_donate(website_sale):
                 checkout_page.qcontext['opc_warnings'].append(_('Please select an other acquirer.'))
                 _logger.warning("checkout(): END at STEP 3, acquirer not found in payment page qcontext")
                 return checkout_page
-
-            # TODO: Directly confirm a sale order with an amount total of 0
-            #       This makes it possible to use the shop as as a pet agency or alike
-            #       Also check this behaviour if not One-Page-Checkout !!!
 
             # Rerender the Pay-Now-Button for for the active acquirer
             # HINT: This creates or updates the Payment-Transaction and updates the Sale Order
@@ -694,7 +751,6 @@ class website_sale_donate(website_sale):
             #              (The SO state is only changed by an answer from the pp to /shop/payment/validate)
             #            - Finally it will return the rerendered button with the correct reference and pp data
             #              and submits itself to the payment provider
-            # TODO: remove checkout_page after tests - seems no longer needed
             final_pp_submission_form = self.payment_transaction_logic(acquirer_id, checkout_page=checkout_page)
             # Check for errors in payment_transaction()
             # ATTENTION: If qcontext missing it means no sale order or no sale order line exists at this point
@@ -736,7 +792,7 @@ class website_sale_donate(website_sale):
 
     # Override of /shop/payment/validate
     # ATTENTION: All payment providers will redirect after its [name]_form_feedback() to /shop/payment/validate
-    # HINT: Overwrite was necessarc because of unwanted redirects e.g.: to /shop in orig. controller
+    # HINT: Overwrite was necessary because of unwanted redirects e.g.: to /shop in orig. controller
     @http.route()
     def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
         cr, uid, context = request.cr, request.uid, request.context
@@ -828,7 +884,6 @@ class website_sale_donate(website_sale):
             product_prices.update(order_line_prices)
         # Cycle through products and return arbitrary price if set
         return product_prices
-
 
     # Extra Route for Sales Order Information
     @http.route('/shop/order/get_data/<int:sale_order_id>', type='json', auth="user", website=True)

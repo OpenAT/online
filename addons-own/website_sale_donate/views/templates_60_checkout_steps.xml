@@ -658,7 +658,7 @@
                     <!-- Acquirer-Selection (Payment Method) Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <t t-foreach="acquirers or []" t-as="acquirer">
-                            <!-- Only show correct acquirers (payment methods) -->
+                            <!-- Only show correct acquirers for recurring payments if set -->
                             <t t-if="acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) )">
                                 <li role="presentation"
                                     t-att-class="'active' if str(acquirer.id) == str(acquirer_id) else ''"
@@ -988,9 +988,7 @@
             </xpath>
         </template>
 
-        <!-- ALTERNATIVE CHECKOUT PAGE for Dadi Payment Providers -->
-        <!-- HINT: the sales order gets confirmed before we redirect to the PP therefore the update is not important -->
-        <!--       = not monitored by website_sale_validate.js in website sales -->
+        <!-- ALTERNATIVE CHECKOUT PAGE !!! replaced default checkout page !!! see override of /shop/payment/validate -->
         <template id="confirmation_static">
             <t t-call="website.layout">
                 <t t-set="additional_title">Shop - Confirmed</t>
@@ -1004,19 +1002,59 @@
                             </div>
                         </div>
 
+                        <!-- Order and Payment status -->
                         <div class="row wsd_confirmation_page_status">
                             <div class="col-md-12">
                                 <!-- Order Status -->
                                 <t t-if="order">
-                                    <h1 class="order_name"><span t-field="order.name"/></h1>
-                                    <h1 class="payment_status"><span t-field="order.payment_tx_id.state"/></h1>
+                                    <h3 class="your_transaction_number">
+                                        <span>Your Transaction Number</span>
+                                    </h3>
+                                    <h1 class="order_name">
+                                        <span t-field="order.name"/>
+                                    </h1>
+                                    <!-- TODO: pack this in a field website.transaction_reference_info -->
+                                    <p class="transaction_reference_info">
+                                        Please add your transaction number to any communication regarding this transaction!<br/>
+                                        When making a bank transfer please always give your transaction number as a reference so we can allocate your payment correctly!
+                                    </p>
+                                    <t t-if="order.payment_tx_id">
+                                        <div class="payment_information">
+                                            <h3>Payment Information</h3>
+                                            <p class="payment_status">
+                                                <div class="payment_status"><span>Payment Method: </span><span class="badge" t-field="order.payment_tx_id.acquirer_id"/></div>
+                                                <div class="payment_status"><span>Payment Reference: </span><span class="badge" t-field="order.payment_tx_id.reference"/></div>
+                                                <div class="payment_status"><span>Payment Status: </span><span class="badge" t-field="order.payment_tx_id.state"/></div>
+                                                <div class="payment_status"><span>Total Amount: </span><span class="badge" t-field="order.amount_total"/></div>
+                                            </p>
+                                        </div>
+                                    </t>
                                 </t>
                                 <!-- Error -->
                                 <t t-if="not order">
-                                    <h1 class="order_error">
+                                    <h2 class="order_error">
                                         <span>No data received from the payment provider.</span>
-                                    </h1>
+                                    </h2>
                                 </t>
+                            </div>
+                        </div>
+
+                        <!-- Payment Acquirer post message -->
+                        <t t-if="order.payment_tx_id.acquirer_id.post_msg">
+                            <div class="row wsd_acquirer_post_msg">
+                                <div class="col-md-12">
+                                        <div class="acquirer_post_msg" t-field="order.payment_tx_id.acquirer_id.post_msg"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Product Template confirmation_post_message(s) -->
+                        <div class="row wsd_product_post_msg">
+                            <div class="col-md-12">
+                                <!-- Todo: Cycle through so lines products and show product_post_msg if not empty
+                                           Create a new controller for product.template and show ist product_post_msg
+                                           field so it can be filled and designed with snippets
+                                -->
                             </div>
                         </div>
 

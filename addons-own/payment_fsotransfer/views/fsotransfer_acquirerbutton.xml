@@ -16,7 +16,16 @@
                 <input type='hidden' name='reference' t-att-value='reference'/>
                 <input type='hidden' name='amount' t-att-value='amount or "0.0"'/>
                 <input type='hidden' name='currency' t-att-value='currency.name'/>
-                <!-- submit -->
+                <!-- no payment forms options (e.g.: for direct cash transfer) -->
+                <div class="form-group col-md-12 do_not_send_payment_forms" for="do_not_send_payment_forms">
+                    <label class="control-label">
+                        <input type="checkbox"
+                               name='do_not_send_payment_forms'
+                               t-att-value="tx_values['do_not_send_payment_forms']"/>
+                        <span>Please do not send payment forms</span>
+                    </label>
+                </div>
+                <!-- submit button -->
                 <button type="submit"
                         data-name="fsotransfer-submit-button"
                         t-att-class="acquirer.submit_button_class or submit_class">
@@ -25,7 +34,7 @@
                     </t>
                     <t t-if="not acquirer.submit_button_text">
                         <img t-if="not submit_txt" src="/payment_fsotransfer/static/src/img/fsotransfer_icon.png"/>
-                        <span t-if="submit_txt"><t t-esc="submit_txt"/> <span class="fa fa-long-arrow-right"/></span>
+                        <span t-if="submit_txt"><t t-esc="submit_txt"/><span class="fa fa-long-arrow-right"/></span>
                     </t>
                 </button>
             </form>

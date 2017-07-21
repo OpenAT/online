@@ -52,6 +52,10 @@ class AcquirerFsotransfer(osv.Model):
     # partner_values and tx_values (which are pre-processed at "form_preprocess_values directly in render") and then
     # used in the dictionary qweb_context wich is used to render the qweb template for the acquirer button form
     def fsotransfer_form_generate_values(self, cr, uid, id, partner_values, tx_values, context=None):
+        _logger.info("fsotransfer_form_generate_values(): tx_values %s" % tx_values)
+        # TODO: get initial value of do_not_send_payment_forms by payment acquirer
+        tx_values.update({'do_not_send_payment_forms': None})
+        _logger.warning("fsotransfer_form_generate_values(): tx_values: %s" % tx_values)
         return partner_values, tx_values
 
     # Define the Form URL (url that will be called when button with form is clicked)
@@ -101,16 +105,16 @@ class PaymentTransactionFsotransfer(osv.Model):
         if data.get('currency') != tx.currency_id.name:
             invalid_parameters.append(('currency', data.get('currency'), tx.currency_id.name))
 
-        info_msg = 'fsotransfer Payment Transaction: Invalid Parameters %s' % (pprint.pformat(invalid_parameters))
-        _logger.info(info_msg)
+        if invalid_parameters:
+            info_msg = 'fsotransfer Payment Transaction: Invalid Parameters %s' % (pprint.pformat(invalid_parameters))
+            _logger.info(info_msg)
 
         return invalid_parameters
 
     # do the form validation and directly set the state of the payment.transaction to pending
     def _fsotransfer_form_validate(self, cr, uid, tx, data, context=None):
-        _logger.info('Validated fsotransfer payment for tx %s: set as pending' % tx.reference)
-
-        # TODO: add and write field do_not_send_payment_forms
+        _logger.info('_fsotransfer_form_validate(): Validated fsotransfer payment for tx %s: set as pending: %s' %
+                     (tx.reference, data))
 
         # Update State
         return tx.write({'state': 'pending', })

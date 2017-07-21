@@ -125,18 +125,13 @@ def form_feedback(self, cr, uid, data, acquirer_name, context=None):
         finally:
             pass
 
-    # Find redirect_url_after_form_feedback
-    # -------------------------------------
-    # TODO: Find correct redirect_url_after_form_feedback and redirect here OR redirect to /shop/payment/validate
-    #       and change shop/payment/validate to find and use the correct redirect_url_after_form_feedback
-
     return res
 
 
 # ====================================================
 # REPLACE THE ORIGINAL METHOD INSTEAD OF INHERITING IT
 # ====================================================
-# HINT: This is sometimes calle monkey patching ;)
+# HINT: This is sometimes called monkey patching ;)
 # ATTENTION: We need to do this because in the form_feedback() of website_sale an quotation e-mail is send if the sale
 #            order state is draft and the tx is anything but "done" or "cancel" which is definitely NOT what we want!
 #            As a bonus we can add all logic former placed and duplicated a lot in the dadi payment methods inside our
