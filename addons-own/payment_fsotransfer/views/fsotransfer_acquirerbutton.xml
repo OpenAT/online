@@ -19,9 +19,10 @@
                 <!-- no payment forms options (e.g.: for direct cash transfer) -->
                 <div class="form-group col-md-12 do_not_send_payment_forms" for="do_not_send_payment_forms">
                     <label class="control-label">
+                        <!-- HINT: 'value' and 'checked' attribute is set in opc_payment() -->
                         <input type="checkbox"
                                name='do_not_send_payment_forms'
-                               t-att-value="tx_values['do_not_send_payment_forms']"/>
+                        />
                         <span>Please do not send payment forms</span>
                     </label>
                 </div>

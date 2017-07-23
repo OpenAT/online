@@ -117,4 +117,5 @@ class PaymentTransactionFsotransfer(osv.Model):
                      (tx.reference, data))
 
         # Update State
-        return tx.write({'state': 'pending', })
+        return tx.write({'state': 'pending',
+                         'do_not_send_payment_forms': True if data.get('do_not_send_payment_forms') == 'on' else False})
