@@ -1,0 +1,614 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_con_zmr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-25 15:50+0000\n"
+"PO-Revision-Date: 2017-07-25 15:50+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:263
+#, python-format
+msgid "All companies must use the same BPKRequestURL!"
+msgstr "Alle Firmen (Organisationseinheiten= müssen die selbe BPKRequestURL verwenden!"
+
+#. module: fso_con_zmr
+#: view:res.company:fso_con_zmr.company_instance_settings
+msgid "Austrian ZMR Settings"
+msgstr "ZMR Zugangsdaten"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
+msgid "BPK"
+msgstr "BPK"
+
+#. module: fso_con_zmr
+#: field:res.partner,BPKForcedBirthdate:0
+msgid "BPK Forced Birthdate"
+msgstr "BPK Geburtsdatum"
+
+#. module: fso_con_zmr
+#: field:res.partner,BPKForcedFirstname:0
+msgid "BPK Forced Firstname"
+msgstr "BPK Vorname"
+
+#. module: fso_con_zmr
+#: field:res.partner,BPKForcedLastname:0
+msgid "BPK Forced Lastname"
+msgstr "BPK Nachname"
+
+#. module: fso_con_zmr
+#: model:res.groups,name:fso_con_zmr.group_res_partner_bpk_manager
+msgid "BPK Manager"
+msgstr "BPK Manager"
+
+#. module: fso_con_zmr
+#: model:ir.actions.act_window,name:fso_con_zmr.res_partner_bpk_res_partner_action
+#: model:ir.ui.menu,name:fso_con_zmr.fso_menu_res_partner_bpk_res_partner_menu
+#: model:ir.ui.menu,name:fso_con_zmr.res_partner_bpk_res_partner_menu
+msgid "BPK Partner"
+msgstr "BPK Verarbeitungsliste"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKPrivate:0
+msgid "BPK Private"
+msgstr "BPK Privat"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_set_bpk_button
+msgid "BPK Processing Status"
+msgstr "BPK Verarbeitungsstatus"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKPublic:0
+msgid "BPK Public"
+msgstr "BPK Öffentlich"
+
+#. module: fso_con_zmr
+#: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_form
+msgid "BPK Request"
+msgstr "BPK Abfrage"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:410
+#, python-format
+msgid "BPK Request Assertion:\n"
+"\n"
+"%s\n"
+""
+msgstr "BPK Request Assertion:\n"
+"\n"
+"%s\n"
+""
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestBirthdate:0
+msgid "BPK Request Birthdate"
+msgstr "BPK-Abfrage Geburtstag"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestCompanyID:0
+msgid "BPK Request Company"
+msgstr "Firma"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestData:0
+msgid "BPK Request Data"
+msgstr "BPK-Abfrage Datum"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestDate:0
+msgid "BPK Request Date"
+msgstr "BPK-Abfrage Datum"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestFirstname:0
+msgid "BPK Request Firstname"
+msgstr "BPK-Abfrage Vorname"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestLastname:0
+msgid "BPK Request Lastname"
+msgstr "BPK-Abfrage Nachname"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestPartnerID:0
+msgid "BPK Request Partner"
+msgstr "Partner"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestURL:0
+msgid "BPK Request URL"
+msgstr "BPK-Abfrage URL"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKRequestZIP:0
+msgid "BPK Request ZIP"
+msgstr "BPK-Abfrage Plz."
+
+#. module: fso_con_zmr
+#: field:res.partner,BPKRequestInProgress:0
+msgid "BPK Request in progress"
+msgstr "BPK-Abfrage in Bearbeitung"
+
+#. module: fso_con_zmr
+#: field:res.partner,BPKRequestNeeded:0
+msgid "BPK Request needed"
+msgstr "BPK-Abfrage notwendig"
+
+#. module: fso_con_zmr
+#: model:ir.actions.act_window,name:fso_con_zmr.res_partner_bpk_action
+#: model:ir.ui.menu,name:fso_con_zmr.fso_menu_res_partner_bpk_menu
+#: model:ir.ui.menu,name:fso_con_zmr.res_partner_bpk_menu
+#: field:res.company,BPKRequestIDS:0
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
+#: view:res.partner:fso_con_zmr.res_partner_set_bpk_button
+#: field:res.partner,BPKRequestIDS:0
+#: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_search
+#: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_tree
+msgid "BPK Requests"
+msgstr "BPK Abfragen"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKResponseData:0
+msgid "BPK Response Data"
+msgstr "BPK-Antwort Daten"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKResponseTime:0
+msgid "BPK Response Time"
+msgstr "BPK-Antwort Dauer"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorCode:0
+msgid "BPK-Error Code"
+msgstr "BPK-Fehler Code"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestBirthdate:0
+msgid "BPK-Error Request Birthdate"
+msgstr "BPK-Fehler Geburtsdatum"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestData:0
+msgid "BPK-Error Request Data"
+msgstr "BPK-Fehler Anfragedaten"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestDate:0
+msgid "BPK-Error Request Date"
+msgstr "BPK-Fehler Datum"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestFirstname:0
+msgid "BPK-Error Request Firstname"
+msgstr "BPK-Fehler Vorname"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestLastname:0
+msgid "BPK-Error Request Lastname"
+msgstr "BPK-Fehler Nachanme"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestURL:0
+msgid "BPK-Error Request URL"
+msgstr "BPK-Fehler URL"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorRequestZIP:0
+msgid "BPK-Error Request ZIP"
+msgstr "BPK-Fehler Plz."
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorResponseData:0
+msgid "BPK-Error Response Data"
+msgstr "BPK-Error Antwortdaten"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorResponseTime:0
+msgid "BPK-Error Response Time"
+msgstr "BPK-Error Antwortdauer"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,BPKErrorText:0
+msgid "BPK-Error Text"
+msgstr "BPK-Fehler Text"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
+#: view:res.partner:fso_con_zmr.res_partner_search_inherit_bpk
+msgid "BPK-Requests in progress"
+msgstr "BPK-Abfrage in Bearbeitung"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_crt_pem:0
+msgid "Certificate (PEM)"
+msgstr "Zertifikat (PEM)"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_crt_pem_filename:0
+msgid "Certificate Name"
+msgstr "Zertifikatname"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_crt_pem_path:0
+msgid "Certificate Path"
+msgstr "Zertifikatspfad"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_cn:0
+msgid "Common Name (cn)"
+msgstr "Common Name (cn)"
+
+#. module: fso_con_zmr
+#: model:ir.model,name:fso_con_zmr.model_res_company
+msgid "Companies"
+msgstr "Unternehmen"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,create_uid:0
+msgid "Created by"
+msgstr "Created by"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,create_date:0
+msgid "Created on"
+msgstr "Created on"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: fso_con_zmr
+#: model:ir.ui.menu,name:fso_con_zmr.menu_fsonline_donationdeduction
+msgid "Donation Deduction"
+msgstr "Spendenabsetzbarkeit"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:475
+#, python-format
+msgid "Exception in fso_con_zmr check_bpk():\n"
+"%s\n"
+""
+msgstr "Exception in fso_con_zmr check_bpk():\n"
+"%s\n"
+""
+
+#. module: fso_con_zmr
+#: field:res.company,stammzahl:0
+msgid "Firmenbuch-/ Vereinsregisternummer"
+msgstr "Firmenbuch-/ Vereinsregisternummer"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:426
+#, python-format
+msgid "Firstname, Lastname and Birthdate are needed for a BPK request!"
+msgstr "Vorname, Nachname und Geburtsdatum müssen vorhanden sein um eine BPK Abfrage durchzuführen!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:278
+#, python-format
+msgid "Folder soaprequest_templates not found at %s"
+msgstr "Folder soaprequest_templates not found at %s"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_set_bpk_button
+msgid "Force BPK Request Values (optional)"
+msgstr "Force BPK Request Values (optional)"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
+msgid "Forced BPK Request Values (optional)"
+msgstr "Forced BPK Request Values (optional)"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:742
+#, python-format
+msgid "Full Search: BPK Records %s found for non existing companies or companies where the ZMR BPK access data was removed for partner %s: %s %s"
+msgstr "Full Search: BPK Records %s found for non existing companies or companies where the ZMR BPK access data was removed for partner %s: %s %s"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:783
+#, python-format
+msgid "Full search: Total partners found requiring a BPK request: %s"
+msgstr "Full search: Total partners found requiring a BPK request: %s"
+
+#. module: fso_con_zmr
+#: field:res.company,BPKRequestURL:0
+msgid "GetBPK Request URL"
+msgstr "GetBPK Request URL"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:372
+#, python-format
+msgid "GetBPK-Request response has no content!"
+msgstr "GetBPK-Request response has no content!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:281
+#, python-format
+msgid "GetBPK_small_j2template.xml not found at %s"
+msgstr "GetBPK_small_j2template.xml not found at %s"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: fso_con_zmr
+#: field:res.partner,LastBPKRequest:0
+#: field:res.partner.bpk,LastBPKRequest:0
+msgid "Last BPK Request"
+msgstr "Letzte BPK Anfrage"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
+msgid "Last BPK-Requests"
+msgstr "Letzte BPK Anfragen"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,__last_update:0
+msgid "Last Modified on"
+msgstr "Last Modified on"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,write_uid:0
+msgid "Last Updated by"
+msgstr "Last Updated by"
+
+#. module: fso_con_zmr
+#: field:res.partner.bpk,write_date:0
+msgid "Last Updated on"
+msgstr "Last Updated on"
+
+#. module: fso_con_zmr
+#: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_form
+msgid "Last invalid BPK-Request"
+msgstr "Letzte fehlerhafte Anfrage"
+
+#. module: fso_con_zmr
+#: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_form
+msgid "Last valid BPK-Request"
+msgstr "Letzte erfolgreiche Anfrage"
+
+#. module: fso_con_zmr
+#: selection:res.company,BPKRequestURL:0
+msgid "Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR"
+msgstr "Echtbetrieb: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:273
+#, python-format
+msgid "Missing input data! Mandatory are firstname, lastname and birthdate!"
+msgstr "Missing input data! Mandatory are firstname, lastname and birthdate!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:403
+#, python-format
+msgid "More than one FremdBPK xml node found!"
+msgstr "More than one FremdBPK xml node found!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:399
+#, python-format
+msgid "More than one GetBPKReturn xml node found!"
+msgstr "More than one GetBPKReturn xml node found!"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
+msgid "Next Scheduled BPK-Requests"
+msgstr "Nächste geplante BPK-Abfragen"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:258
+#, python-format
+msgid "No company with complete security header data found!"
+msgstr "No company with complete security header data found!"
+
+#. module: fso_con_zmr
+#: model:ir.model,name:fso_con_zmr.model_res_partner
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_tree
+msgid "Partner"
+msgstr "Partner"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
+msgid "Partner Data"
+msgstr "Partner Data"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_prvkey_pem:0
+msgid "Private Key (PEM)"
+msgstr "Privater Schlüssel (PEM)"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_prvkey_pem_filename:0
+msgid "Private Key Name"
+msgstr "Privatschlüsselname"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_prvkey_pem_path:0
+msgid "Private Key Path"
+msgstr "Privatschlüsselpfad"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_gvOuId:0
+msgid "Request Organisation (gvOuId)"
+msgstr "Request Organisation (gvOuId)"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_ou:0
+msgid "Request Person (ou)"
+msgstr "Request Person (ou)"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:839
+#, python-format
+msgid "Scheduled BPK fetching: DONE"
+msgstr "Scheduled BPK fetching: DONE"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:808
+#, python-format
+msgid "Scheduled BPK fetching: Limit set to %s based on scheduler interval in seconds/4"
+msgstr "Scheduled BPK fetching: Limit set to %s based on scheduler interval in seconds/4"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:788
+#, python-format
+msgid "Scheduled BPK fetching: START"
+msgstr "Scheduled BPK fetching: START"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:829
+#, python-format
+msgid "Scheduled BPK fetching: Set or update BPK records for %s partner in new environment"
+msgstr "Scheduled BPK fetching: Set or update BPK records for %s partner in new environment"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_search_inherit_bpk
+msgid "Scheduled BPK-Requests"
+msgstr "Scheduled BPK-Requests"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:852
+#, python-format
+msgid "Scheduled BPKRequestNeeded check: DONE"
+msgstr "Scheduled BPKRequestNeeded check: DONE"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:843
+#, python-format
+msgid "Scheduled BPKRequestNeeded check: START"
+msgstr "Scheduled BPKRequestNeeded check: START"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:848
+#, python-format
+msgid "Scheduled BPKRequestNeeded check: Set BPKRequestInProgress for %s partner"
+msgstr "Scheduled BPKRequestNeeded check: Set BPKRequestInProgress for %s partner"
+
+#. module: fso_con_zmr
+#: model:ir.actions.server,name:fso_con_zmr.action_set_bpk
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
+#: view:res.partner:fso_con_zmr.res_partner_set_bpk_button
+msgid "Set BPK"
+msgstr "Set BPK"
+
+#. module: fso_con_zmr
+#: help:res.company,stammzahl:0
+msgid "Stammzahl e.g.: XZVR-123456789"
+msgstr "Stammzahl e.g.: XZVR-123456789"
+
+#. module: fso_con_zmr
+#: selection:res.company,BPKRequestURL:0
+msgid "Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR"
+msgstr "Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR"
+
+#. module: fso_con_zmr
+#: field:res.company,pvpToken_userId:0
+msgid "User ID (userId)"
+msgstr "User ID (userId)"
+
+#. module: fso_con_zmr
+#: view:res.company:fso_con_zmr.company_instance_settings
+msgid "ZMR Access"
+msgstr "ZMR Access"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_set_bpk_button
+msgid "ZMR BPK"
+msgstr "ZMR BPK"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:694
+#, python-format
+msgid "_find_bpk_partners(): Exception while fetching companies:\n"
+"%s\n"
+""
+msgstr "_find_bpk_partners(): Exception while fetching companies:\n"
+"%s\n"
+""
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:290
+#, python-format
+msgid "_request_bpk: Certificate data found but files on drive missing. Trying to restore files!"
+msgstr "_request_bpk: Certificate data found but files on drive missing. Trying to restore files!"
+
+#. module: fso_con_zmr
+#: help:res.company,pvpToken_crt_pem_filename:0
+msgid "crt_pem"
+msgstr "crt_pem"
+
+#. module: fso_con_zmr
+#: help:res.company,pvpToken_prvkey_pem_filename:0
+msgid "prvkey_pem without password!"
+msgstr "prvkey_pem without password!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:492
+#, python-format
+msgid "set_bpk(): Donation Deduction Opt Out is set for partner:\n"
+"%s\n"
+" BPK check skipped for them!\n"
+"\n"
+""
+msgstr "set_bpk(): Donation Deduction Opt Out is set for partner:\n"
+"%s\n"
+" BPK check skipped for them!\n"
+"\n"
+""
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:617
+#, python-format
+msgid "set_bpk(): Exceptions:\n"
+"%s"
+msgstr "set_bpk(): Exceptions:\n"
+"%s"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:518
+#, python-format
+msgid "set_bpk(): Forced BPK Fields are not completely set for partner %s %s with id %s! BPK check skipped!\n"
+"\n"
+""
+msgstr "set_bpk(): Forced BPK Fields are not completely set for partner %s %s with id %s! BPK check skipped!\n"
+"\n"
+""
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:596
+#, python-format
+msgid "set_bpk(): More than one BPK-Request record found per company! Partner %s: %s %s Company: %s"
+msgstr "set_bpk(): More than one BPK-Request record found per company! Partner %s: %s %s Company: %s"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:497
+#, python-format
+msgid "set_bpk(): No partner left after excluding partners with Donation Deduction Opt Out set!"
+msgstr "set_bpk(): No partner left after excluding partners with Donation Deduction Opt Out set!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:533
+#, python-format
+msgid "set_bpk(): request_bpk() exception for partner %s: %s %s\n"
+"%s\n"
+""
+msgstr "set_bpk(): request_bpk() exception for partner %s: %s %s\n"
+"%s\n"
+""
+

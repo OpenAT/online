@@ -15,234 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: website_sale_donate
-#: model:email.template,body_html:website_sale_donate.email_template_webshop
-msgid "\n"
-"\n"
-"<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
-"\n"
-"    <h2>\n"
-"        Hallo ${object.partner_id.name},<br/>\n"
-"        vielen Dank für ihr Vertrauen!\n"
-"    </h2>\n"
-"    <h3><br/>Ihre Persönlichen daten</h3>\n"
-"    <p>\n"
-"        % if object.partner_id.name:\n"
-"            ${object.partner_id.name}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.street:\n"
-"            ${object.partner_id.street}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.street2:\n"
-"            ${object.partner_id.street2}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.city or object.partner_id.zip:\n"
-"            ${object.partner_id.zip} ${object.partner_id.city}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.partner_id.email}\">${object.partner_id.email}</a><br/>\n"
-"        % endif\n"
-"\n"
-"     </p>\n"
-"    <h3><br/>Vorgangsübersicht:</h3>\n"
-"    <p style=\"padding-left: 14px;\">\n"
-"        Nummer: <strong>${object.name}</strong><br/>\n"
-"        Summe: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br/>\n"
-"        Datum: ${object.date_order}<br/>\n"
-"        Fortschritt: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
-"    </p>\n"
-"\n"
-"        <p>Bei Fragen kontaktieren sie bitte:</p>\n"
-"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email or '') | safe}</a><br/>\n"
-"    <div style=\"display:table;\">\n"
-"        <div style=\"display:table-header-group;\">\n"
-"            <div style=\"display:table-row;\">\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Name</div>\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Anzahl</div>\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Download</div>\n"
-"            </div>\n"
-"        </div>\n"
-"        <div style=\"display:table-row-group;\">\n"
-"            % for line in object.order_line:\n"
-"                <div style=\"display:table-row;\">\n"
-"                    <div style=\"display:table-cell;\">${line.product_id.name}</div>\n"
-"                    <div style=\"display:table-cell;\">${line.product_uom_qty}</div>\n"
-"                    % if line.product_id.webshop_download_file:\n"
-"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_id.id}\">Download</a></div>\n"
-"                    % endif\n"
-"                    % if line.product_tmpl_id.webshop_download_file:\n"
-"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_tmpl_id.id}\">Download</a></div>\n"
-"                    % endif\n"
-"                </div>\n"
-"            % endfor\n"
-"        </div>\n"
-"    </div>\n"
-"        % if object.cat_root_id.id == False or object.cat_root_id.id == 55:\n"
-"    <h3>\n"
-"        <strong>${object.company_id.name}</strong>\n"
-"    </h3>\n"
-"    <p>\n"
-"        % if object.company_id.street:\n"
-"            ${object.company_id.street}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.street2:\n"
-"            ${object.company_id.street2}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.city or object.company_id.zip:\n"
-"            ${object.company_id.zip} ${object.company_id.city}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.country_id:\n"
-"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.phone:\n"
-"            Tel.:&nbsp;${object.company_id.phone}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.logo:\n"
-"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
-"        % endif\n"
-"    </p>\n"
-"        % endif\n"
-"        % if object.cat_root_id.id == 80:\n"
-"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email_report_dd or '') | safe}</a>\n"
-"    <h3>\n"
-"        <strong>${Sante-Sexuelle}</strong>\n"
-"    </h3>\n"
-"    <p>\n"
-"        % if object.company_id.email_report_dd:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email_report_dd}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website_report_dd}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.logo_report_dd:\n"
-"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo_report_dd}\" style=\"width: 120px;\"></div>\n"
-"        % endif\n"
-"    </p>\n"
-"        % endif\n"
-"    <p>&nbsp;</p>\n"
-"\n"
-"</div>\n"
-"\n"
-"            "
-msgstr "\n"
-"\n"
-"<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
-"\n"
-"    <h2>\n"
-"        Hallo ${object.partner_id.name},<br/>\n"
-"        vielen Dank für ihr Vertrauen!\n"
-"    </h2>\n"
-"    <h3><br/>Ihre Persönlichen daten</h3>\n"
-"    <p>\n"
-"        % if object.partner_id.name:\n"
-"            ${object.partner_id.name}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.street:\n"
-"            ${object.partner_id.street}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.street2:\n"
-"            ${object.partner_id.street2}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.city or object.partner_id.zip:\n"
-"            ${object.partner_id.zip} ${object.partner_id.city}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.partner_id.email}\">${object.partner_id.email}</a><br/>\n"
-"        % endif\n"
-"\n"
-"     </p>\n"
-"    <h3><br/>Vorgangsübersicht:</h3>\n"
-"    <p style=\"padding-left: 14px;\">\n"
-"        Nummer: <strong>${object.name}</strong><br/>\n"
-"        Summe: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br/>\n"
-"        Datum: ${object.date_order}<br/>\n"
-"        Fortschritt: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
-"    </p>\n"
-"\n"
-"        <p>Bei Fragen kontaktieren sie bitte:</p>\n"
-"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email or '') | safe}</a><br/>\n"
-"    <div style=\"display:table;\">\n"
-"        <div style=\"display:table-header-group;\">\n"
-"            <div style=\"display:table-row;\">\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Name</div>\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Anzahl</div>\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Download</div>\n"
-"            </div>\n"
-"        </div>\n"
-"        <div style=\"display:table-row-group;\">\n"
-"            % for line in object.order_line:\n"
-"                <div style=\"display:table-row;\">\n"
-"                    <div style=\"display:table-cell;\">${line.product_id.name}</div>\n"
-"                    <div style=\"display:table-cell;\">${line.product_uom_qty}</div>\n"
-"                    % if line.product_id.webshop_download_file:\n"
-"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_id.id}\">Download</a></div>\n"
-"                    % endif\n"
-"                    % if line.product_tmpl_id.webshop_download_file:\n"
-"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_tmpl_id.id}\">Download</a></div>\n"
-"                    % endif\n"
-"                </div>\n"
-"            % endfor\n"
-"        </div>\n"
-"    </div>\n"
-"        % if object.cat_root_id.id == False or object.cat_root_id.id == 55:\n"
-"    <h3>\n"
-"        <strong>${object.company_id.name}</strong>\n"
-"    </h3>\n"
-"    <p>\n"
-"        % if object.company_id.street:\n"
-"            ${object.company_id.street}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.street2:\n"
-"            ${object.company_id.street2}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.city or object.company_id.zip:\n"
-"            ${object.company_id.zip} ${object.company_id.city}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.country_id:\n"
-"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.phone:\n"
-"            Tel.:&nbsp;${object.company_id.phone}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.logo:\n"
-"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
-"        % endif\n"
-"    </p>\n"
-"        % endif\n"
-"        % if object.cat_root_id.id == 80:\n"
-"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email_report_dd or '') | safe}</a>\n"
-"    <h3>\n"
-"        <strong>${Sante-Sexuelle}</strong>\n"
-"    </h3>\n"
-"    <p>\n"
-"        % if object.company_id.email_report_dd:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email_report_dd}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website_report_dd}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.logo_report_dd:\n"
-"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo_report_dd}\" style=\"width: 120px;\"></div>\n"
-"        % endif\n"
-"    </p>\n"
-"        % endif\n"
-"    <p>&nbsp;</p>\n"
-"\n"
-"</div>\n"
-"\n"
-"            "
 
 #. module: website_sale_donate
 #: field:product.product,sold_total:0
@@ -873,7 +645,7 @@ msgstr "Zeige keinen Preis in Artikel-Übersichten"
 #. module: website_sale_donate
 #: field:product.template,hide_quantity:0
 msgid "Hide Product-Quantity-Selector in CP"
-msgstr "Mengen-Selektor im Checkout-Panel ausblenden"
+msgstr "Stückzahl-Auswahl im Checkout-Panel ausblenden"
 
 #. module: website_sale_donate
 #: field:product.template,hide_search:0
@@ -1848,3 +1620,395 @@ msgstr "zwei-monatlich"
 #: model:product.payment_interval,name:website_sale_donate.monthly_4
 msgid "4-monthly"
 msgstr "vier-monatlich"
+
+
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "> Open Cart Page"
+msgstr "> Öffne Warenkorbseite"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "> Open Checkout Page"
+msgstr "> Öffne Checkout-Seite"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "> Open Confirmation Page for FS-Online Payment Providers"
+msgstr "> Öffne Dankesseite"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "> Open Payment Page"
+msgstr "> Öffne Zahlungsseite"
+
+#. module: website_sale_donate
+#: field:product.product,button_addtocart_text:0
+#: field:product.template,button_addtocart_text:0
+msgid "Add-To-Cart Button Text"
+msgstr "Add-To-Cart Button Text"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "All Available Payment Intervals"
+msgstr "Alle verfügbaren Zahlungsintervalle"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "All Donate Product images will be automatically resized and cropped to this\n"
+"                                            dimension for the checkout box and for product listing pages."
+msgstr "Alle Produktbilder werden automatisch auf diese größe verkleinert und zugeschnitten für die Anzeige in der Checkout-Box sowie für Produktübersichtsseiten"
+
+#. module: website_sale_donate
+#: field:product.website_price_buttons,amount:0
+msgid "Amount"
+msgstr "Menge"
+
+#. module: website_sale_donate
+#: field:website,amount_title:0
+msgid "Amount (Checkoutbox) Form-Title"
+msgstr "Summe (Checkoutbox) Form-Titel"
+
+#. module: website_sale_donate
+#: field:product.product,amount_title:0
+#: field:product.template,amount_title:0
+msgid "Amount Title Overwrite"
+msgstr "Summenüberschrift"
+
+#. module: website_sale_donate
+#: view:product.template:website_sale_donate.product_template_form_view
+msgid "BASIC PRODUCT SETTINGS"
+msgstr "Allg. Artikeleinstellungen"
+
+#. module: website_sale_donate
+#: model:website.checkout_billing_fields,label:website_sale_donate.birthdate_web
+msgid "Birthdate"
+msgstr "Geburtsdatum"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Cart"
+msgstr "Warenkorb"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Cart Page"
+msgstr "Warenkorbseite"
+
+#. module: website_sale_donate
+#: model:ir.model,name:website_sale_donate.model_website_checkout_billing_fields
+msgid "Checkout Billing Fields"
+msgstr "Checkout Rechnungsfelder"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+#: field:website,CheckoutFields:0
+msgid "Checkout Fields"
+msgstr "Checkout Felder"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Checkout Page"
+msgstr "Checkout Seite"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Confirmation Page"
+msgstr "Dankesseite"
+
+#. module: website_sale_donate
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_cart
+msgid "Donation Cart"
+msgstr "Spendenkörbe"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Donation Product"
+msgstr "Spendenprodukt"
+
+#. module: website_sale_donate
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop
+#: view:website:website_sale_donate.website_form
+msgid "Donation Shop"
+msgstr "Spendenshop"
+
+#. module: website_sale_donate
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_product
+msgid "Donations & Products"
+msgstr "Spenden & Produkte"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Edit Checkout Fields"
+msgstr "Edit Checkout Fields"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Edit Payment Acquirers"
+msgstr "Bearbeite Zahlungsmethoden"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Edit Payment Intervals"
+msgstr "Bearbeite Zahlungsintervalle"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Edit Shipping Fields"
+msgstr "Bearbeite Lieferfelder"
+
+#. module: website_sale_donate
+#: field:product.product,hide_amount_title:0
+#: field:product.template,hide_amount_title:0
+msgid "Hide Amount Title"
+msgstr "Stückzahlüberschrift ausblenden"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_pp_auto_submit_form
+msgid "If you are not redirected after one minute please click the button."
+msgstr "If you are not redirected after one minute please click the button."
+
+#. module: website_sale_donate
+#: field:website,cart_indicator:0
+msgid "Indicator Cart"
+msgstr "Pfadmenü Warenkorb"
+
+#. module: website_sale_donate
+#: field:website,checkout_indicator:0
+msgid "Indicator Checkout"
+msgstr "Pfadmenü Checkout"
+
+#. module: website_sale_donate
+#: field:website,confirmation_indicator:0
+msgid "Indicator Confirmation"
+msgstr "Pfadmenü Dankesseite"
+
+#. module: website_sale_donate
+#: field:website,payment_indicator:0
+msgid "Indicator Payment"
+msgstr "Pfadmenü Zahlungsseite"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "No Payment-Status E-Mails"
+msgstr "Keine Zahlungsstatusänderung E-Mails"
+
+#. module: website_sale_donate
+#: field:payment.acquirer,globally_hidden:0
+msgid "Only available for individual Acquirer Config"
+msgstr "Nur verfügbar bei individueller Zahlungsanbieterkonfiguration"
+
+#. module: website_sale_donate
+#: help:payment.acquirer,submit_button_class:0
+#: help:payment.acquirer,submit_button_text:0
+msgid "Only works in FS-Online Payment Methods"
+msgstr "Funktioniert nur für FS-Online Zahlungsanbieter"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Open Confirmation Page for all other Payment Providers (only possible if product in cart)"
+msgstr "> Öffne standard Dankesseite (wird nicht mehr verwendet!)"
+
+#. module: website_sale_donate
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_order
+msgid "Orders"
+msgstr "Aufträge"
+
+#. module: website_sale_donate
+#: field:product.acquirer_lines,acquirer_pre_msg:0
+msgid "Overwrite Default Acquirer Message"
+msgstr "Zahlungsmethodentext überschreiben"
+
+#. module: website_sale_donate
+#: code:addons/website_sale_donate/controllers/main.py:578
+#, python-format
+msgid "Pay Now"
+msgstr "Jetzt Spenden!"
+
+#. module: website_sale_donate
+#: view:website:website_sale.payment
+msgid "Pay Now!"
+msgstr "Jetzt Spenden!"
+
+#. module: website_sale_donate
+#: field:website,PaymentAcquirers:0
+msgid "Payment Acquirers"
+msgstr "Zahlungsanbieter"
+
+#. module: website_sale_donate
+#: field:product.product,product_acquirer_lines_ids:0
+#: field:product.template,product_acquirer_lines_ids:0
+msgid "Payment Acquirers Overwrite"
+msgstr "Individuelle Zahlungsanbieterkonfiguration"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "Payment Information"
+msgstr "Zahlungsinformation"
+
+#. module: website_sale_donate
+#: field:product.product,payment_interval_as_selection:0
+#: field:product.template,payment_interval_as_selection:0
+#: field:website,payment_interval_as_selection:0
+msgid "Payment Interval as Selection List"
+msgstr "Zahlungsintervall als Selektionsliste"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Payment Methods"
+msgstr "Zahlungsmethoden"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Payment Page"
+msgstr "Zahlungsseite"
+
+#. module: website_sale_donate
+#: field:website,payment_page_bottom:0
+msgid "Payment Page Bottom Snippet Dropping Area"
+msgstr "Zahlungsseite Unterer Snipped Bereich"
+
+#. module: website_sale_donate
+#: field:website,payment_page_submit_button:0
+msgid "Payment Page Submit Button"
+msgstr "Zahlungsseite Submit Button"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "Payment Reference:"
+msgstr "Zahlungsreferenz:"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+#: field:website,StatusEmail:0
+msgid "Payment Status E-Mail Template"
+msgstr "Zahlungsstatus E-Mail Template"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "Payment Status:"
+msgstr "Zahlungsstatus:"
+
+#. module: website_sale_donate
+#: code:addons/website_sale_donate/controllers/main.py:515
+#, python-format
+msgid "Please add at least one product"
+msgstr "Bitte wählen sie einen Artikel aus."
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "Please add your transaction number to any communication regarding this transaction!"
+msgstr "Bitte geben Sie diese Vorgangsnummer in E-Mail und bei Fragen immer an."
+
+#. module: website_sale_donate
+#: code:addons/website_sale_donate/controllers/main.py:702
+#, python-format
+msgid "Please select an other acquirer."
+msgstr "Wählen Sie bitte eine andere Zahlungsmethode."
+
+
+#. module: website_sale_donate
+#: field:payment.acquirer,product_acquirer_lines_ids:0
+msgid "Product Acquirer Lines"
+msgstr "Produkt-Zahlungsanbieterkonfiguration"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Product Image"
+msgstr "Produktbild"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+#: field:website,ShippingFields:0
+msgid "Shipping Fields"
+msgstr "Lieferfelder"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Shipping and Delivery"
+msgstr "Lieferung und Zustellung"
+
+#. module: website_sale_donate
+#: field:website.checkout_billing_fields,show:0
+#: field:website.checkout_shipping_fields,show:0
+msgid "Show"
+msgstr "Anzeigen"
+
+
+#. module: website_sale_donate
+#: field:product.product,simple_checkout:0
+#: field:product.template,simple_checkout:0
+msgid "Simple Checkout"
+msgstr "Direkt zum Checkout"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.website_form
+msgid "Small Cart"
+msgstr "Kleiner Warenkorb"
+
+#. module: website_sale_donate
+#: field:product.product,price_suggested_ids:0
+#: view:product.template:website_sale_donate.product_template_form_view
+#: field:product.template,price_suggested_ids:0
+msgid "Suggested Donation-Values"
+msgstr "Vorgeschlagene Spendenbeträge"
+
+#. module: website_sale_donate
+#: code:addons/website_sale_donate/controllers/main.py:680
+#, python-format
+msgid "The selected payment method does not support recurring payments!"
+msgstr "Die ausgewählte Zahlungsmethode unterstütz keine wiederkehrenden Zahlungen!"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "Total Amount:"
+msgstr "Summe:"
+
+#. module: website_sale_donate
+#: field:account.invoice,wsd_payment_tx_id:0
+msgid "Transaction"
+msgstr "Transaktion"
+
+#. module: website_sale_donate
+#: model:website.checkout_billing_fields,label:website_sale_donate.vat
+msgid "VAT"
+msgstr "UID"
+
+#. module: website_sale_donate
+#: field:website.checkout_billing_fields,validation_rule:0
+#: field:website.checkout_shipping_fields,validation_rule:0
+msgid "Validation Rule"
+msgstr "Feldprüfung (Frontend)"
+
+#. module: website_sale_donate
+#: field:product.product,webshop_download_file:0
+#: field:product.template,webshop_download_file:0
+msgid "WebShop Download File"
+msgstr "WebShop Download-Datei"
+
+#. module: website_sale_donate
+#: field:product.product,webshop_download_file_name:0
+#: field:product.template,webshop_download_file_name:0
+msgid "WebShop Download File Name"
+msgstr "WebShop Download-Datei Name"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "When making a bank transfer please always give your transaction number as a reference so we can allocate your payment correctly!"
+msgstr "Bitte geben Sie bei Banküberweisungen immer Ihre Vorgangsnummer im Feld Verwendungszweck an! Nur dann kann Ihre Zahlung automatisiert zugeordnet werden!"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.wsd_pp_auto_submit_form
+msgid "You will be redirect to the selected payment provider in a few seconds!"
+msgstr "Sie werden in wenigen Sekunden zum Zahlungsanbieter umgeleitet!"
+
+#. module: website_sale_donate
+#: view:website:website_sale_donate.confirmation_static
+msgid "Your Transaction Number"
+msgstr "Ihre Vorgangsnummer"
+
+#. module: website_sale_donate
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_payment
+msgid "Payments"
+msgstr "Zahlungen"

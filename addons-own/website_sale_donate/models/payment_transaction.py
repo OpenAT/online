@@ -10,6 +10,8 @@ _logger = logging.getLogger(__name__)
 
 
 # Replaces completely website_sale.models.payment >>> form_feedback()
+# HINT: This would make further inheritance still possibe
+# ATTENTION: The replacement is done at the end of this file!
 def form_feedback(self, cr, uid, data, acquirer_name, context=None):
     tx = None
     tx_find_method_name = '_%s_form_get_tx_from_data' % acquirer_name

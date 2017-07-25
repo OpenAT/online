@@ -1,0 +1,100 @@
+# -*- coding: utf-'8' "-*-"
+import logging
+from openerp import SUPERUSER_ID
+from openerp.addons.website_sale_delivery.models.sale_order import SaleOrder
+
+__author__ = 'mkarrer'
+_logger = logging.getLogger(__name__)
+
+
+# TODO: THIS IS DISABLED RIGHT NOW _ NOT LOADED IN __init__.py because the logic is not 100% like the
+# TODO: original. If there are no concurrent writes this should be no problem!!!
+# Replaces completely website_sale.models.payment >>> form_feedback()
+# HINT: This would make further inheritance still possibe
+# ATTENTION: The replacement is done at the end of this file!
+def _check_carrier_quotation(self, cr, uid, order, force_carrier_id=None, context=None):
+    _logger.warning("_check_carrier_quotation(): START force_carrier_id = %s, order = %s" % (force_carrier_id,
+                                                                                             order))
+    # Basically website_sale_deliver will reload the payment page on every change of the delivery method
+    # A Java Script is called on every click to an delivery method and this executes
+    # window.location.href = '/shop/payment?carrier_id=' + carrier_id;
+    # which ultimately runs the payment() of website_dale_delivery again which will simply run
+    # _check_carrier_quotation() with "force_carrier_id" set to carrier_id from post and rerender the payment page.
+    #
+    # This is pretty much useless for OPC and it also triggers a lot of concurrent update errors on page reloads
+    # cause _check_carrier_quotation() will always write to the sale order no matter if something has changed or
+    # not.
+    #
+    # Therefore i did a rewrite of this method here
+
+    # If there is no sale order return False
+    if not order:
+        return False
+
+    # Set carrier_id
+    carrier_id = force_carrier_id or order.carrier_id.id
+
+    # Get available carriers
+    # HINT: _get_delivery_methods(): Gets a list of enabled and for the website published carriers
+    enabled_carriers_ids = self._get_delivery_methods(cr, uid, order, context=context)
+
+    # Try to find the final carrier_id by carrier-grid for current shipping address
+    # HINT: If no carrier-grid is configured carrier_id will be unchanged
+    if force_carrier_id or not carrier_id or not carrier_id in enabled_carriers_ids:
+        # Make sure we start to search the carrier-grid with the carrier_id first
+        if carrier_id and carrier_id in enabled_carriers_ids:
+            enabled_carriers_ids.remove(carrier_id)
+            enabled_carriers_ids.insert(0, carrier_id)
+        # Search for the final carrier_id in carrier grid
+        carrier_obj = self.pool.get('delivery.carrier')
+        for c_id in enabled_carriers_ids:
+            grid_id = carrier_obj.grid_get(cr, SUPERUSER_ID, [c_id], order.partner_shipping_id.id)
+            if grid_id:
+                carrier_id = c_id
+                break
+
+    # If no carrier was found or no more so lines which are not delivery products
+    if (order.carrier_id and not carrier_id) or not order.website_order_line:
+        _logger.warning("Removing Carrier from sale order: No product left or carrier not enabled or available!")
+        order.write({'carrier_id': None})
+        self.pool['sale.order']._delivery_unset(cr, SUPERUSER_ID, [order.id], context=context)
+        return True
+
+    # Check if all products are services
+    if order.carrier_id and all(line.product_id.type == "service" for line in order.website_order_line):
+        _logger.warning("Removing carrier from sale order: All products are services!")
+        order.write({'carrier_id': None})
+        self.pool['sale.order']._delivery_unset(cr, SUPERUSER_ID, [order.id], context=context)
+        return True
+
+    # Check for if the delivery sale order line(s) is/are still valid
+    # HINT: This is a very basic test! Right now we check if a delivery line exits only.
+    #       This will update the SO if an carrier is selected for the first time ;)
+    # HINT: "website_order_line" includes all lines with "delivery = False".
+    #       "order_line" includes all so lines
+    # TODO: Search for all so lines with delivery=True and check if they are still valid.
+    delivery_order_line_invalid = False
+    if order.order_line:
+        delivery_order_line_invalid = len(order.website_order_line or []) == len(order.order_line or [])
+        _logger.warning("delivery_order_line_invalid: %s" % delivery_order_line_invalid)
+
+    # Update the sale order if necessary
+    order_carrier_id = order.carrier_id.id if order.carrier_id else None
+    if carrier_id != order_carrier_id or delivery_order_line_invalid:
+        _logger.warning("New carrier or carrier changed! Sale order will be updated!")
+        order.write({'carrier_id': carrier_id})
+        order.delivery_set()
+        return True
+
+    # Nothing changed
+    _logger.info("Carrier did not change.")
+    return True
+
+
+# ====================================================
+# REPLACE THE ORIGINAL METHOD INSTEAD OF INHERITING IT
+# ====================================================
+# HINT: This is sometimes called monkey patching ;)
+# HINT: If any other addon also inherits from website_sale_delivery > _check_carrier_quotation() and calls super
+#       this method will be called and not the one in website_sale_delivery which is exactly what we want and expect!
+SaleOrder._check_carrier_quotation = _check_carrier_quotation

@@ -702,7 +702,23 @@
                                      t-att-id="'aq' + str(acquirer.id)"
                                      t-att-data-id="acquirer.id"
                                      t-att-data-recurring-transactions="'True' if acquirer.recurring_transactions else 'False'">
-                                    <div t-field="acquirer.pre_msg" class="acquirer_pre_msg"/>
+
+                                    <!-- Check for product page overwrites -->
+                                    <t t-set="product_overwrite" t-value="False"/>
+                                    <t t-if="product and product.product_acquirer_lines_ids">
+                                        <t t-foreach="product.product_acquirer_lines_ids" t-as="pac_line">
+                                            <t t-if="pac_line.acquirer_pre_msg and pac_line.acquirer_id.id == acquirer.id">
+                                                <t t-set="product_overwrite" t-value="True"/>
+                                                <div t-field="pac_line.acquirer_pre_msg" class="acquirer_pre_msg"/>
+                                            </t>
+                                        </t>
+
+                                    </t>
+
+                                    <t t-if="not product_overwrite">
+                                        <div t-field="acquirer.pre_msg" class="acquirer_pre_msg"/>
+                                    </t>
+
                                     <t t-if="one_page_checkout">
                                         <div t-raw="acquirer.button_opc"/>
                                     </t>
@@ -935,13 +951,12 @@
 
                                     <!-- Submit Button -->
                                     <a id="button_paynow" class="btn btn-primary btn-xl mt16 a-submit" href="#">
-                                        <!-- t t-if="website.button_paynow">
-                                            <span t-field="website.button_paynow"/>
+                                        <t t-if="website.payment_page_submit_button">
+                                            <span t-field="website.payment_page_submit_button"/>
                                         </t>
-                                        <t t-if="not website.button_paynow">
+                                        <t t-if="not website.payment_page_submit_button">
                                             <span>Pay Now!</span>
-                                        </t -->
-                                        <span>Pay Now!</span>
+                                        </t>
                                     </a>
 
                                 </form>
@@ -1076,7 +1091,7 @@
                         </div>
 
                         <!-- Payment Acquirer post message -->
-                        <t t-if="order.payment_tx_id.acquirer_id.post_msg">
+                        <t t-if="order and order.payment_tx_id and order.payment_tx_id.acquirer_id and order.payment_tx_id.acquirer_id.post_msg">
                             <div class="row wsd_acquirer_post_msg">
                                 <div class="col-md-12">
                                         <div class="acquirer_post_msg" t-field="order.payment_tx_id.acquirer_id.post_msg"/>

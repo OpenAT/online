@@ -187,7 +187,9 @@ class ResPartnerZMRGetBPK(models.Model):
 
     # BPK Fields for request processing and optimization and filtering
     BPKRequestInProgress = fields.Datetime(string="BPK Request in progress", readonly=True)
-    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=True)
+    # HINT: Changed from readonly to writeable to allow the user more control over the partners that are processed
+    #       by the queue
+    BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=False)
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
     # TODO optional: computed state field
     # HINT: colors="red:BPKRequestDate == False and BPKErrorRequestDate;
@@ -196,10 +198,11 @@ class ResPartnerZMRGetBPK(models.Model):
     # HINT: This field shows only the state of the current bpk requests and does not check if current data is still
     # ATTENTION: Date fields are in char format - make sure greater than or lower than comparison works as expected
     # BPKRequestState = fields.Selection(
-    #     selection=[('pending', 'Pending'),                    # BPKRequestNeeded is set
-    #                ('found', 'Found'),                        # any(BPKRequestDate > BPKErrorRequestDate)
-    #                ('found_outdated', 'Found but outdated'),  # any(BPKRequestDate < BPKErrorRequestDate)
-    #                ('notfound', 'Not Found')],                # any(Not BPKRequestDate and BPKErrorRequestDate)
+    #     selection=[('data_incomplete', 'Data incomplete'),         # BPKRequestNeeded=False and no BPK Requests linked
+    #                ('pending', 'BPK Request Scheduled'),           # BPKRequestNeeded is set
+    #                ('bpk_ok', 'BPK OK'),                           # any(BPKRequestDate > BPKErrorRequestDate)
+    #                ('bpk_ok_old', 'BPK OK with old Data'),         # any(BPKRequestDate < BPKErrorRequestDate)
+    #                ('bpk_error', 'Error')],                        # any(Not BPKRequestDate and BPKErrorRequestDate)
     #     string="BPK Request(s) State", compute=_compute_bpk_request_state, store=True)
 
     # Compute BPKRequestNeeded

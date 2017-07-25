@@ -119,5 +119,6 @@ To solve this we did:
         'views/templates_60_checkout_steps.xml',
         'views/views.xml',
         'views/website.xml',
+        'views/fsonline_menu.xml',
     ],
 }

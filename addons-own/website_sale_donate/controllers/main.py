@@ -99,23 +99,23 @@ class website_sale_donate(website_sale):
             if not kwargs.get('product_id'):
                 kwargs['product_id'] = product.id
             _logger.warning("product(): self.cart_update(**kwargs)")
-            # TODO: Check if self works here - this is product.template not sale.order ?!?
-            _logger.error("TODO: Why can it be self should be sale order if cart_update is run or?")
             self.cart_update(**kwargs)
 
         # Remove all other products from the so if there is an individual payment acquirer config for this product
         if product.product_page_template == u'website_sale_donate.ppt_opc' and product.product_acquirer_lines_ids:
                 order = request.website.sale_get_order()
-                if order and order.order_line:
-                    so_lines = order.order_line
+                if order and order.website_order_line:
+                    so_lines = order.website_order_line
                     if len(so_lines) > 1 or so_lines[0].product_id.id != product.id:
                         # TODO: Swap Sale Orders instead of cleaning products from this one
                         #       Even better would be to check if the current so works with the product acquirer config!
                         # TODO: remove all products from SO except this one!
                         for line in so_lines:
                             if line.product_id.id != product.id:
-                                _logger.error("TODO: Remove sale order line %s because of product acquirer config" %
-                                              line.id)
+                                _logger.error("Remove sale order line %s because of individual product acquirer config"
+                                              % line.id)
+                                self.cart_update(product_id=line.product_id.id, add_qty=-1, set_qty=0)
+
         # -----------------
         # ONE PAGE CHECKOUT End
         # -----------------
@@ -159,6 +159,7 @@ class website_sale_donate(website_sale):
 
                 product_acquirers = []
                 acquirer_dict = {acq.id: acq for acq in all_acquires}
+
                 # HINT: product_acquirer_lines_ids is already correctly sorted by sequence
                 for line in product.product_acquirer_lines_ids:
                     if line.acquirer_id.id in acquirer_dict:
@@ -472,16 +473,79 @@ class website_sale_donate(website_sale):
     # Render the payment page with an additional dictionary acquirers_opc for One-Page-Checkout
     def opc_payment(self, **post):
         _logger.warning("opc_payment(): START")
-        # Call payment()
+        opc_warnings = list()
+
+        # ---------------
+        # UPDATE DELIVERY
+        # ---------------
+        # Update the delivery and then remove carrier_id from post to not always generate a redirection!
+        # HINT: self.payment(**post) will basically just call _check_carrier_quotation() ir a carrier_id is in post
+        #       and return a redirection to the payment page again.
+        # ATTENTION: _check_carrier_quotation() was completely rewritten to avoid unnecessary writes to the SO!
+        # HINT: with carrier id website_sale_delivery payment() would update the SO and therefore the acquierer buttons
+        #       would never be rendered. this is why we need to run it twice if a carrier_id is found in post!
+        # HINT: This basically runs _check_carrier_quotation() and returns a redirect to /shop/payment if carrier_id is
+        #       in post!
+        # TODO: check what we should do with errors at this stage
+        # ATTENTION: Input names are delivery_type which is normally remapped by java script to a call to
+        #            window.location.href = '/shop/payment?carrier_id=' + carrier_id;
+        carrier_id = post.get('delivery_type')
+        if carrier_id:
+            post['carrier_id'] = int(carrier_id)
+            _logger.warning("opc_payment(): 'delivery_type' = 'carrier_id' found in post (ID: %s)" % carrier_id)
+            _logger.warning("opc_payment(): Run original payment() to update SO for delivery method")
+            super(website_sale_donate, self).payment(**post)
+            _logger.warning("opc_payment(): Pop carrier_id from post to render acquirer forms in next step")
+            post.pop('carrier_id')
+
+        # --------------------------------------------------------
+        # CREATE THE PAYMENT TRANSACTION AND UPDATE THE SALE ORDER
+        # --------------------------------------------------------
+        # TODO: Maybe this needs to be done before UPDATE DELIVERY?
+        acquirer_id = post.get('acquirer')
+        if acquirer_id:
+            acquirer_id = int(acquirer_id)
+            _logger.warning("opc_payment(): 'acquirer' (ID: %s) found in post" % acquirer_id)
+            _logger.warning("opc_payment(): add 'acquirer' to session")
+            request.session['acquirer_id'] = acquirer_id
+            _logger.warning("opc_payment(): CREATE THE PAYMENT TRANSACTION AND UPDATE THE SALE ORDER")
+            tx = self.payment_transaction_logic(acquirer_id=acquirer_id)
+            if not tx:
+                _logger.error("opc_payment(): ERROR payment_transaction_logic() returned nothing! WHAT NOW?")
+                opc_warnings.append(_('Please add at least one product'))
+
+        # --------------------------------------------------
+        # CALL ORIGINAL payment() TO RENDER ACQUIRER BUTTONS
+        # --------------------------------------------------
+        _logger.warning("opc_payment(): run super().payment(**post)")
         payment_page = super(website_sale_donate, self).payment(**post)
 
+        # ----------------
+        # CHECK FOR ERRORS
+        # ----------------
+        _logger.warning("opc_payment(): CHECK FOR ERRORS")
+        # TODO: Check if this works with INTEGRATE LOGIC FROM PAYMENT ...
+        # TODO: Check what we should do if we have a carrier id
         # Check for Errors or just redirect triggered by payment() overwrite from website_sale_delivery
         if not hasattr(payment_page, 'qcontext') or not payment_page.qcontext:
-            _logger.warning(_('Payment Page has no qcontext. It may be a redirection. Returning orig. payment page'))
+            _logger.error('opc_payment(): Orig payment page has NO QCONTEXT!')
+            return payment_page
+        if opc_warnings:
+            payment_page.qcontext['opc_warnings'] = opc_warnings
+            _logger.error('opc_payment(): opc_warnings found')
             return payment_page
         if payment_page.qcontext.get('errors'):
-            _logger.warning(_('Errors found while rendering the original payment page! Returning orig. payment page'))
+            _logger.error('opc_payment(): qcontext.errors found in original payment page')
             return payment_page
+
+        # ---------------------------
+        # ADD acquirer_id TO QCONTEXT
+        # ---------------------------
+        # HINT: This is not needed for payment() but for checkout() if OPC
+        _logger.warning("opc_payment(): ADD acquirer_id TO QCONTEXT")
+        if acquirer_id:
+            _logger.warning('opc_payment(): add "acquirer_id" to qcontext')
+            payment_page.qcontext.update({'acquirer_id': int(acquirer_id)})
 
         # ----------------------------------------------------------------
         # CHECK IF THERE IS ALREADY A PAYMENT TRANSACTION LINKED TO THE SO
@@ -489,6 +553,7 @@ class website_sale_donate(website_sale):
         # Odoo changed the rendering of the pay-now-button forms and only add the payment transaction reference
         # in the function payment_transaction(). This is a problem for our payment providers where we want the user
         # to add custom information like IBAN or BIC or the checkbox for the payment slips. Therefore we re-add it here
+        _logger.warning("opc_payment(): CHECK IF THERE IS ALREADY A PAYMENT TRANSACTION LINKED TO THE SO")
         tx = request.website.sale_get_transaction()
         if tx:
             cr, uid, context = request.cr, request.uid, request.context
@@ -499,6 +564,8 @@ class website_sale_donate(website_sale):
             for acquirer in payment_page.qcontext['acquirers']:
                 if tx.acquirer_id.id == acquirer.id:
                     # Render the acquirer button again but now with correct payment transaction reference
+                    _logger.warning("opc_payment(): Render the acquirer button again but now with "
+                                    "correct payment transaction reference: %s" % tx.reference)
                     acquirer.button = payment_obj.render(
                         cr, SUPERUSER_ID, acquirer.id,
                         tx.reference,
@@ -513,7 +580,11 @@ class website_sale_donate(website_sale):
         # ---------------------------------------------------
         # ADD EXTRA INFORMATION TO QCONTEXT FOR OPC TEMPLATES
         # ---------------------------------------------------
+        _logger.warning("opc_payment(): ADD EXTRA INFORMATION TO QCONTEXT FOR OPC TEMPLATES")
         payment_qcontext = payment_page.qcontext
+
+        # ATTENTION: Always use one page checkout for the payment page
+        payment_qcontext['one_page_checkout'] = True
 
         # Add Billing Fields to qcontext for address display
         billing_fields_obj = request.env['website.checkout_billing_fields']
@@ -529,6 +600,7 @@ class website_sale_donate(website_sale):
         # ------------------------------------------------------------------------------------------------------
         # CHANGE ORIGINAL ACQUIRER BUTTON FORMS AND ADD A SECOND SET OF BUTTONS WITHOUT A FORM FOR OPC TEMPLATES
         # ------------------------------------------------------------------------------------------------------
+        _logger.warning("opc_payment(): CHANGE ORIGINAL ACQUIRER BUTTON FORMS")
         for acquirer in payment_qcontext['acquirers']:
 
             # SET ORIGINAL INPUT TAGS TO POST DATA IF ANY
@@ -596,7 +668,7 @@ class website_sale_donate(website_sale):
         # ACQUIRER SELECTION AND VALIDATION
         # ---------------------------------
         if post.get('acquirer'):
-
+            _logger.warning("opc_payment(): ACQUIRER SELECTION AND VALIDATION")
             # Set the current acquirer to be correctly pre selected on subsequent renders of the checkout page
             payment_qcontext['acquirer_id'] = post.get('acquirer')
 
@@ -613,15 +685,34 @@ class website_sale_donate(website_sale):
             # TODO: Validate acquirer input fields e.g.: iban and bic
             #       Maybe add a new method to payment providers: e.g.: _[paymentmethod]_pre_send_form_validate()
 
+        # --------------------------------------
+        # ADD "acquirer_auto_submit" TO QCONTEXT
+        # --------------------------------------
+        acquirer_active = False
+        if acquirer_id:
+            _logger.warning("opc_payment(): ADD 'acquirer_auto_submit' TO QCONTEXT")
+            for acquirer in payment_qcontext['acquirers']:
+                if int(acquirer.id) == acquirer_id:
+                    acquirer_active = acquirer
+                    break
+            if not acquirer_active:
+                _logger.error('opc_payment(): ERROR selected acquirer not found in acquirers!')
+                if not payment_qcontext.get('opc_warnings'):
+                    payment_qcontext['opc_warnings'] = list()
+                payment_qcontext['opc_warnings'].append(_('Please select an other acquirer.'))
+            payment_qcontext['acquirer_auto_submit'] = acquirer_active
+
         # -------------------------------------------------------
         # MOVE ACQUIRERS WITH globally_hidden TO acquirers_hidden
         # -------------------------------------------------------
+        _logger.warning("opc_payment(): MOVE ACQUIRERS WITH globally_hidden TO acquirers_hidden")
         # HINT: This is for individual payment acquirer configuration per one page checkout product
         # https://stackoverflow.com/questions/1207406/remove-items-from-a-list-while-iterating
         payment_qcontext['acquirers_hidden'] = [acq for acq in payment_qcontext['acquirers'] if acq.globally_hidden]
         payment_qcontext['acquirers'][:] = [acq for acq in payment_qcontext['acquirers'] if not acq.globally_hidden]
 
         _logger.warning("opc_payment(): END")
+        # TODO: Remove the parts added here from checkout() and payment()
         return payment_page
 
     # payment_transaction controller method (json route) gets replaced with this method
@@ -656,7 +747,7 @@ class website_sale_donate(website_sale):
         # ATTENTION: This call to the json controller may destroy the session: Carefully test this !!!
         # HINT: If there was no order or no order-line or no acquirer_id "pt" would be a redirect to "/shop/checkout"
         _logger.info("payment_transaction_logic(): call original payment_transaction()")
-        pt = super(website_sale_donate, self).payment_transaction(acquirer_id=acquirer_id)
+        pt = super(website_sale_donate, self).payment_transaction(acquirer_id=int(acquirer_id))
 
         # TODO: 'return_url': '/shop/payment/validate', check if this prevents our custom return urls!
         return pt
@@ -726,12 +817,14 @@ class website_sale_donate(website_sale):
             # HINT: self.payment(**post) will basically just call _check_carrier_quotation() ir a carrier_id is in post
             #       and return a redirection to the payment page again.
             # ATTENTION: _check_carrier_quotation() was completely rewritten to avoid unnecessary writes to the SO!
+            # ATTENTION: Input names are delivery_type which is normally remapped by java script to a call to
+            #            window.location.href = '/shop/payment?carrier_id=' + carrier_id;
             # TODO: Test if we should directly call _check_carrier_quotation() instead of self.payment(**post)
             _logger.warning("checkout(): OPC STEP 1: UPDATE DELIVERY")
             carrier_id = post.get('delivery_type')
             if carrier_id:
                 post['carrier_id'] = int(carrier_id)
-                self.payment(**post)
+                super(website_sale_donate, self).payment(**post)
                 # ATTENTION: carrier_id must be removed or payment() will always return the redirection to /shop/payment
                 post.pop('carrier_id')
 
@@ -755,6 +848,7 @@ class website_sale_donate(website_sale):
             # - render("website_sale.checkout", values)
             _logger.warning("checkout(): OPC STEP 3: RUN THE ORIGINAL CHECKOUT CONTROLLER AGAIN")
             checkout_page = super(website_sale_donate, self).checkout(**post)
+            # ATTENTION: Always use one page checkout for the checkout_page
             checkout_page.qcontext['one_page_checkout'] = True
             # Add opc_warnings used in opc templates to display errors
             checkout_page.qcontext['opc_warnings'] = list()
@@ -766,31 +860,8 @@ class website_sale_donate(website_sale):
                 checkout_page.qcontext['opc_warnings'].append(confirm_order.qcontext.get('errors', []))
                 checkout_page.qcontext.update(confirm_order.qcontext)
 
-            # STEP 4: FIND AND SET THE ACTIVE PAYMENT ACQUIRER
-            _logger.warning("checkout(): OPC STEP 4: FIND AND SET THE ACTIVE PAYMENT ACQUIRER")
-            if not post.get('acquirer'):
-                _logger.error('checkout(): OPC STEP 6: ERROR "acquirer" missing in **post!')
-                checkout_page.qcontext['opc_warnings'].append(_('Please select a payment method.'))
-                payment_page = self.opc_payment(**post)
-                checkout_page.qcontext.update(payment_page.qcontext)
-                return checkout_page
-            else:
-                acquirer_id = int(post.get('acquirer'))
-                request.session['acquirer_id'] = acquirer_id
-                checkout_page.qcontext.update({'acquirer_id': acquirer_id})
-
-            # STEP 5: CREATE THE PAYMENT TRANSACTION AND UPDATE THE SALE ORDER
-            # ATTENTION: Still the values from **post will NOT be written to the tx at this point BUT
-            #            they will be transferred to form_validate after the auto submission of acquirer_auto_submit
-            _logger.warning("checkout(): OPC STEP 5: CREATE THE PAYMENT TRANSACTION AND UPDATE THE SALE ORDER")
-            tx = self.payment_transaction_logic(acquirer_id)
-            if not tx:
-                checkout_page.qcontext['opc_warnings'].append(_('Please add at least one product'))
-
-            # STEP 6: RENDER THE PAYMENT BUTTONS (Forms)
-            # ATTENTION: since carrier_id is already removed now we get the payment page and not just a redirection
-            # HINT: opc_payment() will also validate if the acquirer is correct for the payment interval of the SO
-            _logger.warning("checkout(): OPC STEP 6: RENDER THE PAYMENT BUTTONS (opc_payment)")
+            # STEP 4: RENDER THE PAYMENT BUTTONS (Forms)
+            _logger.warning("checkout(): OPC STEP 4: RENDER THE PAYMENT BUTTONS (opc_payment())")
             payment_page = self.opc_payment(**post)
             # ATTENTION: Errors in the payment page may shadow errors in the checkoutpage therefore we add it to
             #            opc_warnings before we add the qcontext to the checkoutpage
@@ -799,35 +870,17 @@ class website_sale_donate(website_sale):
             # Add the payment page qcontext to the checkoutpage qcontext
             checkout_page.qcontext.update(payment_page.qcontext)
 
-            # STEP 7: CHECK FOR ERRORS
+            # STEP 5: CHECK FOR ERRORS
             # HINT: We redirect so late to make sure qcontext of the payment page is already in the checkoutpage
             #       because it is needed in OPC templates.
             # ATTENTION: If confirm_order has a qcontext it means checkout_form_validate() returned errors
             # ATTENTION: Errors in the qcontext for confirm order may shadow errors from the payment- and checkoutpage
-            _logger.warning("checkout(): OPC STEP 7: CHECK FOR ERRORS")
-            if not tx or checkout_page.qcontext.get('error') or confirm_order.location != '/shop/payment':
+            _logger.warning("checkout(): OPC STEP 5: CHECK FOR ERRORS")
+            if checkout_page.qcontext.get('error') or confirm_order.location != '/shop/payment':
                 _logger.warning("checkout(): ERRORS FOUND RETURNING CHECKOUTPAGE")
                 return checkout_page
 
-            # STEP 8: ADD "acquirer_auto_submit" TO QCONTEXT
-            _logger.warning("checkout(): OPC STEP 8: ADD 'acquirer_auto_submit' TO QCONTEXT")
-            # HINT: all acquirers with "globally_hidden" set are moved to acquirers_hidden in opc_payment()
-            acquirers = checkout_page.qcontext.get('acquirers', [])
-            acquirers_hidden = checkout_page.qcontext.get('acquirers_hidden', [])
-            all_acquires = acquirers + acquirers_hidden
-            # Find active acquirer object
-            acquirer_active = False
-            for acquirer in all_acquires:
-                if int(acquirer.id) == acquirer_id:
-                    acquirer_active = acquirer
-                    break
-            if not acquirer_active:
-                _logger.error('checkout(): OPC STEP 8: ERROR selected acquirer not found in opc_payment() qcontext!')
-                checkout_page.qcontext['opc_warnings'].append(_('Please select an other acquirer.'))
-                return checkout_page
-            checkout_page.qcontext['acquirer_auto_submit'] = acquirer_active
-
-            _logger.warning("checkout(): SUCCESS RETURNING CHECKOUTPAGE WITH acquirer_auto_submit FOR PP REDIRECT!")
+            _logger.warning("checkout(): SUCCESS! RETURNING CHECKOUTPAGE WITH 'acquirer_auto_submit' FOR PP REDIRECT!")
             return checkout_page
 
     # One-Page-Checkout: Payment Page Redirection
@@ -846,10 +899,7 @@ class website_sale_donate(website_sale):
             _logger.warning("payment(): END, opc in session therefore redirect to /shop/checkout")
             return request.redirect("/shop/checkout")
 
-        # HINT: The call to the original payment controller is done in opc_payment()
-        # HINT: The original payment page is fully replaced in templates_60_checkout_steps.xml
-        #       Therefore we always call opc_payment()
-        _logger.warning("payment(): END, return self.opc_payment(**post)")
+        _logger.warning("payment(): END: RETURN self.opc_payment(**post)")
         return self.opc_payment(**post)
 
     # Override of /shop/payment/validate
