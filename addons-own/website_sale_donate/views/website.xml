@@ -168,6 +168,7 @@
                                     <field name="payment_indicator"/>
                                     <field name="payment_page_header"/>
                                     <field name="payment_title"/>
+                                    <field name="payment_page_submit_button"/>
                                 </group>
                                 <group string="Payment Methods">
                                     <field name="acquirer_default"/>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Add target="_top" to make the form work in iframes also -->
+        <record id="wsd_acquirer_form" model="ir.ui.view">
+            <field name="name">Add target _top for payment_acquirer form</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="target">_top</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

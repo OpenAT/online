@@ -87,7 +87,14 @@ $(document).ready(function () {
             return false;
         }
         openerp.jsonRpc('/shop/payment/transaction/' + acquirer_id, 'call', {}).then(function (data) {
-            console.log('Mike: SUBMIT FORM');
+
+            // Now the controller returns html content that will replace the previous form content
+            // HINT: This renders the button again and would eventually create a new Payment TX if something is wrong
+            console.log('Mike: /shop/payment/transaction/ REPLACE PAY-NOW-BUTTON FORM DATA:' + data);
+            $form.html(data);
+
+            // Submit the form
+            console.log('Mike: SU/shop/payment/transaction/ SUBMIT PAY-NOW-BUTTON FORM');
             $form.submit();
         });
     });

@@ -1,0 +1,522 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-25 17:14+0000\n"
+"PO-Revision-Date: 2017-07-25 17:14+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_base
+#: model:email.template,body_html:fso_base.email_template_webshop
+msgid "\n"
+"\n"
+"\n"
+"<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
+"\n"
+"    <h2>\n"
+"        <br />\n"
+"        Hello ${object.partner_id.name},<br />\n"
+"        Thank you very much for your trust!\n"
+"    </h2>\n"
+"    <h3><br />Summary of your transaction:</h3>\n"
+"    <p style=\"padding-left: 14px;\">\n"
+"        ID: <strong>${object.name}</strong><br />\n"
+"        Total: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br />\n"
+"        Date: ${object.date_order}<br />\n"
+"        State: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
+"    </p>\n"
+"    <% set signup_url = object.get_signup_url() %>\n"
+"    % if signup_url:\n"
+"    <p>\n"
+"        <br />You could access your data online if you already have an account:\n"
+"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
+"            &#8226;&nbsp;Access Account\n"
+"        </a>\n"
+"        <br />Or you could create a new one:\n"
+"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
+"            &#8226;&nbsp;Register Account\n"
+"        </a>\n"
+"    </p>\n"
+"    % endif\n"
+"    <p>If you have any questions please contact:<br />\n"
+"        <a href=\"mailto:${object.user_id.email or object.company_id.email or ''}?subject=Question%20regarding%20${object.name}\" style=\"display:block; padding-left: 14px;\">\n"
+"            &#8226;&nbsp;&lt;${object.user_id.name or object.company_id.name or ''}&gt; ${object.user_id.email or object.company_id.email or ''}\n"
+"        </a>\n"
+"    </p>\n"
+"    <p>&nbsp;</p>\n"
+"    <h3>\n"
+"        <strong>${object.company_id.name}</strong>\n"
+"    </h3>\n"
+"    <p>\n"
+"        % if object.company_id.street:\n"
+"            ${object.company_id.street}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.street2:\n"
+"            ${object.company_id.street2}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.city or object.company_id.zip:\n"
+"            ${object.company_id.zip} ${object.company_id.city}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.country_id:\n"
+"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.phone:\n"
+"            Tel.:&nbsp;${object.company_id.phone}<br />\n"
+"        % endif\n"
+"        % if object.company_id.email:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br />\n"
+"        % endif\n"
+"        % if object.company_id.website:\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br />\n"
+"        % endif\n"
+"        % if object.company_id.logo:\n"
+"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
+"        % endif\n"
+"    </p>\n"
+"\n"
+"</div>\n"
+"\n"
+"\n"
+"            "
+msgstr "\n"
+"\n"
+"<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
+"\n"
+"    <h2>\n"
+"        Hallo ${object.partner_id.name},<br/>\n"
+"        vielen Dank für ihr Vertrauen!\n"
+"    </h2>\n"
+"    <h3><br/>Ihre persönlichen Daten</h3>\n"
+"    <p>\n"
+"        % if object.partner_id.name:\n"
+"            ${object.partner_id.name}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.street:\n"
+"            ${object.partner_id.street}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.street2:\n"
+"            ${object.partner_id.street2}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.city or object.partner_id.zip:\n"
+"            ${object.partner_id.zip} ${object.partner_id.city}<br/>\n"
+"        % endif\n"
+"        % if object.partner_id.email:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.partner_id.email}\">${object.partner_id.email}</a><br/>\n"
+"        % endif\n"
+"\n"
+"     </p>\n"
+"    <h3><br/>Vorgangsübersicht:</h3>\n"
+"    <p style=\"padding-left: 14px;\">\n"
+"        Vorgangsnummer: <strong>${object.name}</strong><br/>\n"
+"        Vorgangssumme: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br/>\n"
+"        Vorgangsdatum: ${object.date_order}<br/>\n"
+"        Zahlungsstatus: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
+"    </p>\n"
+"\n"
+"        <p>Bei Fragen kontaktieren Sie bitte:</p>\n"
+"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email or '') | safe}</a><br/>\n"
+"    <div style=\"display:table;\">\n"
+"        <div style=\"display:table-header-group;\">\n"
+"            <div style=\"display:table-row;\">\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Name</div>\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Anzahl</div>\n"
+"                <div style=\"display:table-cell; border:1px solid black;\">Download</div>\n"
+"            </div>\n"
+"        </div>\n"
+"        <div style=\"display:table-row-group;\">\n"
+"            % for line in object.order_line:\n"
+"                <div style=\"display:table-row;\">\n"
+"                    <div style=\"display:table-cell;\">${line.product_id.name}</div>\n"
+"                    <div style=\"display:table-cell;\">${line.product_uom_qty}</div>\n"
+"                    % if line.product_id.webshop_download_file:\n"
+"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_id.id}\">Download</a></div>\n"
+"                    % endif\n"
+"                    % if line.product_tmpl_id.webshop_download_file:\n"
+"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_tmpl_id.id}\">Download</a></div>\n"
+"                    % endif\n"
+"                </div>\n"
+"            % endfor\n"
+"        </div>\n"
+"    </div>\n"
+"        % if object.cat_root_id.id == False or object.cat_root_id.id == 55:\n"
+"    <h3>\n"
+"        <strong>${object.company_id.name}</strong>\n"
+"    </h3>\n"
+"    <p>\n"
+"        % if object.company_id.street:\n"
+"            ${object.company_id.street}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.street2:\n"
+"            ${object.company_id.street2}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.city or object.company_id.zip:\n"
+"            ${object.company_id.zip} ${object.company_id.city}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.country_id:\n"
+"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.phone:\n"
+"            Tel.:&nbsp;${object.company_id.phone}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.email:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.website:\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.logo:\n"
+"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
+"        % endif\n"
+"    </p>\n"
+"        % endif\n"
+"        % if object.cat_root_id.id == 80:\n"
+"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email_report_dd or '') | safe}</a>\n"
+"    <h3>\n"
+"        <strong>${Sante-Sexuelle}</strong>\n"
+"    </h3>\n"
+"    <p>\n"
+"        % if object.company_id.email_report_dd:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email_report_dd}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.website:\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website_report_dd}</a><br/>\n"
+"        % endif\n"
+"        % if object.company_id.logo_report_dd:\n"
+"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo_report_dd}\" style=\"width: 120px;\"></div>\n"
+"        % endif\n"
+"    </p>\n"
+"        % endif\n"
+"    <p>&nbsp;</p>\n"
+"\n"
+"</div>\n"
+"\n"
+"            "
+
+#. module: fso_base
+#: model:email.template,subject:fso_base.email_template_webshop
+msgid "${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}"
+msgstr "${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}"
+
+#. module: fso_base
+#: field:res.partner,legal_terms_web:0
+msgid "Accept Legal Terms Web"
+msgstr "Ich akzeptiere die AGB"
+
+#. module: fso_base
+#: field:res.partner,birthdate_web:0
+msgid "Birthdate Web"
+msgstr "Geburtsdatum"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:41
+#, python-format
+msgid "Certificate file not found at %s"
+msgstr "Zertifikatsdatei nicht gefunden unter %s"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:39
+#, python-format
+msgid "Certificate- and Private-Key-File needed if one of them is given!"
+msgstr "Certificate- and Private-Key-File needed if one of them is given!"
+
+#. module: fso_base
+#: model:ir.model,name:fso_base.model_res_company
+msgid "Companies"
+msgstr "Unternehmen"
+
+#. module: fso_base
+#: field:res.partner,company_name_web:0
+msgid "Company Name Web"
+msgstr "Firmen Name Web"
+
+#. module: fso_base
+#: field:fs.group,create_uid:0
+msgid "Created by"
+msgstr "Created by"
+
+#. module: fso_base
+#: field:fs.group,create_date:0
+msgid "Created on"
+msgstr "Created on"
+
+#. module: fso_base
+#: field:fs.group,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: fso_base
+#: selection:product.template,fs_product_type:0
+msgid "Donation"
+msgstr "Spende"
+
+#. module: fso_base
+#: field:res.partner,donation_deduction_optout_web:0
+msgid "Donation Deduction OptOut Web"
+msgstr "Meine Spenden nicht autom. absetzen"
+
+#. module: fso_base
+#: field:res.partner,donation_receipt_web:0
+msgid "Donation Receipt Web"
+msgstr "Spendenbestätigung"
+
+#. module: fso_base
+#: help:res.partner,anrede_individuell:0
+msgid "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
+msgstr "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
+
+#. module: fso_base
+#: code:addons/fso_base/models/fs_groups.py:60
+#, python-format
+msgid "Error!"
+msgstr "Fehler!"
+
+#. module: fso_base
+#: field:fs.group,name:0
+msgid "FS Group Name"
+msgstr "FS Gruppename"
+
+#. module: fso_base
+#: field:product.product,product_variant_fs_group_ids:0
+msgid "FS Groups"
+msgstr "FS Gruppen"
+
+#. module: fso_base
+#: field:product.template,fs_group_ids:0
+msgid "FS Groups (Template)"
+msgstr "FS Gruppen (Vorlage)"
+
+#. module: fso_base
+#: field:product.product,fs_group_ids:0
+msgid "FS Groups (Variant)"
+msgstr "FS Gruppen (Varianten)"
+
+#. module: fso_base
+#: model:res.groups,name:fso_base.group_fs_group_manager
+msgid "FS Groups Manager"
+msgstr "FS Gruppenmanager"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_fstoken_menu
+msgid "FS Login Token"
+msgstr "Temp. Anmeldeschlüssel"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline
+msgid "FS-Online"
+msgstr "FS-Online"
+
+#. module: fso_base
+#: field:res.partner,fore_name_web:0
+msgid "Fore Name Web DEPRICATED use partner_firstname addon"
+msgstr "Fore Name Web DEPRICATED use partner_firstname addon"
+
+#. module: fso_base
+#: view:fs.group:fso_base.fs_group_form
+#: view:fs.group:fso_base.fs_group_search
+#: view:fs.group:fso_base.fs_group_tree
+#: model:ir.actions.act_window,name:fso_base.fs_group_action
+#: model:ir.model,name:fso_base.model_fs_group
+#: model:ir.ui.menu,name:fso_base.fs_group_menu
+msgid "Fundraising Studio Groups"
+msgstr "Fundraising Studio Gruppen"
+
+#. module: fso_base
+#: field:product.product,fs_product_type:0
+#: field:product.template,fs_product_type:0
+msgid "Fundraising Studio Type"
+msgstr "Fundraising Studio Typ"
+
+#. module: fso_base
+#: selection:product.template,fs_product_type:0
+msgid "Godparenthood"
+msgstr "Patenschaften"
+
+#. module: fso_base
+#: field:fs.group,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: fso_base
+#: model:project.task.type,name:fso_base.project_tt_inprogress
+msgid "In Progress"
+msgstr "In Bearbeitung"
+
+#. module: fso_base
+#: field:res.partner,anrede_individuell:0
+msgid "Individuelle Anrede"
+msgstr "Individuelle Anrede"
+
+#. module: fso_base
+#: field:res.company,instance_base_port:0
+msgid "Instance Base Port"
+msgstr "Instanz Base-Port"
+
+#. module: fso_base
+#: field:res.company,instance_id:0
+msgid "Instance ID (e.g.: dadi)"
+msgstr "Instanz ID (z.B.: dadi)"
+
+#. module: fso_base
+#: field:fs.group,__last_update:0
+msgid "Last Modified on"
+msgstr "Last Modified on"
+
+#. module: fso_base
+#: field:fs.group,write_uid:0
+msgid "Last Updated by"
+msgstr "Last Updated by"
+
+#. module: fso_base
+#: field:fs.group,write_date:0
+msgid "Last Updated on"
+msgstr "Last Updated on"
+
+#. module: fso_base
+#: field:res.partner,name_zwei:0
+msgid "Name Zwei"
+msgstr "Name Zwei"
+
+#. module: fso_base
+#: help:res.partner,name_zwei:0
+msgid "Name zweite Zeile für Fundraising Studio"
+msgstr "Name zweite Zeile für Fundraising Studio"
+
+#. module: fso_base
+#: model:project.task.type,name:fso_base.project_tt_new
+msgid "New"
+msgstr "Neu"
+
+#. module: fso_base
+#: field:res.partner,newsletter_web:0
+msgid "Newsletter Web"
+msgstr "Newsletter Anmeldung"
+
+#. module: fso_base
+#: model:project.task.type,name:fso_base.project_tt_nicetohave
+msgid "NiceToHave"
+msgstr "NiceToHave"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_fundraising
+msgid "Online Fundraising"
+msgstr "Online Fundraising"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_overview
+msgid "Overview"
+msgstr "Übersicht"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:36
+#, python-format
+msgid "Parameters missing! Required are url and template."
+msgstr "Parameter fehlt! Benötigt sind url und template."
+
+#. module: fso_base
+#: model:ir.model,name:fso_base.model_res_partner
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:40
+#, python-format
+msgid "Path to cert- or key-file is longer than 255 chars!"
+msgstr "Path to cert- or key-file is longer than 255 chars!"
+
+#. module: fso_base
+#: model:project.task.type,name:fso_base.project_tt_planned
+msgid "Planned"
+msgstr "Geplant"
+
+#. module: fso_base
+#: field:res.partner,post_office_box_web:0
+msgid "Post Office Box Web"
+msgstr "Postfach"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:42
+#, python-format
+msgid "Private key file not found at %s"
+msgstr "Private key file not found at %s"
+
+#. module: fso_base
+#: model:ir.model,name:fso_base.model_product_product
+#: selection:product.template,fs_product_type:0
+msgid "Product"
+msgstr "Produkt"
+
+#. module: fso_base
+#: model:ir.model,name:fso_base.model_product_template
+msgid "Product Template"
+msgstr "Produktvorlage"
+
+#. module: fso_base
+#: code:addons/fso_base/models/fs_groups.py:60
+#, python-format
+msgid "Product variants exist! Please set the FS-Groups there!"
+msgstr "Product variants exist! Please set the FS-Groups there!"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_settings
+msgid "Settings"
+msgstr "Einstellungen"
+
+#. module: fso_base
+#: field:res.partner,street_number_web:0
+msgid "Street Number Web"
+msgstr "Straßen Nummer Web"
+
+#. module: fso_base
+#: field:res.partner,title_web:0
+msgid "Title Web"
+msgstr "Title Web"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/validate.py:42
+#, python-format
+msgid "URL DNS check failed!\n"
+"%s\n"
+"%s\n"
+""
+msgstr "URL DNS check failed!\n"
+"%s\n"
+"%s\n"
+""
+
+#. module: fso_base
+#: code:addons/fso_base/tools/validate.py:35
+#, python-format
+msgid "URL format is not valid: %s"
+msgstr "URL format is not valid: %s"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/validate.py:31
+#, python-format
+msgid "URL must be a string!"
+msgstr "URL must be a string!"
+
+#. module: fso_base
+#: model:project.task.type,name:fso_base.project_tt_waiting
+msgid "Waiting"
+msgstr "Wartend"
+
+#. module: fso_base
+#: view:res.company:fso_base.company_instance_settings
+msgid "e.g. 20040"
+msgstr "z.B. 20040"
+
+#. module: fso_base
+#: view:res.company:fso_base.company_instance_settings
+msgid "e.g. dadi"
+msgstr "z.B. dadi"
+

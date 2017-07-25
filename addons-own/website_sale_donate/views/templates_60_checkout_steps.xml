@@ -658,7 +658,7 @@
                     <!-- Acquirer-Selection (Payment Method) Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <t t-foreach="acquirers or []" t-as="acquirer">
-                            <!-- Only show correct acquirers (payment methods) -->
+                            <!-- Only show correct acquirers for recurring payments if set -->
                             <t t-if="acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) )">
                                 <li role="presentation"
                                     t-att-class="'active' if str(acquirer.id) == str(acquirer_id) else ''"
@@ -702,7 +702,23 @@
                                      t-att-id="'aq' + str(acquirer.id)"
                                      t-att-data-id="acquirer.id"
                                      t-att-data-recurring-transactions="'True' if acquirer.recurring_transactions else 'False'">
-                                    <div t-field="acquirer.pre_msg" class="acquirer_pre_msg"/>
+
+                                    <!-- Check for product page overwrites -->
+                                    <t t-set="product_overwrite" t-value="False"/>
+                                    <t t-if="product and product.product_acquirer_lines_ids">
+                                        <t t-foreach="product.product_acquirer_lines_ids" t-as="pac_line">
+                                            <t t-if="pac_line.acquirer_pre_msg and pac_line.acquirer_id.id == acquirer.id">
+                                                <t t-set="product_overwrite" t-value="True"/>
+                                                <div t-field="pac_line.acquirer_pre_msg" class="acquirer_pre_msg"/>
+                                            </t>
+                                        </t>
+
+                                    </t>
+
+                                    <t t-if="not product_overwrite">
+                                        <div t-field="acquirer.pre_msg" class="acquirer_pre_msg"/>
+                                    </t>
+
                                     <t t-if="one_page_checkout">
                                         <div t-raw="acquirer.button_opc"/>
                                     </t>
@@ -890,86 +906,121 @@
             <xpath expr="//div[@id='wrap']" position="inside">
                 <div class="container oe_website_sale">
 
-                    <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
-                    <t t-call="website_sale_donate.wsd_checkout_pages_header">
-                        <t t-set="payment_page" t-value="True"/>
-                    </t>
-
-                    <!-- Content -->
-                    <div class="row wsd_payment_page_content">
-
-                        <!-- Left Column -->
-                        <div class="col-sm-8">
-                            <!-- Small Cart -->
-                            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
-                            <t t-call="website_sale_donate.small_cart_header">
-                                <!-- Always Show Small-Cart Header -->
-                                <t t-set="show_small_cart_header" t-value="True"/>
-                            </t>
-                            <t t-call="website_sale_donate.small_cart">
-                                <t t-set="disable_changing_products" t-value="True"/>
-                                <t t-set="show_download_links" t-value="True"/>
-                            </t>
-                            <!-- Acquirer (Payment-Method) and Delivery-Method -->
-                            <t t-call="website_sale_donate.wsd_opc_payment"/>
-                        </div>
-
-                        <!-- Right Column -->
-                        <div class="col-sm-3 col-sm-offset-1">
-                            <!-- Billing Address -->
-                            <div class="payment_billing_address">
-                                <h4>Bill To:</h4>
-                                <!--<div t-field="order.partner_invoice_id"-->
-                                     <!--t-field-options='{-->
-                                     <!--"widget": "contact",-->
-                                     <!--"fields": ["address", "name", "phone", "email"]-->
-                                     <!--}'/>-->
-                                <div class="row billing_address">
-                                    <div class="col-sm-12">
-                                        <t t-call="website_sale_donate.wsd_fields_display">
-                                            <t t-set="address_obj" t-value="order.partner_invoice_id"/>
-                                            <t t-set="fields_to_render" t-value="billing_fields"/>
-                                        </t>
-                                    </div>
-                                </div>
-                                <div>
-                                  <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
+                    <!-- Payment-Provider Auto-Submit-Form -->
+                    <t t-if="acquirer_auto_submit">
+                        <div class="container">
+                            <div class="row one-page-checkout ppt_opc-checkout">
+                                <div class="col-md-12">
+                                    <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
                                 </div>
                             </div>
-                            <!-- Shipping Address -->
-                            <t t-if="not website.hide_shipping_address">
-                                <div class="payment_shipping_address">
-                                    <h4>Ship To:</h4>
-                                    <t t-if="website_sale_order and (website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id)">
-                                          <!--<div t-field="order.partner_shipping_id"-->
-                                               <!--t-field-options='{-->
-                                               <!--"widget": "contact",-->
-                                               <!--"fields": ["address", "name", "phone"]-->
-                                               <!--}'/>-->
-                                        <div class="row shipping_address">
-                                            <div class="col-sm-12">
-                                                <t t-call="website_sale_donate.wsd_fields_display">
-                                                    <t t-set="address_obj" t-value="order.partner_shipping_id"/>
-                                                    <t t-set="fields_to_render" t-value="shipping_fields"/>
-                                                </t>
-                                            </div>
-                                        </div>
+                        </div>
+                    </t>
+
+                    <t t-if="not acquirer_auto_submit">
+                        <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
+                        <t t-call="website_sale_donate.wsd_checkout_pages_header">
+                            <t t-set="payment_page" t-value="True"/>
+                        </t>
+
+                        <!-- Content -->
+                        <div class="row wsd_payment_page_content">
+
+                            <!-- Left Column -->
+                            <div class="col-sm-8">
+                                <!-- Small Cart -->
+                                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                                <t t-call="website_sale_donate.small_cart_header">
+                                    <!-- Always Show Small-Cart Header -->
+                                    <t t-set="show_small_cart_header" t-value="True"/>
+                                </t>
+                                <t t-call="website_sale_donate.small_cart">
+                                    <t t-set="disable_changing_products" t-value="True"/>
+                                    <t t-set="show_download_links" t-value="True"/>
+                                </t>
+
+                                <!-- Acquirer (Payment-Method) and Delivery-Method Form -->
+                                <form action="/shop/payment"
+                                      class="payment_opc_acquirer_form"
+                                      method="POST">
+
+                                    <!-- Acquirer and Delivery -->
+                                    <t t-call="website_sale_donate.wsd_opc_payment">
+                                        <t t-set="one_page_checkout" t-value="True"/>
                                     </t>
-                                    <address t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">Ship to the same address</address>
+
+                                    <!-- Submit Button -->
+                                    <a id="button_paynow" class="btn btn-primary btn-xl mt16 a-submit" href="#">
+                                        <t t-if="website.payment_page_submit_button">
+                                            <span t-field="website.payment_page_submit_button"/>
+                                        </t>
+                                        <t t-if="not website.payment_page_submit_button">
+                                            <span>Pay Now!</span>
+                                        </t>
+                                    </a>
+
+                                </form>
+
+
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-sm-3 col-sm-offset-1">
+                                <!-- Billing Address -->
+                                <div class="payment_billing_address">
+                                    <h4>Bill To:</h4>
+                                    <!--<div t-field="order.partner_invoice_id"-->
+                                         <!--t-field-options='{-->
+                                         <!--"widget": "contact",-->
+                                         <!--"fields": ["address", "name", "phone", "email"]-->
+                                         <!--}'/>-->
+                                    <div class="row billing_address">
+                                        <div class="col-sm-12">
+                                            <t t-call="website_sale_donate.wsd_fields_display">
+                                                <t t-set="address_obj" t-value="order.partner_invoice_id"/>
+                                                <t t-set="fields_to_render" t-value="billing_fields"/>
+                                            </t>
+                                        </div>
+                                    </div>
                                     <div>
                                       <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
                                     </div>
                                 </div>
-                            </t>
+                                <!-- Shipping Address -->
+                                <t t-if="not website.hide_shipping_address">
+                                    <div class="payment_shipping_address">
+                                        <h4>Ship To:</h4>
+                                        <t t-if="website_sale_order and (website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id)">
+                                              <!--<div t-field="order.partner_shipping_id"-->
+                                                   <!--t-field-options='{-->
+                                                   <!--"widget": "contact",-->
+                                                   <!--"fields": ["address", "name", "phone"]-->
+                                                   <!--}'/>-->
+                                            <div class="row shipping_address">
+                                                <div class="col-sm-12">
+                                                    <t t-call="website_sale_donate.wsd_fields_display">
+                                                        <t t-set="address_obj" t-value="order.partner_shipping_id"/>
+                                                        <t t-set="fields_to_render" t-value="shipping_fields"/>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <address t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">Ship to the same address</address>
+                                        <div>
+                                          <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Bottom Snippet-Dropping-Area -->
-                    <div class="row wsd_payment_page_bottom">
-                        <div class="col-md-12">
-                            <div t-field="website.payment_page_bottom"/>
+                        <!-- Bottom Snippet-Dropping-Area -->
+                        <div class="row wsd_payment_page_bottom">
+                            <div class="col-md-12">
+                                <div t-field="website.payment_page_bottom"/>
+                            </div>
                         </div>
-                    </div>
+                    </t>
 
                 </div>
             </xpath>
@@ -988,9 +1039,7 @@
             </xpath>
         </template>
 
-        <!-- ALTERNATIVE CHECKOUT PAGE for Dadi Payment Providers -->
-        <!-- HINT: the sales order gets confirmed before we redirect to the PP therefore the update is not important -->
-        <!--       = not monitored by website_sale_validate.js in website sales -->
+        <!-- ALTERNATIVE CHECKOUT PAGE !!! replaced default checkout page !!! see override of /shop/payment/validate -->
         <template id="confirmation_static">
             <t t-call="website.layout">
                 <t t-set="additional_title">Shop - Confirmed</t>
@@ -1004,19 +1053,59 @@
                             </div>
                         </div>
 
+                        <!-- Order and Payment status -->
                         <div class="row wsd_confirmation_page_status">
                             <div class="col-md-12">
                                 <!-- Order Status -->
                                 <t t-if="order">
-                                    <h1 class="order_name"><span t-field="order.name"/></h1>
-                                    <h1 class="payment_status"><span t-field="order.payment_tx_id.state"/></h1>
+                                    <h3 class="your_transaction_number">
+                                        <span>Your Transaction Number</span>
+                                    </h3>
+                                    <h1 class="order_name">
+                                        <span t-field="order.name"/>
+                                    </h1>
+                                    <!-- TODO: pack this in a field website.transaction_reference_info -->
+                                    <p class="transaction_reference_info">
+                                        Please add your transaction number to any communication regarding this transaction!<br/>
+                                        When making a bank transfer please always give your transaction number as a reference so we can allocate your payment correctly!
+                                    </p>
+                                    <t t-if="order.payment_tx_id">
+                                        <div class="payment_information">
+                                            <h3>Payment Information</h3>
+                                            <p class="payment_status">
+                                                <div class="payment_status"><span>Payment Method: </span><span class="badge" t-field="order.payment_tx_id.acquirer_id"/></div>
+                                                <div class="payment_status"><span>Payment Reference: </span><span class="badge" t-field="order.payment_tx_id.reference"/></div>
+                                                <div class="payment_status"><span>Payment Status: </span><span class="badge" t-field="order.payment_tx_id.state"/></div>
+                                                <div class="payment_status"><span>Total Amount: </span><span class="badge" t-field="order.amount_total"/></div>
+                                            </p>
+                                        </div>
+                                    </t>
                                 </t>
                                 <!-- Error -->
                                 <t t-if="not order">
-                                    <h1 class="order_error">
+                                    <h2 class="order_error">
                                         <span>No data received from the payment provider.</span>
-                                    </h1>
+                                    </h2>
                                 </t>
+                            </div>
+                        </div>
+
+                        <!-- Payment Acquirer post message -->
+                        <t t-if="order and order.payment_tx_id and order.payment_tx_id.acquirer_id and order.payment_tx_id.acquirer_id.post_msg">
+                            <div class="row wsd_acquirer_post_msg">
+                                <div class="col-md-12">
+                                        <div class="acquirer_post_msg" t-field="order.payment_tx_id.acquirer_id.post_msg"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Product Template confirmation_post_message(s) -->
+                        <div class="row wsd_product_post_msg">
+                            <div class="col-md-12">
+                                <!-- Todo: Cycle through so lines products and show product_post_msg if not empty
+                                           Create a new controller for product.template and show ist product_post_msg
+                                           field so it can be filled and designed with snippets
+                                -->
                             </div>
                         </div>
 

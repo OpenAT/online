@@ -55,6 +55,7 @@ class Website(models.Model):
     payment_page_header = fields.Char(string='Payment Page Main Header', translate=True)
     payment_page_top = fields.Html(string='Payment Page Top Snippet Dropping Area', translate=True)
     payment_page_bottom = fields.Html(string='Payment Page Bottom Snippet Dropping Area', translate=True)
+    payment_page_submit_button = fields.Char(string='Payment Page Submit Button', translate=True)
     # Payment Settings
     redirect_url_after_form_feedback = fields.Char(string='Redirect URL after PP Form-Feedback',
                                                    help='Redirect to this URL after processing the Answer of the '

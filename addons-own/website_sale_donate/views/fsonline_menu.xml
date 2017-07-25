@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <menuitem id="menu_fsonline_donationshop" name="Donation Shop" sequence="7000" parent="fso_base.menu_fsonline"  />
+
+        <menuitem id="menu_fsonline_donationshop_product" name="Donations &amp; Products" sequence="7010" parent="menu_fsonline_donationshop" action="product.product_template_action"/>
+        <menuitem id="menu_fsonline_donationshop_cart" name="Donation Cart" sequence="7020" parent="menu_fsonline_donationshop" action="sale.action_quotations"/>
+        <menuitem id="menu_fsonline_donationshop_order" name="Orders" sequence="7030" parent="menu_fsonline_donationshop" action="sale.action_orders"/>
+        <menuitem id="menu_fsonline_donationshop_payment" name="Payments" sequence="7040" parent="menu_fsonline_donationshop" action="payment.action_payment_transaction"/>
+
+    </data>
+</openerp>

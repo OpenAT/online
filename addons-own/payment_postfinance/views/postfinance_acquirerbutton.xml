@@ -10,7 +10,7 @@
         <!--</template>-->
 
         <template id="postfinance_acquirer_button">
-            <form id="postfinance" t-if="acquirer" t-att-action="tx_url" method="post" target="_self">
+            <form id="postfinance" t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
                 <t t-if="tx_values.get('return_url')">
                     <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>
                 </t>

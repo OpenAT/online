@@ -124,6 +124,15 @@
                                         <field name="payment_interval_id"/>
                                     </tree>
                                 </field>
+
+                                <field name="product_acquirer_lines_ids">
+                                    <tree string="Acquirers" default_order="sequence" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="acquirer_id"/>
+                                        <field name="acquirer_pre_msg"/>
+                                    </tree>
+                                </field>
+
                                 <field name="button_addtocart_text"/>
                                 <field name="hide_panelfooter"/>
                             </group>
@@ -274,6 +283,7 @@
             <field name="arch" type="xml">
                 <!-- Replace the Name field and add recurring_transaction checkbox -->
                 <field name="name" position="replace">
+                    <field name="globally_hidden"/>
                     <field name="recurring_transactions"/>
                     <field name="submit_button_text"/>
                     <field name="submit_button_class"/>

@@ -11,6 +11,7 @@
                 <group>
                     <field name="BPKRequestCompanyID"/>
                     <field name="BPKRequestPartnerID"/>
+                    <field name="LastBPKRequest"/>
                 </group>
                 <group>
                     <group string="Last valid BPK-Request">
@@ -53,6 +54,7 @@
                   colors="red:not BPKRequestDate and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
                 <field name="BPKRequestPartnerID"/>
                 <field name="BPKRequestCompanyID"/>
+                <field name="LastBPKRequest"/>
                 <field name="BPKRequestDate"/>
                 <field name="BPKPrivate"/>
                 <field name="BPKErrorRequestDate"/>
@@ -68,6 +70,7 @@
             <search string="BPK Requests">
                 <field name="BPKRequestCompanyID"/>
                 <field name="BPKRequestPartnerID"/>
+                <field name="LastBPKRequest"/>
                 <field name="BPKPrivate"/>
                 <field name="BPKPublic"/>
                 <field name="BPKRequestDate"/>

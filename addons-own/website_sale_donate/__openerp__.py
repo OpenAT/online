@@ -52,10 +52,10 @@ Anpassungen des Online-Shops für NPOs
 - Hintergrund Parallax-Bild für das Donation Page Layout
 - Verbesserte Spenden List Views für alle Responsive-Auflösungen
 - Automatische Thumbnail Generierung (Image Square)
-- Über Checkboxen kann fast alles ein oder Ausgeblendet werden.
+- Über Checkboxen kann fast alles ein oder ausgeblendet werden.
 - Inline-Hilfe bei den Spenden Einstellungen
-- image feld bei products.product speichert original auflösung
-- Neue Info Buttons beim Produkt für die gesamte Spendenhöhe
+- Image Feld bei products.product speichert original Auflösung
+- Neue Info-Buttons beim Produkt für die gesamte Spendenhöhe
 
 ## Todo
 - User Form (controller) to create new donation campaigns
@@ -93,6 +93,7 @@ To solve this we did:
         'sale',
         'fso_base',
         'fso_base_website',
+        'payment',
         'website_sale',
         'website_sale_delivery',
         'website_sale_categories',
@@ -105,6 +106,7 @@ To solve this we did:
         'data/data.xml',
         #'data/email_template_data.xml', # moved to fso_base
         'security/ir.model.access.csv',
+        'views/payment_acquirer.xml',
         'views/templates.xml',
         'views/templates_10_small_cart.xml',
         'views/templates_20_crowdfunding.xml',
@@ -117,5 +119,6 @@ To solve this we did:
         'views/templates_60_checkout_steps.xml',
         'views/views.xml',
         'views/website.xml',
+        'views/fsonline_menu.xml',
     ],
 }
