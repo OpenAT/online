@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data>
 
-    <!-- Server Action to run set_bpk() -->
+    <!-- Server Action to run set_bpk() res.partner -->
     <record id="action_set_bpk" model="ir.actions.server">
         <field name="name">Set BPK</field>
         <field name="model_id" ref="model_res_partner"/>
@@ -24,6 +24,28 @@
         <field name="name">Set BPK</field>
         <field name="value" eval="'ir.actions.server,%d'%action_set_bpk"/>
     </record>
+
+
+    <!-- TODO: Server Action to run set_bpk() for res.partner.bpk -->
+    <!-- record id="action_set_bpk_for_bpk_records" model="ir.actions.server">
+        <field name="name">Set BPK</field>
+        <field name="model_id" ref="model_res_partner_bpk"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_model') == 'res.partner.bpk':
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+                # TODO: DEBUG THIS AND FINALIZE IT
+                partner_obj = self.pool['res.partner']
+                partner_ids = partner_obj.search([('BPKRequestIDS', 'in', ids)])
+
+                partner_obj.set_bpk(cr, uid, partner_ids, context=context)
+        </field>
+    </record -->
+
 
     <!-- Scheduled fetch of BPK Records for res.partner -->
     <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
