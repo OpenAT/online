@@ -181,6 +181,7 @@ class PaymentAcquirerOgonedadi(osv.Model):
         temp_ogonedadi_tx_values['SHASIGN'] = shasign
 
         ogonedadi_tx_values.update(temp_ogonedadi_tx_values)
+        _logger.warning("ogonedadi_form_generate_values(): ogonedadi_tx_values: %s" % ogonedadi_tx_values)
         return partner_values, ogonedadi_tx_values
 
     def ogonedadi_get_form_action_url(self, cr, uid, id, context=None):

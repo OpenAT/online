@@ -62,6 +62,7 @@ class AcquirerFRST(osv.Model):
                 'frst_iban': partner.bank_ids[-1].acc_number or '',
                 'frst_bic': partner.bank_ids[-1].bank_bic or '',
             })
+        _logger.warning("frst_form_generate_values(): tx_values: %s" % tx_values)
         return frst_partner_values, tx_values
 
 

@@ -169,7 +169,7 @@ class AcquirerPostfinance(osv.Model):
                 'esr_customer_number': esr_customer_number,
                 'esr_code_line': esr_code_line,
             })
-
+        _logger.warning("postfinance_form_generate_values(): tx_values: %s" % tx_values)
         return partner_values, tx_values
 
 

@@ -52,8 +52,6 @@ class AcquirerFsotransfer(osv.Model):
     # partner_values and tx_values (which are pre-processed at "form_preprocess_values directly in render") and then
     # used in the dictionary qweb_context wich is used to render the qweb template for the acquirer button form
     def fsotransfer_form_generate_values(self, cr, uid, id, partner_values, tx_values, context=None):
-        _logger.info("fsotransfer_form_generate_values(): tx_values %s" % tx_values)
-        # TODO: get initial value of do_not_send_payment_forms by payment acquirer
         tx_values.update({'do_not_send_payment_forms': None})
         _logger.warning("fsotransfer_form_generate_values(): tx_values: %s" % tx_values)
         return partner_values, tx_values
