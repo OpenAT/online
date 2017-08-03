@@ -286,11 +286,11 @@
     </template>
 
     <!-- INHERIT TEMPLATE products: Add t-if to table -->
-    <template id="products_list_view" inherit_id="website_sale.products" name="Switch for Table">
-        <xpath expr="//div[@id='products_grid']//table" position="attributes">
+    <!--template id="products_list_view" inherit_id="website_sale.products" name="Switch for Table">
+        <xpath expr="(//div[@id='products_grid'])[1](//table)[1]" position="attributes">
             <attribute name="t-if">not hide_table</attribute>
         </xpath>
-        <xpath expr="//div[@id='products_grid']//table" position="after">
+        <xpath expr="(//div[@id='products_grid'])[1]/table" position="after">
             <t t-if="show_products_list">
                 <t t-foreach="products" t-as="product">
                     <div class="oe_product oe_list oe_product_cart"
@@ -300,7 +300,7 @@
                 </t>
             </t>
         </xpath>
-    </template>
+    </template-->
 
     <!-- TEMPLATE products: Custom Products List Template -->
     <template id="products_listing" name="List View">
