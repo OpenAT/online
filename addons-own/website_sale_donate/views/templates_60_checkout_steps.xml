@@ -559,13 +559,7 @@
         <template id="wsd_pp_auto_submit_form" name="Payment Provider Auto-Submit-Form">
             <!-- REDIRECT TO PAYMENT PROVIDER Auto-Submit-Form: Finally redirect to payment-provider if all data is correct -->
             <t t-if="acquirer_auto_submit">
-                <h4 class="text-center">
-                    You will be redirect to the selected payment provider in a few seconds!
-                </h4>
-                <p>
-                    If you are not redirected after one minute please click the button.
-                </p>
-                <hr />
+                <t t-if="website.payment_redirection_message"><div t-raw="website.payment_redirection_message"/></t>
                 <div t-raw="acquirer_auto_submit.button"
                      id="wsd_pp_auto_submit_form"
                      class="js_auto_submit_form"

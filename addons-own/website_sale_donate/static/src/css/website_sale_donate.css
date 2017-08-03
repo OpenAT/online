@@ -6,6 +6,12 @@
     /*!*content: "\f067";*!*/
 /*}*/
 
+/* HIDE INPUT FIELDS ON "REDIRECT TO PAYMENT PROVIDER" TEMPLATE */
+#wsd_pp_auto_submit_form input {
+    visibility: hidden;
+    position: absolute;
+}
+
 /* Checkout-Pages Checkout-Step-Indicator */
 .wsd_checkout_pages_header .checkout_steps_navigation {
     margin-top: 1em;

@@ -37,6 +37,7 @@
                                 <field name="button_login"/>
                                 <field name="button_logout"/>
                                 <field name="button_back_to_page"/>
+                                <field name="payment_redirection_message"/>
                             </group>
                         </group>
                         <notebook name="Donation Shop">

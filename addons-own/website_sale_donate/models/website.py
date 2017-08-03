@@ -62,6 +62,13 @@ class Website(models.Model):
                                                         'Payment Provider instead of /shop/confirmation_static',
                                                    translate=True)
 
+    # REDIRECTION TO PAYMENT PROVIDER MESSAGE
+    payment_redirection_message = fields.Html(string='Redirection to PaymentProvider Text', translate=True,
+                                              default="""
+    <h4>You will be redirect to our payment provider to safely finish your donation!</h4>
+    <p>If you are not redirected in a few seconds please click the button below.</p>
+                                              """)
+
     # SHOP CONFIRMATION STATIC (DADI PAYMENT PROVIDERS)
     confirmation_indicator = fields.Char(string='Indicator Confirmation', translate=True)
     confirmation_page_header = fields.Char(string='Confirmation Page Main Header', translate=True)
