@@ -34,14 +34,6 @@
 	path = addons-thirdparty/oca/website
 	url = https://github.com/OCA/website.git
 	branch = 8.0
-[submodule "yelizariev"]
-	path = addons-thirdparty/yelizariev
-	url = https://github.com/yelizariev/addons-yelizariev.git
-	branch = 8.0
-[submodule "addons-thirdparty/yelizariev-website-addons"]
-	path = addons-thirdparty/yelizariev-website-addons
-	url = https://github.com/yelizariev/website-addons.git
-	branch = 8.0
 [submodule "addons-thirdparty/oca/social"]
 	path = addons-thirdparty/oca/social
 	url = https://github.com/OCA/social.git
@@ -77,4 +69,24 @@
 [submodule "addons-thirdparty/serpentcs"]
 	path = addons-thirdparty/serpentcs
 	url = https://github.com/JayVora-SerpentCS/SerpentCS_Contributions-v8.git
+	branch = 8.0
+[submodule "addons-thirdparty/llc/mail-addons"]
+	path = addons-thirdparty/llc/mail-addons
+	url = git@github.com:it-projects-llc/mail-addons.git
+	branch = 8.0
+[submodule "addons-thirdparty/llc/misc-addons"]
+	path = addons-thirdparty/llc/misc-addons
+	url = git@github.com:it-projects-llc/misc-addons.git
+	branch = 8.0
+[submodule "addons-thirdparty/llc/website-addons"]
+	path = addons-thirdparty/llc/website-addons
+	url = git@github.com:it-projects-llc/website-addons.git
+	branch = 8.0
+[submodule "addons-thirdparty/llc/sale-workflow"]
+	path = addons-thirdparty/llc/sale-workflow
+	url = git@github.com:it-projects-llc/sale-workflow.git
+	branch = 8.0
+[submodule "addons-thirdparty/llc/access-addons"]
+	path = addons-thirdparty/llc/access-addons
+	url = git@github.com:it-projects-llc/access-addons.git
 	branch = 8.0
