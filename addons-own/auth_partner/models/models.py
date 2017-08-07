@@ -43,12 +43,14 @@ class res_users(models.Model):
             # https://github.com/OCA/e-commerce/issues/152
             # https://github.com/OCA/e-commerce/pull/190
             if not request:
-                raise openerp.exceptions.AccessDenied()
+                #raise openerp.exceptions.AccessDenied()
+                raise
 
             # Check for a valid FS-Token
             token_record, user_record, errors = fstoken_check(password)
             if errors:
-                raise openerp.exceptions.AccessDenied()
+                # raise openerp.exceptions.AccessDenied()
+                raise
 
 
 class ResPartnerFSToken(models.Model):
