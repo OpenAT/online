@@ -18,6 +18,12 @@ class ir_http(orm.AbstractModel):
         # Process the request first
         response = super(ir_http, self)._dispatch()
 
+        # In case there is no request yet (unbound object error catch)
+        # https://github.com/OCA/e-commerce/issues/152
+        # https://github.com/OCA/e-commerce/pull/190
+        if not request:
+            return response
+
         # Check for fs_ptoken before returning the requests response
         if hasattr(request, 'website') and request.website:
             fs_ptoken = request.httprequest.args.get('fs_ptoken')
