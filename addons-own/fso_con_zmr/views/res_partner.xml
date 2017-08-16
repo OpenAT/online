@@ -11,9 +11,10 @@
                 <page string="ZMR BPK">
                     <group>
                         <group string="Force BPK Request Values (optional)">
-                            <field name="BPKForcedFirstname" attrs="{'required': ['|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
-                            <field name="BPKForcedLastname" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
-                            <field name="BPKForcedBirthdate" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False)]}"/>
+                            <field name="BPKForcedFirstname" attrs="{'required': ['|', '|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                            <field name="BPKForcedLastname" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                            <field name="BPKForcedBirthdate" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                            <field name="BPKForcedZip"/>
                         </group>
                         <group string="BPK Processing Status">
                             <field name="BPKRequestInProgress"/>
