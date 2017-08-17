@@ -109,10 +109,10 @@
                     </group>
                     <group colspan="2">
                     <div  name="bpk_buttons" class="oe_button_box oe_inline">
-                        <button name="button_find_bpk_partners_to_update" type="object" string="Test Search"/>
-                        <button name="set_bpk" type="object" string="Check BPK-Request-Needed"/>
-                        <button name="set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
-                        <button name="set_bpk" type="object" string="Force BPK-Request"/>
+                        <button name="action_check_and_set_bpk_request_needed" type="object" string="Check BPK-Request-Needed"/>
+                        <button name="action_set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
+                        <button name="action_remove_bpk_request_needed" type="object" string="Unschedule BPK-Request"/>
+                        <button name="action_set_bpk" type="object" string="Force BPK-Request"/>
                     </div>
                     </group>
                     <field name="BPKRequestIDS" colspan="2" nolabel="1">
@@ -137,12 +137,12 @@
         <field name="arch" type="xml">
             <tree string="Partner" default_order="BPKRequestNeeded desc, write_date desc">
                 <field name="id"/>
-                <field name="donation_deduction_optout_web" string="OptOut"/>
                 <field name="BPKRequestNeeded"/>
                 <field name="firstname"/>
                 <field name="lastname"/>
                 <field name="birthdate_web" string="Birth."/>
                 <field name="zip"/>
+                <field name="donation_deduction_optout_web" string="OptOut"/>
                 <field name="BPKForcedFirstname"/>
                 <field name="BPKForcedLastname"/>
                 <field name="BPKForcedBirthdate" string="BPK Birth."/>

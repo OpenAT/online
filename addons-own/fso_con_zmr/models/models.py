@@ -9,9 +9,10 @@ from openerp.tools.translate import _
 from openerp.addons.fso_base.tools.soap import soap_request
 from lxml import etree
 import time
-from datetime import timedelta
-import logging
 import datetime
+from datetime import timedelta
+#from datetime import time
+import logging
 from openerp.tools import config
 import re
 import pprint
@@ -944,12 +945,16 @@ class ResPartnerZMRGetBPK(models.Model):
         # ===========
         # FULL SEARCH
         # ===========
-        # The goal of the full search is to find any partner that would need an BPK request but BPKRequestNeeded
-        # is not set. This may be because a new company was added or an existing company was removed or caused by
-        # sosync errors.
+        # The goal of the full search is to find any partner that would need an BPK request but BPKRequestNeeded is not
+        # set.
         #
-        # HINT: Used by check_bpk_request_needed() which is normally started once a week by a scheduled server action
-        #       created by xml.
+        # So contrary to the quick search a full search will not just care about BPKRequestNeeded!
+        # Instead it searches
+        #    - for all partner without BPKRequestNeeded set but where a bpk request would be possible
+        #    - for all partner without BPKRequestNeeded set with existing BPK requests but where:
+        #        - bpk requests for companies are missing
+        #        - there are too many bpk requests per company
+        #        - bpk request data and partner data are not matching
 
         # Find all companies with fully filled ZMR access fields
         try:
@@ -968,7 +973,6 @@ class ResPartnerZMRGetBPK(models.Model):
         #     - with BPKRequestNeeded NOT set
         #     - with full set of regular fields OR full set of forced fields
         #     - where no BPK request is in progress or the BPK request processing start is far in the past or future
-        # TODO: !!! Test and debug this search domain !!!
         domain += [
             '&', '&', '&',
             ('donation_deduction_optout_web', '=', False),
@@ -994,7 +998,7 @@ class ResPartnerZMRGetBPK(models.Model):
         logger.info("find_bpk_partners_to_update(): A.) FIND PARTNERS-TO-UPDATE WITH NO BPK RECORDS FIRST")
 
         # Create search domain for partners with no existing BPK records
-        domain_without_bpk = domain + [('BPKRequestIDS', '=', False)]
+        domain_without_bpk = [('BPKRequestIDS', '=', False)] + domain
         logger.info("Search domain for partners with no BPK records:\n%s\n" % domain_without_bpk)
 
         # Search for partners with no existing BPK records
@@ -1005,8 +1009,8 @@ class ResPartnerZMRGetBPK(models.Model):
         if skip_partner_with_bpk_records or (limit and len(partner_without_bpks) >= limit):
             return partner_without_bpks
 
-        # B.) FIND PARTNERS TO UPDATE WITH EXISTING BPK RECORDS
-        # -----------------------------------------------------
+        # B.) FIND AND CHECK PARTNERS TO UPDATE WITH EXISTING BPK RECORDS
+        # ---------------------------------------------------------------
         # - Find only partners that fulfill the minimum requirements for a bpk check (see base_domain)
         # - Check if latest bpk request data and current partner data are different
         # HINT: If skip_partner_with_bpk_records is set this would be never reached! (Look above: Stopped at point A.)
@@ -1018,7 +1022,7 @@ class ResPartnerZMRGetBPK(models.Model):
         partners_to_update = partner_without_bpks
 
         # Create search domain for partners with existing BPK records
-        domain_with_bpk = domain + [('BPKRequestIDS', '!=', False)]
+        domain_with_bpk = [('BPKRequestIDS', '!=', False)] + domain
         logger.info("Search domain for partners with BPK records:\n%s\n" % domain_with_bpk)
 
         # CHECK PARTNERS
@@ -1029,7 +1033,7 @@ class ResPartnerZMRGetBPK(models.Model):
         remaining = -1 if not limit else limit - len(partner_without_bpks)
         while remaining:
 
-            # Find partner batch
+            # Find next partner batch to check
             partner_with_bpks = self.env['res.partner'].search(domain_with_bpk,
                                                                order=order, limit=fs_batch_size, offset=offset)
 
@@ -1039,7 +1043,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 break
 
             # Log info
-            logger.info("Start batch of %s parnter to check if a BPK request is needed" % len(partner_with_bpks))
+            logger.info("Start batch of %s partner to check if a BPK request is needed" % len(partner_with_bpks))
 
             # CHECK THE PARTNER
             for p in partner_with_bpks:
@@ -1104,17 +1108,16 @@ class ResPartnerZMRGetBPK(models.Model):
             # Create offset for next batch of partners to process
             offset += fs_batch_size
 
-        # SORT THE RECORD SET
-        sort_field = order.split(' ', 1)[0]
-        reverse = False if order.endswith('ASC') else True
-        partners_to_update = partners_to_update.sorted(key=lambda l: getattr(l, sort_field), reverse=reverse)
+        # Sort the final partner record set
+        if partners_to_update:
+            partners_to_update = self.env['res.partner'].search([('id', 'in', partners_to_update.ids)], order=order)
 
         # RETURN THE RECORD SET
         logger.info(_("Full search: Total partners found requiring a BPK request: %s") % len(partners_to_update))
         return partners_to_update
 
     @api.model
-    def scheduled_set_bpk(self, max_requests_per_minute=120):
+    def scheduled_set_bpk(self, request_per_minute=60, max_requests_per_minute=120, mrpm_start=17, mrpm_stop=6):
         start_time = time.time()
         logger.info(_("scheduled_set_bpk() START"))
 
@@ -1130,41 +1133,59 @@ class ResPartnerZMRGetBPK(models.Model):
             "seconds": 1
         }
         scheduled_action = self.env.ref('fso_con_zmr.ir_cron_scheduled_set_bpk')
-        if scheduled_action and scheduled_action.interval_type in interval_to_seconds:
-            max_runtime_in_seconds = int(scheduled_action.interval_number *
-                                         interval_to_seconds[scheduled_action.interval_type])
+        assert scheduled_action, \
+            _("Scheduled action fso_con_zmr.ir_cron_scheduled_set_bpk not found!")
+        assert scheduled_action.interval_type in interval_to_seconds, \
+            _("Interval type %s unknown!") % scheduled_action.interval_type
 
-            # Set the limit of partners to request BPKs based on interval and max_requests_per_minute
-            # HINT: set_bpk may run up to four times per BPK request try BUT it is a save bet to assume
-            #       that most of the time one request is enough.
-            #       However: Try to set the max_requests_per_minute low enough so that multiple request per partner
-            #       and some manually forced user requests as well as request by the UI e.g.: Auth parnter form
-            #       are still covered
-            limit = int((max_runtime_in_seconds / 60) * max_requests_per_minute)
+        # Calculate the maximum runtime
+        max_runtime_in_seconds = int(scheduled_action.interval_number *
+                                     interval_to_seconds[scheduled_action.interval_type])
+        max_runtime_in_minutes = int((max_runtime_in_seconds / 60))
 
-            # In case someone sets interval to one second
-            limit = 1 if limit <= 0 else limit
+        # Limit the number of partners to process based on max_requests_per_minute
+        #
+        # HINT: set_bpk() may run up to four times per partner per company but it is a save bet to assume
+        #       that most of the time one request is enough.
+        #
+        #       However: Try to set the max_requests_per_minute low enough so that multiple request per partner
+        #       and some manually forced user requests as well as request by the UI e.g.: from Auth partner form
+        #       java script status widget are still covered
+        #
+        # ATTENTION: If limit is lower than 1 set it to exactly one partner because a limit of 0 means NO LIMIT !
+        #
+        # https://stackoverflow.com/questions/10048249/how-do-i-determine-if-current-time-is-within-a-specified-range-using-pythons-da
+        #
+        number_of_companies = len(self._find_bpk_companies())
+        now = fields.datetime.now()
+        now_time = now.time()
+        # TODO: make this date and time comparrison work :) maybe the first time must always be the smaller one ?!?
+        if now_time >= datetime.time(mrpm_start, 0) and now_time <= datetime.time(mrpm_stop, 0):
+            limit = int((max_runtime_in_minutes * max_requests_per_minute) / number_of_companies)
         else:
-            return False
+            limit = int((max_runtime_in_minutes * request_per_minute) / number_of_companies)
+        limit = 1 if limit < 1 else limit
 
         # Log start
         logger.info(_("scheduled_set_bpk(): "
                       "Start to process a maximum of %s partner in %s minutes! (max_requests_per_minute: %s)") %
-                    (limit, int(max_runtime_in_seconds / 60), max_requests_per_minute))
+                    (limit, max_runtime_in_minutes, max_requests_per_minute))
 
         # Find partner
-        partners_to_update = self.find_bpk_partners_to_update(quick_search=True, limit=limit)
+        partners_to_update = self.find_bpk_partners_to_update(quick_search=True,
+                                                              search_all_partner=True,
+                                                              limit=limit)
 
         # Run set BPK per partner until its done or runtime_in_seconds (-2s for safety) reached
-        start_datetime = datetime.datetime.now()
-        runtime_limit = start_datetime + datetime.timedelta(0, max_runtime_in_seconds - 2)
+        runtime_start = datetime.datetime.now()
+        runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_seconds - 2)
         partners_done = 0
         for p in partners_to_update:
 
             # Check if max_runtime_in_seconds -2s is reached
-            if datetime.datetime.now() >= runtime_limit:
-                logger.error("scheduled_set_bpk(): Could not process all BPK requests in %s seconds" %
-                             max_runtime_in_seconds)
+            if datetime.datetime.now() >= runtime_end:
+                logger.error("scheduled_set_bpk(): Could not process all %s partner in %s seconds" %
+                             (limit, max_runtime_in_seconds))
                 break
 
             # Run set_bpk for every partner
@@ -1174,6 +1195,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 logger.error("scheduled_set_bpk(): set_bpk() exception for partner %s (ID: %s):\n%s\n" %
                              (p.name, p.id, repr(e)))
 
+            # Add +1 to partners done just for logging later on
             partners_done += 1
 
         # Log processing info
@@ -1181,21 +1203,20 @@ class ResPartnerZMRGetBPK(models.Model):
                     (partners_done, time.time() - start_time))
 
     @api.model
-    def scheduled_check_bpk_request_needed(self):
-        logger.info(_("check_bpk_request_needed() START"))
-        partner_bpk_check_needed = self.find_bpk_partners_to_update(quick_search=False, limit=0)
-
+    def scheduled_check_and_set_bpk_request_needed(self):
+        logger.info(_("scheduled_check_and_set_bpk_request_needed() START"))
+        # Find partner where BPKRequestNeeded is not set but needs to be set
+        partner_bpk_check_needed = self.find_bpk_partners_to_update(quick_search=False,
+                                                                    search_all_partner=True,
+                                                                    limit=0)
         if partner_bpk_check_needed:
+            # Set date for log and write
             bpk_request_needed = fields.datetime.now()
-
-            # Log Info
-            logger.warning("Set BPKRequestInProgress for %s partner to %s" %
-                           (len(partner_bpk_check_needed), bpk_request_needed))
-
+            # Log info
+            logger.warning("Set BPKRequestNeeded to %s for %s partner" %
+                           (bpk_request_needed, len(partner_bpk_check_needed)))
             # Update partner
             partner_bpk_check_needed.write({'BPKRequestNeeded': bpk_request_needed})
-
-        logger.info(_("check_bpk_request_needed() END"))
 
     # --------------
     # BUTTON ACTIONS
@@ -1203,7 +1224,22 @@ class ResPartnerZMRGetBPK(models.Model):
     # ATTENTION: Button Actions should not have anything else in the interface than 'self' because the mapping
     #            from old api to new api seems not correct for method calls from buttons if any additional positional
     #            or keyword arguments are used!
-    # ATTENTION: Button Actions should always use the @api.multi decorator
+    # ATTENTION: Button actions must use the @api.multi decorator
     @api.multi
-    def button_find_bpk_partners_to_update(self):
-        self.find_bpk_partners_to_update(quick_search=False, limit=0)
+    def action_check_and_set_bpk_request_needed(self):
+        # Find partner where BPKRequestNeeded is not set but needs to be set
+        partner = self.find_bpk_partners_to_update(quick_search=False, limit=0)
+        # Set BPKRequestNeeded to now
+        partner.set_bpk_request_needed()
+
+    @api.multi
+    def action_set_bpk_request_needed(self):
+        self.set_bpk_request_needed()
+
+    @api.multi
+    def action_remove_bpk_request_needed(self):
+        self.remove_bpk_request_needed()
+
+    @api.multi
+    def action_set_bpk(self):
+        self.set_bpk()
