@@ -109,6 +109,7 @@
                     </group>
                     <group colspan="2">
                     <div  name="bpk_buttons" class="oe_button_box oe_inline">
+                        <button name="button_find_bpk_partners_to_update" type="object" string="Test Search"/>
                         <button name="set_bpk" type="object" string="Check BPK-Request-Needed"/>
                         <button name="set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
                         <button name="set_bpk" type="object" string="Force BPK-Request"/>
