@@ -1,55 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data>
 
-    <!-- Server Action to run set_bpk() res.partner -->
+    <!-- Server Action to run set_bpk() for res.partner -->
     <record id="action_set_bpk" model="ir.actions.server">
-        <field name="name">Set BPK</field>
+        <field name="name">Force BPK Request</field>
         <field name="model_id" ref="model_res_partner"/>
         <field name="state">code</field>
         <field name="code">
+            <![CDATA[
             if context.get('active_model') == 'res.partner':
                 ids = []
                 if context.get('active_domain'):
                     ids = self.search(cr, uid, context['active_domain'], context=context)
                 elif context.get('active_ids'):
                     ids = context['active_ids']
+                assert len(ids) <= 10, _("Max 10 partner at once are allowed for manually started set_bpk()!")
                 self.set_bpk(cr, uid, ids, context=context)
+            ]]>
         </field>
     </record>
 
-    <!-- Add Server Action to More menu of res.partner -->
+    <!-- Add Server Action to run set_bpk() to More menu of res.partner -->
     <record id="ir_set_bpk" model="ir.values">
         <field name="key2" eval="'client_action_multi'"/>
         <field name="model" eval="'res.partner'"/>
-        <field name="name">Set BPK</field>
+        <field name="name">Force BPK Request</field>
         <field name="value" eval="'ir.actions.server,%d'%action_set_bpk"/>
     </record>
 
 
-    <!-- TODO: Server Action to run set_bpk() for res.partner.bpk -->
-    <!-- record id="action_set_bpk_for_bpk_records" model="ir.actions.server">
-        <field name="name">Set BPK</field>
+    <!-- TODO: Server Action to set BPKRequestNeeded for res.partner -->
+    <record id="action_set_bpk_request_needed" model="ir.actions.server">
+        <field name="name">Schedule BPK Request</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            <![CDATA[
+            if context.get('active_model') == 'res.partner':
+                ids = []
+
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+
+                if ids:
+                    self.set_bpk_request_needed(cr, uid, ids, context=context)
+            ]]>
+        </field>
+    </record>
+
+    <!-- Add Server Action to set BPKRequestNeeded to More menu of res.partner -->
+    <record id="ir_set_bpk_request_needed" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner'"/>
+        <field name="name">Schedule BPK Request</field>
+        <field name="value" eval="'ir.actions.server,%d'%action_set_bpk_request_needed"/>
+    </record>
+
+
+    <!-- Server Action to run set_bpk() for res.partner.bpk -->
+    <record id="action_set_bpk_for_bpk_records" model="ir.actions.server">
+        <field name="name">Force BPK Request</field>
         <field name="model_id" ref="model_res_partner_bpk"/>
         <field name="state">code</field>
         <field name="code">
+            <![CDATA[
             if context.get('active_model') == 'res.partner.bpk':
                 ids = []
                 if context.get('active_domain'):
                     ids = self.search(cr, uid, context['active_domain'], context=context)
                 elif context.get('active_ids'):
                     ids = context['active_ids']
-                # TODO: DEBUG THIS AND FINALIZE IT
-                partner_obj = self.pool['res.partner']
-                partner_ids = partner_obj.search([('BPKRequestIDS', 'in', ids)])
 
-                partner_obj.set_bpk(cr, uid, partner_ids, context=context)
+                if not ids:
+                    return
+
+                assert len(ids) <= 10, _("Max 10 partner at once are allowed for manually started set_bpk()!")
+
+                bpk_requests = self.browse(cr, uid, ids, context=context)
+                partner_ids = [r.BPKRequestPartnerID.id for r in bpk_requests if r.BPKRequestPartnerID]
+
+                if partner_ids:
+                    partner_obj = self.pool['res.partner']
+                    #partners = partner_obj.browse(cr, uid, partner_ids)
+                    partner_obj.set_bpk(cr, uid, partner_ids, context=context)
+            ]]>
         </field>
-    </record -->
+    </record>
+
+    <!-- Add Server Action to run set_bpk() to More menu of res.partner.bpk -->
+    <record id="ir_set_bpk_bpkrecord" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner.bpk'"/>
+        <field name="name">Force BPK Request</field>
+        <field name="value" eval="'ir.actions.server,%d'%action_set_bpk_for_bpk_records"/>
+    </record>
 
 
     <!-- Scheduled fetch of BPK Records for res.partner -->
     <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
-        <field name="name">BPK: Fetch BPK Records</field>
+        <field name="name">BPK: Scheduled fetch of BPK Records every minute</field>
         <field name="priority" eval="2000" />
         <field name="active" eval="False"/>
         <field name="interval_number">1</field>
@@ -63,15 +114,15 @@
 
    <!-- Scheduled run to check BPKRequestNeeded -->
     <record id="ir_cron_check_bpk_request_needed" model="ir.cron">
-        <field name="name">BPK: Check BPKRequestNeeded</field>
+        <field name="name">BPK: Check BPK-Request-Needed for all partner once a week</field>
         <field name="priority" eval="2100" />
         <field name="active" eval="False"/>
-        <field name="interval_number">1</field>
+        <field name="interval_number">7</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="model">res.partner</field>
-        <field name="function">check_bpk_request_needed</field>
+        <field name="function">scheduled_check_bpk_request_needed</field>
         <field name="args" eval="'()'"/>
     </record>
 

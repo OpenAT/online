@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data>
 
+    <!-- ORIGINAL res.partner FORM VIEW EXTENSIONS -->
     <!-- Extend res.partner form to include set_bpk button and other bpk fields -->
     <record id="res_partner_set_bpk_button" model="ir.ui.view">
         <field name="name">res_partner_set_bpk_button</field>
@@ -17,9 +18,9 @@
                             <field name="BPKForcedZip"/>
                         </group>
                         <group string="BPK Processing Status">
-                            <field name="BPKRequestInProgress"/>
                             <field name="BPKRequestNeeded"/>
                             <field name="LastBPKRequest"/>
+                            <field name="BPKRequestError"/>
                         </group>
                     </group>
                     <group string="BPK Requests">
@@ -41,6 +42,7 @@
             </xpath>
         </field>
     </record>
+    <!-- ORIGINAL res.partner SEARCH VIEW EXTENSIONS -->
     <!-- Extend res.partner search view to include custom filters for 'Next BPK-Requests', 'BPK-Requests in Progress' -->
     <record id="res_partner_search_inherit_bpk" model="ir.ui.view">
         <field name="name">res_partner_search_inherit_bpk</field>
@@ -70,25 +72,48 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Partner">
-                <group>
-                    <group string="Partner Data">
+                <group name="Partner">
+                    <h1 colspan="2">Partner</h1>
+                    <group>
                         <field name="firstname"/>
                         <field name="lastname"/>
                         <field name="birthdate_web"/>
                         <field name="zip"/>
                     </group>
-                    <group string="Forced BPK Request Values (optional)">
-                        <field name="BPKForcedFirstname" attrs="{'required': ['|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
-                        <field name="BPKForcedLastname" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False)]}"/>
-                        <field name="BPKForcedBirthdate" attrs="{'required': ['|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False)]}"/>
+                    <group>
+                        <field name="id" readonly="True"/>
+                        <field name="create_date" readonly="True"/>
+                        <field name="create_uid" readonly="True"/>
+                        <field name="write_date" readonly="True"/>
+                        <field name="write_uid" readonly="True"/>
                     </group>
                 </group>
-                <group string="BPK Requests">
-                    <field name="BPKRequestInProgress"/>
-                    <field name="BPKRequestNeeded"/>
-                    <field name="LastBPKRequest"/>
-                    <field name="write_date"/>
-                    <button colspan="2" name="set_bpk" type="object" string="Set BPK"/>
+                <group string="Donation Deduction">
+                    <p colspan="2" style="color: grey; font-size: 10px">
+                        If any of the BPK fields is set only the values of from the BPK fields are used for all
+                        BPK requests and for donation transmissions to the ZMR (even if they are left empty)!
+                        You can use these fields if you do not want to change the donor salutation but need
+                        different values for the donation deduction transmission to the ZMR.
+                    </p>
+                    <group name="donation_deduction_overwrites">
+                        <field name="BPKForcedFirstname" attrs="{'required': ['|', '|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                        <field name="BPKForcedLastname" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                        <field name="BPKForcedBirthdate" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                        <field name="BPKForcedZip"/>
+                    </group>
+                    <group name="bpk_request_info">
+                        <field name="donation_deduction_optout_web"/>
+                        <field name="BPKRequestNeeded"/>
+                        <field name="LastBPKRequest"/>
+                        <field name="BPKRequestError"/>
+                    </group>
+                    <group colspan="2">
+                    <div  name="bpk_buttons" class="oe_button_box oe_inline">
+                        <button name="set_bpk" type="object" string="Check BPK-Request-Needed"/>
+                        <button name="set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
+                        <button name="set_bpk" type="object" string="Force BPK-Request"/>
+                    </div>
+                    </group>
                     <field name="BPKRequestIDS" colspan="2" nolabel="1">
                         <tree string="BPK Requests"
                               default_order="BPKRequestPartnerID,BPKRequestCompanyID"
@@ -109,15 +134,20 @@
         <field name="model">res.partner</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="Partner" default_order="write_date desc">
+            <tree string="Partner" default_order="BPKRequestNeeded desc, write_date desc">
+                <field name="id"/>
+                <field name="donation_deduction_optout_web" string="OptOut"/>
+                <field name="BPKRequestNeeded"/>
                 <field name="firstname"/>
                 <field name="lastname"/>
-                <field name="birthdate_web"/>
+                <field name="birthdate_web" string="Birth."/>
                 <field name="zip"/>
-                <field name="BPKRequestInProgress"/>
-                <field name="BPKRequestNeeded"/>
+                <field name="BPKForcedFirstname"/>
+                <field name="BPKForcedLastname"/>
+                <field name="BPKForcedBirthdate" string="BPK Birth."/>
+                <field name="BPKForcedZip"/>
+                <field name="write_date" readonly="True"/>
                 <field name="LastBPKRequest"/>
-                <field name="write_date"/>
             </tree>
         </field>
     </record>

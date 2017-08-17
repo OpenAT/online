@@ -185,11 +185,11 @@ class ResPartnerZMRGetBPK(models.Model):
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
                                     string="BPK Requests")
     # BPK forced request values
-    # TODO: Make sure Forced BPK Fields are always all filled or none (now only done by attr in the form view)
+    # TODO: Make sure forced BPK fields are always all filled or none (now only done by attr in the form view)
     BPKForcedFirstname = fields.Char(string="BPK Forced Firstname")
     BPKForcedLastname = fields.Char(string="BPK Forced Lastname")
     BPKForcedBirthdate = fields.Date(string="BPK Forced Birthdate")
-    BPKForcedZip = fields.Date(string="BPK Forced ZIP")
+    BPKForcedZip = fields.Char(string="BPK Forced ZIP")
 
     # Will be set when the BPK request processing of one batch of partners from the queue starts and
     # cleared again after the processing of the batch has finished
@@ -204,7 +204,7 @@ class ResPartnerZMRGetBPK(models.Model):
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
 
     # In case the BPK request throws an Exception instead of returning a result we store the exception text here
-    BPKRequestError = fields.Text(string="BPK Request Exception")
+    BPKRequestError = fields.Text(string="BPK Request Exception", readonly=True)
 
     # TODO optional: computed state field
     # HINT: colors="red:BPKRequestDate == False and BPKErrorRequestDate;
@@ -220,17 +220,54 @@ class ResPartnerZMRGetBPK(models.Model):
     #                ('bpk_error', 'Error')],                        # any(Not BPKRequestDate and BPKErrorRequestDate)
     #     string="BPK Request(s) State", compute=_compute_bpk_request_state, store=True)
 
-    # Method to store BPK Fields
+    # Methods to store BPK field names
     def _bpk_regular_fields(self):
-        return ['firstname', 'lastname', 'birthdate_web', 'zip']
+        return ['firstname', 'lastname', 'birthdate_web']
+
+    def _bpk_optional_regular_fields(self):
+        return ['zip']
 
     def _bpk_forced_fields(self):
-        return ['BPKForcedFirstname', 'BPKForcedLastname', 'BPKForcedBirthdate', 'BPKForcedZip']
+        return ['BPKForcedFirstname', 'BPKForcedLastname', 'BPKForcedBirthdate']
+
+    def _bpk_optional_forced_fields(self):
+        return ['BPKForcedZip']
 
     def _bpk_fields(self):
-        return self._bpk_regular_fields() + self._bpk_forced_fields()
+        return self._bpk_regular_fields() + self._bpk_optional_regular_fields() + \
+               self._bpk_forced_fields() + self._bpk_optional_forced_fields()
 
-    # Compute BPKRequestNeeded
+    # ----------------------
+    # EXTEND DEFAULT METHODS
+    # ----------------------
+    @api.model
+    def create(self, values, no_bpkrequestneeded_check=False):
+        # BPK forced fields integrity check
+        if any(values.get(field, False) for field in self._bpk_forced_fields()):
+            assert all(values.get(field, False) for field in self._bpk_forced_fields()), \
+                _("All required BPK Forced Fields must be set! Required are: %s" % self._bpk_forced_fields())
+
+        # Check if donation_deduction_optout_web is set
+        if values.get('donation_deduction_optout_web', False):
+            values['BPKRequestNeeded'] = False
+            return super(ResPartnerZMRGetBPK, self).create(values)
+
+        # No Checks if BPKRequestNeeded is set manually or create was called with no_bpkrequestneeded_check set
+        # ATTENTION: sosync v1 and v2 will NOT sync the field BPKRequestNeeded. The may use no_bpkrequestneeded_check
+        #            to suppress immediate bpk request checks after partner creation or update.
+        #            This may only be useful after BPK file imports in FS.
+        if values.get('BPKRequestNeeded', False) or no_bpkrequestneeded_check:
+            return super(ResPartnerZMRGetBPK, self).create(values)
+
+        # Check if BPKRequestNeeded must be set
+        if all(values.get(field, False) for field in self._bpk_forced_fields()):
+            values['BPKRequestNeeded'] = fields.datetime.now()
+        elif all(values.get(field, False) for field in self._bpk_regular_fields()):
+            values['BPKRequestNeeded'] = fields.datetime.now()
+
+        # Return
+        return super(ResPartnerZMRGetBPK, self).create(values)
+
     @api.multi
     def write(self, vals):
         """Override write to check for BPKRequestNeeded"""
@@ -241,10 +278,9 @@ class ResPartnerZMRGetBPK(models.Model):
             vals['BPKRequestNeeded'] = None
             return super(ResPartnerZMRGetBPK, self).write(vals)
 
-        # No Checks if BPKRequestNeeded is set manually
-        # HINT: This is useful for manually adding partners to the queue or to suppress immediate BPK checks
-        # ATTENTION: sosync v1 and v2 will NOT sync the field BPKRequestNeeded but they may send it to suppress
-        #            immediate bpk request checks after partner creation or update.
+        # No Checks if BPKRequestNeeded is set manually or create was called with no_bpkrequestneeded_check set
+        # ATTENTION: sosync v1 and v2 will !NOT! sync the field BPKRequestNeeded. The may use no_bpkrequestneeded_check
+        #            to suppress immediate bpk request checks after partner creation or update.
         #            This may only be useful after BPK file imports in FS.
         if 'BPKRequestNeeded' in vals:
             return super(ResPartnerZMRGetBPK, self).write(vals)
@@ -253,16 +289,16 @@ class ResPartnerZMRGetBPK(models.Model):
         # ------------------------
         # HINT: Even if there is already a BPK-Request we can assume that if data changed the bpkrequest needs to be
         #       done again. This may not be 100% exact but is fast and easy and false positives are no problem anyway!
+        # ATTENTION: Since sosync v1 always sends all fields, even if they are empty or unchanged,
+        #            we need to really compare the values of the fields.
 
-        # Check if there is any BPK relevant field in vals
+        # Check if there are any BPK relevant field in vals
         fields_to_check = [field for field in self._bpk_fields() if field in vals]
         partners_bpk_needed = []
-
         if fields_to_check:
-            # ATTENTION: Since sosync v1 always sends all fields, even if they are empty or unchanged,
-            #            we need to really compare the values of the fields.
             partners_bpk_needed = self.env['res.partner']
             for p in self:
+                optional_fields = self._bpk_optional_forced_fields() + self._bpk_optional_regular_fields()
 
                 # 1.) Skip any further testing if donation_deduction_optout_web is set for this partner
                 if p.donation_deduction_optout_web:
@@ -270,20 +306,50 @@ class ResPartnerZMRGetBPK(models.Model):
                         p.BPKRequestNeeded = None
                     continue
 
-                # 2.) Check for forced BPK field changes
-                if any(p[forced_field] for forced_field in self._bpk_forced_fields(self)):
-                    # Check for any updates
-                    forced_fields_to_check = [field for field in self._bpk_forced_fields() if field in vals]
-                    if any(p[field] != vals[field] for field in forced_fields_to_check):
+                # 2.) Check forced BPK fields for changes
+                if any(field for field in self._bpk_forced_fields() if field in vals):
+
+                    # Check forced field integrity
+                    # HINT: This test will only run if at least one of the forced fields is set in vals (see 'if' above)
+                    #       Therefore if one field is set all fields must be set either in vals or they must have had
+                    #       a value before already.
+                    assert all(vals.get(field) if field in vals else p[field] for field in self._bpk_forced_fields()), \
+                        _("All required BPK Forced Fields must be set! Required are: %s" % self._bpk_forced_fields())
+
+                    # Check for any changes to the mandatory forced fields
+                    # HINT: This test will only run if at least one of the forced fields is set in vals (see 'if' above)
+                    #       Therefore 'if field in vals' is enough: We do not need to check here if the field has
+                    #       a value or is set to False
+                    if any(vals[field] != p[field] for field in self._bpk_forced_fields() if field in vals):
                         partners_bpk_needed = partners_bpk_needed | p
                     continue
 
-                # 3.) Check for regular BPK field changes if no forced fields are set
-                if not any(p[forced_field] for forced_field in self._bpk_forced_fields()):
-                    regular_fields_to_check = [field for field in self._bpk_regular_fields() if field in vals]
-                    if any(p[field] != vals[field] for field in regular_fields_to_check):
-                        partners_bpk_needed = partners_bpk_needed | p
-                    continue
+                # 3.) Check regular BPK fields for changes
+                elif any(field for field in self._bpk_regular_fields() if field in vals):
+                    # Make sure all regular fields are set that are required for a bpk request
+                    if all(vals.get(field) if field in vals else p[field] for field in self._bpk_regular_fields()):
+                        # Check if data has changed
+                        if any(vals[field] != p[field] for field in self._bpk_regular_fields() if field in vals):
+                            partners_bpk_needed = partners_bpk_needed | p
+                        continue
+
+                # 4.) Check optional BPK fields for changes
+                elif any(field for field in optional_fields if field in vals):
+
+                    # Only check optional BPK field changes if no valid bpk request exits
+                    if not p.BPKRequestIDS or (p.BPKRequestIDS and not p.BPKRequestIDS[0].BPKPrivate):
+
+                        # Check optional forced fields
+                        if all(vals.get(field) if field in vals else p[field] for field in self._bpk_forced_fields()):
+                            if any(vals[f] != p[f] for f in self._bpk_optional_forced_fields() if f in vals):
+                                partners_bpk_needed = partners_bpk_needed | p
+                            continue
+
+                        # Check optional regular fields
+                        elif all(vals.get(f) if f in vals else p[f] for f in self._bpk_regular_fields()):
+                            if any(vals[f] != p[f] for f in self._bpk_optional_regular_fields() if f in vals):
+                                partners_bpk_needed = partners_bpk_needed | p
+                            continue
 
         # Update BPKRequestNeeded
         # -----------------------
@@ -296,9 +362,13 @@ class ResPartnerZMRGetBPK(models.Model):
                 for p in partners_bpk_needed:
                     p.BPKRequestNeeded = fields.datetime.now()
 
+        # Return
+        # ------
         return super(ResPartnerZMRGetBPK, self).write(vals)
 
+    # ----------------
     # INTERNAL METHODS
+    # ----------------
     def _find_bpk_companies(self):
         """
         :return: res.company recordset
@@ -480,15 +550,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return responses
 
-    @api.model
-    def response_ok(self, responses):
-        if len(responses) >= 1 and not any(r['faulttext'] for r in responses):
-            return True
-        else:
-            return False
-
-    # MODEL ACTIONS
-    @api.model
+    # Try __request_bpk() multible times based on errors
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
         """
         Wrapper for _request_bpk() that will additionally clean names and tries the request multiple times
@@ -549,6 +611,16 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return responses
 
+    # Simple response status checker (may be used by java script or by FS)
+    def response_ok(self, responses):
+        if len(responses) >= 1 and not any(r['faulttext'] for r in responses):
+            return True
+        else:
+            return False
+
+    # -------------
+    # MODEL ACTIONS
+    # -------------
     @api.model
     def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
         try:
@@ -563,6 +635,11 @@ class ResPartnerZMRGetBPK(models.Model):
     # RECORD ACTIONS
     # --------------
     @api.multi
+    def set_bpk_request_needed(self):
+        logger.info("set_bpk_request_needed() for ids %s" % self.ids)
+        return self.write({'BPKRequestNeeded': fields.datetime.now()})
+
+    @api.multi
     def set_bpk(self):
         """
         Creates or Updates BPK request for the given partner recordset (=BPKRequestIDS)
@@ -570,18 +647,19 @@ class ResPartnerZMRGetBPK(models.Model):
         HINT: Runs request_bpk() for every partner.
               Exception text will be written to BPKRequestError if request_bpk() raises one
 
-        ATTENTION: Will also update partner fields: BPKRequestNeeded, LastBPKRequest, BPKRequestError
+        ATTENTION: Will also update partner fields: BPKRequestNeeded, LastBPKRequest, BPKRequestError and
+                   BPKRequestInProgress
 
         :return: dict, partner id and related error if any was found
         """
-        # TODO: set/unset and honor BPKRequestInProgress
+        # TODO: Set BPKRequestInProgress ?
 
         # MAKE SURE THERE IST AT LEAST ONE COMPANY WITH FULL ZMR ACCESS DATA
         # ATTENTION: request_bpk() would throw an exception if no company was found and this exception would then
         #            be written to every partner. This is not what we want if there is no company found therefore
         #            we just stop here before we update the partner or their BPK request(s)
         companies = self._find_bpk_companies()
-        assert companies, _("BPK full search: No company found with complete Austrian ZMR access data!")
+        assert companies, _("No company found with complete Austrian ZMR access data!")
 
         # HELPER METHOD: FINAL PARTNER UPDATE
         def finish_partner(partner,
@@ -621,7 +699,7 @@ class ResPartnerZMRGetBPK(models.Model):
             # 3.) Try BPK request to Austrian ZMR
             try:
                 start_time = time.time()
-                resp = self.request_bpk(firstname=firstname, lastname=lastname, birthdate_web=birthdate_web,
+                resp = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web,
                                         zipcode=zipcode)
                 assert resp, _("%s (ID %s): No BPK-Request response(s)!")
             except Exception as e:
@@ -1055,7 +1133,7 @@ class ResPartnerZMRGetBPK(models.Model):
                     (partners_done, time.time() - start_time))
 
     @api.model
-    def check_bpk_request_needed(self):
+    def scheduled_check_bpk_request_needed(self):
         logger.info(_("check_bpk_request_needed() START"))
         partner_bpk_check_needed = self.find_bpk_partners_to_update(quick_search=False, limit=0)
 
@@ -1073,4 +1151,4 @@ class ResPartnerZMRGetBPK(models.Model):
 
     @api.multi
     def tester(self):
-        self.check_bpk_request_needed()
+        self.scheduled_check_bpk_request_needed()
