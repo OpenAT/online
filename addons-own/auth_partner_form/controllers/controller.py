@@ -86,7 +86,12 @@ class AuthPartnerForm(http.Controller):
             # Wrong or invalid token
             if token_error:
                 field_errors['fstoken'] = fstoken
-                errors_token += token_error
+                # Check if a custom message was set for the token error message
+                # or use the standard error message from fstoken_check
+                try:
+                    errors_token += request.website.apf_token_error_message or token_error
+                except:
+                    errors_token += token_error
 
         # UPDATE PARTNER
         # HINT: Only if logged in (so different from the default user request.website.user_id)

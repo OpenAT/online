@@ -1120,7 +1120,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
     @api.model
     def scheduled_set_bpk(self, request_per_minute=10,
-                          max_requests_per_minute=120, mrpm_start="17:00", mrpm_end="9:00"):
+                          max_requests_per_minute=120, mrpm_start="17:00", mrpm_end="6:00"):
         start_time = time.time()
 
         # Calculate the limit of partners to process based on job interval and interval type with 50% safety
