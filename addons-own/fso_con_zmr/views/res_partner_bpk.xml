@@ -9,38 +9,61 @@
         <field name="arch" type="xml">
             <form string="BPK Request">
                 <group>
-                    <field name="BPKRequestCompanyID"/>
-                    <field name="BPKRequestPartnerID"/>
-                    <field name="LastBPKRequest"/>
+                    <group>
+                        <field name="BPKRequestCompanyID"/>
+                        <field name="BPKRequestPartnerID"/>
+                        <field name="LastBPKRequest"/>
+                    </group>
+                    <group>
+                        <field name="id" readonly="True"/>
+                        <field name="create_date" readonly="True"/>
+                        <field name="create_uid" readonly="True"/>
+                        <field name="write_date" readonly="True"/>
+                        <field name="write_uid" readonly="True"/>
+                    </group>
                 </group>
                 <group>
                     <group string="Last valid BPK-Request">
-                        <field name="BPKPrivate"/>
-                        <field name="BPKPublic"/>
                         <field name="BPKRequestDate"/>
-                        <field name="BPKRequestURL"/>
                         <field name="BPKRequestFirstname"/>
                         <field name="BPKRequestLastname"/>
                         <field name="BPKRequestBirthdate"/>
                         <field name="BPKRequestZIP"/>
-                        <field name="BPKRequestData"/>
-                        <field name="BPKResponseTime"/>
-                        <field name="BPKResponseData"/>
                     </group>
                     <group string="Last invalid BPK-Request">
-                        <field name="BPKErrorCode"/>
-                        <field name="BPKErrorText"/>
                         <field name="BPKErrorRequestDate"/>
-                        <field name="BPKErrorRequestURL"/>
                         <field name="BPKErrorRequestFirstname"/>
                         <field name="BPKErrorRequestLastname"/>
                         <field name="BPKErrorRequestBirthdate"/>
                         <field name="BPKErrorRequestZIP"/>
-                        <field name="BPKErrorRequestData"/>
-                        <field name="BPKErrorResponseTime"/>
-                        <field name="BPKErrorResponseData"/>
+                        <field name="BPKErrorText"/>
                     </group>
                 </group>
+                <notebook>
+                    <page string="Valid BPK-Request Details">
+                        <group>
+                            <field name="BPKPrivate"/>
+                            <field name="BPKPublic"/>
+                            <field name="BPKRequestURL"/>
+                            <field name="BPKResponseTime"/>
+                        </group>
+                        <label for="BPKRequestData"/>
+                        <field name="BPKRequestData"/>
+                        <label for="BPKResponseData"/>
+                        <field name="BPKResponseData"/>
+                    </page>
+                    <page string="Invalid BPK-Request Details">
+                        <group>
+                            <field name="BPKErrorCode"/>
+                            <field name="BPKErrorRequestURL"/>
+                            <field name="BPKErrorResponseTime"/>
+                        </group>
+                        <label for="BPKErrorRequestData"/>
+                        <field name="BPKErrorRequestData"/>
+                        <label for="BPKErrorResponseData"/>
+                        <field name="BPKErrorResponseData"/>
+                    </page>
+                </notebook>
             </form>
         </field>
     </record>
@@ -50,14 +73,14 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="BPK Requests"
-                  default_order="BPKRequestPartnerID,BPKRequestCompanyID"
+                  default_order="LastBPKRequest DESC, write_date DESC"
                   colors="red:not BPKRequestDate and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                <field name="LastBPKRequest"/>
                 <field name="BPKRequestPartnerID"/>
                 <field name="BPKRequestCompanyID"/>
-                <field name="LastBPKRequest"/>
-                <field name="BPKRequestDate"/>
+                <field name="BPKRequestDate" string="Last Valid Req."/>
                 <field name="BPKPrivate"/>
-                <field name="BPKErrorRequestDate"/>
+                <field name="BPKErrorRequestDate" string="Last Invalid Req."/>
                 <field name="BPKErrorCode"/>
             </tree>
         </field>

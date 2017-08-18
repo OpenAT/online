@@ -878,9 +878,10 @@ class ResPartnerZMRGetBPK(models.Model):
             # END: partner for loop
 
         # Log runtime and error dictionary
-        logger.info("set_bpk(): Processed %s partners in %.3f seconds" % (len(self), time.time()-start_time))
-        if errors:
-            logger.warning("set_bpk(): Partners with errors: \n%s\n\n" % pp.pprint(errors))
+        if len(self) > 1:
+            logger.info("set_bpk(): Processed %s partners in %.3f seconds" % (len(self), time.time()-start_time))
+            if errors:
+                logger.warning("set_bpk(): Partners with errors: %s" % errors)
 
         # RETURN ERROR DICTIONARY
         # HINT: An empty dict() means no errors where found!
@@ -999,7 +1000,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Create search domain for partners with no existing BPK records
         domain_without_bpk = [('BPKRequestIDS', '=', False)] + domain
-        logger.info("Search domain for partners with no BPK records:\n%s\n" % domain_without_bpk)
+        logger.debug("Search domain for partners with no BPK records: %s" % domain_without_bpk)
 
         # Search for partners with no existing BPK records
         partner_without_bpks = self.env['res.partner'].search(domain_without_bpk, order=order, limit=limit)
@@ -1023,7 +1024,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Create search domain for partners with existing BPK records
         domain_with_bpk = [('BPKRequestIDS', '!=', False)] + domain
-        logger.info("Search domain for partners with BPK records:\n%s\n" % domain_with_bpk)
+        logger.debug("Search domain for partners with BPK records: %s" % domain_with_bpk)
 
         # CHECK PARTNERS
         # ATTENTION: To load one million res.partner from database to memory takes approximately 30 seconds
@@ -1039,7 +1040,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Stop while loop if no partner where found
             if not partner_with_bpks:
-                logger.info("No partners with existing bpk records left to check !")
+                logger.debug("No partners with existing bpk records left to check!")
                 break
 
             # Log info
@@ -1113,13 +1114,14 @@ class ResPartnerZMRGetBPK(models.Model):
             partners_to_update = self.env['res.partner'].search([('id', 'in', partners_to_update.ids)], order=order)
 
         # RETURN THE RECORD SET
-        logger.info(_("Full search: Total partners found requiring a BPK request: %s") % len(partners_to_update))
+        logger.info(_("find_bpk_partners_to_update(): Total partners found requiring a BPK request: %s") %
+                    len(partners_to_update))
         return partners_to_update
 
     @api.model
-    def scheduled_set_bpk(self, request_per_minute=60, max_requests_per_minute=120, mrpm_start=17, mrpm_stop=6):
+    def scheduled_set_bpk(self, request_per_minute=10,
+                          max_requests_per_minute=120, mrpm_start="17:00", mrpm_end="9:00"):
         start_time = time.time()
-        logger.info(_("scheduled_set_bpk() START"))
 
         # Calculate the limit of partners to process based on job interval and interval type with 50% safety
         # which means a maximum number of processed partners of 24*60*60/4 = 21600 in 24 hours.
@@ -1157,10 +1159,18 @@ class ResPartnerZMRGetBPK(models.Model):
         # https://stackoverflow.com/questions/10048249/how-do-i-determine-if-current-time-is-within-a-specified-range-using-pythons-da
         #
         number_of_companies = len(self._find_bpk_companies())
+
+        def in_time_period(starttime, endtime, nowtime):
+            if starttime < endtime:
+                return nowtime >= starttime and nowtime <= endtime
+            else:  # Over midnight
+                return nowtime >= starttime or nowtime <= endtime
+
+        max_req_start = datetime.datetime.strptime(mrpm_start, "%H:%M")
+        max_req_end = datetime.datetime.strptime(mrpm_end, "%H:%M")
         now = fields.datetime.now()
-        now_time = now.time()
-        # TODO: make this date and time comparrison work :) maybe the first time must always be the smaller one ?!?
-        if now_time >= datetime.time(mrpm_start, 0) and now_time <= datetime.time(mrpm_stop, 0):
+
+        if in_time_period(max_req_start, max_req_end, now):
             limit = int((max_runtime_in_minutes * max_requests_per_minute) / number_of_companies)
         else:
             limit = int((max_runtime_in_minutes * request_per_minute) / number_of_companies)
@@ -1168,8 +1178,8 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Log start
         logger.info(_("scheduled_set_bpk(): "
-                      "Start to process a maximum of %s partner in %s minutes! (max_requests_per_minute: %s)") %
-                    (limit, max_runtime_in_minutes, max_requests_per_minute))
+                      "Start to process a maximum of %s partner in %s minutes") %
+                    (limit, max_runtime_in_minutes))
 
         # Find partner
         partners_to_update = self.find_bpk_partners_to_update(quick_search=True,
@@ -1184,7 +1194,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Check if max_runtime_in_seconds -2s is reached
             if datetime.datetime.now() >= runtime_end:
-                logger.error("scheduled_set_bpk(): Could not process all %s partner in %s seconds" %
+                logger.error("scheduled_set_bpk(): Stopped by timeout: Could not process all %s partner in %s seconds" %
                              (limit, max_runtime_in_seconds))
                 break
 
@@ -1199,7 +1209,7 @@ class ResPartnerZMRGetBPK(models.Model):
             partners_done += 1
 
         # Log processing info
-        logger.info("scheduled_set_bpk() END: Processed %s partner in %.3f second" %
+        logger.info("scheduled_set_bpk() Processed %s partner in %.3f second" %
                     (partners_done, time.time() - start_time))
 
     @api.model
