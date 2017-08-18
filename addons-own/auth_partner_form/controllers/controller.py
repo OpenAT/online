@@ -89,7 +89,10 @@ class AuthPartnerForm(http.Controller):
                 # Check if a custom message was set for the token error message
                 # or use the standard error message from fstoken_check
                 try:
-                    errors_token += request.website.apf_token_error_message or token_error
+                    if request.website.apf_token_error_message and len(request.website.apf_token_error_message) > 2:
+                        errors_token += [request.website.apf_token_error_message]
+                    else:
+                        errors_token += token_error
                 except:
                     errors_token += token_error
 
