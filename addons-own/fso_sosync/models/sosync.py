@@ -113,20 +113,20 @@ class SosyncJob(models.Model):
     @api.depends('job_start', 'job_end')
     def _job_duration(self):
         for rec in self:
-            if rec.start and rec.end:
-                rec.duration = _duration_in_ms(rec.start, rec.end)
+            if rec.job_start and rec.job_end:
+                rec.job_duration = _duration_in_ms(rec.job_start, rec.job_end)
 
     @api.depends('sync_start', 'sync_end')
     def _target_request_duration(self):
         for rec in self:
-            if rec.target_request_start and rec.target_request_end:
-                rec.duration = _duration_in_ms(rec.target_request_start, rec.target_request_end)
+            if rec.sync_start and rec.sync_end:
+                rec.sync_duration = _duration_in_ms(rec.sync_start, rec.sync_end)
 
     @api.depends('child_job_start', 'child_job_end')
     def _child_duration(self):
         for rec in self:
-            if rec.child_start and rec.child_end:
-                rec.child_duration = _duration_in_ms(rec.child_start, rec.child_end)
+            if rec.child_job_start and rec.child_job_end:
+                rec.child_job_duration = _duration_in_ms(rec.child_job_start, rec.child_job_end)
 
 
 # NEW ODOO MODEL: sosync.job.queue
