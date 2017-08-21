@@ -156,7 +156,7 @@
         </record>
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
         <record model="ir.actions.act_window" id="apf_partner_fields_action">
-            <field name="name">Donor Data Form</field>
+            <field name="name">Meine-Daten Formular</field>
             <field name="res_model">website.apf_partner_fields</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

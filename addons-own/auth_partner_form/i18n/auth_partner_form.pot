@@ -22,8 +22,8 @@ msgstr ""
 
 #. module: auth_partner_form
 #: model:ir.model,name:auth_partner_form.model_website_apf_partner_fields
-msgid "/meine-daten Partner Fields"
-msgstr ""
+msgid "/meine-daten Spender Fields"
+msgstr "/meine-daten Spender-Felder"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,placeholder:auth_partner_form.birthdate_web
@@ -107,18 +107,18 @@ msgstr ""
 #: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_search
 #: view:website.apf_partner_fields:auth_partner_form.apf_partner_fields_tree
 msgid "APF Partner Fields"
-msgstr ""
+msgstr "Spender-Felder"
 
 #. module: auth_partner_form
 #: field:website,apf_bottom_snippets:0
 #: field:website,apf_top_snippets:0
 msgid "APF Top Snippets"
-msgstr ""
+msgstr "Meine-Daten Obere Snippets"
 
 #. module: auth_partner_form
 #: field:website,apf_yourdata_snippets:0
 msgid "APF Your Data Snippets"
-msgstr ""
+msgstr "'Ihre Daten' Snippets"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.legal_terms_web
@@ -133,22 +133,22 @@ msgstr ""
 #. module: auth_partner_form
 #: view:website.config.settings:auth_partner_form.view_auth_partner_form_settings
 msgid "Auth Partner Form (fstoken)"
-msgstr ""
+msgstr "Meine-Daten Formular"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.birthdate_web
 msgid "Birthdate"
-msgstr ""
+msgstr "Geburtstag"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,css_classes:0
 msgid "CSS classes"
-msgstr ""
+msgstr "CSS Klassen"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.city
 msgid "City"
-msgstr ""
+msgstr "Stadt"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,clearfix:0
@@ -158,69 +158,69 @@ msgstr ""
 #. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 #. module: auth_partner_form
 #: code:addons/auth_partner_form/models/models.py:44
 #, python-format
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
 #. module: auth_partner_form
 #: field:website,apf_title_code:0
 msgid "Code Header"
-msgstr ""
+msgstr "Code Überschrift"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.country_id
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,create_uid:0
 msgid "Created by"
-msgstr ""
+msgstr "Erstellt von"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,create_date:0
 msgid "Created on"
-msgstr ""
+msgstr "Erstellt am"
 
 #. module: auth_partner_form
 #: code:addons/auth_partner_form/controllers/controller.py:44
 #, python-format
 msgid "Data found in field with label: \"Do not enter data here please!\""
-msgstr ""
+msgstr "Daten im Honeypot-Feld 'Bitte keine Daten in dieses Feld eingeben!' gefunden! Bot?"
 
 #. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
 msgid "Do not enter data here please!"
-msgstr ""
+msgstr "Bitte keine Daten in dieses Feld eingeben!"
 
 #. module: auth_partner_form
 #: help:website.apf_partner_fields,nodata:0
 msgid "Do not show res.partner data in the website form."
-msgstr ""
+msgstr "Spenderdaten nicht im Formular anzeigen!"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.email
 msgid "EMail"
-msgstr ""
+msgstr "E-Mail"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,style:0
 msgid "Field Style"
-msgstr ""
+msgstr "Feld Stil"
 
 #. module: auth_partner_form
 #: field:website,apf_title_code_hide:0
 msgid "Hide Code Header"
-msgstr ""
+msgstr "'Code' Überschrift verstecken"
 
 #. module: auth_partner_form
 #: field:website,apf_title_partner_data_hide:0
 msgid "Hide Your-Data Header"
-msgstr ""
+msgstr "'Ihre Daten' Überschrift verstecken"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,id:0
@@ -255,22 +255,22 @@ msgstr ""
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,write_uid:0
 msgid "Last Updated by"
-msgstr ""
+msgstr "Aktualisiert von"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,write_date:0
 msgid "Last Updated on"
-msgstr ""
+msgstr "Aktualisiert am"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,placeholder:auth_partner_form.street
 msgid "Main Street 52"
-msgstr ""
+msgstr "Hauptstrasse 52"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,mandatory:0
 msgid "Mandatory"
-msgstr ""
+msgstr "Pflicht"
 
 #. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
@@ -281,7 +281,7 @@ msgstr ""
 #: code:addons/auth_partner_form/controllers/controller.py:188
 #, python-format
 msgid "Missing or incorrect information! Please check your input."
-msgstr ""
+msgstr "Fehlende oder fehlerhafte Angaben"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.lastname_spak

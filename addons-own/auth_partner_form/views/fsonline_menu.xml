@@ -3,7 +3,7 @@
     <data>
 
         <!-- /meine-daten Form -->
-        <menuitem id="menu_fsonline_apf_partner_fields_menu" name="Donor Data Form" action="auth_partner_form.apf_partner_fields_action" parent="fso_base.menu_fsonline_settings" sequence="10700"/>
+        <menuitem id="menu_fsonline_apf_partner_fields_menu" name="Meine-Daten Formular" action="auth_partner_form.apf_partner_fields_action" parent="fso_con_zmr.menu_fsonline_donationdeduction" sequence="9299"/>
 
     </data>
 </openerp>

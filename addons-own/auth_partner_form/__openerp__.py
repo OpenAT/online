@@ -49,6 +49,7 @@ ATTENTION: The token must be at least 6 chars long, is alphanumeric and case sen
         'website',
         'fso_base',
         'fso_base_website',
+        'fso_con_zmr',
         'auth_partner',
     ],
     'data': [
