@@ -243,8 +243,10 @@ class ResPartnerZMRGetBPK(models.Model):
     # ----------------------
     @api.model
     def create(self, values, no_bpkrequestneeded_check=False):
-        # BPK forced fields integrity check
-        if any(values.get(field, False) for field in self._bpk_forced_fields()):
+
+        # BPK-Forced-Fields integrity check
+        # Check if any BPK forced field has a value
+        if any(field for field in self._bpk_forced_fields() if field in values and values[field]):
             assert all(values.get(field, False) for field in self._bpk_forced_fields()), \
                 _("All required BPK Forced Fields must be set! Required are: %s" % self._bpk_forced_fields())
 
@@ -307,8 +309,8 @@ class ResPartnerZMRGetBPK(models.Model):
                         p.BPKRequestNeeded = None
                     continue
 
-                # 2.) Check forced BPK fields for changes
-                if any(field for field in self._bpk_forced_fields() if field in vals):
+                # 2.) Check forced BPK fields for changes if any field with a value is in vals
+                if any(field for field in self._bpk_forced_fields() if field in vals and vals[field]):
 
                     # Check forced field integrity
                     # HINT: This test will only run if at least one of the forced fields is set in vals (see 'if' above)
@@ -326,7 +328,7 @@ class ResPartnerZMRGetBPK(models.Model):
                     continue
 
                 # 3.) Check regular BPK fields for changes
-                elif any(field for field in self._bpk_regular_fields() if field in vals):
+                elif any(field for field in self._bpk_regular_fields() if field in vals and vals[field]):
                     # Make sure all regular fields are set that are required for a bpk request
                     if all(vals.get(field) if field in vals else p[field] for field in self._bpk_regular_fields()):
                         # Check if data has changed
@@ -335,7 +337,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         continue
 
                 # 4.) Check optional BPK fields for changes
-                elif any(field for field in optional_fields if field in vals):
+                elif any(field for field in optional_fields if field in vals and vals[field]):
 
                     # Only check optional BPK field changes if no valid bpk request exits
                     if not p.BPKRequestIDS or (p.BPKRequestIDS and not p.BPKRequestIDS[0].BPKPrivate):
@@ -553,7 +555,11 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return responses
 
-    # Try __request_bpk() multible times based on errors
+    # -------------
+    # MODEL ACTIONS
+    # -------------
+    # This is a wrapper for _request_bpk() to try multiple requests with different data in case of an request error
+    @api.model
     def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
         """
         Wrapper for _request_bpk() that will additionally clean names and tries the request multiple times
@@ -615,12 +621,28 @@ class ResPartnerZMRGetBPK(models.Model):
         return responses
 
     # Simple response status checker (may be used by java script or by FS)
+    @api.model
     def response_ok(self, responses):
         if len(responses) >= 1 and not any(r['faulttext'] for r in responses):
             return True
         else:
             return False
 
+    # Returns just True or False with for the given BPK-Reuest data
+    # HINT: This is useful e.g.: for a java script widget on auth_partner_form
+    @api.model
+    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
+        try:
+            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
+            check_response = self.response_ok(responses)
+            return check_response
+        except Exception as e:
+            logger.error(_("Exception in fso_con_zmr check_bpk():\n%s\n") % e)
+            return False
+
+    # --------------
+    # RECORD ACTIONS
+    # --------------
     # Check if the request data matches the partner data
     @api.multi
     def bpk_requests_matches_partner_data(self):
@@ -677,22 +699,6 @@ class ResPartnerZMRGetBPK(models.Model):
         # Data matches!
         return True
 
-    # -------------
-    # MODEL ACTIONS
-    # -------------
-    @api.model
-    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
-        try:
-            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
-            check_response = self.response_ok(responses)
-            return check_response
-        except Exception as e:
-            logger.error(_("Exception in fso_con_zmr check_bpk():\n%s\n") % e)
-            return False
-
-    # --------------
-    # RECORD ACTIONS
-    # --------------
     @api.multi
     def set_bpk_request_needed(self):
         logger.info("set_bpk_request_needed() for ids %s" % self.ids)
@@ -1161,14 +1167,21 @@ class ResPartnerZMRGetBPK(models.Model):
         number_of_companies = len(self._find_bpk_companies())
 
         def in_time_period(starttime, endtime, nowtime):
+            # Same day
             if starttime < endtime:
                 return nowtime >= starttime and nowtime <= endtime
-            else:  # Over midnight
+            # Over midnight
+            else:
                 return nowtime >= starttime or nowtime <= endtime
 
-        max_req_start = datetime.datetime.strptime(mrpm_start, "%H:%M")
-        max_req_end = datetime.datetime.strptime(mrpm_end, "%H:%M")
+        max_req_start = fields.datetime.strptime(mrpm_start, "%H:%M")
+        max_req_start = max_req_start.time()
+
+        max_req_end = fields.datetime.strptime(mrpm_end, "%H:%M")
+        max_req_end = max_req_end.time()
+
         now = fields.datetime.now()
+        now = now.time()
 
         if in_time_period(max_req_start, max_req_end, now):
             limit = int((max_runtime_in_minutes * max_requests_per_minute) / number_of_companies)
