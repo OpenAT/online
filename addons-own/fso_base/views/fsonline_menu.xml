@@ -12,6 +12,9 @@
         <menuitem id="menu_fsonline_fstoken_menu" action="auth_partner.fstoken_action" parent="menu_fsonline_settings" sequence="10705"/>
 
         <!-- Scheduled Actions -->
-        <!-- menuitem id="menu_fsonline_scheduledactions" action="base.ir_cron_act" parent="menu_fsonline_settings" sequence="10900"/ -->
+        <menuitem id="menu_fsonline_scheduledactions" action="base.ir_cron_act" parent="menu_fsonline_settings" sequence="10900"/>
+
+        <!-- System Parameters -->
+        <menuitem id="menu_fsonline_ir_config_menu" action="base.ir_config_list_action" parent="menu_fsonline_settings" sequence="10990"/>
     </data>
 </openerp>

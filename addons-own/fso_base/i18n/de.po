@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-25 17:14+0000\n"
-"PO-Revision-Date: 2017-07-25 17:14+0000\n"
+"POT-Creation-Date: 2017-08-21 12:46+0000\n"
+"PO-Revision-Date: 2017-08-21 12:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -266,7 +266,7 @@ msgstr "Meine Spenden nicht autom. absetzen"
 #. module: fso_base
 #: field:res.partner,donation_receipt_web:0
 msgid "Donation Receipt Web"
-msgstr "Spendenbestätigung"
+msgstr "Spendenbestätigung Web"
 
 #. module: fso_base
 #: help:res.partner,anrede_individuell:0
@@ -398,7 +398,7 @@ msgstr "Neu"
 #. module: fso_base
 #: field:res.partner,newsletter_web:0
 msgid "Newsletter Web"
-msgstr "Newsletter Anmeldung"
+msgstr "Newsletter Web"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_nicetohave
@@ -441,7 +441,7 @@ msgstr "Geplant"
 #. module: fso_base
 #: field:res.partner,post_office_box_web:0
 msgid "Post Office Box Web"
-msgstr "Postfach"
+msgstr "Post Office Box Web"
 
 #. module: fso_base
 #: code:addons/fso_base/tools/soap.py:42
@@ -467,6 +467,11 @@ msgid "Product variants exist! Please set the FS-Groups there!"
 msgstr "Product variants exist! Please set the FS-Groups there!"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_scheduledactions
+msgid "Scheduled Actions"
+msgstr "Geplante Vorgänge"
+
+#. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_settings
 msgid "Settings"
 msgstr "Einstellungen"
@@ -477,9 +482,14 @@ msgid "Street Number Web"
 msgstr "Straßen Nummer Web"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_ir_config_menu
+msgid "System Parameters"
+msgstr "Systemparameter"
+
+#. module: fso_base
 #: field:res.partner,title_web:0
 msgid "Title Web"
-msgstr "Title Web"
+msgstr "Titel Web"
 
 #. module: fso_base
 #: code:addons/fso_base/tools/validate.py:42
@@ -488,7 +498,7 @@ msgid "URL DNS check failed!\n"
 "%s\n"
 "%s\n"
 ""
-msgstr "URL DNS check failed!\n"
+msgstr "URL DNS-Prüfung fehlgeschlagen!\n"
 "%s\n"
 "%s\n"
 ""
@@ -497,13 +507,13 @@ msgstr "URL DNS check failed!\n"
 #: code:addons/fso_base/tools/validate.py:35
 #, python-format
 msgid "URL format is not valid: %s"
-msgstr "URL format is not valid: %s"
+msgstr "URL-Format ist nicht gültig: %s"
 
 #. module: fso_base
 #: code:addons/fso_base/tools/validate.py:31
 #, python-format
 msgid "URL must be a string!"
-msgstr "URL must be a string!"
+msgstr "URL muss aus Zeichen bestehen!"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_waiting
