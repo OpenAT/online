@@ -103,6 +103,7 @@
                     </group>
                     <group name="bpk_request_info">
                         <field name="donation_deduction_optout_web"/>
+                        <field name="donation_deduction_disabled"/>
                         <field name="BPKRequestNeeded"/>
                         <field name="LastBPKRequest"/>
                         <field name="BPKRequestError"/>
@@ -143,6 +144,7 @@
                 <field name="birthdate_web" string="Birth."/>
                 <field name="zip"/>
                 <field name="donation_deduction_optout_web" string="OptOut"/>
+                <field name="donation_deduction_disabled" string="Disabled"/>
                 <field name="BPKForcedFirstname"/>
                 <field name="BPKForcedLastname"/>
                 <field name="BPKForcedBirthdate" string="BPK Birth."/>

@@ -250,8 +250,8 @@ class ResPartnerZMRGetBPK(models.Model):
             assert all(values.get(field, False) for field in self._bpk_forced_fields()), \
                 _("All required BPK Forced Fields must be set! Required are: %s" % self._bpk_forced_fields())
 
-        # Check if donation_deduction_optout_web is set
-        if values.get('donation_deduction_optout_web', False):
+        # Check if donation_deduction is disabled
+        if values.get('donation_deduction_optout_web', False) or values.get('donation_deduction_disabled', False):
             values['BPKRequestNeeded'] = False
             return super(ResPartnerZMRGetBPK, self).create(values)
 
@@ -275,9 +275,9 @@ class ResPartnerZMRGetBPK(models.Model):
     def write(self, vals):
         """Override write to check for BPKRequestNeeded"""
 
-        # No Checks if Donation Deduction Opt Out is going to be set to True
-        # HINT: Manually set BPKRequestNeeded does not matter if donation_deduction_optout_web is set to True
-        if vals.get('donation_deduction_optout_web', False):
+        # No Checks if Donation Deduction is going disabled
+        # HINT: Manually set BPKRequestNeeded does not matter if donation deduction is disabled
+        if vals.get('donation_deduction_optout_web', False) or vals.get('donation_deduction_disabled', False):
             vals['BPKRequestNeeded'] = None
             return super(ResPartnerZMRGetBPK, self).write(vals)
 
@@ -303,8 +303,8 @@ class ResPartnerZMRGetBPK(models.Model):
             for p in self:
                 optional_fields = self._bpk_optional_forced_fields() + self._bpk_optional_regular_fields()
 
-                # 1.) Skip any further testing if donation_deduction_optout_web is set for this partner
-                if p.donation_deduction_optout_web:
+                # 1.) Skip any further testing if donation deduction is disabled for this partner
+                if p.donation_deduction_optout_web or p.donation_deduction_disabled:
                     if p.BPKRequestNeeded:
                         p.BPKRequestNeeded = None
                     continue
@@ -764,9 +764,12 @@ class ResPartnerZMRGetBPK(models.Model):
                 # Continue with next partner
                 continue
 
-            # Stop if donation_deduction_optout_web is set
-            if p.donation_deduction_optout_web:
-                errors[p.id] = _("%s (ID %s): Donation Deduction Opt Out is set!") % (p.name, p.id)
+            # Stop if donation deduction is disabled
+            if p.donation_deduction_optout_web or p.donation_deduction_disabled:
+                if p.donation_deduction_optout_web:
+                    errors[p.id] = _("%s (ID %s): Donation Deduction Opt Out is set!") % (p.name, p.id)
+                if p.donation_deduction_disabled:
+                    errors[p.id] = _("%s (ID %s): Donation Deduction Disabled is set!") % (p.name, p.id)
                 finish_partner(p, bpk_request_error=errors[p.id])
                 continue
 
@@ -931,7 +934,7 @@ class ResPartnerZMRGetBPK(models.Model):
         # Used by the method scheduled_set_bpk() which is normally started every minute by a scheduled
         # server action created by xml
         #
-        # HINT: "donation_deduction_optout_web" and "BPKRequestInProgress" are checked by set_bpk() so we do not
+        # HINT: "donation deduction disabled" and "BPKRequestInProgress" are checked by set_bpk() so we do not
         #       need to check it here also. If there are already false positives they will be clean after set_bpk()
         if quick_search:
 
@@ -977,12 +980,14 @@ class ResPartnerZMRGetBPK(models.Model):
         #
         # Only search for partners
         #     - with donation_deduction_optout_web not set
+        #     - with donation_deduction_disabled not set
         #     - with BPKRequestNeeded NOT set
         #     - with full set of regular fields OR full set of forced fields
         #     - where no BPK request is in progress or the BPK request processing start is far in the past or future
         domain += [
-            '&', '&', '&',
+            '&', '&', '&', '&',
             ('donation_deduction_optout_web', '=', False),
+            ('donation_deduction_disabled', '=', False),
             ('BPKRequestNeeded', '=', False),
             '|',
               '&', '&',

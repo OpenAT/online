@@ -15,8 +15,15 @@ class ResPartner(models.Model):
     post_office_box_web = fields.Char(string='Post Office Box Web')
     newsletter_web = fields.Boolean(string='Newsletter Web')
     donation_receipt_web = fields.Boolean(string='Donation Receipt Web')
-    # This field is here because international usage of FSO would not use Austrian ZMR but could use this field also
-    donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web')
+
+    # HINT: SPAK Spendenabsetzbarkeit - Felder zum deaktivieren der automatischen Spendenabsetzung
+    #       = keine BPK Anfragen und keine Spendenuebermittlung an das ZMR
+    # ATTENTION: These fields are here because they may be useful even without fso_con_zmr
+    donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web',
+                                                   help="Donation Deduction OptOut set by Donor")
+    donation_deduction_disabled = fields.Boolean(string='Donation Deduction Disabled',
+                                                 help="Donation Deduction processing disabled by System")
+
     legal_terms_web = fields.Boolean(string='Accept Legal Terms Web')
     birthdate_web = fields.Date(string='Birthdate Web')
     anrede_individuell = fields.Char(string='Individuelle Anrede',
