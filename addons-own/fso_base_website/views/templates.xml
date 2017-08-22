@@ -25,6 +25,11 @@
             <!-- Prevent double click on a tags (links) -->
             <script type="text/javascript" src="/fso_base_website/static/src/js/prevent_double_click.js"/>
 
+            <!-- jQuery throttle or debounce functions
+                 https://github.com/cowboy/jquery-throttle-debounce
+                 http://benalman.com/projects/jquery-throttle-debounce-plugin -->
+            <script type="text/javascript" src="/fso_base_website/static/lib/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js"/>
+
             <!-- Load custom css for smaller fixes -->
             <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
 

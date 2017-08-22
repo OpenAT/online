@@ -9,6 +9,7 @@
                 <!-- INFO: jquery-validate is loaded in fso_base_website -->
                 <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_validate.js"/>
                 <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_format_input.js"/>
+                <script type="text/javascript" src="/auth_partner_form/static/src/js/apf_check_bpk.js"/>
             </xpath>
         </template>
 

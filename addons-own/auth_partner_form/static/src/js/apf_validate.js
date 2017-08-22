@@ -19,7 +19,7 @@ $(document).ready(function () {
                     // This makes the birthdate_web field mandatory if donation_deduction_optout_web is NOT checked
                     // HINT: if "mandatory" is checked in apf fields the field will ALWAYS be mandatory
                     //       by server side validation!
-                    console.log('TEST ' + !$("#donation_deduction_optout_web").is(':checked') );
+                    // console.log('TEST ' + !$("#donation_deduction_optout_web").is(':checked') );
                     return !$("#donation_deduction_optout_web").is(':checked');
                 }
             }

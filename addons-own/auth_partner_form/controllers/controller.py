@@ -196,3 +196,16 @@ class AuthPartnerForm(http.Controller):
                                     'countries': countries,
                                     'states': states,
                                     })
+
+    @http.route(['/check_bpk'], type='json', auth='user', website=True)
+    def check_bpk(self, **kwargs):
+        cr, uid, context = request.cr, request.uid, request.context
+
+        firstname = kwargs.get('firstname', '')
+        lastname = kwargs.get('lastname', '')
+        birthdate = kwargs.get('birthdate', '')
+
+        partner_obj = request.registry['res.partner']
+        bpk_ok = partner_obj.check_bpk(cr, uid, firstname=firstname, lastname=lastname, birthdate=birthdate)
+
+        return bpk_ok

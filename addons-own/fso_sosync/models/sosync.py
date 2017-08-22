@@ -147,6 +147,7 @@ class SosyncJobQueue(models.Model):
     job_source_model = fields.Char(readonly=False)
     job_source_record_id = fields.Integer(readonly=False)
 
+    # Add new Fields only suitable for the queue
     job_state = fields.Selection(selection_add=([("submitted", "Submitted"),
                                                  ("submission_failed", "Submission Failed")]),
                                  readonly=True)

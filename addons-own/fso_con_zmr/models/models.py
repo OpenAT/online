@@ -6,7 +6,7 @@ import openerp
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError, Warning
 from openerp.tools.translate import _
-from openerp.addons.fso_base.tools.soap import soap_request
+from openerp.addons.fso_base.tools.soap import soap_request, GenericTimeoutError
 from lxml import etree
 import time
 import datetime
@@ -15,6 +15,7 @@ from datetime import timedelta
 import logging
 from openerp.tools import config
 import re
+
 import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -522,7 +523,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 if response.status_code != 200:
                     result['response_http_error_code'] = response.status_code
                     error_code = response_etree.find(".//faultcode")
-                    result['faultcode'] = error_code.text if error_code is not None else ""
+                    result['faultcode'] = error_code.text if error_code is not None else str(response.status_code)
                     error_text = response_etree.find(".//faultstring")
                     result['faulttext'] = error_text.text if error_text is not None else "ERROR"
                     # Update answer and process GetBPK for next company
@@ -544,7 +545,8 @@ class ResPartnerZMRGetBPK(models.Model):
                 responses.append(result)
 
             except Exception as e:
-                result['faulttext'] = _("BPK Request Assertion:\n\n%s\n") % e
+                result['faultcode'] = "BPK Request Exception"
+                result['faulttext'] = _("BPK Request Exception:\n\n%s\n") % e
                 responses.append(result)
 
         # Assert that all responses for the found companies are either valid or invalid
@@ -628,17 +630,24 @@ class ResPartnerZMRGetBPK(models.Model):
         else:
             return False
 
-    # Returns just True or False with for the given BPK-Reuest data
+    # Returns just True or False for the given BPK request data
     # HINT: This is useful e.g.: for a java script widget on auth_partner_form
+    # TODO: Return different Values for BPK_OK, BPK_NOT_OK AND SERVICE_UNAVAILABLE
     @api.model
     def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
+        check_response = False
         try:
+            logger.info("STARTED check_bpk()!")
             responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
-            check_response = self.response_ok(responses)
-            return check_response
+            if responses:
+                logger.info("responses: %s" % responses)
+                check_response = self.response_ok(responses)
+                logger.info("check_response: %s" % check_response)
         except Exception as e:
             logger.error(_("Exception in fso_con_zmr check_bpk():\n%s\n") % e)
-            return False
+            check_response = False
+
+        return check_response
 
     # --------------
     # RECORD ACTIONS
@@ -731,8 +740,9 @@ class ResPartnerZMRGetBPK(models.Model):
         companies = self._find_bpk_companies()
 
         # HELPER METHOD: FINAL PARTNER UPDATE
-        def finish_partner(partner, bpk_request_error=None, last_bpk_request=fields.datetime.now()):
-            vals = {'BPKRequestNeeded': None,
+        def finish_partner(partner, bpk_request_error=None, bpk_request_needed=None,
+                           last_bpk_request=fields.datetime.now()):
+            vals = {'BPKRequestNeeded': bpk_request_needed,
                     'BPKRequestInProgress': None,
                     'LastBPKRequest': last_bpk_request,
                     'BPKRequestError': bpk_request_error}
@@ -789,6 +799,15 @@ class ResPartnerZMRGetBPK(models.Model):
                 resp = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web,
                                         zipcode=zipcode)
                 assert resp, _("%s (ID %s): No BPK-Request response(s)!")
+            except GenericTimeoutError as e:
+                try:
+                    errors[p.id] = _("%s (ID %s): BPK-Request exception: %s") % (p.name, p.id, e)
+                except:
+                    errors[p.id] = _("GenericTimeoutError")
+                # ATTENTION: On a timeout we do not clear the BPKRequestNeeded date so that there will be a retry on
+                #            the next scheduler run!
+                finish_partner(p, bpk_request_error=errors[p.id], bpk_request_needed=p.BPKRequestNeeded)
+                continue
             except Exception as e:
                 errors[p.id] = _("%s (ID %s): BPK-Request exception: %s") % (p.name, p.id, e)
                 finish_partner(p, bpk_request_error=errors[p.id])
@@ -882,7 +901,21 @@ class ResPartnerZMRGetBPK(models.Model):
             # Finally update the partner after all responses created or updated its bpk requests
             # HINT: We use 'faulttext' only from the last bpk request for this partner but
             #       this should be no problem since all 'faulttext' must be identical
-            finish_partner(p, bpk_request_error=faulttext)
+            # ATTENTION: If the ZMR Service was not available we would get a http status code of 404. In this case
+            #            we would not clear the BPKRequestNeeded date cause we want to retry this partner at the next
+            #            scheduler run.
+            #            404 = Not Found
+            #                  The requested resource could not be found but may be available in the future.
+            #            408 = Request Timeout
+            #                  The client did not produce a request within the time that the server was prepared to
+            #                  wait. The client MAY repeat the request without modifications at any later time.
+            #            429 = Too Many Requests
+            #                  The user has sent too many requests in a given amount of time. Intended for use with
+            #                  rate-limiting schemes.
+            bpk_request_needed = None
+            if any(r.get('faultcode', "") in ['404', '408', '429', '500', '502', '503', '504'] for r in resp):
+                bpk_request_needed = p.BPKRequestNeeded
+            finish_partner(p, bpk_request_error=faulttext, bpk_request_needed=bpk_request_needed)
 
             # END: partner for loop
 
