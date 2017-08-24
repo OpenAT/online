@@ -40,3 +40,31 @@
 .apf_container .large-input .form-control-feedback {
     bottom: 5px;
 }
+
+/* SNIPPET STYLING */
+html[data-editable="1"] .snippet_apf_bpk_status {
+    border: 1px solid #ececec;
+    padding: 18px;
+    border-radius: 6px;
+}
+html[data-editable="1"] .snippet_apf_bpk_status {
+    border: 1px solid #ececec;
+    padding: 18px;
+    border-radius: 6px;
+}
+
+/* Hide information text for non website editors */
+html:not([data-editable="1"]) .apf_bpk_status_editinfo {
+    display: none;
+}
+
+/* Initially hide apf_bpk_status_message messages for non website editors
+ * Will be unhidden by java script if the bpk request returned an result
+ */
+html:not([data-editable="1"]) .apf_bpk_status_message {
+    display: none;
+}
+
+.apf_bpk_status_message {
+    padding: 15px;
+}

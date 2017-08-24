@@ -14,18 +14,11 @@
 function check_bpk( event, firstname, lastname, birthdate ) {
     console.log("Jetzt wird BPK abgefragt: " + firstname + " " + lastname + " " + birthdate);
 
-    // TODO: timeout decorator in python seems to let python crash on mac os X !!! check alternatives
-
-    openerp.jsonRpc("/check_bpk", 'call', {
+    return openerp.jsonRpc("/check_bpk", 'call', {
         'firstname': firstname,
         'lastname': lastname,
         'birthdate': birthdate
-    })
-    .then(function (bpk_ok) {
-        console.log("bpk_ok: " + bpk_ok)
-        return bpk_ok
     });
-
 }
 
 // Initialize global variables before definition of apf_check_bpk()
@@ -43,39 +36,46 @@ function apf_check_bpk( event ) {
 
     // Hide BPK-Status-Box if ddow is set or fields have changed or one of them is empty
     if (ddow ||
-        !firstname || firstname != firstname_start ||
-        !lastname || lastname != lastname_start ||
-        !birthdate_web || birthdate_web != birthdate_web_start
+        !firstname || firstname !== firstname_start ||
+        !lastname || lastname !== lastname_start ||
+        !birthdate_web || birthdate_web !== birthdate_web_start
     ) {
-        console.log("Hide BPK-Status-Box ")
+        console.log("Hide BPK-Status-Box!");
+        $("html:not([data-editable=\"1\"]) .apf_bpk_status_message").hide();
     }
 
-    // Check BPK Request if all required fields ok
+    // Check BPK Request if all ddow is not set, at least one field changed and required fields are ok
     if (!ddow &&
-        firstname && firstname.length >= 3 &&
+        firstname.length >= 3 &&
         lastname.length >= 3 &&
-        moment(birthdate_web, "DD.MM.YYYY", true).isValid()
+        moment(birthdate_web, "DD.MM.YYYY", true).isValid() &&
+        (firstname !== firstname_start || lastname !== lastname_start || birthdate_web !== birthdate_web)
     ) {
 
         // Convert birthdate to the correct format for zmr requests
-        birthdate_web = moment(birthdate_web, "DD.MM.YYYY", true);
-        birthdate_web = birthdate_web.format("YYYY-MM-DD");
+        var birthdate_web_for_zmr = moment(birthdate_web, "DD.MM.YYYY", true);
+        birthdate_web_for_zmr = birthdate_web_for_zmr.format("YYYY-MM-DD");
 
         // Run check_bpk
-        var bpk_ok = check_bpk( event, firstname, lastname, birthdate_web );
-
-        // TODO: Unhide BPK-Status-Box if bpk_found or bpk_notfound
-        //       Keep box hidden on service unavailable
-        // bpk_found            = Ihre Spenden koennen mit diesen Angaben an das Finanzamt übermittelt werden!
-        // bpk_notfound         = Ihre Spenden koennen mit diesen Angaben leider nicht an das Finanzamt
-        //                        uebermittelt werden!
-        // service_unavailable  = Do Nothing
+        check_bpk( event, firstname, lastname, birthdate_web_for_zmr ).then(function (bpk_ok) {
+            console.log('bpk_ok: ' + bpk_ok);
+            if (bpk_ok) {
+                $(".apf_bpk_status_message.bpk_success").show()
+            }
+            else {
+                $(".apf_bpk_status_message.bpk_error").show()
+            }
+        }, function (error) {
+                console.log("ERROR: " + error);
+                $("html:not([data-editable=\"1\"]) .apf_bpk_status_message").hide();
+        }).then(function () {
+            // Store the values to check later if they have changed
+            console.log('Store field values for comparrisson on subsequent calls!');
+            firstname_start = firstname;
+            lastname_start = lastname;
+            birthdate_web_start = birthdate_web;
+        })
     }
-
-    // Store the values to check later if they have changed
-    firstname_start = firstname;
-    lastname_start = lastname;
-    birthdate_web_start = birthdate_web;
 
 }
 
@@ -96,10 +96,12 @@ $(document).ready(function ( event ) {
     // ATTENTION: debounce will only start the function apf_check_bpk() after no changes to the input fields for 2000ms
     //            On every keyup it will wait again for 4000ms until the moment where there was no keyup for 4000ms.
     //            Only then it will execute the function apf_check_bpk(...)
-    $('#auth_partner_form input:text').keyup( $.debounce( 4000,
-        function ( event ) {
-            console.log("APF input fields changed! Starting apf_check_bpk()");
-            apf_check_bpk( event );
-        }));
+    $('#auth_partner_form #firstname, #auth_partner_form #lastname, #auth_partner_form #birthdate_web').keyup(
+        $.debounce( 2000,
+            function ( event ) {
+                console.log("APF input fields changed!");
+                apf_check_bpk( event );
+            }
+        ));
 
 });

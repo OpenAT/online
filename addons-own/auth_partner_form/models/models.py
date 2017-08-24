@@ -47,6 +47,14 @@ class WebsiteApfSettings(models.Model):
     apf_update_success_message = fields.Html(string='Update Success Message', translate=True)
     apf_token_success_message = fields.Html(string='Token Success Message', translate=True)
     apf_token_error_message = fields.Html(string='Token Error Message', translate=True)
+    # BPK-Status-Snippet Messages
+    apf_status_success = fields.Char(string="BPK-Status-Snippet Success", translate=True,
+                                     default=_("Great! Donation deduction is possible with your data!"))
+    apf_status_error = fields.Char(string="BPK-Status-Snippet Error", translate=True,
+                                   default=_("Donation deduction is not possible with this data! "
+                                             "Please check your input. "
+                                             "The important fields are firstname, lastname and your birthdate."
+                                             "Please contact us if you any questions or problems!"))
 
 
 class ResConfigApfSetting(models.Model):

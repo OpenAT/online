@@ -4,7 +4,6 @@ from openerp import api, models, fields
 from openerp.addons.fso_base.tools.validate import is_valid_url
 import requests
 from requests import Session
-import timeout_decorator
 
 logger = logging.getLogger(__name__)
 

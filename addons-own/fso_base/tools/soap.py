@@ -8,7 +8,7 @@ import os
 import ntpath
 import logging
 # https://pypi.python.org/pypi/timeout-decorator
-import timeout_decorator
+#import timeout_decorator
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,12 @@ class GenericTimeoutError(Exception):
 
 
 # Multithreaded enabled timeout strategy
-@timeout_decorator.timeout(14, use_signals=False, timeout_exception=GenericTimeoutError)
+# ATTENTION: !!! It may be that timeout_decorator crashes python! At least it does on Mac OSX and there are hints
+#                it also did it on linux !!!
+#                TODO: We only used it here to prevent the case of a hung program if there
+#                is a passphrase in the keys. So if we check for a passphrase we can be sure there will be no timeout
+#                by that! requests has its own timeout so no problem there either!
+#@timeout_decorator.timeout(18, use_signals=False, timeout_exception=GenericTimeoutError)
 def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="", **template_args):
     # Validate the input
     assert all((url, template)), _("Parameters missing! Required are url and template.")
@@ -40,6 +45,8 @@ def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="",
         assert len(crt_pem) <= 255 and len(prvkey_pem) <= 255, _("Path to cert- or key-file is longer than 255 chars!")
         assert os.path.exists(crt_pem), _("Certificate file not found at %s") % crt_pem
         assert os.path.exists(prvkey_pem), _("Private key file not found at %s") & prvkey_pem
+        # TODO: Check if the key or cert do have a passphares and if raise an exception so we can remove the timeout
+        #       decorator!
 
     # Set the http header of the request (not the soap header)
     http_header = http_header or {
@@ -67,7 +74,7 @@ def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="",
     # Send the request (POST)
     # http://docs.python-requests.org/en/master/user/advanced/
     request_data = request_data.encode('utf-8')
-    response = session.post(url, data=request_data, headers=http_header, timeout=15)
+    response = session.post(url, data=request_data, headers=http_header, timeout=14)
 
     # Check for response errors
     # DISABLED: Because in most cases one would still want to process the response content to check error in

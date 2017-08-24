@@ -56,6 +56,7 @@ ATTENTION: The token must be at least 6 chars long, is alphanumeric and case sen
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/snippets.xml',
         'views/fsonline_menu.xml',
         'data/data.xml',
     ],

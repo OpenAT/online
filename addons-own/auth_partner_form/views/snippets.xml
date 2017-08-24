@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- BPK-STATUS WIDGET -->
+        <template id="snippet_apf_bpk_status" inherit_id="website.snippets" name="BPK Status Box">
+
+            <!-- Add snippet to content section of the editor -->
+            <xpath expr="//div[@id='snippet_content']" position="inside">
+
+                <!-- BPK-Status Widget -->
+                <div>
+                    <!-- Snippet thumbnail -->
+                    <div class="oe_snippet_thumbnail">
+                        <img class="oe_snippet_thumbnail_img" src="/auth_partner_form/static/src/icons/bpk_status.png"/>
+                        <span class="oe_snippet_thumbnail_title">BPK Status</span>
+                    </div>
+
+                    <!-- Snippet content -->
+                    <div class="oe_snippet_body snippet_apf_bpk_status">
+                        <h4 class="apf_bpk_status_editinfo"><label>BPK-Status Snippet</label></h4>
+                        <p  class="apf_bpk_status_editinfo">
+                            This snippet indicates if the donor can be found in the Austrian Central Registry
+                            for automatic donation deduction with the data of the current form.
+                            This can only work if there is a form on the same page with this snippet that includes
+                            the fields firstname, lastname and birthdate_web.
+                            It will only show the success or error message if all required fields are filled by
+                            the donor and the service of the Austrian Central Registry is set up and available.<br/>
+                            <br/>
+                            Only the colored box of the success or the error message will
+                            be visible for website visitors without editor rights!
+                        </p>
+
+                        <div class="apf_bpk_status_editinfo"><label>Success Message:</label></div>
+                        <p class="apf_bpk_status_message bpk_success bg-success"
+                           t-field="website.apf_status_success"/>
+
+                        <div class="apf_bpk_status_editinfo"><label>Error Message:</label></div>
+                        <p class="apf_bpk_status_message bpk_error bg-danger"
+                           t-field="website.apf_status_error"/>
+                    </div>
+                </div>
+
+            </xpath>
+
+            <!-- Add the options for the snippet (placement and style) -->
+            <xpath expr="//div[@id='snippet_options']" position="inside">
+
+                <!-- BPK-Status Widget Placement and Style Options -->
+                <div data-snippet-option-id='snippet_apf_bpk_status'
+                    data-selector=".snippet_apf_bpk_status"
+                    data-selector-siblings="p, h1, h2, h3, blockquote, .well, .panel, .oe_share"
+                    data-selector-children=".oe_structure .row > [class*='col-md-']">
+
+                    <!-- Position -->
+                    <li class="dropdown-submenu">
+                        <a tabindex="-1" href="#">Float</a>
+                        <ul class="dropdown-menu">
+                            <li data-value="pull-left"><a>Left</a></li>
+                            <li data-value="pull-right"><a>Right</a></li>
+                        </ul>
+                    </li>
+                </div>
+            </xpath>
+
+        </template>
+
+    </data>
+</openerp>
