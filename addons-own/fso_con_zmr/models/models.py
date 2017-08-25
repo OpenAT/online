@@ -2,20 +2,18 @@
 import os
 import errno
 from os.path import join as pj
-import openerp
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError, Warning
 from openerp.tools.translate import _
+from openerp.tools import config
 from openerp.addons.fso_base.tools.soap import soap_request, GenericTimeoutError
 from lxml import etree
 import time
 import datetime
 from datetime import timedelta
-#from datetime import time
+from dateutil import tz
 import logging
-from openerp.tools import config
 import re
-
 import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -1212,14 +1210,26 @@ class ResPartnerZMRGetBPK(models.Model):
             else:
                 return nowtime >= starttime or nowtime <= endtime
 
-        max_req_start = fields.datetime.strptime(mrpm_start, "%H:%M")
-        max_req_start = max_req_start.time()
+        def local_time(utc_date_time, from_zone=tz.gettz('UTC'), to_zone=tz.gettz('Europe/Vienna')):
+            # ATTENTION: Uses the Austrian timezone because the request rate limit is demanded by the Austrian ZMR.
+            # https://stackoverflow.com/questions/4770297/python-convert-utc-datetime-string-to-local-datetime
+            utc_date_time = utc_date_time.replace(tzinfo=from_zone)
+            local_date_time = utc_date_time.astimezone(to_zone)
+            return local_date_time.time()
 
-        max_req_end = fields.datetime.strptime(mrpm_end, "%H:%M")
-        max_req_end = max_req_end.time()
+        # Local Star_time
+        max_req_start = local_time(datetime.datetime.strptime(mrpm_start, "%H:%M"),
+                                   from_zone=tz.gettz('Europe/Vienna'), to_zone=tz.gettz('Europe/Vienna'))
+        logger.debug("Europe/Vienna Start_time: %s" % max_req_start)
 
-        now = fields.datetime.now()
-        now = now.time()
+        # Local End_time
+        max_req_end = local_time(datetime.datetime.strptime(mrpm_end, "%H:%M"),
+                                 from_zone=tz.gettz('Europe/Vienna'), to_zone=tz.gettz('Europe/Vienna'))
+        logger.debug("Europe/Vienna End_time: %s" % max_req_end)
+
+        # Local Now_time
+        now = local_time(datetime.datetime.now())
+        logger.debug("Europe/Vienna Now_time: %s" % now)
 
         if in_time_period(max_req_start, max_req_end, now):
             limit = int((max_runtime_in_minutes * max_requests_per_minute) / number_of_companies)
@@ -1260,12 +1270,12 @@ class ResPartnerZMRGetBPK(models.Model):
             partners_done += 1
 
         # Log processing info
-        logger.info("scheduled_set_bpk() Processed %s partner in %.3f second" %
+        logger.info("scheduled_set_bpk(): Processed %s partner in %.3f second" %
                     (partners_done, time.time() - start_time))
 
     @api.model
     def scheduled_check_and_set_bpk_request_needed(self):
-        logger.info(_("scheduled_check_and_set_bpk_request_needed() START"))
+        logger.info(_("scheduled_check_and_set_bpk_request_needed(): START"))
         # Find partner where BPKRequestNeeded is not set but needs to be set
         partner_bpk_check_needed = self.find_bpk_partners_to_update(quick_search=False,
                                                                     search_all_partner=True,
