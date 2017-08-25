@@ -9,7 +9,7 @@
 // https://stackoverflow.com/questions/14042193/how-to-trigger-an-event-in-input-text-after-i-stop-typing-writing
 // https://stackoverflow.com/questions/39196323/run-ajax-request-only-when-user-has-filled-in-all-required-fields
 
-
+// TODO: Add zip field
 // call '/check_bpk' route of odoo
 function check_bpk( event, firstname, lastname, birthdate ) {
     console.log("Jetzt wird BPK abgefragt: " + firstname + " " + lastname + " " + birthdate);
@@ -21,18 +21,20 @@ function check_bpk( event, firstname, lastname, birthdate ) {
     });
 }
 
+// TODO add zip field
 // Initialize global variables before definition of apf_check_bpk()
 var firstname_start = '' ;
 var lastname_start = '' ;
 var birthdate_web_start = '' ;
 
+// TODO: add zip field
 // Check content of form input fields and set BPK-Status-Box accordingly
 function apf_check_bpk( event ) {
     // Get data from input fields
-    var firstname = $("#auth_partner_form #firstname").val();
-    var lastname = $("#auth_partner_form #lastname").val();
-    var birthdate_web = $("#auth_partner_form #birthdate_web").val();
-    var ddow = $("#auth_partner_form #donation_deduction_optout_web").prop('checked');
+    var firstname = $("#firstname").val();
+    var lastname = $("#lastname").val();
+    var birthdate_web = $("#birthdate_web").val();
+    var ddow = $("#donation_deduction_optout_web").prop('checked');
 
     // Hide BPK-Status-Box if ddow is set or fields have changed or one of them is empty
     if (ddow ||
@@ -58,8 +60,11 @@ function apf_check_bpk( event ) {
 
         // Run check_bpk
         check_bpk( event, firstname, lastname, birthdate_web_for_zmr ).then(function (bpk_ok) {
-            console.log('bpk_ok: ' + bpk_ok);
-            if (bpk_ok) {
+            console.log('bpk_ok[0]: ' + bpk_ok[0]);
+            console.log('bpk_ok[1]: ' + bpk_ok[1]);
+            console.log('bpk_ok[1].state: ' + bpk_ok[1].state);
+            console.log('bpk_ok[1].message: ' + bpk_ok[1].message);
+            if (bpk_ok[0]) {
                 $(".apf_bpk_status_message.bpk_success").show()
             }
             else {
@@ -81,27 +86,38 @@ function apf_check_bpk( event ) {
 
 // BPK-Status-Box for the /meine-daten form
 $(document).ready(function ( event ) {
-    console.log("Started");
 
-    // Get initial values from the form input fields
-    firstname_start = $("#auth_partner_form #firstname").val() || '' ;
-    lastname_start = $("#auth_partner_form #lastname").val() || '' ;
-    birthdate_web_start = $("#auth_partner_form #birthdate_web").val() || '' ;
+    // TODO: ADD ZIP to the fields
+    // TODO: Nicer Animations and button animtions with spinner
 
-    // Run apf_check_bpk() for the initial values
-    console.log("Run apf_check_bpk() for initial values!");
-    apf_check_bpk( event );
+    // Only run this if the snippet is located on this page and all relevant fields exists
+    if ($('.snippet_apf_bpk_status').length &&
+        $('#firstname').length && $('#lastname').length && $('#birthdate_web').length){
+        console.log("BPK-Status live check started!");
 
-    // Check all text input fields of the auth partner form (/meine-daten) for changes in the input fields
-    // ATTENTION: debounce will only start the function apf_check_bpk() after no changes to the input fields for 2000ms
-    //            On every keyup it will wait again for 4000ms until the moment where there was no keyup for 4000ms.
-    //            Only then it will execute the function apf_check_bpk(...)
-    $('#auth_partner_form #firstname, #auth_partner_form #lastname, #auth_partner_form #birthdate_web').keyup(
-        $.debounce( 2000,
-            function ( event ) {
-                console.log("APF input fields changed!");
-                apf_check_bpk( event );
-            }
-        ));
+        // Get initial values from the form input fields
+        firstname_start = $("#firstname").val() || '' ;
+        lastname_start = $("#lastname").val() || '' ;
+        birthdate_web_start = $("#birthdate_web").val() || '' ;
+
+        // Run apf_check_bpk() for the initial values
+        console.log("Run apf_check_bpk() for initial values!");
+        apf_check_bpk( event );
+
+        // TODO: Separate the hide function from the show function: Hide should happen immediately after input
+        //       data of any of the relevant fields has changed! (in opposite to be delayed for 2000ms)
+
+        // Check all text input fields of the auth partner form (/meine-daten) for changes in the input fields
+        // ATTENTION: debounce will only start the function apf_check_bpk() after no changes to the input fields for 2000ms
+        //            On every keyup it will wait again for 4000ms until the moment where there was no keyup for 4000ms.
+        //            Only then it will execute the function apf_check_bpk(...)
+        $('#firstname, #lastname, #birthdate_web').keyup(
+            $.debounce( 2000,
+                function ( event ) {
+                    apf_check_bpk( event );
+                }
+            ));
+    }
+
 
 });

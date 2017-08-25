@@ -90,6 +90,11 @@ class CompanyAustrianZMRSettings(models.Model):
                                                 ],
                                      string="GetBPK Request URL",
                                      default="https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR")
+    # BPK-Request Status messages
+    bpk_found = fields.Text(string="BPK Person-Found Message", translate=True)
+    bpk_not_found = fields.Text(string="BPK No-Person-Matched Message", translate=True)
+    bpk_multiple_found = fields.Text(string="BPK Multiple-Person-Matched Message", translate=True)
+    bpk_zmr_service_error = fields.Text(string="BPK ZMR-Service-Error Message", translate=True)
 
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
     # https://www.odoo.com/de_DE/forum/hilfe-1/question/
@@ -236,6 +241,18 @@ class ResPartnerZMRGetBPK(models.Model):
     def _bpk_fields(self):
         return self._bpk_regular_fields() + self._bpk_optional_regular_fields() + \
                self._bpk_forced_fields() + self._bpk_optional_forced_fields()
+
+    # Http service error codes
+    def _http_service_error_codes(self):
+        # 404 = Not Found
+        #       The requested resource could not be found but may be available in the future.
+        # 408 = Request Timeout
+        #       The client did not produce a request within the time that the server was prepared to
+        #       wait. The client MAY repeat the request without modifications at any later time.
+        # 429 = Too Many Requests
+        #       The user has sent too many requests in a given amount of time. Intended for use with
+        #       rate-limiting schemes.
+        return ['404', '408', '429', '500', '502', '503', '504']
 
     # ----------------------
     # EXTEND DEFAULT METHODS
@@ -633,19 +650,89 @@ class ResPartnerZMRGetBPK(models.Model):
     # TODO: Return different Values for BPK_OK, BPK_NOT_OK AND SERVICE_UNAVAILABLE
     @api.model
     def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
-        check_response = False
-        try:
-            logger.info("STARTED check_bpk()!")
-            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
-            if responses:
-                logger.info("responses: %s" % responses)
-                check_response = self.response_ok(responses)
-                logger.info("check_response: %s" % check_response)
-        except Exception as e:
-            logger.error(_("Exception in fso_con_zmr check_bpk():\n%s\n") % e)
-            check_response = False
 
-        return check_response
+        def returner(state, msg):
+            # state:
+            #     bpk_found                     # BPK OK
+            #     bpk_not_found                 # Existing BPK-Request or answer from zmr but person could not be found
+            #     bpk_multiple_found            # Existing BPK-Request or answer from zmr but multiple person found
+            #     bpk_zmr_service_error         # No existing BPK-Request and ZMR service timed out or was unavailable
+            #     bpk_exception                 # An exception occured
+            # Return list format: [Boolean, {"state": "", "message": ""}]
+            # Return dict example: [False, {"state": "exception", "message": "Firstname empty after cleanup!"}]
+            ok_states = ['bpk_found']
+            error_states = ['bpk_not_found', 'bpk_multiple_found', 'bpk_zmr_service_error', 'bpk_exception']
+            assert state in ok_states + error_states, _("check_bpk(): Invalid state: %s" % state)
+
+            # Use a default message if none was provided
+            defaut_msg = {'bpk_found': _("Data is valid!"),
+                          'bpk_not_found': _("No person matched!"),
+                          'bpk_multiple_found': _("Multiple person matched! Please add zip!"),
+                          'bpk_zmr_service_error': _("ZMR service not available!"),
+                          'bpk_exception': _("Request error"),
+                          }
+            msg = msg or defaut_msg.get(state, "")
+
+            # Return final list
+            return [state in ok_states, {"state": state, "message": msg}]
+
+        # Return result from existing bpk requests
+        # ----------------------------------------
+        bpk_obj = self.sudo().env['res.partner.bpk']
+
+        # Find any positive request with the given data
+        positive_dom = [("BPKRequestFirstname", "=", firstname), ("BPKRequestLastname", "=", lastname),
+                        ("BPKRequestBirthdate", "=", birthdate), ("BPKPrivate", "!=", False)]
+        positive_req = bpk_obj.search(positive_dom)
+        if len(positive_req) >= 1:
+            # Return with positive result
+            # ATTENTION: This may NOT be correct for different messages for different companies
+
+            # Person was found
+            return returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found)
+
+        # Find any negative request for given data
+        negative_dom = [("BPKErrorRequestFirstname", "=", firstname), ("BPKErrorRequestLastname", "=", lastname),
+                        ("BPKErrorRequestBirthdate", "=", birthdate)]
+        negative_req = bpk_obj.search(negative_dom)
+        if len(negative_req) >= 1:
+            # Return with negative result
+            # ATTENTION: This may NOT be correct for different messages for different companies
+
+            # No person matched
+            if 'F230' in negative_req[0].BPKErrorCode:
+                return returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found)
+
+            # Multiple person matched
+            if any(code in negative_req[0].BPKErrorCode for code in ['F231', 'F233']):
+                return returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found)
+
+            # Other request error or exception
+            # HINT: Return all other errors except for ZMR service errors.
+            if not any(e == negative_req[0].BPKErrorCode for e in self._http_service_error_codes()):
+                return returner("bpk_exception", negative_req[0].BPKErrorText)
+
+        # ZMR BPK-Request
+        # ---------------
+        try:
+            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
+            assert len(responses) >= 1, _("No responses from request_bpk()!")
+        except Exception as e:
+            return returner("bpk_exception", str(repr(e)))
+
+        r = responses[0]
+        company = self.sudo.env['res.company'].browse([r.get("company_id")])
+        if r.get("private_bpk") or r.get("public_bpk"):
+            return returner("bpk_found", company.bpk_found)
+        if 'F230' in r.get("faultcode"):
+            return returner("bpk_not_found", company.bpk_not_found)
+        if any(code in r.get("faultcode") for code in ['F231', 'F233']):
+            return returner("bpk_multiple_found", company.bpk_multiple_found)
+        if any(err == r.get("faultcode") for err in self._http_service_error_codes()):
+            return returner("bpk_zmr_service_error", r.get("faulttext"))
+
+        # This should basically be never reached ;) but is here as a fallback
+        return returner("bpk_exception", r.get("faulttext"))
 
     # --------------
     # RECORD ACTIONS
@@ -899,19 +986,11 @@ class ResPartnerZMRGetBPK(models.Model):
             # Finally update the partner after all responses created or updated its bpk requests
             # HINT: We use 'faulttext' only from the last bpk request for this partner but
             #       this should be no problem since all 'faulttext' must be identical
-            # ATTENTION: If the ZMR Service was not available we would get a http status code of 404. In this case
+            # ATTENTION: If the ZMR Service was not available we would get a http_service_error_code. In this case
             #            we would not clear the BPKRequestNeeded date cause we want to retry this partner at the next
             #            scheduler run.
-            #            404 = Not Found
-            #                  The requested resource could not be found but may be available in the future.
-            #            408 = Request Timeout
-            #                  The client did not produce a request within the time that the server was prepared to
-            #                  wait. The client MAY repeat the request without modifications at any later time.
-            #            429 = Too Many Requests
-            #                  The user has sent too many requests in a given amount of time. Intended for use with
-            #                  rate-limiting schemes.
             bpk_request_needed = None
-            if any(r.get('faultcode', "") in ['404', '408', '429', '500', '502', '503', '504'] for r in resp):
+            if any(r.get('faultcode', "") in self._http_service_error_codes() for r in resp):
                 bpk_request_needed = p.BPKRequestNeeded
             finish_partner(p, bpk_request_error=faulttext, bpk_request_needed=bpk_request_needed)
 
