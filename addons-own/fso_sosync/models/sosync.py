@@ -1,6 +1,6 @@
 # -*- coding: utf-'8' "-*-"
 import logging
-from openerp import api, models, fields
+from openerp import api, models, fields, osv
 from openerp.addons.fso_base.tools.validate import is_valid_url
 import requests
 from requests import Session
@@ -287,27 +287,64 @@ class BaseSosync(models.AbstractModel):
                                     })
             logger.info("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
 
-    @api.multi
-    def write(self, values, create_sync_job=True):
-        # Perform original write
-        result = super(BaseSosync, self).write(values)
-
+    @api.model
+    def create(self, values, **kwargs):
         # CREATE SYNC JOBS
         # ----------------
-        # HINT: Switch in context dict to suppress sync job generation
-        #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation
-        # ATTENTION: "create_sync_job" is not passed on to subsequent writes!
+        values = values or dict()
+
+        # Get create_sync_job from context or set it to True
+        # HINT: create_sync_job is a switch in the context dict to suppress sync job generation
+        #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation!
+        if not self.env.context:
+            create_sync_job = True
+        else:
+            create_sync_job = self.env.context.get("create_sync_job", True)
+            if not create_sync_job:
+                # Enable sync jobs creation again!
+                # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
+                #            Therefore possible updates in other models can still create sync jobs which is the
+                #            intended and correct behaviour!
+                self = self.with_context(create_sync_job=True)
+
+        # Create sync jobs and set the sosync_write_date
+        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
+            # Create Sync Job
+            self.create_sync_job()
+            # Add sosync_write_date to values
+            values["sosync_write_date"] = fields.datetime.now()
+
+        # Continue with create method
+        return super(BaseSosync, self).create(values, **kwargs)
+
+    @api.multi
+    def write(self, values, **kwargs):
+        # CREATE SYNC JOBS
+        # ----------------
+        values = values or dict()
+
+        # Get create_sync_job from context or set it to True
+        # HINT: create_sync_job is a switch in the context dict to suppress sync job generation
+        #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation!
+        # ATTENTION: "create_sync_job" is set to "True" in the context before any other method is called!
         #            Therefore possible updates in other models can still create sync jobs which is the intended
-        #            behaviour!
-        field_dict = values or dict()
-        if create_sync_job:
-            # Check for sosync tracked fields
-            if any(field_key in field_dict for field_key in self._get_sosync_tracked_fields()):
-                # Create Sync Job
-                self.create_sync_job()
-                # Update sosync_write_date
-                for record in self:
-                    record.sosync_write_date = fields.datetime.now()
+        #            and correct behaviour!
+        if not self.env.context:
+            create_sync_job = True
+        else:
+            create_sync_job = self.env.context.get("create_sync_job", True)
+            if not create_sync_job:
+                # Enable sync jobs creation again in the current context
+                self = self.with_context(create_sync_job=True)
+
+        # Create sync jobs and set the sosync_write_date
+        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
+            # Create Sync Job
+            self.create_sync_job()
+            # Add sosync_write_date to values
+            values["sosync_write_date"] = fields.datetime.now()
 
         # Continue with write method
-        return result
+        return super(BaseSosync, self).write(values, **kwargs)
+
+
