@@ -26,6 +26,20 @@
 
                         <field name="BPKRequestURL"/>
                     </group>
+                    <group col="2" string="BPK-Status-Snippet Messages">
+                        <p colspan="2" style="color:grey; font-size:9pt;">
+                            You can overwrite the default status messages of the check_bpk() method with these fields.
+                            check_bpk() is used e.g.: by the Fundraising Studio GUI or the BPK status snippet.
+                            If you use multiple companies  remember to set these fields for all of them where you
+                            want customized messages. In the rare event of an exception the exception message will
+                            be shown instead. Leave any of this fields empty if you are satisfied with the default
+                            message.
+                        </p>
+                        <field name="bpk_found"/>
+                        <field name="bpk_not_found"/>
+                        <field name="bpk_multiple_found"/>
+                        <field name="bpk_zmr_service_error"/>
+                    </group>
                 </page>
             </xpath>
         </field>

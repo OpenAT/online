@@ -645,13 +645,14 @@ class ResPartnerZMRGetBPK(models.Model):
         else:
             return False
 
-    # Returns just True or False for the given BPK request data
-    # HINT: This is useful e.g.: for a java script widget on auth_partner_form
-    # TODO: Return different Values for BPK_OK, BPK_NOT_OK AND SERVICE_UNAVAILABLE
+    # Returns the BPK Status for the given request data.
+    # HINT: Will first search the existing BPK-Requests and if none found it will send a BPK-Request to the ZMR.
+    #       This is useful e.g.: for a java script widget on auth_partner_form
+    # Returns a list in the format: [Boolean, {"state": "", "message": ""}]
     @api.model
     def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
-
-        def returner(state, msg):
+        # Local helper function
+        def _returner(state, msg):
             # state:
             #     bpk_found                     # BPK OK
             #     bpk_not_found                 # Existing BPK-Request or answer from zmr but person could not be found
@@ -689,7 +690,7 @@ class ResPartnerZMRGetBPK(models.Model):
             # ATTENTION: This may NOT be correct for different messages for different companies
 
             # Person was found
-            return returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found)
+            return _returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found)
 
         # Find any negative request for given data
         negative_dom = [("BPKErrorRequestFirstname", "=", firstname), ("BPKErrorRequestLastname", "=", lastname),
@@ -701,16 +702,16 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # No person matched
             if 'F230' in negative_req[0].BPKErrorCode:
-                return returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found)
+                return _returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found)
 
             # Multiple person matched
             if any(code in negative_req[0].BPKErrorCode for code in ['F231', 'F233']):
-                return returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found)
+                return _returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found)
 
             # Other request error or exception
             # HINT: Return all other errors except for ZMR service errors.
             if not any(e == negative_req[0].BPKErrorCode for e in self._http_service_error_codes()):
-                return returner("bpk_exception", negative_req[0].BPKErrorText)
+                return _returner("bpk_exception", negative_req[0].BPKErrorText)
 
         # ZMR BPK-Request
         # ---------------
@@ -718,21 +719,21 @@ class ResPartnerZMRGetBPK(models.Model):
             responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
             assert len(responses) >= 1, _("No responses from request_bpk()!")
         except Exception as e:
-            return returner("bpk_exception", str(repr(e)))
+            return _returner("bpk_exception", str(repr(e)))
 
         r = responses[0]
-        company = self.sudo.env['res.company'].browse([r.get("company_id")])
+        company = self.sudo().env['res.company'].browse([r.get("company_id")])
         if r.get("private_bpk") or r.get("public_bpk"):
-            return returner("bpk_found", company.bpk_found)
+            return _returner("bpk_found", company.bpk_found)
         if 'F230' in r.get("faultcode"):
-            return returner("bpk_not_found", company.bpk_not_found)
+            return _returner("bpk_not_found", company.bpk_not_found)
         if any(code in r.get("faultcode") for code in ['F231', 'F233']):
-            return returner("bpk_multiple_found", company.bpk_multiple_found)
+            return _returner("bpk_multiple_found", company.bpk_multiple_found)
         if any(err == r.get("faultcode") for err in self._http_service_error_codes()):
-            return returner("bpk_zmr_service_error", r.get("faulttext"))
+            return _returner("bpk_zmr_service_error", r.get("faulttext"))
 
-        # This should basically be never reached ;) but is here as a fallback
-        return returner("bpk_exception", r.get("faulttext"))
+        # This should only be reached in rare circumstances ;) and serves as a fallback and safety net
+        return _returner("bpk_exception", r.get("faulttext"))
 
     # --------------
     # RECORD ACTIONS

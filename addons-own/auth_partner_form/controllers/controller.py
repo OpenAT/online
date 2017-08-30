@@ -129,6 +129,14 @@ class AuthPartnerForm(http.Controller):
                             # Fix for Date fields: convert '' to None
                             elif ftype == 'date':
                                 fields_to_update[fname] = kwargs[fname].strip() if kwargs[fname].strip() else None
+                                if fields_to_update[fname]:
+                                    # Convert Date from %d.%m.%Y to %Y-%m-%d
+                                    # HINT: In the meine-daten form only a date-format %d.%m.%Y is allowed!
+                                    #       Language settings of odoo are not taken into account! Therefore we must
+                                    #       Convert the date string from the website to a datetime here with the correct
+                                    #       format.
+                                    fields_to_update[fname] = fields.datetime.strptime(fields_to_update[fname],
+                                                                                       '%d.%m.%Y')
                             else:
                                 value = kwargs[fname].strip() if isinstance(kwargs[fname], basestring) else \
                                     kwargs[fname]

@@ -193,7 +193,7 @@ msgstr "Code"
 #: field:website,apf_title_code:0
 #: field:website.config.settings,apf_title_code:0
 msgid "Code Header"
-msgstr "Code Überschrift"
+msgstr "'Code' Überschrift"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.country_id
@@ -320,13 +320,13 @@ msgstr "Nachname"
 #. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
 msgid "Logout"
-msgstr "Abmelden"
+msgstr ""
 
 #. module: auth_partner_form
 #: field:website,apf_logout_button:0
 #: field:website.config.settings,apf_logout_button:0
 msgid "Logout Button"
-msgstr "Abmelde-Button"
+msgstr "'Abmelden' Button"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,placeholder:auth_partner_form.street
@@ -352,7 +352,7 @@ msgstr "Meine Spenden bitte nicht absetzen"
 #: code:addons/auth_partner_form/controllers/controller.py:177
 #, python-format
 msgid "Missing or incorrect information! Please check your input."
-msgstr "Fehlende oder falsche Angaben! Bitte überprüfen sie ihre Eingabe."
+msgstr "Fehlende oder falsche Angaben! Bitte überprüfen Sie Ihre Eingabe."
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,placeholder:auth_partner_form.city
@@ -428,13 +428,13 @@ msgstr "Nr."
 #: code:addons/auth_partner_form/models/models.py:42
 #, python-format
 msgid "Submit"
-msgstr "Senden"
+msgstr "Angaben bestätigen"
 
 #. module: auth_partner_form
 #: field:website,apf_submit_button:0
 #: field:website.config.settings,apf_submit_button:0
 msgid "Submit Button"
-msgstr "Bestätigen"
+msgstr "'Angaben bestätigen' Button"
 
 #. module: auth_partner_form
 #: field:website,apf_token_error_message:0
@@ -469,7 +469,7 @@ msgstr "'Datenaktualisierung erfolgreich' Text"
 #. module: auth_partner_form
 #: field:res.partner,fstoken_update:0
 msgid "Update by FS Token"
-msgstr "Aktualisiert mit FS-Token"
+msgstr "Aktualisiert mit FS-Token von"
 
 #. module: auth_partner_form
 #: field:res.partner,fstoken_update_date:0
@@ -508,7 +508,7 @@ msgstr "Ihr Code ist gültig!"
 #: code:addons/auth_partner_form/controllers/controller.py:173
 #, python-format
 msgid "Your data could not be updated. Please try again."
-msgstr "Ihre Daten konnten nicht aktualisiert werden. Bitte versuchen sie es erneut."
+msgstr "Ihre Daten konnten nicht aktualisiert werden. Bitte versuchen Sie es erneut."
 
 #. module: auth_partner_form
 #: code:addons/auth_partner_form/controllers/controller.py:170
@@ -540,5 +540,5 @@ msgstr "res.partner Field"
 #. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
 msgid "to enter a new code"
-msgstr "um einen neuen Coede einzugeben"
+msgstr "abmelden um einen neuen Code einzugeben"
 

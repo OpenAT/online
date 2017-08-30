@@ -42,29 +42,25 @@
 }
 
 /* SNIPPET STYLING */
+
+
+/* SNIPPET: snippet_apf_bpk_status */
+/* ------------------------------- */
+
+/* Show snippet border in edit mode only */
 html[data-editable="1"] .snippet_apf_bpk_status {
-    border: 1px solid #ececec;
     padding: 18px;
-    border-radius: 6px;
-}
-html[data-editable="1"] .snippet_apf_bpk_status {
-    border: 1px solid #ececec;
-    padding: 18px;
-    border-radius: 6px;
+    border-radius: 4px;
+    box-shadow: 1px 1px 14px rgba(0,0,0,0.1);
 }
 
-/* Hide information text for non website editors */
+/* Hide website editor snippet information text if not in edit mode */
 html:not([data-editable="1"]) .apf_bpk_status_editinfo {
     display: none;
 }
 
-/* Initially hide apf_bpk_status_message messages for non website editors
- * Will be unhidden by java script if the bpk request returned an result
- */
-html:not([data-editable="1"]) .apf_bpk_status_message {
-    display: none;
-}
-
-.apf_bpk_status_message {
+/* Style the BPK status box */
+.apf_bpk_status_box {
     padding: 15px;
+    min-height: 1em;
 }

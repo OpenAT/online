@@ -30,6 +30,13 @@
                  http://benalman.com/projects/jquery-throttle-debounce-plugin -->
             <script type="text/javascript" src="/fso_base_website/static/lib/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js"/>
 
+            <!-- ladda animated spinner for bootstrap
+                 https://github.com/msurguy/ladda-bootstrap
+                 http://msurguy.github.io/ladda-bootstrap/ -->
+            <link rel="stylesheet" href='/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/ladda-themeless.css' t-ignore="true"/>
+            <script type="text/javascript" src="/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/spin.js"/>
+            <script type="text/javascript" src="/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/ladda.js"/>
+
             <!-- Load custom css for smaller fixes -->
             <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
 

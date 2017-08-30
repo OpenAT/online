@@ -18,26 +18,28 @@
 
                     <!-- Snippet content -->
                     <div class="oe_snippet_body snippet_apf_bpk_status">
-                        <h4 class="apf_bpk_status_editinfo"><label>BPK-Status Snippet</label></h4>
-                        <p  class="apf_bpk_status_editinfo">
-                            This snippet indicates if the donor can be found in the Austrian Central Registry
-                            for automatic donation deduction with the data of the current form.
-                            This can only work if there is a form on the same page with this snippet that includes
-                            the fields firstname, lastname and birthdate_web.
-                            It will only show the success or error message if all required fields are filled by
-                            the donor and the service of the Austrian Central Registry is set up and available.<br/>
-                            <br/>
-                            Only the colored box of the success or the error message will
-                            be visible for website visitors without editor rights!
-                        </p>
 
-                        <div class="apf_bpk_status_editinfo"><label>Success Message:</label></div>
-                        <p class="apf_bpk_status_message bpk_success bg-success"
-                           t-field="website.apf_status_success"/>
+                        <!-- Website editor info text (NOT visible for regular website visitors! See the css.)-->
+                        <div class="apf_bpk_status_editinfo">
+                            <h4><label>BPK-Status Snippet</label></h4>
+                            <p>
+                                This snippet indicates if the donor can be found in the Austrian Central Registry
+                                for automatic donation deduction with the data of the current form.
+                                This can only work if there is a form on the same page with this snippet that includes
+                                the fields firstname, lastname and birthdate_web.
+                                It will only show the success or error message if all required fields are filled by
+                                the donor and the service of the Austrian Central Registry is set up and available.<br/>
+                                <br/>
+                                Only the colored box below is visible for your website visitors!
+                            </p>
+                        </div>
 
-                        <div class="apf_bpk_status_editinfo"><label>Error Message:</label></div>
-                        <p class="apf_bpk_status_message bpk_error bg-danger"
-                           t-field="website.apf_status_error"/>
+                        <!-- BPK-Status Snippet Message Box -->
+                        <div class="apf_bpk_status_box ladda-button bg-info" data-style="expand-left">
+                            <span class="apf_bpk_status_box_loading">Checking Data ...</span>
+                            <span class="apf_bpk_status_box_message"></span>
+                        </div>
+
                     </div>
                 </div>
 

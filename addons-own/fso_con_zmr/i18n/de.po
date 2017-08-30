@@ -61,7 +61,7 @@ msgstr "Es sind nicht alle notwendigen BPK Felder gesetzt! Notwendig sind: %s"
 #. module: fso_con_zmr
 #: view:res.company:fso_con_zmr.company_instance_settings
 msgid "Austrian ZMR Settings"
-msgstr "ZMR Zugangsdaten"
+msgstr "AT: ZMR Einstellungen"
 
 #. module: fso_con_zmr
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
