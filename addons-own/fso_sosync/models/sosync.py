@@ -61,13 +61,13 @@ class SosyncJob(models.Model):
                                             ("skipped", "Skipped")],
                                  string="State", default="new", readonly=True)
     job_error_code = fields.Selection(selection=[("timeout", "Job timed out"),
-                                             ("run_counter", "Run count exceeded"),
-                                             ("child_job_creation", "Child job creation error"),
-                                             ("child_job_processing", "Child job processing error"),
-                                             ("source_data", "Sync Source error"),
-                                             ("target_request", "Sync Target error"),
-                                             ("cleanup", "Job finalization error")],
-                                  string="Error Code", readonly=True)
+                                                 ("run_counter", "Run count exceeded"),
+                                                 ("child_job", "Child job error"),
+                                                 ("sync_source", "Could not determine sync direction"),
+                                                 ("transformation", "Model transformation error"),
+                                                 ("cleanup", "Job finalization error"),
+                                                 ("unknown", "Unexpected error")],
+                                      string="Error Code", readonly=True)
     job_error_text = fields.Text(string="Error", readonly=True)
     job_log = fields.Text(string="Job Log", readonly=True)
 
