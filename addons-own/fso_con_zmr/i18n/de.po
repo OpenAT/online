@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-18 07:00+0000\n"
-"PO-Revision-Date: 2017-08-18 07:00+0000\n"
+"POT-Creation-Date: 2017-08-31 08:28+0000\n"
+"PO-Revision-Date: 2017-08-31 08:28+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,44 +16,51 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:784
+#: code:addons/fso_con_zmr/models/models.py:890
+#: code:addons/fso_con_zmr/models/models.py:898
 #, python-format
 msgid "%s (ID %s): BPK-Request exception: %s"
 msgstr "%s (ID %s): BPK-Anfrage Fehler: %s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:763
+#: code:addons/fso_con_zmr/models/models.py:868
+#, python-format
+msgid "%s (ID %s): Donation Deduction Disabled is set!"
+msgstr "%s (ID %s): 'SPAK ausgenommen' Feld ist gesetzt!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:866
 #, python-format
 msgid "%s (ID %s): Donation Deduction Opt Out is set!"
 msgstr "%s (ID %s): Meine Spende nicht absetzen ist gesetzt!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:858
+#: code:addons/fso_con_zmr/models/models.py:972
 #, python-format
 msgid "%s (ID %s): More than one BPK record per company found and removal of BPK records failed also: %s"
 msgstr "%s (ID %s): Es wurde mehr als eine BPK-Anfrage für eine Organisation gefunden. Das Löschen der überflüssigen Anfragen schlug fehl: %s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:782
+#: code:addons/fso_con_zmr/models/models.py:887
 #, python-format
 msgid "%s (ID %s): No BPK-Request response(s)!"
 msgstr "%s (ID %s): Keine Antworten für die BPK-Abrage erhalten!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:752
+#: code:addons/fso_con_zmr/models/models.py:854
 #, python-format
 msgid "%s (ID %s): Skipped BPK request! Partner data matches existing BPK request data!"
 msgstr "%s (ID %s): BPK-Anfrage wurde übersprungen da die Kontaktdaten identisch sind mit den BPK-Anfrage Daten!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:394
+#: code:addons/fso_con_zmr/models/models.py:412
 #, python-format
 msgid "All companies must use the same BPKRequestURL!"
 msgstr "Alle Organisationen (oder Organisationseinheiten) müssen die selbe BPKRequestURL verwenden!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:249
-#: code:addons/fso_con_zmr/models/models.py:318
+#: code:addons/fso_con_zmr/models/models.py:267
+#: code:addons/fso_con_zmr/models/models.py:336
 #, python-format
 msgid "All required BPK Forced Fields must be set! Required are: %s"
 msgstr "Es sind nicht alle notwendigen BPK Felder gesetzt! Notwendig sind: %s"
@@ -61,7 +68,7 @@ msgstr "Es sind nicht alle notwendigen BPK Felder gesetzt! Notwendig sind: %s"
 #. module: fso_con_zmr
 #: view:res.company:fso_con_zmr.company_instance_settings
 msgid "Austrian ZMR Settings"
-msgstr "AT: ZMR Einstellungen"
+msgstr "ZMR Zugangsdaten"
 
 #. module: fso_con_zmr
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
@@ -121,7 +128,7 @@ msgid "BPK Public"
 msgstr "BPK Öffentlich"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:1078
+#: code:addons/fso_con_zmr/models/models.py:1200
 #, python-format
 msgid "BPK Records %s found for non existing companies or companies where the ZMR BPK access data was removed for partner %s: %s %s"
 msgstr "BPK-Abfragen %s gefunden für gelöschte Organisationen oder Organisationen bei denen dei ZMR Zugangsdaten entfernt wurden für Kontakt %s: %s %s"
@@ -130,18 +137,6 @@ msgstr "BPK-Abfragen %s gefunden für gelöschte Organisationen oder Organisatio
 #: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_form
 msgid "BPK Request"
 msgstr "BPK-Abfrage"
-
-#. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:545
-#, python-format
-msgid "BPK Request Assertion:\n"
-"\n"
-"%s\n"
-""
-msgstr "BPK-Abfrage Fehler:\n"
-"\n"
-"%s\n"
-""
 
 #. module: fso_con_zmr
 #: field:res.partner.bpk,BPKRequestBirthdate:0
@@ -167,6 +162,18 @@ msgstr "BPK-Abfrage Datum"
 #: field:res.partner,BPKRequestError:0
 msgid "BPK Request Exception"
 msgstr "BPK-Abfrage Fehler"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:564
+#, python-format
+msgid "BPK Request Exception:\n"
+"\n"
+"%s\n"
+""
+msgstr "BPK Abfrage Fehler:\n"
+"\n"
+"%s\n"
+""
 
 #. module: fso_con_zmr
 #: field:res.partner.bpk,BPKRequestFirstname:0
@@ -228,12 +235,12 @@ msgid "BPK Response Time"
 msgstr "BPK-Antwort Dauer"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:964
+#: code:addons/fso_con_zmr/models/models.py:1084
 #, python-format
 msgid "BPK full search: Exception while searching for companies with complete ZMR settings:\n"
 "%s\n"
 ""
-msgstr "BPK full search: Exception while searching for companies with complete ZMR settings:\n"
+msgstr "BPK full search: Ein Fehler ist aufgetreten bei der Suche nach Organistaionen mit vollständigen ZMR Zugangsdaten:\n"
 "%s\n"
 ""
 
@@ -299,6 +306,11 @@ msgid "BPK-Requests in progress"
 msgstr "BPK-Abfrage in Bearbeitung"
 
 #. module: fso_con_zmr
+#: view:res.company:fso_con_zmr.company_instance_settings
+msgid "BPK-Status-Snippet Messages"
+msgstr "BPK-Status-Snippet Meldungen"
+
+#. module: fso_con_zmr
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_tree
 msgid "Birth."
 msgstr "Geb."
@@ -331,7 +343,7 @@ msgstr "Common Name (cn)"
 #. module: fso_con_zmr
 #: model:ir.model,name:fso_con_zmr.model_res_company
 msgid "Companies"
-msgstr "Organisation"
+msgstr "Organisationen"
 
 #. module: fso_con_zmr
 #: field:res.partner.bpk,create_uid:0
@@ -344,10 +356,21 @@ msgid "Created on"
 msgstr "Erstellt am"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:551
+#: code:addons/fso_con_zmr/models/models.py:669
+#, python-format
+msgid "Data is valid!"
+msgstr "Data is valid!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:570
 #, python-format
 msgid "Different BPK request results by company with identical request data! ZMR error?"
 msgstr "Unterschiedliche BPK-Antworten per Organisation erhalten mit identischen Anfragedaten! ZMR Fehler?"
+
+#. module: fso_con_zmr
+#: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_tree
+msgid "Disabled"
+msgstr "Deaktiviert"
 
 #. module: fso_con_zmr
 #: field:res.partner.bpk,display_name:0
@@ -361,34 +384,24 @@ msgid "Donation Deduction"
 msgstr "Spendenabsetzbarkeit"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:690
-#, python-format
-msgid "Exception in fso_con_zmr check_bpk():\n"
-"%s\n"
-""
-msgstr "Fehler in fso_con_zmr check_bpk():\n"
-"%s\n"
-""
-
-#. module: fso_con_zmr
 #: field:res.company,stammzahl:0
 msgid "Firmenbuch-/ Vereinsregisternummer"
 msgstr "Firmenbuch-/ Vereinsregisternummer"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:574
+#: code:addons/fso_con_zmr/models/models.py:597
 #, python-format
 msgid "Firstname is empty after cleanup!"
 msgstr "Vorname is leer nach der 'cleanup' Funktion!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:570
+#: code:addons/fso_con_zmr/models/models.py:593
 #, python-format
 msgid "Firstname, Lastname and Birthdate are needed for a BPK request!"
 msgstr "Vorname, Nachname und Geburtsdatum müssen vorhanden sein um eine BPK-Abfrage durchzuführen!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:417
+#: code:addons/fso_con_zmr/models/models.py:435
 #, python-format
 msgid "Folder soaprequest_templates not found at %s"
 msgstr "Ordner 'soaprequest_templates' nicht gefunden: %s"
@@ -410,18 +423,24 @@ msgid "Force BPK-Request"
 msgstr "Erzwinge BPK-Anfrage"
 
 #. module: fso_con_zmr
-#: field:res.company,BPKRequestURL:0
-msgid "GetBPK Request URL"
-msgstr "GetBPK Anfrage URL"
+#: code:addons/fso_con_zmr/models/models.py:892
+#, python-format
+msgid "GenericTimeoutError"
+msgstr "GenericTimeoutError"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:507
+#: field:res.company,BPKRequestURL:0
+msgid "GetBPK Request URL"
+msgstr "GetBPK-Anfrage URL"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:525
 #, python-format
 msgid "GetBPK-Request response has no content!"
 msgstr "GetBPK-Anfrage: Die Antwort ist leer!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:420
+#: code:addons/fso_con_zmr/models/models.py:438
 #, python-format
 msgid "GetBPK_small_j2template.xml not found at %s"
 msgstr "GetBPK_small_j2template.xml not found at %s"
@@ -440,7 +459,7 @@ msgid "If any of the BPK fields is set only the values of from the BPK fields ar
 msgstr "Wenn Sie die abweichende Angaben für die automatisierte Übermittlung der Spenden an das Finanzamt benötigen jedoch die derzeitige Ansprache des Spenders nicht verändern möchten können Sie die BPK Felder verwenden. Sobald eines der BPK Felder gesetzt ist werden alle Anfragen and das ZMR und das Finanzamt bezüglich der Spendenabsetzung ausschließlich mit den Werten der BPK Felder durchgeführt! Wenn Sie nach dem Setzten der BPK Felder wieder mit den regulären Feldern des Kontaktes anfragen möchten leeren Sie bitte alle BPK Felder."
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:1141
+#: code:addons/fso_con_zmr/models/models.py:1263
 #, python-format
 msgid "Interval type %s unknown!"
 msgstr "ZMR Abfrage Server Action: Intervalltyp %s unbekannt!"
@@ -497,7 +516,7 @@ msgid "Last valid BPK-Request"
 msgstr "Letzte erfolgreiche Anfrage"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:578
+#: code:addons/fso_con_zmr/models/models.py:601
 #, python-format
 msgid "Lastname is empty after cleanup!"
 msgstr "Nachname ist leer nach der 'cleanup' Funktion!"
@@ -508,22 +527,28 @@ msgid "Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR"
 msgstr "Echtbetrieb: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:412
+#: code:addons/fso_con_zmr/models/models.py:430
 #, python-format
 msgid "Missing input data! Mandatory are firstname, lastname and birthdate!"
 msgstr "Fehlende Anfragedaten! Benötigt werden Vorname, Nachname und Geburtsdatum!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:538
+#: code:addons/fso_con_zmr/models/models.py:556
 #, python-format
 msgid "More than one FremdBPK xml node found!"
 msgstr "Mehr als eine FremdBPK xml node in der Antwort gefunden!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:534
+#: code:addons/fso_con_zmr/models/models.py:552
 #, python-format
 msgid "More than one GetBPKReturn xml node found!"
 msgstr "Mehr als eine GetBPKReturn xml node in der Antwort gefunden!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:671
+#, python-format
+msgid "Multiple person matched! Please add zip!"
+msgstr "Mehrere Personen gefunden! Bitte ergänzen Sie Ihre Angaben mit Ihrer Postleitzahl."
 
 #. module: fso_con_zmr
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
@@ -531,10 +556,22 @@ msgid "Next Scheduled BPK-Requests"
 msgstr "Kontakte mit geplanten BPK-Abfragen"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:389
+#: code:addons/fso_con_zmr/models/models.py:407
 #, python-format
 msgid "No company found with complete Austrian ZMR access data!"
 msgstr "Es konnte keine Organisation mit vollständigen ZMR Zugangdaten gefunden werden!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:670
+#, python-format
+msgid "No person matched!"
+msgstr "Keine Person gefunden!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:720
+#, python-format
+msgid "No responses from request_bpk()!"
+msgstr "Keine Antworten von request_bpk()!"
 
 #. module: fso_con_zmr
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_tree
@@ -546,7 +583,7 @@ msgstr "OptOut"
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_tree
 msgid "Partner"
-msgstr "Kontakt"
+msgstr "Spender"
 
 #. module: fso_con_zmr
 #: field:res.company,pvpToken_prvkey_pem:0
@@ -579,6 +616,12 @@ msgid "Request Person (ou)"
 msgstr "Anfrage Person (ou)"
 
 #. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:673
+#, python-format
+msgid "Request error"
+msgstr "Anfragefehler"
+
+#. module: fso_con_zmr
 #: model:ir.actions.server,name:fso_con_zmr.server_action_set_bpk_request_needed
 #: model:ir.actions.server,name:fso_con_zmr.server_action_set_bpk_request_needed_for_bpkrecords
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
@@ -591,7 +634,7 @@ msgid "Scheduled BPK-Requests"
 msgstr "Geplante BPK-Anfragen"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:1139
+#: code:addons/fso_con_zmr/models/models.py:1261
 #, python-format
 msgid "Scheduled action fso_con_zmr.ir_cron_scheduled_set_bpk not found!"
 msgstr "Scheduled action fso_con_zmr.ir_cron_scheduled_set_bpk not found!"
@@ -629,6 +672,21 @@ msgstr "Erfolgreiche BPK-Anfrage Details"
 
 #. module: fso_con_zmr
 #: view:res.company:fso_con_zmr.company_instance_settings
+msgid "You can overwrite the default status messages of the check_bpk() method with these fields.\n"
+"                            check_bpk() is used e.g.: by the Fundraising Studio GUI or the BPK status snippet.\n"
+"                            If you use multiple companies  remember to set these fields for all of them where you\n"
+"                            want customized messages. In the rare event of an exception the exception message will\n"
+"                            be shown instead. Leave any of this fields empty if you are satisfied with the default\n"
+"                            message."
+msgstr "Sie könne mit diesen Feldern die standard Status Meldungen von check_bpk() überschreiben.\n"
+"                            Diese Meldungen werden von dem BPK-Status-Snippet und von Fundraising Studio verwendet.\n"
+"                            Wenn Sie mehrere Organisation mit ZMR Zugangsdaten verwenden müssen Sie bitte bei allen\n"
+"                            die gewünschten Meldungen setzen. In dem seltenen Fall eines Fehlers wird statt diesen\n"
+"                            Meldungen eine Information zum Fehler angezeigt. Wenn die vorgegebnenen Meldung für Sie passen\n"
+"                            können Sie diese Felder einfach leer lassen!"
+
+#. module: fso_con_zmr
+#: view:res.company:fso_con_zmr.company_instance_settings
 msgid "ZMR Access"
 msgstr "ZMR Zugangsdaten"
 
@@ -638,16 +696,28 @@ msgid "ZMR BPK"
 msgstr "ZMR BPK"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:429
+#: code:addons/fso_con_zmr/models/models.py:672
+#, python-format
+msgid "ZMR service not available!"
+msgstr "Dienst temporär nicht verfügbar!!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:447
 #, python-format
 msgid "_request_bpk: Certificate data found but files on drive missing. Trying to restore files!"
 msgstr "_request_bpk: Certificate data found but files on drive missing. Trying to restore files!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:627
+#: code:addons/fso_con_zmr/models/models.py:744
 #, python-format
 msgid "bpk_requests_matches_partner_data() is only allowed for one partner at once"
 msgstr "bpk_requests_matches_partner_data() is only allowed for one partner at once"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/models.py:666
+#, python-format
+msgid "check_bpk(): Invalid state: %s"
+msgstr "check_bpk(): Ungültiger Status: %s"
 
 #. module: fso_con_zmr
 #: help:res.company,pvpToken_crt_pem_filename:0
@@ -655,7 +725,7 @@ msgid "crt_pem"
 msgstr "crt_pem"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:1117
+#: code:addons/fso_con_zmr/models/models.py:1239
 #, python-format
 msgid "find_bpk_partners_to_update(): Total partners found requiring a BPK request: %s"
 msgstr "find_bpk_partners_to_update(): Total partners found requiring a BPK request: %s"
@@ -666,13 +736,13 @@ msgid "prvkey_pem without password!"
 msgstr "prvkey_pem (ohne passphrase!)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:1217
+#: code:addons/fso_con_zmr/models/models.py:1358
 #, python-format
-msgid "scheduled_check_and_set_bpk_request_needed() START"
-msgstr "scheduled_check_and_set_bpk_request_needed() START"
+msgid "scheduled_check_and_set_bpk_request_needed(): START"
+msgstr "scheduled_check_and_set_bpk_request_needed(): START"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/models.py:1180
+#: code:addons/fso_con_zmr/models/models.py:1321
 #, python-format
 msgid "scheduled_set_bpk(): Start to process a maximum of %s partner in %s minutes"
 msgstr "scheduled_set_bpk(): Start to process a maximum of %s partner in %s minutes"

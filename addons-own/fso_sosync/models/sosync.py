@@ -36,20 +36,20 @@ class SosyncJob(models.Model):
     # ======
 
     # SYNCJOB
-    job_id = fields.Integer(string="Sosync Job ID", readonly=True)
+    job_id = fields.Integer(string="Job ID", readonly=True)
     job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True)
 
     # SYNCJOB SOURCE
-    job_source_system = fields.Selection(selection=_systems, string="Source System", readonly=True)
-    job_source_model = fields.Char(string="Source Model", readonly=True)
-    job_source_record_id = fields.Integer(string="Source Record ID", readonly=True)
+    job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
+    job_source_model = fields.Char(string="Job Source Model", readonly=True)
+    job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
 
     # SYNCJOB INFO
-    job_fetched = fields.Datetime(string="Fetched Date", readonly=True)
-    job_start = fields.Datetime(string="Start", readonly=True)
-    job_end = fields.Datetime(string="End", readonly=True)
-    job_duration = fields.Integer(string="Duration (ms)", compute='_job_duration', readonly=True)
-    job_run_count = fields.Integer(string="Run Count", readonly=True,
+    job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
+    job_start = fields.Datetime(string="Job Start", readonly=True)
+    job_end = fields.Datetime(string="Job End", readonly=True)
+    job_duration = fields.Integer(string="Job Duration (ms)", compute='_job_duration', readonly=True)
+    job_run_count = fields.Integer(string="Job Run Count", readonly=True,
                                    help="Restarts triggered by changed source data in between job processing")
     # HINT: If a sync job is related to a flow listed in the instance pillar option "sosync_skipped_flows"
     #       the job and any related parent-job will get the state "skipped" from the sosyncer service
@@ -96,15 +96,16 @@ class SosyncJob(models.Model):
     sync_target_record_id = fields.Integer(string="Target Record ID", readonly=True)
 
     # SYNCHRONIZATION INFO
-    sync_source_data = fields.Text(string="SYNC SOURCE Data", readonly=True)
-    sync_target_request = fields.Text(string="SYNC TARGET Request(s)", readonly=True)
-    sync_target_answer = fields.Text(string="SYNC TARGET Answer(s)", readonly=True)
+    sync_source_data = fields.Text(string="Sync Source Data", readonly=True)
 
-    # SYNCHRONIZATION PROCESSING TIME
-    sync_start = fields.Datetime(string="SYNC Start", readonly=True)
-    sync_end = fields.Datetime(string="SYNC End", readonly=True)
-    sync_duration = fields.Integer(string="SYNC Duration (ms)",
-                                   compute="_target_request_duration", readonly=True)
+    sync_target_data_before = fields.Text(string="Sync Target Data before", readonly=True) # Not used in odoo
+    sync_target_request = fields.Text(string="Sync Target Request(s)", readonly=True)
+    sync_target_answer = fields.Text(string="Sync Target Answer(s)", readonly=True)
+    sync_target_data_after = fields.Text(string="Sync Target Data after", readonly=True) # Not used in odoo
+
+    sync_start = fields.Datetime(string="Sync Start", readonly=True)
+    sync_end = fields.Datetime(string="Sync End", readonly=True)
+    sync_duration = fields.Integer(string="Sync Duration (ms)", compute="_target_request_duration", readonly=True)
 
 
 
@@ -188,8 +189,8 @@ class SosyncJobQueue(models.Model):
                 response = session.get(url, headers=http_header, timeout=timeout,
                                        params={'job_date': record.job_date,
                                                'job_source_system': record.job_source_system,
-                                               'source_model': record.job_source_model,
-                                               'source_record_id': record.job_source_record_id})
+                                               'job_source_model': record.job_source_model,
+                                               'job_source_record_id': record.job_source_record_id})
             except Exception as e:
                 record.sudo().write({'job_state': 'submission_failed',
                                      'submission': submission,
@@ -300,12 +301,6 @@ class BaseSosync(models.AbstractModel):
             create_sync_job = True
         else:
             create_sync_job = self.env.context.get("create_sync_job", True)
-            if not create_sync_job:
-                # Enable sync jobs creation again!
-                # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
-                #            Therefore possible updates in other models can still create sync jobs which is the
-                #            intended and correct behaviour!
-                self = self.with_context(create_sync_job=True)
 
         # Create sync jobs and set the sosync_write_date
         if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
@@ -313,6 +308,13 @@ class BaseSosync(models.AbstractModel):
             self.create_sync_job()
             # Add sosync_write_date to values
             values["sosync_write_date"] = fields.datetime.now()
+
+        # Make sure sync jobs creation is enabled again
+        # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the
+        #            intended and correct behaviour!
+        if not create_sync_job:
+            self = self.with_context(create_sync_job=True)
 
         # Continue with create method
         return super(BaseSosync, self).create(values, **kwargs)
@@ -333,9 +335,6 @@ class BaseSosync(models.AbstractModel):
             create_sync_job = True
         else:
             create_sync_job = self.env.context.get("create_sync_job", True)
-            if not create_sync_job:
-                # Enable sync jobs creation again in the current context
-                self = self.with_context(create_sync_job=True)
 
         # Create sync jobs and set the sosync_write_date
         if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
@@ -343,6 +342,13 @@ class BaseSosync(models.AbstractModel):
             self.create_sync_job()
             # Add sosync_write_date to values
             values["sosync_write_date"] = fields.datetime.now()
+
+        # Make sure sync jobs creation is enabled again
+        # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the
+        #            intended and correct behaviour!
+        if not create_sync_job:
+            self = self.with_context(create_sync_job=True)
 
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)

@@ -14,12 +14,11 @@ class ResPartnerSosync(models.Model):
 
     # RELATED FIELDS
     #parent_id = fields.Many2one(sosync="True")     # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner in FSO
-    #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kentte es ausgelassen werden.
+    #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kann es ausgelassen werden.
     country_id = fields.Many2one(sosync="True")     # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind
     gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
     # ATTENTION: All languages that are used by FS must be installed manually in FS-O!
     lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US
-    BPKRequestIDS = fields.One2many(sosync="True")  # TODO: Later
 
     # -----------------------------------------------------------------------------------------------------------------
 
@@ -44,10 +43,13 @@ class ResPartnerSosync(models.Model):
     # - Moeglichkeit 2: Immer auf xPersonAdressegueltigLE
     # - Moeglichkeit 3: Was im Internet eingegeben wird wird als gueltige Adresse verspeichert und alle Anderen Adressen werden mit Gueltikeit Tagesdatum-1 gesetzt. Ausnahme: Kontaktpersonenadressen werden nicht auf ungueltig gesetzt
     # TODO: Entscheiden was genommen wird
+    # TODO: Besprechen ob eine Methode oder Funktion bei unvollstaendigen Adressen noch zusätzlich ausgeführt werden sollte -
+    #       wenn ja sollte es eine neue stored procedure im SQL geben dei alle notwendigen Akionen ausführt - diese sollte auch vom fs gui verwendet werden
+    # TODO: Frage: ist immer die zuletzt veränderte nicht Abgelaufene Adresse die gueltige? Antwort: Die letzte in der Anlagereihenfolge ist die gueltige Adresse
     street = fields.Char(sosync="True")
     street_number_web = fields.Char(sosync="True")
     #street2 = fields.Char(sosync="True")               # Nicht in FS vorhanden
-    post_office_box_web = fields.Char(sosync="True")                # Post Box Adresszusatz fuer CH
+    post_office_box_web = fields.Char(sosync="True")    # Post Box Adresszusatz fuer CH
     city = fields.Char(sosync="True")
     zip = fields.Char(sosync="True")
     # land id - siehe oben related fields country_id
@@ -82,6 +84,9 @@ class ResPartnerSosync(models.Model):
     #legal_terms_web = fields.Boolean(sosync="True")                 # Accept legal terms (webshop) derzit nur in FSO
 
     # BKP Forced Fields
+    #BPKRequestIDS = fields.One2many(sosync="True")  # nicht notwendig
     BPKForcedFirstname = fields.Char(sosync="True")
     BPKForcedLastname = fields.Char(sosync="True")
     BPKForcedBirthdate = fields.Date(sosync="True")
+    # TODO: Check field name
+    BPKForcedZip = fields.Char(sosync="True")

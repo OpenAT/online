@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 09:35+0000\n"
-"PO-Revision-Date: 2017-08-21 09:35+0000\n"
+"POT-Creation-Date: 2017-08-31 08:18+0000\n"
+"PO-Revision-Date: 2017-08-31 08:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -159,6 +159,16 @@ msgid "Auth Partner Form (fstoken)"
 msgstr "Meine-Daten Formular"
 
 #. module: auth_partner_form
+#: view:website:website.snippets
+msgid "BPK Status"
+msgstr "BPK Status"
+
+#. module: auth_partner_form
+#: view:website:website.snippets
+msgid "BPK-Status Snippet"
+msgstr "BPK-Status Snippet"
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.birthdate_web
 msgid "Birthdate"
 msgstr "Geburtsdatum"
@@ -169,6 +179,11 @@ msgid "CSS classes"
 msgstr "CSS Klassen"
 
 #. module: auth_partner_form
+#: view:website:website.snippets
+msgid "Checking Data ..."
+msgstr "Checking Data ..."
+
+#. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.city
 msgid "City"
 msgstr "Stadt"
@@ -176,7 +191,7 @@ msgstr "Stadt"
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,clearfix:0
 msgid "Clearfix"
-msgstr ""
+msgstr "Clearfix"
 
 #. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
@@ -232,13 +247,6 @@ msgid "Do not show res.partner data in the website form."
 msgstr "Spenderdaten nicht im Formular anzeigen!"
 
 #. module: auth_partner_form
-#: model:ir.actions.act_window,name:auth_partner_form.apf_partner_fields_action
-#: model:ir.ui.menu,name:auth_partner_form.apf_partner_fields_menu
-#: model:ir.ui.menu,name:auth_partner_form.menu_fsonline_apf_partner_fields_menu
-msgid "Donor Data Form"
-msgstr "Meine-Daten Form"
-
-#. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.email
 msgid "EMail"
 msgstr "E-Mail"
@@ -255,6 +263,11 @@ msgid "Firstname"
 msgstr "Vorname"
 
 #. module: auth_partner_form
+#: view:website:website.snippets
+msgid "Float"
+msgstr "Umlaufend"
+
+#. module: auth_partner_form
 #: field:website,apf_title_code_hide:0
 #: field:website.config.settings,apf_title_code_hide:0
 msgid "Hide Code Header"
@@ -269,7 +282,7 @@ msgstr "'Ihre Daten' Überschrift verstecken"
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,id:0
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: auth_partner_form
 #: model:website.apf_partner_fields,label:auth_partner_form.anrede_individuell
@@ -299,7 +312,7 @@ msgstr "Label"
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,__last_update:0
 msgid "Last Modified on"
-msgstr "Last Modified on"
+msgstr "Geändert am"
 
 #. module: auth_partner_form
 #: field:website.apf_partner_fields,write_uid:0
@@ -318,9 +331,14 @@ msgid "Lastname"
 msgstr "Nachname"
 
 #. module: auth_partner_form
+#: view:website:website.snippets
+msgid "Left"
+msgstr "Links"
+
+#. module: auth_partner_form
 #: view:website:auth_partner_form.meinedaten
 msgid "Logout"
-msgstr ""
+msgstr "Abmelden"
 
 #. module: auth_partner_form
 #: field:website,apf_logout_button:0
@@ -349,7 +367,14 @@ msgid "Meine Spenden bitte nicht absetzen"
 msgstr "Meine Spenden bitte nicht absetzen"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:177
+#: model:ir.actions.act_window,name:auth_partner_form.apf_partner_fields_action
+#: model:ir.ui.menu,name:auth_partner_form.apf_partner_fields_menu
+#: model:ir.ui.menu,name:auth_partner_form.menu_fsonline_apf_partner_fields_menu
+msgid "Meine-Daten Formular"
+msgstr "Meine-Daten Formular"
+
+#. module: auth_partner_form
+#: code:addons/auth_partner_form/controllers/controller.py:185
 #, python-format
 msgid "Missing or incorrect information! Please check your input."
 msgstr "Fehlende oder falsche Angaben! Bitte überprüfen Sie Ihre Eingabe."
@@ -363,6 +388,11 @@ msgstr "Graz"
 #: field:website.apf_partner_fields,nodata:0
 msgid "NoData"
 msgstr "NoData"
+
+#. module: auth_partner_form
+#: view:website:website.snippets
+msgid "Only the colored box below is visible for your website visitors!"
+msgstr "Nur die färbige Box ist für die Besucher Ihrer Webseite sichtbar!"
 
 #. module: auth_partner_form
 #: model:ir.model,name:auth_partner_form.model_res_partner
@@ -388,6 +418,11 @@ msgstr "Radio"
 #: selection:website.apf_partner_fields,style:0
 msgid "Radio + SelectNone"
 msgstr "Radio + SelectNone"
+
+#. module: auth_partner_form
+#: view:website:website.snippets
+msgid "Right"
+msgstr "Rechts"
 
 #. module: auth_partner_form
 #: selection:website.apf_partner_fields,style:0
@@ -435,6 +470,21 @@ msgstr "Angaben bestätigen"
 #: field:website.config.settings,apf_submit_button:0
 msgid "Submit Button"
 msgstr "'Angaben bestätigen' Button"
+
+#. module: auth_partner_form
+#: view:website:website.snippets
+msgid "This snippet indicates if the donor can be found in the Austrian Central Registry\n"
+"                                for automatic donation deduction with the data of the current form.\n"
+"                                This can only work if there is a form on the same page with this snippet that includes\n"
+"                                the fields firstname, lastname and birthdate_web.\n"
+"                                It will only show the success or error message if all required fields are filled by\n"
+"                                the donor and the service of the Austrian Central Registry is set up and available."
+msgstr "Dieses Snippet gibt dem Spender schon währen der Eingabe seiner Daten Auskunft darüber ob mit\n"
+"                                seinen Daten seine Spenden automatisiert an das Finanzamt übermittelt werden können.\n"
+"                                Dies ist nur möglich wenn sich auf Seite mit dem Snippet auch ein Formular befindet\n"
+"                                das die Felder Vorname, Nachname and Geburtstag beinhaltet.\n"
+"                                Das Snippet wird nur angezeigt wenn alle Felder ausgefüllt sind und mindestens\n"
+"                                bei einer Organisation die vollständigen und korrekten ZMR Zugangsdaten eingetragen sind."
 
 #. module: auth_partner_form
 #: field:website,apf_token_error_message:0
@@ -499,19 +549,19 @@ msgid "Your Data"
 msgstr "Ihre Daten"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:181
+#: code:addons/auth_partner_form/controllers/controller.py:189
 #, python-format
 msgid "Your code is valid!"
 msgstr "Ihr Code ist gültig!"
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:173
+#: code:addons/auth_partner_form/controllers/controller.py:181
 #, python-format
 msgid "Your data could not be updated. Please try again."
 msgstr "Ihre Daten konnten nicht aktualisiert werden. Bitte versuchen Sie es erneut."
 
 #. module: auth_partner_form
-#: code:addons/auth_partner_form/controllers/controller.py:170
+#: code:addons/auth_partner_form/controllers/controller.py:178
 #, python-format
 msgid "Your data was successfully updated!"
 msgstr "Ihre Daten wurden erfolgreich aktualisiert!"

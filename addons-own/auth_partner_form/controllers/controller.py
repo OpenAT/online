@@ -23,6 +23,7 @@ from openerp.tools.translate import _
 from openerp.addons.auth_partner.fstoken_tools import fstoken_check
 from openerp.addons.web.controllers.main import login_and_redirect
 
+import locale
 import urllib2
 import datetime
 import logging
@@ -104,11 +105,41 @@ class AuthPartnerForm(http.Controller):
             user = request.env['res.users'].sudo().browse([request.uid])
             partner = user.partner_id
 
-            # Add countries and states
-            countries = request.env['res.country']
-            countries = countries.sudo().search([])
-            states = request.env['res.country.state']
-            states = states.sudo().search([])
+            # Add sorted countries and states
+            # HINT: Sort by language in context for name field is not implemented in o8 fixed in o9 and up!
+            #       https://github.com/odoo/odoo/issues/5283
+            start_locale = locale.getlocale()
+            try:
+                # Try to set locale by website language for correct unicode sorting by name of countries
+                locale.setlocale(locale.LC_ALL, request.env.context.get("lang", "de_AT")+".UTF-8")
+            except:
+                logging.warning("Could not set locale for auth_partner_form for country and state "
+                                "sorting by website lang!")
+                pass
+            # Sorted Countries (add Austria and Germany to the top)
+            countries_obj = request.env['res.country'].sudo()
+            countries = countries_obj.search([])
+            countries_sorted = sorted(countries, cmp=locale.strcoll, key=lambda c: c.name)
+            countries_sorted_ids = [c.id for c in countries_sorted]
+            germany = countries_obj.search([('code', '=', 'DE')])
+            if germany:
+                countries_sorted_ids = [germany.id] + countries_sorted_ids
+            austria = countries_obj.search([('code', '=', 'AT')])
+            if austria:
+                countries_sorted_ids = [austria.id] + countries_sorted_ids
+            countries = countries_obj.browse(countries_sorted_ids)
+            # Sorted States
+            states_obj = request.env['res.country.state']
+            states = states_obj.sudo().search([])
+            states_sorted = sorted(states, cmp=locale.strcoll, key=lambda s: s.name)
+            states = states_obj.sudo().browse([s.id for s in states_sorted])
+            try:
+                # Revert to original locale
+                locale.setlocale(locale.LC_ALL, start_locale)
+            except:
+                logging.warning("Could not revert to initial locale for auth_partner_form after country and state "
+                                "sorting by website lang!")
+                pass
 
             # Find fields_to_update
             fields_to_update = dict()
