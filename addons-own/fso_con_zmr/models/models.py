@@ -14,6 +14,7 @@ from datetime import timedelta
 from dateutil import tz
 import logging
 import re
+from requests import Timeout
 import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -805,7 +806,7 @@ class ResPartnerZMRGetBPK(models.Model):
         return self.write({'BPKRequestNeeded': False})
 
     @api.multi
-    def set_bpk(self):
+    def set_bpk(self, force_request=False):
         """
         Creates or Updates BPK request for the given partner recordset (=BPKRequestIDS)
 
@@ -850,7 +851,7 @@ class ResPartnerZMRGetBPK(models.Model):
             #       in the interface: e.g.: 'force_request'. But be careful: if there are options in the interface
             #       set_bpk() could not be called by buttons or server actions directly any more because of
             #       mapping problems from old api to new api (just create a wrapper method like for the buttons)
-            if p.bpk_requests_matches_partner_data():
+            if not force_request and p.bpk_requests_matches_partner_data():
                 errors[p.id] = _("%s (ID %s): Skipped BPK request! Partner data matches existing BPK request data!") \
                                % (p.name, p.id)
                 if not p.LastBPKRequest:
@@ -885,17 +886,19 @@ class ResPartnerZMRGetBPK(models.Model):
                 resp = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web,
                                         zipcode=zipcode)
                 assert resp, _("%s (ID %s): No BPK-Request response(s)!")
-            except GenericTimeoutError as e:
+            except Timeout as e:
                 try:
-                    errors[p.id] = _("%s (ID %s): BPK-Request exception: %s") % (p.name, p.id, e)
+                    errors[p.id] = _("%s (ID %s): BPK-Request Timeout Exception: %s") % (p.name, p.id, e)
                 except:
-                    errors[p.id] = _("GenericTimeoutError")
-                # ATTENTION: On a timeout we do not clear the BPKRequestNeeded date so that there will be a retry on
-                #            the next scheduler run!
+                    errors[p.id] = _("BPK-Request Timeout Exception")
+                logger.info(errors[p.id])
+                # ATTENTION: On a timeout we do not clear the BPKRequestNeeded date and do NOT update or create a
+                #            res.partner.bpk record so that there will be a retry on the next scheduler run!
                 finish_partner(p, bpk_request_error=errors[p.id], bpk_request_needed=p.BPKRequestNeeded)
                 continue
             except Exception as e:
                 errors[p.id] = _("%s (ID %s): BPK-Request exception: %s") % (p.name, p.id, e)
+                logger.info(errors[p.id])
                 finish_partner(p, bpk_request_error=errors[p.id])
                 continue
 
@@ -998,10 +1001,11 @@ class ResPartnerZMRGetBPK(models.Model):
             # END: partner for loop
 
         # Log runtime and error dictionary
-        if len(self) > 1:
-            logger.info("set_bpk(): Processed %s partners in %.3f seconds" % (len(self), time.time()-start_time))
-            if errors:
-                logger.warning("set_bpk(): Partners with errors: %s" % errors)
+        # TODO: do not log single partners any more if error of zomby process could be found (enable if again)
+        # if len(self) > 1:
+        logger.info("set_bpk(): Processed %s partners in %.3f seconds" % (len(self), time.time()-start_time))
+        if errors:
+            logger.warning("set_bpk(): Partners with errors: %s" % errors)
 
         # RETURN ERROR DICTIONARY
         # HINT: An empty dict() means no errors where found!
@@ -1323,13 +1327,14 @@ class ResPartnerZMRGetBPK(models.Model):
                     (limit, max_runtime_in_minutes))
 
         # Find partner
+        logger.info("scheduled_set_bpk(): Run find_bpk_partners_to_update()")
         partners_to_update = self.find_bpk_partners_to_update(quick_search=True,
                                                               search_all_partner=True,
                                                               limit=limit)
 
         # Run set BPK per partner until its done or runtime_in_seconds (-2s for safety) reached
         runtime_start = datetime.datetime.now()
-        runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_seconds - 2)
+        runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_seconds - 4)
         partners_done = 0
         for p in partners_to_update:
 
@@ -1341,6 +1346,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Run set_bpk for every partner
             try:
+                logger.info("scheduled_set_bpk(): Run set_bpk() for %s!" % p.name)
                 p.set_bpk()
             except Exception as e:
                 logger.error("scheduled_set_bpk(): set_bpk() exception for partner %s (ID: %s):\n%s\n" %
