@@ -185,10 +185,10 @@
 
     <!-- Scheduled fetch of BPK Records for res.partner -->
     <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
-        <field name="name">BPK: Scheduled fetch of BPK Records every minute</field>
+        <field name="name">BPK: Scheduled fetch of BPK Records every two minutes</field>
         <field name="priority" eval="2000" />
-        <field name="active" eval="False"/>
-        <field name="interval_number">1</field>
+        <field name="active" eval="True"/>
+        <field name="interval_number">2</field>
         <field name="interval_type">minutes</field>
         <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>

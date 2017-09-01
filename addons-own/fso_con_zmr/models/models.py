@@ -1323,7 +1323,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Log start
         logger.info(_("scheduled_set_bpk(): "
-                      "Start to process a maximum of %s partner in %s minutes") %
+                      "START: process a maximum of %s partner in %s minutes") %
                     (limit, max_runtime_in_minutes))
 
         # Find partner
@@ -1334,7 +1334,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Run set BPK per partner until its done or runtime_in_seconds (-2s for safety) reached
         runtime_start = datetime.datetime.now()
-        runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_seconds - 4)
+        runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_seconds - 22)
         partners_done = 0
         for p in partners_to_update:
 
@@ -1356,7 +1356,7 @@ class ResPartnerZMRGetBPK(models.Model):
             partners_done += 1
 
         # Log processing info
-        logger.info("scheduled_set_bpk(): Processed %s partner in %.3f second" %
+        logger.info("scheduled_set_bpk(): END: Processed %s partner in %.3f second" %
                     (partners_done, time.time() - start_time))
 
     @api.model
