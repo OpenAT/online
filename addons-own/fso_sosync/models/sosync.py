@@ -51,8 +51,8 @@ class SosyncJob(models.Model):
 
     # SYNCJOB INFO
     job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
-    job_start = fields.Datetime(string="Job Start", readonly=True)
-    job_end = fields.Datetime(string="Job End", readonly=True)
+    job_start = fields.Char(string="Job Start", readonly=True)
+    job_end = fields.Char(string="Job End", readonly=True)
     job_duration = fields.Integer(string="Job Duration (ms)", compute='_job_duration', readonly=True)
     job_run_count = fields.Integer(string="Job Run Count", readonly=True,
                                    help="Restarts triggered by changed source data in between job processing")
@@ -86,8 +86,8 @@ class SosyncJob(models.Model):
                                       readonly=True)
 
     # CHILD JOBS PROCESSING TIME
-    child_job_start = fields.Datetime(string="Child Processing Start", readonly=True)
-    child_job_end = fields.Datetime(string="Child Processing End", readonly=True)
+    child_job_start = fields.Char(string="Child Processing Start", readonly=True)
+    child_job_end = fields.Char(string="Child Processing End", readonly=True)
     child_job_duration = fields.Integer(string="Child Processing Duration", compute="_child_duration", readonly=True)
 
     # SYNCHRONIZATION SOURCE
@@ -108,8 +108,8 @@ class SosyncJob(models.Model):
     sync_target_answer = fields.Text(string="Sync Target Answer(s)", readonly=True)
     sync_target_data_after = fields.Text(string="Sync Target Data after", readonly=True) # Not used in odoo
 
-    sync_start = fields.Datetime(string="Sync Start", readonly=True)
-    sync_end = fields.Datetime(string="Sync End", readonly=True)
+    sync_start = fields.Char(string="Sync Start", readonly=True)
+    sync_end = fields.Char(string="Sync End", readonly=True)
     sync_duration = fields.Integer(string="Sync Duration (ms)", compute="_target_request_duration", readonly=True)
 
 
