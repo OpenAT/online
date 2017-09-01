@@ -3,3 +3,4 @@
 import sosync
 import res_partner
 import res_company
+import res_partner_bpk

@@ -4,6 +4,7 @@ from openerp import api, models, fields, osv
 from openerp.addons.fso_base.tools.validate import is_valid_url
 import requests
 from requests import Session
+from dateutil import parser
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,12 @@ class GenericTimeoutError(Exception):
 
 # HELPER FUNCTIONS
 def _duration_in_ms(start_datetime, end_datetime):
-    duration = end_datetime - start_datetime
-    return int(duration.total_seconds() * 1000)
+    try:
+        duration = parser.parse(end_datetime) - parser.parse(start_datetime)
+        return int(duration.total_seconds() * 1000)
+    except:
+        pass
+    return None
 
 
 # NEW ODOO MODEL: sosync.job
@@ -302,22 +307,28 @@ class BaseSosync(models.AbstractModel):
         else:
             create_sync_job = self.env.context.get("create_sync_job", True)
 
-        # Create sync jobs and set the sosync_write_date
-        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
-            # Create Sync Job
-            self.create_sync_job()
-            # Add sosync_write_date to values
-            values["sosync_write_date"] = fields.datetime.now()
-
-        # Make sure sync jobs creation is enabled again
+        # Make sure sync jobs creation is enabled in the context again
         # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
         #            Therefore possible updates in other models can still create sync jobs which is the
         #            intended and correct behaviour!
         if not create_sync_job:
             self = self.with_context(create_sync_job=True)
 
+        # Set the sosync_write_date
+        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
+            # Add sosync_write_date to values
+            values["sosync_write_date"] = fields.datetime.now()
+
+        # Create the record
+        rec = super(BaseSosync, self).create(values, **kwargs)
+
+        # Create the sync job
+        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()) and rec:
+            # Create Sync Job
+            rec.create_sync_job()
+
         # Continue with create method
-        return super(BaseSosync, self).create(values, **kwargs)
+        return rec
 
     @api.multi
     def write(self, values, **kwargs):
@@ -336,19 +347,19 @@ class BaseSosync(models.AbstractModel):
         else:
             create_sync_job = self.env.context.get("create_sync_job", True)
 
+        # Make sure sync jobs creation is enabled in the context again
+        # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the
+        #            intended and correct behaviour!
+        if not create_sync_job:
+            self = self.with_context(create_sync_job=True)
+
         # Create sync jobs and set the sosync_write_date
         if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
             # Create Sync Job
             self.create_sync_job()
             # Add sosync_write_date to values
             values["sosync_write_date"] = fields.datetime.now()
-
-        # Make sure sync jobs creation is enabled again
-        # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
-        #            Therefore possible updates in other models can still create sync jobs which is the
-        #            intended and correct behaviour!
-        if not create_sync_job:
-            self = self.with_context(create_sync_job=True)
 
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)

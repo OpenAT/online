@@ -11,20 +11,22 @@
                 <header>
                     <field name="job_state" widget="statusbar" statusbar_visible="new,inprogress,done"/>
                 </header>
-                <group string="SyncJob Basics">
+                <group string="Job Info">
                     <group>
                         <field name="job_id"/>
                         <field name="job_date"/>
-                        <field name="job_fetched"/>
+                        <field name="job_source_system"/>
+                        <field name="job_source_model"/>
+                        <field name="job_source_record_id"/>
                     </group>
                     <group>
+                        <field name="job_fetched"/>
                         <field name="job_start"/>
                         <field name="job_end"/>
                         <field name="job_duration"/>
-                        <field name="job_run_count"/>
                     </group>
                 </group>
-                <group string="Job Info">
+                <group string="Sync Info">
                     <group>
                         <field name="job_source_system"/>
                         <field name="job_source_model"/>
@@ -36,25 +38,86 @@
                         <field name="sync_target_record_id"/>
                     </group>
                 </group>
-                <group string="Child Jobs">
-                    <field name="parent_job_id"/>
-                    <field name="child_job_start"/>
-                    <field name="child_job_end"/>
-                    <field name="child_job_duration"/>
-                    <field name="parent_job_odoo"/>
-                    <field name="child_jobs_odoo"/>
-                </group>
-                <group string="Sync Info">
-                    <field name="sync_source_data"/>
-                    <field name="sync_start"/>
-                    <field name="sync_end"/>
-                    <field name="sync_duration"/>
-                    <field name="sync_target_request"/>
-                    <field name="sync_target_answer"/>
-                    <field name="job_error_code"/>
-                    <field name="job_error_text"/>
-                    <field name="job_log"/>
-                </group>
+                <notebook>
+                    <page string="Job Detail">
+
+
+                        <group string="Parent Job">
+                            <group>
+                                <field name="parent_job_id"/>
+                            </group>
+                            <group>
+                                <field name="parent_job_odoo"/>
+                            </group>
+                        </group>
+                        <group string="Job Details">
+                            <group>
+                                <field name="job_run_count"/>
+                                <field name="sync_start"/>
+                                <field name="sync_end"/>
+                                <field name="sync_duration"/>
+                            </group>
+                            <group>
+                                <field name="id" readonly="True"/>
+                                <field name="create_date" readonly="True"/>
+                                <field name="create_uid" readonly="True"/>
+                                <field name="write_date" readonly="True"/>
+                                <field name="write_uid" readonly="True"/>
+                            </group>
+                        </group>
+                        <label for="job_error_code"/>
+                        <field name="job_error_code"/>
+                        <label for="job_error_text"/>
+                        <field name="job_error_text"/>
+                        <label for="job_log"/>
+                        <field name="job_log"/>
+                    </page>
+                    <page string="Child Jobs">
+                        <group>
+                            <field name="child_job_start"/>
+                            <field name="child_job_end"/>
+                            <field name="child_job_duration"/>
+                        </group>
+                        <label for="child_jobs_odoo"/>
+                        <field name="child_jobs_odoo">
+                            <tree string="Child Jobs" default_order="write_date DESC"
+                                  colors="red:job_state in ('error', 'skipped');
+                                          orange:job_state in ('inprogress',);
+                                          green:job_state in ('done',)">
+                                <field name="job_id"/>
+                                <field name="job_date"/>
+                                <field name="job_start"/>
+                                <field name="job_end"/>
+                                <field name="child_jobs_odoo"/>
+                                <field name="job_run_count"/>
+                                <field name="job_state"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Source Data">
+                        <label for="sync_source_data"/>
+                        <field name="sync_source_data"/>
+                    </page>
+
+                    <page string="Target Data Before">
+                        <label for="sync_target_data_before"/>
+                        <field name="sync_target_data_before"/>
+                    </page>
+                    <page string="Target Request(s)">
+                        <label for="sync_target_request"/>
+                        <field name="sync_target_request"/>
+                    </page>
+
+                    <page string="Target Answer">
+                        <label for="sync_target_answer"/>
+                        <field name="sync_target_answer"/>
+
+                    </page>
+                    <page string="Target Data After">
+                        <label for="sync_target_data_after"/>
+                        <field name="sync_target_data_after"/>
+                    </page>
+                </notebook>
             </form>
         </field>
     </record>
@@ -65,7 +128,7 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Sosync Job"
-                  default_order="job_date,job_fetched"
+                  default_order="write_date DESC, job_date DESC, job_fetched DESC"
                   colors="
                       red:job_state in ('error', 'skipped');
                       orange:job_state in ('inprogress',);
@@ -80,6 +143,7 @@
                 <field name="sync_target_model"/>
                 <field name="sync_target_record_id"/>
                 <field name="job_state"/>
+                <field name="write_date"/>
             </tree>
         </field>
     </record>
@@ -110,6 +174,7 @@
                 <field name="sync_target_system"/>
                 <field name="sync_target_model"/>
                 <field name="sync_target_record_id"/>
+                <field name="write_date"/>
             </search>
         </field>
     </record>
