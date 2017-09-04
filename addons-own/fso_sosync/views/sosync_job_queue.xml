@@ -39,7 +39,7 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Sosync Job Queue"
-                  default_order="job_date,submission"
+                  default_order="job_date DESC, submission DESC"
                   colors="
                       red:job_state in ('submission_failed',);
                       green:job_state in ('submitted',)">

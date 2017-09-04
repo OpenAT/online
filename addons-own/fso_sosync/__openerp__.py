@@ -54,9 +54,10 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         'security/ir.model.access.csv',
         'views/sosync_job.xml',
         'views/sosync_job_queue.xml',
-        #'views/fsonline_menu.xml',
+        'views/fsonline_menu.xml',
         'views/res_partner.xml',
         'data/actions.xml',
+        'data/scheduled_actions.xml',
         'data/user_sosync.xml',
     ],
 }

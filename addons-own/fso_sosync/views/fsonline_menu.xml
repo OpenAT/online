@@ -2,6 +2,8 @@
 <openerp>
     <data>
 
+        <menuitem id="menu_fsonline_sosync_job_menu" action="sosync_job_action" parent="fso_base.menu_fsonline_settings" sequence="10885"/>
+        <menuitem id="menu_fsonline_sosync_job_queue_menu" action="sosync_job_queue_action" parent="fso_base.menu_fsonline_settings" sequence="10886"/>
 
     </data>
 </openerp>

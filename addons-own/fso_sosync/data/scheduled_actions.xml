@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data noupdate="1">
+
+    <!-- Scheduled submission of new sync jobs in the sosync job queue -->
+    <record id="ir_cron_scheduled_job_queue_submission" model="ir.cron">
+        <field name="name">SOSYNC: Submit sync jobs in the sosync job queue</field>
+        <field name="priority" eval="3000" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">sosync.job.queue</field>
+        <field name="function">scheduled_job_queue_submission</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+</data></openerp>
