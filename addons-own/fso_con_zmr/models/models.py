@@ -740,6 +740,7 @@ class ResPartnerZMRGetBPK(models.Model):
     # RECORD ACTIONS
     # --------------
     # Check if the request data matches the partner data
+    # TODO: Should be renamed to bpk_requests_matches_partner_data_and_faultcode()
     @api.multi
     def bpk_requests_matches_partner_data(self):
         assert self.ensure_one(), _("bpk_requests_matches_partner_data() is only allowed for one partner at once")
@@ -767,11 +768,18 @@ class ResPartnerZMRGetBPK(models.Model):
                             }
 
         # CHECK IF THE DATA OF ALL BPK-REQUESTS MATCH THE DATA OF THE PARTNER FIELDS
-        # HINT: If any of the BPK Request data does not match the current partner data we return 'False'
+        # HINT: If any of the BPK Request data does not match the current partner data
+        #       OR the error code in any BPK request is unknown (e.g.: service timeout)
+        #       we return 'False'
         # ATTENTION: False == u'' will resolve to False! Therefore we use " ... or '' "
         for r in p.BPKRequestIDS:
             # ATTENTION: Only check non orphan bpk records so we do not reinclude them again and again
             if r.BPKRequestCompanyID.id in bpk_companies.ids:
+
+                # If the last BPK-Request got an error and the faultcode is unknown return False
+                if r.BPKErrorRequestDate > r.BPKRequestData:
+                    if not any(code in r.BPKErrorCode for code in ['F230', 'F231', 'F233']):
+                        return False
 
                 # Prepare the bpk request data to compare
                 if r.BPKErrorRequestDate > r.BPKRequestData:
@@ -851,6 +859,8 @@ class ResPartnerZMRGetBPK(models.Model):
             #       in the interface: e.g.: 'force_request'. But be careful: if there are options in the interface
             #       set_bpk() could not be called by buttons or server actions directly any more because of
             #       mapping problems from old api to new api (just create a wrapper method like for the buttons)
+            # TODO: BETTER IDEA: Check the BPK request if an known error state is included - if not
+            #                    redo the request
             if not force_request and p.bpk_requests_matches_partner_data():
                 errors[p.id] = _("%s (ID %s): Skipped BPK request! Partner data matches existing BPK request data!") \
                                % (p.name, p.id)
