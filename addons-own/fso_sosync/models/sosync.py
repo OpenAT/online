@@ -262,8 +262,8 @@ class BaseSosync(models.AbstractModel):
 
     # NEW COMMON FIELDS
     sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True)
-    sosync_write_date = fields.Datetime(string="Sosync Write Date", readonly=True,
-                                        help="Last change of one or more sosync-tracked-fields.")
+    sosync_write_date = fields.Char(string="Sosync Write Date", readonly=True,
+                                    help="Last change of one or more sosync-tracked-fields.")
     # HINT: Is a char field to show exact ms
     sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
                                    help="Exact datetime of source-data-readout for the sync job!")
