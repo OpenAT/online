@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- Fundraising Studio requests GROUP -->
+        <record id="fso_base.instance_system_user" model="res.groups">
+            <field name="name">FS-Online Instance System User Group (Do not assign to regular user)</field>
+            <field name="comment">
+                Group members of the FS-Online Instance System User Group have access to most of the odoo models.
+                This is a technical group and should never be assigned to regular user!
+            </field>
+            <!-- Inherited Groups -->
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('account.group_account_manager')),
+                   (4, ref('base.group_erp_manager')),
+                   (4, ref('base.group_system')),
+                   (4, ref('base.group_user')),
+                   (4, ref('base.group_sale_manager')),
+                   (4, ref('base.group_document_user')),
+                   (4, ref('event.group_event_manager')),
+                   (4, ref('gamification.group_goal_manager')),
+                   (4, ref('base.group_hr_manager')),
+                   (4, ref('base.group_hr_attendance')),
+                   (4, ref('base.group_hr_user')),
+                   (4, ref('im_livechat.group_im_livechat_manager')),
+                   (4, ref('lunch.group_lunch_manager')),
+                   (4, ref('marketing.group_marketing_manager')),
+                   (4, ref('project.group_project_manager')),
+                   (4, ref('purchase.group_purchase_manager')),
+                   (4, ref('stock.group_stock_manager')),
+                   (4, ref('base.group_survey_manager')),
+                   (4, ref('base.group_website_designer')),
+                   (4, ref('base.group_no_one')),
+                   (4, ref('fso_base.group_fs_group_manager')),
+                   (4, ref('auth_partner.group_fstoken_manager')),
+                   ]"/>
+        </record>
+        
+    </data>
+</openerp>

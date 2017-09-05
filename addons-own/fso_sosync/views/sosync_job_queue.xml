@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
             <form string="Sosync Job Queue">
                 <header>
-                    <field name="job_state" widget="statusbar" statusbar_visible="new,submitted"/>
+                    <field name="submission_state" widget="statusbar" statusbar_visible="new,submitted"/>
                 </header>
                 <group>
                     <group string="Job Basics">
@@ -21,7 +21,10 @@
                         <field name="job_source_system"/>
                         <field name="job_source_model"/>
                         <field name="job_source_record_id"/>
+                        <field name="job_source_sosync_write_date"/>
                     </group>
+                    <label for="job_source_fields"/>
+                    <field name="job_source_fields"/>
                 </group>
                 <group string="Submission">
                     <field name="submission"/>
@@ -41,8 +44,8 @@
             <tree string="Sosync Job Queue"
                   default_order="job_date DESC, submission DESC"
                   colors="
-                      red:job_state in ('submission_failed',);
-                      green:job_state in ('submitted',)">
+                      red:submission_state in ('submission_failed',);
+                      green:submission_state in ('submitted',)">
                 <field name="id"/>
                 <field name="job_date"/>
                 <field name="submission"/>
@@ -50,7 +53,7 @@
                 <field name="job_source_system"/>
                 <field name="job_source_model"/>
                 <field name="job_source_record_id"/>
-                <field name="job_state"/>
+                <field name="submission_state"/>
             </tree>
         </field>
     </record>

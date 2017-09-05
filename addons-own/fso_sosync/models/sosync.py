@@ -1,10 +1,13 @@
 # -*- coding: utf-'8' "-*-"
 import logging
 from openerp import api, models, fields, osv
+from openerp.tools.translate import _
 from openerp.addons.fso_base.tools.validate import is_valid_url
 import requests
-from requests import Session
+from requests import Request, Session
+from requests import Timeout
 from dateutil import parser
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +51,8 @@ class SosyncJob(models.Model):
     job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
     job_source_model = fields.Char(string="Job Source Model", readonly=True)
     job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
+    job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
+    job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
 
     # SYNCJOB INFO
     job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
@@ -138,24 +143,28 @@ class SosyncJob(models.Model):
 class SosyncJobQueue(models.Model):
     """
     This is the queue of jobs that needs to be submitted to the sosyncer.
-    Submission is done by a simple REST URL call to the sosyncer with the fields source_system, source_model and
-    and source_record_id.
-    Example: http://sosync.care.datadialog.net?source_system=fso&source_model=res
+    Submission is done by a simple REST URL call to the sosyncer
     """
     _name = 'sosync.job.queue'
-    _inherit = 'sosync.job'
+
+    # CONSTANTS
+    _systems = [("fso", "FS-Online"), ("fs", "Fundraising Studio")]
 
     # FIELDS
-    # Remove of readonly attribute for testing purposes and manual sync job creation in the queue
-    job_date = fields.Datetime(readonly=False)
-    job_source_system = fields.Selection(readonly=False)
-    job_source_model = fields.Char(readonly=False)
-    job_source_record_id = fields.Integer(readonly=False)
+    # Job Info
+    job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True)
+    job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
+    job_source_model = fields.Char(string="Job Source Model", readonly=True)
+    job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
+    job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
+    job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
 
-    # Add new Fields only suitable for the queue
-    job_state = fields.Selection(selection_add=([("submitted", "Submitted"),
-                                                 ("submission_failed", "Submission Failed")]),
-                                 readonly=True)
+    # Submission Info
+    submission_state = fields.Selection(selection=[("new", "New"),
+                                            ("submitted", "Submitted"),
+                                            ("submission_error", "Submission Error")
+                                            ],
+                                 string="State", default="new", readonly=True)
 
     submission = fields.Datetime(string="Submission", readonly=True)
     submission_response_code = fields.Char(string="Response Code", help="HTTP Response Code", readonly=True)
@@ -170,9 +179,12 @@ class SosyncJobQueue(models.Model):
     @api.multi
     def submit_sync_job(self, instance="", url="", http_header={},
                         crt_pem="", prvkey_pem="", user="", pwd="", timeout=4):
-        # Instance ID from first company (e.g.: care)
-        instance = instance or self.env['res.company'].sudo().search([], limit=1).instance_id
-        assert instance, "Instance ID for the default (first) company is missing!"
+
+        # Instance ID from main (= Instance) company (e.g.: care)
+        # TODO: Make a new boolean checkbox to mark one company as the instance company!
+        instance = instance or self.env['res.company'].sudo().search([("instance_company", "=", True)],
+                                                                     limit=1).instance_id
+        assert instance, "'Instance ID' for the main instance company is missing!"
 
         # Sosync service url (in internal network)
         url = url or "http://sosync."+instance+".datadialog.net/job/create"
@@ -190,33 +202,46 @@ class SosyncJobQueue(models.Model):
         for record in self:
             logger.info("Submitting sosync sync-job %s from queue to %s!" % (record.id, url))
             submission = fields.Datetime.now()
+            data = {'job_date': record.job_date,
+                    'job_source_system': record.job_source_system,
+                    'job_source_model': record.job_source_model,
+                    'job_source_record_id': record.job_source_record_id,
+                    'job_source_sosync_write_date': record.job_source_sosync_write_date,
+                    'job_source_fields': record.job_source_fields,
+                    }
             try:
-                response = session.get(url, headers=http_header, timeout=timeout,
-                                       params={'job_date': record.job_date,
-                                               'job_source_system': record.job_source_system,
-                                               'job_source_model': record.job_source_model,
-                                               'job_source_record_id': record.job_source_record_id})
+                response = session.post(url, headers=http_header, timeout=timeout, data=data)
+
+            # Timeout Exception
+            except Timeout as e:
+                logger.error("Submitting sosync sync-job %s request Timeout exception!" % record.id)
+                record.sudo().write({'submission_state': 'submission_error',
+                                     'submission': submission,
+                                     'submission_error': 'timeout',
+                                     'submission_response_code': '',
+                                     'submission_response_body': "GET Request Exception:\n%s" % e})
+                continue
+
+            # Generic Exception
             except Exception as e:
-                record.sudo().write({'job_state': 'submission_failed',
+                record.sudo().write({'submission_state': 'submission_failed',
                                      'submission': submission,
                                      'submission_error': 'error',
                                      'submission_response_code': '',
                                      'submission_response_body': "GET Request Exception:\n%s" % e})
-                # Continue with next record
                 continue
 
             # HTTP Error Code returned
             if response.status_code != requests.codes.ok:
-                record.sudo().write({'job_state': 'submission_failed',
+                record.sudo().write({'submission_state': 'submission_error',
                                      'submission': submission,
                                      'submission_error': 'error',
                                      'submission_response_code': response.status_code,
                                      'submission_response_body': response.content})
-                # Continue with next record
                 continue
 
             # Submission was successful
-            record.sudo().write({'job_state': 'submitted',
+            record.sudo().write({'submission_state': 'submitted',
                                  'submission': submission,
                                  'submission_error': '',
                                  'submission_response_code': response.status_code,
@@ -246,11 +271,14 @@ class SosyncJobQueue(models.Model):
             limit = 1 if limit <= 0 else limit
 
         # Search for new sync jobs to submit
-        new_jobs_in_queue = self.search([('job_state', '=', 'new')], limit=limit)
+        # HINT: Search for jobs in queue with errors first to block further submission until this jobs are submitted
+        jobs_in_queue = self.search([('submission_state', '=', 'submission_error')], limit=limit)
+        if not jobs_in_queue:
+            jobs_in_queue = self.search([('submission_state', '=', 'new')], limit=limit)
 
         # Submit jobs to sosync service
-        if new_jobs_in_queue:
-            new_jobs_in_queue.submit_sync_job()
+        if jobs_in_queue:
+            jobs_in_queue.submit_sync_job()
         else:
             logger.info("No sosync sync-jobs in queue to submit!")
 
@@ -269,6 +297,10 @@ class BaseSosync(models.AbstractModel):
                                    help="Exact datetime of source-data-readout for the sync job!")
 
     @api.model
+    def _sosync_write_date_now(self):
+        return datetime.datetime.utcnow().isoformat() + "Z"
+
+    @api.model
     def _get_sosync_tracked_fields(self, updated_fields=list()):
         sosync_tracked_fields = list()
 
@@ -278,18 +310,27 @@ class BaseSosync(models.AbstractModel):
 
         return sosync_tracked_fields
 
+    @api.model
+    def _sosync_watched_fields(self, values={}):
+        tracked_fields = self._get_sosync_tracked_fields()
+        watched_fields = {key: values[key] for key in values if key in tracked_fields}
+        return watched_fields
+
     @api.multi
-    def create_sync_job(self):
+    def create_sync_job(self, job_date=fields.Datetime.now(), sosync_write_date="", job_source_fields=dict()):
+        assert job_source_fields, _("create_sync_job(): job_source_fields is empty!")
         # Get the sosync.job.queue model in a new environment with the su user
         job_queue = self.env["sosync.job.queue"].sudo()
-        date = fields.Datetime.now()
         model = self._name
         for record in self:
-            job = job_queue.create({"job_date": date,
-                                    "job_state": "new",
+            date = sosync_write_date or record.sosync_write_date
+            assert date, _("create_sync_job(): sosync_write_date missing on Job-Queue job creation")
+            job = job_queue.create({"job_date": job_date,
                                     "job_source_system": "fso",
                                     "job_source_model": model,
                                     "job_source_record_id": record.id,
+                                    "job_source_sosync_write_date": date,
+                                    "job_source_fields": job_source_fields,
                                     })
             logger.info("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
 
@@ -314,20 +355,21 @@ class BaseSosync(models.AbstractModel):
         if not create_sync_job:
             self = self.with_context(create_sync_job=True)
 
+        # Find all watched Fields
+        watched_fields = self._sosync_watched_fields(values)
+
         # Set the sosync_write_date
-        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
-            # Add sosync_write_date to values
-            values["sosync_write_date"] = fields.datetime.now()
+        sosync_write_date = self._sosync_write_date_now()
 
         # Create the record
+        if create_sync_job and watched_fields:
+            values["sosync_write_date"] = sosync_write_date
         rec = super(BaseSosync, self).create(values, **kwargs)
 
         # Create the sync job
-        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()) and rec:
-            # Create Sync Job
-            rec.create_sync_job()
+        if create_sync_job and watched_fields and rec:
+            rec.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields)
 
-        # Continue with create method
         return rec
 
     @api.multi
@@ -354,12 +396,14 @@ class BaseSosync(models.AbstractModel):
         if not create_sync_job:
             self = self.with_context(create_sync_job=True)
 
-        # Create sync jobs and set the sosync_write_date
-        if create_sync_job and any(field_key in values for field_key in self._get_sosync_tracked_fields()):
-            # Create Sync Job
-            self.create_sync_job()
-            # Add sosync_write_date to values
-            values["sosync_write_date"] = fields.datetime.now()
+        # Find all watched Fields
+        watched_fields = self._sosync_watched_fields(values)
+
+        # Create sync job(s) and set the sosync_write_date
+        if create_sync_job and watched_fields:
+            sosync_write_date = self._sosync_write_date_now()
+            self.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields)
+            values["sosync_write_date"] = sosync_write_date
 
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)

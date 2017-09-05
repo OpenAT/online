@@ -88,7 +88,7 @@ TODO (must be done manually right now):
         'web_export_view',
         'report_custom_filename',
         'partner_contact_gender',
-        # Default Own Addons
+        # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',
         'partner_firstname_lastname',
@@ -105,6 +105,7 @@ TODO (must be done manually right now):
         'data/email_templates.xml',
         'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
+        'data/instance_system_user_group.xml',
         'views/fsonline_menu.xml',
         'views/templates_backend_css.xml',
         'views/res_company.xml',

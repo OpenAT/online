@@ -18,6 +18,7 @@
                         <field name="job_source_system"/>
                         <field name="job_source_model"/>
                         <field name="job_source_record_id"/>
+                        <field name="job_source_sosync_write_date"/>
                     </group>
                     <group>
                         <field name="job_fetched"/>
@@ -40,8 +41,6 @@
                 </group>
                 <notebook>
                     <page string="Job Detail">
-
-
                         <group string="Parent Job">
                             <group>
                                 <field name="parent_job_id"/>
@@ -65,6 +64,8 @@
                                 <field name="write_uid" readonly="True"/>
                             </group>
                         </group>
+                        <label for="job_source_fields"/>
+                        <field name="job_source_fields"/>
                         <label for="job_error_code"/>
                         <field name="job_error_code"/>
                         <label for="job_error_text"/>
