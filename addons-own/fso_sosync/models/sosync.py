@@ -197,7 +197,8 @@ class SosyncJobQueue(models.Model):
 
         # Sosync service url (in internal network)
         url_overwrite = self.env['res.company'].sudo().search([("instance_company", "=", True)], limit=1)
-        url_overwrite = url_overwrite.sosync_job_submission_url
+        if url_overwrite:
+            url_overwrite = url_overwrite.sosync_job_submission_url
         url = url or url_overwrite or "http://sosync."+instance+".datadialog.net/job/create"
         is_valid_url(url=url, dns_check=False)
 
@@ -241,7 +242,7 @@ class SosyncJobQueue(models.Model):
 
             # Generic Exception
             except Exception as e:
-                record.sudo().write({'submission_state': 'submission_failed',
+                record.sudo().write({'submission_state': 'submission_error',
                                      'submission_url': url,
                                      'submission': submission,
                                      'submission_error': 'error',
