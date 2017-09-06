@@ -337,8 +337,7 @@ class BaseSosync(models.AbstractModel):
         return watched_fields
 
     @api.multi
-    def create_sync_job(self, job_date=fields.Datetime.now(), sosync_write_date="", job_source_fields=dict()):
-        assert job_source_fields, _("create_sync_job(): job_source_fields is empty!")
+    def create_sync_job(self, job_date=fields.Datetime.now(), sosync_write_date=None, job_source_fields=None):
         # Get the sosync.job.queue model in a new environment with the su user
         job_queue = self.env["sosync.job.queue"].sudo()
         model = self._name
