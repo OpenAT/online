@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+        <!-- CompanyInstanceSettings INHERIT: company form view -->
+        <record id="instance_company_sosync_settings" model="ir.ui.view">
+            <field name="name">Add sosync setting to company</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="fso_base.company_instance_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Instance Basics']" position="after">
+                    <page string="Sosync Settings">
+                        <group name="sosync_basic_settings">
+                            <field name="sosync_job_submission_url"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+</data></openerp>

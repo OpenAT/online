@@ -56,6 +56,7 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         'views/sosync_job_queue.xml',
         'views/fsonline_menu.xml',
         'views/res_partner.xml',
+        'views/res_company.xml',
         'data/actions.xml',
         'data/scheduled_actions.xml',
         'data/user_sosync.xml',

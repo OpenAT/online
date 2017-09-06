@@ -54,15 +54,15 @@ class CompanyInstanceSettings(models.Model):
         # Check main instance setting
         new_instance_company = self._check_instance_company(vals)
 
-        # TODO: Add all instance-system-users to the vals
-        # HINT: The stuff below is not jet working :(
-        # instance_system_user_group = self.env.ref("fso_base.instance_system_user")
-        # instance_system_users = instance_system_user_group.users
-        # if instance_system_users:
-        #     vals["user_ids"] = vals.get("user_ids", []) + instance_system_users.ids
-
         # Create the new company
-        ret = super(CompanyInstanceSettings, self).create(vals, **kwargs)
+        ret = super(CompanyInstanceSettings, self).create(vals)
+
+        # Add this company to all instance-system-users
+        if ret:
+            instance_system_user_group = self.env.ref("fso_base.instance_system_user")
+            instance_system_users = instance_system_user_group.users
+            for u in instance_system_users:
+                u.company_ids = ret.ids + u.company_ids.ids
 
         # Update main company of instance-system-users if this company is the new instance main company
         if new_instance_company:
@@ -82,6 +82,7 @@ class CompanyInstanceSettings(models.Model):
         # Update main company of instance-system-users if this company is the new instance main company
         if new_instance_company:
             self._update_instance_company_of_instance_user()
+
         return ret
 
 

@@ -11,27 +11,31 @@
                 <header>
                     <field name="submission_state" widget="statusbar" statusbar_visible="new,submitted"/>
                 </header>
+                <group string="Job Basics">
+                    <field name="id" readonly="True"/>
+                    <field name="job_date"/>
+                </group>
                 <group>
-                    <group string="Job Basics">
-                        <field name="id" readonly="True"/>
-                        <field name="job_date"/>
-
-                    </group>
                     <group string="Job Source">
                         <field name="job_source_system"/>
                         <field name="job_source_model"/>
                         <field name="job_source_record_id"/>
                         <field name="job_source_sosync_write_date"/>
                     </group>
-                    <label for="job_source_fields"/>
-                    <field name="job_source_fields"/>
+                    <group string="Submission">
+                        <field name="submission"/>
+                        <field name="submission_url"/>
+                        <field name="submission_error"/>
+                        <field name="submission_response_code"/>
+                        <field name="submission_response_body"/>
+                    </group>
                 </group>
-                <group string="Submission">
-                    <field name="submission"/>
-                    <field name="submission_error"/>
-                    <field name="submission_response_code"/>
-                    <field name="submission_response_body"/>
-                </group>
+                <notebook>
+                    <page string="Job Source Fields">
+                        <label for="job_source_fields"/>
+                        <field name="job_source_fields"/>
+                    </page>
+                </notebook>
             </form>
         </field>
     </record>

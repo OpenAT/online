@@ -8,22 +8,25 @@
             <field name="model">res.company</field>
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//notebook[last()]" position="inside">
+                <xpath expr="//page[@string='General Information']" position="before">
                     <page string="FS-Online Settings">
                         <group name="FS-Online_Main_Company">
                             <field name="instance_company"/>
                         </group>
-                        <group name="FS-Online_Basics"
-                               attrs="{'invisible': [('instance_company', '=', False)]}">
-                            <group>
-                                <field name="instance_id" placeholder="e.g. dadi"
-                                       attrs="{'required': [('instance_company', '=', True)]}"/>
-                            </group>
-                            <group>
-                                <field name="instance_base_port" placeholder="e.g. 20040"
-                                       attrs="{'required': [('instance_company', '=', True)]}"/>
-                            </group>
-                        </group>
+                        <notebook name="FS-Online Settings Notebook">
+                            <page string="Instance Basics">
+                                <group attrs="{'invisible': [('instance_company', '=', False)]}">
+                                    <group>
+                                        <field name="instance_id" placeholder="e.g. dadi"
+                                               attrs="{'required': [('instance_company', '=', True)]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="instance_base_port" placeholder="e.g. 20040"
+                                               attrs="{'required': [('instance_company', '=', True)]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
                     </page>
                 </xpath>
             </field>

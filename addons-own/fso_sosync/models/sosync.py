@@ -8,6 +8,7 @@ from requests import Request, Session
 from requests import Timeout
 from dateutil import parser
 import datetime
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,15 @@ def _duration_in_ms(start_datetime, end_datetime):
     except:
         pass
     return None
+
+
+class ResCompanySosyncSettings(models.Model):
+    _inherit = "res.company"
+
+    # Job submission url overwrite for debugging purposes
+    sosync_job_submission_url = fields.Char(string="sosync job sumission URL",
+                                            help="Overwrite for the sosync job submission URL. "
+                                                 "Keep empty for default URL!")
 
 
 # NEW ODOO MODEL: sosync.job
@@ -161,12 +171,11 @@ class SosyncJobQueue(models.Model):
 
     # Submission Info
     submission_state = fields.Selection(selection=[("new", "New"),
-                                            ("submitted", "Submitted"),
-                                            ("submission_error", "Submission Error")
-                                            ],
-                                 string="State", default="new", readonly=True)
-
+                                                   ("submitted", "Submitted"),
+                                                   ("submission_error", "Submission Error")],
+                                        string="State", default="new", readonly=True)
     submission = fields.Datetime(string="Submission", readonly=True)
+    submission_url = fields.Char(sting="Submission URL", readonly=True)
     submission_response_code = fields.Char(string="Response Code", help="HTTP Response Code", readonly=True)
     submission_response_body = fields.Text(string="Response Body", readonly=True)
 
@@ -187,7 +196,9 @@ class SosyncJobQueue(models.Model):
         assert instance, "'Instance ID' for the main instance company is missing!"
 
         # Sosync service url (in internal network)
-        url = url or "http://sosync."+instance+".datadialog.net/job/create"
+        url_overwrite = self.env['res.company'].sudo().search([("instance_company", "=", True)], limit=1)
+        url_overwrite = url_overwrite.sosync_job_submission_url
+        url = url or url_overwrite or "http://sosync."+instance+".datadialog.net/job/create"
         is_valid_url(url=url, dns_check=False)
 
         # Create a Session Object (just like a regular UA e.g. Firefox or Chrome)
@@ -210,13 +221,19 @@ class SosyncJobQueue(models.Model):
                     'job_source_fields': record.job_source_fields,
                     }
             try:
-                response = session.post(url, headers=http_header, timeout=timeout, data=data)
+                http_header = http_header or {
+                    'content-type': 'application/json; charset=utf8',
+                }
+                # Convert unicode data dict to utf-8 encoded json object
+                data_json = json.dump(data, encoding='utf-8')
+                response = session.post(url, headers=http_header, timeout=timeout, data=data_json)
 
             # Timeout Exception
             except Timeout as e:
                 logger.error("Submitting sosync sync-job %s request Timeout exception!" % record.id)
                 record.sudo().write({'submission_state': 'submission_error',
                                      'submission': submission,
+                                     'submission_url': url,
                                      'submission_error': 'timeout',
                                      'submission_response_code': '',
                                      'submission_response_body': "GET Request Exception:\n%s" % e})
@@ -225,6 +242,7 @@ class SosyncJobQueue(models.Model):
             # Generic Exception
             except Exception as e:
                 record.sudo().write({'submission_state': 'submission_failed',
+                                     'submission_url': url,
                                      'submission': submission,
                                      'submission_error': 'error',
                                      'submission_response_code': '',
@@ -234,6 +252,7 @@ class SosyncJobQueue(models.Model):
             # HTTP Error Code returned
             if response.status_code != requests.codes.ok:
                 record.sudo().write({'submission_state': 'submission_error',
+                                     'submission_url': url,
                                      'submission': submission,
                                      'submission_error': 'error',
                                      'submission_response_code': response.status_code,
@@ -242,6 +261,7 @@ class SosyncJobQueue(models.Model):
 
             # Submission was successful
             record.sudo().write({'submission_state': 'submitted',
+                                 'submission_url': url,
                                  'submission': submission,
                                  'submission_error': '',
                                  'submission_response_code': response.status_code,

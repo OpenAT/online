@@ -5,9 +5,9 @@
     <record id="company_instance_settings" model="ir.ui.view">
         <field name="name">Austrian ZMR Connection Settings</field>
         <field name="model">res.company</field>
-        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="inherit_id" ref="fso_base.company_instance_settings"/>
         <field name="arch" type="xml">
-            <xpath expr="//notebook[last()]" position="inside">
+            <xpath expr="//page[@string='Instance Basics']" position="after">
                 <page string="Austrian ZMR Settings">
                     <group col="2" string="ZMR Access">
                         <field name="stammzahl"/>
