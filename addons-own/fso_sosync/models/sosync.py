@@ -429,5 +429,3 @@ class BaseSosync(models.AbstractModel):
 
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)
-
-
