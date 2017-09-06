@@ -225,7 +225,7 @@ class SosyncJobQueue(models.Model):
                 'content-type': 'application/json; charset=utf-8',
             }
             # Convert unicode data dict to utf-8 encoded json object
-            data_json = json.dumps(data, encoding='utf-8')
+            data_json = json.dumps(data, ensure_ascii=False)
             try:
                 response = requests.post(url, headers=http_header, timeout=timeout, data=data_json)
             # Timeout Exception
