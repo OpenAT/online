@@ -221,14 +221,13 @@ class SosyncJobQueue(models.Model):
                     'job_source_sosync_write_date': record.job_source_sosync_write_date,
                     'job_source_fields': record.job_source_fields,
                     }
+            http_header = http_header or {
+                'content-type': 'application/json; charset=utf-8',
+            }
+            # Convert unicode data dict to utf-8 encoded json object
+            data_json = json.dumps(data, encoding='utf-8')
             try:
-                http_header = http_header or {
-                    'content-type': 'application/json; charset=utf8',
-                }
-                # Convert unicode data dict to utf-8 encoded json object
-                data_json = json.dump(data, encoding='utf-8')
-                response = session.post(url, headers=http_header, timeout=timeout, data=data_json)
-
+                response = requests.post(url, headers=http_header, timeout=timeout, data=data_json)
             # Timeout Exception
             except Timeout as e:
                 logger.error("Submitting sosync sync-job %s request Timeout exception!" % record.id)
@@ -378,6 +377,7 @@ class BaseSosync(models.AbstractModel):
 
         # Find all watched Fields
         watched_fields = self._sosync_watched_fields(values)
+        watched_fields_json = json.dumps(watched_fields, ensure_ascii=False)
 
         # Set the sosync_write_date
         sosync_write_date = self._sosync_write_date_now()
@@ -389,7 +389,7 @@ class BaseSosync(models.AbstractModel):
 
         # Create the sync job
         if create_sync_job and watched_fields and rec:
-            rec.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields)
+            rec.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields_json)
 
         return rec
 
@@ -419,11 +419,12 @@ class BaseSosync(models.AbstractModel):
 
         # Find all watched Fields
         watched_fields = self._sosync_watched_fields(values)
+        watched_fields_json = json.dumps(watched_fields, ensure_ascii=False)
 
         # Create sync job(s) and set the sosync_write_date
         if create_sync_job and watched_fields:
             sosync_write_date = self._sosync_write_date_now()
-            self.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields)
+            self.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields_json)
             values["sosync_write_date"] = sosync_write_date
 
         # Continue with write method
