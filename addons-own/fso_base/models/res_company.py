@@ -54,6 +54,12 @@ class CompanyInstanceSettings(models.Model):
         # Check main instance setting
         new_instance_company = self._check_instance_company(vals)
 
+        # Make sure this is a child company of the main-instance-company
+        if not new_instance_company and "company_id" not in vals:
+            instance_company_id = self.sudo().search([("instance_company", "=", True)], limit=1).id
+            if instance_company_id:
+                vals["parent_id"] = instance_company_id
+
         # Create the new company
         ret = super(CompanyInstanceSettings, self).create(vals)
 
