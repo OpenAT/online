@@ -10,15 +10,14 @@ class ResPartnerSosync(models.Model):
 
     # ACTIVE (= Hidden)
     # Hidden is not available in Fundraising Studio therefor delayed until we talk about delete
-    active = fields.Boolean(sosync="True")          # Record is hidden (will not show up by default in any search)
+    #active = fields.Boolean(sosync="True")         # Record is hidden (will not show up by default in any search)
 
     # RELATED FIELDS
     #parent_id = fields.Many2one(sosync="True")     # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner in FSO
     #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kann es ausgelassen werden.
-    country_id = fields.Many2one(sosync="True")     # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind
-    gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
-    # ATTENTION: All languages that are used by FS must be installed manually in FS-O!
-    lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US
+
+    #TODO im FLOW: gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
+    #TODO im FLOW: lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US
 
     # -----------------------------------------------------------------------------------------------------------------
 
@@ -28,31 +27,27 @@ class ResPartnerSosync(models.Model):
     firstname = fields.Char(sosync="True")          # Vorname
     lastname = fields.Char(sosync="True")           # Name
     name_zwei = fields.Char(sosync="True")          # Name2
-    phone = fields.Char(sosync="True")              # Festnetznummer # TODO: GL2K hat das falsch verwendet ummappen Andere kontrollieren Joe vermitteln
-    mobile = fields.Char(sosync="True")             # Mobilnummer
-    fax = fields.Char(sosync="True")                # Fax
+    #TODO im Flow: phone = fields.Char(sosync="True")              # Festnetznummer # TODO: GL2K hat das falsch verwendet ummappen Andere kontrollieren Joe vermitteln
+    #TODO im Flow: mobile = fields.Char(sosync="True")             # Mobilnummer
+    #TODO im Flow: fax = fields.Char(sosync="True")                # Fax
     email = fields.Char(sosync="True")              # EMail
 
     # Kanalsperren
     #opt_out = fields.Boolean(sosync="True")        # Now not in FS needed. No communication wanted by the partner by EMail: Todo: Change Text in Forms to "No unspecific E-Mail" wanted
 
     # Standard address fields
-    # Wird gesynced auf xPersonAdressegueltigLE beim Anlegen
-    # Daten aus PersonAdresseBlock
-    # - Moeglichkeit 1: Immer auf eigene Web Adresse fix verdrahtet
-    # - Moeglichkeit 2: Immer auf xPersonAdressegueltigLE
-    # - Moeglichkeit 3: Was im Internet eingegeben wird wird als gueltige Adresse verspeichert und alle Anderen Adressen werden mit Gueltikeit Tagesdatum-1 gesetzt. Ausnahme: Kontaktpersonenadressen werden nicht auf ungueltig gesetzt
-    # TODO: Entscheiden was genommen wird
-    # TODO: Besprechen ob eine Methode oder Funktion bei unvollstaendigen Adressen noch zusätzlich ausgeführt werden sollte -
-    #       wenn ja sollte es eine neue stored procedure im SQL geben dei alle notwendigen Akionen ausführt - diese sollte auch vom fs gui verwendet werden
-    # TODO: Frage: ist immer die zuletzt veränderte nicht Abgelaufene Adresse die gueltige? Antwort: Die letzte in der Anlagereihenfolge ist die gueltige Adresse
+    # INFO: Wird immer auf die letzte guelteig nicht zeitlich limiertiert adresse gesynced
+    #       Falls diese nicht vorhanden ist wird auf die letzte gueltige zeitlich limitierte gesynced
+    #       Falls diese auch nicht vorhanden ist wird eine neue zeitlich nicht begrenzte adresse angelegt
+    # ATTENTION: In FS muss geklaert werden was passiert wenn eine zeitlich nicht begrnzte gueltige addresse nach einer
+    #            zeitlich begrenzten angelegt wird.
     street = fields.Char(sosync="True")
     street_number_web = fields.Char(sosync="True")
     #street2 = fields.Char(sosync="True")               # Nicht in FS vorhanden
-    post_office_box_web = fields.Char(sosync="True")    # Post Box Adresszusatz fuer CH
+    #TODO im Flow: post_office_box_web = fields.Char(sosync="True")    # Post Box Adresszusatz fuer CH
     city = fields.Char(sosync="True")
     zip = fields.Char(sosync="True")
-    # land id - siehe oben related fields country_id
+    #TODO im FLOW: country_id = fields.Many2one(sosync="True")     # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind
 
     # Website related fields
     #website_published = fields.Boolean(sosync="True")  # Nicht in FS vorhanden
@@ -64,29 +59,24 @@ class ResPartnerSosync(models.Model):
     # TODO: nationality - Will be done later or never :)
     # TODO: Adresszuatz in FS - Ist nicht zuhanden oder Lieferadresse sondern eben ein Adresszusatz. Sobald erster Kunde das mochte machen wir dies
 
-    anrede_individuell = fields.Char(sosync="True")                 # AnredeIndividuell bei Adresse und bei E-Mail
-
+    #TODO im Flow: anrede_individuell = fields.Char(sosync="True")                 # AnredeIndividuell bei Adresse und bei E-Mail
     title_web = fields.Char(sosync="True")                          # Titel
+    birthdate_web = fields.Date(sosync="True")                      # Geb. Datum # TODO: Check if timezone may make a day shift in odoo and then in fs
+    #TODO im Flow: company_name_web = fields.Char(sosync="True")                   # TODO: Folgebesprechung TODO MIKE: Check wo eingesetzt
 
-    birthdate_web = fields.Date(sosync="True")                      # Geb. Datum
-
-    company_name_web = fields.Char(sosync="True")                   # TODO: Folgebesprechung TODO MIKE: Check wo eingesetzt
-
-    # TODO: Double-Opt-In workflow von FS oder direkt in FSO Wo?
-    # TODO: Check current Double Opt in Workflow for current FSO customers
+    # TODO: Festlegen: Double-Opt-In workflow von FS oder direkt in FSO Wo?
+    # TODO: Check current Double Opt in Workflow in FSO
+    # TODO: Add an other field to "show" double opt in status
     newsletter_web = fields.Boolean(sosync="True")                  # Newsletter OptIn - Zustimmung generell Newsletter zu empfangen (Mappen auf alle allgem. Newsletter) - Ist nur eine Anmeldung keine Abmeldung wenn er schon E-Mails bekommt
 
-    donation_receipt_web = fields.Boolean(sosync="True")            # Spendenquittung bitte pruefen ob ERstzlos streichbar - TODO: Vorhanden Kunden pruefen wo im Einsatz
-
+    # TODO im Flow: donation_receipt_web = fields.Boolean(sosync="True")            # Spendenquittung bitte pruefen ob ERstzlos streichbar - TODO: Vorhanden Kunden pruefen wo im Einsatz
     donation_deduction_optout_web = fields.Boolean(sosync="True")   # Spenden nicht autom. absetzen gesetzt vom Spender. TODO: Mit korrekter FS Gruppe verschalten!
-    donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!
+    # TODO im Flow: donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!
 
     #legal_terms_web = fields.Boolean(sosync="True")                 # Accept legal terms (webshop) derzit nur in FSO
 
     # BKP Forced Fields
-    #BPKRequestIDS = fields.One2many(sosync="True")  # nicht notwendig
     BPKForcedFirstname = fields.Char(sosync="True")
     BPKForcedLastname = fields.Char(sosync="True")
     BPKForcedBirthdate = fields.Date(sosync="True")
-    # TODO: Check field name
-    BPKForcedZip = fields.Char(sosync="True")
+    # TODO im FLOW: BPKForcedZip = fields.Char(sosync="True")

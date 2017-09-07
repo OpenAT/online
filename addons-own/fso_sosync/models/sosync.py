@@ -189,8 +189,7 @@ class SosyncJobQueue(models.Model):
     def submit_sync_job(self, instance="", url="", http_header={},
                         crt_pem="", prvkey_pem="", user="", pwd="", timeout=4):
 
-        # Instance ID from main (= Instance) company (e.g.: care)
-        # TODO: Make a new boolean checkbox to mark one company as the instance company!
+        # Get the 'Instance ID' (e.g.: care) from the main instance company for the default service sosync url
         instance = instance or self.env['res.company'].sudo().search([("instance_company", "=", True)],
                                                                      limit=1).instance_id
         assert instance, "'Instance ID' for the main instance company is missing!"
@@ -210,10 +209,12 @@ class SosyncJobQueue(models.Model):
         if user and pwd:
             session.auth(user, pwd)
 
-        # Submit every sync Job as a REST URL call to the sosyncer
+        # Submit every sync Job as a POST call to the sosyncer v2
         for record in self:
             logger.info("Submitting sosync sync-job %s from queue to %s!" % (record.id, url))
-            submission = fields.Datetime.now()
+            http_header = http_header or {
+                'content-type': 'application/json; charset=utf-8',
+            }
             data = {'job_date': record.job_date,
                     'job_source_system': record.job_source_system,
                     'job_source_model': record.job_source_model,
@@ -221,13 +222,11 @@ class SosyncJobQueue(models.Model):
                     'job_source_sosync_write_date': record.job_source_sosync_write_date,
                     'job_source_fields': record.job_source_fields,
                     }
-            http_header = http_header or {
-                'content-type': 'application/json; charset=utf-8',
-            }
-            # Convert unicode data dict to ascii Therefore encode utf-8 encoded json object
-            data_json = json.dumps(data, ensure_ascii=True)
+            # Convert python dictionary with unicode values to ascii json object with escaped UTF-8 chars
+            data_json_ascii = json.dumps(data, ensure_ascii=True)
+            submission = fields.Datetime.now()
             try:
-                response = requests.post(url, headers=http_header, timeout=timeout, data=data_json)
+                response = requests.post(url, headers=http_header, timeout=timeout, data=data_json_ascii)
             # Timeout Exception
             except Timeout as e:
                 logger.error("Submitting sosync sync-job %s request Timeout exception!" % record.id)
@@ -236,7 +235,7 @@ class SosyncJobQueue(models.Model):
                                      'submission_url': url,
                                      'submission_error': 'timeout',
                                      'submission_response_code': '',
-                                     'submission_response_body': "GET Request Exception:\n%s" % e})
+                                     'submission_response_body': "Request Timeout:\n%s" % e})
                 continue
 
             # Generic Exception
@@ -246,7 +245,7 @@ class SosyncJobQueue(models.Model):
                                      'submission': submission,
                                      'submission_error': 'error',
                                      'submission_response_code': '',
-                                     'submission_response_body': "GET Request Exception:\n%s" % e})
+                                     'submission_response_body': "Request Exception:\n%s" % e})
                 continue
 
             # HTTP Error Code returned
@@ -337,18 +336,19 @@ class BaseSosync(models.AbstractModel):
         return watched_fields
 
     @api.multi
-    def create_sync_job(self, job_date=fields.Datetime.now(), sosync_write_date=None, job_source_fields=None):
-        # Get the sosync.job.queue model in a new environment with the su user
+    def create_sync_job(self, job_date=None, sosync_write_date=None, job_source_fields=None):
+        # HINT: sosync_write_date may be emtpy for initial sync of records sosync v2 uses write date as a fallback
+        # HINT: job_source_fields may be empty by sync job creation in gui
+        job_date = job_date or fields.Datetime.now()
         job_queue = self.env["sosync.job.queue"].sudo()
         model = self._name
         for record in self:
-            date = sosync_write_date or record.sosync_write_date
-            assert date, _("create_sync_job(): sosync_write_date missing on Job-Queue job creation")
+            sosync_write_date = sosync_write_date or record.sosync_write_date
             job = job_queue.create({"job_date": job_date,
                                     "job_source_system": "fso",
                                     "job_source_model": model,
                                     "job_source_record_id": record.id,
-                                    "job_source_sosync_write_date": date,
+                                    "job_source_sosync_write_date": sosync_write_date,
                                     "job_source_fields": job_source_fields,
                                     })
             logger.info("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
