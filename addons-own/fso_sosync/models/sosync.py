@@ -3,6 +3,8 @@ import logging
 from openerp import api, models, fields, osv
 from openerp.tools.translate import _
 from openerp.addons.fso_base.tools.validate import is_valid_url
+#from openerp.models import BaseModel
+
 import requests
 from requests import Request, Session
 from requests import Timeout
@@ -315,6 +317,19 @@ class BaseSosync(models.AbstractModel):
     sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
                                    help="Exact datetime of source-data-readout for the sync job!")
 
+    # Extend the fields.get of openerp.Basemodel to include the sosync attribute for the java script
+    # field manager for website forms to make it possible highlight sosynced watched fields in the backend
+    def fields_get(self, cr, user, allfields=None, context=None, write_access=True, attributes=None):
+        res = super(BaseSosync, self).fields_get(cr, user, allfields=allfields, context=context,
+                                                      write_access=write_access, attributes=attributes)
+        for fname, field in self._fields.iteritems():
+            if hasattr(field, "_attrs"):
+                sosync = field._attrs.get("sosync")
+                if sosync and fname in res:
+                    res[fname].update({"sosync": sosync})
+
+        return res
+
     @api.model
     def _sosync_write_date_now(self):
         return datetime.datetime.utcnow().isoformat() + "Z"
@@ -428,3 +443,18 @@ class BaseSosync(models.AbstractModel):
 
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)
+
+
+# class BaseModelSosync(models.Model, models.AbstractModel, models.TransientModel):
+#
+#     def fields_get(self, cr, user, allfields=None, context=None, write_access=True, attributes=None):
+#         print "Fields get extension!"
+#         res = super(BaseModelSosync, self).fields_get(cr, user, allfields=allfields, context=context,
+#                                                       write_access=write_access, attributes=attributes)
+#         for fname, field in self._fields.iteritems():
+#             if hasattr(field, "_attrs"):
+#                 sosync = field["_attrs"].get("sosync")
+#                 if sosync:
+#                     print "Field %s sosync %s" % (fname, sosync)
+#
+#         return res

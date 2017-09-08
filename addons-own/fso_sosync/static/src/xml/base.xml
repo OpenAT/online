@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template_sosync" xml:space="preserve">
+
+    <t t-extend="FieldChar">
+
+        <t t-jquery="t:first" t-operation="before">
+            <t t-if="widget.field.sosync">
+                <span class="sosync_indicator">&#8226;</span>
+            </t>
+        </t>
+
+    </t>
+
+</templates>
