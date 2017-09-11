@@ -30,3 +30,12 @@ class ResPartner(models.Model):
                                      help="Eine individuelle Anrede die für den Schriftverkehr verwendet wird.")
     name_zwei = fields.Char(string='Name Zwei',
                             help="Name zweite Zeile für Fundraising Studio")
+
+    # DISABLED FOR NOW: Extend the gender field for all FS options
+    # ATTENTION: Makes for web no sense therefore disabled!
+    #gender = fields.Selection(selection_add=[('male_male', 'Male/Male'),
+    #                                         ('female_female', 'Female/Female'),
+    #                                         ('female_male', 'Female/Male'),
+    #                                         ('male_female', 'Male/Female'),
+    #                                         ])
+

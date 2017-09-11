@@ -16,8 +16,8 @@ class ResPartnerSosync(models.Model):
     #parent_id = fields.Many2one(sosync="True")     # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner in FSO
     #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kann es ausgelassen werden.
 
-    #TODO im FLOW: gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
-    #TODO im FLOW: lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US
+    gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
+    #TODO im DEFFERED: lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US
 
     # -----------------------------------------------------------------------------------------------------------------
 
@@ -27,9 +27,9 @@ class ResPartnerSosync(models.Model):
     firstname = fields.Char(sosync="True")          # Vorname
     lastname = fields.Char(sosync="True")           # Name
     name_zwei = fields.Char(sosync="True")          # Name2
-    #TODO im Flow: phone = fields.Char(sosync="True")              # Festnetznummer # TODO: GL2K hat das falsch verwendet ummappen Andere kontrollieren Joe vermitteln
-    #TODO im Flow: mobile = fields.Char(sosync="True")             # Mobilnummer
-    #TODO im Flow: fax = fields.Char(sosync="True")                # Fax
+    phone = fields.Char(sosync="True")              # Festnetznummer # TODO: GL2K hat das falsch verwendet ummappen Andere kontrollieren Joe vermitteln
+    mobile = fields.Char(sosync="True")             # Mobilnummer
+    fax = fields.Char(sosync="True")                # Fax
     email = fields.Char(sosync="True")              # EMail
 
     # Kanalsperren
@@ -44,10 +44,10 @@ class ResPartnerSosync(models.Model):
     street = fields.Char(sosync="True")
     street_number_web = fields.Char(sosync="True")
     #street2 = fields.Char(sosync="True")               # Nicht in FS vorhanden
-    #TODO im Flow: post_office_box_web = fields.Char(sosync="True")    # Post Box Adresszusatz fuer CH
+    #TODO im DEFFERED: post_office_box_web = fields.Char(sosync="True")    # Post Box Adresszusatz fuer CH
     city = fields.Char(sosync="True")
     zip = fields.Char(sosync="True")
-    #TODO im FLOW: country_id = fields.Many2one(sosync="True")     # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind
+    country_id = fields.Many2one(sosync="True")     # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind
 
     # Website related fields
     #website_published = fields.Boolean(sosync="True")  # Nicht in FS vorhanden
@@ -59,17 +59,17 @@ class ResPartnerSosync(models.Model):
     # TODO: nationality - Will be done later or never :)
     # TODO: Adresszuatz in FS - Ist nicht zuhanden oder Lieferadresse sondern eben ein Adresszusatz. Sobald erster Kunde das mochte machen wir dies
 
-    #TODO im Flow: anrede_individuell = fields.Char(sosync="True")                 # AnredeIndividuell bei Adresse und bei E-Mail
+    anrede_individuell = fields.Char(sosync="True")                 # AnredeIndividuell bei Adresse und bei E-Mail
     title_web = fields.Char(sosync="True")                          # Titel
     birthdate_web = fields.Date(sosync="True")                      # Geb. Datum # TODO: Check if timezone may make a day shift in odoo and then in fs
-    #TODO im Flow: company_name_web = fields.Char(sosync="True")                   # TODO: Folgebesprechung TODO MIKE: Check wo eingesetzt
+    #TODO im DEFFERED: company_name_web = fields.Char(sosync="True")                   # TODO: Folgebesprechung TODO MIKE: Check wo eingesetzt
 
     # TODO: Festlegen: Double-Opt-In workflow von FS oder direkt in FSO Wo?
     # TODO: Check current Double Opt in Workflow in FSO
     # TODO: Add an other field to "show" double opt in status
     newsletter_web = fields.Boolean(sosync="True")                  # Newsletter OptIn - Zustimmung generell Newsletter zu empfangen (Mappen auf alle allgem. Newsletter) - Ist nur eine Anmeldung keine Abmeldung wenn er schon E-Mails bekommt
 
-    # TODO im Flow: donation_receipt_web = fields.Boolean(sosync="True")            # Spendenquittung bitte pruefen ob ERstzlos streichbar - TODO: Vorhanden Kunden pruefen wo im Einsatz
+    donation_receipt_web = fields.Boolean(sosync="True")            # Spendenquittung bitte pruefen ob ERstzlos streichbar - TODO: Vorhanden Kunden pruefen wo im Einsatz
     donation_deduction_optout_web = fields.Boolean(sosync="True")   # Spenden nicht autom. absetzen gesetzt vom Spender. TODO: Mit korrekter FS Gruppe verschalten!
     # TODO im Flow: donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!
 
@@ -79,4 +79,4 @@ class ResPartnerSosync(models.Model):
     BPKForcedFirstname = fields.Char(sosync="True")
     BPKForcedLastname = fields.Char(sosync="True")
     BPKForcedBirthdate = fields.Date(sosync="True")
-    # TODO im FLOW: BPKForcedZip = fields.Char(sosync="True")
+    BPKForcedZip = fields.Char(sosync="True")

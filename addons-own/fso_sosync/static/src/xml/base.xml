@@ -2,14 +2,103 @@
 
 <templates id="template_sosync" xml:space="preserve">
 
-    <t t-extend="FieldChar">
-
-        <t t-jquery="t:first" t-operation="before">
-            <t t-if="widget.field.sosync">
-                <span class="sosync_indicator">&#8226;</span>
-            </t>
+    <!-- SOSYNC WATCHED FIELD MARKER -->
+    <t t-name="sosync_field_marker">
+        <t t-if="widget and widget.field and widget.field.sosync">
+            <span class="sosync_indicator">&#8226;</span>
         </t>
+    </t>
 
+
+    <!-- SOSYNC WATCHED FIELD MARKER: EXTENDED FIELD WIDGETS -->
+    <t t-extend="FieldChar">
+        <t t-jquery="t:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldEmail">
+        <t t-jquery="t:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldText">
+        <t t-jquery="t:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldTextHtml">
+        <t t-jquery="t:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldCharDomain">
+        <t t-jquery="span:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <!-- t t-extend="web.datepicker">
+        <t t-jquery="span:first" t-operation="prepend">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t -->
+
+    <t t-extend="FieldDate">
+        <t t-jquery="span:first" t-operation="prepend">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldDatetime">
+        <t t-jquery="span:first" t-operation="prepend">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldSelection">
+        <t t-jquery="span:first" t-operation="prepend">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldRadio">
+        <t t-jquery="span:first" t-operation="prepend">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldMany2One">
+        <t t-jquery="span:first" t-operation="prepend">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldMany2ManyTags">
+        <t t-jquery="t:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldMany2ManyTag">
+        <t t-jquery="t:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldReference">
+        <t t-jquery="tr:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
+    </t>
+
+    <t t-extend="FieldBoolean">
+        <t t-jquery="span:first" t-operation="before">
+            <t t-call="sosync_field_marker"/>
+        </t>
     </t>
 
 </templates>
