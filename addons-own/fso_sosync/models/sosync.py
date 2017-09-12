@@ -277,7 +277,6 @@ class SosyncJobQueue(models.Model):
     # --------------------------------------------------
     @api.model
     def scheduled_job_queue_submission(self, limit=0):
-        logger.info("Scheduled sosync sync-job-queue submission!")
 
         # Limit the number of submissions per scheduled run to the interval length in seconds
         # HINT: This suggests that a submission should time-out after one second
@@ -301,6 +300,11 @@ class SosyncJobQueue(models.Model):
         # Make sure there is at least one job loaded for submission
         limit = 1 if limit <= 0 else limit
 
+        max_runtime_in_sec = runtime_in_sec - 1
+
+        logger.info("Scheduled sync-job-queue submission! "
+                    "max-runtime in seconds: %s, max-jobs to submit: %s" % (max_runtime_in_sec, limit))
+
         # Search for new sync jobs to submit
         # HINT: Search for jobs in queue with errors first to block further submission until this jobs are submitted
         jobs_in_queue = self.search([('submission_state', '=', 'submission_error')], limit=limit)
@@ -309,7 +313,6 @@ class SosyncJobQueue(models.Model):
 
         # Submit jobs to sosync service
         runtime_start = datetime.datetime.now()
-        max_runtime_in_sec = runtime_in_sec - 1
         runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_sec)
         processed_jobs_counter = 0
         for job in jobs_in_queue:
@@ -319,7 +322,7 @@ class SosyncJobQueue(models.Model):
             processed_jobs_counter += 1
 
         # Log processing info
-        logger.info("Submitted %s Sync Jobs in %s seconds" % (processed_jobs_counter, max_runtime_in_sec))
+        logger.info("Processed %s Sync Jobs" % processed_jobs_counter)
 
 
 # NEW ABSTRACT MODEL: base.sosync

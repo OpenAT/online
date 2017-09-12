@@ -129,7 +129,7 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Sosync Job"
-                  default_order="write_date DESC, job_date DESC, job_fetched DESC"
+                  default_order="job_start DESC, write_date DESC, job_date DESC, job_fetched DESC"
                   colors="
                       red:job_state in ('error', 'skipped');
                       orange:job_state in ('inprogress',);
@@ -144,7 +144,8 @@
                 <field name="sync_target_model"/>
                 <field name="sync_target_record_id"/>
                 <field name="job_state"/>
-                <field name="write_date"/>
+                <!-- field name="write_date"/ -->
+                <field name="job_start"/>
             </tree>
         </field>
     </record>
