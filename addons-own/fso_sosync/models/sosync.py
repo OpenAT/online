@@ -213,7 +213,7 @@ class SosyncJobQueue(models.Model):
 
         # Submit every sync Job as a POST call to the sosyncer v2
         for record in self:
-            logger.info("Submitting sosync sync-job %s from queue to %s!" % (record.id, url))
+            logger.debug("Submitting sosync sync-job %s from queue to %s!" % (record.id, url))
             http_header = http_header or {
                 'content-type': 'application/json; charset=utf-8',
             }
@@ -242,6 +242,7 @@ class SosyncJobQueue(models.Model):
 
             # Generic Exception
             except Exception as e:
+                logger.error("Submitting sosync sync-job %s exception: %s" % (record.id, repr(e)))
                 record.sudo().write({'submission_state': 'submission_error',
                                      'submission_url': url,
                                      'submission': submission,
@@ -252,6 +253,7 @@ class SosyncJobQueue(models.Model):
 
             # HTTP Error Code returned
             if response.status_code != requests.codes.ok:
+                logger.error("Submitting sosync sync-job %s error: %s" % (record.id, response.content))
                 record.sudo().write({'submission_state': 'submission_error',
                                      'submission_url': url,
                                      'submission': submission,
@@ -274,7 +276,7 @@ class SosyncJobQueue(models.Model):
     # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE SUBMISSION
     # --------------------------------------------------
     @api.model
-    def scheduled_job_queue_submission(self, limit=60):
+    def scheduled_job_queue_submission(self, limit=0):
         logger.info("Scheduled sosync sync-job-queue submission!")
 
         # Limit the number of submissions per scheduled run to the interval length in seconds
@@ -287,9 +289,17 @@ class SosyncJobQueue(models.Model):
             "minutes": 60,
             "seconds": 1
         }
+        # Lowest interval is 60 seconds for cron jobs
+        runtime_in_sec = 60
         if scheduled_action and scheduled_action.interval_type in interval_to_seconds:
-            limit = int(scheduled_action.interval_number * interval_to_seconds[scheduled_action.interval_type])
-            limit = 1 if limit <= 0 else limit
+            runtime_in_sec = int(scheduled_action.interval_number * interval_to_seconds[scheduled_action.interval_type])
+            # Raise job limit to 200 jobs per second
+            # Now the limit would be one job per second which is way to low therefore we multiply it by 200
+            # so we estimate that one job could be received by the sosyncer every 50 ms
+            limit = runtime_in_sec * 200
+
+        # Make sure there is at least one job loaded for submission
+        limit = 1 if limit <= 0 else limit
 
         # Search for new sync jobs to submit
         # HINT: Search for jobs in queue with errors first to block further submission until this jobs are submitted
@@ -298,10 +308,18 @@ class SosyncJobQueue(models.Model):
             jobs_in_queue = self.search([('submission_state', '=', 'new')], limit=limit)
 
         # Submit jobs to sosync service
-        if jobs_in_queue:
-            jobs_in_queue.submit_sync_job()
-        else:
-            logger.info("No sosync sync-jobs in queue to submit!")
+        runtime_start = datetime.datetime.now()
+        max_runtime_in_sec = runtime_in_sec - 1
+        runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_sec)
+        processed_jobs_counter = 0
+        for job in jobs_in_queue:
+            if datetime.datetime.now() >= runtime_end:
+                break
+            job.submit_sync_job()
+            processed_jobs_counter += 1
+
+        # Log processing info
+        logger.info("Submitted %s Sync Jobs in %s seconds" % (processed_jobs_counter, max_runtime_in_sec))
 
 
 # NEW ABSTRACT MODEL: base.sosync
@@ -366,7 +384,7 @@ class BaseSosync(models.AbstractModel):
                                     "job_source_sosync_write_date": sosync_write_date,
                                     "job_source_fields": job_source_fields,
                                     })
-            logger.info("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
+            logger.debug("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
 
     @api.model
     def create(self, values, **kwargs):
@@ -391,7 +409,11 @@ class BaseSosync(models.AbstractModel):
 
         # Find all watched Fields
         watched_fields = self._sosync_watched_fields(values)
-        watched_fields_json = json.dumps(watched_fields, ensure_ascii=False)
+        try:
+            watched_fields_repr = {key: str(values[key]) for key in values if key in watched_fields}
+            watched_fields_json = json.dumps(watched_fields_repr, ensure_ascii=False)
+        except:
+            watched_fields_json = watched_fields
 
         # Set the sosync_write_date
         sosync_write_date = self._sosync_write_date_now()
@@ -444,17 +466,3 @@ class BaseSosync(models.AbstractModel):
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)
 
-
-# class BaseModelSosync(models.Model, models.AbstractModel, models.TransientModel):
-#
-#     def fields_get(self, cr, user, allfields=None, context=None, write_access=True, attributes=None):
-#         print "Fields get extension!"
-#         res = super(BaseModelSosync, self).fields_get(cr, user, allfields=allfields, context=context,
-#                                                       write_access=write_access, attributes=attributes)
-#         for fname, field in self._fields.iteritems():
-#             if hasattr(field, "_attrs"):
-#                 sosync = field["_attrs"].get("sosync")
-#                 if sosync:
-#                     print "Field %s sosync %s" % (fname, sosync)
-#
-#         return res
