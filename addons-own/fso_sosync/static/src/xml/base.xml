@@ -5,7 +5,8 @@
     <!-- SOSYNC WATCHED FIELD MARKER -->
     <t t-name="sosync_field_marker">
         <t t-if="widget and widget.field and widget.field.sosync">
-            <span class="sosync_indicator">&#8226;</span>
+            <!-- span class="sosync_indicator">&#8226;</span -->
+            <span class="sosync_indicator"></span>
         </t>
     </t>
 
@@ -48,14 +49,26 @@
     </t -->
 
     <t t-extend="FieldDate">
-        <t t-jquery="span:first" t-operation="prepend">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery="span:first" t-operation="replace">
+            <t t-if="widget and widget.field and widget.field.sosync">
+                <span class="oe_form_field oe_datepicker_root oe_form_field_date sosync_indicator"
+                      t-att-style="widget.node.attrs.style"/>
+            </t>
+            <t t-if="!widget or !widget.field or !widget.field.sosync">
+                <span class="oe_form_field oe_datepicker_root oe_form_field_date"
+                      t-att-style="widget.node.attrs.style"/>
+            </t>
         </t>
     </t>
 
     <t t-extend="FieldDatetime">
-        <t t-jquery="span:first" t-operation="prepend">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery="span:first" t-operation="replace">
+            <t t-if="widget and widget.field and widget.field.sosync">
+                <span class="oe_form_field oe_datepicker_root oe_form_field_datetime sosync_indicator" t-att-style="widget.node.attrs.style"/>
+            </t>
+            <t t-if="!widget or !widget.field or !widget.field.sosync">
+                <span class="oe_form_field oe_datepicker_root oe_form_field_datetime" t-att-style="widget.node.attrs.style"/>
+            </t>
         </t>
     </t>
 

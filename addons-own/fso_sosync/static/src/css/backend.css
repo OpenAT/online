@@ -1,7 +1,15 @@
-/* Set forms to use nearly the full width */
+/* Set forms to use nearly the full width
 .sosync_indicator {
     position: absolute;
     color: limegreen;
     margin-left: -12px;
 }
-
+*/
+.sosync_indicator:before {
+    position: absolute;
+    /*display: inline-block;*/
+    color: limegreen;
+    margin-left: -12px;
+    content: "•";
+    z-index: 10000;
+}
