@@ -417,6 +417,7 @@ class BaseSosync(models.AbstractModel):
             watched_fields_json = json.dumps(watched_fields_repr, ensure_ascii=False)
         except:
             watched_fields_json = watched_fields
+            pass
 
         # Set the sosync_write_date
         sosync_write_date = self._sosync_write_date_now()
@@ -458,7 +459,12 @@ class BaseSosync(models.AbstractModel):
 
         # Find all watched Fields
         watched_fields = self._sosync_watched_fields(values)
-        watched_fields_json = json.dumps(watched_fields, ensure_ascii=False)
+        try:
+            watched_fields_repr = {key: str(values[key]) for key in values if key in watched_fields}
+            watched_fields_json = json.dumps(watched_fields_repr, ensure_ascii=False)
+        except:
+            watched_fields_json = watched_fields
+            pass
 
         # Create sync job(s) and set the sosync_write_date
         if create_sync_job and watched_fields:
