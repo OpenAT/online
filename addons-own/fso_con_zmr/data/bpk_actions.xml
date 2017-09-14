@@ -24,8 +24,8 @@
 
                 # Call button action action_set_bpk
                 if ids:
-                    assert len(ids) <= 81, _("Max 80 partner at once are allowed for manually started set_bpk()! Please use Schedule BPK-Request instead!")
-                    self.action_set_bpk(cr, uid, ids, context=context)
+                    assert len(ids) <= 2000, _("Max 2000 partner at once are allowed for manually started set_bpk()! Please use Schedule BPK-Request instead!")
+                    self.action_set_bpk(cr, uid, ids, force_request=True, context=context)
             ]]>
         </field>
     </record>
@@ -127,9 +127,9 @@
 
                 # Run set_bpk() for found partner
                 if partner_ids:
-                    assert len(ids) <= 81, _("Max 80 partner at once are allowed for manually started set_bpk()!")
+                    assert len(ids) <= 2000, _("Max 2000 partner at once are allowed for manually started set_bpk()! Please use Schedule BPK-Request instead!")
                     partner_obj = self.pool['res.partner']
-                    partner_obj.action_set_bpk(cr, uid, partner_ids, context=context)
+                    partner_obj.action_set_bpk(cr, uid, partner_ids, force_request=True, context=context)
             ]]>
         </field>
     </record>

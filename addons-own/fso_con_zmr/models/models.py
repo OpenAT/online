@@ -1408,5 +1408,5 @@ class ResPartnerZMRGetBPK(models.Model):
         self.remove_bpk_request_needed()
 
     @api.multi
-    def action_set_bpk(self):
-        self.set_bpk()
+    def action_set_bpk(self, force_request=False):
+        self.set_bpk(force_request=force_request)
