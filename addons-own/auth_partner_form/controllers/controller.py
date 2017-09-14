@@ -48,6 +48,10 @@ class AuthPartnerForm(http.Controller):
         errors = list()
         countries = None
         states = None
+        bpkfields = {"firstname": "BPKForcedFirstname",
+                     "lastname": "BPKForcedLastname",
+                     "birthdate_web": "BPKForcedBirthdate",
+                     "zip": "BPKForcedZip"}
 
         # Honey Pot Field Test
         if kwargs.get('fs_hpf'):
@@ -145,6 +149,7 @@ class AuthPartnerForm(http.Controller):
             fields_to_update = dict()
             apf_fields = request.env['website.apf_partner_fields']
             apf_fields = apf_fields.sudo().search([])
+
             for field in apf_fields:
                 if field.res_partner_field_id:
                     fname = field.res_partner_field_id.name
@@ -204,6 +209,14 @@ class AuthPartnerForm(http.Controller):
                     if fstoken:
                         fields_to_update['fstoken_update'] = fstoken
                         fields_to_update['fstoken_update_date'] = fields.datetime.now()
+
+                    # Update BPKForced... fields instead of the regular fields if already set for the partner
+                    if partner.BPKForcedFirstname or partner.BPKForcedLastname or partner.BPKForcedBirthdate:
+                        # Swap firstname, lastname, birthdate_web and zip with the BPKForced... field names
+                        for key in bpkfields:
+                            if key in fields_to_update:
+                                fields_to_update[bpkfields[key]] = fields_to_update.pop(key)
+
                     if partner.sudo().write(fields_to_update):
                         success_message = request.website.apf_update_success_message or \
                                           _('Your data was successfully updated!')
@@ -220,10 +233,18 @@ class AuthPartnerForm(http.Controller):
             token_valid_message = request.website.apf_token_success_message or _('Your code is valid!')
             messages_token.append(token_valid_message)
 
+        # Add a dict with the partner BPKForced... field values but the regular field keys
+        # HINT: This dict takes precedence in the form over the regular partner fields
+        partner_bpk = {}
+        if partner and (partner.BPKForcedFirstname or partner.BPKForcedLastname or partner.BPKForcedBirthdate):
+            for key in bpkfields:
+                partner_bpk[key] = partner[bpkfields[key]]
+
         return http.request.render('auth_partner_form.meinedaten',
                                    {'kwargs': kwargs,
                                     'fstoken': fstoken,
                                     'partner': partner,
+                                    'partner_bpk': partner_bpk,
                                     'apf_fields': apf_fields,
                                     'field_errors': field_errors,
                                     'errors_token': errors_token,

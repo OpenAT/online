@@ -216,7 +216,7 @@
                                                                            t-att-id="f_name"
                                                                            t-att-name="f_name"
                                                                            class="form-control"
-                                                                           t-att-value="kwargs.get(f_name) if field.nodata else partner[f_name]"
+                                                                           t-att-value="kwargs.get(f_name) if field.nodata else partner_bpk[f_name] if f_name in partner_bpk else partner[f_name]"
                                                                            t-att-placeholder="field.placeholder"
                                                                            t-att-required="field.mandatory"
                                                                            t-att="validation_rule"
@@ -225,8 +225,9 @@
 
                                                                 <!-- DATE FIELDS -->
                                                                 <t t-if="f_type in ['date',]">
+                                                                    <t t-set="date_de_value" t-value="partner_bpk[f_name] if f_name in partner_bpk else partner[f_name]"/>
                                                                     <t t-set="date_de"
-                                                                       t-value="datetime.datetime.strftime(datetime.datetime.strptime(partner[f_name],'%Y-%m-%d'), '%d.%m.%Y') if partner[f_name] else None"
+                                                                       t-value="datetime.datetime.strftime(datetime.datetime.strptime(date_de_value,'%Y-%m-%d'), '%d.%m.%Y') if date_de_value else None"
                                                                     />
                                                                     <input type="text"
                                                                            t-att-id="f_name"
