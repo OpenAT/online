@@ -607,16 +607,16 @@ class ResPartnerZMRGetBPK(models.Model):
         # HINT: _request_bpk() will always return at least one result or it would raise an exception
         responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=birthdate)
 
-        # RETURN VALID BPK OR RETRY ON ERROR
-        # ----------------------------------
-        # 1.) Return the List of valid Responses(s)
+        # Return the responses if bpk was found
         if self.response_ok(responses):
             return responses
 
-        # 2.) Error: Person not found: Retry with birth-year only
-        faultcode = responses[0].get('faultcode', "")
-        year = False
-        if 'F230' in faultcode:
+        # ERROR HANDLING
+        # --------------
+
+        # 1.) Person not found at all: Retry with birth-year only
+        year = None
+        if 'F230' in responses[0].get('faultcode', ""):
             try:
                 date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
                 year = date.strftime("%Y")
@@ -627,29 +627,35 @@ class ResPartnerZMRGetBPK(models.Model):
                     year = None
             if year:
                 responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year)
+
                 # Return list of valid responses
                 if self.response_ok(responses):
                     return responses
 
-        # 3.) Error: Multiple Persons found: Retry with regular birthdate including zipcode
+                # If still no person was found we reset the year to none cause no better results can be expected
+                # by a year only search
+                if 'F230' in responses[0].get('faultcode', ""):
+                    year = None
+
+        # 2.) Error: Multiple Persons found: Retry with zipcode
         faultcode = responses[0].get('faultcode', "")
         if zipcode and any(code in faultcode for code in ('F231', 'F233')):
-            responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=birthdate,
+            responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year or birthdate,
                                           zipcode=zipcode)
 
-        # 4.) Error: Multiple Persons found: Retry with full firstname (e.g.: second firstname)
+        # 3.) Error: Multiple Persons found: Retry with full firstname (e.g.: second firstname) and zipcode
         faultcode = responses[0].get('faultcode', "")
         if any(code in faultcode for code in ('F231', 'F233')):
             first_clean_nosplit = clean_name(firstname, split=False)
             if first_clean_nosplit != first_clean:
                 responses = self._request_bpk(firstname=first_clean_nosplit, lastname=last_clean,
-                                              birthdate=birthdate, zipcode=zipcode)
+                                              birthdate=year or birthdate, zipcode=zipcode)
 
-        # 5.) Still errors or exceptions: Desperate last try with unchanged data
+        # 4.) Still errors or exceptions: Desperate last try with unchanged data
         if responses[0].get('faultcode', ""):
             rsp_odata = self._request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
-            if not rsp_odata[0].get('faultcode', ""):
-                responses = rsp_odata
+            if self.response_ok(rsp_odata):
+                return rsp_odata
 
         return responses
 
