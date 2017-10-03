@@ -947,14 +947,14 @@ class website_sale_donate(website_sale):
         if not order:
             return request.redirect(redirect_url_after_form_feedback)
 
-        # Confirm free sale orders
+        # Confirm free sale orders or cancel sale_orders
         # HINT: No payment transaction BUT a sale order with 0 total amount
-        if (not order.amount_total and not tx) or tx.state in ['pending', 'done']:
-            if (not order.amount_total and not tx):
-                # Orders are confirmed by payment transactions, but there is none for free orders,
-                # (e.g. free events), so confirm immediately
-                order.action_button_confirm()
-                # TODO: Send e-mail like in addons-own/website_sale_donate/models/payment_transaction.py
+        if not order.amount_total and (not tx or tx and tx.state in ['pending', 'done']):
+            # Orders are confirmed by payment transactions, but there is none for free orders,
+            # (e.g. free events), so confirm immediately
+            order.action_button_confirm()
+            # TODO: Send e-mail like in addons-own/website_sale_donate/models/payment_transaction.py
+        # HINT: This may be redundant because sale order will normally already cancelled in form_feedback()
         elif tx and tx.state == 'cancel' and order.state != 'cancel':
             sale_order_obj.action_cancel(cr, SUPERUSER_ID, [order.id], context=request.context)
 

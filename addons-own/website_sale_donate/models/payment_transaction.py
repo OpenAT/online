@@ -68,13 +68,14 @@ def form_feedback(self, cr, uid, data, acquirer_name, context=None):
                 self.pool['sale.order'].action_button_confirm(cr, SUPERUSER_ID, [tx.sale_order_id.id], context=context)
 
             # Payment error
-            if tx.state in ['cancel', 'error'] and tx.sale_order_id.state != 'cancel':
-                _logger.error('<%s> (ID %s) payment transaction error! Cancel sale order %s (ID %s)', acquirer_name,
-                              tx.id, tx.sale_order_id.name, tx.sale_order_id.id)
+            elif tx.state in ['cancel', 'error'] and tx.sale_order_id.state != 'cancel':
+                _logger.error('<%s> (ID %s) payment transaction error or canceled by user! '
+                              'Cancel sale order %s (ID %s)',
+                              acquirer_name, tx.id, tx.sale_order_id.name, tx.sale_order_id.id)
                 self.pool['sale.order'].action_cancel(cr, SUPERUSER_ID, [tx.sale_order_id.id], context=context)
 
             # All other payment states
-            if tx.state not in ['pending', 'done', 'cancel', 'error']:
+            else:
                 _logger.warning('<%s> (ID %s) unknown payment transaction state %s! Sale order %s (ID %s) in state %s',
                                 acquirer_name, tx.id, tx.state, tx.sale_order_id.name, tx.sale_order_id.id,
                                 tx.sale_order_id.state)
