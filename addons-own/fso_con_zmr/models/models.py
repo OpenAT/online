@@ -226,6 +226,14 @@ class ResPartnerZMRGetBPK(models.Model):
     #                ('bpk_error', 'Error')],                        # any(Not BPKRequestDate and BPKErrorRequestDate)
     #     string="BPK Request(s) State", compute=_compute_bpk_request_state, store=True)
 
+    @api.onchange('BPKForcedFirstname', 'BPKForcedLastname')
+    def onchange_copy_zip_birthdate(self):
+        if self.BPKForcedFirstname or self.BPKForcedLastname:
+            if not self.BPKForcedBirthdate and self.birthdate_web:
+                self.BPKForcedBirthdate = self.birthdate_web
+            if not self.BPKForcedZip and self.zip:
+                self.BPKForcedZip = self.zip
+
     # Methods to store BPK field names
     def _bpk_regular_fields(self):
         return ['firstname', 'lastname', 'birthdate_web']
