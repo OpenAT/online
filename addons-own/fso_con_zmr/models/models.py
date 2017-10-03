@@ -228,9 +228,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
     @api.onchange('BPKForcedFirstname', 'BPKForcedLastname')
     def onchange_copy_zip_birthdate(self):
-        if self.BPKForcedFirstname or self.BPKForcedLastname:
-            if not self.BPKForcedBirthdate and self.birthdate_web:
-                self.BPKForcedBirthdate = self.birthdate_web
+        if self.BPKForcedFirstname and self.BPKForcedLastname:
             if not self.BPKForcedZip and self.zip:
                 self.BPKForcedZip = self.zip
 
