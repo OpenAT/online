@@ -51,6 +51,8 @@ Better default robots.txt view
     'depends': [
         'fso_base',
         'website',
+        #'website_domain_manager',
+        #'website_widget_manager',
     ],
     'installable': True,
     'data': [

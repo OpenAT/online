@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem id="menu_fsonline_website" parent="fso_base.menu_fsonline" name="Website" sequence="4000"/>
+        <menuitem id="domain_templates_menu" action="website_domain_manager.domain_templates_action"  parent="fso_base.menu_fsonline_settings" sequence="10"/>
+        <menuitem id="website_domains_menu" action="website_domain_manager.website_domains_action"  parent="fso_base.menu_fsonline_settings" sequence="20"/>
+
+        <!-- Add Domain and Widget Manager to FS-Online Settings menu -->
+        <menuitem id="menu_fsonline_website" parent="fso_base.menu_fsonline" name="Website" sequence="8000"/>
+        <menuitem id="widget_manager_menu"  action="website_widget_manager.widget_manager_action" parent="menu_fsonline_website" sequence="8130"/>
+        <menuitem id="widget_manager_lp_menu" action="website_widget_manager.widget_manager_lp_action" parent="menu_fsonline_website" sequence="8140"/>
+
     </data>
 </openerp>

@@ -257,7 +257,7 @@ msgstr "Checkout Seite Unterer Snippet Bereich"
 #: field:website,checkout_page_header:0
 #: field:website.config.settings,checkout_page_header:0
 msgid "Checkout Page Main Header"
-msgstr "Checkout Seite Titelr"
+msgstr "Checkout Seite Titel"
 
 #. module: website_sale_donate
 #: field:website,checkout_page_top:0

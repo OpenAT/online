@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-21 12:46+0000\n"
-"PO-Revision-Date: 2017-08-21 12:46+0000\n"
+"POT-Creation-Date: 2017-10-04 13:27+0000\n"
+"PO-Revision-Date: 2017-10-04 13:27+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -202,9 +202,26 @@ msgstr "\n"
 "            "
 
 #. module: fso_base
+#: model:res.groups,comment:fso_base.instance_system_user
+msgid "\n"
+"                Group members of the FS-Online Instance System User Group have access to most of the odoo models.\n"
+"                This is a technical group and should never be assigned to regular user!\n"
+"            "
+msgstr "\n"
+"                Group members of the FS-Online Instance System User Group have access to most of the odoo models.\n"
+"                This is a technical group and should never be assigned to regular user!\n"
+"            "
+
+#. module: fso_base
 #: model:email.template,subject:fso_base.email_template_webshop
 msgid "${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}"
 msgstr "${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}"
+
+#. module: fso_base
+#: code:addons/fso_base/models/res_company.py:19
+#, python-format
+msgid "'Instance Base Port' and 'Instance ID' must be set for the 'Instance Main Company'!"
+msgstr "'Instance Base Port' and 'Instance ID' must be set for the 'Instance Main Company'!"
 
 #. module: fso_base
 #: field:res.partner,legal_terms_web:0
@@ -217,13 +234,13 @@ msgid "Birthdate Web"
 msgstr "Geburtsdatum"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:41
+#: code:addons/fso_base/tools/soap.py:46
 #, python-format
 msgid "Certificate file not found at %s"
 msgstr "Zertifikatsdatei nicht gefunden unter %s"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:39
+#: code:addons/fso_base/tools/soap.py:44
 #, python-format
 msgid "Certificate- and Private-Key-File needed if one of them is given!"
 msgstr "Certificate- and Private-Key-File needed if one of them is given!"
@@ -262,6 +279,11 @@ msgstr "Spende"
 #: field:res.partner,donation_deduction_optout_web:0
 msgid "Donation Deduction OptOut Web"
 msgstr "Meine Spenden nicht autom. absetzen"
+
+#. module: fso_base
+#: help:res.partner,donation_deduction_optout_web:0
+msgid "Donation Deduction OptOut set by Donor"
+msgstr "Donation Deduction OptOut set by Donor"
 
 #. module: fso_base
 #: field:res.partner,donation_receipt_web:0
@@ -315,6 +337,16 @@ msgid "FS-Online"
 msgstr "FS-Online"
 
 #. module: fso_base
+#: model:res.groups,name:fso_base.instance_system_user
+msgid "FS-Online Instance System User Group (Do not assign to regular user)"
+msgstr "FS-Online Instance System User Group (Do not assign to regular user)"
+
+#. module: fso_base
+#: view:res.company:fso_base.company_instance_settings
+msgid "FS-Online Settings"
+msgstr "FS-Online Settings"
+
+#. module: fso_base
 #: field:res.partner,fore_name_web:0
 msgid "Fore Name Web DEPRICATED use partner_firstname addon"
 msgstr "Fore Name Web DEPRICATED use partner_firstname addon"
@@ -359,6 +391,11 @@ msgstr "Individuelle Anrede"
 #: field:res.company,instance_base_port:0
 msgid "Instance Base Port"
 msgstr "Instanz Base-Port"
+
+#. module: fso_base
+#: view:res.company:fso_base.company_instance_settings
+msgid "Instance Basics"
+msgstr "Instance Basics"
 
 #. module: fso_base
 #: field:res.company,instance_id:0
@@ -416,7 +453,7 @@ msgid "Overview"
 msgstr "Übersicht"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:36
+#: code:addons/fso_base/tools/soap.py:41
 #, python-format
 msgid "Parameters missing! Required are url and template."
 msgstr "Parameter fehlt! Benötigt sind url und template."
@@ -424,11 +461,12 @@ msgstr "Parameter fehlt! Benötigt sind url und template."
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_res_partner
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_partner
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_partner_partner
 msgid "Partner"
-msgstr "Partner"
+msgstr "Kontakte"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:40
+#: code:addons/fso_base/tools/soap.py:45
 #, python-format
 msgid "Path to cert- or key-file is longer than 255 chars!"
 msgstr "Path to cert- or key-file is longer than 255 chars!"
@@ -444,7 +482,7 @@ msgid "Post Office Box Web"
 msgstr "Post Office Box Web"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:42
+#: code:addons/fso_base/tools/soap.py:47
 #, python-format
 msgid "Private key file not found at %s"
 msgstr "Private key file not found at %s"

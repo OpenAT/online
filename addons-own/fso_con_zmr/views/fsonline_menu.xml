@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem id="menu_fsonline_donationdeduction" parent="fso_base.menu_fsonline" name="Donation Deduction" sequence="9000"/>
+        <menuitem id="menu_fsonline_donationdeduction" parent="fso_base.menu_fsonline" name="Donation Deduction" sequence="7500"/>
 
-        <menuitem id="fso_menu_res_partner_bpk_res_partner_menu" action="res_partner_bpk_res_partner_action" parent="menu_fsonline_donationdeduction" sequence="9300"/>
-        <menuitem id="fso_menu_res_partner_bpk_menu" action="res_partner_bpk_action" parent="menu_fsonline_donationdeduction" sequence="9305"/>
+        <menuitem id="fso_menu_res_partner_bpk_res_partner_menu" action="res_partner_bpk_res_partner_action" parent="menu_fsonline_donationdeduction" sequence="7510"/>
+        <menuitem id="fso_menu_res_partner_bpk_menu" action="res_partner_bpk_action" parent="menu_fsonline_donationdeduction" sequence="7520"/>
 
     </data>
 </openerp>
