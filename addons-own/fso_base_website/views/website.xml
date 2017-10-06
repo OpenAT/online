@@ -124,5 +124,8 @@
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
         <menuitem id="website_menu" action="website_action" parent="fso_base.menu_fsonline_settings" sequence="100"/>
+        <!-- Duplicate it in FSO Web Top Menu -->
+        <menuitem id="menu_fsonline_web_website_menu" action="website_action" parent="fso_base_website.menu_fsonline_web_settings" sequence="500"/>
+
     </data>
 </openerp>

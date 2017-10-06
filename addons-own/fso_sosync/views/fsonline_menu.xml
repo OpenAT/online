@@ -2,9 +2,9 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_fsonline_sosync" parent="fso_base.menu_fsonline" name="Sosync" sequence="9800"/>
-        <menuitem id="menu_fsonline_sosync_job_menu" action="sosync_job_action" parent="menu_fsonline_sosync" sequence="9810"/>
-        <menuitem id="menu_fsonline_sosync_job_queue_menu" action="sosync_job_queue_action" parent="menu_fsonline_sosync" sequence="9820"/>
+        <menuitem id="menu_fsonline_sosync" parent="fso_base.menu_fsonline_system" name="Sosync" sequence="8800"/>
+        <menuitem id="menu_fsonline_sosync_job_menu" action="sosync_job_action" parent="menu_fsonline_sosync" sequence="8810"/>
+        <menuitem id="menu_fsonline_sosync_job_queue_menu" action="sosync_job_queue_action" parent="menu_fsonline_sosync" sequence="8820"/>
 
     </data>
 </openerp>

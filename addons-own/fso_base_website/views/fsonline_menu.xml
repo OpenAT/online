@@ -9,5 +9,47 @@
         <menuitem id="widget_manager_menu"  action="website_widget_manager.widget_manager_action" parent="menu_fsonline_website" sequence="8130"/>
         <menuitem id="widget_manager_lp_menu" action="website_widget_manager.widget_manager_lp_action" parent="menu_fsonline_website" sequence="8140"/>
 
+        <!-- ======= -->
+        <!-- FSO WEB -->
+        <!-- ======= -->
+        <menuitem id="menu_fsonline_web" name="FSO-Web" sequence="4" groups="base.group_user"/>
+
+        <!-- CRM -->
+        <menuitem id="menu_fsonline_web_crm" name="CRM" sequence="10" parent="menu_fsonline_web" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web_crm_leads" name="Neue Anfragen" sequence="11" parent="menu_fsonline_web_crm" action="crm.crm_case_category_act_leads_all"/>
+        <menuitem id="menu_fsonline_web_crm_oppor" name="Bearbeitete Anfragen" sequence="12" parent="menu_fsonline_web_crm" action="crm.crm_case_category_act_oppor11"/>
+
+        <!-- Blog -->
+        <menuitem id="menu_fsonline_web_blog" name="Blog" sequence="2000" parent="menu_fsonline_web" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web_blog_blogs" name="Blogs" sequence="2100" parent="menu_fsonline_web_blog" action="website_blog.action_blog_blog"/>
+        <menuitem id="menu_fsonline_web_blog_posts" name="Posts" sequence="2200" parent="menu_fsonline_web_blog" action="website_blog.action_blog_post"/>
+        <menuitem id="menu_fsonline_web_blog_tags" name="Tags" sequence="2300" parent="menu_fsonline_web_blog" action="website_blog.action_tags"/>
+
+        <!-- Forum -->
+        <menuitem id="menu_fsonline_web_forum" name="Forum" sequence="3000" parent="menu_fsonline_web" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web_forum_forums" name="Forums" sequence="3100" parent="menu_fsonline_web_forum" action="website_forum.action_forum_forum"/>
+        <menuitem id="menu_fsonline_web_forum_posts" name="Posts" sequence="3200" parent="menu_fsonline_web_forum" action="website_forum.action_forum_post"/>
+
+        <!-- Documentation -->
+        <menuitem id="menu_fsonline_web_doc" name="Documentation" sequence="4000" parent="menu_fsonline_web" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web_doc_toc" name="Table of Content" sequence="4100" parent="menu_fsonline_web_doc" action="website_forum_doc.action_documentation_toc"/>
+        <menuitem id="menu_fsonline_web_doc_posts" name="Posts" sequence="4200" parent="menu_fsonline_web_doc" action="website_forum_doc.action_forum_doc_post"/>
+
+        <!-- Surveys -->
+        <menuitem id="menu_fsonline_web_survey" name="Survey" sequence="5000" parent="menu_fsonline_web" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web_survey_surveys" sequence="5100" parent="menu_fsonline_web_survey" action="survey.action_survey_form"/>
+        <menuitem id="menu_fsonline_web_survey_user_input" sequence="5200" parent="menu_fsonline_web_survey" action="survey.action_survey_user_input"/>
+        <menuitem id="menu_fsonline_web_survey_page_form" sequence="5300" parent="menu_fsonline_web_survey" action="survey.action_survey_page_form"/>
+        <menuitem id="menu_fsonline_web_survey_question_form" sequence="5400" parent="menu_fsonline_web_survey" action="survey.action_survey_question_form"/>
+        <menuitem id="menu_fsonline_web_survey_label_form" sequence="5500" parent="menu_fsonline_web_survey" action="survey.action_survey_label_form"/>
+        <menuitem id="menu_fsonline_web_survey_user_input_line" sequence="5600" parent="menu_fsonline_web_survey" action="survey.action_survey_user_input_line"/>
+
+        <!-- Settings -->
+        <menuitem id="menu_fsonline_web_settings" name="Settings" sequence="10000" parent="menu_fsonline_web" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web_domain_templates" action="website_domain_manager.domain_templates_action"  parent="menu_fsonline_web_settings" sequence="10100"/>
+        <menuitem id="menu_fsonline_web_website_domains" action="website_domain_manager.website_domains_action"  parent="menu_fsonline_web_settings" sequence="10200"/>
+        <menuitem id="menu_fsonline_web_widget_manager"  action="website_widget_manager.widget_manager_action" parent="menu_fsonline_web_settings" sequence="10300"/>
+        <menuitem id="menu_fsonline_web_landing_pages_manager" action="website_widget_manager.widget_manager_lp_action" parent="menu_fsonline_web_settings" sequence="10400"/>
+
     </data>
 </openerp>
