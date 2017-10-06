@@ -642,3 +642,26 @@ select {
     background: none;
     background-color: whitesmoke;
 }
+
+/* KANBAN VIEWS */
+.openerp .oe_tag {
+    border: none;
+    font-size: 11px;
+    padding: 2px 4px;
+    margin: 0 2px 2px 0;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+    min-width: 24px;
+    background: #bc2a31;
+    color: #ffffff;
+    display: inline-block;
+    word-break: break-word;
+    text-shadow: none;
+}
+.openerp .oe_kanban_view.oe_kanban_grouped .oe_kanban_column,
+.openerp .oe_kanban_view .oe_kanban_group_header {
+    background: #ffffff;
+    border-left: none;
+    border-right: 1px solid #f5f5f5;
+}
