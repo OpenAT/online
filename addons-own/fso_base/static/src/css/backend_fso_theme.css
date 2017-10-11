@@ -707,11 +707,54 @@ html .openerp .oe_mail .oe_attach_label {
 }
 
 html .openerp .oe_followers button.oe_follower.oe_following {
-    background-color: rgb(182, 0, 141);
+    color: #666666;
+    background-color: rgb(251, 241, 251);
     background-image: none;
 }
 html .openerp .oe_followers button,
 html .openerp .oe_followers .oe_button,
 html .openerp .oe_followers input[type='submit'] {
-    border: 1px solid rgb(182, 0, 141);
+    /*border: 1px solid rgb(182, 0, 141);*/
+}
+html .openerp .oe_kanban_view .oe_kanban_action_button {
+     height: inherit;
+    /*margin: 0;*/
+}
+.openerp a.button:hover,
+.openerp button:hover,
+.openerp .oe_button:hover,
+.openerp input[type='submit']:hover,
+.openerp a.button:focus,
+.openerp button:focus,
+.openerp .oe_button:focus,
+.openerp input[type='submit']:focus {
+    background-color: #f6f6f6;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#f6f6f6));
+    background-image: -webkit-linear-gradient(top, #f6f6f6, #f6f6f6);
+    background-image: -moz-linear-gradient(top, #f6f6f6, #f6f6f6);
+    background-image: -ms-linear-gradient(top, #f6f6f6, #f6f6f6);
+    background-image: -o-linear-gradient(top, #f6f6f6, #f6f6f6);
+    background-image: linear-gradient(to bottom, #f6f6f6, #f6f6f6);
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    border: 1px solid rgb(214, 214, 214);
+}
+
+.openerp .oe_followers button.oe_follower.oe_following:hover {
+    color: white;
+    filter: none;
+    background-color: #bc2b30;
+    background-image: -webkit-linear-gradient(top, #bc2b30, #bc2b30);
+    background-image: -moz-linear-gradient(top, #bc2b30, #bc2b30);
+    background-image: -ms-linear-gradient(top, #bc2b30, #bc2b30);
+    background-image: -o-linear-gradient(top, #bc2b30, #bc2b30);
+    background-image: linear-gradient(to bottom, #bc2b30, #bc2b30);
+}
+
+.text-core .text-wrap .text-tags .text-tag .text-button {
+    border: 1px solid #d6d6d6;
+    background: #fbf1fc;
+    color: #202020;
+    font: 11px Roboto, "lucida grande", tahoma, verdana, arial, sans-serif;
 }
