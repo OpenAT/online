@@ -215,6 +215,7 @@
                                         </div>
                                     <field name="confirmation_indicator"/>
                                     <field name="confirmation_page_header"/>
+                                    <field name="confirmation_transaction_reference_info"/>
                                 </group>
                                 <!-- TODO -->
                                 <group string="Payment Status E-Mail Template">

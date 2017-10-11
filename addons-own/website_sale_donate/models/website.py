@@ -2,6 +2,7 @@
 __author__ = 'Michael Karrer'
 
 from openerp import models, fields, api
+from openerp.tools.translate import _
 
 # Port to odoo v8 api
 class Website(models.Model):
@@ -64,15 +65,24 @@ class Website(models.Model):
 
     # REDIRECTION TO PAYMENT PROVIDER MESSAGE
     payment_redirection_message = fields.Html(string='Redirection to PaymentProvider Text', translate=True,
-                                              default="""
+                                              default=lambda self: _("""
     <h4>You will be redirect to our payment provider to safely finish your donation!</h4>
     <p>If you are not redirected in a few seconds please click the button below.</p>
-                                              """)
+                                              """))
 
     # SHOP CONFIRMATION STATIC (DADI PAYMENT PROVIDERS)
+
     confirmation_indicator = fields.Char(string='Indicator Confirmation', translate=True)
     confirmation_page_header = fields.Char(string='Confirmation Page Main Header', translate=True)
     confirmation_page_top = fields.Html(string='Confirmation Page Top Snippet Dropping Area', translate=True)
+    confirmation_transaction_reference_info = fields.Html(string='Confirmation Page Info Text', translate=True,
+                                                          default=lambda self: _("""
+    <p>
+        Please add your transaction number to any communication regarding this transaction!<br/>
+        When making a bank transfer please always give your transaction number as a reference so we can allocate 
+        your payment correctly!
+    </p>                                                          
+                                                          """))
     confirmation_page_bottom = fields.Html(string='Confirmation Page Bottom Snippet Dropping Area', translate=True)
 
     # WEBSITE SETTINGS FORM RELATED MODELS

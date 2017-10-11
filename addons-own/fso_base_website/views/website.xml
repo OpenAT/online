@@ -9,6 +9,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Website" create="false" delete="false">
+                <sheet>
                     <group name="Basics">
                         <group string="Website Settings">
                             <field name="name" string="Name"/>
@@ -72,6 +73,7 @@
                             </group>
                         </page>
                     </notebook>
+                </sheet>
                 </form>
             </field>
         </record>

@@ -1059,10 +1059,7 @@
                                         <span t-field="order.name"/>
                                     </h1>
                                     <!-- TODO: pack this in a field website.transaction_reference_info -->
-                                    <p class="transaction_reference_info">
-                                        Please add your transaction number to any communication regarding this transaction!<br/>
-                                        When making a bank transfer please always give your transaction number as a reference so we can allocate your payment correctly!
-                                    </p>
+                                    <div class="transaction_reference_info" t-field="website.confirmation_transaction_reference_info"/>
                                     <t t-if="order.payment_tx_id">
                                         <div class="payment_information">
                                             <h3>Payment Information</h3>

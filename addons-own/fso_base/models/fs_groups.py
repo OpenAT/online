@@ -30,16 +30,14 @@ class ProductTemplate(osv.osv):
         result = dict.fromkeys(ids, False)
 
         for template in self.browse(cr, uid, ids, context=context):
-            if template.attribute_line_ids:
-                # Product Variants exists
-                # Return False
-                result[template.id] = False
+            # Only one Variant Exits
+            if template.product_variant_ids and len(template.product_variant_ids) == 1:
+                default_variant = self.pool['product.product'].browse(cr, uid,
+                                                                      template.product_variant_ids.ids[0],
+                                                                      context=context)
+                result[template.id] = default_variant.product_variant_fs_group_ids
             else:
-                # No Variants (= one default Variant)
-                # return product_variant_fs_group_ids from related product.product default variant
-                product = self.pool['product.product'].browse(cr, uid,
-                                                              template.product_variant_ids.ids[0], context=context)
-                result[template.id] = product.product_variant_fs_group_ids
+                result[template.id] = False
 
         return result
 
@@ -47,20 +45,17 @@ class ProductTemplate(osv.osv):
     def _set_product_variant_fs_group_ids(self, cr, uid, id, name, value, args, context=None):
         template = self.browse(cr, uid, id, context=context)
 
-        if not template.attribute_line_ids:
-            # No Variants
-            # Update the product_variant_fs_group_ids field for related product.product default variant
-            # HINT: template.product_variant_ids must be checked in case the template is created just right now and
-            #       has no related product variant already
-            if template.product_variant_ids:
-                product = self.pool['product.product'].browse(cr, uid,
-                                                              template.product_variant_ids.ids[0], context=context)
-                product.product_variant_fs_group_ids = value
-        else:
-            raise osv.except_osv(_('Error!'), _('Product variants exist! Please set the FS-Groups there!'))
+        if template.product_variant_ids:
+            if len(template.product_variant_ids) == 1:
+                default_variant = self.pool['product.product'].browse(cr, uid,
+                                                                      template.product_variant_ids.ids[0],
+                                                                      context=context)
+                default_variant.product_variant_fs_group_ids = value
+            else:
+                raise osv.except_osv(_('Error!'), _('Product variants exist! Please set the FS-Groups there!'))
+
 
     _columns = {
-        # Always use the product.product "product_variant_fs_group_ids" field
         'fs_group_ids': fields.function(_get_product_variant_fs_group_ids, fnct_inv=_set_product_variant_fs_group_ids,
                                         type="many2many", relation="fs.group",
                                         string='FS Groups (Template)'),

@@ -10,14 +10,25 @@
     -webkit-border-radius: 0;
     border-radius: 0;
 }
+.openerp .oe_form_sheet {
+    margin-bottom: 2em;
+}
 .openerp .oe_application .oe_form_sheetbg {
     background: none;
     border-bottom: none;
 }
 
-/* Disable vertical seperators between field-labels and fields */
+/* Disable vertical seperators between field-labels and fields adn better padding */
 .openerp .oe_form td.oe_form_group_cell_label {
     border-right: 0 solid #ddd;
+    padding: 4px 0 6px 0;
+}
+.openerp .oe_form td.oe_form_group_cell + .oe_form_group_cell {
+    padding: 0;
+}
+.openerp .oe_form .oe_form_field,
+.openerp .oe_form .oe_form_field_boolean {
+    padding-top: 4px;
 }
 
 
@@ -416,6 +427,7 @@
 .openerp .oe_form div.oe_chatter {
     max-width: inherit;
     border-top: 1px solid whitesmoke;
+    border-top: none;
 }
 
 /* KANBAN VIEWS */
@@ -576,6 +588,10 @@ html .openerp .oe_pager_group a:hover {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+.openerp .oe_searchview .oe_searchview_facets {
+    min-height: 23px;
+    padding-top: 2px;
+}
 
 
 .openerp .oe_view_manager table.oe_view_manager_header .oe_button_group .active a {
@@ -659,9 +675,43 @@ select {
     word-break: break-word;
     text-shadow: none;
 }
-.openerp .oe_kanban_view.oe_kanban_grouped .oe_kanban_column,
-.openerp .oe_kanban_view .oe_kanban_group_header {
+html .openerp .oe_kanban_view.oe_kanban_grouped .oe_kanban_column,
+html .openerp .oe_kanban_view .oe_kanban_group_header {
     background: #ffffff;
-    border-left: none;
-    border-right: 1px solid #f5f5f5;
+    /*border-left: none;*/
+    /*border-right: 1px solid #f5f5f5;*/
+}
+html .openerp .oe_kanban_view.oe_kanban_grouped .oe_kanban_dummy_cell {
+    background: none;
+    background-color: #fafafa;
+}
+
+html body .openerp .oe_mail .oe_msg .oe_msg_footer {
+    margin: 4px;
+    border: none;
+    background-color: transparent;
+    border-radius: 0;
+    color: grey;
+}
+.openerp .oe_form textarea {
+    border-color: #ececec;
+    border-bottom-color: #ececec;
+}
+html .openerp .oe_mail button.oe_attach,
+html .openerp .oe_mail button.oe_full {
+    color: #b6008d;
+
+}
+html .openerp .oe_mail .oe_attach_label {
+    color: #b6008d;
+}
+
+html .openerp .oe_followers button.oe_follower.oe_following {
+    background-color: rgb(182, 0, 141);
+    background-image: none;
+}
+html .openerp .oe_followers button,
+html .openerp .oe_followers .oe_button,
+html .openerp .oe_followers input[type='submit'] {
+    border: 1px solid rgb(182, 0, 141);
 }
