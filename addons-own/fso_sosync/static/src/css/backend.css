@@ -1,15 +1,27 @@
-/* Set forms to use nearly the full width
-.sosync_indicator {
-    position: absolute;
-    color: limegreen;
-    margin-left: -12px;
+
+/*.sosync_indicator {*/
+    /*color: limegreen;*/
+    /*position: absolute;*/
+    /*overflow: hidden;*/
+    /*padding-top: 1px;*/
+    /*margin-left: -7px;*/
+    /*z-index: 10000;*/
+/*}*/
+
+.openerp .oe_form .oe_form_field[data-sosync="True"]:empty {
+    display: inherit !important;
 }
-*/
-.sosync_indicator:before {
+.openerp .oe_form .oe_form_field[data-sosync="True"]:before {
+    content: '•\00a0';
+    color: #33cd33;
     position: absolute;
-    /*display: inline-block;*/
-    color: limegreen;
-    margin-left: -12px;
-    content: "•";
+    margin-left: -6px;
+    z-index: 10000;
+}
+.openerp .oe_form .oe_form_field:before {
+    content: '•\00a0';
+    color: transparent;
+    position: absolute;
+    margin-left: -6px;
     z-index: 10000;
 }

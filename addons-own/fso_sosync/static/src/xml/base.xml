@@ -2,43 +2,34 @@
 
 <templates id="template_sosync" xml:space="preserve">
 
-    <!-- SOSYNC WATCHED FIELD MARKER -->
-    <t t-name="sosync_field_marker">
-        <t t-if="widget and widget.field and widget.field.sosync">
-            <!-- span class="sosync_indicator">&#8226;</span -->
-            <span class="sosync_indicator"></span>
-        </t>
-    </t>
-
-
     <!-- SOSYNC WATCHED FIELD MARKER: EXTENDED FIELD WIDGETS -->
     <t t-extend="FieldChar">
-        <t t-jquery="t:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery="span:first">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldEmail">
-        <t t-jquery="t:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldText">
-        <t t-jquery="t:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldTextHtml">
-        <t t-jquery="t:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery="div:first">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldCharDomain">
-        <t t-jquery="span:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
@@ -49,68 +40,50 @@
     </t -->
 
     <t t-extend="FieldDate">
-        <t t-jquery="span:first" t-operation="replace">
-            <t t-if="widget and widget.field and widget.field.sosync">
-                <span class="oe_form_field oe_datepicker_root oe_form_field_date sosync_indicator"
-                      t-att-style="widget.node.attrs.style"/>
-            </t>
-            <t t-if="!widget or !widget.field or !widget.field.sosync">
-                <span class="oe_form_field oe_datepicker_root oe_form_field_date"
-                      t-att-style="widget.node.attrs.style"/>
-            </t>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldDatetime">
-        <t t-jquery="span:first" t-operation="replace">
-            <t t-if="widget and widget.field and widget.field.sosync">
-                <span class="oe_form_field oe_datepicker_root oe_form_field_datetime sosync_indicator" t-att-style="widget.node.attrs.style"/>
-            </t>
-            <t t-if="!widget or !widget.field or !widget.field.sosync">
-                <span class="oe_form_field oe_datepicker_root oe_form_field_datetime" t-att-style="widget.node.attrs.style"/>
-            </t>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldSelection">
-        <t t-jquery="span:first" t-operation="prepend">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldRadio">
-        <t t-jquery="span:first" t-operation="prepend">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery="span:first">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldMany2One">
-        <t t-jquery="span:first" t-operation="prepend">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldMany2ManyTags">
-        <t t-jquery="t:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
-        </t>
-    </t>
-
-    <t t-extend="FieldMany2ManyTag">
-        <t t-jquery="t:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldReference">
-        <t t-jquery="tr:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
     <t t-extend="FieldBoolean">
-        <t t-jquery="span:first" t-operation="before">
-            <t t-call="sosync_field_marker"/>
+        <t t-jquery=".oe_form_field">
+            this.attr('t-att-data-sosync', 'widget.field.sosync');
         </t>
     </t>
 
