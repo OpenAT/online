@@ -8,18 +8,29 @@
     /*z-index: 10000;*/
 /*}*/
 
+
+.openerp .oe_form_readonly .oe_edit_only, .openerp .oe_form_readonly .oe_form_field:empty {
+    /* display: none !important; */
+}
+
+
+.openerp .oe_form_readonly .oe_form_field[data-sosync="False"]:empty,
+.openerp .oe_form_readonly .oe_form_field[data-sosync="True"]:empty,
+.openerp .oe_form .oe_form_field[data-sosync="False"]:empty,
 .openerp .oe_form .oe_form_field[data-sosync="True"]:empty {
     display: inherit !important;
 }
 .openerp .oe_form .oe_form_field[data-sosync="True"]:before {
-    content: '•\00a0';
+    /*content: '•\00a0';*/
+    content: '*\00a0';
     color: #33cd33;
     position: absolute;
     margin-left: -6px;
     z-index: 10000;
 }
 .openerp .oe_form .oe_form_field:before {
-    content: '•\00a0';
+    /*content: '•\00a0';*/
+    content: '*\00a0';
     color: transparent;
     position: absolute;
     margin-left: -6px;

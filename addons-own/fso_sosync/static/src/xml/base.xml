@@ -5,85 +5,79 @@
     <!-- SOSYNC WATCHED FIELD MARKER: EXTENDED FIELD WIDGETS -->
     <t t-extend="FieldChar">
         <t t-jquery="span:first">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldEmail">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldText">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldTextHtml">
         <t t-jquery="div:first">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldCharDomain">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
-    <!-- t t-extend="web.datepicker">
-        <t t-jquery="span:first" t-operation="prepend">
-            <t t-call="sosync_field_marker"/>
-        </t>
-    </t -->
-
     <t t-extend="FieldDate">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldDatetime">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldSelection">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldRadio">
         <t t-jquery="span:first">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldMany2One">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldMany2ManyTags">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldReference">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
     <t t-extend="FieldBoolean">
         <t t-jquery=".oe_form_field">
-            this.attr('t-att-data-sosync', 'widget.field.sosync');
+            this.attr('t-att-data-sosync', 'widget.field.sosync or "False"');
         </t>
     </t>
 
