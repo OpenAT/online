@@ -5,11 +5,12 @@ from openerp import models, fields
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    fs_product_type = fields.Selection(selection=[('product', 'Product'),               # Produkt
-                                                  ('donation', 'Donation'),             # Spende
+    fs_product_type = fields.Selection(selection=[('donation', 'Donation'),             # Spende
+                                                  ('product', 'Product'),               # Produkt
                                                   ('godparenthood', 'Godparenthood'),   # Patenschaft
-                                                  ('sponsorship', 'Donation'),          # Foerderer(schaft)
-                                                  ('membership', 'Donation'),           # Mitgliedschaft
+                                                  ('sponsorship', 'Sponsorship'),       # Foerderer(schaft)
+                                                  ('membership', 'Membership'),         # Mitgliedschaft
+                                                  ('eventticket', 'Event Ticket'),      # Event Ticket
                                                   ],
-                                       string="Fundraising Studio Type")
+                                       string="Type")
 

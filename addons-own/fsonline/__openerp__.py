@@ -75,5 +75,6 @@ Module tasks:
     ],
     'data': [
         'data/user_studio.xml',
+        'views/product_template.xml',
     ],
 }

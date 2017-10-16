@@ -15,7 +15,16 @@ class FSGroups(models.Model):
     _name = 'fs.group'
     _description = 'Fundraising Studio Groups'
 
-    name = new_api_fields.Char(string="FS Group Name")
+    name = new_api_fields.Char(string="Gruppenname")    # = GruppeKurz
+    parent_id = new_api_fields.Many2one(string="Parent Group", comodel_name="fs.group")
+
+    GruppeLang = new_api_fields.Char(string="Gruppenname Lang")
+    TabellentypID = new_api_fields.Integer(string="Tabellentyp ID")
+    MehrEintraegeInGruppeMoeglich = new_api_fields.Boolean(string="Mehr als ein Eintrag in Gruppe möglich")
+    GUINurEineGleichzeitigGueltig = new_api_fields.Boolean(string="Keine Zeitraumüberschneidungen von mehreren Gruppeneinträgen")
+    GUIGruppenBearbeitenMoeglich = new_api_fields.Boolean(string="Erlaube Benutzeränderung der Gruppenzugehörigkeit")
+    NegativGruppe = new_api_fields.Boolean(string="Handelt es sich um eine Negativgruppe")
+    GUIAnzeigen = new_api_fields.Boolean(string="Anzeige der Gruppe auf der Oberfläche")
 
 
 # Add Fundraising Studio Groups to product.template

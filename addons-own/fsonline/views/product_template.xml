@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- DONATION PRODUCT TEMPLATE FORM -->
+    <record model="ir.ui.view" id="fso_product_template_form">
+        <field name="name">FS-Online Product Template Form</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <form string="Spenden, Artikel, Patenschaften, Events, Mitgliedschaften">
+                <!-- Technical fields -->
+                <field name="is_product_variant" invisible="1"/>
+                <field name='product_variant_count' invisible='1'/>
+                <!-- PRODUCT SHEET -->
+                <sheet>
+
+                    <!-- HEAD -->
+                    <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
+                    </div>
+                    <div class="oe_left" style="width: 500px;">
+                        <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
+                        <div class="oe_title" style="width: 390px;">
+                            <label class="oe_edit_only" for="name"/>
+                            <h1><field name="name" class="oe_inline"/></h1>
+                        </div>
+                        <div class="oe_left">
+                            <label for="fs_product_type"/>
+                            <h2><field name="fs_product_type" class="oe_inline"/></h2>
+                        </div>
+                        <div class="oe_left">
+                            <label for="fs_group_ids"/>
+                            <h2><field name="fs_group_ids" class="oe_inline"/></h2>
+                        </div>
+                    </div>
+
+                    <!-- TABS -->
+                    <notebook>
+                        <page string="Basis">
+
+                            <group string="Betrag">
+                                <group>
+                                    <field name="list_price" string="Standard Betrag"/>
+                                    <field name="price_donate" string="Spendenbetrag frei wählbar"/>
+                                    <field name="price_donate_min" string="Mindestspendenbetrag" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                                    <field name="price_suggested_ids" string="Spendenbuttons" attrs="{'invisible': [('price_donate','=', False)]}">
+                                        <tree string="Suggested Donation-Values" default_order="sequence" editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="name"/>
+                                            <field name="amount"/>
+                                            <field name="css_classes"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <group>
+                                    <field name="uom_id" string="Standard Einheit"/>
+                                    <field name="payment_interval_lines_ids" string="Zahlungsintervalle">
+                                        <tree string="Payment Intervals" default_order="sequence" editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="payment_interval_id"/>
+                                        </tree>
+                                    </field>
+                                    <field name="payment_interval_default" string="Standard Zahlungsinterval"/>
+                                    <field name="payment_interval_as_selection" string="Zahlungsint. als Liste"/>
+                                </group>
+                            </group>
+
+                            <group string="Checkout" colspan="2">
+                                <field name="simple_checkout" string="Warenkorb überspringen"/>
+                                <field name="button_addtocart_text" string="Checkout Button Text"/>
+                            </group>
+
+                            <group string="Spendenziel">
+                                <group>
+                                    <group>
+                                        <field name="funding_goal"/>
+                                        <field name="funding_user"/>
+                                    </group>
+                                    <group>
+                                        <field name="funding_reached" readonly="1"/>
+                                    </group>
+                                </group>
+                                <field colspan="2" name="funding_desc"/>
+                                <group string="Spendenseite">
+                                    <group string="Seite">
+                                        <field name="hide_fundingtext" string="Kurztext ausblenden"/>
+                                        <field name="hide_fundingbar" string="Zielbalken ausblenden"/>
+                                        <field name="hide_fundingdesc" string="Beschreibung ausblenden"/>
+                                        <field name="hide_fundingtextincp" string=""/>
+                                        <field name="hide_fundingbarincp"/>
+                                    </group>
+                                    <group string="Spendenbox">
+                                        <field name="hide_fundingtextincp" string=""/>
+                                        <field name="hide_fundingbarincp"/>
+                                    </group>
+                                </group>
+                                <group string="Artikelübersichtsseiten">
+                                    <field name="hide_fundingtextinlist" string="Kurztext ausblenden"/>
+                                    <field name="hide_fundingbarinlist" string="Zielbalken ausblenden"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Webseite">
+
+                        </page>
+
+                        <page string="Verkauf">
+
+                        </page>
+
+                        <page string="Einkauf">
+
+                        </page>
+
+                        <page string="Buchhaltung">
+
+                        </page>
+
+                        <page string="Info">
+                            <field name="id" readonly="1"/>
+                            <field name="active"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="fso_product_template_form_action">
+        <field name="name">FSO Product Template Form Action</field>
+        <field name="res_model">product.product</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fso_product_template_form"/>
+    </record>
+
+    <!-- menuitem action="fso_product_template_form_action" id="fso_product_template_menu"
+              parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" / -->
+
+</data></openerp>
