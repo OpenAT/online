@@ -71,7 +71,7 @@ class ResPartnerSosync(models.Model):
 
     donation_receipt_web = fields.Boolean(sosync="True")            # Spendenquittung bitte pruefen ob ERstzlos streichbar - TODO: Vorhanden Kunden pruefen wo im Einsatz
     donation_deduction_optout_web = fields.Boolean(sosync="True")   # Spenden nicht autom. absetzen gesetzt vom Spender. TODO: Mit korrekter FS Gruppe verschalten!
-    # TODO im Flow: donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!
+    donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!
 
     #legal_terms_web = fields.Boolean(sosync="True")                 # Accept legal terms (webshop) derzit nur in FSO
 
