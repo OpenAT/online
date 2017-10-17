@@ -25,6 +25,7 @@
                 <group>
                     <group string="Last valid BPK-Request">
                         <field name="BPKRequestDate"/>
+                        <field name="BPKRequestVersion"/>
                         <field name="BPKRequestFirstname"/>
                         <field name="BPKRequestLastname"/>
                         <field name="BPKRequestBirthdate"/>
@@ -32,6 +33,7 @@
                     </group>
                     <group string="Last invalid BPK-Request">
                         <field name="BPKErrorRequestDate"/>
+                        <field name="BPKErrorRequestVersion"/>
                         <field name="BPKErrorRequestFirstname"/>
                         <field name="BPKErrorRequestLastname"/>
                         <field name="BPKErrorRequestBirthdate"/>

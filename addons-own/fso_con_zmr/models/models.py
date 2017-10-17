@@ -166,6 +166,8 @@ class ResPartnerBPK(models.Model):
     BPKResponseData = fields.Text(string="BPK Response Data", readonly=True)
     BPKResponseTime = fields.Float(string="BPK Response Time", readonly=True)
 
+    BPKRequestVersion = fields.Integer(string="BPK Request Version", readonly=True)
+
     # Invalid BPK request field set
     # -----------------------------
     # This set of field gets updated by every bpk request with an error (or a missing bpk)
@@ -182,6 +184,8 @@ class ResPartnerBPK(models.Model):
 
     BPKErrorResponseData = fields.Text(string="BPK-Error Response Data", readonly=True)
     BPKErrorResponseTime = fields.Float(string="BPK-Error Response Time", readonly=True)
+
+    BPKErrorRequestVersion = fields.Integer(string="BPK-Error Request Version", readonly=True)
 
 
 class ResPartnerZMRGetBPK(models.Model):
@@ -584,7 +588,7 @@ class ResPartnerZMRGetBPK(models.Model):
     # -------------
     # This is a wrapper for _request_bpk() to try multiple requests with different data in case of an request error
     @api.model
-    def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
+    def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), version=False):
         """
         Wrapper for _request_bpk() that will additionally clean names and tries the request multiple times
         with different values depending on the request error
@@ -592,9 +596,14 @@ class ResPartnerZMRGetBPK(models.Model):
         :param lastname:
         :param birthdate:
         :param zipcode:
+        :param version: Version of this decision tree schould be raised on any change!
         :return: list(), Containing one result-dict for every company found
                          (at least one result is always in the list ELSE it would throw an exception)
         """
+        # Version stored in all BPK-Requests to be checked in bpk_requests_matches_partner_data()
+        if version:
+            return 1
+
         # CHECK INPUT DATA
         if not all((firstname, lastname, birthdate)):
             raise ValueError(_("Firstname, Lastname and Birthdate are needed for a BPK request!"))
@@ -724,34 +733,42 @@ class ResPartnerZMRGetBPK(models.Model):
         # Find any positive request with the given data
         positive_dom = [("BPKRequestFirstname", "=", firstname), ("BPKRequestLastname", "=", lastname),
                         ("BPKRequestBirthdate", "=", birthdate), ("BPKPrivate", "!=", False)]
-        positive_req = bpk_obj.search(positive_dom)
-        if len(positive_req) >= 1:
-            # Return with positive result
-            # ATTENTION: This may NOT be correct for different messages for different companies
+        try:
+            positive_req = bpk_obj.search(positive_dom)
+            if len(positive_req) >= 1:
+                # Return with positive result
+                # ATTENTION: This may NOT be correct for different messages for different companies
 
-            # Person was found
-            return _returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found)
+                # Person was found
+                return _returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found)
+        except Exception as e:
+            logger.error("check_bpk() %s" % str(repr(e)))
+            pass
 
         # Find any negative request for given data
         negative_dom = [("BPKErrorRequestFirstname", "=", firstname), ("BPKErrorRequestLastname", "=", lastname),
                         ("BPKErrorRequestBirthdate", "=", birthdate)]
-        negative_req = bpk_obj.search(negative_dom)
-        if len(negative_req) >= 1:
-            # Return with negative result
-            # ATTENTION: This may NOT be correct for different messages for different companies
+        try:
+            negative_req = bpk_obj.search(negative_dom)
+            if len(negative_req) >= 1:
+                # Return with negative result
+                # ATTENTION: This may NOT be correct for different messages for different companies
 
-            # No person matched
-            if 'F230' in negative_req[0].BPKErrorCode:
-                return _returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found)
+                # No person matched
+                if 'F230' in negative_req[0].BPKErrorCode:
+                    return _returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found)
 
-            # Multiple person matched
-            if any(code in negative_req[0].BPKErrorCode for code in ['F231', 'F233']):
-                return _returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found)
+                # Multiple person matched
+                if any(code in negative_req[0].BPKErrorCode for code in ['F231', 'F233']):
+                    return _returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found)
 
-            # Other request error or exception
-            # HINT: Return all other errors except for ZMR service errors.
-            if not any(e == negative_req[0].BPKErrorCode for e in self._http_service_error_codes()):
-                return _returner("bpk_exception", negative_req[0].BPKErrorText)
+                # Other request error or exception
+                # HINT: Return all other errors except for ZMR service errors.
+                if not any(e == negative_req[0].BPKErrorCode for e in self._http_service_error_codes()):
+                    return _returner("bpk_exception", negative_req[0].BPKErrorText)
+        except Exception as e:
+            logger.error("check_bpk() %s" % str(repr(e)))
+            pass
 
         # ZMR BPK-Request
         # ---------------
@@ -817,18 +834,23 @@ class ResPartnerZMRGetBPK(models.Model):
 
                 # If the last BPK-Request got an error and the faultcode is unknown return False
                 # ATTENTION: For file imports there may not be any error code
-                if r.BPKErrorRequestDate > r.BPKRequestData and r.BPKErrorCode:
-                    if not any(code in r.BPKErrorCode for code in ['F230', 'F231', 'F233']):
+                if r.BPKErrorRequestDate > r.BPKRequestData:
+                    if not r.BPKErrorCode or not any(code in r.BPKErrorCode for code in ['F230', 'F231', 'F233']):
                         return False
 
-                # Prepare the bpk request data to compare
+                # Prepare the bpk request data to compare  and check the request version
                 if r.BPKErrorRequestDate > r.BPKRequestData:
+                    # Check if the request version changed
+                    if r.BPKErrorRequestVersion != self.request_bpk(version=True):
+                        return False
                     bpk_data = {'firstname': r.BPKErrorRequestFirstname or '',
                                 'lastname': r.BPKErrorRequestLastname or '',
                                 'birthdate': r.BPKErrorRequestBirthdate or '',
                                 'zipcode': r.BPKErrorRequestZIP or '',
                                 }
                 else:
+                    if r.BPKRequestVersion != self.request_bpk(version=True):
+                        return False
                     bpk_data = {'firstname': r.BPKRequestFirstname or '',
                                 'lastname': r.BPKRequestLastname or '',
                                 'birthdate': r.BPKRequestBirthdate or '',
@@ -979,6 +1001,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         'BPKRequestZIP': zipcode or False,
                         'BPKResponseData': r.get('response_content') or False,
                         'BPKResponseTime': response_time,
+                        'BPKRequestVersion': self.request_bpk(version=True),
                     })
 
                 else:
@@ -995,6 +1018,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         'BPKErrorRequestZIP': zipcode or False,
                         'BPKErrorResponseData': r.get('response_content') or False,
                         'BPKErrorResponseTime': response_time,
+                        'BPKErrorRequestVersion': self.request_bpk(version=True),
                     })
 
                 # Search for an existing bpk record
