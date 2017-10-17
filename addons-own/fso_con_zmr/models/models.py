@@ -433,8 +433,8 @@ class ResPartnerZMRGetBPK(models.Model):
         responses = list()
 
         # Validate input
-        if not all((firstname, lastname, birthdate)):
-            raise ValidationError(_("Missing input data! Mandatory are firstname, lastname and birthdate!"))
+        if not all((firstname, lastname)):
+            raise ValidationError(_("Missing input data! Mandatory are firstname and lastname!"))
 
         # Get the request_data_template path
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -623,25 +623,37 @@ class ResPartnerZMRGetBPK(models.Model):
         # 1.) Person not found at all: Retry with birth-year only
         year = None
         if 'F230' in responses[0].get('faultcode', ""):
-            try:
-                date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
-                year = date.strftime("%Y")
-            except:
-                try:
-                    year = str(birthdate).split("-", 1)[0]
-                except:
-                    year = None
-            if year:
-                responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year)
-
-                # Return list of valid responses
+            # Try without birthdate but with zipcode
+            if zipcode:
+                responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate="", zipcode=zipcode)
                 if self.response_ok(responses):
                     return responses
 
-                # If still no person was found we reset the year to none cause no better results can be expected
-                # by a year only search
-                if 'F230' in responses[0].get('faultcode', ""):
-                    year = None
+            # Try with birth year only
+            if 'F230' in responses[0].get('faultcode', ""):
+                try:
+                    date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
+                    year = date.strftime("%Y")
+                except:
+                    try:
+                        year = str(birthdate).split("-", 1)[0]
+                    except:
+                        year = None
+                if year:
+                    responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year)
+
+                    # Return list of valid responses
+                    if self.response_ok(responses):
+                        return responses
+
+                    # If still no person was found we reset the year to none cause no better results can be expected
+                    # by a year only search
+                    if 'F230' in responses[0].get('faultcode', ""):
+                        year = None
+            # Since we got no F230 we most likely got multiple person matched after we removed the birthdate
+            # Therefore we set the birthdate to none for all the multiple person matched tries to avoid F230 again
+            else:
+                birthdate = ""
 
         # 2.) Error: Multiple Persons found: Retry with zipcode
         faultcode = responses[0].get('faultcode', "")
@@ -804,7 +816,8 @@ class ResPartnerZMRGetBPK(models.Model):
             if r.BPKRequestCompanyID.id in bpk_companies.ids:
 
                 # If the last BPK-Request got an error and the faultcode is unknown return False
-                if r.BPKErrorRequestDate > r.BPKRequestData:
+                # ATTENTION: For file imports there may not be any error code
+                if r.BPKErrorRequestDate > r.BPKRequestData and r.BPKErrorCode:
                     if not any(code in r.BPKErrorCode for code in ['F230', 'F231', 'F233']):
                         return False
 
