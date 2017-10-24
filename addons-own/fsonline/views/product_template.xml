@@ -13,35 +13,62 @@
                 <!-- PRODUCT SHEET -->
                 <sheet>
 
-                    <!-- HEAD -->
-                    <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
+                    <!-- HEAD (Button Box Name and Image) -->
+                    <div class="oe_right oe_button_box" style="width: 400px;" name="buttons">
+                        <p>Button Box Placeholder</p>
                     </div>
-                    <div class="oe_left" style="width: 500px;">
+
+                    <div class="oe_left" style="width: calc(100% - 430px);">
                         <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
-                        <div class="oe_title" style="width: 390px;">
-                            <label class="oe_edit_only" for="name"/>
-                            <h1><field name="name" class="oe_inline"/></h1>
+                        <div style="margin-left: 140px;">
+                            <div class="oe_edit_only"><label for="name"/></div>
+                            <h1><field name="name" /></h1>
                         </div>
-                        <div class="oe_left">
-                            <label for="fs_product_type"/>
-                            <h2><field name="fs_product_type" class="oe_inline"/></h2>
-                        </div>
-                        <div class="oe_left">
-                            <label for="fs_group_ids"/>
-                            <h2><field name="fs_group_ids" class="oe_inline"/></h2>
-                        </div>
+                        <!-- div>
+                            <div class="oe_edit_only"><label for="description_sale" string="Kurztext (Kurzbeschreibung)"/></div>
+                            <div><field name="description_sale"/></div>
+                        </div -->
                     </div>
+
+                    <group>
+                        <label colspan="2" class="oe_edit_only" for="description_sale" string="Kurztext (Kurzbeschreibung)"/>
+                        <field colspan="2" nolabel="1" name="description_sale"/>
+                    </group>
+
+                    <group name="Basic Settings">
+                        <group>
+                            <field name="fs_product_type" string="Fundraising Studio Typ"/>
+                            <field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>
+                            <field name="product_page_template" string="Webseitenvorlage"/>
+                        </group>
+                        <group>
+                            <!--
+                            <field name="product_page_template" string="Webseitenvorlage"/>
+                            <field name="website_published" string="Webfreigabe"/>
+                            <field name="website_published_start" string="Webanzeige Start"/>
+                            <field name="website_published_end" string="Webanzeige Ende"/>
+                            <field name="website_visible" string="Webanzeige (berechnet)" readonly="1"/>
+                            <field name="website_url" invisible="0" widget="url" readonly="1" string="Standard URL"/>
+                            <label for="description_sale" colspan="2" string="Kurztext (Kurzbeschreibung)" class="oe_edit_only"/>
+                            <field name="description_sale" colspan="2" nolabel="1"/>
+                            -->
+                            <field name="type"/>
+                            <field name="uom_id" string="Mengeneinheit"/>
+                            <field name="website_url" invisible="0" widget="url" readonly="1" string="Standard URL"/>
+                        </group>
+                    </group>
 
                     <!-- TABS -->
                     <notebook>
-                        <page string="Basis">
-
-                            <group string="Betrag">
-                                <group>
+                        <page string="Zahlung">
+                            <group>
+                                <group string="Betrag" col="2">
                                     <field name="list_price" string="Standard Betrag"/>
-                                    <field name="price_donate" string="Spendenbetrag frei wählbar"/>
-                                    <field name="price_donate_min" string="Mindestspendenbetrag" attrs="{'invisible': [('price_donate','=', False)]}"/>
-                                    <field name="price_suggested_ids" string="Spendenbuttons" attrs="{'invisible': [('price_donate','=', False)]}">
+                                    <field name="price_donate" string="Betrag frei wählbar"/>
+                                    <field name="price_donate_min" string="Mindestbetrag" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                                </group>
+                                <group col="1">
+                                    <field name="price_suggested_ids" string="Betragsvorschläge (Spendenbuttons)" attrs="{'invisible': [('price_donate','=', False)]}">
                                         <tree string="Suggested Donation-Values" default_order="sequence" editable="bottom">
                                             <field name="sequence" widget="handle"/>
                                             <field name="name"/>
@@ -50,74 +77,259 @@
                                         </tree>
                                     </field>
                                 </group>
+                            </group>
+
+                            <group string="Zahlungsinterval" attrs="{'invisible': [('price_donate','=', False)]}">
+                                <div colspan="2" class="backend-help oe_edit_only">
+                                    <p>Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll</p>
+                                </div>
                                 <group>
-                                    <field name="uom_id" string="Standard Einheit"/>
-                                    <field name="payment_interval_lines_ids" string="Zahlungsintervalle">
+                                    <field name="payment_interval_default" string="Standard Zahlungsinterval"/>
+                                </group>
+                                <group>
+                                    <label colspan="2" for="payment_interval_lines_ids" string="Auswählbare Zahlungsintervalle"/>
+                                    <field colspan="2" name="payment_interval_lines_ids" nolabel="1">
                                         <tree string="Payment Intervals" default_order="sequence" editable="bottom">
                                             <field name="sequence" widget="handle"/>
                                             <field name="payment_interval_id"/>
                                         </tree>
                                     </field>
-                                    <field name="payment_interval_default" string="Standard Zahlungsinterval"/>
-                                    <field name="payment_interval_as_selection" string="Zahlungsint. als Liste"/>
                                 </group>
                             </group>
 
-                            <group string="Checkout" colspan="2">
-                                <field name="simple_checkout" string="Warenkorb überspringen"/>
-                                <field name="button_addtocart_text" string="Checkout Button Text"/>
-                            </group>
-
-                            <group string="Spendenziel">
-                                <group>
-                                    <group>
-                                        <field name="funding_goal"/>
-                                        <field name="funding_user"/>
-                                    </group>
-                                    <group>
-                                        <field name="funding_reached" readonly="1"/>
-                                    </group>
-                                </group>
-                                <field colspan="2" name="funding_desc"/>
-                                <group string="Spendenseite">
-                                    <group string="Seite">
-                                        <field name="hide_fundingtext" string="Kurztext ausblenden"/>
-                                        <field name="hide_fundingbar" string="Zielbalken ausblenden"/>
-                                        <field name="hide_fundingdesc" string="Beschreibung ausblenden"/>
-                                        <field name="hide_fundingtextincp" string=""/>
-                                        <field name="hide_fundingbarincp"/>
-                                    </group>
-                                    <group string="Spendenbox">
-                                        <field name="hide_fundingtextincp" string=""/>
-                                        <field name="hide_fundingbarincp"/>
-                                    </group>
-                                </group>
-                                <group string="Artikelübersichtsseiten">
-                                    <field name="hide_fundingtextinlist" string="Kurztext ausblenden"/>
-                                    <field name="hide_fundingbarinlist" string="Zielbalken ausblenden"/>
-                                </group>
+                            <!-- group string="Zahlungsmethoden" attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}" -->
+                            <group string="Zahlungsmethoden">
+                                <div colspan="2" class="backend-help oe_edit_only">
+                                    <p>
+                                        Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende / diesen Artikel überschreiben.
+                                        Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout Webseitenvorlage funktioniert!
+                                    </p>
+                                </div>
+                                <!-- label colspan="2" for="product_acquirer_lines_ids" class="oe_edit_only"/ -->
+                                <field colspan="2" name="product_acquirer_lines_ids" nolabel="1" attrs="{'readonly': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}">
+                                    <tree string="Acquirers" default_order="sequence" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="acquirer_id"/>
+                                        <field name="acquirer_pre_msg"/>
+                                    </tree>
+                                </field>
                             </group>
                         </page>
 
                         <page string="Webseite">
+                            <group>
+                                <group>
+                                    <field name="website_published" string="Webfreigabe"/>
+                                    <field name="website_published_start" string="Webanzeige Start"/>
+                                    <field name="website_published_end" string="Webanzeige Ende"/>
+                                </group>
+                                <group>
+                                    <field name="website_visible" string="Webanzeige (berechnet)" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Spendenseite (Artikelseite)">
+                                <group string="Seiteneinstellungen" class="fso_backend_separator">
+                                    <!-- h3 colspan="2" class="fso_backend_separator">Seiteneinstellungen</h3 -->
+                                    <field name="hide_categories" string="Kategorienavigation ausblenden"/>
+                                    <field name="hide_search" string="Suchfeld ausblenden"/>
+                                    <field name="show_desctop" string="Extra Widget-Bereich am Seitenbeginn"/>
+                                    <field name="show_descbottom" string="Extra Widget-Bereich am Seitenende"/>
+                                    <field name="hide_salesdesc" string="Kurzbeschreibung ausblenden"/>
+                                    <field name="format" attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_ahch')]}"/>
+                                    <field name="alternative_product_ids" string="Verlinke Spenden- oder Artikelseiten" widget="many2many_tags"/>
+                                    <field name="parallax_image_medium" string="Seitenhintergrung" widget="image" class="oe_avatar oe_left"/>
+                                    <field name="parallax_speed" string="Hintergrungdbewegung beim Scrollen" attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
+                                </group>
+                                <group string="Spendenbox auf der Seite" class="fso_backend_separator">
+                                    <!-- h3 colspan="2" class="fso_backend_separator">Spendenbox auf der Seite</h3 -->
+                                    <field name="hide_payment" string="Spendenbox ausblenden"/>
+                                    <field name="hide_image" string="Bild ausblenden"/>
+                                    <!-- field name="image_square" string="Bild (autom. quadratisch zugeschnitten)" widget="image" class="oe_avatar oe_left" attrs="{'readonly': True, 'invisible': [('hide_image','=', True)]}"/ -->
+                                    <field name="variants_as_list" string="Artikelvarianten als Auswahlliste darstellen"/>
+                                    <field name="payment_interval_as_selection" string="Zahlungsintervalle als Auswahlliste darstellen"/>
+                                    <field name="hide_quantity" string="Stückzahlauswahl ausblenden"/>
+                                    <field name="hide_amount_title" string="Betragsüberschrift ausblenden"/>
+                                    <field name="amount_title" string="Abweichende Betragsüberschrift" attrs="{'invisible': [('hide_amount_title','=', True)]}"/>
+                                    <field name="button_addtocart_text" string="Button Text"/>
+                                    <field name="hide_panelfooter" string="Globalen Footer Ausblenden"/>
+                                </group>
+                                <div colspan="4" class="text-center oe_edit_only">
+                                    <p>
+                                        <img src="/fsonline/static/src/img/donation_layout_800x900_v2.png"/>
+                                    </p>
+                                </div>
+                                <div colspan="4" class="backend-help oe_edit_only">
+                                    <p>
+                                        Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!
+                                    </p>
+                                </div>
+                            </group>
+                            <group string="Übersichtsseiten (Artikellisten)">
+                                <field name="website_sequence" string="Reihung"/>
+                                <field name="public_categ_ids" string="Angezeigt in den Kategorien" widget="many2many_tags"/>
+                                <field name="website_style_ids" string="Design (Extra CSS Klassen)" widget="many2many_tags"/>
+                                <field name="do_not_link" string="Keine Verlinkung zur Spendenseite"/>
+                                <field name="hide_price" string="Betrag nicht anzeigen"/>
+                            </group>
+                            <group string="Spendenkorbeinstellungen (Warenkorb)">
+                                <field name="simple_checkout" string="Spendenkorbseite überspringen"/>
+                                <field name="accessory_product_ids" string="Zugehörige Spenden und Artikel" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <group string="Digitale Inhalte" attrs="{'invisible': [('product_page_template','==', 'website_sale.product')]}">
+                                        <field name="webshop_download_file" string="Download-Datei" widget="binary" filename="webshop_download_file_name"/>
+                                        <field name="webshop_download_file_name" string="Download-Datei Name"/>
+                                </group>
+                                <group>
 
+                                </group>
+                            </group>
                         </page>
 
-                        <page string="Verkauf">
+                        <page string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'godparenthood', 'sponsorship'])]}">
+                            <group string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'godparenthood', 'sponsorship'])]}">
+                                <group>
+                                    <field name="funding_goal"/>
+                                    <field name="funding_user"/>
+                                </group>
+                                <group>
+                                    <field name="funding_reached" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Webseiteneinstellungen">
+                                <group string="Spendenseite (Artikelseite)" class="fso_backend_separator">
+                                        <field name="hide_fundingtext" string="Kurztext ausblenden"/>
+                                        <field name="hide_fundingbar" string="Zielbalken ausblenden"/>
+                                        <field name="hide_fundingdesc" string="Beschreibung ausblenden"/>
+                                        <field name="funding_desc" string="Beschreibung"/>
+                                </group>
+                                <group string="Spendenbox auf der Seite" class="fso_backend_separator">
+                                        <field name="hide_fundingtextincp" string="Text ausblenden"/>
+                                        <field name="hide_fundingbarincp" string="Zielbalken ausblenden"/>
+                                </group>
+                            </group>
+                            <group string="Artikelübersichtsseiten">
+                                <group>
+                                    <field name="hide_fundingtextinlist" string="Text ausblenden"/>
+                                    <field name="hide_fundingbarinlist" string="Zielbalken ausblenden"/>
+                                </group>
+                                <group>
 
+                                </group>
+                            </group>
                         </page>
 
-                        <page string="Einkauf">
-
+                        <page name="variants" string="Varianten">
+                            <div class="oe_right">
+                                <button class="oe_inline oe_stat_button" string="Variant Prices"  name="%(product.variants_template_action)d" type="action" icon="fa-strikethrough"/>
+                                <button class="oe_inline oe_stat_button" name="%(product.product_variant_action)d" type="action" icon="fa-sitemap">
+                                    <field string="List of Variants" name="product_variant_count" widget="statinfo" />
+                                </button>
+                            </div>
+                            <p class="oe_grey">
+                                <strong>Warning</strong>: adding or deleting attributes
+                                will delete and recreate existing variants and lead
+                                to the loss of their possible customizations.
+                            </p>
+                            <field name="attribute_line_ids" widget="one2many_list" context="{'show_attribute': False}">
+                                <tree string="Variants" editable="bottom">
+                                    <field name="attribute_id"/>
+                                    <field name="value_ids" widget="many2many_tags" options="{'no_create_edit': True}" domain="[('attribute_id', '=', attribute_id)]" context="{'default_attribute_id': attribute_id}"/>
+                                </tree>
+                            </field>
                         </page>
 
-                        <page string="Buchhaltung">
+                        <page string="System">
+                            <group string="Information">
+                                <group>
+                                    <field name="active"/>
+                                    <field name="state"/>
+                                    <field name="product_manager"/>
+                                    <field name="ean13"/>
+                                    <field name="default_code" string="Interner Code"/>
+                                    <field name="description" string="Interne Beschreibung"/>
+                                </group>
+                                <group>
+                                    <field name="id" readonly="True"/>
+                                    <field name="create_date" readonly="True"/>
+                                    <field name="create_uid" readonly="True"/>
+                                    <field name="write_date" readonly="True"/>
+                                    <field name="write_uid" readonly="True"/>
+                                    <field name="fs_group_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
 
-                        </page>
+                            <group string="Buchhaltung">
+                                <group>
+                                    <field name="categ_id"/>
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der Buchhaltung sofern diese nicht explizit für dieses Produkt
+                                            gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun.
+                                        </p>
+                                    </div>
+                                </group>
+                                <group>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="property_account_income" domain="[('type', '!=', 'view')]"/>
+                                    <field name="taxes_id" widget="many2many_tags"/>
+                                </group>
+                                <group>
+                                    <field name="property_account_expense" domain="[('type', '!=', 'view')]"/>
+                                    <field name="supplier_taxes_id" widget="many2many_tags"/>
+                                </group>
+                            </group>
 
-                        <page string="Info">
-                            <field name="id" readonly="1"/>
-                            <field name="active"/>
+                            <group string="Einkauf (Beschaffung)">
+                                <group name="Supply Chain Information">
+                                    <field name="standard_price"/>
+                                    <field name="description_purchase"/>
+                                </group>
+                                <group name="Supply Chain">
+                                    <field name="route_ids" widget="many2many_checkboxes"/>
+                                    <field name="seller_ids"/>
+                                </group>
+                            </group>
+
+                            <group string="Lager" attrs="{'invisible':[('type','=','service')]}">
+                                <group name="Lagerstandsbewertung" class="fso_backend_separator" groups="base.group_user">
+                                    <label for="qty_available"/>
+                                    <div>
+                                        <field name="qty_available" class="oe_inline"/>
+                                        <button name="%(stock.action_view_change_product_quantity)d" string="⇒ Update"
+                                                type="action"
+                                                class="oe_link"/>
+                                    </div>
+                                    <label for="incoming_qty"/>
+                                    <div>
+                                        <field name="incoming_qty" class="oe_inline"/>
+                                        <button string="⇒ Request Procurement" name="%(stock.act_make_procurement)d"
+                                                type="action" class="oe_link"/>
+                                    </div>
+                                    <field name="virtual_available"/>
+                                </group>
+                                <group name="Counter-Part Locations Properties" groups="stock.group_locations" class="fso_backend_separator">
+                                    <field name="property_stock_procurement" domain="[('usage','=','procurement')]"/>
+                                    <field name="property_stock_production" domain="[('usage','=','production')]"/>
+                                    <field name="property_stock_inventory" domain="[('usage','=','inventory')]"/>
+                                </group>
+                            </group>
+                            <group name="Lager_2" attrs="{'invisible':[('type','=','service')]}">
+                                <group name="Volume and Weight" class="fso_backend_separator">
+                                    <field name="volume"/>
+                                    <field name="weight"/>
+                                    <field name="weight_net"/>
+                                </group>
+                                <group name="Storage Location" class="fso_backend_separator">
+                                    <field name="loc_rack"/>
+                                    <field name="loc_row"/>
+                                    <field name="loc_case"/>
+                                </group>
+                            </group>
+
                         </page>
                     </notebook>
                 </sheet>
@@ -126,14 +338,53 @@
         </field>
     </record>
 
-    <record model="ir.actions.act_window" id="fso_product_template_form_action">
-        <field name="name">FSO Product Template Form Action</field>
-        <field name="res_model">product.product</field>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="fso_product_template_form"/>
+    <!-- DONATION PRODUCT TEMPLATE TREE -->
+    <record model="ir.ui.view" id="fso_product_template_tree">
+        <field name="name">FS-Online Product Template Tree</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <tree string="Spenden und Artikel"
+                  default_order="website_sequence"
+                  colors="green:fs_product_type and fs_product_type != 'product' and website_published and website_visible;
+                          orange:fs_product_type and fs_product_type != 'product' and website_published and not website_visible;
+                          red:fs_product_type and fs_product_type != 'product' and not website_published;
+                          blue: not fs_product_type or fs_product_type == 'product'">
+                <field name="website_sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="fs_product_type" string="FS Typ"/>
+                <field name="price_donate" string="Freier Betrag"/>
+                <field name="list_price" string="Betrag"/>
+                <field name="payment_interval_default" string="Std. Interv."/>
+                <field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>
+                <field name="product_page_template" string="Webvorlage"/>
+                <field name="website_published" string="Freig."/>
+                <field name="website_published_start" string="Start"/>
+                <field name="website_published_end" string="Ende"/>
+                <field name="website_visible" string="Sichtb."/>
+            </tree>
+        </field>
     </record>
 
-    <!-- menuitem action="fso_product_template_form_action" id="fso_product_template_menu"
-              parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" / -->
+    <record model="ir.actions.act_window" id="fso_product_template_viewaction">
+        <field name="name">Spenden und Artikel </field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">tree, form</field>
+        <field name="view_id" ref="fso_product_template_form"/>
+    </record>
+    <record id="fso_product_template_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="fso_product_template_tree"/>
+        <field name="act_window_id" ref="fso_product_template_viewaction"/>
+    </record>
+    <record id="fso_product_template_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fso_product_template_form"/>
+        <field name="act_window_id" ref="fso_product_template_viewaction"/>
+    </record>
+
+    <menuitem action="fso_product_template_viewaction" id="fso_product_template_menu"
+              parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" />
 
 </data></openerp>

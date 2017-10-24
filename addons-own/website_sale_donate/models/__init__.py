@@ -4,6 +4,7 @@
 __author__ = 'mkarrer'
 
 #import sale_order_check_carrier_quotation
+import product_template
 import payment_acquirer
 import payment_transaction
 import product_website_price_buttons

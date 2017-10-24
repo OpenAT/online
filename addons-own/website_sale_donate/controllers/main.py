@@ -77,6 +77,11 @@ class website_sale_donate(website_sale):
         except:
             category = ''
 
+        # Check visibility
+        if not product.active or (not request.website.is_publisher() and not product.website_visible):
+                #return request.render('website.page_404', {'path': product.website_url, 'code': '404'})
+                return request.registry['ir.http']._handle_exception(AttributeError, 404)
+
         # Store the current request url in the session for possible returns
         # HINT: html escaping is done by request.redirect so not needed here!
         query = {'category': category, 'search': search}

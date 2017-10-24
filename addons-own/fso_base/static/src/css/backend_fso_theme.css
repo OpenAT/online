@@ -23,13 +23,14 @@
     border-right: 0 solid #ddd;
     padding: 4px 0 6px 0;
 }
-.openerp .oe_form td.oe_form_group_cell + .oe_form_group_cell {
-    padding: 0;
-}
+/*.openerp .oe_form td.oe_form_group_cell + .oe_form_group_cell {*/
+    /*padding: 0;*/
+/*}*/
 .openerp .oe_form .oe_form_field,
 .openerp .oe_form .oe_form_field_boolean {
     /*padding-top: 4px;*/
     /*margin-left: 7px;*/
+    padding: 0;
 }
 
 
@@ -956,4 +957,24 @@ html .openerp .oe_kanban_view .oe_kanban_footer_left .oe_tags .oe_tag {
 .action_open_issue_kanban {
     display: block;
     padding-top:12px;
+}
+
+
+.openerp div.backend-help {
+    background-color: #fafafa;
+    border: solid 3px #fafafa;
+    border-left-color: bisque;
+    padding: 0 1em;
+    margin: 0 2em 0.5em 1em;
+}
+.openerp div.backend-help p {
+
+}
+.openerp img.product_page_template_images {
+    width: 260px;
+}
+.openerp div.fso_backend_separator {
+    /*color: #d056b2;*/
+    color: #666666;
+    /*font-size: 18px;*/
 }
