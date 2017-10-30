@@ -1,191 +1,22 @@
 # -*- coding: utf-8 -*-
 import os
-import errno
 from os.path import join as pj
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError, Warning
 from openerp.tools.translate import _
-from openerp.tools import config
 from openerp.addons.fso_base.tools.soap import soap_request, GenericTimeoutError
+from openerp.addons.fso_base.tools.name import clean_name
 from lxml import etree
 import time
 import datetime
 from datetime import timedelta
 from dateutil import tz
 import logging
-import re
 from requests import Timeout
 import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
 logger = logging.getLogger(__name__)
-
-
-def clean_name(name, split=False):
-    # https://github.com/OpenAT/online/issues/64
-    # HINT: Char fields are always unicode in odoo which is good therefore do not convert any Char fields with str()!
-    # ATTENTION: Flags like re.UNICODE do NOT work all the time! Use (?u) instead in the start of any regex pattern!
-
-    # Replace u., und, & with +
-    name = re.sub(ur"(?u)[&]+", "+", name)
-    name = re.sub(ur"(?iu)\b(und|u)\b", "+", name)
-    # Remove right part starting with first +
-    name = name.split('+')[0]
-    # Remove unwanted words case insensitive (?i)
-    # HINT: This may leave spaces or dots after the words but these get cleaned later on anyway
-    name = re.sub(ur"(?iu)\b(fam|familie|sen|jun|persönlich|privat|c[/]o|anonym|e[.]u)\b", "", name)
-    # Remove Numbers
-    name = ''.join(re.findall(ur"(?u)[^0-9]+", name))
-    # Keep only unicode alphanumeric-characters (keeps chars like e.g.: Öö ỳ Ṧ), dash and space
-    # HINT: This removes the left over dots from e.g.: Sen. or e.u
-    name = ''.join(re.findall(ur"(?u)[\w\- ]+", name))
-    # Remove leading and trailing: whitespace and non alphanumeric characters
-    name = re.sub(ur"(?u)^[\W]*|[\W]*$", "", name)
-    # Replace multiple dashes with one dash
-    name = re.sub(ur"(?u)-[\s\-]*-+", "-", name)
-    # Remove whitespace around dashes
-    name = re.sub(ur"(?u)\s*-\s*", "-", name)
-    # Replace multiple spaces with one space
-    name = re.sub(ur"(?u)\s\s+", " ", name)
-    # Use only first word of name
-    if split:
-        # Search from start until first non unicode alphanumeric-character which is not a - is reached
-        # HINT: Can only be space or dash at this point ;)
-        name = ''.join(re.findall(ur"(?u)^[\w\-]+", name))
-
-    return name
-
-
-class CompanyAustrianZMRSettings(models.Model):
-    _inherit = 'res.company'
-
-    # FIELDS
-    BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestCompanyID",
-                                    string="BPK Requests")
-
-    # Basic Settings
-    stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')
-
-    # PVPToken userPrincipal
-    pvpToken_userId = fields.Char(string="User ID (userId)")
-    pvpToken_cn = fields.Char(string="Common Name (cn)")
-    pvpToken_gvOuId = fields.Char(string="Request Organisation (gvOuId)")
-    pvpToken_ou = fields.Char(string="Request Person (ou)")
-
-    # ZMR Requests SSL Zertifikate
-    # http://www.ridingbytes.com/2016/01/02/odoo-remember-the-filename-of-binary-files/
-    pvpToken_crt_pem = fields.Binary(string="Certificate (PEM)")
-    pvpToken_crt_pem_filename = fields.Char(string="Certificate Name", help="crt_pem")
-    pvpToken_crt_pem_path = fields.Char(string="Certificate Path",
-                                        compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
-
-    pvpToken_prvkey_pem = fields.Binary(string="Private Key (PEM)")
-    pvpToken_prvkey_pem_filename = fields.Char(string="Private Key Name", help="prvkey_pem without password!")
-    pvpToken_prvkey_pem_path = fields.Char(string="Private Key Path",
-                                           compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
-    # Get BPK request URLS
-    BPKRequestURL = fields.Selection(selection=[('https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR',
-                                                 'Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
-                                                ('https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR',
-                                                 'Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR'),
-                                                ],
-                                     string="GetBPK Request URL",
-                                     default="https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR")
-    # BPK-Request Status messages
-    bpk_found = fields.Text(string="BPK Person-Found Message", translate=True)
-    bpk_not_found = fields.Text(string="BPK No-Person-Matched Message", translate=True)
-    bpk_multiple_found = fields.Text(string="BPK Multiple-Person-Matched Message", translate=True)
-    bpk_zmr_service_error = fields.Text(string="BPK ZMR-Service-Error Message", translate=True)
-
-    # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
-    # https://www.odoo.com/de_DE/forum/hilfe-1/question/
-    #     is-there-a-way-to-get-the-location-to-your-odoo-and-to-create-new-files-in-your-custom-module-89677
-    @api.depends('pvpToken_crt_pem', 'pvpToken_prvkey_pem')
-    def _certs_to_file(self):
-        # http://stackoverflow.com/questions/21458155/get-file-path-from-binary-data
-        assert config['data_dir'], "config['data_dir'] missing!"
-        assert self.env.cr.dbname, "self.env.cr.dbname missing!"
-        assert self.env.user.company_id.id, "self.env.user.company_id.id missing!"
-        crt_dir = pj(config['data_dir'], "filestore", self.env.cr.dbname,
-                     "fso_con_zmr", "company_"+str(self.env.user.company_id.id))
-        if not os.path.exists(crt_dir):
-            try:
-                os.makedirs(crt_dir)
-            except OSError as err:
-                if err.errno != errno.EEXIST:
-                    raise
-        for rec in self:
-            if rec.pvpToken_crt_pem:
-                crt_pem_file = pj(crt_dir, rec.pvpToken_crt_pem_filename)
-                with open(crt_pem_file, 'w') as f:
-                    f.write(rec.pvpToken_crt_pem.decode('base64'))
-                # Write path to field
-                rec.pvpToken_crt_pem_path = crt_pem_file
-            if rec.pvpToken_prvkey_pem:
-                prvkey_pem_file = pj(crt_dir, rec.pvpToken_prvkey_pem_filename)
-                with open(prvkey_pem_file, 'w') as f:
-                    f.write(rec.pvpToken_prvkey_pem.decode('base64'))
-                # Write path to field
-                rec.pvpToken_prvkey_pem_path = prvkey_pem_file
-
-    # TODO: on deletion of a company delete all related res.partner.bpk records
-
-
-class ResPartnerBPK(models.Model):
-    _name = 'res.partner.bpk'
-
-    # FIELDS
-    # res.company
-    BPKRequestCompanyID = fields.Many2one(comodel_name='res.company', string="BPK Request Company",
-                                          required=True, readonly=True)
-
-    # res.partner
-    BPKRequestPartnerID = fields.Many2one(comodel_name='res.partner', string="BPK Request Partner",
-                                          required=True, readonly=True)
-
-    # To make sorting the BPK request easier
-    LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
-
-    # Make debugging of multiple request on error easier
-    BPKRequestLog = fields.Text(string="Request Log", readonly=True)
-
-    # Successful BPK request field set
-    # --------------------------------
-    # This set of fields gets only updated if private and public bpk was returned successfully
-    BPKPrivate = fields.Char(string="BPK Private", readonly=True)
-    BPKPublic = fields.Char(string="BPK Public", readonly=True)
-
-    BPKRequestDate = fields.Datetime(string="BPK Request Date", readonly=True)
-    BPKRequestURL = fields.Char(string="BPK Request URL", readonly=True)
-    BPKRequestData = fields.Text(string="BPK Request Data", readonly=True)
-    BPKRequestFirstname = fields.Char(string="BPK Request Firstname", readonly=True)
-    BPKRequestLastname = fields.Char(string="BPK Request Lastname", readonly=True)
-    BPKRequestBirthdate = fields.Date(string="BPK Request Birthdate", readonly=True)
-    BPKRequestZIP = fields.Char(string="BPK Request ZIP", readonly=True)
-
-    BPKResponseData = fields.Text(string="BPK Response Data", readonly=True)
-    BPKResponseTime = fields.Float(string="BPK Response Time", readonly=True)
-
-    BPKRequestVersion = fields.Integer(string="BPK Request Version", readonly=True)
-
-    # Invalid BPK request field set
-    # -----------------------------
-    # This set of field gets updated by every bpk request with an error (or a missing bpk)
-    BPKErrorCode = fields.Char(string="BPK-Error Code", readonly=True)
-    BPKErrorText = fields.Text(string="BPK-Error Text", readonly=True)
-
-    BPKErrorRequestDate = fields.Datetime(string="BPK-Error Request Date", readonly=True)
-    BPKErrorRequestURL = fields.Char(string="BPK-Error Request URL", readonly=True)
-    BPKErrorRequestData = fields.Text(string="BPK-Error Request Data", readonly=True)
-    BPKErrorRequestFirstname = fields.Char(string="BPK-Error Request Firstname", readonly=True)
-    BPKErrorRequestLastname = fields.Char(string="BPK-Error Request Lastname", readonly=True)
-    BPKErrorRequestBirthdate = fields.Date(string="BPK-Error Request Birthdate", readonly=True)
-    BPKErrorRequestZIP = fields.Char(string="BPK-Error Request ZIP", readonly=True)
-
-    BPKErrorResponseData = fields.Text(string="BPK-Error Response Data", readonly=True)
-    BPKErrorResponseTime = fields.Float(string="BPK-Error Response Time", readonly=True)
-
-    BPKErrorRequestVersion = fields.Integer(string="BPK-Error Request Version", readonly=True)
 
 
 class ResPartnerZMRGetBPK(models.Model):
