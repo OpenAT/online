@@ -17,6 +17,9 @@ class CompanyAustrianZMRSettings(models.Model):
     # FIELDS
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestCompanyID",
                                     string="BPK Requests")
+    fa_donation_report_ids = fields.One2many(comodel_name="res.partner.fa_donation_report",
+                                             inverse_name="bpk_company_id",
+                                             string="Donation Reports")
 
     # Basic Settings
     stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')

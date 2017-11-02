@@ -275,10 +275,11 @@ class ResPartnerZMRGetBPK(models.Model):
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         soaprequest_templates = pj(addon_path, 'soaprequest_templates')
         assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at %s") \
-                                                      % soaprequest_templates
+                                                        % soaprequest_templates
+
         getbpk_template = pj(soaprequest_templates, 'GetBPK_small_j2template.xml')
-        assert os.path.exists(soaprequest_templates), _("GetBPK_small_j2template.xml not found at %s") \
-                                                      % getbpk_template
+        assert os.path.exists(getbpk_template), _("GetBPK_small_j2template.xml not found at %s") \
+                                                   % getbpk_template
 
         # Find all companies with fully filled ZMR access fields
         companies = self._find_bpk_companies()
