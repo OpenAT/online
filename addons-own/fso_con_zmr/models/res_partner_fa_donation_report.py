@@ -31,7 +31,7 @@ class ResPartnerFADonationReport(models.Model):
     sub_datetime = fields.Datetime(string="Submission Date", readonly=True)
     sub_url = fields.Char(string="Submission URL", readonly=True)
     # HINT: This is set by FS-Online at submission!
-    sub_typ = fields.Selection(string="Donation Report Type", required=True, readonly=True,
+    sub_typ = fields.Selection(string="Donation Report Type", readonly=True,
                                selection=[('E', 'Erstuebermittlung'),
                                           ('A', 'Aenderungsuebermittlung'),
                                           ('S', 'Stornouebermittlung')])
@@ -40,8 +40,7 @@ class ResPartnerFADonationReport(models.Model):
     sub_request_time = fields.Float(string="Request Time", readonly=True)
     sub_log = fields.Text(string="Submission Log", readonly=True)
     # Submission BPK Information (Gathered at submission time from res.partner.bpk and copied here)
-    sub_bpk_id = fields.Many2one(comodel_name='res.partner.bpk', string="BPK Request",
-                                 required=True, readonly=True)
+    sub_bpk_id = fields.Many2one(comodel_name='res.partner.bpk', string="BPK Request", readonly=True)
     sub_bpk_company_name = fields.Char(string="BPK Company Name", readonly=True)
     sub_bpk_company_stammzahl = fields.Char(string="BPK Company Stammzahl", readonly=True)
     sub_bpk_private = fields.Char(string="BPK Private", readonly=True)
