@@ -55,6 +55,34 @@ class CompanyAustrianZMRSettings(models.Model):
     bpk_multiple_found = fields.Text(string="BPK Multiple-Person-Matched Message", translate=True)
     bpk_zmr_service_error = fields.Text(string="BPK ZMR-Service-Error Message", translate=True)
 
+    # Austrian Finanz Online Webservice Session-Login Data
+    # https://www.bmf.gv.at/egovernment/fon/fuer-softwarehersteller/softwarehersteller-funktionen.html#Webservices
+    fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)")
+    fa_benid = fields.Char(string="Webservicebenutzer ID (benid)")
+    fa_pin = fields.Char(string="Webservicebenutzer Pin (pin)")
+    fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)")
+
+    # Finanz Online Donation Report Settings (Spendenmeldung)
+    fa_dr_url = fields.Selection(selection=[('https://test', 'Test: https://test'),
+                                            ('https://production', 'Live: https://production')],
+                                 string="Spendenmeldung URL")
+    fa_dr_type = fields.Selection(string="Spendenmeldung Uebermitllungstyp",
+                                  selection=[('KK', 'Einrichtung Kunst und Kultur (gem. § 4a Abs 2 Z 5 EStG)'),
+                                             ('SO', 'Karitative Einrichtungen (gem § 4a Abs 2 Z3 lit a bis c EStG)'),
+                                             ('FW', 'Wissenschaftseinrichtungen (gem. 4a Abs 2Z 1 EStG)'),
+                                             ('NT', 'Naturschutz und Tierheime (gem § 4a Abs 2 Z 3 lit d und e EStG)'),
+                                             ('SN', 'Sammeleinrichtungen Naturschutz (gem § 4a Abs 2 Z 3 lit d und e EStG)'),
+                                             ('SG', 'gemeinnützige Stiftungen (§ 4b EStG 1988, hinsichtlich Spenden)'),
+                                             ('UN', 'Universitätetn, Kunsthochschulen, Akademie der bildenden Künste (inkl. Fakultäten, Instituteund besondere Einrichtungen, § 4a Abs 3 Z 1 EStG)'),
+                                             ('MÖ', 'Museen von Körperschaften öffentlichen Rechts (§ 4a Abs 4 lit b EStG)'),
+                                             ('MP', 'Privatmuseen mit überregionaler Bedeutung (§ 4a Abs 4 lit b EStG)'),
+                                             ('FF', 'Freiwillige Feuerwehren ( § 4a Abs 6 EStG) und Landesfeuerwehrverbände (§ 4a Abs 6 EStG)'),
+                                             ('KR', 'Kirchen und Religionsgesellschaften mit verpflichtenden Beiträgen (§ 18 Abs 1 Z 5 EStG)'),
+                                             ('PA', 'Pensionsversicherungsanstalten und Versorgungseinrichtungen (§ 18 Abs 1 Z 1a EStG)'),
+                                             ('SE', 'Behindertensportdachverbände, Internationale Anti-Korruptions-Akademie, Diplomatische Akademie (§ 4a Abs 4 EStG)'),
+                                             ('ZG', 'gemeinnützige Stiftungen (§ 4b EStG, hinsichtlich Zuwendungen zur Vermögensausstattung)')],
+                                  )
+
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
     # https://www.odoo.com/de_DE/forum/hilfe-1/question/
     #     is-there-a-way-to-get-the-location-to-your-odoo-and-to-create-new-files-in-your-custom-module-89677

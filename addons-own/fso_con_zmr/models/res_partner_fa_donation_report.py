@@ -51,8 +51,8 @@ class ResPartnerFADonationReport(models.Model):
     sub_bpk_zip = fields.Char(string="BPK ZIP", readonly=True)
 
     # Error Information
-    error_code = fields.Char(string="Error Code", redonly=True)
-    error_text = fields.Char(string="Error Information", redonly=True)
+    error_code = fields.Char(string="Error Code", readonly=True)
+    error_text = fields.Char(string="Error Information", readonly=True)
 
     # State Information
     skipped_by_id = fields.Many2one(comodel_name='res.partner.fa_donation_report',
@@ -60,7 +60,7 @@ class ResPartnerFADonationReport(models.Model):
                                     readonly=True)
     skipped = fields.One2many(comodel_name="res.partner.fa_donation_report",
                               inverse_name="skipped_by_id",
-                              string="Skipped")
+                              string="Skipped", readonly=True)
     state = fields.Selection(string="State", selection=[('new', 'New'),
                                                         ('approved', 'Approved'),
                                                         ('skipped', 'Skipped'),
@@ -98,4 +98,5 @@ class ResPartnerFADonationReport(models.Model):
             #       at all
             #       TODO: Check if a many2one and one2many can point to itself
 
+            # HINT: RefNr must be the id in the "partner_id" field
 

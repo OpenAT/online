@@ -41,6 +41,18 @@
                         <field name="bpk_zmr_service_error"/>
                     </group>
                 </page>
+                <page string="FinanzOnline Einstellungen">
+                    <group string="Webservice Session Login-Data">
+                        <field name="fa_tid"/>
+                        <field name="fa_benid"/>
+                        <field name="fa_pin"/>
+                        <field name="fa_herstellerid"/>
+                    </group>
+                    <group string="Spendenmeldung Einstellungen">
+                        <field name="fa_dr_type"/>
+                        <field name="fa_dr_url"/>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>

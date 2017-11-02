@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- DONATION REPORT: Create form, tree and list view for the Donation Reports -->
+    <record model="ir.ui.view" id="res_partner_fa_dr_form">
+        <field name="name">res_partner_fa_dr_form</field>
+        <field name="model">res.partner.fa_donation_report</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+
+            <form string="Donation Report">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="new,approved,submitted"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="bpk_company_id"/>
+                            <field name="anlage_am_um"/>
+                            <field name="ze_datum_von"/>
+                            <field name="ze_datum_bis"/>
+                            <field name="meldungs_jahr"/>
+                            <field name="betrag"/>
+                        </group>
+                        <group>
+                            <field name="id" readonly="True"/>
+                            <field name="create_date" readonly="True"/>
+                            <field name="create_uid" readonly="True"/>
+                            <field name="write_date" readonly="True"/>
+                            <field name="write_uid" readonly="True"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Submission">
+                            <group>
+                                <group>
+                                    <field name="sub_datetime"/>
+                                    <field name="sub_url"/>
+                                    <field name="sub_typ"/>
+                                    <field name="skipped_by_id"/>
+                                    <field name="skipped" widget="many2many_tags"/>
+                                    <field name="error_code"/>
+                                    <field name="error_text"/>
+                                </group>
+                                <group>
+                                    <field name="sub_bpk_id"/>
+                                    <field name="sub_bpk_company_name"/>
+                                    <field name="sub_bpk_company_stammzahl"/>
+                                    <field name="sub_bpk_private"/>
+                                    <field name="sub_bpk_public"/>
+                                    <field name="sub_bpk_firstname"/>
+                                    <field name="sub_bpk_lastname"/>
+                                    <field name="sub_bpk_birthdate"/>
+                                    <field name="sub_bpk_zip"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Submission Data">
+                            <label for="sub_data"/>
+                            <field name="sub_data"/>
+                        </page>
+                        <page string="Response">
+                            <label for="sub_response"/>
+                            <field name="sub_response"/>
+                        </page>
+                        <page string="Submission Log">
+                            <label for="sub_log"/>
+                            <field name="sub_log"/>
+                        </page>
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="res_partner_fa_dr_tree">
+        <field name="name">res_partner_fa_dr_tree</field>
+        <field name="model">res.partner.fa_donation_report</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Donation Reports"
+                  default_order="sub_datetime DESC, write_date DESC"
+                  colors="red: state == 'error';grey: state == 'skipped';green: state == 'submitted'">
+                <field name="partner_id"/>
+                <field name="bpk_company_id"/>
+                <field name="meldungs_jahr"/>
+                <field name="betrag"/>
+                <field name="sub_datetime"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="res_partner_fa_dr_search">
+        <field name="name">res_partner_fa_dr_search</field>
+        <field name="model">res.partner.fa_donation_report</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Donation Reports">
+                <field name="partner_id"/>
+                <field name="bpk_company_id"/>
+                <field name="anlage_am_um"/>
+                <field name="ze_datum_von"/>
+                <field name="ze_datum_bis"/>
+                <field name="meldungs_jahr"/>
+                <field name="betrag"/>
+                <field name="sub_bpk_private"/>
+                <field name="sub_bpk_public"/>
+                <field name="sub_bpk_firstname"/>
+                <field name="sub_bpk_lastname"/>
+                <field name="state"/>
+                <field name="error_code"/>
+                <field name="error_text"/>
+            </search>
+        </field>
+    </record>
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="res_partner_fa_dr_action" model="ir.actions.act_window" >
+        <field name="name">Donation Reports</field>
+        <field name="res_model">res.partner.fa_donation_report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="res_partner_fa_dr_search"/>
+    </record>
+    <record id="res_partner_fa_dr_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_fa_dr_tree"/>
+        <field name="act_window_id" ref="res_partner_fa_dr_action"/>
+    </record>
+    <record id="res_partner_fa_dr_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_fa_dr_form"/>
+        <field name="act_window_id" ref="res_partner_fa_dr_action"/>
+    </record>
+
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="res_partner_fa_dr_menu" action="res_partner_fa_dr_action" parent="base.menu_config" sequence="1300"/>
+
+</data></openerp>

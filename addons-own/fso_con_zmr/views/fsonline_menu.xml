@@ -5,6 +5,7 @@
 
         <menuitem id="fso_menu_res_partner_bpk_res_partner_menu" action="res_partner_bpk_res_partner_action" parent="menu_fsonline_donationdeduction" sequence="7510"/>
         <menuitem id="fso_menu_res_partner_bpk_menu" action="res_partner_bpk_action" parent="menu_fsonline_donationdeduction" sequence="7520"/>
-
+        <menuitem id="fso_menu_res_partner_fa_dr_action_menu" action="res_partner_fa_dr_action" parent="menu_fsonline_donationdeduction" sequence="7525"
+                  string="Spendenmeldung"/>
     </data>
 </openerp>
