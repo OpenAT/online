@@ -1,0 +1,11 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ses="https://finanzonline.bmf.gv.at/fon/ws/session">
+    <x:Header/>
+    <x:Body>
+        <ses:loginRequest>
+            <ses:tid>{{ fo_login['tid']|empty_if_exception_filter }}</ses:tid>
+            <ses:benid>{{ fo_login['benid']|empty_if_exception_filter }}</ses:benid>
+            <ses:pin>{{ fo_login['pin']|empty_if_exception_filter }}</ses:pin>
+            <ses:herstellerid>{{ fo_login['herstellerid']|empty_if_exception_filter }}</ses:herstellerid>
+        </ses:loginRequest>
+    </x:Body>
+</x:Envelope>

@@ -35,6 +35,9 @@ class ResPartnerFADonationReport(models.Model):
                                selection=[('E', 'Erstuebermittlung'),
                                           ('A', 'Aenderungsuebermittlung'),
                                           ('S', 'Stornouebermittlung')])
+    sub_mode = fields.Selection(string="Spendenmeldung Modus", readonly=True,
+                                selection=[('T', 'Testumgebung'),
+                                           ('P', 'Echtbetrieb')])
     sub_data = fields.Char(string="Submission Data", readonly=True)
     sub_response = fields.Char(string="Response", readonly=True)
     sub_request_time = fields.Float(string="Request Time", readonly=True)
@@ -71,28 +74,26 @@ class ResPartnerFADonationReport(models.Model):
 
     @api.multi
     def submit_donation_report_to_fa(self):
+        # LOGIN TO FINANZ ONLINE
+
+        # SUBMIT DONATION REPORT(S) (Spendenmeldung)
         for report in self:
 
-            # Get the template folder directory
-            addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            soaprequest_templates = pj(addon_path, 'soaprequest_templates')
-            assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at %s")\
-                                                          % soaprequest_templates
+            # TODO: Check donation_deduction_optout and donation_deduction_disabled
 
-            # Get the request template path
-            send_report_template = pj(soaprequest_templates, 'send_donation_report_small_j2template.xml')
-            assert os.path.exists(send_report_template), _("send_donation_report_small_j2template.xml not found at %s")\
-                                                           % send_report_template
+            # TODO: Check report state (skip all donation reports where state is not "approved" or "error")
 
+            # TODO: Login to Finanz Online
+            #       HINT: todo: the login method MUST CHECK IF THE SESSION ID IS STILL VALID
 
-            # Find the correct "Uebermittlungs_Typ"
+            # TODO: Find the correct "Uebermittlungs_Typ"
             # E = Erstmeldung (if there are no other submissions for this person for this meldungs_jahr)
             # A = Aenderung (if there are already send reports for this person with the same meldungs_jahr)
             #     !!!Ohne vbPK!!! ABER RefNr = RefNr der Erstmeldung!
             # S = Stornierung ( if the "betrag" is 0 or negative and there is a send report of type E or A
             #                   for this meldungs_jahr)
             #     !!!Ohne vbPK UND ohne Betrag!!! ABER RefNr = RefNr der Erstmeldung!
-
+            #
             # HINT: If the Uebermittlungs_Typ is S but there are no other already send reports for this year we
             #       will not send anything but simply skipp the not send reports and this one to so nothing was send
             #       at all
@@ -100,3 +101,13 @@ class ResPartnerFADonationReport(models.Model):
 
             # HINT: RefNr must be the id in the "partner_id" field
 
+            # TODO: Send Data (FileUpload) To Finanz Online
+            #       HINT: In case of an error retry to "Login to Finanz Online"
+
+            # TODO: Update the donation report record
+
+        # TODO: Logout all companies from Finanz Online
+
+    #
+    # TODO: Add scheduler action and scheduler xml-data-record
+    #

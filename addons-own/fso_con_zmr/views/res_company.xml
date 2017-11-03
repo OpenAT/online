@@ -42,15 +42,23 @@
                     </group>
                 </page>
                 <page string="FinanzOnline Einstellungen">
-                    <group string="Webservice Session Login-Data">
-                        <field name="fa_tid"/>
-                        <field name="fa_benid"/>
-                        <field name="fa_pin"/>
-                        <field name="fa_herstellerid"/>
-                    </group>
                     <group string="Spendenmeldung Einstellungen">
                         <field name="fa_dr_type"/>
-                        <field name="fa_dr_url"/>
+                        <field name="fa_dr_mode"/>
+                    </group>
+                    <group string="Webservice Login-Daten">
+                        <div  colspan="2" name="finanz_online_buttons" class="oe_button_box oe_inline">
+                            <button name="finanz_online_login" type="object" string="Login"
+                                    attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
+                            <button name="finanz_online_logout" type="object" string="Logout"
+                                    attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
+                        </div>
+                        <field name="fa_tid"/>
+                        <field name="fa_benid"/>
+                        <field name="fa_pin" password="True"/>
+                        <field name="fa_herstellerid"/>
+                        <field name="fa_login_returncode" readonly="1" invisible="1"/>
+                        <field name="fa_login_message" readonly="1"/>
                     </group>
                 </page>
             </xpath>

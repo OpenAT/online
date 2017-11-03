@@ -1,0 +1,10 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ses="https://finanzonline.bmf.gv.at/fon/ws/session">
+    <x:Header/>
+    <x:Body>
+        <ses:logoutRequest>
+            <ses:tid>{{ fo_logout['tid']|empty_if_exception_filter }}</ses:tid>
+            <ses:benid>{{ fo_logout['benid']|empty_if_exception_filter }}</ses:benid>
+            <ses:id>{{ fo_logout['id']|empty_if_exception_filter }}</ses:id>
+        </ses:logoutRequest>
+    </x:Body>
+</x:Envelope>
