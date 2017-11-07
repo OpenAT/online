@@ -66,7 +66,6 @@ class ResPartnerFADonationReport(models.Model):
     sub_bpk_zip = fields.Char(string="BPK ZIP", readonly=True)
 
     # Error Information
-    error_code = fields.Char(string="Error Code", readonly=True)
     error_text = fields.Char(string="Error Information", readonly=True)
 
     # State Information
@@ -80,7 +79,8 @@ class ResPartnerFADonationReport(models.Model):
                                                         ('approved', 'Approved'),
                                                         ('skipped', 'Skipped'),
                                                         ('submitted', 'Submitted'),
-                                                        ('error', 'Error')],
+                                                        ('error', 'Error'),
+                                                        ('exception', 'Exception')],
                              default='new',
                              readonly=True)
 
@@ -97,46 +97,46 @@ class ResPartnerFADonationReport(models.Model):
         return bpk_record
 
     @api.multi
-    def _donation_report_update(self, bpk=None, **kwargs):
+    def _donation_report_update(self, state=str(), response=None, bpk=None, **kwargs):
         assert self.ensure_one(), _("_donation_report_update() works only for a single record!")
-
-        # Find the related bpk record
-        bpk = bpk or self._find_bpk_record()
+        assert state, _("Required keyword argument 'state' is missing!")
 
         values = {
+            # State
+            'state': state,
+
             # Submission information
             'sub_datetime': kwargs.get('sub_datetime') or fields.datetime.now(),
-            'sub_url': kwargs.get('sub_url'),
-            'sub_typ': kwargs.get('sub_typ'),
-            'sub_data': kwargs.get('sub_data'),
-            'sub_response': kwargs.get('sub_response'),
-            'sub_request_time': kwargs.get('sub_request_time'),
+            'sub_url': response.request.url if response else kwargs.get('sub_url'),
+            'sub_data': response.request.body if response else kwargs.get('sub_data'),
+            'sub_response': response.content if response else kwargs.get('sub_response'),
+            'sub_request_time': response.elapsed if response else kwargs.get('sub_request_time'),
 
-            # Reference Number
+            # Type and Reference Number
+            'sub_typ': kwargs.get('sub_typ'),
             'sub_refnr': kwargs.get('sub_refnr'),
 
             # Data from the bpk company
             'sub_company_mode': kwargs.get('sub_mode') or self.bpk_company_id.fa_dr_mode,
             'sub_company_type': kwargs.get('sub_company_type') or self.bpk_company_id.fa_dr_type,
 
-            # BPK data
-            'sub_bpk_id': kwargs.get('sub_bpk_id') or bpk.id,
-            'sub_bpk_company_name': kwargs.get('sub_bpk_company_name') or bpk.BPKRequestCompanyID.name,
-            'sub_bpk_company_stammzahl': kwargs.get('sub_bpk_company_stammzahl') or bpk.BPKRequestCompanyID.stammzahl,
-            'sub_bpk_private': kwargs.get('sub_bpk_private') or bpk.BPKPrivate,
-            'sub_bpk_public': kwargs.get('sub_bpk_public') or bpk.BPKPublic,
-            'sub_bpk_firstname': kwargs.get('sub_bpk_firstname') or bpk.BPKRequestFirstname,
-            'sub_bpk_lastname': kwargs.get('sub_bpk_lastname') or bpk.BPKRequestLastname,
-            'sub_bpk_birthdate': kwargs.get('sub_bpk_birthdate') or bpk.BPKRequestBirthdate,
-            'sub_bpk_zip': kwargs.get('sub_bpk_zip') or bpk.BPKRequestZIP,
-
             # Error information
-            'error_code': kwargs.get('error_code'),
             'error_text': kwargs.get('error_text'),
 
             # Skipped information
             'skipped_by_id': kwargs.get('skipped_by_id'),
             'skipped': kwargs.get('skipped'),
+
+            # BPK data
+            'sub_bpk_id': bpk.id if bpk else None,
+            'sub_bpk_company_name': bpk.BPKRequestCompanyID.name if bpk else None,
+            'sub_bpk_company_stammzahl': bpk.BPKRequestCompanyID.stammzahl if bpk else None,
+            'sub_bpk_private': bpk.BPKPrivate if bpk else None,
+            'sub_bpk_public': bpk.BPKPublic if bpk else None,
+            'sub_bpk_firstname': bpk.BPKRequestFirstname if bpk else None,
+            'sub_bpk_lastname': bpk.BPKRequestLastname if bpk else None,
+            'sub_bpk_birthdate': bpk.BPKRequestBirthdate if bpk else None,
+            'sub_bpk_zip': bpk.BPKRequestZIP if bpk else None,
         }
 
         # Append to submission log
@@ -266,7 +266,7 @@ class ResPartnerFADonationReport(models.Model):
                 'Fastnr_Fon_Tn': bpk_company.fa_herstellerid,    # Steuernummer des Dienstleisters
                 'Fastnr_Org': bpk_company.vat,                   # Steuernummer der Organisation
                 # MessageSpec
-                'MessageRefId': report.id,
+                'MessageRefId': 'DADI/'+report.id,
                 'Timestamp': fields.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                 'Uebermittlungsart': bpk_company.fa_dr_type,
                 'Zeitraum': report.meldungs_jahr,
@@ -276,6 +276,8 @@ class ResPartnerFADonationReport(models.Model):
                 'Betrag': '0' if report.betrag <= 0 else str(self.betrag),
                 'vbPK': bpk.BPKPublic,
             }
+
+            # Submit donation report to FinanzOnline
             try:
                 response = soap_request(url='https://finanzonline.bmf.gv.at/fon/ws/fileupload',
                                         template=fo_donation_report_template,
@@ -285,30 +287,34 @@ class ResPartnerFADonationReport(models.Model):
                                         },
                                         fo_donation_report=fo_donation_report_data)
             except Exception as e:
-                error_msg = "soap_request failed!\n%s" % str(e)
+                error_msg = "Donation report submission to FinanzOnline failed!\n%s" % str(e)
                 logger.error(error_msg)
-                report._donation_report_update(state="error", error_text=error_msg)
+                report._donation_report_update(state="error", bpk=bpk, error_text=error_msg)
                 continue
 
+            # Check for errors / response status code
             if response.status_code != 200:
-                error_msg = _("Donation report submission to FinanzOnline failed! HTTP error %s! \n"
-                              "%s") % (response.status_code, response.content)
+                error_msg = _("Donation report submission to FinanzOnline failed! HTTP error"
+                              "%s %s") % (response.status_code, response.reason)
                 logger.error(error_msg)
-                report._donation_report_update(state="error", error_text=error_msg)
+                report._donation_report_update(response=response, bpk=bpk,
+                                               state="error", error_text=error_msg,)
                 continue
 
-
+            # Process answer (response.content) as xml
             try:
                 # Process xml answer
                 parser = etree.XMLParser(remove_blank_text=True)
                 response_etree = etree.fromstring(response.content, parser=parser)
-                response_pprint = etree.tostring(response_etree, pretty_print=True)
             except Exception as e:
-                logger.error("Could not parse response as XML!\n%s\nResponse Content:\n%s" % (str(e), response.content))
+                error_msg = _("Could not parse FinanzOnline response as XML!\n"
+                              "%s\nResponse Content:\n%s") % (str(e), response.content)
+                logger.error(error_msg)
+                report._donation_report_update(response=response, bpk=bpk,
+                                               state="exception", error_text=error_msg,)
+                continue
 
-            # TODO: Handle regular errors
-
-            # TODO: Update the donation report
+            # TODO: Find data in response.content xml and update donation report
 
 
     #

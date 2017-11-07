@@ -41,7 +41,6 @@
                                     <field name="sub_typ"/>
                                     <field name="skipped_by_id"/>
                                     <field name="skipped" widget="many2many_tags"/>
-                                    <field name="error_code"/>
                                     <field name="error_text"/>
                                 </group>
                                 <group>

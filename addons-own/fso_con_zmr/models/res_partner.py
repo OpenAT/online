@@ -365,25 +365,39 @@ class ResPartnerZMRGetBPK(models.Model):
                                                                                                                 '+')
                                         },
                                         )
-                assert response.content, _("GetBPK-Request response has no content!")
+
+                # Store basic data in result
                 result['request_data'] = response.request.body
                 result['request_url'] = response.request.url
                 response_time = time.time() - start_time
                 result['response_time_sec'] = "%.3f" % response_time
 
-                # Process soap xml answer
-                parser = etree.XMLParser(remove_blank_text=True)
-                response_etree = etree.fromstring(response.content, parser=parser)
-                response_pprint = etree.tostring(response_etree, pretty_print=True)
-                result['response_content'] = response_pprint
+                # Process response content as xml
+                try:
+                    assert response.content, _("GetBPK-Request response has no content!")
+                    parser = etree.XMLParser(remove_blank_text=True)
+                    response_etree = etree.fromstring(response.content, parser=parser)
+                    response_pprint = etree.tostring(response_etree, pretty_print=True)
+                    result['response_content'] = response_pprint
+                except Exception as e:
+                    result['response_content'] = response.content
+                    result['faultcode'] = response.status_code
+                    result['faulttext'] = _("GetBPK-Request response is not valid XML!\n"
+                                            "HTML status code %s with reason %s\n\n%s") % (response.status_code,
+                                                                                           response.reason,
+                                                                                           str(e))
+                    # Update answer and process GetBPK for next company
+                    responses.append(result)
+                    continue
 
-                # Response contains an error or is incomplete
+                # Check for http error codes
                 if response.status_code != 200:
                     result['response_http_error_code'] = response.status_code
+                    result['response_content'] = response_pprint
                     error_code = response_etree.find(".//faultcode")
                     result['faultcode'] = error_code.text if error_code is not None else str(response.status_code)
                     error_text = response_etree.find(".//faultstring")
-                    result['faulttext'] = error_text.text if error_text is not None else "ERROR"
+                    result['faulttext'] = error_text.text if error_text is not None else response.reason
                     # Update answer and process GetBPK for next company
                     responses.append(result)
                     continue
