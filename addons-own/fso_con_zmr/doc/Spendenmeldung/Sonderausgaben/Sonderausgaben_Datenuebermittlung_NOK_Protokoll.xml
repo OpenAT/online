@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SonderausgabenResponse xmlns="https://finanzonline.bmf.gv.at/fon/ws/uebermittlungSonderausgaben" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Info_Daten>
+		<Fastnr_Fon_Tn>091234567</Fastnr_Fon_Tn>
+		<Fastnr_Org>091234567</Fastnr_Org>
+	</Info_Daten>
+	<MessageSpec>
+		<MessageRefId>20170419b</MessageRefId>
+		<EinbringungsTimestamp>2017-04-19T11:10:28.355920</EinbringungsTimestamp>
+		<Art>UEB_SA</Art>
+		<Uebermittlung>P</Uebermittlung>
+		<Info>NOK</Info>
+		<Error>
+			<Code>ERR-F-011</Code>
+			<Text>Es liegt keine Berechtigung für die Übermittlungsart vor (Fastnr_Org).</Text>
+		</Error>
+	</MessageSpec>
+</SonderausgabenResponse>

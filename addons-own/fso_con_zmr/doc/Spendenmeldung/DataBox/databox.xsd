@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="https://finanzonline.bmf.gv.at/fon/ws/databox" xmlns:dbx="https://finanzonline.bmf.gv.at/fon/ws/databox">
+
+	<xs:element name="getDataboxEntryRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="tid">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="12"/>
+							<xs:minLength value="9"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="benid">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="12"/>
+							<xs:minLength value="5"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="id">
+        			<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[0-9A-Za-z]{10,24}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="applkey" type="xs:string"/>						
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="getDataboxEntryResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="rc" type="xs:int"/>
+				<xs:element minOccurs="0" name="msg" type="xs:string"/>
+				<xs:element minOccurs="0" name="result" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="getDataboxRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="tid">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="12"/>
+							<xs:minLength value="9"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="benid">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="12"/>
+							<xs:minLength value="5"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="id">
+        			<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[0-9A-Za-z]{10,24}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="erltyp">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="2"/>
+							<xs:minLength value="0"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>									
+				<xs:element maxOccurs="1" minOccurs="0" name="ts_zust_von" type="xs:dateTime"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="ts_zust_bis" type="xs:dateTime"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="getDataboxResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="rc" type="xs:int"/>
+				<xs:element minOccurs="0" name="msg" type="xs:string"/>					
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="result" type="dbx:databoxListEntry"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="databoxListEntry">
+		<xs:sequence>
+			<xs:element name="stnr" type="xs:string"/>
+			<xs:element name="name" type="xs:string"/>					
+			<xs:element name="anbringen" type="xs:string"/>
+			<xs:element name="zrvon" type="xs:string"/>
+			<xs:element name="zrbis" type="xs:string"/>
+			<xs:element name="datbesch" type="xs:date"/>
+			<xs:element name="erltyp" type="xs:string"/>
+			<xs:element name="fileart" type="xs:string"/>
+			<xs:element name="ts_zust" type="xs:dateTime"/>
+			<xs:element name="applkey" type="xs:string"/>
+			<xs:element name="filebez" type="xs:string"/>
+			<xs:element name="status" type="xs:string"/>					
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

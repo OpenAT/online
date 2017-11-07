@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SonderausgabenResponse xmlns="https://finanzonline.bmf.gv.at/fon/ws/uebermittlungSonderausgaben" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Info_Daten>
+		<Fastnr_Fon_Tn>091234567</Fastnr_Fon_Tn>
+		<Fastnr_Org>091234567</Fastnr_Org>
+	</Info_Daten>
+	<MessageSpec>
+		<MessageRefId>20170310g</MessageRefId>
+		<EinbringungsTimestamp>2017-04-10T16:08:59.187475</EinbringungsTimestamp>
+		<Art>UEB_SA</Art>
+		<Uebermittlung>P</Uebermittlung>
+		<Info>OK</Info>
+	</MessageSpec>
+</SonderausgabenResponse>

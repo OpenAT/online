@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="https://finanzonline.bmf.gv.at/fon/ws/databox" targetNamespace="https://finanzonline.bmf.gv.at/fon/ws/databox" name="databoxService">
+ 
+	<types>
+    	<xsd:schema>
+			<xsd:import namespace="https://finanzonline.bmf.gv.at/fon/ws/databox" schemaLocation="databox.xsd"/>
+		</xsd:schema>
+	</types>
+
+	<message name="getDataboxEntryRequest">
+		<part element="tns:getDataboxEntryRequest" name="parameters"/>
+	</message>
+	<message name="getDataboxEntryResponse">
+		<part element="tns:getDataboxEntryResponse" name="parameters"/>
+	</message>
+	
+	<message name="getDataboxRequest">
+		<part element="tns:getDataboxRequest" name="parameters"/>
+	</message>
+	<message name="getDataboxResponse">
+		<part element="tns:getDataboxResponse" name="parameters"/>
+	</message>	
+
+	<portType name="databoxServicePort">
+		<operation name="getDataboxEntry">
+			<input message="tns:getDataboxEntryRequest" name="getDataboxEntryRequest"/>
+			<output message="tns:getDataboxEntryResponse" name="getDataboxEntryResponse"/>
+		</operation>
+		
+		<operation name="getDatabox">
+			<input message="tns:getDataboxRequest" name="getDataboxRequest"/>
+			<output message="tns:getDataboxResponse" name="getDataboxResponse"/>
+		</operation>
+	</portType>
+
+	<binding name="databoxServiceBinding" type="tns:databoxServicePort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		
+		<operation name="getDataboxEntry">
+			<soap:operation soapAction="getDataboxEntry"/>
+			<input name="getDataboxEntryRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="getDataboxEntryResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		
+		<operation name="getDatabox">
+			<soap:operation soapAction="getDatabox"/>
+			<input name="getDataboxRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="getDataboxResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		
+	</binding>
+
+	<service name="databoxService">
+		<port binding="tns:databoxServiceBinding" name="databox">
+      		<soap:address location="https://finanzonline.bmf.gv.at/fon/ws/databox"/>
+		</port>
+	</service>
+
+</definitions>

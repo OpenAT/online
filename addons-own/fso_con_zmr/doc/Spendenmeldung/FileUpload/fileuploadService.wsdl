@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="https://finanzonline.bmf.gv.at/fon/ws/fileupload" targetNamespace="https://finanzonline.bmf.gv.at/fon/ws/fileupload" name="fileuploadService">
+    <types>
+    	<xsd:schema>
+			<xsd:import namespace="https://finanzonline.bmf.gv.at/fon/ws/fileupload" schemaLocation="fileupload.xsd"/>
+		</xsd:schema>
+    </types>
+    
+    <message name="fileuploadRequest">                             
+        <part element="tns:fileuploadRequest" name="parameters"/>
+    </message>
+    <message name="fileuploadResponse">
+        <part element="tns:fileuploadResponse" name="parameters"/>
+    </message>
+    
+    <portType name="fileuploadPort">
+        <operation name="upload">
+            <input message="tns:fileuploadRequest" name="fileuploadRequest"/>
+            <output message="tns:fileuploadResponse" name="fileuploadResponse"/>
+        </operation>
+    </portType>
+    
+    <binding name="fileuploadBinding" type="tns:fileuploadPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="upload">
+            <soap:operation soapAction="upload"/>
+            <input name="fileuploadRequest">
+                <soap:body use="literal"/>
+            </input>
+            <output name="fileuploadResponse">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    
+    <service name="fileuploadService">
+        <port binding="tns:fileuploadBinding" name="fileupload">
+            <soap:address location="https://finanzonline.bmf.gv.at/fon/ws/fileupload"/>
+        </port>
+    </service>
+</definitions>

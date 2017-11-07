@@ -1,0 +1,56 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:fil="https://finanzonline.bmf.gv.at/fon/ws/fileupload">
+    <x:Header/>
+    <x:Body>
+        <fil:fileuploadRequest>
+            <fil:tid>{{ fo_donation_report['tid']|empty_if_exception_filter }}</fil:tid>
+            <fil:benid>{{ fo_donation_report['benid']|empty_if_exception_filter }}</fil:benid>
+            <fil:id>{{ fo_donation_report['id']|empty_if_exception_filter }}</fil:id>
+            <!-- UEB_SA = Sonderausgaben -->
+            <fil:art>{{ fo_donation_report['art']|empty_if_exception_filter or 'UEB_SA'}}</fil:art>
+            <fil:uebermittlung>{{ fo_donation_report['uebermittlung']|empty_if_exception_filter }}</fil:uebermittlung>
+            <fil:data>
+                <![CDATA[
+                    <SonderausgabenUebermittlung xmlns="https://finanzonline.bmf.gv.at/fon/ws/uebermittlungSonderausgaben">
+
+                        <Info_Daten>
+                            <Fastnr_Fon_Tn>{{ fo_donation_report['Fastnr_Fon_Tn']|empty_if_exception_filter }}</Fastnr_Fon_Tn>
+                            <Fastnr_Org>{{ fo_donation_report['Fastnr_Org']|empty_if_exception_filter }}</Fastnr_Org>
+                        </Info_Daten>
+
+                        <MessageSpec>
+                            <MessageRefId>{{ fo_donation_report['MessageRefId']|empty_if_exception_filter }}</MessageRefId>
+                            <Timestamp>{{ fo_donation_report['Timestamp']|empty_if_exception_filter }}</Timestamp>
+                            <Uebermittlungsart>{{ fo_donation_report['Uebermittlungsart']|empty_if_exception_filter }}</Uebermittlungsart>
+                            <Zeitraum>2017{{ fo_donation_report['Zeitraum']|empty_if_exception_filter }}</Zeitraum>
+                        </MessageSpec>
+                        
+                        {% if fo_donation_report.get('sub_typ') == 'E' %}
+                        <!-- Erstmeldung -->
+                        <Sonderausgaben Uebermittlungs_Typ="E">
+                            <RefNr>{{ fo_donation_report['RefNr']|empty_if_exception_filter }}</RefNr>
+                            <Betrag>123.45{{ fo_donation_report['Betrag']|empty_if_exception_filter }}</Betrag>
+                            <vbPK>{{ fo_donation_report['vbPK']|empty_if_exception_filter }}</vbPK>
+                        </Sonderausgaben>
+                        {% endif %}
+
+                        {% if fo_donation_report.get('sub_typ') == 'A' %}
+                        <!-- Aenderungsmeldung -->
+                        <Sonderausgaben Uebermittlungs_Typ="A">
+                            <RefNr>{{ fo_donation_report['RefNr']|empty_if_exception_filter }}</RefNr>
+                            <Betrag>123.45{{ fo_donation_report['Betrag']|empty_if_exception_filter }}</Betrag>
+                        </Sonderausgaben>
+                        {% endif %}
+
+                        {% if fo_donation_report.get('sub_typ') == 'S' %}
+                        <!-- Stornierungsmeldung -->
+                        <Sonderausgaben Uebermittlungs_Typ="S">
+                            <RefNr>{{ fo_donation_report['RefNr']|empty_if_exception_filter }}</RefNr>
+                        </Sonderausgaben>
+                        {% endif %}
+
+                    </SonderausgabenUebermittlung>
+                ]]>
+            </fil:data>
+        </fil:fileuploadRequest>
+    </x:Body>
+</x:Envelope>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SonderausgabenResponse xmlns="https://finanzonline.bmf.gv.at/fon/ws/uebermittlungSonderausgaben" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Info_Daten>
+		<Fastnr_Fon_Tn>091234567</Fastnr_Fon_Tn>
+		<Fastnr_Org>091234567</Fastnr_Org>
+	</Info_Daten>
+	<MessageSpec>
+		<MessageRefId>20170412b</MessageRefId>
+		<EinbringungsTimestamp>2017-04-12T07:54:59.073329</EinbringungsTimestamp>
+		<Art>UEB_SA</Art>
+		<Uebermittlung>P</Uebermittlung>
+		<Info>TWOK</Info>
+	</MessageSpec>
+	<SonderausgabenError>
+		<RefNr>1</RefNr>
+		<Error>
+			<Code>ERR-U-008</Code>
+			<Text>Die Erstübermittlung ist nicht möglich, da die übermittelten Daten bereits vorhanden sind.</Text>
+			<Data>210</Data>
+		</Error>
+	</SonderausgabenError>
+	<SonderausgabenError>
+		<RefNr>2</RefNr>
+		<Error>
+			<Code>ERR-U-008</Code>
+			<Text>Die Erstübermittlung ist nicht möglich, da die übermittelten Daten bereits vorhanden sind.</Text>
+			<Data>211</Data>
+		</Error>
+	</SonderausgabenError>
+	<SonderausgabenError>
+		<RefNr>3</RefNr>
+		<Error>
+			<Code>ERR-U-008</Code>
+			<Text>Die Erstübermittlung ist nicht möglich, da die übermittelten Daten bereits vorhanden sind.</Text>
+			<Data>212</Data>
+		</Error>
+	</SonderausgabenError>
+	<SonderausgabenError>
+		<RefNr>4</RefNr>
+		<Error>
+			<Code>ERR-U-008</Code>
+			<Text>Die Erstübermittlung ist nicht möglich, da die übermittelten Daten bereits vorhanden sind.</Text>
+			<Data>213</Data>
+		</Error>
+	</SonderausgabenError>
+</SonderausgabenResponse>

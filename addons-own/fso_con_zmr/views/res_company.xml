@@ -57,6 +57,13 @@
                         <field name="fa_benid"/>
                         <field name="fa_pin" password="True"/>
                         <field name="fa_herstellerid"/>
+                        <div colspan="2" class="backend-help" attrs="{'invisible': [('vat','!=', False)]}">
+                            <p>
+                                Die Steuer-Nr. dieser Organisation muss ebenfalls eingetragen sein um eine
+                                Spendenmeldung an FinanzOnline zu ermöglichen! Die Steuernummer kann im
+                                Reiter Allgemeine Informationen für diese Organisation eingetragen werden.
+                            </p>
+                        </div>
                         <field name="fa_login_returncode" readonly="1" invisible="1"/>
                         <field name="fa_login_message" readonly="1"/>
                     </group>

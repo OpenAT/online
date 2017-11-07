@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="https://finanzonline.bmf.gv.at/fon/ws/fileupload">
+	<xs:element name="fileuploadRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="tid">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="12"/>
+							<xs:minLength value="9"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="benid">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="12"/>
+							<xs:minLength value="5"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="id">
+        			<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[0-9A-Za-z]{10,24}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="art">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="U30"/>
+							<xs:enumeration value="JAHR_ERKL"/>
+							<xs:enumeration value="L1"/>
+							<xs:enumeration value="KOM"/>
+							<xs:enumeration value="SB"/>
+							<xs:enumeration value="108"/>
+							<xs:enumeration value="108AB"/>
+							<xs:enumeration value="U13"/>
+							<xs:enumeration value="JAB"/>
+							<xs:enumeration value="IVF"/>
+							<xs:enumeration value="RZ"/>
+							<xs:enumeration value="DUE"/>
+							<xs:enumeration value="UEB"/>
+							<xs:enumeration value="FVAN"/>
+							<xs:enumeration value="ZEAN"/>
+							<xs:enumeration value="SBS"/>	 
+							<xs:enumeration value="KOMU"/>	 						
+							<xs:enumeration value="EUST"/>
+							<xs:enumeration value="TVW"/>
+							<xs:enumeration value="SBZ"/>
+							<xs:enumeration value="BIL"/>
+							<xs:enumeration value="VAT"/>
+							<xs:enumeration value="VATAB"/>
+							<xs:enumeration value="BET"/>
+							<xs:enumeration value="LFH"/>
+							<xs:enumeration value="FPH"/>
+							<xs:enumeration value="NOVA"/>	
+							<xs:enumeration value="STAB"/>
+							<xs:enumeration value="KA1"/>
+							<xs:enumeration value="KDUEB"/>
+							<xs:enumeration value="UEB_SA"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="uebermittlung">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="1"/>
+							<xs:enumeration value="T"/>
+							<xs:enumeration value="P"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="data" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fileuploadResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="rc" type="xs:int"/>
+				<xs:element name="msg" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

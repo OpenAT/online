@@ -3,7 +3,7 @@
 from openerp import api, models, fields
 from openerp.tools import config
 from openerp.tools.translate import _
-from openerp.addons.fso_base.tools.soap import soap_request, GenericTimeoutError
+from openerp.addons.fso_base.tools.soap import soap_request
 
 from lxml import etree
 import os
@@ -65,10 +65,10 @@ class CompanyAustrianZMRSettings(models.Model):
     fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)")
     fa_benid = fields.Char(string="Webservicebenutzer ID (benid)")
     fa_pin = fields.Char(string="Webservicebenutzer Pin (pin)")
-    fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)")
+    fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)", default="ATU44865400")
 
     # Austrian Finanz Online Webservice Login Information
-    # HINT: fa stands for FinanzAmt (not for Finanz Online)
+    # HINT: fa stands for FinanzAmt (not for FinanzOnline)
     fa_login_sessionid = fields.Char(string="Finanz Online Login SessionID", readonly=True)
     fa_login_returncode = fields.Char(string="Finanz Online Login Returncode", readonly=True)
     fa_login_message = fields.Text(string="Finanz Online Login Message", readonly=True)
@@ -189,7 +189,7 @@ class CompanyAustrianZMRSettings(models.Model):
         c = self
 
         # Check if there is already a session id (if we are already logged in)
-        # TODO: Check somehow is the sessionid is still valid
+        # TODO: !!! Check somehow is the sessionid is still valid !!!
         if c.fa_login_sessionid:
             return c.fa_login_sessionid
 
