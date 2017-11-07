@@ -113,7 +113,6 @@
                 <field name="sub_bpk_firstname"/>
                 <field name="sub_bpk_lastname"/>
                 <field name="state"/>
-                <field name="error_code"/>
                 <field name="error_text"/>
             </search>
         </field>
