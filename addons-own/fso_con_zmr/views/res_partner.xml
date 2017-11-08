@@ -72,71 +72,83 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Partner">
-                <group name="Partner">
-                    <h1 colspan="2">Partner</h1>
-                    <group>
-                        <field name="firstname"/>
-                        <field name="lastname"/>
-                        <field name="birthdate_web"/>
-                        <field name="zip"/>
+                <header>
+                    <button name="action_check_and_set_bpk_request_needed" type="object" string="Check BPK-Request-Needed"/>
+                    <button name="action_set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
+                    <button name="action_remove_bpk_request_needed" type="object" string="Unschedule BPK-Request"/>
+                    <button name="compute_bpk_state" type="object" string="Compute BPK State"/>
+                    <button name="action_recompute_bpk_state" type="object" string="Compute BPK State for All"/>
+                    <field name="bpk_state" widget="statusbar" statusbar_visible="pending,found"/>
+                </header>
+                <sheet>
+                    <group name="Partner">
+                        <h1 colspan="2">Partner</h1>
+                        <group>
+                            <field name="firstname"/>
+                            <field name="lastname"/>
+                            <field name="birthdate_web"/>
+                            <field name="zip"/>
+                        </group>
+                        <group>
+                            <field name="id" readonly="True"/>
+                            <field name="create_date" readonly="True"/>
+                            <field name="create_uid" readonly="True"/>
+                            <field name="write_date" readonly="True"/>
+                            <field name="write_uid" readonly="True"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="id" readonly="True"/>
-                        <field name="create_date" readonly="True"/>
-                        <field name="create_uid" readonly="True"/>
-                        <field name="write_date" readonly="True"/>
-                        <field name="write_uid" readonly="True"/>
+                    <group string="Donation Deduction">
+                        <p colspan="2" style="color: grey; font-size: 10px">
+                            If any of the BPK fields is set only the values of from the BPK fields are used for all
+                            BPK requests and for donation transmissions to the ZMR (even if they are left empty)!
+                            You can use these fields if you do not want to change the donor salutation but need
+                            different values for the donation deduction transmission to the ZMR.
+                        </p>
+                        <group name="donation_deduction_overwrites">
+                            <field name="BPKForcedFirstname" attrs="{'required': ['|', '|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                            <field name="BPKForcedLastname" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                            <field name="BPKForcedBirthdate" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
+                            <field name="BPKForcedZip"/>
+                        </group>
+                        <group name="bpk_request_info">
+                            <field name="donation_deduction_optout_web"/>
+                            <field name="donation_deduction_disabled"/>
+                            <field name="BPKRequestNeeded"/>
+                            <field name="LastBPKRequest"/>
+                            <field name="BPKRequestError"/>
+                        </group>
+                        <group colspan="2">
+                        <div  name="bpk_buttons" class="oe_button_box oe_inline">
+                            <button name="action_check_and_set_bpk_request_needed" type="object" string="Check BPK-Request-Needed"/>
+                            <button name="action_set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
+                            <button name="action_remove_bpk_request_needed" type="object" string="Unschedule BPK-Request"/>
+                            <button name="action_recompute_bpk_state" type="object" string="Recompute BPK State"/>
+                        </div>
+                        </group>
+                        <field name="BPKRequestIDS" colspan="2" nolabel="1">
+                            <tree string="BPK Requests"
+                                  default_order="BPKRequestPartnerID,BPKRequestCompanyID"
+                                  colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                                <field name="BPKRequestCompanyID"/>
+                                <field name="BPKRequestDate"/>
+                                <field name="BPKPrivate"/>
+                                <field name="BPKErrorRequestDate"/>
+                                <field name="BPKErrorCode"/>
+                            </tree>
+                        </field>
                     </group>
-                </group>
-                <group string="Donation Deduction">
-                    <p colspan="2" style="color: grey; font-size: 10px">
-                        If any of the BPK fields is set only the values of from the BPK fields are used for all
-                        BPK requests and for donation transmissions to the ZMR (even if they are left empty)!
-                        You can use these fields if you do not want to change the donor salutation but need
-                        different values for the donation deduction transmission to the ZMR.
-                    </p>
-                    <group name="donation_deduction_overwrites">
-                        <field name="BPKForcedFirstname" attrs="{'required': ['|', '|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
-                        <field name="BPKForcedLastname" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
-                        <field name="BPKForcedBirthdate" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
-                        <field name="BPKForcedZip"/>
-                    </group>
-                    <group name="bpk_request_info">
-                        <field name="donation_deduction_optout_web"/>
-                        <field name="donation_deduction_disabled"/>
-                        <field name="BPKRequestNeeded"/>
-                        <field name="LastBPKRequest"/>
-                        <field name="BPKRequestError"/>
-                    </group>
-                    <group colspan="2">
-                    <div  name="bpk_buttons" class="oe_button_box oe_inline">
-                        <button name="action_check_and_set_bpk_request_needed" type="object" string="Check BPK-Request-Needed"/>
-                        <button name="action_set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
-                        <button name="action_remove_bpk_request_needed" type="object" string="Unschedule BPK-Request"/>
-                        <button name="action_set_bpk" type="object" string="Force BPK-Request"/>
-                    </div>
-                    </group>
-                    <field name="BPKRequestIDS" colspan="2" nolabel="1">
-                        <tree string="BPK Requests"
-                              default_order="BPKRequestPartnerID,BPKRequestCompanyID"
-                              colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
-                            <field name="BPKRequestCompanyID"/>
-                            <field name="BPKRequestDate"/>
-                            <field name="BPKPrivate"/>
-                            <field name="BPKErrorRequestDate"/>
-                            <field name="BPKErrorCode"/>
-                        </tree>
-                    </field>
-                </group>
+                </sheet>
             </form>
         </field>
     </record>
+
     <record model="ir.ui.view" id="res_partner_bpk_res_partner_tree">
         <field name="name">res_partner_bpk_res_partner_tree</field>
         <field name="model">res.partner</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="Partner" default_order="BPKRequestNeeded desc, write_date desc">
+            <tree string="Partner" default_order="BPKRequestNeeded desc, write_date desc"
+                  colors="grey:bpk_state == 'data_incomplete';blue:bpk_state == 'pending';red:bpk_state == 'error';orange:bpk_state == 'found_old';green:bpk_state == 'found'">
                 <field name="id"/>
                 <field name="BPKRequestNeeded"/>
                 <field name="firstname"/>
@@ -151,9 +163,11 @@
                 <field name="BPKForcedZip"/>
                 <field name="write_date" readonly="True"/>
                 <field name="LastBPKRequest"/>
+                <field name="bpk_state"/>
             </tree>
         </field>
     </record>
+
     <record model="ir.ui.view" id="res_partner_bpk_res_partner_search">
         <field name="name">res_partner_bpk_res_partner_search</field>
         <field name="model">res.partner</field>
@@ -168,11 +182,19 @@
                 <field name="BPKRequestNeeded"/>
                 <field name="LastBPKRequest"/>
                 <field name="write_date"/>
+                <field name="bpk_state"/>
+                <field name="bpk_id_error_code"/>
+                <field name="bpk_id_state"/>
                 <!-- WARNING: 'order_by' is ignored in filters: https://github.com/odoo/odoo/issues/11610 -->
                 <group string="BPK">
                     <filter string="Next Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc'}"/>
                     <filter string="Last BPK-Requests" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
                     <filter string="BPK-Requests in progress" name="bpk_requests_in_progress" domain="[('BPKRequestInProgress','!=',False)]" context="{'order_by':'write_date desc'}"/>
+                </group>
+                <group string="Group By">
+                    <filter string="BPK-State" context="{'group_by':'bpk_state'}"/>
+                    <filter string="FirstBPK-State" context="{'group_by':'bpk_id_state'}"/>
+                    <filter string="FirstBPK-ErrorCode" context="{'group_by':'bpk_id_error_code'}"/>
                 </group>
                 <separator/>
             </search>

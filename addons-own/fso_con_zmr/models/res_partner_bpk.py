@@ -30,6 +30,23 @@ class ResPartnerBPK(models.Model):
     # Make debugging of multiple request on error easier
     BPKRequestLog = fields.Text(string="Request Log", readonly=True)
 
+    @api.depends('BPKRequestDate', 'BPKErrorRequestDate')
+    def _compute_bpk_state(self):
+        for r in self:
+            if not r.BPKRequestDate and not r.BPKErrorRequestDate:
+                r.state = ''
+            elif (r.BPKRequestDate and not r.BPKErrorRequestDate) or (r.BPKRequestDate >= r.BPKErrorRequestDate):
+                r.state = 'found'
+            elif r.BPKRequestDate and r.BPKErrorRequestDate and r.BPKRequestDate < r.BPKErrorRequestDate:
+                r.state = 'found_old'
+            elif r.BPKErrorRequestDate:
+                r.state = 'error'
+
+    state = fields.Selection(selection=[('found', 'Found'),
+                                        ('found_old', 'Found with old data'),
+                                        ('error', 'Error')], readonly=True,
+                             string="State", compute='_compute_bpk_state', compute_sudo=True, store=True)
+
     # Successful BPK request field set
     # --------------------------------
     # This set of fields gets only updated if private and public bpk was returned successfully
