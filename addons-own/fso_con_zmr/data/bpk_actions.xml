@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp><data>
+<openerp><data noupdate="1">
 
     <!-- =========== -->
     <!-- res.partner -->
     <!-- =========== -->
 
     <!-- Server Action to run set_bpk() for res.partner -->
-    <record id="server_action_set_bpk" model="ir.actions.server">
+    <record id="server_action_set_bpk" model="ir.actions.server" forcecreate="1">
         <field name="name">Force BPK-Request</field>
         <field name="model_id" ref="model_res_partner"/>
         <field name="state">code</field>
@@ -30,7 +30,7 @@
         </field>
     </record>
     <!-- Add to more menu -->
-    <record id="ir_server_action_set_bpk" model="ir.values">
+    <record id="ir_server_action_set_bpk" model="ir.values" forcecreate="1">
         <field name="key2" eval="'client_action_multi'"/>
         <field name="model" eval="'res.partner'"/>
         <field name="name">Force BPK-Request</field>
@@ -39,7 +39,7 @@
 
 
     <!-- Server Action to run set_bpk_request_needed() for res.partner -->
-    <record id="server_action_set_bpk_request_needed" model="ir.actions.server">
+    <record id="server_action_set_bpk_request_needed" model="ir.actions.server" forcecreate="1">
         <field name="name">Schedule BPK-Request</field>
         <field name="model_id" ref="model_res_partner"/>
         <field name="state">code</field>
@@ -61,16 +61,15 @@
         </field>
     </record>
     <!-- Add to more menu -->
-    <record id="ir_server_action_set_bpk_request_needed" model="ir.values">
+    <record id="ir_server_action_set_bpk_request_needed" model="ir.values" forcecreate="1">
         <field name="key2" eval="'client_action_multi'"/>
         <field name="model" eval="'res.partner'"/>
         <field name="name">Schedule BPK-Request</field>
         <field name="value" eval="'ir.actions.server,%d'%server_action_set_bpk_request_needed"/>
     </record>
 
-
     <!-- Server Action to run remove_bpk_request_needed() for res.partner -->
-    <record id="server_action_remove_bpk_request_needed" model="ir.actions.server">
+    <record id="server_action_remove_bpk_request_needed" model="ir.actions.server" forcecreate="1">
         <field name="name">Unschedule BPK-Request</field>
         <field name="model_id" ref="model_res_partner"/>
         <field name="state">code</field>
@@ -92,7 +91,7 @@
         </field>
     </record>
     <!-- Add to more menu -->
-    <record id="ir_server_action_remove_bpk_request_needed" model="ir.values">
+    <record id="ir_server_action_remove_bpk_request_needed" model="ir.values" forcecreate="1">
         <field name="key2" eval="'client_action_multi'"/>
         <field name="model" eval="'res.partner'"/>
         <field name="name">Unschedule BPK-Request</field>
@@ -105,7 +104,7 @@
     <!-- =============== -->
 
     <!-- Server Action to run set_bpk() for res.partner.bpk -->
-    <record id="server_action_set_bpk_for_bpkrecords" model="ir.actions.server">
+    <record id="server_action_set_bpk_for_bpkrecords" model="ir.actions.server" forcecreate="1">
         <field name="name">Force BPK Request</field>
         <field name="model_id" ref="model_res_partner_bpk"/>
         <field name="state">code</field>
@@ -134,7 +133,7 @@
         </field>
     </record>
     <!-- Add to more menu -->
-    <record id="ir_server_action_set_bpk_for_bpkrecords" model="ir.values">
+    <record id="ir_server_action_set_bpk_for_bpkrecords" model="ir.values" forcecreate="1">
         <field name="key2" eval="'client_action_multi'"/>
         <field name="model" eval="'res.partner.bpk'"/>
         <field name="name">Force BPK Request</field>
@@ -143,7 +142,7 @@
 
 
     <!-- Server Action to run set_bpk_request_needed() for res.partner.bpk -->
-    <record id="server_action_set_bpk_request_needed_for_bpkrecords" model="ir.actions.server">
+    <record id="server_action_set_bpk_request_needed_for_bpkrecords" model="ir.actions.server" forcecreate="1">
         <field name="name">Schedule BPK-Request</field>
         <field name="model_id" ref="model_res_partner_bpk"/>
         <field name="state">code</field>
@@ -170,7 +169,7 @@
         </field>
     </record>
     <!-- Add to more menu -->
-    <record id="ir_server_action_set_bpk_request_needed_for_bpkrecords" model="ir.values">
+    <record id="ir_server_action_set_bpk_request_needed_for_bpkrecords" model="ir.values" forcecreate="1">
         <field name="key2" eval="'client_action_multi'"/>
         <field name="model" eval="'res.partner.bpk'"/>
         <field name="name">Schedule BPK-Request</field>
@@ -184,7 +183,7 @@
     <!-- ================= -->
 
     <!-- Scheduled fetch of BPK Records for res.partner -->
-    <record id="ir_cron_scheduled_set_bpk" model="ir.cron">
+    <record id="ir_cron_scheduled_set_bpk" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Scheduled fetch of BPK Records every two minutes</field>
         <field name="priority" eval="2000" />
         <field name="active" eval="True"/>
@@ -198,7 +197,7 @@
     </record>
 
    <!-- Scheduled run to check BPKRequestNeeded -->
-    <record id="ir_cron_check_bpk_request_needed" model="ir.cron">
+    <record id="ir_cron_check_bpk_request_needed" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Check BPKRequestNeeded for all partner once a week</field>
         <field name="priority" eval="2100" />
         <field name="active" eval="False"/>
@@ -208,6 +207,34 @@
         <field name="doall" eval="False"/>
         <field name="model">res.partner</field>
         <field name="function">scheduled_check_and_set_bpk_request_needed</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+   <!-- Scheduled run to check res.partner.bpk state -->
+    <record id="ir_cron_scheduled_compute_state" model="ir.cron" forcecreate="1">
+        <field name="name">BPK: Check BPK-Records 'state' field</field>
+        <field name="priority" eval="2200" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">res.partner.bpk</field>
+        <field name="function">scheduled_compute_state</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+   <!-- Scheduled run to check res.partner bpk_state -->
+    <record id="ir_cron_scheduled_compute_bpk_state" model="ir.cron" forcecreate="1">
+        <field name="name">BPK: Check Partner 'bpk_state' field</field>
+        <field name="priority" eval="2300" />
+        <field name="active" eval="True"/>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">res.partner</field>
+        <field name="function">scheduled_compute_bpk_state</field>
         <field name="args" eval="'()'"/>
     </record>
 

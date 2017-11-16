@@ -19,17 +19,21 @@ class ResPartner(models.Model):
     # HINT: SPAK Spendenabsetzbarkeit - Felder zum deaktivieren der automatischen Spendenabsetzung
     #       = keine BPK Anfragen und keine Spendenuebermittlung an das ZMR
     # ATTENTION: These fields are here because they may be useful even without fso_con_zmr
-    donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web',
+    donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web', index=True,
                                                    help="Donation Deduction OptOut set by Donor")
-    donation_deduction_disabled = fields.Boolean(string='Donation Deduction Disabled',
+    donation_deduction_disabled = fields.Boolean(string='Donation Deduction Disabled', index=True,
                                                  help="Donation Deduction processing disabled by System")
 
     legal_terms_web = fields.Boolean(string='Accept Legal Terms Web')
-    birthdate_web = fields.Date(string='Birthdate Web')
+    birthdate_web = fields.Date(string='Birthdate Web', index=True,)
     anrede_individuell = fields.Char(string='Individuelle Anrede',
                                      help="Eine individuelle Anrede die für den Schriftverkehr verwendet wird.")
     name_zwei = fields.Char(string='Name Zwei',
                             help="Name zweite Zeile für Fundraising Studio")
+
+    # Just enable the index
+    firstname = fields.Char(index=True)
+    lastname = fields.Char(index=True)
 
     # DISABLED FOR NOW: Extend the gender field for all FS options
     # ATTENTION: Makes for web no sense therefore disabled!

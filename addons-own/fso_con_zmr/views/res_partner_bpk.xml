@@ -9,6 +9,7 @@
         <field name="arch" type="xml">
             <form string="BPK Request">
                 <header>
+                    <button name="compute_state" type="object" string="Compute BPK State"/>
                     <field name="state" widget="statusbar" statusbar_visible="found"/>
                 </header>
                 <sheet>
@@ -119,12 +120,19 @@
                 <field name="BPKErrorRequestFirstname"/>
                 <field name="BPKErrorRequestLastname"/>
                 <field name="BPKErrorRequestBirthdate"/>
-                <group string="Group By">
+                <group string="Filter by State">
+                    <filter string="Found" domain="[('state','=','found')]"/>
+                    <filter string="Found with old data" domain="[('state','=','found_old')]"/>
+                    <filter string="Error" domain="[('state','=','error')]"/>
+                </group>
+                <group string="Filter by Error">
+                    <filter string="No person matched" domain="[('BPKErrorCode','ilike','F230')]"/>
+                    <filter string="Multiple person matched"
+                            domain="['|', ('BPKErrorCode','ilike','F231'), ('BPKErrorCode','ilike','F233')]"/>
+                </group>
+                <group string="Group by">
                     <filter string="State" name="state" context="{'group_by':'state'}"/>
-                    <filter string="ErrorCode" domain="[('state','!=','found')]" context="{'group_by':'BPKErrorCode'}"/>
-                    <!-- separator/>
-                    <filter string="Last Message" name="group_message_last_post" context="{'group_by':'message_last_post:week'}"/>
-                    <filter string="Assignation Month" context="{'group_by':'date_start:month'}" help="Creation Date"/ -->
+                    <filter string="Error Code" context="{'group_by':'BPKErrorCode'}"/>
                 </group>
             </search>
         </field>

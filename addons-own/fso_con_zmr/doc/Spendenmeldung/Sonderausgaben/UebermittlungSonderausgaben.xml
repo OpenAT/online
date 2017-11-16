@@ -12,16 +12,21 @@
 		<Uebermittlungsart>KK</Uebermittlungsart>
 		<Zeitraum>2017</Zeitraum>
 	</MessageSpec>
-	<Sonderausgaben Uebermittlungs_Typ="E">
-		<RefNr>123456</RefNr>
+
+    <Sonderausgaben Uebermittlungs_Typ="E">
+		<id>1</id>
+        <RefNr>123456</RefNr>
 		<Betrag>123.45</Betrag>
 		<vbPK>SxiN7J89uDSfr+MHWtXT5l+/v5Pdhc4vtke39nbEzC857sRdv1TrE/2HcDtRJmHvRTONmyrwRuPHc/6b/+8q5l+g3NoVpL+zGhABdHmB6c6KeFMDdqYl9cwR9PaZFnf2NMukW5OrI0OPFJ4SH6SGppC7yeVJybMAIivjiWKgy0M=</vbPK>
 	</Sonderausgaben>
-	<Sonderausgaben Uebermittlungs_Typ="A">
+
+    <Sonderausgaben Uebermittlungs_Typ="A">
 		<RefNr>123456</RefNr>
 		<Betrag>543.21</Betrag>
 	</Sonderausgaben>
-	<Sonderausgaben Uebermittlungs_Typ="S">
+
+    <Sonderausgaben Uebermittlungs_Typ="S">
 		<RefNr>123456</RefNr>
 	</Sonderausgaben>
+
 </SonderausgabenUebermittlung>

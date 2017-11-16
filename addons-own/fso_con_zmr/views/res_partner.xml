@@ -76,9 +76,8 @@
                     <button name="action_check_and_set_bpk_request_needed" type="object" string="Check BPK-Request-Needed"/>
                     <button name="action_set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
                     <button name="action_remove_bpk_request_needed" type="object" string="Unschedule BPK-Request"/>
-                    <button name="compute_bpk_state" type="object" string="Compute BPK State"/>
-                    <button name="action_recompute_bpk_state" type="object" string="Compute BPK State for All"/>
-                    <field name="bpk_state" widget="statusbar" statusbar_visible="pending,found"/>
+                    <button name="compute_bpk_state_and_bpk_id" type="object" string="Compute BPK State"/>
+                    <field name="bpk_id_state" widget="statusbar" statusbar_visible="pending,found"/>
                 </header>
                 <sheet>
                     <group name="Partner">
@@ -116,6 +115,8 @@
                             <field name="BPKRequestNeeded"/>
                             <field name="LastBPKRequest"/>
                             <field name="BPKRequestError"/>
+                            <field name="bpk_id"/>
+                            <field name="bpk_id_error_code"/>
                         </group>
                         <group colspan="2">
                         <div  name="bpk_buttons" class="oe_button_box oe_inline">
@@ -148,7 +149,11 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Partner" default_order="BPKRequestNeeded desc, write_date desc"
-                  colors="grey:bpk_state == 'data_incomplete';blue:bpk_state == 'pending';red:bpk_state == 'error';orange:bpk_state == 'found_old';green:bpk_state == 'found'">
+                  colors="grey:not ((firstname and lastname and birthdate_web) or (BPKForcedFirstname and BPKForcedLastname and BPKForcedBirthdate));
+                          blue:BPKRequestNeeded;
+                          red:bpk_id_state == 'error';
+                          orange:bpk_id_state == 'found_old';
+                          green:bpk_id_state == 'found'">
                 <field name="id"/>
                 <field name="BPKRequestNeeded"/>
                 <field name="firstname"/>
@@ -163,7 +168,7 @@
                 <field name="BPKForcedZip"/>
                 <field name="write_date" readonly="True"/>
                 <field name="LastBPKRequest"/>
-                <field name="bpk_state"/>
+                <field name="bpk_id_state"/>
             </tree>
         </field>
     </record>
@@ -182,17 +187,24 @@
                 <field name="BPKRequestNeeded"/>
                 <field name="LastBPKRequest"/>
                 <field name="write_date"/>
-                <field name="bpk_state"/>
                 <field name="bpk_id_error_code"/>
                 <field name="bpk_id_state"/>
                 <!-- WARNING: 'order_by' is ignored in filters: https://github.com/odoo/odoo/issues/11610 -->
-                <group string="BPK">
-                    <filter string="Next Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc'}"/>
-                    <filter string="Last BPK-Requests" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
-                    <filter string="BPK-Requests in progress" name="bpk_requests_in_progress" domain="[('BPKRequestInProgress','!=',False)]" context="{'order_by':'write_date desc'}"/>
+                <group string="Filter by BPK-State">
+                    <filter string="Found" domain="[('bpk_id_state','=','found')]"/>
+                    <filter string="Found with old Data" domain="[('bpk_id_state','=','found_old')]"/>
+                    <filter string="Error" domain="[('bpk_id_state','=','error')]"/>
                 </group>
-                <group string="Group By">
-                    <filter string="BPK-State" context="{'group_by':'bpk_state'}"/>
+                <group string="Filter by BPK-Error">
+                    <filter string="No person matched" domain="[('bpk_id_error_code','ilike','F230')]"/>
+                    <filter string="Multiple person matched"
+                            domain="['|', ('bpk_id_error_code','ilike','F231'), ('bpk_id_error_code','ilike','F233')]"/>
+                </group>
+                <group string="Filter by BPK-Schedule">
+                    <filter string="Scheduled for BPK-Request" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc'}"/>
+                    <filter string="BPK-Request done" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
+                </group>
+                <group string="Group by BPK-Data">
                     <filter string="FirstBPK-State" context="{'group_by':'bpk_id_state'}"/>
                     <filter string="FirstBPK-ErrorCode" context="{'group_by':'bpk_id_error_code'}"/>
                 </group>
