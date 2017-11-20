@@ -114,7 +114,7 @@
                         <group name="bpk_request_info">
                             <field name="BPKRequestNeeded"/>
                             <field name="LastBPKRequest"/>
-                            <field name="BPKRequestError" attrs="{'invisible': [('BPKRequestError', '!=', False)]}"/>
+                            <field name="BPKRequestError" attrs="{'invisible': [('BPKRequestError', '=', False)]}"/>
                         </group>
                         <group colspan="2">
                         <div  name="bpk_buttons" class="oe_button_box oe_inline">
