@@ -482,21 +482,34 @@ class ResPartnerZMRGetBPK(models.Model):
             return 1
 
         class LogKeeper:
-            log = ''
+            log = u''
 
         # Update the request log on every _request_bpk() call
         def _request_with_log(first, last, birthd, zipc,):
-            first = first or ''
-            last = last or ''
-            birthd = birthd or ''
-            zipc = zipc or ''
+            # Prepare data
+            first = first or u''
+            last = last or u''
+            birthd = birthd or u''
+            zipc = zipc or u''
+
+            # Do the request
             resp = self._request_bpk(firstname=first, lastname=last, birthdate=birthd, zipcode=zipc)
-            LogKeeper.log += 'Request Data: "'+first+'"; "'+last+'"; "'+birthd+'"; "'+zipc+'";\n'
-            if resp[0].get('faultcode', "") or resp[0].get('faulttext', ""):
-                LogKeeper.log += str(resp[0].get('faultcode', ""))+'\n'+str(resp[0].get('faulttext', ""))+'\n'
-            LogKeeper.log += "----------\n\n"
+
+            # Update and append the request log
+            try:
+                LogKeeper.log += u'Request Data: "'+first+u'"; "'+last+u'"; "'+birthd+u'"; "'+zipc+u'";\n'
+                faultcode = resp[0].get('faultcode', u"")
+                faulttext = resp[0].get('faulttext', u"")
+                if faultcode or faulttext:
+                    LogKeeper.log += faultcode+u'\n'+faulttext+u'\n'
+                LogKeeper.log += u"----------\n\n"
+            except Exception as e:
+                logger.error("_request_with_log() Could not store the request log! Unicode error?")
+                pass
             for r in resp:
                 r['request_log'] = LogKeeper.log
+
+            # Return the response(s)
             return resp
 
         # CHECK INPUT DATA
@@ -583,7 +596,7 @@ class ResPartnerZMRGetBPK(models.Model):
         # 4.) Still errors/exceptions or names where empty after clean names:
         #     Last try with unchanged data
         if not responses or (
-                    responses[0].get('faultcode', "") and (firstname != first_clean or lastname != last_clean)):
+                (not responses[0].get('public_bpk', "")) and (firstname != first_clean or lastname != last_clean)):
             responses = _request_with_log(firstname, lastname, birthdate, zipcode)
 
         return responses
@@ -603,9 +616,9 @@ class ResPartnerZMRGetBPK(models.Model):
     #       This is useful e.g.: for a java script widget on auth_partner_form
     # Returns a list in the format: [Boolean, {"state": "", "message": ""}]
     @api.model
-    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str()):
+    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), internal_search=True):
         # Local helper function
-        def _returner(state, msg):
+        def _returner(state, msg, log=''):
             # state:
             #     bpk_found                     # BPK OK
             #     bpk_not_found                 # Existing BPK-Request or answer from zmr but person could not be found
@@ -628,7 +641,7 @@ class ResPartnerZMRGetBPK(models.Model):
             msg = msg or defaut_msg.get(state, "")
 
             # Return final list
-            return [state in ok_states, {"state": state, "message": msg}]
+            return [state in ok_states, {"state": state, "message": msg, "log": log}]
 
         # Return result from existing bpk requests
         # ----------------------------------------
@@ -637,48 +650,61 @@ class ResPartnerZMRGetBPK(models.Model):
         # Get the current request logic version
         version = self.request_bpk(version=True)
 
-        # Find a matching positive request for the given data
-        positive_dom = [("BPKRequestFirstname", "=", firstname), ("BPKRequestLastname", "=", lastname),
-                        ("BPKRequestBirthdate", "=", birthdate), ("BPKPrivate", "!=", False),
-                        ("BPKRequestPartnerID.BPKRequestNeeded", "=", False)]
+        # Check the birthdate format
         try:
-            positive_req = bpk_obj.search(positive_dom)
-            if len(positive_req) >= 1:
-                # Return with positive result
-                # ATTENTION: This may NOT be correct for different messages for different companies
-
-                # Person was found
-                return _returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found)
+            b_test = datetime.datetime.strptime(birthdate, '%Y-%m-%d')
         except Exception as e:
-            logger.error("check_bpk() %s" % str(repr(e)))
+            internal_search = False
+            logger.warning("check_bpk(): Birhtdate format %s seems incorrect! Internal search skipped!" % birthdate)
             pass
 
-        # Find a matching negative request for the given data
-        negative_dom = [("BPKErrorRequestFirstname", "=", firstname), ("BPKErrorRequestLastname", "=", lastname),
-                        ("BPKErrorRequestBirthdate", "=", birthdate), ("BPKErrorRequestVersion", "=", version),
-                        ("BPKRequestPartnerID.BPKRequestNeeded", "=", False)]
-        try:
-            negative_req = bpk_obj.search(negative_dom)
-            if len(negative_req) >= 1:
-                # Return with negative result
-                # ATTENTION: This may NOT be correct for different messages for different companies
+        # Search through existing BPK requests
+        if internal_search:
+            # Find a matching positive request for the given data
+            positive_dom = [("BPKRequestFirstname", "=", firstname), ("BPKRequestLastname", "=", lastname),
+                            ("BPKRequestBirthdate", "=", birthdate), ("BPKPrivate", "!=", False),
+                            ("BPKRequestPartnerID.BPKRequestNeeded", "=", False)]
+            try:
+                positive_req = bpk_obj.search(positive_dom)
+                if len(positive_req) >= 1:
+                    # Return with positive result
+                    # ATTENTION: This may NOT be correct for different messages for different companies
 
-                # No person matched
-                if 'F230' in negative_req[0].BPKErrorCode:
-                    return _returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found)
+                    # Person was found
+                    return _returner("bpk_found", positive_req[0].BPKRequestCompanyID.bpk_found,
+                                     log=positive_req[0].bpk_request_log)
+            except Exception as e:
+                logger.error("check_bpk() %s" % str(repr(e)))
+                pass
 
-                # Multiple person matched
-                if any(code in negative_req[0].BPKErrorCode for code in ['F231', 'F233']):
-                    return _returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found)
+            # Find a matching negative request for the given data
+            negative_dom = [("BPKErrorRequestFirstname", "=", firstname), ("BPKErrorRequestLastname", "=", lastname),
+                            ("BPKErrorRequestBirthdate", "=", birthdate), ("BPKErrorRequestVersion", "=", version),
+                            ("BPKRequestPartnerID.BPKRequestNeeded", "=", False)]
+            try:
+                negative_req = bpk_obj.search(negative_dom)
+                if len(negative_req) >= 1:
+                    # Return with negative result
+                    # ATTENTION: This may NOT be correct for different messages for different companies
 
-                # DISABLED: ON GENERIC ERRORS ALWAYS DO THE CHECK e.g.: if the ZMR service was down
-                # Other request error or exception
-                # HINT: Return all other errors except for ZMR service errors.
-                #if not any(e == negative_req[0].BPKErrorCode for e in self._http_service_error_codes()):
-                #    return _returner("bpk_exception", negative_req[0].BPKErrorText)
-        except Exception as e:
-            logger.error("check_bpk() %s" % str(repr(e)))
-            pass
+                    # No person matched
+                    if 'F230' in negative_req[0].BPKErrorCode:
+                        return _returner("bpk_not_found", negative_req[0].BPKRequestCompanyID.bpk_not_found,
+                                         log=negative_req[0].bpkerror_request_log)
+
+                    # Multiple person matched
+                    if any(code in negative_req[0].BPKErrorCode for code in ['F231', 'F233']):
+                        return _returner("bpk_multiple_found", negative_req[0].BPKRequestCompanyID.bpk_multiple_found,
+                                         log=negative_req[0].bpkerror_request_log)
+
+                    # DISABLED: ON GENERIC ERRORS ALWAYS DO THE CHECK e.g.: if the ZMR service was down
+                    # Other request error or exception
+                    # HINT: Return all other errors except for ZMR service errors.
+                    #if not any(e == negative_req[0].BPKErrorCode for e in self._http_service_error_codes()):
+                    #    return _returner("bpk_exception", negative_req[0].BPKErrorText)
+            except Exception as e:
+                logger.error("check_bpk() %s" % str(repr(e)))
+                pass
 
         # ZMR BPK-Request
         # ---------------
@@ -689,18 +715,19 @@ class ResPartnerZMRGetBPK(models.Model):
             return _returner("bpk_exception", str(repr(e)))
 
         r = responses[0]
+        r_log = r.get('request_log', '')
         company = self.sudo().env['res.company'].browse([r.get("company_id")])
         if r.get("private_bpk") or r.get("public_bpk"):
-            return _returner("bpk_found", company.bpk_found)
+            return _returner("bpk_found", company.bpk_found, log=r_log)
         if 'F230' in r.get("faultcode"):
-            return _returner("bpk_not_found", company.bpk_not_found)
+            return _returner("bpk_not_found", company.bpk_not_found, log=r_log)
         if any(code in r.get("faultcode") for code in ['F231', 'F233']):
-            return _returner("bpk_multiple_found", company.bpk_multiple_found)
+            return _returner("bpk_multiple_found", company.bpk_multiple_found, log=r_log)
         if any(err == r.get("faultcode") for err in self._http_service_error_codes()):
-            return _returner("bpk_zmr_service_error", r.get("faulttext"))
+            return _returner("bpk_zmr_service_error", r.get("faulttext"), log=r_log)
 
         # This should only be reached in rare circumstances ;) and serves as a fallback and safety net
-        return _returner("bpk_exception", r.get("faulttext"))
+        return _returner("bpk_exception", r.get("faulttext"), log=r_log)
 
     # --------------
     # RECORD ACTIONS
@@ -1318,6 +1345,7 @@ class ResPartnerZMRGetBPK(models.Model):
         logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
                       "Found a total of %s partner to check in %.6f seconds") % (total_to_check, now()-while_start))
         partner_batch = True
+        found_partner_counter = 0
         while partner_batch:
             # Load all partner
             # logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
@@ -1335,6 +1363,7 @@ class ResPartnerZMRGetBPK(models.Model):
             logger.info(_("scheduled_check_and_set_bpk_request_needed(): Check BPKRequestNeeded for %s partner") % count)
             start = now()
             found_partner = partner_batch.check_bpk_request_needed()
+            found_partner_counter += len(found_partner)
             duration = now() - start
             tpr = 0 if not count else duration/count
             logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
@@ -1345,10 +1374,10 @@ class ResPartnerZMRGetBPK(models.Model):
             logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
                           "Set BPKRequestNeeded for %s found partner") % count)
             start = now()
-            # found_partner.write({'BPKRequestNeeded': fields.datetime.now()})
-            rec_now = fields.datetime.now()
-            for rec in found_partner:
-                rec.BPKRequestNeeded = rec_now
+            found_partner.write({'BPKRequestNeeded': fields.datetime.now()})
+            #rec_now = fields.datetime.now()
+            #for rec in found_partner:
+            #    rec.BPKRequestNeeded = rec_now
             duration = now() - start
             tpr = 0 if not count else duration / count
             logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
@@ -1364,8 +1393,9 @@ class ResPartnerZMRGetBPK(models.Model):
                             partners_done, total_duration, time_per_record))
             remaining_partner = total_to_check - partners_done
             time_left = remaining_partner * time_per_record
-            logger.info("scheduled_check_and_set_bpk_request_needed(): "
-                        "%s remaining partner to check (approx %.2f minutes left)" % (remaining_partner, time_left/60))
+            logger.info("scheduled_check_and_set_bpk_request_needed(): Found %s partner total! "
+                        "%s remaining partner to check (approx %.2f minutes left)" % (
+                found_partner_counter, remaining_partner, time_left/60))
 
         logger.info(_("scheduled_check_and_set_bpk_request_needed(): END"))
 
