@@ -70,7 +70,7 @@ class ResPartnerZMRGetBPK(models.Model):
     def _bpk_optional_forced_fields(self):
         return ['BPKForcedZip']
 
-    def _bpk_fields(self):
+    def _all_bpk_fields(self):
         return self._bpk_regular_fields() + self._bpk_optional_regular_fields() + \
                self._bpk_forced_fields() + self._bpk_optional_forced_fields()
 
@@ -175,7 +175,7 @@ class ResPartnerZMRGetBPK(models.Model):
         #            we need to really compare the values of the fields.
 
         # Check if there are any BPK relevant field in vals
-        fields_to_check = [field for field in self._bpk_fields() if field in vals]
+        fields_to_check = [field for field in self._all_bpk_fields() if field in vals]
         partners_bpk_needed = []
         if fields_to_check:
             partners_bpk_needed = self.env['res.partner']
@@ -479,12 +479,12 @@ class ResPartnerZMRGetBPK(models.Model):
         #            If you change the request_bpk logic make sure to update the version number
         # HINT: Used in last_bpkreq_matches_partner_data()
         if version:
-            return 1
+            return 2
 
         class LogKeeper:
             log = u''
 
-        # Update the request log on every _request_bpk() call
+        # HELPER: Do the BPK request and add the request log to the result(s)
         def _request_with_log(first, last, birthd, zipc,):
             # Prepare data
             first = first or u''
@@ -519,86 +519,70 @@ class ResPartnerZMRGetBPK(models.Model):
         # firstname cleanup
         first_clean = clean_name(firstname, split=True) or clean_name(firstname, split=False)
         if not first_clean:
+            first_clean = firstname
             logger.warning(_("request_bpk() Firstname is empty after cleanup!"))
 
         # lastname cleanup
         last_clean = clean_name(lastname, split=False)
         if not last_clean:
+            last_clean = lastname
             logger.warning(_("request_bpk() Lastname is empty after cleanup!"))
 
         responses = {}
-        if first_clean and last_clean:
-            # REQUEST BPK FOR EVERY COMPANY
-            # HINT: _request_bpk() will always return at least one result or it would raise an exception
-            # responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=birthdate)
-            responses = _request_with_log(first_clean, last_clean, birthdate, '')
 
-            # Return the responses if bpk was found
+        # 1.) Try with full birthdate and cleaned names
+        responses = _request_with_log(first_clean, last_clean, birthdate, '')
+        if self.response_ok(responses):
+            return responses
+
+        # 2.) Try with birth year
+        try:
+            date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
+            year = date.strftime("%Y")
+        except:
+            try:
+                year = str(birthdate).split("-", 1)[0]
+            except:
+                year = None
+        if year:
+            # responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year)
+            responses = _request_with_log(first_clean, last_clean, year, '')
             if self.response_ok(responses):
                 return responses
 
-            # ERROR HANDLING
-            # --------------
-
-            # 1.) Person not found at all: Retry with birth-year only
-            year = None
+            # ATTENTION: If still no person was found we reset the year to none cause no better results can be expected
+            #            by a year only search so all other tries will use the full birthdate
+            #            If multiple person where found at this point it makes sense to use the year only for all
+            #            subsequent tries cause we already know that the person would not be found with the full
+            #            birthdate at this point.
             if 'F230' in responses[0].get('faultcode', ""):
-                # Try without birthdate but with zipcode
-                if zipcode:
-                    # responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate="", zipcode=zipcode)
-                    responses = _request_with_log(first_clean, last_clean, '', zipcode)
-                    if self.response_ok(responses):
-                        return responses
+                year = None
 
-                # Try with birth year only
-                if 'F230' in responses[0].get('faultcode', ""):
-                    try:
-                        date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
-                        year = date.strftime("%Y")
-                    except:
-                        try:
-                            year = str(birthdate).split("-", 1)[0]
-                        except:
-                            year = None
-                    if year:
-                        # responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year)
-                        responses = _request_with_log(first_clean, last_clean, year, '')
+        # 3.) try with zip code
+        if zipcode:
+            # Without birthdate
+            responses = _request_with_log(first_clean, last_clean, '', zipcode)
+            if self.response_ok(responses):
+                return responses
 
-                        # Return list of valid responses
-                        if self.response_ok(responses):
-                            return responses
+            # With birthdate or birth year
+            responses = _request_with_log(first_clean, last_clean, year or birthdate, zipcode)
+            if self.response_ok(responses):
+                return responses
 
-                        # If still no person was found we reset the year to none cause no better results can be expected
-                        # by a year only search
-                        if 'F230' in responses[0].get('faultcode', ""):
-                            year = None
-                # Since we got no F230 we most likely got multiple person matched after we removed the birthdate
-                # Therefore we set the birthdate to none for all the multiple person matched tries to avoid F230 again
-                else:
-                    birthdate = ""
+        # 4.) Try with full firstname (e.g.: if there is a second firstname that was removed by clean_name())
+        # HINT: lastname is never split
+        first_clean_nosplit = clean_name(firstname, split=False)
+        if first_clean_nosplit != first_clean:
+            responses = _request_with_log(first_clean_nosplit, last_clean, year or birthdate, zipcode)
+            if self.response_ok(responses):
+                return responses
 
-            # 2.) Error: Multiple Persons found: Retry with zipcode
-            faultcode = responses[0].get('faultcode', "")
-            if zipcode and any(code in faultcode for code in ('F231', 'F233')):
-                # responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year or birthdate,
-                #                              zipcode=zipcode)
-                responses = _request_with_log(first_clean, last_clean, year or birthdate, zipcode)
-
-            # 3.) Error: Multiple Persons found: Retry with full firstname (e.g.: second firstname) and zipcode
-            faultcode = responses[0].get('faultcode', "")
-            if any(code in faultcode for code in ('F231', 'F233')):
-                first_clean_nosplit = clean_name(firstname, split=False)
-                if first_clean_nosplit != first_clean:
-                    # responses = self._request_bpk(firstname=first_clean_nosplit, lastname=last_clean,
-                    #                              birthdate=year or birthdate, zipcode=zipcode)
-                    responses = _request_with_log(first_clean_nosplit, last_clean, year or birthdate, zipcode)
-
-        # 4.) Still errors/exceptions or names where empty after clean names:
-        #     Last try with unchanged data
-        if not responses or (
-                (not responses[0].get('public_bpk', "")) and (firstname != first_clean or lastname != last_clean)):
+        # 5.) Last try with unchanged data
+        if not responses or firstname != first_clean or lastname != last_clean:
             responses = _request_with_log(firstname, lastname, birthdate, zipcode)
 
+        # Finally return the "latest" response(s)
         return responses
 
     # Simple response status checker (may be used by java script or by FS)
@@ -852,7 +836,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 continue
 
             # Make sure a bpk request is possible (one complete set of mandatory fields is available)
-            if not (all(p[field] for field in self._bpk_fields()) or
+            if not (all(p[field] for field in self._bpk_regular_fields()) or
                     all(p[field] for field in self._bpk_forced_fields())
                     ):
                 continue
