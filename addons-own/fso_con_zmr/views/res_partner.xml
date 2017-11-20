@@ -95,26 +95,26 @@
                         </group>
                     </group>
                     <group string="Donation Deduction">
-                        <p colspan="2" style="color: grey; font-size: 10px">
-                            If any of the BPK fields is set only the values of from the BPK fields are used for all
-                            BPK requests and for donation transmissions to the ZMR (even if they are left empty)!
-                            You can use these fields if you do not want to change the donor salutation but need
-                            different values for the donation deduction transmission to the ZMR.
-                        </p>
                         <group name="donation_deduction_overwrites">
+                            <field name="donation_deduction_optout_web"/>
+                            <field name="donation_deduction_disabled"/>
+                            <div colspan="2" class="backend-help oe_edit_only">
+                                <p colspan="2" style="color: grey; font-size: 10px">
+                                    If any of the BPK fields is set only the values of from the BPK fields are used for all
+                                    BPK requests and for donation transmissions to the ZMR (even if they are left empty)!
+                                    You can use these fields if you do not want to change the donor salutation but need
+                                    different values for the donation deduction transmission to the ZMR.
+                                </p>
+                            </div>
                             <field name="BPKForcedFirstname" attrs="{'required': ['|', '|', ('BPKForcedLastname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
                             <field name="BPKForcedLastname" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedBirthdate', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
                             <field name="BPKForcedBirthdate" attrs="{'required': ['|', '|', ('BPKForcedFirstname', '!=', False), ('BPKForcedLastname', '!=', False), ('BPKForcedZip', '!=', False)]}"/>
                             <field name="BPKForcedZip"/>
                         </group>
                         <group name="bpk_request_info">
-                            <field name="donation_deduction_optout_web"/>
-                            <field name="donation_deduction_disabled"/>
                             <field name="BPKRequestNeeded"/>
                             <field name="LastBPKRequest"/>
-                            <field name="BPKRequestError"/>
-                            <field name="bpk_id"/>
-                            <field name="bpk_id_error_code"/>
+                            <field name="BPKRequestError" attrs="{'invisible': [('BPKRequestError', '!=', False)]}"/>
                         </group>
                         <group colspan="2">
                         <div  name="bpk_buttons" class="oe_button_box oe_inline">

@@ -719,16 +719,20 @@ class ResPartnerZMRGetBPK(models.Model):
     # Computed bpk_state, bpk_id, bpk_id_state, bpk_id_error_code
     @api.multi
     def compute_bpk_state_and_bpk_id(self):
-        # HINT: These mehtod is used in set_bpk()!
+        # HINT: These method is used in set_bpk()!
         #       normally it would be used in create() and write() but in this special case set_bkp() is the better
         #       choice because set_bpk() is the only way how a related bpk record could change it's relevant data
         for r in self:
             vals = {}
             # Link first BPK record and error and state information
             if r.BPKRequestIDS:
-                vals['bpk_id'] = r.BPKRequestIDS[0].id
-                vals['bpk_id_state'] = r.BPKRequestIDS[0].state
-                vals['bpk_id_error_code'] = r.BPKRequestIDS[0].BPKErrorCode
+                bpk_req = r.BPKRequestIDS[0]
+                vals['bpk_id'] = bpk_req.id
+                vals['bpk_id_state'] = bpk_req.state
+                if bpk_req.BPKErrorRequestDate > bpk_req.BPKRequestDate:
+                    vals['bpk_id_error_code'] = bpk_req.BPKErrorCode
+                else:
+                    vals['bpk_id_error_code'] = None
             else:
                 vals['bpk_id'] = None
                 vals['bpk_id_state'] = None
