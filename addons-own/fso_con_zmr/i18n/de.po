@@ -201,11 +201,6 @@ msgid "BPK Request ZIP"
 msgstr "BPK-Abfrage Plz."
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKRequestInProgress:0
-msgid "BPK Request in progress"
-msgstr "BPK-Abfrage in Bearbeitung"
-
-#. module: fso_con_zmr
 #: field:res.partner,BPKRequestNeeded:0
 msgid "BPK Request needed"
 msgstr "BPK-Abfrage geplant"
@@ -710,8 +705,8 @@ msgstr "_request_bpk: Certificate data found but files on drive missing. Trying 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/models.py:744
 #, python-format
-msgid "check_bpk_matches_partner_data() is only allowed for one partner at once"
-msgstr "check_bpk_matches_partner_data() is only allowed for one partner at once"
+msgid "last_bpkreq_matches_partner_data() is only allowed for one partner at once"
+msgstr "last_bpkreq_matches_partner_data() is only allowed for one partner at once"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/models.py:666

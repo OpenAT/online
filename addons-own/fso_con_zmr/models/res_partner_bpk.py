@@ -59,6 +59,7 @@ class ResPartnerBPK(models.Model):
     BPKResponseTime = fields.Float(string="BPK Response Time", readonly=True)
 
     BPKRequestVersion = fields.Integer(string="BPK Request Version", readonly=True)
+    bpk_request_log = fields.Text(string="BPK Request Log", readonly=True)
 
     # Invalid BPK request field set
     # -----------------------------
@@ -78,6 +79,7 @@ class ResPartnerBPK(models.Model):
     BPKErrorResponseTime = fields.Float(string="BPK-Error Response Time", readonly=True)
 
     BPKErrorRequestVersion = fields.Integer(string="BPK-Error Request Version", readonly=True)
+    bpkerror_request_log = fields.Text(string="BPK-Error Request Log", readonly=True)
 
     # -------------
     # MODEL ACTIONS

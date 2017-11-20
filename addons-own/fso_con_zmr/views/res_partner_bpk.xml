@@ -53,9 +53,14 @@
                                 <field name="BPKPublic"/>
                                 <field name="BPKRequestURL"/>
                                 <field name="BPKResponseTime"/>
+                                <field name="BPKRequestVersion"/>
                             </group>
+                            <label for="bpk_request_log"/>
+                            <field name="bpk_request_log"/>
+                            <separator colspan="2"/>
                             <label for="BPKRequestData"/>
                             <field name="BPKRequestData"/>
+                            <separator colspan="2"/>
                             <label for="BPKResponseData"/>
                             <field name="BPKResponseData"/>
                         </page>
@@ -64,9 +69,14 @@
                                 <field name="BPKErrorCode"/>
                                 <field name="BPKErrorRequestURL"/>
                                 <field name="BPKErrorResponseTime"/>
+                                <field name="BPKErrorRequestVersion"/>
                             </group>
+                            <label for="bpkerror_request_log"/>
+                            <field name="bpkerror_request_log"/>
+                            <separator colspan="2"/>
                             <label for="BPKErrorRequestData"/>
                             <field name="BPKErrorRequestData"/>
+                            <separator colspan="2"/>
                             <label for="BPKErrorResponseData"/>
                             <field name="BPKErrorResponseData"/>
                         </page>

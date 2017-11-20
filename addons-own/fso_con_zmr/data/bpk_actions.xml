@@ -196,14 +196,16 @@
         <field name="args" eval="'()'"/>
     </record>
 
-   <!-- Scheduled run to check BPKRequestNeeded -->
+    <!-- Scheduled run to check BPKRequestNeeded -->
+    <!-- TODO: Make sure this starts at 2:30 at night -->
     <record id="ir_cron_check_bpk_request_needed" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Check BPKRequestNeeded for all partner once a week</field>
         <field name="priority" eval="2100" />
-        <field name="active" eval="False"/>
+        <field name="active" eval="True"/>
         <field name="interval_number">7</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 01:30:00')" />
         <field name="doall" eval="False"/>
         <field name="model">res.partner</field>
         <field name="function">scheduled_check_and_set_bpk_request_needed</field>
@@ -211,7 +213,7 @@
     </record>
 
    <!-- Scheduled run to check res.partner.bpk state -->
-    <record id="ir_cron_scheduled_compute_state" model="ir.cron" forcecreate="1">
+    <!-- record id="ir_cron_scheduled_compute_state" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Check BPK-Records 'state' field</field>
         <field name="priority" eval="2200" />
         <field name="active" eval="False"/>
@@ -222,7 +224,7 @@
         <field name="model">res.partner.bpk</field>
         <field name="function">scheduled_compute_state</field>
         <field name="args" eval="'()'"/>
-    </record>
+    </record -->
 
    <!-- Scheduled run to check res.partner bpk_state -->
     <record id="ir_cron_scheduled_compute_bpk_state" model="ir.cron" forcecreate="1">

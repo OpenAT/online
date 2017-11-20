@@ -50,14 +50,12 @@
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <field name="BPKRequestInProgress"/>
                 <field name="BPKRequestNeeded"/>
                 <field name="LastBPKRequest"/>
                 <field name="write_date"/>
                 <separator/>
                 <!-- filter string="Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc',}"/ -->
                 <filter string="Scheduled BPK-Requests" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]"/>
-                <filter string="BPK-Requests in progress" name="bpk_requests_in_progress" domain="[('BPKRequestInProgress','!=',False)]"/>
                 <separator/>
             </field>
         </field>
@@ -183,17 +181,79 @@
                 <field name="lastname"/>
                 <field name="birthdate_web"/>
                 <field name="zip"/>
-                <field name="BPKRequestInProgress"/>
                 <field name="BPKRequestNeeded"/>
                 <field name="LastBPKRequest"/>
                 <field name="write_date"/>
                 <field name="bpk_id_error_code"/>
                 <field name="bpk_id_state"/>
                 <!-- WARNING: 'order_by' is ignored in filters: https://github.com/odoo/odoo/issues/11610 -->
+                <group string="Filter by BPK">
+                    <filter string="BPK_Request_possible"
+                            domain="[
+                            '&amp;', '&amp;',
+                            ('donation_deduction_optout_web', '=', False),
+                            ('donation_deduction_disabled', '=', False),
+                            '|',
+                              '&amp;', '&amp;',
+                              ('firstname', '!=', False),
+                              ('lastname', '!=', False),
+                              ('birthdate_web', '!=', False),
+
+                              '&amp;', '&amp;',
+                              ('BPKForcedFirstname', '!=', False),
+                              ('BPKForcedLastname', '!=', False),
+                              ('BPKForcedBirthdate', '!=', False),
+                            ]"/>
+                    <!-- filter string="BPK_Request_possible_not_planned"
+                            domain="[
+                            '&amp;', '&amp;', '&amp;',
+                            ('donation_deduction_optout_web', '=', False),
+                            ('donation_deduction_disabled', '=', False),
+                            ('BPKRequestNeeded', '=', False),
+                            '|',
+                              '&amp;', '&amp;',
+                              ('firstname', '!=', False),
+                              ('lastname', '!=', False),
+                              ('birthdate_web', '!=', False),
+
+                              '&amp;', '&amp;',
+                              ('BPKForcedFirstname', '!=', False),
+                              ('BPKForcedLastname', '!=', False),
+                              ('BPKForcedBirthdate', '!=', False),
+                            ]"/ -->
+                    <!-- filter string="BPK_Request_possible_not_planned_no_requests"
+                            domain="[
+                            '&amp;', '&amp;', '&amp;', '&amp;',
+                            ('BPKRequestIDS', '=', [(6, False, [])]),
+                            ('donation_deduction_optout_web', '=', False),
+                            ('donation_deduction_disabled', '=', False),
+                            ('BPKRequestNeeded', '=', False),
+                            '|',
+                              '&amp;', '&amp;',
+                              ('firstname', '!=', False),
+                              ('lastname', '!=', False),
+                              ('birthdate_web', '!=', False),
+
+                              '&amp;', '&amp;',
+                              ('BPKForcedFirstname', '!=', False),
+                              ('BPKForcedLastname', '!=', False),
+                              ('BPKForcedBirthdate', '!=', False),
+                            ]"/ -->
+                    <!-- http://ludwiktrammer.github.io/odoo/domain-for-empty-many2many-in-attrs.html -->
+                    <filter string="Partner_with_BPK_Requests" domain="[('BPKRequestIDS','!=',False)]"/>
+                    <!-- filter string="Partner_without_BPK_Requests_False" domain="[('BPKRequestIDS','=',False)]"/>
+                    <filter string="Partner_without_BPK_Requests_None" domain="[('BPKRequestIDS','=',None)]"/>
+                    <filter string="Partner_without_BPK_Requests_List" domain="[('BPKRequestIDS','=',[])]"/>
+                    <filter string="Partner_without_BPK_Requests_0" domain="[('BPKRequestIDS','=',0)]"/>
+                    <filter string="Partner_without_BPK_Requests_lt0" domain="[('BPKRequestIDS','&lt;',0)]"/>
+                    <filter string="Partner_without_BPK_Requests_lt1" domain="[('BPKRequestIDS','&lt;',1)]"/ -->
+
+                </group>
                 <group string="Filter by BPK-State">
                     <filter string="Found" domain="[('bpk_id_state','=','found')]"/>
                     <filter string="Found with old Data" domain="[('bpk_id_state','=','found_old')]"/>
                     <filter string="Error" domain="[('bpk_id_state','=','error')]"/>
+                    <filter string="State not set" domain="[('bpk_id_state','=',False)]"/>
                 </group>
                 <group string="Filter by BPK-Error">
                     <filter string="No person matched" domain="[('bpk_id_error_code','ilike','F230')]"/>
@@ -202,11 +262,13 @@
                 </group>
                 <group string="Filter by BPK-Schedule">
                     <filter string="Scheduled for BPK-Request" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc'}"/>
-                    <filter string="BPK-Request done" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
+                    <filter string="LastBPKRequest is set" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
                 </group>
                 <group string="Group by BPK-Data">
                     <filter string="FirstBPK-State" context="{'group_by':'bpk_id_state'}"/>
                     <filter string="FirstBPK-ErrorCode" context="{'group_by':'bpk_id_error_code'}"/>
+                    <filter string="Donation Deduction OptOut" context="{'group_by':'donation_deduction_optout_web'}"/>
+                    <filter string="Donation Deduction Disabled" context="{'group_by':'donation_deduction_disabled'}"/>
                 </group>
                 <separator/>
             </search>
