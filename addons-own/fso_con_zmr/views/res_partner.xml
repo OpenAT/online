@@ -116,14 +116,6 @@
                             <field name="LastBPKRequest"/>
                             <field name="BPKRequestError" attrs="{'invisible': [('BPKRequestError', '=', False)]}"/>
                         </group>
-                        <group colspan="2">
-                        <div  name="bpk_buttons" class="oe_button_box oe_inline">
-                            <button name="action_check_and_set_bpk_request_needed" type="object" string="Check BPK-Request-Needed"/>
-                            <button name="action_set_bpk_request_needed" type="object" string="Schedule BPK-Request"/>
-                            <button name="action_remove_bpk_request_needed" type="object" string="Unschedule BPK-Request"/>
-                            <button name="action_recompute_bpk_state" type="object" string="Recompute BPK State"/>
-                        </div>
-                        </group>
                         <field name="BPKRequestIDS" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="BPKRequestPartnerID,BPKRequestCompanyID"

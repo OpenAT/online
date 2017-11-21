@@ -530,11 +530,11 @@ class ResPartnerZMRGetBPK(models.Model):
             last_clean = lastname
             logger.warning(_("request_bpk() Lastname is empty after cleanup!"))
 
-        # Escape incalid XML characters in zip and birthdate
+        # Escape invalid XML characters in zip and birthdate
         # HINT: There should be none so the values should not change at all. Still it makes sense as a last resort just
         #       to make sure the xml will not fail with an 500 Error at the ZMR.
-        birthdate = escape(birthdate)
-        zipcode = escape(zipcode)
+        birthdate = escape(birthdate) if birthdate else ''
+        zipcode = escape(zipcode) if zipcode else ''
 
         responses = {}
 
@@ -586,7 +586,7 @@ class ResPartnerZMRGetBPK(models.Model):
             if self.response_ok(responses):
                 return responses
 
-        # 5.) Last try with nearly unchanged data (only special chars will be removed)
+        # 5.) Last try with nearly unchanged data (only xml-invalid chars will be escaped)
         if not responses or firstname != first_clean or lastname != last_clean:
             # ATTENTION: Since the values are not cleaned we must escape '&', '>' and '<'
             responses = _request_with_log(escape(firstname), escape(lastname), birthdate, zipcode)

@@ -596,11 +596,6 @@ msgid "Private Key Path"
 msgstr "Privatschlüsselpfad"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestLog:0
-msgid "Request Log"
-msgstr "Anfrage Log"
-
-#. module: fso_con_zmr
 #: field:res.company,pvpToken_gvOuId:0
 msgid "Request Organisation (gvOuId)"
 msgstr "Anfrage Organisation (gvOuId)"

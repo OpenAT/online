@@ -32,9 +32,6 @@ class ResPartnerBPK(models.Model):
     # To make sorting the BPK request easier
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
 
-    # Make debugging of multiple request on error easier
-    BPKRequestLog = fields.Text(string="Request Log", readonly=True)
-
     # ATTENTION: If you change this field don't forget to change bpk_id_state field in res_partner.py also!
     state = fields.Selection(selection=[('found', 'Found'),
                                         ('found_old', 'Found with old data'),
@@ -92,9 +89,9 @@ class ResPartnerBPK(models.Model):
         if BPKErrorRequestDate and not isinstance(BPKErrorRequestDate, datetime.datetime):
             BPKErrorRequestDate = du_parser.parse(BPKErrorRequestDate)
             logger.debug("_compute_state() BPKRequestDate is not a datetime object for %s", self.ids)
-        state = None
+        state = False
         if not BPKRequestDate and not BPKErrorRequestDate:
-            state = None
+            state = False
         elif BPKRequestDate and not BPKErrorRequestDate:
             state = 'found'
         elif BPKErrorRequestDate and not BPKRequestDate:
@@ -120,13 +117,74 @@ class ResPartnerBPK(models.Model):
     @api.multi
     def write(self, vals):
         res = super(ResPartnerBPK, self).write(vals)
-        if res:
+        # Compute the state field
+        if res and 'state' not in vals:
             for r in self:
                 BPKRequestDate = vals.get('BPKRequestDate') or r.BPKRequestDate
                 BPKErrorRequestDate = vals.get('BPKErrorRequestDate') or r.BPKErrorRequestDate
                 computed_state = self._compute_state(BPKRequestDate, BPKErrorRequestDate)
                 if r.state != computed_state:
                     r.write({'state': computed_state})
+        return res
+
+    @api.multi
+    def clear_data(self):
+        # Find all res.partner.bpk related to the partners of the res.partner.bpk records in self
+        all_requests = self.env['res.partner.bpk']
+        all_partner = self.env['res.partner']
+        for r in self:
+            all_requests = all_requests | r.BPKRequestPartnerID.BPKRequestIDS
+            all_partner = all_partner | r.BPKRequestPartnerID
+
+        # Clear all Data from BPK Request(s)
+        res = all_requests.write({
+            #
+            'state': False,
+            'LastBPKRequest': False,
+            #
+            'BPKPrivate': False,
+            'BPKPublic': False,
+            #
+            'BPKRequestDate': False,
+            'BPKRequestURL': False,
+            'BPKRequestData': False,
+            'BPKRequestFirstname': False,
+            'BPKRequestLastname': False,
+            'BPKRequestBirthdate': False,
+            'BPKRequestZIP': False,
+            'BPKResponseData': False,
+            'BPKResponseTime': False,
+            'BPKRequestVersion': False,
+            'bpk_request_log': False,
+            #
+            'BPKErrorCode': False,
+            'BPKErrorText': False,
+            #
+            'BPKErrorRequestDate': False,
+            'BPKErrorRequestURL': False,
+            'BPKErrorRequestData': False,
+            'BPKErrorRequestFirstname': False,
+            'BPKErrorRequestLastname': False,
+            'BPKErrorRequestBirthdate': False,
+            'BPKErrorRequestZIP': False,
+            'BPKErrorResponseData': False,
+            'BPKErrorResponseTime': False,
+            'BPKErrorRequestVersion': False,
+            'bpkerror_request_log': False,
+        })
+
+        # Update related res.partner
+        # all_partner.compute_bpk_state_and_bpk_id()
+        # all_partner.action_check_and_set_bpk_request_needed()
+        # HINT: Less accurate but faster:
+        all_partner.write({
+            'LastBPKRequest': False,
+            'BPKRequestNeeded': fields.datetime.now(),
+            'BPKRequestError': False,
+            'bpk_id_error_code': False,
+            'bpk_id_state': False,
+        })
+
         return res
 
     # --------------

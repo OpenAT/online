@@ -10,6 +10,7 @@
             <form string="BPK Request">
                 <header>
                     <button name="compute_state" type="object" string="Compute BPK State"/>
+                    <button name="clear_data" type="object" string="Clear Data"/>
                     <field name="state" widget="statusbar" statusbar_visible="found"/>
                 </header>
                 <sheet>
