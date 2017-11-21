@@ -14,7 +14,7 @@ def clean_name(name, split=False):
     name = name.split('+')[0]
     # Remove unwanted words case insensitive (?i)
     # HINT: This may leave spaces or dots after the words but these get cleaned later on anyway
-    name = re.sub(ur"(?iu)\b(fam|familie|sen|jun|persönlich|privat|c[/]o|anonym|e[.]u|dr|dipl|ing)\b", "", name)
+    name = re.sub(ur"(?iu)\b(fam|familie|sen|jun|persönlich|privat|c[/]o|anonym|e[.]u|dr|dipl|ing|mag|fh)\b", "", name)
     # Remove Numbers
     name = ''.join(re.findall(ur"(?u)[^0-9]+", name))
     # Keep only unicode alphanumeric-characters (keeps chars like e.g.: Öö ỳ Ṧ), dash and space
