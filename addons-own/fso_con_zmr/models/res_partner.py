@@ -11,6 +11,8 @@ import time
 import datetime
 from datetime import timedelta
 from dateutil import tz
+# https://wiki.python.org/moin/EscapingXml
+from xml.sax.saxutils import escape
 import logging
 from requests import Timeout
 import pprint
@@ -528,6 +530,12 @@ class ResPartnerZMRGetBPK(models.Model):
             last_clean = lastname
             logger.warning(_("request_bpk() Lastname is empty after cleanup!"))
 
+        # Escape incalid XML characters in zip and birthdate
+        # HINT: There should be none so the values should not change at all. Still it makes sense as a last resort just
+        #       to make sure the xml will not fail with an 500 Error at the ZMR.
+        birthdate = escape(birthdate)
+        zipcode = escape(zipcode)
+
         responses = {}
 
         # 1.) Try with full birthdate and cleaned names
@@ -558,7 +566,7 @@ class ResPartnerZMRGetBPK(models.Model):
             if 'F230' in responses[0].get('faultcode', ""):
                 year = None
 
-        # 3.) try with zip code
+        # 3.) Try with zip code
         if zipcode:
             # Without birthdate
             responses = _request_with_log(first_clean, last_clean, '', zipcode)
@@ -578,9 +586,10 @@ class ResPartnerZMRGetBPK(models.Model):
             if self.response_ok(responses):
                 return responses
 
-        # 5.) Last try with unchanged data
+        # 5.) Last try with nearly unchanged data (only special chars will be removed)
         if not responses or firstname != first_clean or lastname != last_clean:
-            responses = _request_with_log(firstname, lastname, birthdate, zipcode)
+            # ATTENTION: Since the values are not cleaned we must escape '&', '>' and '<'
+            responses = _request_with_log(escape(firstname), escape(lastname), birthdate, zipcode)
 
         # Finally return the "latest" response(s)
         return responses
@@ -1102,13 +1111,11 @@ class ResPartnerZMRGetBPK(models.Model):
             #       this should be no problem since all 'faultcode' must be identical
 
             # We can clear BPKRequestNeeded only if we got a known faultcode or a bpk was found
-            bpk_request_needed = fields.datetime.now()
+            bpk_request_needed = p.BPKRequestNeeded or fields.datetime.now()
             r = resp[0]
             faultcode = r.get('faultcode')
-            if ((r.get('private_bpk') and r.get('public_bpk'))
-                or
-                (faultcode and any(r in faultcode for r in self._zmr_error_codes()))
-                ):
+            if ((r.get('private_bpk') and r.get('public_bpk')) or (
+                faultcode and any(r in faultcode for r in self._zmr_error_codes()))):
                 bpk_request_needed = None
 
             # Update the res.partner
