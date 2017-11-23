@@ -413,7 +413,7 @@ class ResPartnerZMRGetBPK(models.Model):
                     result['response_content'] = response_pprint
                 except Exception as e:
                     result['response_content'] = response.content
-                    result['faultcode'] = response.status_code
+                    result['faultcode'] = str(response.status_code)
                     result['faulttext'] = _("GetBPK-Request response is not valid XML!\n"
                                             "HTML status code %s with reason %s\n\n%s") % (response.status_code,
                                                                                            response.reason,
