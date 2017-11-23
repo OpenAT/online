@@ -583,7 +583,7 @@ class ResPartnerZMRGetBPK(models.Model):
         # 4.) Try with full firstname (e.g.: if there is a second firstname that was removed by clean_name())
         # HINT: lastname is never split
         first_clean_nosplit = clean_name(firstname, split=False)
-        if first_clean_nosplit != first_clean:
+        if first_clean_nosplit and first_clean_nosplit != first_clean:
             responses = _request_with_log(first_clean_nosplit, last_clean, year or birthdate, zipcode)
             if self.response_ok(responses):
                 return responses
