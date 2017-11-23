@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import sys
 import os
 from os.path import join as pj
+import openerp
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError, Warning
 from openerp.tools.translate import _
@@ -26,7 +28,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
     # FIELDS
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
-                                    string="BPK Requests", index=True)
+                                    string="BPK Requests")
     # BPK forced request values
     # TODO: Make sure forced BPK fields are always all filled or none (now only done by attr in the form view)
     BPKForcedFirstname = fields.Char(string="BPK Forced Firstname", index=True)
@@ -581,7 +583,7 @@ class ResPartnerZMRGetBPK(models.Model):
         # 4.) Try with full firstname (e.g.: if there is a second firstname that was removed by clean_name())
         # HINT: lastname is never split
         first_clean_nosplit = clean_name(firstname, split=False)
-        if first_clean_nosplit and first_clean_nosplit != first_clean:
+        if first_clean_nosplit != first_clean:
             responses = _request_with_log(first_clean_nosplit, last_clean, year or birthdate, zipcode)
             if self.response_ok(responses):
                 return responses
@@ -827,22 +829,29 @@ class ResPartnerZMRGetBPK(models.Model):
 
     @api.multi
     def check_bpk_request_needed(self):
-        found = self.env['res.partner']
+        found_ids = []
+        logger.info("check_bpk_request_needed() START ")
 
         valid_bpk_companies = self._find_bpk_companies()
         # HINT: If there are no companies with Austrian ZMR access data it makes no sense to set BPKRequestNeeded
         if not valid_bpk_companies:
-            return found
+            logger.warning("check_bpk_request_needed() END (No companies with ZMR access data found)")
+            return self.env['res.partner']
 
         counter = 0
         start = time.time()
         for p in self:
-            counter += 1
-            if counter >= 101:
-                time_per_record = (time.time()-start)/(counter-1)
-                logger.debug("check_bpk_request_needed() done for 100 partner (%.3fs/partner)" % time_per_record)
+
+            # Logging
+            log_batch = 100
+            if counter >= log_batch:
+                time_per_record = (time.time()-start)/counter
+                logger.debug("check_bpk_request_needed() "
+                             "done for %s partner (%.3fs/partner) " % (log_batch, time_per_record))
+                # Reset counter and time
                 counter = 0
                 start = time.time()
+            counter += 1
 
             # Check that BPKRequestNeeded is not already set (and other fields that would disable the BPK check)
             if p.BPKRequestNeeded or p.donation_deduction_optout_web or p.donation_deduction_disabled:
@@ -857,7 +866,7 @@ class ResPartnerZMRGetBPK(models.Model):
             # Check for missing BPK records for valid companies or no BPK records at all
             p_bpkrequests_company_ids = [r.BPKRequestCompanyID.id for r in p.BPKRequestIDS]
             if set(valid_bpk_companies.ids) - set(p_bpkrequests_company_ids):
-                found = found | p
+                found_ids.append(p.id)
                 continue
 
             # Check for multiple bpk records for a valid company
@@ -867,7 +876,7 @@ class ResPartnerZMRGetBPK(models.Model):
             orphan_bpk_ids = set(p_bpkrequests_company_ids) - set(valid_bpk_companies.ids)
             p_bpkrequests_valid_company_ids = [i for i in p_bpkrequests_company_ids if i not in orphan_bpk_ids]
             if len(p_bpkrequests_valid_company_ids) != len(set(p_bpkrequests_valid_company_ids)):
-                found = found | p
+                found_ids.append(p.id)
                 continue
 
             # Check that field 'state' is set for all BPK records
@@ -879,18 +888,19 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Check if the state of all BPK records is the same
             if len(set([r.state for r in p.BPKRequestIDS])) > 1:
-                found = found | p
+                found_ids.append(p.id)
                 continue
 
             # Check if the BPK request(s) data is different from the partner data
             # HINT: Even if a BPK is already found it would not hurt to do the BPK request again if
             #       any of the relevant fields have changed (it's easier to understand for the user)
             if not p.last_bpkreq_matches_partner_data():
-                found = found | p
+                found_ids.append(p.id)
                 continue
 
         # Return all partner where BPKRequestNeeded should be set but is not right now
-        return found
+        logger.info("check_bpk_request_needed() END")
+        return self.browse(found_ids)
 
     @api.multi
     def set_bpk_request_needed(self):
@@ -1331,53 +1341,64 @@ class ResPartnerZMRGetBPK(models.Model):
               ('BPKForcedLastname', '!=', False),
               ('BPKForcedBirthdate', '!=', False),
             ]
+        partner_to_check_ids = self.search(domain).ids
 
+        # Start batch processing
         batch_size = 1000
         offset = 0
-        partner_to_check = self.search(domain)
-        total_to_check = len(partner_to_check)
+        total_to_check = len(partner_to_check_ids)
+        partner_batch = True
+        found_partner_counter = 0
         while_start = now()
         logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
                       "Found a total of %s partner to check in %.6f seconds") % (total_to_check, now()-while_start))
-        partner_batch = True
-        found_partner_counter = 0
         while partner_batch:
-            # Load all partner
-            # logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
-            #               "Search for up to %s partner to check") % batch_size)
             start = now()
-            # partner_batch = self.search(domain, limit=batch_size, offset=offset)
-            partner_batch = partner_to_check[offset:offset+batch_size]
-            offset += batch_size
-            count = len(partner_batch)
-            duration = now() - start
-            # logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
-            #               "Found %s partner to check in %.3f seconds (%.3fs/p)") % (count, duration, duration/count))
 
-            # Check the found partner
-            logger.info(_("scheduled_check_and_set_bpk_request_needed(): Check BPKRequestNeeded for %s partner") % count)
-            start = now()
-            found_partner = partner_batch.check_bpk_request_needed()
-            found_partner_counter += len(found_partner)
-            duration = now() - start
-            tpr = 0 if not count else duration/count
-            logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
-                          "Checked %s partner in %.3f seconds (%.3fs/p") % (count, duration, tpr))
+            # Do every batch in its own environment and therefore in an isolated db-transaction
+            # HINT: This reduces the RAM and saves all "in between" results if the process should crash
+            # You don't need clear caches because is cleared when finish "with"
+            with openerp.api.Environment.manage():
+                # You don't need close your cr because is closed when finish "with"
+                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
 
-            # Update the found partner
-            count = len(found_partner)
-            logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
-                          "Set BPKRequestNeeded for %s found partner") % count)
-            start = now()
-            found_partner.write({'BPKRequestNeeded': fields.datetime.now()})
-            #rec_now = fields.datetime.now()
-            #for rec in found_partner:
-            #    rec.BPKRequestNeeded = rec_now
-            duration = now() - start
-            tpr = 0 if not count else duration / count
-            logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
-                          "Set BPKRequestNeeded done for %s partner in %.3f seconds (%.3fs/p)") % (
-                count, duration, tpr))
+                    # Create a new environment with new cursor database
+                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+
+                    # with_env replaces original env for this method
+                    # This forces isolated transaction to commit
+                    partner_batch = self.with_env(new_env).browse(partner_to_check_ids[offset:offset + batch_size])
+
+                    offset += batch_size
+                    count = len(partner_batch)
+                    duration = now() - start
+                    logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
+                                  "Prefetch %s partner in %.3f seconds (%.3fs/p)") % (count, duration, duration/count))
+
+                    # Check the found partner
+                    logger.info(_("scheduled_check_and_set_bpk_request_needed(): Check BPKRequestNeeded for %s partner") % count)
+                    start = now()
+                    found_partner = partner_batch.check_bpk_request_needed()
+                    found_partner_counter += len(found_partner)
+                    duration = now() - start
+                    tpr = 0 if not count or not duration else duration/count
+                    logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
+                                  "Checked %s (%s) partner in %.3f seconds (%.3fs/p") % (len(partner_batch), count, duration, tpr))
+
+                    # Update the found partner
+                    count = len(found_partner)
+                    logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
+                                  "Set BPKRequestNeeded for %s found partner") % count)
+                    start = now()
+                    found_partner.write({'BPKRequestNeeded': fields.datetime.now()})
+                    duration = now() - start
+                    tpr = 0 if not count or not duration else duration / count
+                    logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
+                                  "Set BPKRequestNeeded done for %s partner in %.3f seconds (%.3fs/p)") % (
+                        count, duration, tpr))
+
+                    # Commit the changes in the new environment
+                    new_env.cr.commit()  # Don't show a invalid-commit in this case
 
             # Log estimated remaining time
             partners_done = offset - batch_size + len(partner_batch)
