@@ -502,14 +502,22 @@ class ResPartnerZMRGetBPK(models.Model):
             # Update and append the request log
             try:
                 LogKeeper.log += u'Request Data: "'+first+u'"; "'+last+u'"; "'+birthd+u'"; "'+zipc+u'";\n'
+            except:
+                pass
+
+            try:
                 faultcode = resp[0].get('faultcode', u"")
                 faulttext = resp[0].get('faulttext', u"")
                 if faultcode or faulttext:
                     LogKeeper.log += faultcode+u'\n'+faulttext+u'\n'
-                LogKeeper.log += u"Response Time: %s sec\n----------\n\n" % resp[0].get('response_time_sec', u"0")
+                LogKeeper.log += u"Response Time: %s sec\n" % str(resp[0].get('response_time_sec', u"0"))
             except Exception as e:
-                logger.error("_request_with_log() Could not store the request log! Unicode error?")
+                logger.error("_request_with_log() Could not store the request log!\n%s") % str(e)
                 pass
+
+            LogKeeper.log += u"----------\n\n"
+
+            # Update all results
             for r in resp:
                 r['request_log'] = LogKeeper.log
 
