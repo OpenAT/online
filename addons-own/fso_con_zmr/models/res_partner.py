@@ -656,8 +656,11 @@ class ResPartnerZMRGetBPK(models.Model):
         # Search through existing BPK requests
         if internal_search:
             # Find a matching positive request for the given data
-            positive_dom = [("BPKRequestFirstname", "=", firstname), ("BPKRequestLastname", "=", lastname),
-                            ("BPKRequestBirthdate", "=", birthdate), ("BPKPrivate", "!=", False),
+            positive_dom = [("BPKRequestFirstname", "=", firstname),
+                            ("BPKRequestLastname", "=", lastname),
+                            ("BPKRequestBirthdate", "=", birthdate),
+                            ("BPKRequestZIP", "=", zipcode or False),
+                            ("BPKPrivate", "!=", False),
                             ("BPKRequestPartnerID.BPKRequestNeeded", "=", False)]
             try:
                 positive_req = bpk_obj.search(positive_dom)
@@ -673,8 +676,11 @@ class ResPartnerZMRGetBPK(models.Model):
                 pass
 
             # Find a matching negative request for the given data
-            negative_dom = [("BPKErrorRequestFirstname", "=", firstname), ("BPKErrorRequestLastname", "=", lastname),
-                            ("BPKErrorRequestBirthdate", "=", birthdate), ("BPKErrorRequestVersion", "=", version),
+            negative_dom = [("BPKErrorRequestFirstname", "=", firstname),
+                            ("BPKErrorRequestLastname", "=", lastname),
+                            ("BPKErrorRequestBirthdate", "=", birthdate),
+                            ("BPKErrorRequestZIP", "=", zipcode or False),
+                            ("BPKErrorRequestVersion", "=", version),
                             ("BPKRequestPartnerID.BPKRequestNeeded", "=", False)]
             try:
                 negative_req = bpk_obj.search(negative_dom)
