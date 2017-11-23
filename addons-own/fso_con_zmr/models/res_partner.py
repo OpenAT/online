@@ -506,7 +506,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 faulttext = resp[0].get('faulttext', u"")
                 if faultcode or faulttext:
                     LogKeeper.log += faultcode+u'\n'+faulttext+u'\n'
-                LogKeeper.log += u"----------\n\n"
+                LogKeeper.log += u"Response Time: %s sec\n----------\n\n" % resp[0].get('response_time_sec', u"0")
             except Exception as e:
                 logger.error("_request_with_log() Could not store the request log! Unicode error?")
                 pass
