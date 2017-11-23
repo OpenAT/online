@@ -1372,8 +1372,9 @@ class ResPartnerZMRGetBPK(models.Model):
                     offset += batch_size
                     count = len(partner_batch)
                     duration = now() - start
+                    tpr = 0 if not count or not duration else duration / count
                     logger.info(_("scheduled_check_and_set_bpk_request_needed(): "
-                                  "Prefetch %s partner in %.3f seconds (%.3fs/p)") % (count, duration, duration/count))
+                                  "Browse %s partner in %.6f seconds (%.3fs/p)") % (count, duration, tpr))
 
                     # Check the found partner
                     logger.info(_("scheduled_check_and_set_bpk_request_needed(): Check BPKRequestNeeded for %s partner") % count)
