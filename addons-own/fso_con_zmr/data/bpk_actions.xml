@@ -186,7 +186,7 @@
     <record id="ir_cron_scheduled_set_bpk" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Scheduled fetch of BPK Records every two minutes</field>
         <field name="priority" eval="2000" />
-        <field name="active" eval="True"/>
+        <field name="active" eval="False"/>
         <field name="interval_number">2</field>
         <field name="interval_type">minutes</field>
         <field name="numbercall">-1</field>
@@ -201,7 +201,7 @@
     <record id="ir_cron_check_bpk_request_needed" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Check BPKRequestNeeded for all partner once a week</field>
         <field name="priority" eval="2100" />
-        <field name="active" eval="True"/>
+        <field name="active" eval="False"/>
         <field name="interval_number">7</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
@@ -230,7 +230,7 @@
     <record id="ir_cron_scheduled_compute_bpk_state" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Check Partner 'bpk_state' field</field>
         <field name="priority" eval="2300" />
-        <field name="active" eval="True"/>
+        <field name="active" eval="False"/>
         <field name="interval_number">5</field>
         <field name="interval_type">minutes</field>
         <field name="numbercall">-1</field>
