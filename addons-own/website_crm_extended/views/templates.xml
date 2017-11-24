@@ -63,7 +63,7 @@
             </xpath>
         </template>
 
-        <!-- Address Data Option  -->
+        <!-- Honey Pot hidden input field  -->
         <template id="contactus_form_honey_pot"
                   inherit_id="website_crm.contactus_form"
                   name="Spam Protection: Honey Pot"
@@ -84,6 +84,29 @@
                     <label class="col-md-3 col-sm-4 control-label" for="hpfdadi">HPF Datadialog</label>
                     <div class="col-md-7 col-sm-8">
                         <input name="hpfdadi" class="form-control" type="text" tabindex="-1" autocomplete="off" t-attf-value="#{hpfdadi or ''}"/>
+                    </div>
+                </div>
+
+            </xpath>
+        </template>
+
+        <!-- Newsletter Option  -->
+        <template id="contactus_form_newsletter"
+                  inherit_id="website_crm.contactus_form"
+                  name="Newsletter Checkbox"
+                  customize_show="True" active="False">
+            <xpath expr="//form/div/div/button/../.." position="before">
+
+                <!-- Newsletter -->
+                <div t-attf-class="form-group #{error and 'newsletter_web' in error and 'has-error' or ''}">
+                    <label class="col-md-3 col-sm-4 control-label" for="newsletter_web"></label>
+                    <div class="col-md-7 col-sm-8">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="newsletter_web" required="True"/>
+                                <span name="newsletter_web">Please send me your newsletter!</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
