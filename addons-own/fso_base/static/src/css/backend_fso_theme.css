@@ -978,3 +978,22 @@ html .openerp .oe_kanban_view .oe_kanban_footer_left .oe_tags .oe_tag {
     color: #666666;
     /*font-size: 18px;*/
 }
+
+
+/* LABLES AND FIELDS */
+.openerp .oe_form label,
+.openerp .oe_form td.oe_form_group_cell_label label {
+    font-weight: inherit !important;
+    color: #888;
+}
+
+.openerp .oe_button.oe_link {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.openerp .oe_button.oe_link:hover,
+.openerp .oe_button.oe_link:focus {
+    border: inherit;
+    text-decoration: underline;
+    background-color: inherit;
+}
