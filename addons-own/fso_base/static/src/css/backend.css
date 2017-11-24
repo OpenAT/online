@@ -50,3 +50,11 @@
 .openerp .oe_form_editable .oe_form .oe_form_field_datetime input {
     width: 240px;
 }
+
+/* Default colors in list views */
+tr[style*="grey"] {
+    color: #b9b9b9 !important;
+}
+tr[style*="blue"] {
+    color: #1482e2 !important;
+}
