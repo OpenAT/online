@@ -345,10 +345,11 @@
         <field name="arch" type="xml">
             <tree string="Spenden und Artikel"
                   default_order="website_sequence"
-                  colors="green:fs_product_type and fs_product_type != 'product' and website_published and website_visible;
-                          orange:fs_product_type and fs_product_type != 'product' and website_published and not website_visible;
-                          red:fs_product_type and fs_product_type != 'product' and not website_published;
-                          blue: not fs_product_type or fs_product_type == 'product'">
+                  colors="red:not fs_product_type and website_published;
+                          grey:not fs_product_type;
+                          green:website_published and website_visible;
+                          orange:website_published and not website_visible;
+                          grey:not website_published;">
                 <field name="website_sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="fs_product_type" string="FS Typ"/>
@@ -357,7 +358,7 @@
                 <field name="payment_interval_default" string="Std. Interv."/>
                 <field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>
                 <field name="product_page_template" string="Webvorlage"/>
-                <field name="website_published" string="Freig."/>
+                <field name="website_published" string="WebFreig."/>
                 <field name="website_published_start" string="Start"/>
                 <field name="website_published_end" string="Ende"/>
                 <field name="website_visible" string="Sichtb."/>
