@@ -1,0 +1,28 @@
+/* sosync indicator */
+.openerp .oe_view .oe_form .oe_form_field {
+    border-left: 1px solid transparent;
+    padding-left: 4px;
+    min-height: 22px;
+}
+.openerp .oe_view .oe_form .oe_form_field[data-sosync="True"] {
+    border-left: 1px solid #33cd33;
+}
+.openerp .oe_view .oe_form .oe_form_field.oe_form_field_date {
+    height: 22px;
+}
+
+/* Show empty fields to show the sosync indicator also for empty fields */
+.openerp .oe_view_manager_view_form .oe_form_readonly .oe_form_field[data-sosync="False"]:empty,
+.openerp .oe_view_manager_view_form .oe_form_readonly .oe_form_field[data-sosync="True"]:empty,
+.openerp .oe_view_manager_view_form .oe_form .oe_form_field[data-sosync="False"]:empty,
+.openerp .oe_view_manager_view_form .oe_form .oe_form_field[data-sosync="True"]:empty {
+    display: inherit !important;
+}
+
+/* correction for the top padding */
+.openerp .oe_form input[type="text"],
+.openerp .oe_form input[type="password"],
+.openerp .oe_form input[type="file"],
+.openerp .oe_form select {
+    padding-top: 5px;
+}

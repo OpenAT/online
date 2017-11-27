@@ -5,7 +5,7 @@
     <!-- LOAD CSS FOR ODOO BACKEND -->
     <template id="assets_backend" name="fso_base assets_backend" inherit_id="web.assets_backend">
         <xpath expr="." position="inside">
-            <link rel="stylesheet" href="/fso_sosync/static/src/css/backend.css"/>
+            <link rel="stylesheet" href="/fso_sosync/static/src/css/sosync_backend.css"/>
         </xpath>
     </template>
 

@@ -23,16 +23,6 @@
     border-right: 0 solid #ddd;
     padding: 4px 0 6px 0;
 }
-/*.openerp .oe_form td.oe_form_group_cell + .oe_form_group_cell {*/
-    /*padding: 0;*/
-/*}*/
-.openerp .oe_form .oe_form_field,
-.openerp .oe_form .oe_form_field_boolean {
-    /*padding-top: 4px;*/
-    /*margin-left: 7px;*/
-    padding: 0;
-}
-
 
 /* TOP MENU */
 /* red: #bc2a30 */
@@ -123,18 +113,8 @@
 }
 .openerp .nav-pills > li.active > a,
 .openerp a.list-group-item.active > a {
-    /*background-color: #f49800;*/
-    /*background-color: #ffffff;*/
-    /*color: black;*/
-    /*border-left: 6px solid #e48f02;*/
-    /*margin-left: 8px;*/
-    /*padding-left: 5px;*/
-
     background-color: #ffffff;
     color: #f92fc7;
-    /* border-left: 6px solid #f82dc8; */
-    /* margin-left: 8px; */
-    /* padding-left: 5px; */
 }
 .openerp .nav-pills > li.active a:hover,
 .openerp .nav-pills > li.active a:focus,
@@ -142,6 +122,7 @@
 .openerp a.list-group-item.active a:focus {
     background-color: #eee;
 }
+
 /* VIEW MANAGER HEADER */
 .openerp .oe_view_manager_current > .oe_view_manager_header {
     border-bottom: 1px solid #ececec;
@@ -169,9 +150,7 @@
 }
 .openerp .oe_application a {
     color: #b6008d;
-    /* font-weight: bold; */
 }
-
 
 /* TABLES */
 .openerp .oe_list_content > thead {
@@ -243,7 +222,6 @@
 .openerp .oe_form_editable .oe_list_editable .oe_list_content td.oe_required {
     background-color: #ffecfb;
 }
-
 
 /* BUTTONS */
 .openerp .oe_form .oe_form_button {
@@ -904,26 +882,6 @@ html .oe_kanban_project_avatars img {
 }
 
 
-/* LIGHT TOP MENU
-
-#oe_main_menu_navbar.navbar-inverse {
-    background-color: rgb(243, 176, 227);
-}
-#oe_main_menu_navbar.navbar-inverse .navbar-nav > .active > a,
-#oe_main_menu_navbar.navbar-inverse .navbar-nav > .active > a:hover,
-#oe_main_menu_navbar.navbar-inverse .navbar-nav > .active > a:focus {
-    background-color: rgb(243, 176, 227);
-}
-#oe_main_menu_navbar.navbar-inverse .navbar-nav > .active > a, #oe_main_menu_navbar.navbar-inverse .navbar-nav > .active > a:hover, #oe_main_menu_navbar.navbar-inverse .navbar-nav > .active > a:focus {
-    text-shadow: 0 0 16px rgba(156, 0, 120, 0.58);
-}
-.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
-    background-color: #f3afe3;
-    text-shadow: 0 0 16px rgba(156, 0, 120, 0.58);
-        border-bottom: 6px solid #b3479b;
-}
-*/
-
 .openerp .oe_secondary_menu_section {
     padding-top: 0.25em;
     padding-bottom: 0.2em;
@@ -974,13 +932,10 @@ html .openerp .oe_kanban_view .oe_kanban_footer_left .oe_tags .oe_tag {
     width: 260px;
 }
 .openerp div.fso_backend_separator {
-    /*color: #d056b2;*/
     color: #666666;
-    /*font-size: 18px;*/
 }
 
-
-/* LABLES AND FIELDS */
+/* LABLES, FIELDS AND LINKS */
 .openerp .oe_form label,
 .openerp .oe_form td.oe_form_group_cell_label label {
     font-weight: inherit !important;
