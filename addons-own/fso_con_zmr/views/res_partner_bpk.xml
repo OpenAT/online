@@ -17,7 +17,7 @@
                     <group>
                         <group>
                             <field name="BPKRequestCompanyID"/>
-                            <field name="BPKRequestPartnerID"/>
+                            <field name="BPKRequestPartnerID" context="{'form_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_form', 'tree_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_tree'}"/>
                             <field name="LastBPKRequest"/>
                         </group>
                         <group>
