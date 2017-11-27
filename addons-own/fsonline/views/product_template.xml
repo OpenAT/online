@@ -255,7 +255,7 @@
                                     <field name="create_uid" readonly="True"/>
                                     <field name="write_date" readonly="True"/>
                                     <field name="write_uid" readonly="True"/>
-                                    <field name="fs_group_ids" widget="many2many_tags"/>
+                                    <field name="fs_workflow" string="FS Workflow (veraltet)"/>
                                 </group>
                             </group>
 

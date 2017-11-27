@@ -5,6 +5,7 @@ __author__ = 'Michael Karrer'
 
 
 # Product Template
+# ATTENTION: There are unported parts for product.template in website_sale_donate.py !
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
@@ -23,3 +24,19 @@ class ProductTemplate(models.Model):
                 pt.website_visible = True
             else:
                 pt.website_visible = False
+
+    @api.onchange('fs_product_type')
+    def _onchange_set_fs_workflow_by_fs_product_type(self):
+        if self.fs_product_type in ['donation', 'godparenthood', 'sponsorship', 'membership']:
+            self.fs_workflow = 'donation'
+        else:
+            self.fs_workflow = 'product'
+
+    @api.multi
+    def write(self, vals):
+        if vals and 'fs_product_type' in vals and not 'fs_workflow' in vals:
+            if vals.get('fs_product_type') in ['donation', 'godparenthood', 'sponsorship', 'membership']:
+                vals['fs_workflow'] = 'donation'
+            else:
+                vals['fs_workflow'] = 'product'
+        return super(ProductTemplate, self).write(vals)

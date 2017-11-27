@@ -6,11 +6,10 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     fs_product_type = fields.Selection(selection=[('donation', 'Donation'),             # Spende
-                                                  ('product', 'Product'),               # Produkt
                                                   ('godparenthood', 'Godparenthood'),   # Patenschaft
                                                   ('sponsorship', 'Sponsorship'),       # Foerderer(schaft)
                                                   ('membership', 'Membership'),         # Mitgliedschaft
+                                                  ('product', 'Product'),               # Produkt
                                                   ('eventticket', 'Event Ticket'),      # Event Ticket
                                                   ],
                                        string="Type")
-
