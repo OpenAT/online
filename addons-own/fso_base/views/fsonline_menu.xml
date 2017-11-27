@@ -15,23 +15,42 @@
         <menuitem id="menu_fsonline_notes" action="note.action_note_note" parent="menu_fsonline_organizer" name="Notes" sequence="2010"/>
         <menuitem id="menu_fsonline_partner_partner" action="base.action_partner_form" parent="menu_fsonline_organizer" name="Partner" sequence="2020"/>
 
+
+        <!-- ============= -->
+        <!-- FSO ORGANIZER -->
+        <!-- ============= -->
+        <menuitem id="menu_fso_organizer" name="Organizer" sequence="4" groups="base.group_user"/>
+
+        <!-- ORGANIZER -->
+        <menuitem id="menu_fso_organizer_organizer" parent="menu_fso_organizer" name="Organizer" sequence="1000" groups="base.group_user"/>
+        <menuitem id="menu_fso_organizer_organizer_calender" action="calendar.action_calendar_event" parent="menu_fso_organizer_organizer" name="Kalender" sequence="1010"/>
+        <menuitem id="menu_fso_organizer_organizer_notes" action="note.action_note_note" parent="menu_fso_organizer_organizer" name="Notizen" sequence="1020"/>
+        <menuitem id="menu_fso_organizer_organizer_partner" action="base.action_partner_form" parent="menu_fso_organizer_organizer" name="Kontakte" sequence="1030"/>
+
+        <!-- PROJEKT -->
+        <menuitem id="menu_fso_organizer_project" parent="menu_fso_organizer" name="Projekt" sequence="2000" groups="base.group_user"/>
+        <menuitem id="menu_fso_organizer_project_task" action="project.action_view_task" parent="menu_fso_organizer_project" name="Aufgaben" sequence="2010"/>
+        <menuitem id="menu_fso_organizer_project_project" action="project.open_view_project_all" parent="menu_fso_organizer_project" name="Projekte" sequence="2020"/>
+        <menuitem id="menu_fso_organizer_project_analytic" action="account.action_account_analytic_account_form" parent="menu_fso_organizer_project" name="Kostenstellen" sequence="2030"/>
+
+        <!-- ZEITERFASSUNG -->
+        <menuitem id="menu_fso_organizer_hrtime" parent="menu_fso_organizer" name="Zeiterfassung" sequence="3000" groups="base.group_user"/>
+        <menuitem id="menu_fso_organizer_hrtime_mytimesheet" action="hr_timesheet_sheet.ir_actions_server_timsheet_sheet" name="Mein Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3010"/>
+        <menuitem id="menu_fso_organizer_hrtime_timesheet" action="hr_timesheet_sheet.act_hr_timesheet_sheet_form" name="Alle Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3015"/>
+        <menuitem id="menu_fso_organizer_hrtime_leave" action="hr_holidays.open_ask_holidays" name="Urlaub u. Abwesenheit" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+        <menuitem id="menu_fso_organizer_hrtime_leavereq" action="hr_holidays.open_allocation_holidays" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+
         <!-- MESSAGES -->
-        <menuitem id="menu_fsonline_messages" parent="menu_fsonline" name="Messages" sequence="3000"/>
-        <menuitem id="menu_fsonline_messages_inbox" action="portal.action_mail_inbox_feeds_portal" parent="menu_fsonline_messages" name="Inbox" sequence="3030"/>
-        <menuitem id="menu_fsonline_messages_todo" action="portal.action_mail_star_feeds_portal" parent="menu_fsonline_messages" name="ToDo" sequence="3040"/>
-        <menuitem id="menu_fsonline_messages_archive" action="portal.action_mail_archives_feeds_portal" parent="menu_fsonline_messages" name="Archive" sequence="3050"/>
-
-
-        <!-- ============ -->
-        <!-- FSO CAMPAIGN -->
-        <!-- ============ -->
-        <menuitem id="menu_fsonline_campaign" name="FSO Campaign" sequence="3" groups="base.group_user"/>
+        <menuitem id="menu_fso_organizer_msg" parent="menu_fso_organizer" name="Nachrichten" sequence="4100" groups="base.group_user"/>
+        <menuitem id="menu_fso_organizer_msg_inbox" action="portal.action_mail_inbox_feeds_portal" parent="menu_fso_organizer_msg" name="Inbox" sequence="4140"/>
+        <menuitem id="menu_fso_organizer_msg_todo" action="portal.action_mail_star_feeds_portal" parent="menu_fso_organizer_msg" name="ToDo" sequence="4150"/>
+        <menuitem id="menu_fso_organizer_msg_archive" action="portal.action_mail_archives_feeds_portal" parent="menu_fso_organizer_msg" name="Archiv" sequence="4160"/>
 
 
         <!-- ========== -->
         <!-- FSO SYSTEM -->
         <!-- ========== -->
-        <menuitem id="menu_fsonline_system" name="FSO-System" sequence="5" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_system" name="System |  " sequence="5" groups="base.group_user"/>
 
         <!-- ACCESS -->
         <menuitem id="menu_fsonline_access" parent="menu_fsonline_system" name="Access" sequence="9000"/>
