@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+    <!-- Checklist Templates: Create form, tree and list view for the project.task.subtask -->
+    <record model="ir.ui.view" id="project_task_subtask_template_form">
+        <field name="name">Checklist Templates</field>
+        <field name="model">project.task.subtask.template</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Checklist Templates">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Checklist">
+                            <field name="template_subtask_ids">
+                                <tree string="ToDo" editable="bottom" default_order="sequence">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="extended_description"/>
+                                    <field name="state" readonly="True"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Used in">
+                            <field name="template_task_ids" readonly="True">
+                                <tree string="Tasks">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_task_subtask_template_tree">
+        <field name="name">Checklist Templates</field>
+        <field name="model">project.task.subtask.template</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Checklist Templates" default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="project_task_subtask_template_search">
+        <field name="name">Checklist Templates</field>
+        <field name="model">project.task.subtask.template</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Checklist Templates">
+                <field name="name"/>
+                <field name="template_subtask_ids"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Now we create actions for the new views -->
+    <record model="ir.actions.act_window" id="project_task_subtask_template_action" >
+        <field name="name">Checklist Templates</field>
+        <field name="res_model">project.task.subtask.template</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="project_task_subtask_template_search"/>
+    </record>
+
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem name="Checklist Templates"
+              id="project_task_subtask_template_menu"
+              action="project_task_subtask_template_action"
+              parent="project.menu_project_management"/>
+
+    </data>
+</openerp>

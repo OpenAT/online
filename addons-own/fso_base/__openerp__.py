@@ -67,12 +67,12 @@ TODO (must be done manually right now):
     'depends': [
         # Default odoo addons
         'base', 'crm', 'mail',
-        'account_voucher', 'project', 'note', 'project_issue', 'account_accountant', 'survey', 'sale','stock',
+        'account_voucher', 'project', 'note', 'account_accountant', 'survey', 'sale','stock',
         'purchase', 'hr', 'hr_timesheet_sheet', 'hr_recruitment', 'hr_holidays', 'hr_expense', 'hr_evaluation',
         'calendar', 'contacts', 'gamification', 'im_livechat', 'lunch',
         'mass_mailing', 'project_timesheet', 'sale_service', 'account_analytic_analysis', 'delivery', 'warning',
         'sale_stock', 'sale_margin', 'analytic_user_function', 'crm_claim', 'crm_helpdesk','stock_dropshipping',
-        'stock_landed_costs', 'procurement_jit', 'stock_picking_wave', 'project_issue_sheet', 'account_asset',
+        'stock_landed_costs', 'procurement_jit', 'stock_picking_wave', 'account_asset',
         'account_followup', 'product_email_template', 'account_payment', 'hr_contract', 'document',
         'website', 'website_blog', 'website_event', 'website_forum', 'website_sale',
         'website_certification', 'website_crm', 'website_crm_partner_assign', 'website_customer', 'website_event_sale',

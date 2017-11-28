@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Add new fields to the tree view of project.task.subtask -->
+        <record id="subtask_list_view" model="ir.ui.view">
+            <field name="name">subtask_list_view</field>
+            <field name="model">project.task.subtask</field>
+            <field name="inherit_id" ref="project_task_subtask.subtask_list_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="sequence" string="Seq" widget="handle"/>
+                </field>
+                <field name="task_state" position="after">
+                    <field name="template_subtask_id"/>
+                    <field name="template_subtask_id_template_id"/>
+                    <field name="subtask_template_id"/>
+                    <field name="state"/>
+                    <field name="sequence" string="Seq"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Add new filters to project.task.subtask -->
+        <record id="project_task_subtask_view_search" model="ir.ui.view">
+            <field name="name">project_task_subtask_view_search</field>
+            <field name="model">project.task.subtask</field>
+            <field name="inherit_id" ref="project_task_subtask.project_task_subtask_view_search"/>
+            <field name="arch" type="xml">
+                <filter name="done_subtask" position="after">
+                     <separator/>
+                    <filter string="Without Template Todos" domain="[('subtask_template_id','=',False)]" name="no_template_subtask"/>
+                     <separator/>
+                    <filter string="Template Todos" domain="[('subtask_template_id','!=',False)]" name="template_subtask"/>
+                </filter>
+                <filter string="State" position="after">
+                    <filter string="Template" name="gb_subtask_template_id" domain="[]" context="{'group_by':'subtask_template_id'}"/>
+                    <filter string="Origin Template" name="gb_subtask_template_id" domain="[]" context="{'group_by':'template_subtask_id_template_id'}"/>
+                </filter>
+            </field>
+        </record>
+
+        <!-- REPLACE ACTION: action_view_subtask to add another enabled default filter -->
+        <record id="project_task_subtask.action_view_subtask" model="ir.actions.act_window">
+            <field name="name">Checklist</field>
+            <field name="res_model">project.task.subtask</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context" eval="{}"/>
+        </record>
+
+    </data>
+</openerp>

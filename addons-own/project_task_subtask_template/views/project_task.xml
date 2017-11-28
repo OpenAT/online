@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_task_form2" model="ir.ui.view">
+            <field name="name">project.task.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project_task_subtask.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree[@string='Task Work']" position="attributes">
+                    <attribute name="default_order">sequence</attribute>
+                </xpath>
+                <xpath expr="//field[@name='default_user']" position="before">
+                    <group>
+                        <group>
+                            <field name="subtask_template_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <button type="object" name="import_subtasks" string="Import Todo's from template(s)"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//tree[@string='Task Work']/field[@name='name']" position="before">
+                    <field name="sequence" widget="handle"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
