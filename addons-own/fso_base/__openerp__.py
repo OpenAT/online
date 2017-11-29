@@ -88,6 +88,8 @@ TODO (must be done manually right now):
         'web_export_view',
         'report_custom_filename',
         'partner_contact_gender',
+        'cam_hr',
+        'cam_hr_overtime',
         # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',

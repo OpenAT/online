@@ -37,8 +37,8 @@
         <menuitem id="menu_fso_organizer_hrtime" parent="menu_fso_organizer" name="Zeiterfassung" sequence="3000" groups="base.group_user"/>
         <menuitem id="menu_fso_organizer_hrtime_mytimesheet" action="hr_timesheet_sheet.ir_actions_server_timsheet_sheet" name="Mein Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3010"/>
         <menuitem id="menu_fso_organizer_hrtime_timesheet" action="hr_timesheet_sheet.act_hr_timesheet_sheet_form" name="Alle Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3015"/>
-        <menuitem id="menu_fso_organizer_hrtime_leave" action="hr_holidays.open_ask_holidays" name="Urlaub u. Abwesenheit" parent="menu_fso_organizer_hrtime" sequence="3020"/>
-        <menuitem id="menu_fso_organizer_hrtime_leavereq" action="hr_holidays.open_allocation_holidays" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+        <menuitem id="menu_fso_organizer_hrtime_leave" action="cam_hr.hr_alle_urlaubsantraege_action" name="Urlaub u. Abwesenheit" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+        <menuitem id="menu_fso_organizer_hrtime_leavereq" action="cam_hr.hr_urlaubsanspruch_action" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3020"/>
 
         <!-- NACHRICHTEN -->
         <menuitem id="menu_fso_organizer_msg" parent="menu_fso_organizer" name="Nachrichten" sequence="4100" groups="base.group_user"/>
