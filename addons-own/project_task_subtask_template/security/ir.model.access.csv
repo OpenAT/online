@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_task_subtask_full,project.task.subtask,model_project_task_subtask,project.group_project_user,1,1,1,1
+access_task_subtask_template,project.task.subtask.template,model_project_task_subtask_template,project.group_project_user,1,1,1,1
+

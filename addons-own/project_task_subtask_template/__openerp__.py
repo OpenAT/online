@@ -39,6 +39,7 @@ Add subtasks by template
     ],
     'installable': True,
     'data': [
+        'security/ir.model.access.csv',
         'views/project_task_subtask_template.xml',
         'views/project_task.xml',
         'views/project_task_subtask.xml',

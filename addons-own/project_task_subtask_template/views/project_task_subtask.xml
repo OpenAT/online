@@ -2,6 +2,27 @@
 <openerp>
     <data>
 
+        <!-- Extend the form view -->
+        <record id="subtask_form_view" model="ir.ui.view">
+            <field name="name">subtask_form_view</field>
+            <field name="model">project.task.subtask</field>
+            <field name="inherit_id" ref="project_task_subtask.view_id"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="extended_description"/>
+                    <field name="reviewer_id"/>
+                </field>
+                <field name="task_id" position="after">
+                    <field name="task_state" readonly="1"/>
+                    <field name="project_id" readonly="1"/>
+                    <field name="template_subtask_id" readonly="1"/>
+                    <field name="template_subtask_id_template_id" readonly="1"/>
+                    <field name="template_subtask_id_name" readonly="1"/>
+                    <field name="template_subtask_id_extended_description" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
         <!-- Add new fields to the tree view of project.task.subtask -->
         <record id="subtask_list_view" model="ir.ui.view">
             <field name="name">subtask_list_view</field>

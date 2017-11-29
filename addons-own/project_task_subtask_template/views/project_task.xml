@@ -23,6 +23,9 @@
                 <xpath expr="//tree[@string='Task Work']/field[@name='name']" position="before">
                     <field name="sequence" widget="handle"/>
                 </xpath>
+                <xpath expr="//field[@name='write_date']" position="after">
+                    <button type="object" name="button_open_subtask_popup" icon="gtk-info" string="Open"/>
+                </xpath>
             </field>
         </record>
 

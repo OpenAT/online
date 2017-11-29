@@ -11,7 +11,7 @@ class ProjectTaskSubtask(models.Model):
     sequence = fields.Integer(string="Sequence", index=1)
 
     # Add a long description field
-    extended_description = fields.Text(string="Extended Description", translate=True)
+    extended_description = fields.Html(string="Extended Description")
 
     # For subtasks used in subtask templates
     # Link to templates
@@ -28,6 +28,10 @@ class ProjectTaskSubtask(models.Model):
     template_subtask_id_template_id = fields.Many2one(string="Origin Template",
                                                       comodel_name='project.task.subtask.template',
                                                       related='template_subtask_id.subtask_template_id', store=True)
+    template_subtask_id_name = fields.Char(string="Origin Description", readonly=True,
+                                           related="template_subtask_id.name")
+    template_subtask_id_extended_description = fields.Html(string="Origin Ext-Description", readonly=True,
+                                                           related="template_subtask_id.extended_description")
 
     # Remove required for some fields
     user_id = fields.Many2one(required=False)
@@ -106,3 +110,15 @@ class ProjectTaskSubtask(models.Model):
 
         # Return res so that the changes can be written to the database
         return res
+
+    @api.multi
+    def button_open_subtask_popup(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'project_task_subtask.view_id',
+            'res_model': 'project.task.subtask',
+            'res_id': self.id,
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+        }
