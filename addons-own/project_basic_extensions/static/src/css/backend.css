@@ -1,6 +1,6 @@
 .kanban_icon_box {
     margin: 6px 0 0 0;
-    border-top: 1px dotted rgba(1, 1, 1, 0.1);
+    /*border-top: 1px dotted rgba(1, 1, 1, 0.1);*/
     /*border-bottom: 1px dotted rgba(1, 1, 1, 0.1);*/
     line-height: 20px;
     font-size: 12px;
@@ -44,7 +44,7 @@
     height: 14px;
     width: 14px;
     margin-top: 3px;
-    margin-left: 8px;
+    margin-left: 3px;
     -moz-border-radius: 14px;
     -webkit-border-radius: 14px;
     border-radius: 14px;
@@ -53,5 +53,5 @@
 }
 .openerp .kanban_task_footer .oe_kanban_status_green {
     background-image: none;
-    background-color: #39d039;
+    background-color: #4aa94a;
 }

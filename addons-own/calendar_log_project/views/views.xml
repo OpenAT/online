@@ -259,5 +259,22 @@
             <!--</field>-->
         <!--</record>-->
 
+        <!-- INHERIT: CALENDAR CALENDAR VIEW -->
+        <record id="view_calendar_event_calendar_calendar_log" model="ir.ui.view">
+            <field name="name">view_calendar_event_calendar_calendar_log</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_calendar"/>
+            <field name="arch" type="xml">
+                <xpath expr="//calendar" position="attributes">
+                    <attribute name="display">[project_id]: [name]</attribute>
+                    <attribute name="mode">week</attribute>
+                    <attribute name="quick_add">false</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="project_id"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>

@@ -131,16 +131,13 @@
         </record>
 
         <!-- INHERIT: CALENDAR CALENDAR VIEW -->
-        <record id="view_calendar_event_calendar_calendar_log" model="ir.ui.view">
+        <!-- record id="view_calendar_event_calendar_calendar_log" model="ir.ui.view">
             <field name="name">view_calendar_event_calendar_calendar_log</field>
             <field name="model">calendar.event</field>
             <field name="inherit_id" ref="calendar.view_calendar_event_calendar"/>
             <field name="arch" type="xml">
                 <xpath expr="//calendar" position="attributes">
                     <attribute name="display">[category_id]: [name]</attribute>
-                    <!-- Not documented but found in java script at
-                         addons/web_calendar/static/src/js/web_calendar.js line 257
-                         Start calendar in week View: -->
                     <attribute name="mode">week</attribute>
                     <attribute name="quick_add">false</attribute>
                 </xpath>
@@ -148,7 +145,7 @@
                     <field name="category_id"/>
                 </xpath>
             </field>
-        </record>
+        </record -->
 
         <!-- NEW: CALENDAR GRAPH VIEW -->
         <record id="view_calendar_event_graph" model="ir.ui.view">

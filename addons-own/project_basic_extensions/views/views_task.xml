@@ -124,8 +124,9 @@
                     <div name="kanban_task_footer" class="kanban_task_footer">
                         <!-- stars -->
                         <span><field name="priority" widget="priority"/></span>
-                        <!-- image and 'ready for next stage' indicator  -->
-                        <span class="pull-right"><field name="kanban_state" widget="kanban_state_selection"/></span>
+                        <!-- 'ready for next stage' indicator  -->
+                        <span class="pull-left"><field name="kanban_state" widget="kanban_state_selection"/></span>
+                        <!-- user image -->
                         <img t-att-src="kanban_image('res.users', 'image_small', record.user_id.raw_value)"
                              t-att-title="record.user_id.value"
                              width="18" height="18"
