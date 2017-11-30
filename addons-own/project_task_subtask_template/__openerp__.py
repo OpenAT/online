@@ -35,6 +35,7 @@ Add subtasks by template
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
+        'project',
         'project_task_subtask',
     ],
     'installable': True,
@@ -43,5 +44,6 @@ Add subtasks by template
         'views/project_task_subtask_template.xml',
         'views/project_task.xml',
         'views/project_task_subtask.xml',
+        'views/templates_backend_css.xml',
     ],
 }

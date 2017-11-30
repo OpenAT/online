@@ -29,5 +29,24 @@
             </field>
         </record>
 
+        <!-- REPLACE original view -->
+        <record id="project_task_subtask.view_task_kanban_subtasks" model="ir.ui.view">
+            <field name="name">project.task.kanban.subtasks</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name ='categ_ids']" position="after">
+                    <field name="subtask_ids"/>
+                    <field name="kanban_subtasks"/>
+                    <field name="kanban_subtasks_icons"/>
+                </xpath>
+                <xpath expr="//span[@title ='Remaining hours']/.." position="before">
+                    <div name="task-kanban-todolist" class="task-kanban-todolist">
+                        <t t-raw="record.kanban_subtasks_icons.raw_value"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>

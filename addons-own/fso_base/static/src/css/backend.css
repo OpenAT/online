@@ -40,6 +40,13 @@
 .openerp .oe_kanban_view .oe_kanban_group_title .oe_kanban_group_title_text {
     font-size: 10px;
 }
+body .openerp .btn-group.kanban_state {
+    padding-top: 0;
+    /*margin-right: 4px !important;*/
+}
+body  .openerp .oe_kanban_view .oe_kanban_footer_left {
+    margin-top: 0;
+}
 
 /* Date Picker and Date Input Fields */
 .ui-datepicker,

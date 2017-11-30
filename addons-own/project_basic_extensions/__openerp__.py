@@ -45,10 +45,12 @@ Project, Task and Issues Extensions
         'project',
         'pad',
         'project_issue',
+        'project_task_subtask_template',
     ],
     'installable': True,
     'data': [
         'views/views_project.xml',
         'views/views_task.xml',
+        'views/templates_backend_css.xml',
     ],
 }

@@ -1,0 +1,57 @@
+.kanban_icon_box {
+    margin: 6px 0 0 0;
+    border-top: 1px dotted rgba(1, 1, 1, 0.1);
+    /*border-bottom: 1px dotted rgba(1, 1, 1, 0.1);*/
+    line-height: 20px;
+    font-size: 12px;
+    text-align: right;
+    color: #969696;
+}
+.kanban_icon_box .oe_e {
+    display: inline-block;
+    font-size: 30px;
+    line-height: 20px;
+    margin: 0 3px;
+    color: #969696;
+}
+.kanban_icon_box .oe_e.large_icon {
+    display: inline-block;
+    font-size: 36px;
+    line-height: 20px;
+    margin: 0 12px 0 0;
+    float: left;
+}
+
+
+.openerp .oe_kanban_view .oe_kanban_content .kanban_task_footer .oe_star_on,
+.openerp .oe_kanban_view .oe_kanban_content .kanban_task_footer .oe_star_off {
+    text-shadow: none;
+    vertical-align: inherit;
+    position: inherit;
+    top: inherit;
+    line-height: 12px;
+}
+
+.openerp .oe_kanban_view .oe_kanban_content .oe_tag {
+    background: #969696;
+}
+
+.openerp .oe_kanban_view .oe_kanban_content [name='kanban-task-tags'] {
+    text-align: right;
+}
+
+.openerp .kanban_task_footer .oe_kanban_status {
+    height: 14px;
+    width: 14px;
+    margin-top: 3px;
+    margin-left: 8px;
+    -moz-border-radius: 14px;
+    -webkit-border-radius: 14px;
+    border-radius: 14px;
+    background-image: none;
+    background-color: #bbbbbb;
+}
+.openerp .kanban_task_footer .oe_kanban_status_green {
+    background-image: none;
+    background-color: #39d039;
+}
