@@ -151,7 +151,7 @@ class hr_timesheet_sheet(osv.osv):
                 
                 self.write(cr,uid,sheet.id,res[sheet.id])
    
-        return res;
+        return res
 
     def _vacation_allocations(self, cr, uid, ids, field_name, arg, context=None):       
         """

@@ -90,6 +90,9 @@ TODO (must be done manually right now):
         'partner_contact_gender',
         'cam_hr',
         'cam_hr_overtime',
+        'web_searchbar_full_width',
+        'website_seo_url',
+        'website_seo_url_product',
         # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',
@@ -100,6 +103,7 @@ TODO (must be done manually right now):
         'web_logout_with_kwargs',
         'website_crm_extended',
         'website_blog_layouts',
+        'cam_hr_overtime_calendar_log',
     ],
     'data': [
         'data/setup.xml',

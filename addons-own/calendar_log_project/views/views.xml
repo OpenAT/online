@@ -8,6 +8,7 @@
             <field name="model">calendar.event</field>
             <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
             <field name="arch" type="xml">
+
                 <xpath expr="//div[@class='oe_title']" position="after">
                     <div>
                         <group>
@@ -35,6 +36,7 @@
                             This text will be used for invitation emails and therefore may be visible to customers!
                         </div>
                 </xpath>
+
             </field>
         </record>
 
@@ -172,6 +174,20 @@
                             name="%(calendar_log_project_hr_timesheet_sheet_day_cat_detail_action)d"
                             string="Exp. Sum." />
                 </div>
+                <tree string="Attendances" position="attributes">
+                    <attribute name="colors">red:not calendar_timelog_event;green:action == 'sign_in';blue:action == 'sign_out'</attribute>
+                    <attribute name="default_order">name DESC, action</attribute>
+                </tree>
+                <field name="action" position="after">
+                    <!--
+                    <field name="calendar_event_sign_in_ids" readonly="True" widget="one2many_tags"/>
+                    <field name="calendar_event_sign_out_ids" readonly="True" widget="one2many_tags"/>
+                    -->
+                    <field name="calendar_timelog_event"/>
+                </field>
+                <xpath expr="//page[@string='Attendances']/group/group" position="attributes">
+                    <attribute name="colspan">2</attribute>
+                </xpath>
                 <notebook position="inside">
                     <page string="Expense Summary">
                         <field colspan="4" name="day_cat_details" nolabel="1">

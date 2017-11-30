@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from openerp import models
 from openerp import tools, api
 from openerp.fields import Many2one, Boolean, Char, Float, Date, One2many
-from openerp.osv import fields, osv
+from openerp.osv import osv
 from openerp.tools.translate import _
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class calendar_event_category(osv.osv):
     _inherit = 'calendar.event.category'
@@ -15,9 +19,57 @@ class calendar_event_category(osv.osv):
                          help='Default Is-Attendance setting for meetings with this category',
                          default=False)
 
+
 class hr_analytic_timesheet(osv.osv):
     _inherit = 'hr.analytic.timesheet'
     event_category_id = Many2one('calendar.event.category', string='Event Category', readonly=False)
+
+
+# Add inverse fields for filtering
+class ProjectProject(models.Model):
+    _inherit = 'project.project'
+
+    calendar_event_project_id_ids = One2many(string="Calendar Time-Log",
+                                          comodel_name="calendar.event", inverse_name="project_id")
+
+
+# Add inverse fields for filtering
+class ProjectTask(models.Model):
+    _inherit = 'project.task'
+
+    calendar_event_task_id_ids = One2many(string="Calendar Time-Log",
+                                          comodel_name="calendar.event", inverse_name="task_id")
+
+
+# Add inverse fields for filtering
+class ProjectTaskWork(models.Model):
+    _inherit = 'project.task.work'
+
+    calendar_event_task_work_id_ids = One2many(string="Calendar Time-Log",
+                                               comodel_name="calendar.event", inverse_name="task_work_id")
+
+
+# Add inverse fields for filtering
+class HrAttendance(models.Model):
+    _inherit = 'hr.attendance'
+
+    calendar_event_sign_in_ids = One2many(string="Calendar SignIn",
+                                          comodel_name="calendar.event", inverse_name="sign_in_id")
+    calendar_event_sign_out_ids = One2many(string="Calendar SignOut",
+                                           comodel_name="calendar.event", inverse_name="sign_out_id")
+    calendar_timelog_event = Many2one(string="Calendar Event", comodel_name='calendar.event',
+                                      compute='_calendar_timelog_event', readonly=True)
+
+
+    @api.depends('calendar_event_sign_in_ids', 'calendar_event_sign_out_ids')
+    def _calendar_timelog_event(self):
+        for r in self:
+            if r.calendar_event_sign_in_ids:
+                r.calendar_timelog_event = r.calendar_event_sign_in_ids[0]
+            elif r.calendar_event_sign_out_ids:
+                r.calendar_timelog_event = r.calendar_event_sign_out_ids[0]
+            else:
+                r.calendar_timelog_event = False
 
 
 class calendar_event(osv.osv):

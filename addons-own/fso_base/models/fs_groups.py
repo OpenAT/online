@@ -20,11 +20,11 @@ class FSGroups(models.Model):
 
     GruppeLang = new_api_fields.Char(string="Gruppenname Lang")
     TabellentypID = new_api_fields.Integer(string="Tabellentyp ID")
-    MehrEintraegeInGruppeMoeglich = new_api_fields.Boolean(string="Mehr als ein Eintrag in Gruppe möglich")
-    GUINurEineGleichzeitigGueltig = new_api_fields.Boolean(string="Keine Zeitraumüberschneidungen von mehreren Gruppeneinträgen")
-    GUIGruppenBearbeitenMoeglich = new_api_fields.Boolean(string="Erlaube Benutzeränderung der Gruppenzugehörigkeit")
+    MehrEintraegeInGruppeMoeglich = new_api_fields.Boolean(string="Mehr als ein Eintrag in Gruppe moeglich")
+    GUINurEineGleichzeitigGueltig = new_api_fields.Boolean(string="Keine Zeitraumueberschneidungen von mehreren Gruppeneintraegen")
+    GUIGruppenBearbeitenMoeglich = new_api_fields.Boolean(string="Erlaube Benutzeraenderung der Gruppenzugehoerigkeit")
     NegativGruppe = new_api_fields.Boolean(string="Handelt es sich um eine Negativgruppe")
-    GUIAnzeigen = new_api_fields.Boolean(string="Anzeige der Gruppe auf der Oberfläche")
+    GUIAnzeigen = new_api_fields.Boolean(string="Anzeige der Gruppe auf der Oberflaeche")
 
 
 # Add Fundraising Studio Groups to product.template
@@ -62,7 +62,6 @@ class ProductTemplate(osv.osv):
                 default_variant.product_variant_fs_group_ids = value
             else:
                 raise osv.except_osv(_('Error!'), _('Product variants exist! Please set the FS-Groups there!'))
-
 
     _columns = {
         'fs_group_ids': fields.function(_get_product_variant_fs_group_ids, fnct_inv=_set_product_variant_fs_group_ids,
