@@ -46,6 +46,7 @@ Project, Task and Issues Extensions
         'pad',
         'project_issue',
         'project_task_subtask_template',
+        'project_timesheet',
     ],
     'installable': True,
     'data': [

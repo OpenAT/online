@@ -55,3 +55,23 @@
     background-image: none;
     background-color: #4aa94a;
 }
+
+/* PROJECT KANBAN VIEW */
+.openerp .oe_kanban_view .oe_kanban_content[name='project_oe_kanban_content'] .oe_kanban_project_list {
+    display: none;
+}
+.openerp .oe_kanban_view .oe_kanban_content[name='project_oe_kanban_content'] .oe_kanban_project_avatars {
+    text-align: center;
+    margin-top: 6px;
+}
+.openerp .oe_kanban_view .oe_kanban_content[name='project_oe_kanban_content'] .kanban_icon_box {
+    margin: 0;
+    text-align: center;
+}
+.openerp .oe_kanban_view .oe_kanban_content[name='project_oe_kanban_content'] [name='project_linked_records_info'] {
+    margin: 0 22px;
+}
+.openerp .oe_kanban_view .oe_kanban_project {
+    /* min-height: inherit; */
+    min-height: 130px;
+}

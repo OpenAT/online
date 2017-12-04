@@ -102,7 +102,7 @@
                 <!-- Replace remaining hours with hours-summary -->
                 <xpath expr="//div[@class='oe_kanban_content']/div[@class='oe_kanban_footer_left'][1]" position="replace">
                     <div name="kanban_task_hours_info" class="kanban_icon_box">
-                        <span class="oe_e large_icon">N</span>
+                        <!-- span class="oe_e large_icon">N</span -->
                         <span class="oe_e">&amp;</span><span><t t-esc="Math.round(record.planned_hours.raw_value)"/></span>
                         <span class="oe_e">W</span><span><t t-esc="Math.round(record.effective_hours.raw_value)"/></span>
                         <span class="oe_e">R</span><span><t t-esc="Math.round(record.remaining_hours.raw_value)"/></span>
@@ -145,19 +145,45 @@
             <field name="inherit_id" ref="project.view_project_kanban"/>
             <field name="arch" type="xml">
                 <field name="planned_hours" position="after">
-                    <!--<field name="remaining_hours"/>-->
                     <field name="total_hours"/>
                 </field>
-                <xpath expr="//div[@class='oe_kanban_footer_left']/span[@groups='project.group_time_work_estimation_tasks']" position="replace">
-                    <span groups="project.group_time_work_estimation_tasks" title="Remaining hours">
-                        <span class="oe_e">N</span>
-                        <t t-esc="Math.round(record.total_hours.raw_value - record.effective_hours.raw_value)"/>
-                    </span>
-                    <span groups="project.group_time_work_estimation_tasks">
-                        <span class="oe_e">R</span>
-                        <t t-esc="Math.round(record.effective_hours.raw_value)"/>/<t t-esc="Math.round(record.total_hours.raw_value)"/> <field name="company_uom_id"/>
-                    </span>
+
+                <!-- Hide orig. Tasks -->
+                <!-- Hide orig. Hours -->
+                <!-- Hide orig. Issues -->
+                <!-- Hide orig. Documents -->
+                <!-- ATTENTION: Hidden by CSS with selector targeting "name" ! -->
+                <xpath expr="//div[@class='oe_kanban_content']" position="attributes">
+                    <attribute name="name">project_oe_kanban_content</attribute>
                 </xpath>
+
+                <!-- Hide original div with working hours informations -->
+                <xpath expr="//div[@class='oe_kanban_footer_left']" position="attributes">
+                    <attribute name="style">display:none;</attribute>
+                </xpath>
+
+                <!-- Create a time box div like in the tasks and a linked element box for Task, Issues and Dokuments -->
+                <xpath expr="//div[@class='oe_kanban_project_avatars']" position="before">
+
+                    <div name="project_linked_records_info" class="kanban_icon_box">
+                        <!-- span class="oe_e large_icon">/</span -->
+                        <!-- Tasks -->
+                        <a name="%(project.act_project_project_2_project_task_all)d" type="action"><span class="oe_e">t</span><span><t t-raw="record.task_count.raw_value"/></span></a>
+                        <!-- Issues -->
+                        <a name="%(project_issue.act_project_project_2_project_issue_all)d" type="action"><span class="oe_e">#</span><span><t t-raw="record.issue_ids.raw_value.length"/></span></a>
+                        <!-- Documents -->
+                        <a name="attachment_tree_view" type="object"><span class="oe_e">’</span><span><t t-raw="record.doc_count.raw_value"/></span></a>
+                    </div>
+
+                    <div name="project_task_hours_info" class="kanban_icon_box">
+                        <!-- a name="open_timesheets" type="object"><span class="oe_e large_icon">N</span></a -->
+                        <span class="oe_e">&amp;</span><span><t t-esc="Math.round(record.planned_hours.raw_value)"/></span>
+                        <a name="open_timesheets" type="object"><span class="oe_e">W</span><span><t t-esc="Math.round(record.hours_quantity.raw_value)"/></span></a>
+                        <span class="oe_e">R</span><span><t t-esc="Math.round(record.total_hours.raw_value - record.effective_hours.raw_value)"/></span>
+                    </div>
+
+                </xpath>
+
             </field>
         </record>
 
