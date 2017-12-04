@@ -75,3 +75,7 @@
     /* min-height: inherit; */
     min-height: 130px;
 }
+.openerp .oe_kanban_view .oe_kanban_content[name='project_oe_kanban_content'] .oe_kanban_project_avatars img {
+    width: 20px;
+    height: 20px;
+}

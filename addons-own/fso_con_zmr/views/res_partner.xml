@@ -20,6 +20,7 @@
                         <group string="BPK Processing Status">
                             <field name="BPKRequestNeeded"/>
                             <field name="LastBPKRequest"/>
+                            <field name="bpk_request_error_tries"/>
                             <field name="BPKRequestError"/>
                         </group>
                     </group>
@@ -114,6 +115,7 @@
                         <group name="bpk_request_info">
                             <field name="BPKRequestNeeded"/>
                             <field name="LastBPKRequest"/>
+                            <field name="bpk_request_error_tries"/>
                             <field name="BPKRequestError" attrs="{'invisible': [('BPKRequestError', '=', False)]}"/>
                         </group>
                         <field name="BPKRequestIDS" colspan="2" nolabel="1">
@@ -239,6 +241,7 @@
                     <filter string="Partner_without_BPK_Requests_0" domain="[('BPKRequestIDS','=',0)]"/>
                     <filter string="Partner_without_BPK_Requests_lt0" domain="[('BPKRequestIDS','&lt;',0)]"/>
                     <filter string="Partner_without_BPK_Requests_lt1" domain="[('BPKRequestIDS','&lt;',1)]"/ -->
+                    <filter string="Too_many_BPKErrors" domain="[('bpk_request_error_tries','&gt;=',20)]"/>
 
                 </group>
                 <group string="Filter by BPK-State">

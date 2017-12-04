@@ -26,6 +26,10 @@ logger = logging.getLogger(__name__)
 class ResPartnerZMRGetBPK(models.Model):
     _inherit = 'res.partner'
 
+    # Constants
+    def bpk_max_tries(self):
+        return 20
+
     # FIELDS
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestPartnerID",
                                     string="BPK Requests")
@@ -40,6 +44,13 @@ class ResPartnerZMRGetBPK(models.Model):
     # HINT: Normally set at res.partner write() (or create()) if any BPK relevant data was set or has changed
     # HINT: Changed from readonly to writeable to allow users to manually force BPK requests
     BPKRequestNeeded = fields.Datetime(string="BPK Request needed", readonly=False, index=True)
+
+    # TODO: Add a BPKRequest request counter and update set_bpk() and scheduled_check_and_set_bpk_request_needed() to
+    #       honor this counter correctly
+    bpk_request_error_tries = fields.Integer(string="BPK Request Error Tries",
+                                             help="If bpk_request_error_tries is higher than 20 set_bpk() will just "
+                                            "clear BPKRequestNeeded and will not try this partner again until this is "
+                                            "lower than 20 again.")
 
     # Store the last BPK Request date also at the partner to make searching for BPKRequestNeeded easier
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
@@ -597,9 +608,11 @@ class ResPartnerZMRGetBPK(models.Model):
                 return responses
 
         # 5.) Last try with nearly unchanged data (only xml-invalid chars will be escaped)
-        if not responses or firstname != first_clean or lastname != last_clean:
-            # ATTENTION: Since the values are not cleaned we must escape '&', '>' and '<'
-            responses = _request_with_log(escape(firstname), escape(lastname), birthdate, zipcode)
+        # Remove all special chars or Austrian ZMR will fail with an non xml valid answer
+        first_basic_clean = clean_name(firstname, full_cleanup=False)
+        last_basic_clean = clean_name(lastname, full_cleanup=False)
+        if not responses or first_basic_clean != first_clean or last_basic_clean != last_clean:
+            responses = _request_with_log(first_basic_clean, last_basic_clean, birthdate, zipcode)
 
         # Finally return the "latest" response(s)
         return responses
@@ -948,12 +961,17 @@ class ResPartnerZMRGetBPK(models.Model):
         def finish_partner(partner,
                            bpk_request_error=None,
                            bpk_request_needed=None,
-                           last_bpk_request=fields.datetime.now()):
+                           last_bpk_request=fields.datetime.now(),
+                           bpk_request_error_tries=-1):
+
+            if bpk_request_error_tries == -1:
+                bpk_request_error_tries = partner.bpk_request_error_tries
 
             # Update the res.partner fields: BPKRequestNeeded, LastBPKRequest, BPKRequestError
             vals = {'BPKRequestNeeded': bpk_request_needed,
                     'LastBPKRequest': last_bpk_request,
-                    'BPKRequestError': bpk_request_error}
+                    'BPKRequestError': bpk_request_error,
+                    'bpk_request_error_tries': bpk_request_error_tries}
             res = partner.write(vals)
 
             # Compute and update res.partner fields: bpk_state, bpk_id, bpk_id_state, bpk_id_error_code
@@ -996,6 +1014,15 @@ class ResPartnerZMRGetBPK(models.Model):
                 # Continue with next partner
                 continue
 
+            # Stop if bpk_request_error_tries tries is higher than max tries (BPKRequestNeeded will be cleared)
+            if p.bpk_request_error_tries >= self.bpk_max_tries():
+                errors[p.id] = _("%s (ID %s): Skipped BPK request! Max BPKErrorRequest limit reached!") \
+                               % (p.name, p.id)
+                finish_partner(p, bpk_request_error=errors[p.id],
+                               last_bpk_request=p.LastBPKRequest or fields.datetime.now())
+                # Continue with next partner
+                continue
+
             # Prepare BPK request values
             if any(p[forced_field] for forced_field in self._bpk_forced_fields()):
                 firstname = p.BPKForcedFirstname
@@ -1027,17 +1054,19 @@ class ResPartnerZMRGetBPK(models.Model):
                 # ATTENTION: On a timeout we do not clear the BPKRequestNeeded date and do NOT update or create a
                 #            res.partner.bpk record so that there will be a retry on the next scheduler run!
                 finish_partner(p, bpk_request_error=errors[p.id],
-                               bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now())
+                               bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now(),
+                               bpk_request_error_tries=p.bpk_request_error_tries + 1)
                 continue
 
-            # Other Exception (BPKRequestNeeded is set)
+            # Other Exception (BPKRequestNeeded will be set)
             except Exception as e:
                 errors[p.id] = _("%s (ID %s): BPK-Request exception: %s") % (p.name, p.id, e)
                 logger.info(errors[p.id])
                 # ATTENTION: On an exception we do not clear the BPKRequestNeeded date and do NOT update or create a
                 #            res.partner.bpk record so that there will be a retry on the next scheduler run!
                 finish_partner(p, bpk_request_error=errors[p.id],
-                               bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now())
+                               bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now(),
+                               bpk_request_error_tries=p.bpk_request_error_tries + 1)
                 continue
 
             # Create or update the res.partner.bpk requests with the responses
@@ -1118,7 +1147,8 @@ class ResPartnerZMRGetBPK(models.Model):
                                          "and removal of BPK records failed also: %s") % (p.name, p.id, e)
                         # Update the partner and stop processing other responses but continue with the next partner
                         finish_partner(p, bpk_request_error=errors[p.id],
-                                       bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now())
+                                       bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now(),
+                                       bpk_request_error_tries=p.bpk_request_error_tries + 1)
                         break
 
                 # Create a new bpk record or update the existing one
@@ -1142,8 +1172,9 @@ class ResPartnerZMRGetBPK(models.Model):
                 faultcode and any(r in faultcode for r in self._zmr_error_codes()))):
                 bpk_request_needed = None
 
-            # Update the res.partner
-            finish_partner(p, bpk_request_error=faulttext, bpk_request_needed=bpk_request_needed)
+            # Update the res.partner (and reset bpk_request_error_tries if we know the faultcode or a bpk was found)
+            finish_partner(p, bpk_request_error=faulttext, bpk_request_needed=bpk_request_needed,
+                           bpk_request_error_tries=0 if not bpk_request_needed else p.bpk_request_error_tries + 1)
 
             # END: partner for loop
 
@@ -1340,10 +1371,11 @@ class ResPartnerZMRGetBPK(models.Model):
 
         now = time.time
         domain = [
-            '&', '&', '&',
+            '&', '&', '&', '&',
             ('donation_deduction_optout_web', '=', False),
             ('donation_deduction_disabled', '=', False),
             ('BPKRequestNeeded', '=', False),
+            ('bpk_request_error_tries', '<', self.bpk_max_tries()),
             '|',
               '&', '&',
               ('firstname', '!=', False),
