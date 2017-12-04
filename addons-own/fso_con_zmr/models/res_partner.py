@@ -1053,9 +1053,9 @@ class ResPartnerZMRGetBPK(models.Model):
                 logger.info(errors[p.id])
                 # ATTENTION: On a timeout we do not clear the BPKRequestNeeded date and do NOT update or create a
                 #            res.partner.bpk record so that there will be a retry on the next scheduler run!
+                #            AND we do not increase the bpk_request_error_tries counter!
                 finish_partner(p, bpk_request_error=errors[p.id],
-                               bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now(),
-                               bpk_request_error_tries=p.bpk_request_error_tries + 1)
+                               bpk_request_needed=p.BPKRequestNeeded or fields.datetime.now())
                 continue
 
             # Other Exception (BPKRequestNeeded will be set)
