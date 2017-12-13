@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Donation Report Submission: Create form, tree and list view for the Donation Report Submissions -->
+    <record model="ir.ui.view" id="res_partner_donation_report_submission_form">
+        <field name="name">res_partner_donation_report_submission_form</field>
+        <field name="model">res.partner.donation_report.submission</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+
+            <form string="Donation Report Submission">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="new,in_progress,submitted"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="submission_env" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                            <field name="meldungs_jahr" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                            <field name="bpk_company_id" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                        </group>
+                        <group>
+                            <field name="id" readonly="True"/>
+                            <field name="create_date" readonly="True"/>
+                            <field name="create_uid" readonly="True"/>
+                            <field name="write_date" readonly="True"/>
+                            <field name="write_uid" readonly="True"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Donation Reports">
+                            <field name="donation_report_ids" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                        </page>
+                        <page string="Submission">
+                            <group>
+                                <group>
+                                    <field name="submission_datetime"/>
+                                    <field name="submission_url"/>
+                                    <field name="submission_fa_dr_type"/>
+                                </group>
+                                <group>
+                                    <field name="submission_fa_tid"/>
+                                    <field name="submission_fa_benid"/>
+                                    <field name="submission_fa_herstellerid"/>
+                                    <field name="submission_fa_orgid"/>
+                                </group>
+                                <field name="submission_log" colspan="2"/>
+                            </group>
+                        </page>
+                        <page string="Submission Content">
+                            <field name="submission_content"/>
+                        </page>
+                        <page string="Response">
+                            <field name="error_code"/>
+                            <field name="error_detail"/>
+                            <field name="response_http_code"/>
+                            <field name="response_time"/>
+                            <field name="response_content"/>
+                        </page>
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="res_partner_donation_report_submission_tree">
+        <field name="name">res_partner_donation_report_submission_tree</field>
+        <field name="model">res.partner.donation_report.submission</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Donation Report Submissions"
+                  default_order="submission_datetime DESC, write_date DESC"
+                  colors="red: state == 'error';grey: state == 'skipped';green: state == 'submitted';blue: state == 'prepared';">
+                <field name="submission_env"/>
+                <field name="meldungs_jahr"/>
+                <field name="bpk_company_id"/>
+                <field name="submission_datetime"/>
+                <field name="donation_report_ids" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="res_partner_donation_report_submission_search">
+        <field name="name">res_partner_donation_report_submission_search</field>
+        <field name="model">res.partner.donation_report.submission</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Donation Report Submissions">
+                <field name="donation_report_ids"/>
+                <field name="meldungs_jahr"/>
+                <field name="bpk_company_id"/>
+                <field name="submission_datetime"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="res_partner_donation_report_submission_action" model="ir.actions.act_window" >
+        <field name="name">Donation Report Submissions</field>
+        <field name="res_model">res.partner.donation_report.submission</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="res_partner_donation_report_submission_search"/>
+    </record>
+    <record id="res_partner_donation_report_submission_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_donation_report_submission_tree"/>
+        <field name="act_window_id" ref="res_partner_donation_report_submission_action"/>
+    </record>
+    <record id="res_partner_donation_report_submission_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_donation_report_submission_form"/>
+        <field name="act_window_id" ref="res_partner_donation_report_submission_action"/>
+    </record>
+
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="res_partner_donation_report_submission_menu" action="res_partner_donation_report_submission_action" parent="base.menu_config" sequence="1300"/>
+
+</data></openerp>

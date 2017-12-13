@@ -25,9 +25,9 @@ class ResPartnerBPK(models.Model):
                                           required=True, readonly=True)
 
     # res.partner.fa_donation_report
-    fa_donation_report_ids = fields.One2many(comodel_name="res.partner.fa_donation_report",
-                                             inverse_name="sub_bpk_id",
-                                             string="Donation Reports")
+    # fa_donation_report_ids = fields.One2many(comodel_name="res.partner.fa_donation_report",
+    #                                          inverse_name="sub_bpk_id",
+    #                                          string="Donation Reports")
 
     # To make sorting the BPK request easier
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)

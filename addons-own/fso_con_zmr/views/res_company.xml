@@ -57,11 +57,12 @@
                         <field name="fa_benid"/>
                         <field name="fa_pin" password="True"/>
                         <field name="fa_herstellerid"/>
+                        <field name="fa_orgid"/>
                         <div colspan="2" class="backend-help" attrs="{'invisible': [('vat','!=', False)]}">
                             <p>
-                                Die Steuer-Nr. dieser Organisation muss ebenfalls eingetragen sein um eine
-                                Spendenmeldung an FinanzOnline zu ermöglichen! Die Steuernummer kann im
-                                Reiter Allgemeine Informationen für diese Organisation eingetragen werden.
+                                Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem
+                                Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen (ohne Trennzeichen).
+                                (Sie entspricht nicht der UID Nummer.)
                             </p>
                         </div>
                         <field name="fa_login_returncode" readonly="1" invisible="1"/>

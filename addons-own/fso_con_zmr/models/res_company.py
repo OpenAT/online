@@ -22,9 +22,16 @@ class CompanyAustrianZMRSettings(models.Model):
     # FIELDS
     BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestCompanyID",
                                     string="BPK Requests")
-    fa_donation_report_ids = fields.One2many(comodel_name="res.partner.fa_donation_report",
-                                             inverse_name="bpk_company_id",
-                                             string="Donation Reports")
+
+    # Donation Reports
+    donation_report_ids = fields.One2many(comodel_name="res.partner.donation_report",
+                                          inverse_name="bpk_company_id",
+                                          string="Donation Reports", readonly=True)
+
+    # Donation Report Submissions
+    donation_report_submission_ids = fields.One2many(comodel_name="res.partner.donation_report.submission",
+                                                     inverse_name="bpk_company_id",
+                                                     string="Donation Report Submissions", readonly=True)
 
     # Basic Settings
     stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')
@@ -65,7 +72,16 @@ class CompanyAustrianZMRSettings(models.Model):
     fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)")
     fa_benid = fields.Char(string="Webservicebenutzer ID (benid)")
     fa_pin = fields.Char(string="Webservicebenutzer Pin (pin)")
-    fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)", default="ATU44865400")
+
+    fa_herstellerid = fields.Char(string="Finanzamt-Steuernummer des Softwareherstellers (herstellerid)",
+                                  help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
+                                       "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
+                                       "(ohne Trennzeichen) (Fastnr_Fon_Tn)",
+                                  default="685032617", size=9)
+    fa_orgid = fields.Char(string="Finanzamt-Steuernummer der Organisation (Fastnr_Org)",
+                                  help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
+                                       "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
+                                       "(ohne Trennzeichen) (Fastnr_Org)", size=9)
 
     # Austrian Finanz Online Webservice Login Information
     # HINT: fa stands for FinanzAmt (not for FinanzOnline)
@@ -74,10 +90,11 @@ class CompanyAustrianZMRSettings(models.Model):
     fa_login_message = fields.Text(string="Finanz Online Login Message", readonly=True)
 
     # Finanz Online Donation Report Settings (Spendenmeldung)
+    # TODO: remove obsolete Field fa_dr_mode
     fa_dr_mode = fields.Selection(selection=[('T', 'T: Testumgebung'),
                                              ('P', 'P: Echtbetrieb')],
-                                  string="Spendenmeldung Modus")
-    fa_dr_type = fields.Selection(string="Spendenmeldung Uebermitllungstyp",
+                                  string="Spendenmeldung Modus (Veraltet)")
+    fa_dr_type = fields.Selection(string="Spendenmeldung Uebermittlungsart",
                                   selection=[('KK', 'KK Einrichtung Kunst und Kultur (gem. § 4a Abs 2 Z 5 EStG)'),
                                              ('SO', 'SO Karitative Einrichtungen (gem § 4a Abs 2 Z3 lit a bis c EStG)'),
                                              ('FW', 'FW Wissenschaftseinrichtungen (gem. 4a Abs 2Z 1 EStG)'),
@@ -126,7 +143,6 @@ class CompanyAustrianZMRSettings(models.Model):
                 rec.pvpToken_prvkey_pem_path = prvkey_pem_file
 
         # TODO: Delete old cert files on field changes (= new cert upload)
-
 
     # TODO: on deletion of a company delete all related res.partner.bpk records
 
