@@ -806,13 +806,21 @@ class ResPartnerZMRGetBPK(models.Model):
     # Check if the request data matches the partner data
     @api.multi
     def last_bpkreq_matches_partner_data(self, companies=False):
+        """
+        Returns True if all companies have exactly one bpk_request with matching data else returns False
+
+        :param companies:
+        :return:
+        """
         assert self.ensure_one(), _("last_bpkreq_matches_partner_data() is only allowed for one partner at once")
         p = self[0]
 
         # Get valid bpk companies
         bpk_companies = companies if companies else self._find_bpk_companies()
+        assert bpk_companies, "last_bpkreq_matches_partner_data() No valid bpk companies given or found!"
 
-        # Get the res.partner data to compare
+        # Prepare the res.partner data to compare
+        # ATTENTION: False == u'' will resolve to False! This is why the or '' are set for any field
         if any(p[field] for field in self._bpk_forced_fields()):
             partner_data = {'firstname': p.BPKForcedFirstname or '',
                             'lastname': p.BPKForcedLastname or '',
@@ -826,54 +834,48 @@ class ResPartnerZMRGetBPK(models.Model):
                             'zipcode': p.zip or '',
                             }
 
-        # CHECK IF THE DATA OF ALL BPK-REQUESTS FOR GIVEN COMPANIES MATCH THE DATA OF THE PARTNER FIELDS
-        # HINT: If any of the BPK Request data does not match the current partner data
-        #       OR the error code in any BPK request is unknown (e.g.: service timeout)
-        #       we return 'False'
-        #
-        # ATTENTION: False == u'' will resolve to False! This is why the or '' are set for any field
-        #
-        for r in p.BPKRequestIDS:
+        # Check bpk request for all companies
+        for company in bpk_companies:
 
-            # ATTENTION: BPK records for deleted companies or companies with removed zmr access data are ignored!
-            if r.BPKRequestCompanyID.id in bpk_companies.ids:
+            # Get all bpk request for this company (should be one only)
+            bpk_request_to_check = self.env['res.partner.bpk']
+            for bpk in p.BPKRequestIDS:
+                if bpk.BPKRequestCompanyID.id == company.id:
+                    bpk_request_to_check = bpk_request_to_check | bpk
 
-                # BPK-Error request is the latest request
-                if r.BPKErrorRequestDate > r.BPKRequestDate:
+            # Multiple or no existing bpk request for this company found
+            if len(bpk_request_to_check) != 1:
+                return False
 
-                    # Return False for unknown or missing BPKErrorCode
-                    # ATTENTION: For file imports there may not be any error code
-                    if not r.BPKErrorCode or not any(code in r.BPKErrorCode for code in self._zmr_error_codes()):
-                        return False
+            # Compare the data
+            r = bpk_request_to_check[0]
+            if r.BPKErrorRequestDate > r.BPKRequestDate:
 
-                    # Return False if the request logic version is not matching
-                    # HINT: Check version only for BPK Errors
-                    if r.BPKErrorRequestVersion != self.request_bpk(version=True):
-                        return False
-
-                    # Prepare the error BPK Request data for comparison
-                    bpk_data = {'firstname': r.BPKErrorRequestFirstname or '',
-                                'lastname': r.BPKErrorRequestLastname or '',
-                                'birthdate': r.BPKErrorRequestBirthdate or '',
-                                'zipcode': r.BPKErrorRequestZIP or '',
-                                }
-
-                # Successful BPK request is the latest request
-                else:
-                    # Prepare the successful BPK Request data for comparison
-                    # ATTENTION: No check of the request logic version if the BPK was already found!
-                    bpk_data = {'firstname': r.BPKRequestFirstname or '',
-                                'lastname': r.BPKRequestLastname or '',
-                                'birthdate': r.BPKRequestBirthdate or '',
-                                'zipcode': r.BPKRequestZIP or '',
-                                }
-
-                # Compare the data
-                if any(partner_data[field] != bpk_data[field] for field in partner_data):
-                    # If unequal data was found return false
+                # Check for unknown BPKErrorCode (For file imports there may not be any error code)
+                if not r.BPKErrorCode or not any(code in r.BPKErrorCode for code in self._zmr_error_codes()):
                     return False
 
-        # Data matches!
+                # Check request logic version
+                if r.BPKErrorRequestVersion != self.request_bpk(version=True):
+                    return False
+
+                bpk_data = {'firstname': r.BPKErrorRequestFirstname or '',
+                            'lastname': r.BPKErrorRequestLastname or '',
+                            'birthdate': r.BPKErrorRequestBirthdate or '',
+                            'zipcode': r.BPKErrorRequestZIP or '',
+                            }
+            else:
+                bpk_data = {'firstname': r.BPKRequestFirstname or '',
+                            'lastname': r.BPKRequestLastname or '',
+                            'birthdate': r.BPKRequestBirthdate or '',
+                            'zipcode': r.BPKRequestZIP or '',
+                            }
+
+            # Compare the partner data with the bpk request for this company
+            if any(partner_data[field] != bpk_data[field] for field in partner_data):
+                return False
+
+        # Since no check returned with error the data of all bpk requests matches the data of the person
         return True
 
     @api.multi
@@ -1161,7 +1163,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         errors[p.id] += str(resp.get('faultcode', '')) + ' ' + str(resp.get('faulttext', ''))
 
                 # Create/Update the BPK record with the values of this response
-                bpk = self.env['res.partner.bpk'].sudo().search([('BPKRequestCompanyID.id', '=', bpk['company_id']),
+                bpk = self.env['res.partner.bpk'].sudo().search([('BPKRequestCompanyID.id', '=', resp['company_id']),
                                                                  ('BPKRequestPartnerID.id', '=', p.id)])
                 if bpk:
                     bpk.write(values)
