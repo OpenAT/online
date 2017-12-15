@@ -983,7 +983,7 @@ class website_sale_donate(website_sale):
             if order and order.name and order.payment_tx_id:
                 return request.website.render("website_sale_donate.confirmation_static", {'order': order})
             else:
-                raise
+                raise ValueError
         except:
             return request.website.render("website_sale_donate.confirmation_static", {'order': None})
 
