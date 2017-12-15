@@ -38,70 +38,9 @@
     </record>
 
 
-    <!-- Server Action to run set_bpk_request_needed() for res.partner -->
-    <record id="server_action_set_bpk_request_needed" model="ir.actions.server" forcecreate="1">
-        <field name="name">Schedule BPK-Request</field>
-        <field name="model_id" ref="model_res_partner"/>
-        <field name="state">code</field>
-        <field name="code">
-            <![CDATA[
-            if context.get('active_model') == 'res.partner':
-
-                # Find ids
-                ids = []
-                if context.get('active_domain'):
-                    ids = self.search(cr, uid, context['active_domain'], context=context)
-                elif context.get('active_ids'):
-                    ids = context['active_ids']
-
-                # Set BPKRequestNeeded
-                if ids:
-                    self.action_set_bpk_request_needed(cr, uid, ids, context=context)
-            ]]>
-        </field>
-    </record>
-    <!-- Add to more menu -->
-    <record id="ir_server_action_set_bpk_request_needed" model="ir.values" forcecreate="1">
-        <field name="key2" eval="'client_action_multi'"/>
-        <field name="model" eval="'res.partner'"/>
-        <field name="name">Schedule BPK-Request</field>
-        <field name="value" eval="'ir.actions.server,%d'%server_action_set_bpk_request_needed"/>
-    </record>
-
-    <!-- Server Action to run remove_bpk_request_needed() for res.partner -->
-    <record id="server_action_remove_bpk_request_needed" model="ir.actions.server" forcecreate="1">
-        <field name="name">Unschedule BPK-Request</field>
-        <field name="model_id" ref="model_res_partner"/>
-        <field name="state">code</field>
-        <field name="code">
-            <![CDATA[
-            if context.get('active_model') == 'res.partner':
-
-                # Find ids
-                ids = []
-                if context.get('active_domain'):
-                    ids = self.search(cr, uid, context['active_domain'], context=context)
-                elif context.get('active_ids'):
-                    ids = context['active_ids']
-
-                # UnSet BPKRequestNeeded
-                if ids:
-                    self.action_remove_bpk_request_needed(cr, uid, ids, context=context)
-            ]]>
-        </field>
-    </record>
-    <!-- Add to more menu -->
-    <record id="ir_server_action_remove_bpk_request_needed" model="ir.values" forcecreate="1">
-        <field name="key2" eval="'client_action_multi'"/>
-        <field name="model" eval="'res.partner'"/>
-        <field name="name">Unschedule BPK-Request</field>
-        <field name="value" eval="'ir.actions.server,%d'%server_action_remove_bpk_request_needed"/>
-    </record>
-
-
-    <!-- =============== -->
-    <!-- res.partner.bpk -->
-    <!-- =============== -->
+    <!-- ============================ -->
+    <!-- BPK RECORDS: res.partner.bpk -->
+    <!-- ============================ -->
 
     <!-- Server Action to run set_bpk() for res.partner.bpk -->
     <record id="server_action_set_bpk_for_bpkrecords" model="ir.actions.server" forcecreate="1">
@@ -141,43 +80,6 @@
     </record>
 
 
-    <!-- Server Action to run set_bpk_request_needed() for res.partner.bpk -->
-    <record id="server_action_set_bpk_request_needed_for_bpkrecords" model="ir.actions.server" forcecreate="1">
-        <field name="name">Schedule BPK-Request</field>
-        <field name="model_id" ref="model_res_partner_bpk"/>
-        <field name="state">code</field>
-        <field name="code">
-            <![CDATA[
-            if context.get('active_model') == 'res.partner.bpk':
-
-                # Find res.partner.bpk ids
-                ids = []
-                if context.get('active_domain'):
-                    ids = self.search(cr, uid, context['active_domain'], context=context)
-                elif context.get('active_ids'):
-                    ids = context['active_ids']
-
-                # Find res.partner ids
-                bpk_requests = self.browse(cr, uid, ids, context=context)
-                partner_ids = [r.BPKRequestPartnerID.id for r in bpk_requests if r.BPKRequestPartnerID]
-
-                # Set BPKRequestNeeded for found partner
-                if partner_ids:
-                    partner_obj = self.pool['res.partner']
-                    partner_obj.action_set_bpk_request_needed(cr, uid, partner_ids, context=context)
-            ]]>
-        </field>
-    </record>
-    <!-- Add to more menu -->
-    <record id="ir_server_action_set_bpk_request_needed_for_bpkrecords" model="ir.values" forcecreate="1">
-        <field name="key2" eval="'client_action_multi'"/>
-        <field name="model" eval="'res.partner.bpk'"/>
-        <field name="name">Schedule BPK-Request</field>
-        <field name="value" eval="'ir.actions.server,%d'%server_action_set_bpk_request_needed_for_bpkrecords"/>
-    </record>
-
-
-
     <!-- ================= -->
     <!-- SCHEDULED ACTIONS -->
     <!-- ================= -->
@@ -198,8 +100,8 @@
 
     <!-- Scheduled run to check BPKRequestNeeded -->
     <!-- TODO: Make sure this starts at 2:30 at night -->
-    <record id="ir_cron_check_bpk_request_needed" model="ir.cron" forcecreate="1">
-        <field name="name">BPK: Check BPKRequestNeeded for all partner once a week</field>
+    <record id="ir_cron_scheduled_set_bpk_state" model="ir.cron" forcecreate="1">
+        <field name="name">BPK: Check BPK State for all partners once a week</field>
         <field name="priority" eval="2100" />
         <field name="active" eval="False"/>
         <field name="interval_number">7</field>
@@ -208,35 +110,7 @@
         <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 01:30:00')" />
         <field name="doall" eval="False"/>
         <field name="model">res.partner</field>
-        <field name="function">scheduled_check_and_set_bpk_request_needed</field>
-        <field name="args" eval="'()'"/>
-    </record>
-
-   <!-- Scheduled run to check res.partner.bpk state -->
-    <!-- record id="ir_cron_scheduled_compute_state" model="ir.cron" forcecreate="1">
-        <field name="name">BPK: Check BPK-Records 'state' field</field>
-        <field name="priority" eval="2200" />
-        <field name="active" eval="False"/>
-        <field name="interval_number">5</field>
-        <field name="interval_type">minutes</field>
-        <field name="numbercall">-1</field>
-        <field name="doall" eval="False"/>
-        <field name="model">res.partner.bpk</field>
-        <field name="function">scheduled_compute_state</field>
-        <field name="args" eval="'()'"/>
-    </record -->
-
-   <!-- Scheduled run to check res.partner bpk_state -->
-    <record id="ir_cron_scheduled_compute_bpk_state" model="ir.cron" forcecreate="1">
-        <field name="name">BPK: Check Partner 'bpk_state' field</field>
-        <field name="priority" eval="2300" />
-        <field name="active" eval="False"/>
-        <field name="interval_number">5</field>
-        <field name="interval_type">minutes</field>
-        <field name="numbercall">-1</field>
-        <field name="doall" eval="False"/>
-        <field name="model">res.partner</field>
-        <field name="function">scheduled_compute_bpk_state</field>
+        <field name="function">scheduled_set_bpk_state</field>
         <field name="args" eval="'()'"/>
     </record>
 
