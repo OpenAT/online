@@ -700,8 +700,8 @@ msgstr "_request_bpk: Certificate data found but files on drive missing. Trying 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/models.py:744
 #, python-format
-msgid "last_bpkreq_matches_partner_data() is only allowed for one partner at once"
-msgstr "last_bpkreq_matches_partner_data() is only allowed for one partner at once"
+msgid "all_bpk_requests_matches_partner_data() is only allowed for one partner at once"
+msgstr "all_bpk_requests_matches_partner_data() is only allowed for one partner at once"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/models.py:666

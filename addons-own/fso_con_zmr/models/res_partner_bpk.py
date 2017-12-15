@@ -127,66 +127,6 @@ class ResPartnerBPK(models.Model):
                     r.write({'state': computed_state})
         return res
 
-    @api.multi
-    def clear_data(self):
-        # Find all res.partner.bpk related to the partners of the res.partner.bpk records in self
-        all_requests = self.env['res.partner.bpk']
-        all_partner = self.env['res.partner']
-        for r in self:
-            all_requests = all_requests | r.BPKRequestPartnerID.BPKRequestIDS
-            all_partner = all_partner | r.BPKRequestPartnerID
-
-        # Clear all Data from BPK Request(s)
-        res = all_requests.write({
-            #
-            'state': False,
-            'LastBPKRequest': False,
-            #
-            'BPKPrivate': False,
-            'BPKPublic': False,
-            #
-            'BPKRequestDate': False,
-            'BPKRequestURL': False,
-            'BPKRequestData': False,
-            'BPKRequestFirstname': False,
-            'BPKRequestLastname': False,
-            'BPKRequestBirthdate': False,
-            'BPKRequestZIP': False,
-            'BPKResponseData': False,
-            'BPKResponseTime': False,
-            'BPKRequestVersion': False,
-            'bpk_request_log': False,
-            #
-            'BPKErrorCode': False,
-            'BPKErrorText': False,
-            #
-            'BPKErrorRequestDate': False,
-            'BPKErrorRequestURL': False,
-            'BPKErrorRequestData': False,
-            'BPKErrorRequestFirstname': False,
-            'BPKErrorRequestLastname': False,
-            'BPKErrorRequestBirthdate': False,
-            'BPKErrorRequestZIP': False,
-            'BPKErrorResponseData': False,
-            'BPKErrorResponseTime': False,
-            'BPKErrorRequestVersion': False,
-            'bpkerror_request_log': False,
-        })
-
-        # Update related res.partner
-        # all_partner.compute_bpk_state_and_bpk_id()
-        # all_partner.action_check_and_set_bpk_request_needed()
-        # HINT: Less accurate but faster:
-        all_partner.write({
-            'LastBPKRequest': False,
-            'BPKRequestNeeded': fields.datetime.now(),
-            'BPKRequestError': False,
-            'bpk_id_error_code': False,
-            'bpk_id_state': False,
-        })
-
-        return res
-
     # --------------
     # BUTTON ACTIONS
     # --------------
