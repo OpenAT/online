@@ -10,6 +10,8 @@ from datetime import timedelta
 from openerp import fields
 from openerp.addons.website.models.website import slug
 
+import locale
+
 # import copy
 # import requests
 
@@ -380,15 +382,65 @@ class website_sale_donate(website_sale):
     def checkout_values(self, data=None):
         values = super(website_sale_donate, self).checkout_values(data=data)
 
+        # Sort countries and states in values
+        # -----------------------------------
+        # Add sorted countries and states
+        # HINT: Sort by "language in context" for name field is not implemented in o8 fixed in o9 and up!
+        #       https://github.com/odoo/odoo/issues/5283
+        start_locale = locale.getlocale()
+
+        # Try to set locale by website language for correct unicode sorting by name of countries
+        try:
+            locale.setlocale(locale.LC_ALL, request.env.context.get("lang", "de_AT") + ".UTF-8")
+        except Exception as e:
+            logging.error("Could not set locale for country and state sorting by website lang!")
+            pass
+
+        # Sorted Countries (add Austria, Germany and Swiss to the top)
+        # HINT: It is NO Problem if they are twice in the list :)
+        countries_obj = request.env['res.country'].sudo()
+        countries = countries_obj.search([])
+        countries_sorted = sorted(countries, cmp=locale.strcoll, key=lambda c: c.name)
+        countries_sorted_ids = [c.id for c in countries_sorted]
+
+        swiss = countries_obj.search([('code', '=', 'CH')])
+        if swiss:
+            countries_sorted_ids = [swiss.id] + countries_sorted_ids
+
+        germany = countries_obj.search([('code', '=', 'DE')])
+        if germany:
+            countries_sorted_ids = [germany.id] + countries_sorted_ids
+
+        austria = countries_obj.search([('code', '=', 'AT')])
+        if austria:
+            countries_sorted_ids = [austria.id] + countries_sorted_ids
+
+        countries = countries_obj.browse(countries_sorted_ids)
+        # Update values
+        if values.get('countries', False) and countries:
+            values['countries'] = countries
+
+        # Sorted States
+        states_obj = request.env['res.country.state']
+        states = states_obj.sudo().search([])
+        states_sorted = sorted(states, cmp=locale.strcoll, key=lambda s: s.name)
+        states = states_obj.sudo().browse([s.id for s in states_sorted])
+        # Update values
+        if values.get('states', False) and states:
+            values['states'] = states
+
+        # Revert to original locale
+        try:
+            locale.setlocale(locale.LC_ALL, start_locale)
+        except Exception as e:
+            logging.error("Could not revert to initial locale after country and state sorting by website lang!")
+            pass
+
         # Add Billing Fields to values dict
+        # ---------------------------------
         billing_fields = request.env['website.checkout_billing_fields']
         billing_fields = billing_fields.search([])
         values['billing_fields'] = billing_fields
-
-        # Add Shipping Fields to values dict
-        shipping_fields = request.env['website.checkout_shipping_fields']
-        shipping_fields = shipping_fields.search([])
-        values['shipping_fields'] = shipping_fields
 
         for field in billing_fields:
             f_name = field.res_partner_field_id.name
@@ -404,6 +456,12 @@ class website_sale_donate(website_sale):
                 values['checkout'][f_name] = values['checkout'].get(f_name).strip() if values['checkout'].get(f_name)\
                     else None
 
+        # Add Shipping Fields to values dict
+        # ----------------------------------
+        shipping_fields = request.env['website.checkout_shipping_fields']
+        shipping_fields = shipping_fields.search([])
+        values['shipping_fields'] = shipping_fields
+
         for field in shipping_fields:
             f_name = 'shipping_' + field.res_partner_field_id.name
             f_type = field.res_partner_field_id.ttype
@@ -417,6 +475,7 @@ class website_sale_donate(website_sale):
                     else None
 
         # Add option-tag attributes for shipping-address-selector for wsd_checkout_form_billing_fields template
+        # -----------------------------------------------------------------------------------------------------
         if values.get('shippings'):
             shippings_selector_attrs = dict()
             # Render the dict for every shipping res.partner
