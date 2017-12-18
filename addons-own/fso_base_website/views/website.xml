@@ -46,6 +46,7 @@
                         <page string="Search Engines">
                             <group string="Google Analytics">
                                 <field name="google_analytics_key"/>
+                                <field name="google_analytics_script"/>
                             </group>
                             <group string="robots.txt">
                                 <label for="RobotsViewId"/>

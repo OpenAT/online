@@ -32,3 +32,5 @@ class Website(models.Model):
                                               string="Public Partner: Do not add as follower")
     PublicPartnerTimezone = fields.Selection(related="partner_id.tz",
                                              string="Public Partner: Timezone")
+
+    google_analytics_script = fields.Text(string="Google Analytics Script")
