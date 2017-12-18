@@ -29,12 +29,15 @@
                         <field name="BPKRequestIDS" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="BPKRequestPartnerID,BPKRequestCompanyID"
-                                  colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                                  colors="red:state == 'error';
+                                          orange:state == 'data_mismatch';
+                                          green:state == 'found';">
                                 <field name="BPKRequestCompanyID"/>
-                                <field name="BPKRequestDate"/>
-                                <field name="BPKPrivate"/>
-                                <field name="BPKErrorRequestDate"/>
+                                <field name="BPKRequestDate" string="BPK gefunden am"/>
+                                <!-- field name="BPKPrivate"/ -->
+                                <field name="BPKErrorRequestDate" string="BPK Fehler am"/>
                                 <field name="BPKErrorCode"/>
+                                <field name="state"/>
                             </tree>
                         </field>
                     </group>
@@ -119,12 +122,15 @@
                         <field name="BPKRequestIDS" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="BPKRequestPartnerID,BPKRequestCompanyID"
-                                  colors="red:BPKRequestDate == False and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                                  colors="red:state == 'error';
+                                          orange:state == 'data_mismatch';
+                                          green:state == 'found';">
                                 <field name="BPKRequestCompanyID"/>
-                                <field name="BPKRequestDate"/>
-                                <field name="BPKPrivate"/>
-                                <field name="BPKErrorRequestDate"/>
+                                <field name="BPKRequestDate" string="BPK gefunden am"/>
+                                <!-- field name="BPKPrivate"/ -->
+                                <field name="BPKErrorRequestDate" string="BPK Fehler am"/>
                                 <field name="BPKErrorCode"/>
+                                <field name="state"/>
                             </tree>
                         </field>
                     </group>
@@ -141,8 +147,7 @@
             <tree string="Partner" default_order="BPKRequestNeeded desc, write_date desc"
                   colors="grey:bpk_state in ('disabled', 'missing_data');
                           blue:bpk_state == 'pending';
-                          orange:bpk_state == 'error_found_old';
-                          red:bpk_state == 'error';
+                          red:bpk_state in ('error', 'error_max_tries');
                           green:bpk_state == 'found';">
                 <field name="id"/>
                 <field name="BPKRequestNeeded"/>
@@ -243,23 +248,26 @@
 
                 </group>
                 <group string="Filter by BPK-State">
-                    <filter string="Disabled" domain="[('bpk_state','=','disabled')]"/>
+                    <filter string="Donation Deduction Disabled" domain="[('bpk_state','=','disabled')]"/>
                     <filter string="Missing Data" domain="[('bpk_state','=','missing_data')]"/>
                     <filter string="BPK Request Pending" domain="[('bpk_state','=','pending')]"/>
                     <filter string="Found" domain="[('bpk_state','=','found')]"/>
-                    <filter string="Error (found with old data)" domain="[('bpk_state','=','error_found_old')]"/>
+                    <filter string="Error (max retries reached)" domain="[('bpk_state','=','error_max_tries')]"/>
                     <filter string="Error" domain="[('bpk_state','=','error')]"/>
-                    <filter string="State not set" domain="[('bpk_state','=',False)]"/>
+                    <filter string="State missing" domain="[('bpk_state','=',False)]"/>
                 </group>
+
                 <group string="Filter by BPK-Error">
                     <filter string="No person matched" domain="[('bpk_error_code','ilike','F230')]"/>
                     <filter string="Multiple person matched"
                             domain="['|', ('bpk_error_code','ilike','F231'), ('bpk_error_code','ilike','F233')]"/>
                 </group>
+
                 <group string="Filter by BPK-Schedule">
                     <filter string="Scheduled for BPK-Request" name="next_bpk_requests" domain="[('BPKRequestNeeded','!=',False)]" context="{'order_by':'write_date desc'}"/>
                     <filter string="LastBPKRequest is set" name="last_bpk_requests" domain="[('LastBPKRequest','!=',False)]" context="{'order_by':'LastBPKRequest desc'}"/>
                 </group>
+
                 <group string="Group by BPK-Data">
                     <filter string="BPK-State" context="{'group_by':'bpk_state'}"/>
                     <filter string="FirstBPK-ErrorCode" context="{'group_by':'bpk_error_code'}"/>

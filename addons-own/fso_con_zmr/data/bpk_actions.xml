@@ -84,7 +84,7 @@
     <!-- SCHEDULED ACTIONS -->
     <!-- ================= -->
 
-    <!-- Scheduled fetch of BPK Records for res.partner -->
+    <!-- Scheduled fetch of BPK Records from ZMR for res.partner -->
     <record id="ir_cron_scheduled_set_bpk" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Scheduled fetch of BPK Records every two minutes</field>
         <field name="priority" eval="2000" />
@@ -98,8 +98,8 @@
         <field name="args" eval="'()'"/>
     </record>
 
-    <!-- Scheduled run to check BPKRequestNeeded -->
-    <!-- TODO: Make sure this starts at 2:30 at night -->
+    <!-- Scheduled Check to update partner bpk_state field
+         HINT: Will also update state of BPK records (state field of res.partner.bpk)  -->
     <record id="ir_cron_scheduled_set_bpk_state" model="ir.cron" forcecreate="1">
         <field name="name">BPK: Check BPK State for all partners once a week</field>
         <field name="priority" eval="2100" />

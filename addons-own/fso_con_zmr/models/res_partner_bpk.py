@@ -29,12 +29,11 @@ class ResPartnerBPK(models.Model):
     #                                          inverse_name="sub_bpk_id",
     #                                          string="Donation Reports")
 
-    # To make sorting the BPK request easier
+    # To make sorting the BPK requests easier
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
 
-    # ATTENTION: If you change this field don't forget to change bpk_id_state field in res_partner.py also!
-    state = fields.Selection(selection=[('found', 'Found'),
-                                        ('found_old', 'Found with old data'),
+    state = fields.Selection(selection=[('data_mismatch', 'Partner Data Mismatch'),
+                                        ('found', 'Found'),
                                         ('error', 'Error')],
                              string="State", readonly=True)
 
@@ -78,105 +77,73 @@ class ResPartnerBPK(models.Model):
     BPKErrorRequestVersion = fields.Integer(string="BPK-Error Request Version", readonly=True)
     bpkerror_request_log = fields.Text(string="BPK-Error Request Log", readonly=True)
 
-    # -------------
-    # MODEL ACTIONS
-    # -------------
-    @api.model
-    def _compute_state(self, BPKRequestDate, BPKErrorRequestDate):
-        if BPKRequestDate and not isinstance(BPKRequestDate, datetime.datetime):
-            BPKRequestDate = du_parser.parse(BPKRequestDate)
-            logger.debug("_compute_state() BPKRequestDate is not a datetime object for %s", self.ids)
-        if BPKErrorRequestDate and not isinstance(BPKErrorRequestDate, datetime.datetime):
-            BPKErrorRequestDate = du_parser.parse(BPKErrorRequestDate)
-            logger.debug("_compute_state() BPKRequestDate is not a datetime object for %s", self.ids)
-        state = False
-        if not BPKRequestDate and not BPKErrorRequestDate:
-            state = False
-        elif BPKRequestDate and not BPKErrorRequestDate:
-            state = 'found'
-        elif BPKErrorRequestDate and not BPKRequestDate:
-            state = 'error'
-        elif BPKRequestDate >= BPKErrorRequestDate:
-            state = 'found'
-        elif BPKRequestDate < BPKErrorRequestDate:
-            state = 'found_old'
-        return state
-
     # --------------
     # RECORD ACTIONS
     # --------------
+    @api.multi
+    def set_bpk_state(self):
+
+        # Helper method to only write to the BPKs if values have changed
+        # HINT: This comparison is less expensive than real writes to the db
+        def write(bpk_request, values):
+            if any(bpk_request[f] != values[f] for f in values):
+                bpk_request.write(values)
+
+        # ATTENTION: The order of the checks is very important e.g.: 'data check' must be made before 'found check'!
+        # ATTENTION: Method used in create() and write() therefore ALWAYS use write() instead of '=' to prevent
+        #            recurring write loops !!!
+        for bpk in self:
+
+            # 1.) Check if the partner data matches the bpk data
+            if not bpk.BPKRequestPartnerID.all_bpk_requests_matches_partner_data(bpk_to_check=bpk):
+                write(bpk, {'state': 'data_mismatch'})
+                continue
+
+            # 2.) Check if the bpk was found
+            if bpk.BPKPublic and bpk.BPKRequestDate > bpk.BPKErrorRequestDate:
+                write(bpk, {'state': 'found'})
+                continue
+
+            # 3.) Must be an error if state was not determined yet
+            write(bpk, {'state': 'error'})
+            continue
+
+        return True
+
+    # ----
+    # CRUD
+    # ----
     @api.model
-    def create(self, vals):
-        # Compute State
-        BPKRequestDate = vals.get('BPKRequestDate')
-        BPKErrorRequestDate = vals.get('BPKErrorRequestDate')
-        state = self._compute_state(BPKRequestDate, BPKErrorRequestDate)
-        vals.update({'state': state})
-        return super(ResPartnerBPK, self).create(vals)
+    def create(self, values):
+
+        # Create the BPK request in the current environment (memory only right now i guess)
+        # ATTENTION: self is still empty but the BPK exits in the 'res' recordset already
+        res = super(ResPartnerBPK, self).create(values)
+
+        if res:
+            res.set_bpk_state()
+
+        return res
 
     @api.multi
-    def write(self, vals):
-        res = super(ResPartnerBPK, self).write(vals)
-        # Compute the state field
-        if res and 'state' not in vals:
-            for r in self:
-                BPKRequestDate = vals.get('BPKRequestDate') or r.BPKRequestDate
-                BPKErrorRequestDate = vals.get('BPKErrorRequestDate') or r.BPKErrorRequestDate
-                computed_state = self._compute_state(BPKRequestDate, BPKErrorRequestDate)
-                if r.state != computed_state:
-                    r.write({'state': computed_state})
+    def write(self, values):
+
+        # ATTENTION: !!! After this 'self' is changed (in memory i guess) 'res' is only a boolean !!!
+        res = super(ResPartnerBPK, self).write(values)
+
+        # Compute the bpk_state and bpk_error_code for the partner
+        if res and self and 'state' not in values:
+            self.set_bpk_state()
+
         return res
 
     # --------------
     # BUTTON ACTIONS
     # --------------
+    # ATTENTION: Button Actions should not have anything else in the interface than 'self' because the mapping
+    #            from old api to new api seems not correct for method calls from buttons if any additional positional
+    #            or keyword arguments are used!
+    # ATTENTION: Button actions must use the @api.multi decorator
     @api.multi
     def compute_state(self):
-        self.write({})
-
-    # ----------------------------------------
-    # (MODEL) ACTIONS FOR AUTOMATED PROCESSING
-    # ----------------------------------------
-    @api.model
-    def scheduled_compute_state(self):
-        start = time.time()
-
-        # SET LIMIT
-        # HINT: We estimate the fastest speed with 10ms per record (Speed on macbook was 16ms)
-        interval_to_seconds = {
-            "weeks": 7 * 24 * 60 * 60,
-            "days": 24 * 60 * 60,
-            "hours": 60 * 60,
-            "minutes": 60,
-            "seconds": 1
-        }
-        scheduled_action = self.env.ref('fso_con_zmr.ir_cron_scheduled_compute_state')
-        max_runtime_sec = int(scheduled_action.interval_number *
-                              interval_to_seconds[scheduled_action.interval_type])
-        limit = int((max_runtime_sec * 1000) / 10)
-
-        # GET RECORDS
-        bpk_state_missing = self.search(['&',
-                                         ('state', '=', False),
-                                         '|',
-                                           ('BPKRequestDate', '!=', False),
-                                           ('BPKErrorRequestDate', '!=', False)],
-                                        limit=limit)
-        # If limit is not yet reached append records where the state must be unset
-        remaining_slots = limit-len(bpk_state_missing)
-        if remaining_slots:
-            bpk_state_set_wrong = self.search([('state', '!=', False),
-                                               ('BPKRequestDate', '=', False),
-                                               ('BPKErrorRequestDate', '=', False)],
-                                              limit=remaining_slots)
-        records = bpk_state_missing | bpk_state_set_wrong
-
-        # PROCESS RECORDS
-        logger.info("scheduled_compute_state() compute state for %s res.partner.bpk" % len(records))
-        runtime_end = datetime.datetime.now() + datetime.timedelta(0, max_runtime_sec - int(time.time() - start) - 10)
-        for r in records:
-            # Check remaining runtime
-            if datetime.datetime.now() >= runtime_end:
-                break
-            # recalculate the state
-            r.write({})
+        self.set_bpk_state()

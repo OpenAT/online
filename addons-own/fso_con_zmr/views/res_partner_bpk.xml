@@ -93,12 +93,14 @@
         <field name="arch" type="xml">
             <tree string="BPK Requests"
                   default_order="LastBPKRequest DESC, write_date DESC"
-                  colors="red:not BPKRequestDate and BPKErrorRequestDate;orange:BPKRequestDate &lt; BPKErrorRequestDate;green:BPKRequestDate &gt; BPKErrorRequestDate">
+                  colors="red:state == 'error';
+                          orange:state == 'data_mismatch';
+                          green:state == 'found';">
                 <field name="LastBPKRequest"/>
                 <field name="BPKRequestPartnerID"/>
                 <field name="BPKRequestCompanyID"/>
                 <field name="BPKRequestDate" string="Last Valid Req."/>
-                <field name="BPKPrivate"/>
+                <!-- field name="BPKPrivate"/ -->
                 <field name="BPKErrorRequestDate" string="Last Invalid Req."/>
                 <field name="BPKErrorCode"/>
                 <field name="state"/>
@@ -131,12 +133,15 @@
                 <field name="BPKErrorRequestLastname"/>
                 <field name="BPKErrorRequestBirthdate"/>
                 <group string="Filter by State">
+                    <filter string="Pending" domain="[('state','=','pending')]"/>
                     <filter string="Found" domain="[('state','=','found')]"/>
-                    <filter string="Found with old data" domain="[('state','=','found_old')]"/>
                     <filter string="Error" domain="[('state','=','error')]"/>
                 </group>
                 <group string="Filter by Error">
-                    <filter string="No person matched" domain="[('BPKErrorCode','ilike','F230')]"/>
+                    <filter string="Found with former data"
+                            domain="[('BPKPublic', '!=', 'False'), ('state','=','error')]"/>
+                    <filter string="No person matched"
+                            domain="[('BPKErrorCode','ilike','F230')]"/>
                     <filter string="Multiple person matched"
                             domain="['|', ('BPKErrorCode','ilike','F231'), ('BPKErrorCode','ilike','F233')]"/>
                 </group>
