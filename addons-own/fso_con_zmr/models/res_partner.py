@@ -567,6 +567,8 @@ class ResPartnerZMRGetBPK(models.Model):
     # Returns a list in the format: [Boolean, {"state": "", "message": ""}]
     @api.model
     def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), internal_search=True):
+        logger.info("check_bpk(): START")
+
         # Local helper function
         def _returner(state, msg, log=''):
             # state:
@@ -590,11 +592,16 @@ class ResPartnerZMRGetBPK(models.Model):
                           }
             msg = msg or defaut_msg.get(state, "")
 
+            # Log request Time
+            logger.info("check_bpk(): ZMR request(s) finished in %.3f seconds" % (time.time() - start_time))
+            logger.info("check_bpk(): END")
+
             # Return final list
             return [state in ok_states, {"state": state, "message": msg, "log": log}]
 
         # Return result from existing bpk requests
         # ----------------------------------------
+        start_time = time.time()
         bpk_obj = self.sudo().env['res.partner.bpk']
 
         # Get the current request logic version
@@ -616,10 +623,9 @@ class ResPartnerZMRGetBPK(models.Model):
                             ("BPKRequestBirthdate", "=", birthdate),
                             ("BPKRequestZIP", "=", zipcode or False),
                             ("BPKPrivate", "!=", False),
-                            ("BPKRequestPartnerID.BPKRequestNeeded", "=", False),
                             ("bpk_request_log", "!=", False)]
             try:
-                positive_req = bpk_obj.search(positive_dom)
+                positive_req = bpk_obj.search(positive_dom, limit=1)
                 if len(positive_req) >= 1:
                     # Return with positive result
                     # ATTENTION: This may NOT be correct for different messages for different companies
@@ -630,6 +636,7 @@ class ResPartnerZMRGetBPK(models.Model):
             except Exception as e:
                 logger.error("check_bpk() %s" % str(repr(e)))
                 pass
+            logger.debug("check_bpk(): Internal positive search finished in %.3f seconds" % (time.time() - start_time))
 
             # Find a matching negative request for the given data
             negative_dom = [("BPKErrorRequestFirstname", "=", firstname),
@@ -637,7 +644,6 @@ class ResPartnerZMRGetBPK(models.Model):
                             ("BPKErrorRequestBirthdate", "=", birthdate),
                             ("BPKErrorRequestZIP", "=", zipcode or False),
                             ("BPKErrorRequestVersion", "=", version),
-                            ("BPKRequestPartnerID.BPKRequestNeeded", "=", False),
                             ("bpkerror_request_log", "!=", False)]
             try:
                 negative_req = bpk_obj.search(negative_dom)
@@ -663,9 +669,12 @@ class ResPartnerZMRGetBPK(models.Model):
             except Exception as e:
                 logger.error("check_bpk() %s" % str(repr(e)))
                 pass
+        # Log search time
+        logger.info("check_bpk(): Internal search finished in %.3f seconds" % (time.time() - start_time))
 
         # ZMR BPK-Request
         # ---------------
+        start_time = time.time()
         try:
             responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
             assert len(responses) >= 1, _("No responses from request_bpk()!")
@@ -696,7 +705,7 @@ class ResPartnerZMRGetBPK(models.Model):
         Returns True if a all mandatory fields for a BPK request are filled.
         :return:
         """
-        assert self.ensure_one(), _("bpk_fields_set() is only allowed for one partner at once")
+        assert self.ensure_one(), _("all_mandatory_bpk_fields_are_set() is only allowed for one partner at once")
         # HINT: For r in self is just done for better readability but not really needed since this should only operate
         #       for a single partner: see assert above
         for r in self:
@@ -786,6 +795,8 @@ class ResPartnerZMRGetBPK(models.Model):
     def set_bpk_state(self):
         now = fields.datetime.now
 
+        # Helper method to only write to the partner if values have changed
+        # HINT: This comparison is less expensive than real writes to the db
         def write(partner, values):
             if any(partner[f] != values[f] for f in values):
                 partner.write(values)
@@ -876,30 +887,6 @@ class ResPartnerZMRGetBPK(models.Model):
         :return: dict, partner id and related error if any was found
         """
         now = fields.datetime.now
-
-        # FINAL PARTNER UPDATE
-        # --------------------
-        def finish_partner(partner,
-                           bpk_request_error=None,
-                           bpk_request_needed=None,
-                           last_bpk_request=now(),
-                           bpk_request_error_tries=-1):
-
-            if bpk_request_error_tries == -1:
-                bpk_request_error_tries = partner.bpk_request_error_tries
-
-            # Update the res.partner fields: BPKRequestNeeded, LastBPKRequest, BPKRequestError
-            vals = {'BPKRequestNeeded': bpk_request_needed,
-                    'LastBPKRequest': last_bpk_request,
-                    'BPKRequestError': bpk_request_error if bpk_request_error else False,
-                    'bpk_request_error_tries': bpk_request_error_tries}
-            res = partner.write(vals)
-            return res
-
-        # GLOBAL ERROR DICTIONARY
-        # -----------------------
-        # Format: {partner_id: "Error or exception text", ...}
-        # HINT: Done this way for a complete logging after the method finishes
         errors = dict()
 
         # BPK REQUEST FOR EACH PARTNER
@@ -908,12 +895,13 @@ class ResPartnerZMRGetBPK(models.Model):
         for p in self:
             errors[p.id] = ""
 
-            # Update the bpk_state and check if a BPK request is still needed/possible
+            # Check if a BPK request is still needed/possible
+            # HINT: This will update the partner bpk_state field
             p.set_bpk_state()
             if not p.BPKRequestNeeded:
                 continue
 
-            # Prepare the request data
+            # Prepare the request data from the partner
             if any(p[forced_field] for forced_field in self._bpk_forced_fields()):
                 firstname = p.BPKForcedFirstname
                 lastname = p.BPKForcedLastname
@@ -926,47 +914,51 @@ class ResPartnerZMRGetBPK(models.Model):
                 zipcode = p.zip
             start_time = time.time()
 
-            # Request BPK from ZMR
-            # --------------------
-
             # Limit the ZMR requests to companies with mismatching bpk requests only
             companies_with_non_matching_requests = self.env['res.company']
             for company in self._find_bpk_companies():
                 if not p.all_bpk_requests_matches_partner_data(companies=company):
                     companies_with_non_matching_requests = companies_with_non_matching_requests | company
 
-            # End if all companies already match
-            # HINT: This MUST be an error since p.set_bpk_state() should have cleared BPKRequestNeeded in this case
-            assert companies_with_non_matching_requests, "companies_with_non_matching_requests is empty!"
+            # Stop if no company is left
+            # ATTENTION: This MUST be an error since p.set_bpk_state() should have cleared BPKRequestNeeded!
+            assert companies_with_non_matching_requests, _("No companies (with ZMR access data) found with "
+                                                           "missing BPK requests or with existing BPK requests with"
+                                                           "missmatching data. This MUST be an error since "
+                                                           "set_bpk_state() should have cleared BPKRequestNeeded "
+                                                           "in this case already!")
 
-            # Try the BPK requests to the ZMR
+            # Request BPK from ZMR
+            # --------------------
             try:
                 bpk_respones = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web,
                                                 zipcode=zipcode, companies=companies_with_non_matching_requests)
                 assert bpk_respones, _("%s (ID %s): No BPK-Request response(s)!") % (p.name, p.id)
+            # 1.) TIMEOUT
             except Timeout as e:
                 try:
                     errors[p.id] += _("%s (ID %s): BPK-Request Timeout Exception: %s") % (p.name, p.id, e)
                 except:
                     errors[p.id] += _("BPK-Request Timeout Exception")
                 # NEXT PARTNER:
+                # HINT: LastBPKRequest is "increased" to now to stay on top of processing list
                 logger.info(errors[p.id])
                 p.write({'LastBPKRequest': now(),
                          'BPKRequestError': errors[p.id] or False})
                 continue
-
+            # 2.) EXCEPTION
             except Exception as e:
                 errors[p.id] += _("%s (ID %s): BPK-Request exception: %s") % (p.name, p.id, e)
                 # NEXT PARTNER:
-                # HINT: Increase error counter because of exception (~ unknown error)
+                # HINT: LastBPKRequest is set. Increase error counter for this unknown error
                 logger.info(errors[p.id])
-                p.write({'LastBPKRequest': now(),
+                p.write({'LastBPKRequest': p.LastBPKRequest or now(),
                          'BPKRequestError': errors[p.id] or False,
                          'bpk_request_error_tries': p.bpk_request_error_tries + 1})
                 continue
 
+            # 3.) ANSWERS FROM ZMR
             # Create/Update the BPK request(s) for any response(s)
-            # ----------------------------------------------------
             for resp in bpk_respones:
                 try:
                     response_time = float(resp['response_time_sec'])
@@ -1076,7 +1068,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Limit the number of partners to process based on max_requests_per_minute
         #
-        # HINT: set_bpk() may run up to four times per partner per company but it is a save bet to assume
+        # HINT: set_bpk() may run up to n times per partner per company but it is a save bet to assume
         #       that most of the time one request is enough.
         #
         #       However: Try to set the max_requests_per_minute low enough so that multiple request per partner
@@ -1171,9 +1163,10 @@ class ResPartnerZMRGetBPK(models.Model):
         while_start = now()
 
         # Search for partner
+        # TODO: Get the partner field (e.g. firstname) from the methods (e.g. _bpk_regular_fields())
         domain = [
             '|',
-            ('bpk_state', '!=', False),
+            ('bpk_state', '=', False),
             '&', '&', '&', '&',
               ('donation_deduction_optout_web', '=', False),
               ('donation_deduction_disabled', '=', False),
