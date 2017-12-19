@@ -21,47 +21,65 @@ class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report'
     _order = 'anlage_am_um DESC'
 
+    now = fields.datetime.now
+
     # ------
     # FIELDS
     # ------
-    # HINT: 'fields' can only be set in FS-Online in state 'new'
-    # HINT: 'transmission' means 'Uebertragung lauft' oder wird vorbereited
-    # ATTENTION: All donation reports from FRST MUST have the state 'prepared' to avoid any editing in FS-Online !
+    # HINT: 'fields' can only be changed in FS-Online in state 'new'
     state = fields.Selection(string="State", readonly=True, default='new',
                              selection=[('new', 'New'),
-                                        ('prepared', 'Prepared for Submission'),
+                                        ('approved', 'Approved for Submission'),
                                         ('submitted', 'Submitted'),
                                         ('skipped', 'Skipped'),
                                         ('error', 'Error')])
+    info = fields.Text(string="Info", readonly=True)
 
-    # Submission data (Values from Fundraising Studio if submission_env is p)
-    # -----------------------------------------------------------------------
-    # ATTENTION: This will determine the submission url!
-    submission_env = fields.Selection(string="Environment", selection=[('t', 'Test'), ('p', 'Production')],
-                                      required=True)
-
-    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True)
-    bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True)
-
-    anlage_am_um = fields.Datetime(string="Donation Report Create Date", required=True, default=fields.datetime.now(),
-                                   help=_("This is used for the order of the submission_type computation!"))
-    ze_datum_von = fields.Datetime(string="Donation Report Start", required=True)
-    ze_datum_bis = fields.Datetime(string="Donation Report End", required=True)
-
-    mj_range = [(str(i), str(i)) for i in range(2017, int(datetime.datetime.now().year)+11)]
-    meldungs_jahr = fields.Selection(string="Donation Report Year (Zeitraum)", required=True, selection=mj_range)
-    betrag = fields.Float(string="Donation Report Total (Betrag)", required=True)
-
-    # Fields computed (or set) just before transmission
-    # -------------------------------------------------
+    # Donation report submission
     submission_id = fields.Many2one(string="Submission",
                                     help="submission_id.id is used as the MessageRefId !",
-                                    comodel_name="res.partner.donation_report.submission", readonly=True)
-    submission_state = fields.Selection(related="submission_id.state")
-    submission_datetime = fields.Datetime(related="submission_id.submission_datetime")
-    submission_url = fields.Char(related="submission_id.submission_url")
-    submission_fa_dr_type = fields.Char(related="submission_id.submission_fa_dr_type")
+                                    comodel_name="res.partner.donation_report.submission",
+                                    readonly=True, states={'new': [('readonly', False)]})
 
+    # Related Fields from the donation report submission (drs)
+    submission_state = fields.Selection(related="submission_id.state", store=True, readonly=True)
+    submission_datetime = fields.Datetime(related="submission_id.submission_datetime", store=True,  readonly=True)
+    submission_url = fields.Char(related="submission_id.submission_url", store=True,  readonly=True)
+    submission_fa_dr_type = fields.Char(related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
+
+    # Data for submission (normally from Fundraising Studio)
+    # ------------------------------------------------------
+    # ATTENTION: This will determine the submission url!
+    submission_env = fields.Selection(string="Environment", selection=[('t', 'Test'), ('p', 'Production')],
+                                      required=True, readonly=True, states={'new': [('readonly', False)]})
+    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True,
+                                 readonly=True, states={'new': [('readonly', False)]})
+    bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
+                                     readonly=True, states={'new': [('readonly', False)]})
+
+    anlage_am_um = fields.Datetime(string="Donation Report Create Date", required=True, default=fields.datetime.now(),
+                                   readonly=True, states={'new': [('readonly', False)]},
+                                   help=_("This is used for the order of the submission_type computation!"))
+    ze_datum_von = fields.Datetime(string="Donation Report Start", required=True,
+                                   readonly=True, states={'new': [('readonly', False)]})
+    ze_datum_bis = fields.Datetime(string="Donation Report End", required=True,
+                                   readonly=True, states={'new': [('readonly', False)]})
+
+    meldungs_jahr = fields.Selection(string="Donation Report Year (Zeitraum)", required=True,
+                                     readonly=True, states={'new': [('readonly', False)]},
+                                     selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)])
+    betrag = fields.Float(string="Donation Report Total (Betrag)", required=True,
+                          readonly=True, states={'new': [('readonly', False)]})
+
+    # BPK request
+    # -----------
+    bpk_id = fields.Many2one(string="BPK", comodel_name='res.partner.bpk',  computed="_compute_bpk_id", store=True,
+                             readonly=True)
+    bpk_state = fields.Selection(related="bpk_id.state", store=True, readonly=True)
+    bpk_public = fields.Char(related="bpk_id.BPKPublic", store=True, readonly=True)
+
+    # Fields computed (or set) just before transmission to FinanzOnline
+    # -----------------------------------------------------------------
     submission_type = fields.Selection(string="Donation Report Type", readonly=True,
                                        selection=[('E', 'Erstuebermittlung'),
                                                   ('A', 'Aenderungsuebermittlung'),
@@ -80,34 +98,38 @@ class ResPartnerFADonationReport(models.Model):
     submission_zip = fields.Char(string="ZIP Code", readonly=True)
     submission_bpk_public = fields.Char(string="Public BPK (vbPK)", readonly=True)
 
-    response_content = fields.Text(string="Response", readonly=True)
+    # FinanzOnline XML Response
+    # -------------------------
+    # HINT: response_content will only hold the xml snippets related to this donation report based on submission_refnr
+    response_content = fields.Text(string="Response Content", readonly=True)
+    response_error_code = fields.Char(string="Response Error Code", readonly=True)
+    response_error_detail = fields.Text(string="Response Error Detail", readonly=True)
 
     # Error
     # -----
-    error = fields.Selection(string="Error", readonly=True,
-                             selection=[('submission_error', 'Submission Error'),
-                                        ('response_error', 'Response Error'),
-                                        ('bpk_pending', 'BPK-Request pending'),
-                                        ('bpk_missing', 'BPK Missing')])
-    error_code = fields.Char(string="Error Code", redonly=True)
-    error_detail = fields.Text(string="Error Detail", readonly=True)
+    error_type = fields.Selection(string="Error", readonly=True,
+                                  selection=[('bpk_missing', 'BPK Missing'),
+                                             ('response_error', 'Finanz Online Error'),
+                                             ])
 
     # Related Donation Reports
     # ------------------------
+    # Erstmeldung
     report_erstmeldung_id = fields.Many2one(string="Zugehoerige Erstmeldung", comodel_name='res.partner.donation_report',
                                             readonly=True)
+    # Follow Up reports to this erstmeldung
     report_follow_up_ids = fields.One2many(string="Follow-Up Reports", comodel_name="res.partner.donation_report",
                                            inverse_name="report_erstmeldung_id", readonly=True)
-
-    # Skipped Info
-    # ------------
+    # Skipped by donation report
     skipped_by_id = fields.Many2one(string="Skipped by Report", comodel_name='res.partner.donation_report',
                                     readonly=True)
+    # This report skipped these donation reports
     skipped = fields.One2many(string="Skipped the Reports", comodel_name="res.partner.donation_report",
                               inverse_name="skipped_by_id", readonly=True)
 
+    # TODO: check if api.constrains also fires on xmlrpc calls
     @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis')
-    def _check_field_constrains(self):
+    def _check_submission_data_constrains(self):
         now = datetime.datetime.now()
         min_year = 2017
         max_year = int(now.year)+1
@@ -135,6 +157,25 @@ class ResPartnerFADonationReport(models.Model):
                                             "Please check ze_datum_von and ze_datum_bis."
                                             "") % (r.ze_datum_von, r.ze_datum_bis, r.meldungs_jahr))
 
+    # TODO: check if api.constrains also fires on xmlrpc calls
+    @api.constrains('submission_id', 'bpk_public')
+    def _check_donation_report_submission_link(self):
+        for r in self:
+
+            # Unlink from donation report submission if the bpk was not found
+            # TODO: Check if write works here?!?
+            if not r.bpk_public and r.submission_id and r.state in ('new', 'approved'):
+                r.write({'submission_id': False})
+
+            if r.submission_id:
+                if r.state not in ('new', 'approved'):
+                    raise ValidationError(_("You can not change the donation report submission in state %s!") % r.state)
+                if not r.bpk_public:
+                    raise ValidationError(_("You can not link to a donation report submission without a public BPK!"))
+            if not r.submission_id and r.state not in ('new', 'approved'):
+                raise ValidationError(_("You can not unlink from the donation report submission in state %s!"
+                                        "") % r.state)
+
     @api.onchange('meldungs_jahr')
     def _oc_meldungs_jahr(self):
         vtz = pytz.timezone("Europe/Vienna")
@@ -148,3 +189,9 @@ class ResPartnerFADonationReport(models.Model):
                     year_end = datetime.datetime(int(r.meldungs_jahr), 12, 31, 23, 59, 59, 999)
                     year_end = naive_to_timezone(naive=year_end, naive_tz=vtz, naive_dst=True, target_tz=pytz.UTC)
                     r.ze_datum_bis = year_end
+
+    @api.multi
+    def approve_for_submission(self):
+        assert self.ensure_one(), _("You can only approve a singe donation report!")
+        assert self.state == 'new', _("You can only approve donation reports in state 'new'")
+        self.write({'state': 'approved'})

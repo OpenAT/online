@@ -24,14 +24,14 @@ class CompanyAustrianZMRSettings(models.Model):
                                     string="BPK Requests")
 
     # Donation Reports
-    donation_report_ids = fields.One2many(comodel_name="res.partner.donation_report",
-                                          inverse_name="bpk_company_id",
-                                          string="Donation Reports", readonly=True)
+    #donation_report_ids = fields.One2many(comodel_name="res.partner.donation_report",
+    #                                      inverse_name="bpk_company_id",
+    #                                      string="Donation Reports", readonly=True)
 
     # Donation Report Submissions
-    donation_report_submission_ids = fields.One2many(comodel_name="res.partner.donation_report.submission",
-                                                     inverse_name="bpk_company_id",
-                                                     string="Donation Report Submissions", readonly=True)
+    #donation_report_submission_ids = fields.One2many(comodel_name="res.partner.donation_report.submission",
+    #                                                 inverse_name="bpk_company_id",
+    #                                                 string="Donation Report Submissions", readonly=True)
 
     # Basic Settings
     stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')

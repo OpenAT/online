@@ -17,6 +17,7 @@ from dateutil import tz
 from xml.sax.saxutils import escape
 import logging
 from requests import Timeout
+import copy
 import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
@@ -77,8 +78,8 @@ class ResPartnerZMRGetBPK(models.Model):
     bpk_error_code = fields.Char(string="BPK-Error Code", readonly=True)
 
     # Donation Reports
-    donation_report_ids = fields.One2many(string="Donation Reports", readonly=True,
-                                          comodel_name="res.partner.donation_report", inverse_name="partner_id")
+    #donation_report_ids = fields.One2many(string="Donation Reports", readonly=True,
+    #                                     comodel_name="res.partner.donation_report", inverse_name="partner_id")
 
     @api.depends('donation_deduction_optout_web', 'donation_deduction_disabled')
     def _compute_bpk_disabled(self):
@@ -423,7 +424,7 @@ class ResPartnerZMRGetBPK(models.Model):
         #            If you change the request_bpk logic make sure to update the version number
         # HINT: Used in all_bpk_requests_matches_partner_data()
         if version:
-            return 2
+            return 3
 
         class LogKeeper:
             log = u''
@@ -442,7 +443,8 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Update and append the request log
             try:
-                LogKeeper.log += u'Request Data: "' + first + u'"; "' + last + u'"; "' + birthd + u'"; "' + zipc + u'";\n'
+                LogKeeper.log += u'Request Data: "' + first + u'"; "' + last + u'"; "' + birthd + u'"; "' + \
+                                 zipc + u'";\n'
             except:
                 pass
 
@@ -491,10 +493,18 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # 1.) Try with full birthdate and cleaned names
         responses = _request_with_log(first_clean, last_clean, birthdate, '')
+        # copy this response for final results
+        responses_first = copy.deepcopy(responses)
         if self.response_ok(responses):
             return responses
 
-        # 2.) Try with birth year
+        # 2.) Try with zipcode, full birthdate and cleaned names
+        if zipcode:
+            responses = _request_with_log(first_clean, last_clean, birthdate, zipcode)
+            if self.response_ok(responses):
+                return responses
+
+        # 3.) Try with birth year only
         try:
             date = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
             year = date.strftime("%Y")
@@ -509,43 +519,43 @@ class ResPartnerZMRGetBPK(models.Model):
             if self.response_ok(responses):
                 return responses
 
-            # ATTENTION: If still no person was found we reset the year to none cause no better results can be expected
-            #            by a year only search so all other tries will use the full birthdate
-            #            If multiple person where found at this point it makes sense to use the year only for all
-            #            subsequent tries cause we already know that the person would not be found with the full
-            #            birthdate at this point.
-            if 'F230' in responses[0].get('faultcode', ""):
-                year = None
-
-        # 3.) Try with zip code
+        # 4.) Try with zip code only
         if zipcode:
             # Without birthdate
             responses = _request_with_log(first_clean, last_clean, '', zipcode)
             if self.response_ok(responses):
                 return responses
 
-            # With birthdate or birth year
-            responses = _request_with_log(first_clean, last_clean, year or birthdate, zipcode)
-            if self.response_ok(responses):
-                return responses
+            # 4.1) Try with zip code and year
+            if year:
+                responses = _request_with_log(first_clean, last_clean, year, zipcode)
+                if self.response_ok(responses):
+                    return responses
 
-        # 4.) Try with full firstname (e.g.: if there is a second firstname that was removed by clean_name())
+        # 5.) Try with full firstname (e.g.: if there is a second firstname that was removed by clean_name())
         # HINT: lastname is never split
         first_clean_nosplit = clean_name(firstname, split=False)
         if first_clean_nosplit and first_clean_nosplit != first_clean:
-            responses = _request_with_log(first_clean_nosplit, last_clean, year or birthdate, zipcode)
+            responses = _request_with_log(first_clean_nosplit, last_clean, birthdate, zipcode)
             if self.response_ok(responses):
                 return responses
+            # 5.1) Try with full firstname and year
+            if year:
+                responses = _request_with_log(first_clean_nosplit, last_clean, year, zipcode)
+                if self.response_ok(responses):
+                    return responses
 
-        # 5.) Last try with nearly unchanged data (only xml-invalid chars will be escaped)
-        # Remove all special chars or Austrian ZMR will fail with an non xml valid answer
+        # 6.) Last try with nearly unchanged data
+        # HINT: Will remove all special chars (or Austrian ZMR will fail with an 'non xml valid chars' error)
         first_basic_clean = clean_name(firstname, full_cleanup=False)
         last_basic_clean = clean_name(lastname, full_cleanup=False)
         if not responses or first_basic_clean != first_clean or last_basic_clean != last_clean:
             responses = _request_with_log(first_basic_clean, last_basic_clean, birthdate, zipcode)
+            if self.response_ok(responses):
+                return responses
 
-        # Finally return the "latest" response(s)
-        return responses
+        # Finally return the response(s) from the first request
+        return responses_first
 
     # Simple response status checker (may be used by java script or by FS)
     @api.model
@@ -1006,17 +1016,20 @@ class ResPartnerZMRGetBPK(models.Model):
             # NEXT PARTNER:
             # HINT: Reset error counter if no BPKErrorCode or the error is known
             error_code = bpk_respones[0].get('BPKErrorCode', '')
-            error_known = any(known_error_code in error_code for known_error_code in self._zmr_error_codes())
+            state_known = not error_code or any(known_error_code in error_code
+                                                for known_error_code in self._zmr_error_codes())
+
             logger.info(errors[p.id])
             p.write({'LastBPKRequest': now(),
                      'BPKRequestError': errors[p.id] or False,
-                     'bpk_request_error_tries': 0 if error_known else p.bpk_request_error_tries + 1})
+                     'bpk_request_error_tries': 0 if state_known else p.bpk_request_error_tries + 1})
             continue
 
         # END: partner loop
 
         # Log and return
         logger.info("set_bpk(): Processed %s partner in %.3f seconds" % (len(self), time.time() - start_time))
+        errors = {key: errors[key] for key in errors if errors[key]}
         if errors:
             logger.warning("set_bpk(): Partners with errors: %s" % errors)
         return errors
