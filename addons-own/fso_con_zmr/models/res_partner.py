@@ -395,7 +395,7 @@ class ResPartnerZMRGetBPK(models.Model):
         res = super(ResPartnerZMRGetBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
-        if res and self and 'bpk_state' not in values:
+        if 'bpk_state' not in values:
             self.set_bpk_state()
 
         return res
@@ -461,8 +461,8 @@ class ResPartnerZMRGetBPK(models.Model):
             LogKeeper.log += u"----------\n\n"
 
             # Update all results
-            for r in resp:
-                r['request_log'] = LogKeeper.log
+            for response in resp:
+                response['request_log'] = LogKeeper.log
 
             # Return the response(s)
             return resp
@@ -490,13 +490,12 @@ class ResPartnerZMRGetBPK(models.Model):
         zipcode = escape(zipcode) if zipcode else ''
 
         responses = {}
+        responses_first = {}
 
         # 1.) Try with full birthdate and cleaned names
-        responses = _request_with_log(first_clean, last_clean, birthdate, '')
-        # copy this response for final results
-        responses_first = copy.deepcopy(responses)
-        if self.response_ok(responses):
-            return responses
+        responses_first = _request_with_log(first_clean, last_clean, birthdate, '')
+        if self.response_ok(responses_first):
+            return responses_first
 
         # 2.) Try with zipcode, full birthdate and cleaned names
         if zipcode:
@@ -514,7 +513,6 @@ class ResPartnerZMRGetBPK(models.Model):
             except:
                 year = None
         if year:
-            # responses = self._request_bpk(firstname=first_clean, lastname=last_clean, birthdate=year)
             responses = _request_with_log(first_clean, last_clean, year, '')
             if self.response_ok(responses):
                 return responses
@@ -554,7 +552,10 @@ class ResPartnerZMRGetBPK(models.Model):
             if self.response_ok(responses):
                 return responses
 
-        # Finally return the response(s) from the first request
+        # Update log also in responses_first
+        for r in responses_first:
+            r['request_log'] = LogKeeper.log
+        # Finally return the first response (responses_first) with full log
         return responses_first
 
     # Simple response status checker (may be used by java script or by FS)
@@ -1016,13 +1017,14 @@ class ResPartnerZMRGetBPK(models.Model):
             # NEXT PARTNER:
             # HINT: Reset error counter if no BPKErrorCode or the error is known
             error_code = bpk_respones[0].get('BPKErrorCode', '')
-            state_known = not error_code or any(known_error_code in error_code
-                                                for known_error_code in self._zmr_error_codes())
-
-            logger.info(errors[p.id])
+            error_known = False
+            if error_code:
+                error_known = any(known_error_code in error_code for known_error_code in self._zmr_error_codes())
+            logger.info("set_bpk(): errors: %s" % errors[p.id])
             p.write({'LastBPKRequest': now(),
                      'BPKRequestError': errors[p.id] or False,
-                     'bpk_request_error_tries': 0 if state_known else p.bpk_request_error_tries + 1})
+                     'bpk_request_error_tries': 0 if not error_code or error_known else p.bpk_request_error_tries + 1})
+            #p.set_bpk_state()
             continue
 
         # END: partner loop
