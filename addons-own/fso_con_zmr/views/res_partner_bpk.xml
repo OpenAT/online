@@ -17,6 +17,7 @@
                         <group>
                             <field name="BPKRequestCompanyID"/>
                             <field name="BPKRequestPartnerID" context="{'form_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_form', 'tree_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_tree'}"/>
+                            <field name="partner_state"/>
                             <field name="LastBPKRequest"/>
                         </group>
                         <group>
@@ -98,6 +99,7 @@
                           green:state == 'found';">
                 <field name="LastBPKRequest"/>
                 <field name="BPKRequestPartnerID"/>
+                <field name="partner_state"/>
                 <field name="BPKRequestCompanyID"/>
                 <field name="BPKRequestDate" string="Last Valid Req."/>
                 <!-- field name="BPKPrivate"/ -->
@@ -115,6 +117,7 @@
         <field name="arch" type="xml">
             <search string="BPK Requests">
                 <field name="BPKRequestPartnerID"/>
+                <field name="partner_state"/>
                 <field name="BPKErrorCode"/>
                 <field name="BPKPrivate"/>
                 <field name="BPKPublic"/>
@@ -147,6 +150,7 @@
                 </group>
                 <group string="Group by">
                     <filter string="State" name="state" context="{'group_by':'state'}"/>
+                    <filter string="Partner State" name="state" context="{'group_by':'partner_state'}"/>
                     <filter string="Error Code" context="{'group_by':'BPKErrorCode'}"/>
                 </group>
             </search>

@@ -24,6 +24,10 @@ class ResPartnerBPK(models.Model):
     BPKRequestPartnerID = fields.Many2one(comodel_name='res.partner', string="BPK Request Partner",
                                           required=True, readonly=True)
 
+    # ATTENTION: Related fields are pretty slow expecially if no Full Vaccuum is done to the db regualarily
+    #            Therefore this fields will also be updated by set_bpk_state()
+    partner_state = fields.Char(string="Partner BPK State", readonly=True)
+
     # To make sorting the BPK requests easier
     LastBPKRequest = fields.Datetime(string="Last BPK Request", readonly=True)
 
@@ -81,6 +85,9 @@ class ResPartnerBPK(models.Model):
         # Helper method to only write to the BPKs if values have changed
         # HINT: This comparison is less expensive than real writes to the db
         def write(bpk_request, values):
+            # Add the current partner bpk state to the fields
+            values['partner_state'] = bpk.BPKRequestPartnerID.bpk_state if bpk.BPKRequestPartnerID else False
+            # Update the bpk if any value is changed
             if any(bpk_request[f] != values[f] for f in values):
                 bpk_request.write(values)
 

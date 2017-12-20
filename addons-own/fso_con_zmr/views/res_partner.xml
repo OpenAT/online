@@ -270,7 +270,7 @@
 
                 <group string="Group by BPK-Data">
                     <filter string="BPK-State" context="{'group_by':'bpk_state'}"/>
-                    <filter string="FirstBPK-ErrorCode" context="{'group_by':'bpk_error_code'}"/>
+                    <filter string="BPK-ErrorCode" context="{'group_by':'bpk_error_code'}"/>
                     <filter string="Donation Deduction OptOut" context="{'group_by':'donation_deduction_optout_web'}"/>
                     <filter string="Donation Deduction Disabled" context="{'group_by':'donation_deduction_disabled'}"/>
                 </group>
