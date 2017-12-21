@@ -830,21 +830,23 @@ class ResPartnerZMRGetBPK(models.Model):
                 continue
 
             # 4.) Check BPKRequestNeeded
-            if r.BPKRequestIDS:
-                # Check for multiple bpk records per company
-                bpk_requests_company_ids = [bpk.BPKRequestCompanyID.id for bpk in r.BPKRequestIDS]
-                if bpk_requests_company_ids and len(bpk_requests_company_ids) != len(set(bpk_requests_company_ids)):
+            bpk_requests_company_ids = [bpk.BPKRequestCompanyID.id for bpk in r.BPKRequestIDS]
+            companies_with_zmr_access = self._find_bpk_companies()
+
+            # 4.1 Check for missing BPK records for companies with zmr access data
+            if companies_with_zmr_access:
+                if set(companies_with_zmr_access.ids) - set(bpk_requests_company_ids):
                     write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'BPKRequestNeeded': now()})
                     continue
 
-                # Check for missing BPK records for companies with zmr access data
-                companies_with_zmr_access = self._find_bpk_companies()
-                if companies_with_zmr_access and bpk_requests_company_ids:
-                    if set(companies_with_zmr_access.ids) - set(bpk_requests_company_ids):
-                        write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'BPKRequestNeeded': now()})
-                        continue
+            # 4.2 Check for multiple bpk records per company
+            if bpk_requests_company_ids:
+                if len(bpk_requests_company_ids) != len(set(bpk_requests_company_ids)):
+                    write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'BPKRequestNeeded': now()})
+                    continue
 
-                # Check if the partner data matches all bpk requests
+            # 4.3 Check if the partner data matches all bpk requests
+            if r.BPKRequestIDS:
                 if not r.all_bpk_requests_matches_partner_data():
                     write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'BPKRequestNeeded': now()})
                     continue
@@ -866,7 +868,7 @@ class ResPartnerZMRGetBPK(models.Model):
                     continue
 
             # 6.) SPECIAL CASE: No BPK requests and no companies with zmr access data
-            if not r.BPKRequestIDS and not self._find_bpk_companies():
+            if not r.BPKRequestIDS and not companies_with_zmr_access:
                 write(r, {'bpk_state': 'new', 'bpk_error_code': False})
                 continue
 
