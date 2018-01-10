@@ -18,6 +18,9 @@ class FSGroups(models.Model):
     name = new_api_fields.Char(string="Gruppenname")    # = GruppeKurz
     parent_id = new_api_fields.Many2one(string="Parent Group", comodel_name="fs.group")
 
+    # z_gruppe_id -> das ist der Ordner und der ist fix ID unveraenderlich daher statische domain auf ID
+    # fson_aktiv -> ob ie Gruppe im FS-Online auswählbar ist ebenfalls teil der domain
+
     GruppeLang = new_api_fields.Char(string="Gruppenname Lang")
     TabellentypID = new_api_fields.Integer(string="Tabellentyp ID")
     MehrEintraegeInGruppeMoeglich = new_api_fields.Boolean(string="Mehr als ein Eintrag in Gruppe moeglich")

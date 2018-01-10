@@ -67,29 +67,35 @@ class CompanyAustrianZMRSettings(models.Model):
     bpk_multiple_found = fields.Text(string="BPK Multiple-Person-Matched Message", translate=True)
     bpk_zmr_service_error = fields.Text(string="BPK ZMR-Service-Error Message", translate=True)
 
-    # Austrian Finanz Online Webservice Session-Login Data
+    # Austrian Finanz Amt: Finanz Online Webservice Session-Login Data
     # https://www.bmf.gv.at/egovernment/fon/fuer-softwarehersteller/softwarehersteller-funktionen.html#Webservices
     fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)")
     fa_benid = fields.Char(string="Webservicebenutzer ID (benid)")
     fa_pin = fields.Char(string="Webservicebenutzer Pin (pin)")
+    fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)",
+                                  help="Umsatzsteuer-Identifikations-Nummer (UID-Nummer) des Softwareherstellers.",
+                                  default="ATU44865400", size=24)
 
-    fa_herstellerid = fields.Char(string="Finanzamt-Steuernummer des Softwareherstellers (herstellerid)",
-                                  help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
-                                       "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
-                                       "(ohne Trennzeichen) (Fastnr_Fon_Tn)",
-                                  default="685032617", size=9)
-    fa_orgid = fields.Char(string="Finanzamt-Steuernummer der Organisation (Fastnr_Org)",
-                                  help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
-                                       "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
-                                       "(ohne Trennzeichen) (Fastnr_Org)", size=9)
+    # Austrian Finanz Amt: Finanz Online donation report submission (Spendenmeldung Meldung):
+    # Fastnr_Fon_Tn
+    fa_fastnr_fon_tn = fields.Char(string="Finanzamt-Steuernummer des Softwareherstellers (Fastnr_Fon_Tn)",
+                                   help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
+                                        "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
+                                        "(ohne Trennzeichen) (Fastnr_Fon_Tn)",
+                                   default="685032617", size=9)
+    # Fastnr_Org
+    fa_fastnr_org = fields.Char(string="Finanzamt-Steuernummer der Organisation (Fastnr_Org)",
+                                help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
+                                     "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
+                                     "(ohne Trennzeichen) (Fastnr_Org)",
+                                size=9, oldname="fa_orgid")
 
-    # Austrian Finanz Online Webservice Login Information
-    # HINT: fa stands for FinanzAmt (not for FinanzOnline)
+    # Austrian Finanz Amt: Finanz Online Webservice Session and Login Information
     fa_login_sessionid = fields.Char(string="Finanz Online Login SessionID", readonly=True)
     fa_login_returncode = fields.Char(string="Finanz Online Login Returncode", readonly=True)
     fa_login_message = fields.Text(string="Finanz Online Login Message", readonly=True)
 
-    # Finanz Online Donation Report Settings (Spendenmeldung)
+    # Austrian Finanz Amt: Finanz Online donation report (Spendenmeldung)
     # TODO: remove obsolete Field fa_dr_mode
     fa_dr_mode = fields.Selection(selection=[('T', 'T: Testumgebung'),
                                              ('P', 'P: Echtbetrieb')],
@@ -221,7 +227,7 @@ class CompanyAustrianZMRSettings(models.Model):
                                                   % fo_login_template
 
         # CHECK FINANZ ONLINE LOGIN DATA
-        mandatory_fields = ['fa_tid', 'fa_benid', 'fa_pin', 'fa_herstellerid']
+        mandatory_fields = ['fa_tid', 'fa_benid', 'fa_pin']
         missing = [field for field in mandatory_fields if not getattr(c, field)]
         if missing:
             c.fa_login_sessionid = False
