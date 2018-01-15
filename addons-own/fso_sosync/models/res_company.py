@@ -10,7 +10,7 @@ class ResCompanySosync(models.Model):
 
     # RELATED FIELDS
     # bank_ids = fields.One2many(sosync="True")              # Company Bank Accounts
-    # BPKRequestIDS = fields.One2many(sosync="True")         # BPK Requests
+    # bpk_request_ids = fields.One2many(sosync="True")         # BPK Requests
     # child_ids = fields..One2many(sosync="True")            # Child companies
     # parent_id = fields.Many2one(sosync="True")             # Parent Company
     # user_ids = fields.Many2one(sosync="True")              # Accepted Users (Users allowed to use this comp.)
@@ -52,4 +52,4 @@ class ResCompanySosync(models.Model):
     #pvpToken_prvkey_pem_filename = fields.Char(sosync="True")
     #pvpToken_prvkey_pem_path = fields.Char(sosync="True")
 
-    #BPKRequestURL = fields.Selection(sosync="True")
+    #bpk_request_url = fields.Selection(sosync="True")

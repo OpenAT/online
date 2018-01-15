@@ -19,6 +19,8 @@
                         <field name="job_source_model"/>
                         <field name="job_source_record_id"/>
                         <field name="job_source_sosync_write_date"/>
+                        <field name="job_source_type"/>
+                        <field name="job_source_merge_into_id"/>
                     </group>
                     <group>
                         <field name="job_fetched"/>
@@ -37,6 +39,7 @@
                         <field name="sync_target_system"/>
                         <field name="sync_target_model"/>
                         <field name="sync_target_record_id"/>
+                        <field name="sync_target_merge_into_id"/>
                     </group>
                 </group>
                 <notebook>

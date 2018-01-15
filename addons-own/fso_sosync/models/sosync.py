@@ -66,6 +66,13 @@ class SosyncJob(models.Model):
     job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
     job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
 
+    job_source_type = fields.Selection(string="Job Source Type", selection=[("delete", "Delete"),
+                                                                            ("merge_into", "Merge Into")],
+                                       help="Job type indicator for special sync jobs. "
+                                            "If empty it is processed as a default sync job = 'create' or 'update'",
+                                       readonly=True, default=False)
+    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID")
+
     # SYNCJOB INFO
     job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
     job_start = fields.Char(string="Job Start", readonly=True)
@@ -116,6 +123,7 @@ class SosyncJob(models.Model):
     sync_target_system = fields.Selection(selection=_systems, string="Target System", readonly=True)
     sync_target_model = fields.Char(string="Target Model", readonly=True)
     sync_target_record_id = fields.Integer(string="Target Record ID", readonly=True)
+    sync_target_merge_into_id = fields.Integer(string="Sync Target Merge-Into Target ID")
 
     # SYNCHRONIZATION INFO
     sync_source_data = fields.Text(string="Sync Source Data", readonly=True)
@@ -125,10 +133,11 @@ class SosyncJob(models.Model):
     sync_target_answer = fields.Text(string="Sync Target Answer(s)", readonly=True)
     sync_target_data_after = fields.Text(string="Sync Target Data after", readonly=True) # Not used in odoo
 
+
+
     sync_start = fields.Char(string="Sync Start", readonly=True)
     sync_end = fields.Char(string="Sync End", readonly=True)
     sync_duration = fields.Integer(string="Sync Duration (ms)", compute="_target_request_duration", readonly=True)
-
 
 
     # COMPUTED FIELDS METHODS

@@ -76,7 +76,7 @@ class ResPartnerSosync(models.Model):
     #legal_terms_web = fields.Boolean(sosync="True")                 # Accept legal terms (webshop) derzit nur in FSO
 
     # BKP Forced Fields
-    BPKForcedFirstname = fields.Char(sosync="True")
-    BPKForcedLastname = fields.Char(sosync="True")
-    BPKForcedBirthdate = fields.Date(sosync="True")
-    BPKForcedZip = fields.Char(sosync="True")
+    bpk_forced_firstname = fields.Char(sosync="True")
+    bpk_forced_lastname = fields.Char(sosync="True")
+    bpk_forced_birthdate = fields.Date(sosync="True")
+    bpk_forced_zip = fields.Char(sosync="True")
