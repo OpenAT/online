@@ -71,7 +71,7 @@ class SosyncJob(models.Model):
                                        help="Job type indicator for special sync jobs. "
                                             "If empty it is processed as a default sync job = 'create' or 'update'",
                                        readonly=True, default=False)
-    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID")
+    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID", readonly=True)
 
     # SYNCJOB INFO
     job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
@@ -183,7 +183,7 @@ class SosyncJobQueue(models.Model):
                                        help="Job type indicator for special sync jobs. "
                                             "If empty it is processed as a default sync job = 'create' or 'update'",
                                        readonly=True, default=False)
-    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID")
+    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID", readonly=True)
 
     job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
     job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
