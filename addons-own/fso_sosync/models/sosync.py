@@ -177,6 +177,14 @@ class SosyncJobQueue(models.Model):
     job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
     job_source_model = fields.Char(string="Job Source Model", readonly=True)
     job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
+
+    job_source_type = fields.Selection(string="Job Source Type", selection=[("delete", "Delete"),
+                                                                            ("merge_into", "Merge Into")],
+                                       help="Job type indicator for special sync jobs. "
+                                            "If empty it is processed as a default sync job = 'create' or 'update'",
+                                       readonly=True, default=False)
+    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID")
+
     job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
     job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
 
@@ -232,6 +240,9 @@ class SosyncJobQueue(models.Model):
                     'job_source_record_id': record.job_source_record_id,
                     'job_source_sosync_write_date': record.job_source_sosync_write_date,
                     'job_source_fields': record.job_source_fields,
+                    #
+                    'job_source_type': record.job_source_type,
+                    'job_source_merge_into_id': record.job_source_merge_into_id,
                     }
             # Convert python dictionary with unicode values to ascii json object with escaped UTF-8 chars
             data_json_ascii = json.dumps(data, ensure_ascii=True)
