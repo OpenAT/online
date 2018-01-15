@@ -43,7 +43,8 @@
                                     <field name="submission_fa_tid"/>
                                     <field name="submission_fa_benid"/>
                                     <field name="submission_fa_herstellerid"/>
-                                    <field name="submission_fa_orgid"/>
+
+                                    <field name="submission_fa_fastnr_org"/>
                                 </group>
                                 <field name="submission_log" colspan="2"/>
                             </group>

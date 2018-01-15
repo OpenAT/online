@@ -29,7 +29,8 @@ class ResPartnerFADonationReport(models.Model):
     # HINT: 'fields' can only be changed in FS-Online in state 'new'
     state = fields.Selection(string="State", readonly=True, default='new',
                              selection=[('new', 'New'),
-                                        ('approved', 'Approved for Submission'),
+                                        ('approved', 'Approved for Submission'),    # Freigegeben
+                                        ('prepared', 'Prepared for Submission'),    # Linked to a donation report subm.
                                         ('submitted', 'Submitted'),
                                         ('skipped', 'Skipped'),
                                         ('error', 'Error')])
@@ -42,6 +43,7 @@ class ResPartnerFADonationReport(models.Model):
                                     readonly=True, states={'new': [('readonly', False)]})
 
     # Related Fields from the donation report submission (drs)
+    # TODO: related fields seem to be pretty slow - it may be better to just update them by the write or update mehtod?
     submission_state = fields.Selection(related="submission_id.state", store=True, readonly=True)
     submission_datetime = fields.Datetime(related="submission_id.submission_datetime", store=True,  readonly=True)
     submission_url = fields.Char(related="submission_id.submission_url", store=True,  readonly=True)
@@ -76,7 +78,7 @@ class ResPartnerFADonationReport(models.Model):
     bpk_id = fields.Many2one(string="BPK", comodel_name='res.partner.bpk',  computed="_compute_bpk_id", store=True,
                              readonly=True)
     bpk_state = fields.Selection(related="bpk_id.state", store=True, readonly=True)
-    bpk_public = fields.Char(related="bpk_id.BPKPublic", store=True, readonly=True)
+    bpk_public = fields.Char(related="bpk_id.bpk_public", store=True, readonly=True)
 
     # Fields computed (or set) just before transmission to FinanzOnline
     # -----------------------------------------------------------------
@@ -107,10 +109,15 @@ class ResPartnerFADonationReport(models.Model):
 
     # Error
     # -----
-    error_type = fields.Selection(string="Error", readonly=True,
+    error_type = fields.Selection(string="Error Type", readonly=True,
                                   selection=[('bpk_missing', 'BPK Missing'),
-                                             ('response_error', 'Finanz Online Error'),
+                                             ('bpk_not_unique', 'BPK Not Unique'),    # multiple partners with same bpk
+                                             ('data_incomplete', 'Data Incomplete'),  # should never happen!
+                                             ('submission_error', 'Submission Error'),
+                                             ('response_error', 'FinanzOnline Error'),
                                              ])
+    error_code = fields.Char(string="Error Code", redonly=True)
+    error_detail = fields.Text(string="Error Detail", readonly=True)
 
     # Related Donation Reports
     # ------------------------
@@ -127,6 +134,9 @@ class ResPartnerFADonationReport(models.Model):
     skipped = fields.One2many(string="Skipped the Reports", comodel_name="res.partner.donation_report",
                               inverse_name="skipped_by_id", readonly=True)
 
+    # -------------
+    # FIELD METHODS (compute, onchange, constrains)
+    # -------------
     # TODO: check if api.constrains also fires on xmlrpc calls
     @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis')
     def _check_submission_data_constrains(self):
@@ -190,6 +200,8 @@ class ResPartnerFADonationReport(models.Model):
                     year_end = naive_to_timezone(naive=year_end, naive_tz=vtz, naive_dst=True, target_tz=pytz.UTC)
                     r.ze_datum_bis = year_end
 
+    # TODO: Maybe Change this to a muti record method
+    # TODO: Check if the related BPK is found more than once in the system - if so do not allow to set state to approved
     @api.multi
     def approve_for_submission(self):
         assert self.ensure_one(), _("You can only approve a singe donation report!")

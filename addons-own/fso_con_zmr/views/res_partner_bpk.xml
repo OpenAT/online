@@ -15,10 +15,10 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="BPKRequestCompanyID"/>
-                            <field name="BPKRequestPartnerID" context="{'form_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_form', 'tree_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_tree'}"/>
+                            <field name="bpk_request_company_id"/>
+                            <field name="bpk_request_partner_id" context="{'form_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_form', 'tree_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_tree'}"/>
                             <field name="partner_state"/>
-                            <field name="LastBPKRequest"/>
+                            <field name="last_bpk_request"/>
                         </group>
                         <group>
                             <field name="id" readonly="True"/>
@@ -30,56 +30,56 @@
                     </group>
                     <group>
                         <group string="Last valid BPK-Request">
-                            <field name="BPKRequestDate"/>
-                            <field name="BPKRequestVersion"/>
-                            <field name="BPKRequestFirstname"/>
-                            <field name="BPKRequestLastname"/>
-                            <field name="BPKRequestBirthdate"/>
-                            <field name="BPKRequestZIP"/>
+                            <field name="bpk_request_date"/>
+                            <field name="bpk_request_version"/>
+                            <field name="bpk_request_firstname"/>
+                            <field name="bpk_request_lastname"/>
+                            <field name="bpk_request_birthdate"/>
+                            <field name="bpk_request_zip"/>
                         </group>
                         <group string="Last invalid BPK-Request">
-                            <field name="BPKErrorRequestDate"/>
-                            <field name="BPKErrorRequestVersion"/>
-                            <field name="BPKErrorRequestFirstname"/>
-                            <field name="BPKErrorRequestLastname"/>
-                            <field name="BPKErrorRequestBirthdate"/>
-                            <field name="BPKErrorRequestZIP"/>
-                            <field name="BPKErrorText"/>
+                            <field name="bpk_error_request_date"/>
+                            <field name="bpk_error_request_version"/>
+                            <field name="bpk_error_request_firstname"/>
+                            <field name="bpk_error_request_lastname"/>
+                            <field name="bpk_error_request_birthdate"/>
+                            <field name="bpk_error_request_zip"/>
+                            <field name="bpk_error_text"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Valid BPK-Request Details">
                             <group>
-                                <field name="BPKPrivate"/>
-                                <field name="BPKPublic"/>
-                                <field name="BPKRequestURL"/>
-                                <field name="BPKResponseTime"/>
-                                <field name="BPKRequestVersion"/>
+                                <field name="bpk_private"/>
+                                <field name="bpk_public"/>
+                                <field name="bpk_request_url"/>
+                                <field name="bpk_response_time"/>
+                                <field name="bpk_request_version"/>
                             </group>
                             <label for="bpk_request_log"/>
                             <field name="bpk_request_log"/>
                             <separator colspan="2"/>
-                            <label for="BPKRequestData"/>
-                            <field name="BPKRequestData"/>
+                            <label for="bpk_request_data"/>
+                            <field name="bpk_request_data"/>
                             <separator colspan="2"/>
-                            <label for="BPKResponseData"/>
-                            <field name="BPKResponseData"/>
+                            <label for="bpk_response_data"/>
+                            <field name="bpk_response_data"/>
                         </page>
                         <page string="Invalid BPK-Request Details">
                             <group>
-                                <field name="BPKErrorCode"/>
-                                <field name="BPKErrorRequestURL"/>
-                                <field name="BPKErrorResponseTime"/>
-                                <field name="BPKErrorRequestVersion"/>
+                                <field name="bpk_error_code"/>
+                                <field name="bpk_error_request_url"/>
+                                <field name="bpk_error_response_time"/>
+                                <field name="bpk_error_request_version"/>
                             </group>
-                            <label for="bpkerror_request_log"/>
-                            <field name="bpkerror_request_log"/>
+                            <label for="bpk_error_request_log"/>
+                            <field name="bpk_error_request_log"/>
                             <separator colspan="2"/>
-                            <label for="BPKErrorRequestData"/>
-                            <field name="BPKErrorRequestData"/>
+                            <label for="bpk_error_request_data"/>
+                            <field name="bpk_error_request_data"/>
                             <separator colspan="2"/>
-                            <label for="BPKErrorResponseData"/>
-                            <field name="BPKErrorResponseData"/>
+                            <label for="bpk_error_response_data"/>
+                            <field name="bpk_error_response_data"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -93,18 +93,18 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="BPK Requests"
-                  default_order="LastBPKRequest DESC, write_date DESC"
+                  default_order="last_bpk_request DESC, write_date DESC"
                   colors="red:state == 'error';
                           orange:state == 'data_mismatch';
                           green:state == 'found';">
-                <field name="LastBPKRequest"/>
-                <field name="BPKRequestPartnerID"/>
+                <field name="last_bpk_request"/>
+                <field name="bpk_request_partner_id"/>
                 <field name="partner_state"/>
-                <field name="BPKRequestCompanyID"/>
-                <field name="BPKRequestDate" string="Last Valid Req."/>
-                <!-- field name="BPKPrivate"/ -->
-                <field name="BPKErrorRequestDate" string="Last Invalid Req."/>
-                <field name="BPKErrorCode"/>
+                <field name="bpk_request_company_id"/>
+                <field name="bpk_request_date" string="Last Valid Req."/>
+                <!-- field name="bpk_private"/ -->
+                <field name="bpk_error_request_date" string="Last Invalid Req."/>
+                <field name="bpk_error_code"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -116,25 +116,25 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="BPK Requests">
-                <field name="BPKRequestPartnerID"/>
+                <field name="bpk_request_partner_id"/>
                 <field name="partner_state"/>
-                <field name="BPKErrorCode"/>
-                <field name="BPKPrivate"/>
-                <field name="BPKPublic"/>
-                <field name="BPKRequestCompanyID"/>
+                <field name="bpk_error_code"/>
+                <field name="bpk_private"/>
+                <field name="bpk_public"/>
+                <field name="bpk_request_company_id"/>
                 <!-- maybe not needed here -->
-                <field name="LastBPKRequest"/>
-                <field name="BPKRequestDate"/>
-                <field name="BPKRequestURL"/>
-                <field name="BPKRequestFirstname"/>
-                <field name="BPKRequestLastname"/>
-                <field name="BPKRequestBirthdate"/>
-                <field name="BPKErrorText"/>
-                <field name="BPKErrorRequestDate"/>
-                <field name="BPKErrorRequestURL"/>
-                <field name="BPKErrorRequestFirstname"/>
-                <field name="BPKErrorRequestLastname"/>
-                <field name="BPKErrorRequestBirthdate"/>
+                <field name="last_bpk_request"/>
+                <field name="bpk_request_date"/>
+                <field name="bpk_request_url"/>
+                <field name="bpk_request_firstname"/>
+                <field name="bpk_request_lastname"/>
+                <field name="bpk_request_birthdate"/>
+                <field name="bpk_error_text"/>
+                <field name="bpk_error_request_date"/>
+                <field name="bpk_error_request_url"/>
+                <field name="bpk_error_request_firstname"/>
+                <field name="bpk_error_request_lastname"/>
+                <field name="bpk_error_request_birthdate"/>
                 <group string="Filter by State">
                     <filter string="Pending" domain="[('state','=','pending')]"/>
                     <filter string="Found" domain="[('state','=','found')]"/>
@@ -142,16 +142,16 @@
                 </group>
                 <group string="Filter by Error">
                     <filter string="Found with former data"
-                            domain="[('BPKPublic', '!=', 'False'), ('state','=','error')]"/>
+                            domain="[('bpk_public', '!=', 'False'), ('state','=','error')]"/>
                     <filter string="No person matched"
-                            domain="[('BPKErrorCode','ilike','F230')]"/>
+                            domain="[('bpk_error_code','ilike','F230')]"/>
                     <filter string="Multiple person matched"
-                            domain="['|', ('BPKErrorCode','ilike','F231'), ('BPKErrorCode','ilike','F233')]"/>
+                            domain="['|', ('bpk_error_code','ilike','F231'), ('bpk_error_code','ilike','F233')]"/>
                 </group>
                 <group string="Group by">
                     <filter string="State" name="state" context="{'group_by':'state'}"/>
                     <filter string="Partner State" name="state" context="{'group_by':'partner_state'}"/>
-                    <filter string="Error Code" context="{'group_by':'BPKErrorCode'}"/>
+                    <filter string="Error Code" context="{'group_by':'bpk_error_code'}"/>
                 </group>
             </search>
         </field>

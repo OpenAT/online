@@ -55,8 +55,8 @@ msgstr "%s (ID %s): BPK-Anfrage wurde übersprungen da die Kontaktdaten identisc
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/models.py:412
 #, python-format
-msgid "All companies must use the same BPKRequestURL!"
-msgstr "Alle Organisationen (oder Organisationseinheiten) müssen die selbe BPKRequestURL verwenden!"
+msgid "All companies must use the same bpk_request_url!"
+msgstr "Alle Organisationen (oder Organisationseinheiten) müssen die selbe bpk_request_url verwenden!"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/models.py:267
@@ -81,22 +81,22 @@ msgid "BPK Birth."
 msgstr "BPK Geb."
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKForcedBirthdate:0
+#: field:res.partner,bpk_forced_birthdate:0
 msgid "BPK Forced Birthdate"
 msgstr "BPK Geburtsdatum"
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKForcedFirstname:0
+#: field:res.partner,bpk_forced_firstname:0
 msgid "BPK Forced Firstname"
 msgstr "BPK Vorname"
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKForcedLastname:0
+#: field:res.partner,bpk_forced_lastname:0
 msgid "BPK Forced Lastname"
 msgstr "BPK Nachname"
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKForcedZip:0
+#: field:res.partner,bpk_forced_zip:0
 msgid "BPK Forced ZIP"
 msgstr "BPK Plz."
 
@@ -113,7 +113,7 @@ msgid "BPK Partner"
 msgstr "Kontakte (geplant)"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKPrivate:0
+#: field:res.partner.bpk,bpk_private:0
 msgid "BPK Private"
 msgstr "BPK Privat"
 
@@ -123,7 +123,7 @@ msgid "BPK Processing Status"
 msgstr "BPK Verarbeitungsstatus"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKPublic:0
+#: field:res.partner.bpk,bpk_public:0
 msgid "BPK Public"
 msgstr "BPK Öffentlich"
 
@@ -139,27 +139,27 @@ msgid "BPK Request"
 msgstr "BPK-Abfrage"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestBirthdate:0
+#: field:res.partner.bpk,bpk_request_birthdate:0
 msgid "BPK Request Birthdate"
 msgstr "BPK-Abfrage Geburtstag"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestCompanyID:0
+#: field:res.partner.bpk,bpk_request_company_id:0
 msgid "BPK Request Company"
 msgstr "Organisation"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestData:0
+#: field:res.partner.bpk,bpk_request_data:0
 msgid "BPK Request Data"
 msgstr "BPK-Abfrage Daten"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestDate:0
+#: field:res.partner.bpk,bpk_request_date:0
 msgid "BPK Request Date"
 msgstr "BPK-Abfrage Datum"
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKRequestError:0
+#: field:res.partner,bpk_request_error:0
 msgid "BPK Request Exception"
 msgstr "BPK-Abfrage Fehler"
 
@@ -176,32 +176,32 @@ msgstr "BPK Abfrage Fehler:\n"
 ""
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestFirstname:0
+#: field:res.partner.bpk,bpk_request_firstname:0
 msgid "BPK Request Firstname"
 msgstr "BPK-Abfrage Vorname"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestLastname:0
+#: field:res.partner.bpk,bpk_request_lastname:0
 msgid "BPK Request Lastname"
 msgstr "BPK-Abfrage Nachname"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestPartnerID:0
+#: field:res.partner.bpk,bpk_request_partner_id:0
 msgid "BPK Request Partner"
 msgstr "Kontakt"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestURL:0
+#: field:res.partner.bpk,bpk_request_url:0
 msgid "BPK Request URL"
 msgstr "BPK-Abfrage URL"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKRequestZIP:0
+#: field:res.partner.bpk,bpk_request_zip:0
 msgid "BPK Request ZIP"
 msgstr "BPK-Abfrage Plz."
 
 #. module: fso_con_zmr
-#: field:res.partner,BPKRequestNeeded:0
+#: field:res.partner,bpk_request_needed:0
 msgid "BPK Request needed"
 msgstr "BPK-Abfrage geplant"
 
@@ -209,23 +209,23 @@ msgstr "BPK-Abfrage geplant"
 #: model:ir.actions.act_window,name:fso_con_zmr.res_partner_bpk_action
 #: model:ir.ui.menu,name:fso_con_zmr.fso_menu_res_partner_bpk_menu
 #: model:ir.ui.menu,name:fso_con_zmr.res_partner_bpk_menu
-#: field:res.company,BPKRequestIDS:0
+#: field:res.company,bpk_request_ids:0
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_form
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
 #: view:res.partner:fso_con_zmr.res_partner_set_bpk_button
-#: field:res.partner,BPKRequestIDS:0
+#: field:res.partner,bpk_request_ids:0
 #: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_search
 #: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_tree
 msgid "BPK Requests"
 msgstr "BPK-Abfragen"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKResponseData:0
+#: field:res.partner.bpk,bpk_response_data:0
 msgid "BPK Response Data"
 msgstr "BPK-Antwort Daten"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKResponseTime:0
+#: field:res.partner.bpk,bpk_response_time:0
 msgid "BPK Response Time"
 msgstr "BPK-Antwort Dauer"
 
@@ -240,57 +240,57 @@ msgstr "BPK full search: Ein Fehler ist aufgetreten bei der Suche nach Organista
 ""
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorCode:0
+#: field:res.partner.bpk,bpk_error_code:0
 msgid "BPK-Error Code"
 msgstr "BPK-Fehler Code"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestBirthdate:0
+#: field:res.partner.bpk,bpk_error_request_birthdate:0
 msgid "BPK-Error Request Birthdate"
 msgstr "BPK-Fehler Geburtsdatum"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestData:0
+#: field:res.partner.bpk,bpk_error_request_data:0
 msgid "BPK-Error Request Data"
 msgstr "BPK-Fehler Anfragedaten"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestDate:0
+#: field:res.partner.bpk,bpk_error_request_date:0
 msgid "BPK-Error Request Date"
 msgstr "BPK-Fehler Datum"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestFirstname:0
+#: field:res.partner.bpk,bpk_error_request_firstname:0
 msgid "BPK-Error Request Firstname"
 msgstr "BPK-Fehler Vorname"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestLastname:0
+#: field:res.partner.bpk,bpk_error_request_lastname:0
 msgid "BPK-Error Request Lastname"
 msgstr "BPK-Fehler Nachanme"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestURL:0
+#: field:res.partner.bpk,bpk_error_request_url:0
 msgid "BPK-Error Request URL"
 msgstr "BPK-Fehler URL"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorRequestZIP:0
+#: field:res.partner.bpk,bpk_error_request_zip:0
 msgid "BPK-Error Request ZIP"
 msgstr "BPK-Fehler Plz."
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorResponseData:0
+#: field:res.partner.bpk,bpk_error_response_data:0
 msgid "BPK-Error Response Data"
 msgstr "BPK-Fehler Antwortdaten"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorResponseTime:0
+#: field:res.partner.bpk,bpk_error_response_time:0
 msgid "BPK-Error Response Time"
 msgstr "BPK-Fehler Antwortdauer"
 
 #. module: fso_con_zmr
-#: field:res.partner.bpk,BPKErrorText:0
+#: field:res.partner.bpk,bpk_error_text:0
 msgid "BPK-Error Text"
 msgstr "BPK-Fehler Text"
 
@@ -424,7 +424,7 @@ msgid "GenericTimeoutError"
 msgstr "GenericTimeoutError"
 
 #. module: fso_con_zmr
-#: field:res.company,BPKRequestURL:0
+#: field:res.company,bpk_request_url:0
 msgid "GetBPK Request URL"
 msgstr "GetBPK-Anfrage URL"
 
@@ -465,8 +465,8 @@ msgid "Invalid BPK-Request Details"
 msgstr "Fehlerhafte BPK-Anfrage Details"
 
 #. module: fso_con_zmr
-#: field:res.partner,LastBPKRequest:0
-#: field:res.partner.bpk,LastBPKRequest:0
+#: field:res.partner,last_bpk_request:0
+#: field:res.partner.bpk,last_bpk_request:0
 msgid "Last BPK Request"
 msgstr "Letzte BPK-Anfrage"
 
@@ -517,7 +517,7 @@ msgid "Lastname is empty after cleanup!"
 msgstr "Nachname ist leer nach der 'cleanup' Funktion!"
 
 #. module: fso_con_zmr
-#: selection:res.company,BPKRequestURL:0
+#: selection:res.company,bpk_request_url:0
 msgid "Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR"
 msgstr "Echtbetrieb: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR"
 
@@ -640,7 +640,7 @@ msgid "Stammzahl e.g.: XZVR-123456789"
 msgstr "Stammzahl e.g.: XZVR-123456789"
 
 #. module: fso_con_zmr
-#: selection:res.company,BPKRequestURL:0
+#: selection:res.company,bpk_request_url:0
 msgid "Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR"
 msgstr "Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR"
 

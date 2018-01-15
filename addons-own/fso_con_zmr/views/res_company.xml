@@ -24,7 +24,7 @@
                         <field name="pvpToken_prvkey_pem_filename" invisible="1"/>
                         <field name="pvpToken_prvkey_pem_path" readonly="True"/>
 
-                        <field name="BPKRequestURL"/>
+                        <field name="bpk_request_url"/>
                     </group>
                     <group col="2" string="BPK-Status-Snippet Messages">
                         <p colspan="2" style="color:grey; font-size:9pt;">

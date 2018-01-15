@@ -61,7 +61,7 @@
 
                 # Find res.partner ids
                 bpk_requests = self.browse(cr, uid, ids, context=context)
-                partner_ids = [r.BPKRequestPartnerID.id for r in bpk_requests if r.BPKRequestPartnerID]
+                partner_ids = [r.bpk_request_partner_id.id for r in bpk_requests if r.bpk_request_partner_id]
 
                 # Run set_bpk() for found partner
                 if partner_ids:

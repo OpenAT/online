@@ -48,10 +48,10 @@ class AuthPartnerForm(http.Controller):
         errors = list()
         countries = None
         states = None
-        bpkfields = {"firstname": "BPKForcedFirstname",
-                     "lastname": "BPKForcedLastname",
-                     "birthdate_web": "BPKForcedBirthdate",
-                     "zip": "BPKForcedZip"}
+        bpkfields = {"firstname": "bpk_forced_firstname",
+                     "lastname": "bpk_forced_lastname",
+                     "birthdate_web": "bpk_forced_birthdate",
+                     "zip": "bpk_forced_zip"}
 
         # Honey Pot Field Test
         if kwargs.get('fs_hpf'):
@@ -211,7 +211,7 @@ class AuthPartnerForm(http.Controller):
                         fields_to_update['fstoken_update_date'] = fields.datetime.now()
 
                     # Update BPKForced... fields instead of the regular fields if already set for the partner
-                    if partner.BPKForcedFirstname or partner.BPKForcedLastname or partner.BPKForcedBirthdate:
+                    if partner.bpk_forced_firstname or partner.bpk_forced_lastname or partner.bpk_forced_birthdate:
                         # Swap firstname, lastname, birthdate_web and zip with the BPKForced... field names
                         for key in bpkfields:
                             if key in fields_to_update:
@@ -236,7 +236,7 @@ class AuthPartnerForm(http.Controller):
         # Add a dict with the partner BPKForced... field values but the regular field keys
         # HINT: This dict takes precedence in the form over the regular partner fields
         partner_bpk = {}
-        if partner and (partner.BPKForcedFirstname or partner.BPKForcedLastname or partner.BPKForcedBirthdate):
+        if partner and (partner.bpk_forced_firstname or partner.bpk_forced_lastname or partner.bpk_forced_birthdate):
             for key in bpkfields:
                 partner_bpk[key] = partner[bpkfields[key]]
 

@@ -20,7 +20,7 @@ class CompanyAustrianZMRSettings(models.Model):
     _inherit = 'res.company'
 
     # FIELDS
-    BPKRequestIDS = fields.One2many(comodel_name="res.partner.bpk", inverse_name="BPKRequestCompanyID",
+    bpk_request_ids = fields.One2many(comodel_name="res.partner.bpk", inverse_name="bpk_request_company_id",
                                     string="BPK Requests")
 
     # Donation Reports
@@ -54,7 +54,7 @@ class CompanyAustrianZMRSettings(models.Model):
     pvpToken_prvkey_pem_path = fields.Char(string="Private Key Path",
                                            compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
     # Get BPK request URLS
-    BPKRequestURL = fields.Selection(selection=[('https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR',
+    bpk_request_url = fields.Selection(selection=[('https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR',
                                                  'Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
                                                 ('https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR',
                                                  'Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR'),
