@@ -47,6 +47,7 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
     'application': True,
     'auto_install': False,
     'depends': [
+        #'crm',
         'fsonline',
     ],
     'data': [

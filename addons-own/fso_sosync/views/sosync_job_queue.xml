@@ -20,9 +20,11 @@
                         <field name="job_source_system"/>
                         <field name="job_source_model"/>
                         <field name="job_source_record_id"/>
+                        <field name="job_source_target_record_id"/>
                         <field name="job_source_sosync_write_date"/>
                         <field name="job_source_type"/>
-                        <field name="job_source_merge_into_id"/>
+                        <field name="job_source_merge_into_record_id"/>
+                        <field name="job_source_target_merge_into_record_id"/>
                     </group>
                     <group string="Submission">
                         <field name="submission"/>
@@ -59,6 +61,7 @@
                 <field name="job_source_system"/>
                 <field name="job_source_model"/>
                 <field name="job_source_record_id"/>
+                <field name="job_source_type"/>
                 <field name="submission_state"/>
             </tree>
         </field>
@@ -76,6 +79,7 @@
                 <field name="job_source_system"/>
                 <field name="job_source_model"/>
                 <field name="job_source_record_id"/>
+                <field name="job_source_type"/>
             </search>
         </field>
     </record>

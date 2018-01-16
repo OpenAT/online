@@ -45,6 +45,9 @@ class ResCompanySosyncSettings(models.Model):
 class SosyncJob(models.Model):
     """
     sosync sync jobs
+
+    A sync job is basically just a signal that a record had some relevant changes. Directions and final sync
+    behaviour is determined by the sync flow!
     """
     _name = 'sosync.job'
 
@@ -63,15 +66,23 @@ class SosyncJob(models.Model):
     job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
     job_source_model = fields.Char(string="Job Source Model", readonly=True)
     job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
+    job_source_target_record_id = fields.Integer(string="Job Source Target Record ID", readonly=True,
+                                                 help="Only filled if the target system id is already available in the "
+                                                      "job source system at job creation time!")   # NEW
     job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
     job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
 
+    # Additional info for merge and delete sync jobs
+    # HINT: It would be best if this information could be retrieved from the job source system by the sync flow
+    #       but for now this is the quicker next-best-alternative
     job_source_type = fields.Selection(string="Job Source Type", selection=[("delete", "Delete"),
                                                                             ("merge_into", "Merge Into")],
                                        help="Job type indicator for special sync jobs. "
                                             "If empty it is processed as a default sync job = 'create' or 'update'",
-                                       readonly=True, default=False)
-    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID", readonly=True)
+                                       readonly=True, default=False)  # NEW
+    job_source_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Record ID", readonly=True)  # NEW
+    job_source_target_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Target Record ID",
+                                                            readonly=True)  # NEW
 
     # SYNCJOB INFO
     job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
@@ -118,12 +129,13 @@ class SosyncJob(models.Model):
     sync_source_system = fields.Selection(selection=_systems, string="Source System", readonly=True)
     sync_source_model = fields.Char(string="Source Model", readonly=True)
     sync_source_record_id = fields.Integer(string="Source Record ID", readonly=True)
+    sync_source_merge_into_record_id = fields.Integer(string="Source Merge-Into Record ID", readonly=True)  # NEW
 
     # SYNCHRONIZATION TARGET
     sync_target_system = fields.Selection(selection=_systems, string="Target System", readonly=True)
     sync_target_model = fields.Char(string="Target Model", readonly=True)
     sync_target_record_id = fields.Integer(string="Target Record ID", readonly=True)
-    sync_target_merge_into_id = fields.Integer(string="Sync Target Merge-Into Target ID")
+    sync_target_merge_into_record_id = fields.Integer(string="Target Merge-Into Record ID", readonly=True)  # NEW
 
     # SYNCHRONIZATION INFO
     sync_source_data = fields.Text(string="Sync Source Data", readonly=True)
@@ -132,8 +144,6 @@ class SosyncJob(models.Model):
     sync_target_request = fields.Text(string="Sync Target Request(s)", readonly=True)
     sync_target_answer = fields.Text(string="Sync Target Answer(s)", readonly=True)
     sync_target_data_after = fields.Text(string="Sync Target Data after", readonly=True) # Not used in odoo
-
-
 
     sync_start = fields.Char(string="Sync Start", readonly=True)
     sync_end = fields.Char(string="Sync End", readonly=True)
@@ -163,8 +173,13 @@ class SosyncJob(models.Model):
 # NEW ODOO MODEL: sosync.job.queue
 class SosyncJobQueue(models.Model):
     """
+    sosync sync jobs queue
+
     This is the queue of jobs that needs to be submitted to the sosyncer.
     Submission is done by a simple REST URL call to the sosyncer
+
+    A sync job is basically just a signal that a record had some relevant changes. Directions and final sync
+    behaviour is determined by the sync flow!
     """
     _name = 'sosync.job.queue'
 
@@ -177,13 +192,21 @@ class SosyncJobQueue(models.Model):
     job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
     job_source_model = fields.Char(string="Job Source Model", readonly=True)
     job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
+    job_source_target_record_id = fields.Integer(string="Job Source Target Record ID", readonly=True,
+                                                 help="Only filled if already available in the job source system at "
+                                                      "job creation time")  # NEW
 
+    # Additional info for merge and delete sync jobs
+    # HINT: It would be best if this information could be retrieved from the job source system by the sync flow
+    #       but for now this is the quicker next-best-alternative
     job_source_type = fields.Selection(string="Job Source Type", selection=[("delete", "Delete"),
                                                                             ("merge_into", "Merge Into")],
                                        help="Job type indicator for special sync jobs. "
                                             "If empty it is processed as a default sync job = 'create' or 'update'",
                                        readonly=True, default=False)
-    job_source_merge_into_id = fields.Integer(string="Job Source Merge-Into Source ID", readonly=True)
+    job_source_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Record ID", readonly=True)
+    job_source_target_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Target Record ID",
+                                                            readonly=True)  # NEW
 
     job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
     job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
@@ -238,11 +261,12 @@ class SosyncJobQueue(models.Model):
                     'job_source_system': record.job_source_system,
                     'job_source_model': record.job_source_model,
                     'job_source_record_id': record.job_source_record_id,
+                    'job_source_target_record_id': record.job_source_target_record_id,
                     'job_source_sosync_write_date': record.job_source_sosync_write_date,
                     'job_source_fields': record.job_source_fields,
-                    #
                     'job_source_type': record.job_source_type,
-                    'job_source_merge_into_id': record.job_source_merge_into_id,
+                    'job_source_merge_into_record_id': record.job_source_merge_into_record_id,
+                    'job_source_target_merge_into_record_id': record.job_source_target_merge_into_record_id,
                     }
             # Convert python dictionary with unicode values to ascii json object with escaped UTF-8 chars
             data_json_ascii = json.dumps(data, ensure_ascii=True)
@@ -392,7 +416,8 @@ class BaseSosync(models.AbstractModel):
         return watched_fields
 
     @api.multi
-    def create_sync_job(self, job_date=None, sosync_write_date=None, job_source_fields=None):
+    def create_sync_job(self, job_date=False, sosync_write_date=False, job_source_fields=False, job_source_type=False,
+                        job_source_merge_into_record_id=False, job_source_target_merge_into_record_id=False):
         # HINT: sosync_write_date may be emtpy for initial sync of records sosync v2 uses write date as a fallback
         # HINT: job_source_fields may be empty by sync job creation in gui
         job_date = job_date or fields.Datetime.now()
@@ -404,8 +429,12 @@ class BaseSosync(models.AbstractModel):
                                     "job_source_system": "fso",
                                     "job_source_model": model,
                                     "job_source_record_id": record.id,
+                                    "job_source_target_record_id": record.sosync_fs_id,
                                     "job_source_sosync_write_date": sosync_write_date,
                                     "job_source_fields": job_source_fields,
+                                    "job_source_type": job_source_type,
+                                    "job_source_merge_into_record_id": job_source_merge_into_record_id,
+                                    "job_source_target_merge_into_record_id": job_source_target_merge_into_record_id,
                                     })
             logger.debug("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
 
@@ -487,11 +516,42 @@ class BaseSosync(models.AbstractModel):
             pass
 
         # Create sync job(s) and set the sosync_write_date
+        # HINT: This is done "before" the actual write because if something goes wrong when trying to create the sync
+        #       job the write to the record should not be done (rollback) because sync job creation is crucial!
         if create_sync_job and watched_fields:
             sosync_write_date = self._sosync_write_date_now()
-            self.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields_json)
+            for record in self:
+                record.create_sync_job(sosync_write_date=sosync_write_date, job_source_fields=watched_fields_json)
             values["sosync_write_date"] = sosync_write_date
 
         # Continue with write method
         return super(BaseSosync, self).write(values, **kwargs)
 
+    @api.multi
+    def unlink(self):
+        # Get create_sync_job from context or set it to True
+        # HINT: create_sync_job is a switch in the context dict to suppress sync job generation
+        #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation!
+        # ATTENTION: "create_sync_job" is set to "True" in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the intended
+        #            and correct behaviour!
+        if not self.env.context:
+            create_sync_job = True
+        else:
+            create_sync_job = self.env.context.get("create_sync_job", True)
+
+        # Make sure sync jobs creation is enabled in the context again
+        # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the
+        #            intended and correct behaviour!
+        if not create_sync_job:
+            self = self.with_context(create_sync_job=True)
+
+        # Create the sync Job
+        if create_sync_job:
+            sosync_write_date = self._sosync_write_date_now()
+            for record in self:
+                record.create_sync_job(sosync_write_date=sosync_write_date, job_source_type="delete")
+
+        # Continue with the unlink method
+        return super(BaseSosync, self).unlink()
