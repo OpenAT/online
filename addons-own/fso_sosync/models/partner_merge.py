@@ -27,9 +27,10 @@ class PartnerMerge(models.Model):
         logger.info("merge_partner: Update reference fields")
         wizard._update_reference_fields(cr, SUPERUSER_ID, partner_to_remove, partner_to_keep, context=context)
 
-        # Update field values (e.g. e-mail)
-        logger.info("merge_partner: Update field values")
-        wizard._update_values(cr, SUPERUSER_ID, partner_to_remove, partner_to_keep, context=context)
+        # Update target partner field values
+        # ATTENTION: DISABLED because the field values will be already corrected in FRST!
+        #logger.info("merge_partner: Update field values")
+        #wizard._update_values(cr, SUPERUSER_ID, partner_to_remove, partner_to_keep, context=context)
 
     @api.model
     def merge_partner(self, partner_to_remove_id=False, partner_to_keep_id=False):
