@@ -37,13 +37,13 @@
                                     <field name="submission_id"/>
                                     <field name="submission_type"/>
                                     <field name="submission_refnr"/>
-                                    <field name="submission_datetime"/>
+                                    <field name="submission_id_datetime"/>
 
                                 </group>
                                 <group>
-                                    <field name="submission_state"/>
-                                    <field name="submission_url"/>
-                                    <field name="submission_fa_dr_type"/>
+                                    <field name="submission_id_state"/>
+                                    <field name="submission_id_url"/>
+                                    <field name="submission_id_fa_dr_type"/>
                                     <field name="submission_firstname"/>
                                     <field name="submission_lastname"/>
                                     <field name="submission_birthdate_web"/>
