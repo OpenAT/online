@@ -30,6 +30,7 @@ class ResPartnerFADonationReport(models.Model):
     state = fields.Selection(string="State", readonly=True, default='new',
                              selection=[('new', 'New'),
                                         ('skipped', 'Skipped'),
+                                        ('disabled', 'Donation Deduction Disabled'),
                                         ('error', 'Error'),
                                         ('submitted', 'Submitted to FinanzOnline'),
                                         ('response_ok', 'Accepted by FinanzOnline'),
@@ -52,8 +53,8 @@ class ResPartnerFADonationReport(models.Model):
     submission_id_url = fields.Char(related="submission_id.submission_url", store=True,  readonly=True)
     submission_id_fa_dr_type = fields.Char(related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
 
-    # Data for submission (normally from Fundraising Studio)
-    # ------------------------------------------------------
+    # Data for submission (normally from Fundraising Studio if not a test environment report)
+    # ---------------------------------------------------------------------------------------
     # ATTENTION: This will determine the submission url!
     submission_env = fields.Selection(string="Environment", selection=[('t', 'Test'), ('p', 'Production')],
                                       required=True, readonly=True, states={'new': [('readonly', False)]})
@@ -83,19 +84,13 @@ class ResPartnerFADonationReport(models.Model):
     #       changed or removed after a donation report was already submitted
     bpk_public_forced = fields.Char(string="Forced Public BPK (vbPK)", readonly=True)
 
-    # BPK request
-    # -----------
-    # ATTENTION: These fields are all set or updated at create or write of the method or at any create, write and
-    #            unlink of an bpk request (res.partner.bpk)
-    # TODO: This should NOT be a computed field but set by bok methods create, write and unlink - this is the only
-    #       reliable way!
-    # TODO: Create an inverse field
-    bpk_id = fields.Many2one(string="Partner/Company BPK", comodel_name='res.partner.bpk', readonly=True)
-    bpk_state = fields.Selection(string="BPK State", readonly=True)
-    bpk_public = fields.Char(string="BPK Public", readonly=True)
-    bpk_private = fields.Char(string="BPK Private", readonly=True)
-
-
+    # # BPK request
+    # # DISABLED because FRST will do the check! and here the submission_bpk_public and submission_bpk_private is enough
+    # # -----------
+    # bpk_id = fields.Many2one(string="Partner/Company BPK", comodel_name='res.partner.bpk', readonly=True)
+    # bpk_state = fields.Selection(string="BPK State", readonly=True)
+    # bpk_public = fields.Char(string="BPK Public", readonly=True)
+    # bpk_private = fields.Char(string="BPK Private", readonly=True)
 
     # Fields computed (or recomputed) just before submission to FinanzOnline
     # ----------------------------------------------------------------------
@@ -130,10 +125,11 @@ class ResPartnerFADonationReport(models.Model):
     # Error
     # -----
     error_type = fields.Selection(string="Error Type", readonly=True,
-                                  selection=[('bpk_missing', 'BPK Missing'),
+                                  selection=[('bpk_pending', 'BPK Request Pending'),
+                                             ('bpk_missing', 'BPK Not Found'),
                                              ('bpk_not_unique', 'BPK Not Unique'),     # multiple partners with same bpk
                                              ('data_incomplete', 'Data Incomplete'),   # should never happen!
-                                             ('response_error', 'Error from FinanzOnline')])
+                                             ])
     error_code = fields.Char(string="Error Code", redonly=True)
     error_detail = fields.Text(string="Error Detail", readonly=True)
 
@@ -189,24 +185,8 @@ class ResPartnerFADonationReport(models.Model):
                                             "Please check ze_datum_von and ze_datum_bis."
                                             "") % (r.ze_datum_von, r.ze_datum_bis, r.meldungs_jahr))
 
-    # TODO: check if api.constrains also fires on xmlrpc calls
-    @api.constrains('submission_id', 'bpk_public')
-    def _check_donation_report_submission_link(self):
-        for r in self:
-
-            # Unlink from donation report submission if the bpk was not found
-            # TODO: Check if write works here?!?
-            if not r.bpk_public and r.submission_id and r.state in ('new',):
-                r.write({'submission_id': False})
-
-            if r.submission_id:
-                if r.state not in ('new',):
-                    raise ValidationError(_("You can not change the donation report submission in state %s!") % r.state)
-                if not r.bpk_public:
-                    raise ValidationError(_("You can not link to a donation report submission without a public BPK!"))
-            if not r.submission_id and r.state not in ('new',):
-                raise ValidationError(_("You can not unlink from the donation report submission in state %s!"
-                                        "") % r.state)
+    # TODO: Add various api constrains e.g.: for mandatory fields or that fields can not be changed in certain states
+    # TODO: Add an api constrain that the environment is not allowed to change
 
     @api.onchange('meldungs_jahr')
     def _oc_meldungs_jahr(self):
@@ -233,95 +213,178 @@ class ResPartnerFADonationReport(models.Model):
         This will find all donation reports with the same bpk_private but with a different partner (duplicates)
         :return: recordset
         """
-        assert self.ensure_one(), _("_same_bpk_different_partner() works only for one record!")
+        assert self.ensure_one(), _("_same_bpk_different_partner() works only for one record at a time!")
         if not self.bpk_private:
             return self.env['res.partner.donation_report']
         # Find donation reports with the same bpk and company but with a different partner
         duplicates = self.sudo().search([('bpk_private', '=', self.bpk_private),
                                          ('bpk_request_company_id', '=', self.bpk_company_id),
-                                         ('bpk_request_partner_id', '!=', self.partner_id)])
+                                         ('bpk_request_partner_id', '!=', self.partner_id)],
+                                         ('bpk_public_forced', '=', self.bpk_public_forced))
         return duplicates
 
-    # TODO: run the 'write' method of donation reports also when the bpk method 'create' or 'write' is called so that
-    #       BPK updates will update donation reports also!
+    def _changes_allowed_states(self):
+        return 'new', 'disabled', 'error'
+
+    def _mandatory_submission_fields(self):
+        mandatory_submission_fields = ('submission_type', 'submission_refnr',
+                                       'submission_firstname', 'submission_lastname', 'submission_birthdate_web')
+        return mandatory_submission_fields
+
     @api.multi
-    def compute_bpk_fields(self):
+    def skip_older_unsubmitted_reports(self):
         for report in self:
-            # FIND the related bpk(s)
+            # Search for unsubmitted donation reports that are created before this report
+            older_reports = report.sudo().search([('bpk_company_id', '=', self.bpk_company_id),
+                                                  ('partner_id', '=', self.partner_id),
+                                                  ('meldungs_jahr', '=', self.meldungs_jahr),
+                                                  ('bpk_public_forced', '=', self.bpk_public_forced),
+                                                  ('state', 'in', self._changes_allowed_states()),
+                                                  ('anlage_am_um', '<', self.anlage_am_um)])
+            # Skip older reports and unlink them from any donation_report.submission
+            # HINT: we are already the superuser in this environment
+            older_reports.write({'state': 'skipped', 'skipped_by_id': report.id, 'submission_id': False,
+                                 'error_type': False, 'error_code': False, 'error_detail': False})
+
+    def update_state_and_submission_information(self):
+        for r in self:
+            # Skipp older reports
+            # TODO: correct domain for bpk_public_forced see below :)
+            r.skip_older_unsubmitted_reports()
+
+            # Ignore submitted and skipped donation reports
+            # ATTENTION: They must stay unchanged! (TODO: Add an api.constraint)
+            if r.state not in self._changes_allowed_states():
+                continue
+
+            # Check the BPK
+            submission_bpk_public = False
+            submission_bpk_private = False
+
+            # Donation Deduction is disabled
+            if r.partner_id.bpk_state == 'disabled':
+                r.write({'state': 'disabled', 'skipped_by_id': False, 'submission_id': False,
+                         'error_type': False, 'error_code': False, 'error_detail': False})
+                continue
+            # BPK request pending
+            if r.partner_id.bpk_state == 'pending':
+                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
+                         'error_type': 'bpk_pending', 'error_code': False, 'error_detail': False})
+                continue
+            # BPK NOT found
+            if r.partner_id.bpk_state != 'found':
+                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
+                         'error_type': 'bpk_missing', 'error_code': False, 'error_detail': False})
+                continue
+
+            # Find the related BPK request
             bpk = self.env['res.partner.bpk']
+            bpk = bpk.sudo().search([('bpk_request_partner_id', '=', r.partner_id),
+                                     ('bpk_request_company_id', '=', r.bpk_company_id)])
+            if len(bpk) == 1:
+                submission_bpk_public = bpk.bpk_public
+                submission_bpk_private = bpk.bpk_private
+            else:
+                logger.error('update_state_and_submission_information(): BPK not found but expected! '
+                             'Partner %s (ID %s) Donation Report ID: %s' % (r.partner_id.name, r.partner_id.id, r.id))
+                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
+                         'error_type': 'bpk_missing', 'error_code': False,
+                         'error_detail': "BPK not found or multiple found! (Number of BPK found: %s)" % len(bpk)})
+                continue
 
-            # Search for a bpk request with this partner and company
-            if report.partner_id and report.bpk_company_id:
-                bpk = bpk.sudo().search([('bpk_request_partner_id', '=', report.partner_id),
-                                         ('bpk_request_company_id', '=', report.bpk_company_id)])
+            # Check if there are any other reports with the same bpk but a different partner
+            # ATTENTION: Such partners must be merged before the donation report can be submitted
+            if r.bpk_public_forced or submission_bpk_private:
+                domain = [('bpk_request_company_id', '=', r.bpk_company_id),
+                          ('bpk_request_partner_id', '!=', r.partner_id)]
+                if r.bpk_public_forced:
+                    domain.append(('bpk_public_forced', '=', r.bpk_public_forced))
+                else:
+                    domain.append(('submission_bpk_public', '=', submission_bpk_public))
+                # Search for donation reports with different partner but the same BPK number
+                r_same_bpk = r.sudo().search(domain)
+                if r_same_bpk:
+                    error_detail = _("Reports found with the same BPK but a different Partner:\n"
+                                     "%s") % "\n".join("Report ID: "+str(rep.id) for rep in (r | r_same_bpk))
+                    rvals = {'state': 'error', 'skipped_by_id': False, 'submission_id': False,
+                             'error_type': 'bpk_not_unique', 'error_code': False, 'error_detail': error_detail}
+                    r.write(rvals)
+                    for report_same_bpk in r_same_bpk:
+                        if report_same_bpk.state in self._changes_allowed_states():
+                            report_same_bpk.write(rvals)
+                    continue
 
-            # Update the bpk_id fields
-            if not bpk:
-                report.write({'bpk_id': False, 'bpk_state': False, 'bpk_public': False, 'bpk_private': False})
-            elif len(bpk) == 1:
-                report.write({'bpk_id': bpk.id, 'bpk_state': bpk.state,
-                              'bpk_public': bpk.bpk_public, 'bpk_private': bpk.bpk_private})
-            elif len(bpk) > 1:
-                report.write({'bpk_id': False, 'bpk_state': False, 'bpk_public': False, 'bpk_private': False})
-                raise ValidationError(_("More than one BPK found for partner %s (ID %s) and company %s (ID %s)!")
-                                      % (report.partner_id.name, report.partner_id.id,
-                                         report.bpk_company_id.name, report.bpk_company_id.id))
+            # TODO: Compute and update the submission values
+            subm_vals = {
+                'submission_type': False,
+                'submission_refnr': False,
+                'report_erstmeldung_id': False,
+                #
+                'submission_firstname': False,
+                'submission_lastname': False,
+                'submission_birthdate_web': False,
+                'submission_zip': False,
+                'submission_bpk_public': False if r.bpk_public_forced else submission_bpk_public,
+                'submission_bpk_private': False if r.bpk_public_forced else submission_bpk_private,
+                'submission_sosync_fs_id': False,
+            }
+
+            # Check if all needed values are available
+            mandatory_submission_fields = ('submission_type', 'submission_refnr',
+                                           'submission_firstname', 'submission_lastname', 'submission_birthdate_web')
+            if not r.bpk_public_forced:
+                mandatory_submission_fields = mandatory_submission_fields + ('submission_bpk_public',
+                                                                             'submission_bpk_private')
+            missing_fields = (field for field in mandatory_submission_fields if not subm_vals[field])
+            if missing_fields:
+                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
+                         'error_type': 'data_incomplete', 'error_code': False,
+                         'error_detail': 'Missing Fields: %s' % str(missing_fields)})
+                continue
+
+            # Update the donation report with the computed values
+            values = {'state': 'new', 'skipped_by_id': False, 'submission_id': r.submission_id,
+                      'error_type': False, 'error_code': False, 'error_detail': False}
+            values.append(subm_vals)
+            r.write(values)
+            continue
+
 
     @api.model
     def create(self, vals):
-        # CHECK mandatory fields
-        missing_fields = self._check_mandatory_fields(values=vals)
-        if missing_fields:
-            raise ValidationError(_("Mandatory donation report field(s) %s missing!") % str(missing_fields))
-
-        # Create the donation report in the current environment (memory only right now)
+        # Create the donation report in the current environment (=memory only right now)
         # ATTENTION: 'self' is still empty but the record 'exits' in the 'res' recordset already so every change
         #            or method call must be done to res and not to self
-        # Other stuff done ba the in memory creation
-        #     - Values validation (through API constrains above)
-        #     - bpk_id computed (and other computed fields)
+        # Other stuff done by the in memory creation:
+        #     - api.constrain(s) = Values validation
         res = super(ResPartnerFADonationReport, self).create(vals)
 
-        # TODO: CHECK if the report can be skipped or if other reports can be skipped
-        # TODO: We should also unlink reports skipped or with errors from any submission
+        # Compute the state and update the submission values if state is not 'disabled' or 'error'
+        res.update_state_and_submission_information()
 
-        # Update the BPK fields
-        res.compute_bpk_fields()
-
-        # Check if there are any report(s) with the same BPK but a different partner
-        # HINT: Must be done after compute_bpk_fields()
-        reports_with_same_bpk = res._same_bpk_different_partner()
-        if reports_with_same_bpk:
-            vls = {'state': 'error', 'error_type': 'bpk_not_unique', 'error_code': False,
-                   'error_detail': 'Reports with the same private BPK but different Partners:\n%s' %
-                                   "\n".join("Report ID: "+str(r.id) for r in reports_with_same_bpk)}
-            # TODO: Update all reports_with_same_bpk which are not in state 'submitted' or later
-            # Update the current report
-            res.write(vls)
-            # End processing
-            return res
-
-        # TODO: COMPUTE submission fields (e.g.: 'submission_type', 'submission_refnr', ...)
-
-        # TODO: Unlink donation reports from submissions if the state is error or skipped
-
-        # return the record (create it in db)
+        # Return the record (create it in db)
         return res
 
+    @api.multi
+    def write(self, vals):
+        for r in self:
+            # Prevent an environment change after the donation got created
+            if 'submission_env' in vals and vals['submission_env'] != r.submission_env:
+                raise ValidationError(_("You can not change the environment once the donation report got created!"))
 
+        # ATTENTION: !!! After this 'self' is changed (in memory i guess) 'res' is only a boolean !!!
+        res = super(ResPartnerFADonationReport, self).write(vals)
 
+        # Compute the state and update the submission values if state is not 'disabled' or 'error'
+        self.update_state_and_submission_information()
 
-    # TODO: OTHER BASIC METHODS
-    # @api.multi
-    # def write(self, vals):
-    #     for r in self:
-    #         # TODO: do the same as in create
-    #
-    # @api.multi
-    # def unlink(self):
-    #     for r in self:
-    #         # TODO: Prevent the unlink of a report if linked to a submission in submitted state
-    #
-    #
-    # # TODO: IMPORTANT: If a BPK of a partner changes donation reports in state submitted or in state error with any
-    # #                  other error type than response_error must be flagged with bpk_changed_after_submission
+        # Return the recordset
+        return res
+
+    @api.multi
+    def unlink(self):
+        for r in self:
+            if r.state not in self._changes_allowed_states():
+                raise ValidationError(_("Deletion of a donation report is only allowed in the states "
+                                        "%s") % self._changes_allowed_states())
+        return super(ResPartnerFADonationReport, self).unlink()
