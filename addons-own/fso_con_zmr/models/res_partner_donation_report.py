@@ -117,9 +117,6 @@ class ResPartnerFADonationReport(models.Model):
     submission_bpk_public = fields.Char(string="Public BPK (vbPK)", readonly=True)
     submission_bpk_private = fields.Char(string="Private BPK", readonly=True)
 
-    # HINT: This field may not be available if the addon fs_sosync is not installed
-    submission_sosync_fs_id = fields.Char(string="Fundraising Studio ID", readonly=True)
-
     # FinanzOnline XML Response
     # HINT: response_content will only hold the xml snippets related to this donation report based on submission_refnr
     response_content = fields.Text(string="Response Content", readonly=True)
