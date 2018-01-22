@@ -79,11 +79,13 @@ class ResPartnerFADonationReport(models.Model):
     betrag = fields.Float(string="Donation Report Total (Betrag)", required=True,
                           readonly=True, states={'new': [('readonly', False)]})
 
-    # FORCE the public bpk:
-    # HINT: This must be set by FRST when it creates a cancellation donation report for a partner where the bpk has
-    #       changed or removed after a donation report was already submitted so that the cancelation donation report
-    #       can be matched to the correct submission_refnr
-    bpk_public_forced = fields.Char(string="Forced Public BPK (vbPK)", readonly=True)
+    # HINT: Set by FRST when it creates a cancellation donation report because:
+    #           - The BPK of the related partner has changed and a donation report for the old BPK number was already
+    #             submitted
+    #           - Donation deduction is disabled for the partner after a donation report was already submitted
+    cancellation_for_bpk_private = fields.Char(string="Cancellation for Private BPK", readonly=True,
+                                               help="Cancellation donation report for last submitted donation report "
+                                                    "with this private BPK number")
 
     # # BPK request
     # # DISABLED because FRST will do the check! and here the submission_bpk_public and submission_bpk_private is enough
@@ -219,14 +221,16 @@ class ResPartnerFADonationReport(models.Model):
         return 'new', 'disabled', 'error'
 
     def _changes_allowed_fields_after_submission(self):
-        f = ('state', 'info', 'submission_id_state', 'submission_id_datetime', 'submission_id_url',
-             'submission_id_fa_dr_type', 'response_content', 'response_error_code', 'response_error_detail')
+        f = ('state',
+             'info',
+             'submission_id_state',
+             'submission_id_datetime',
+             'submission_id_url',
+             'submission_id_fa_dr_type',
+             'response_content',
+             'response_error_code',
+             'response_error_detail')
         return f
-
-    def _mandatory_basic_fields(self):
-        mandatory_basic_fields = ('submission_env', 'partner_id', 'bpk_company_id', 'anlage_am_um', 'ze_datum_von',
-                                  'ze_datum_bis', 'meldungs_jahr', 'betrag', 'bpk_public_forced')
-        return mandatory_basic_fields
 
     @api.multi
     def skip_older_unsubmitted_reports(self):
@@ -236,13 +240,35 @@ class ResPartnerFADonationReport(models.Model):
                                              ('bpk_company_id', '=', r.bpk_company_id),
                                              ('partner_id', '=', r.partner_id),
                                              ('meldungs_jahr', '=', r.meldungs_jahr),
-                                             ('bpk_public_forced', '=', r.bpk_public_forced),
+                                             ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
                                              ('state', 'in', r._changes_allowed_states()),
                                              ('anlage_am_um', '<', r.anlage_am_um)])
             # Skip older reports and unlink them from any donation_report.submission
             # HINT: We are already the superuser in this environment
             older_reports.write({'state': 'skipped', 'skipped_by_id': r.id, 'submission_id': False,
                                  'error_type': False, 'error_code': False, 'error_detail': False})
+
+    @api.multi
+    def _submission_bpk_private(self):
+        assert self.ensure_one(), _("_submission_bpk_private() works only for one record at a time!")
+
+        # Get the private BPK from the cancellation_for_bpk_private field first
+        if self.cancellation_for_bpk_private:
+            return self.cancellation_for_bpk_private
+
+        # Get it from the donation report if set
+        # TODO: Maybe this needs to be disabled ?!?
+        # if self.submission_bpk_private:
+        #     return self.submission_bpk_private
+
+        # Get it from the currently related bpk record
+        bpk = self._get_bpk()
+        if bpk:
+            return bpk.bpk_private
+
+        # Nothing found so we return False
+        return False
+
 
     # ATTENTION: Will throw an exception if the found report is the same than 'self'
     @api.multi
@@ -252,7 +278,7 @@ class ResPartnerFADonationReport(models.Model):
                                   ('bpk_company_id', '=', self.bpk_company_id),
                                   ('partner_id', '=', self.partner_id),
                                   ('meldungs_jahr', '=', self.meldungs_jahr),
-                                  ('bpk_public_forced', '=', self.bpk_public_forced),
+                                  ('submission_bpk_private', '=', self._submission_bpk_private()),
                                   ('state', 'not in', ['new', 'skipped', 'disabled', 'error'])],
                                  order="anlage_am_um DESC", limit=1)
         if lsr:
@@ -275,7 +301,7 @@ class ResPartnerFADonationReport(models.Model):
                                            self.bpk_company_id.name, self.bpk_company_id.id,
                                            " ".join(b.id for b in bpk))
 
-        # Return the bpk request record or an empty record set
+        # Returns either an empty record set or an record set with one record in it
         return bpk
 
     @api.multi
@@ -284,7 +310,7 @@ class ResPartnerFADonationReport(models.Model):
         # Cancellation donation report
         # HINT: Since only FSON can submit donation reports FSON must have the last submitted report no matter
         #       if other reports are already be synced or not. Therefore we can compute the submission_type in
-        # FSON.
+        #       FSON.
         if self.betrag <= 0:
             lsr = self._last_submitted_report()
             assert lsr, _("No submitted donation report found for this cancellation donation report "
@@ -297,7 +323,7 @@ class ResPartnerFADonationReport(models.Model):
         return 'A' if lsr else 'E'
 
     @api.multi
-    def compute_submission_refnr(self, bpk_request_id=False):
+    def compute_submission_refnr(self, submission_bpk_private=False):
         assert self.ensure_one(), _("compute_submission_refnr() works only for one record at a time!")
         # Cancellation donation report
         # ----------------------------
@@ -306,8 +332,8 @@ class ResPartnerFADonationReport(models.Model):
         #       if other reports are already synced or not. Therefore we can compute the last submission_refnr in FSON.
         # HINT: refnr example: 2017KK222111000-2111000
         if self.betrag <= 0:
-            # HINT: _last_submitted_report() takes into account the 'bpk_public_forced' field. So it will return the
-            #       last donation report based on the correct field.
+            # HINT: _last_submitted_report() takes into account the 'cancellation_for_bpk_private' field.
+            #       So it will return the last donation report based on the correct field.
             lsr = self._last_submitted_report()
             assert lsr, _("No submitted donation report found for this cancellation donation report "
                           "(ID %s)!") % self.id
@@ -333,13 +359,16 @@ class ResPartnerFADonationReport(models.Model):
         return refnr
 
     @api.multi
-    def compute_report_erstmeldung_id(self):
+    def compute_report_erstmeldung_id(self, submission_bpk_private=False):
         assert self.ensure_one(), _("compute_report_erstmeldung_id() works only for one record at a time!")
+        submission_bpk_private = (submission_bpk_private or
+                                  self.cancellation_for_bpk_private or
+                                  self.submission_bpk_private)
         erstmeldung = self.sudo().search([('submission_env', '=', self.submission_env),
                                           ('partner_id', '=', self.partner_id),
                                           ('bpk_company_id', '=', self.bpk_company_id),
                                           ('meldungs_jahr', '=', self.meldungs_jahr),
-                                          ('bpk_public_forced', '=', self.bpk_public_forced),
+                                          ('submission_bpk_private', '=', self._submission_bpk_private()),
                                           ('submission_type', '=', 'E')])
         if erstmeldung:
             assert len(erstmeldung) == 1, _("More than one Erstmeldung found for donation report %s !") % self.id
@@ -362,7 +391,7 @@ class ResPartnerFADonationReport(models.Model):
                                      ('partner_id', '=', r.partner_id),
                                      ('bpk_company_id', '=', r.bpk_company_id),
                                      ('meldungs_jahr', '=', r.meldungs_jahr),
-                                     ('bpk_public_forced', '=', r.bpk_public_forced),
+                                     ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
                                      ('anlage_am_um', '>', r.anlage_am_um)],
                                     order="anlage_am_um DESC", limit="1")
             if newer:
@@ -372,7 +401,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # Check the BPK
             # -------------
-            # Donation Deduction is disabled
+            # Donation deduction is disabled
             if r.partner_id.bpk_state == 'disabled':
                 r.write({'state': 'disabled', 'skipped_by_id': False, 'submission_id': False,
                          'error_type': False, 'error_code': False, 'error_detail': False})
@@ -402,12 +431,12 @@ class ResPartnerFADonationReport(models.Model):
             # ------------------------------------------------------------------------------
             # ATTENTION: Such partners must be merged before the donation report can be submitted
             # HINT: It is ok if there are donation reports for the same partner with different bpk numbers
-            if r.bpk_public_forced or bpk.bpk_private:
+            if r.cancellation_for_bpk_private or bpk.bpk_private:
                 # Build the search domain (same company but different partners)
                 domain = [('bpk_request_company_id', '=', r.bpk_company_id),
                           ('bpk_request_partner_id', '!=', r.partner_id)]
-                if r.bpk_public_forced:
-                    domain.append(('bpk_public_forced', '=', r.bpk_public_forced))
+                if r.cancellation_for_bpk_private:
+                    domain.append(('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private))
                 else:
                     domain.append(('submission_bpk_public', '=', bpk.bpk_public))
 
@@ -430,34 +459,38 @@ class ResPartnerFADonationReport(models.Model):
 
             # Compute the submission values
             # -----------------------------
-            # HINT: If bpk_public_forced is set we need the values from the related bpk request
+            # HINT: If cancellation_for_bpk_private is set we need the values from the related bpk request
             subm_vals = {
                 'submission_type': r.compute_submission_type(),
                 'submission_refnr': r.compute_submission_refnr(),
                 'report_erstmeldung_id': r.compute_report_erstmeldung_id(),
                 #
-                'submission_firstname': False if r.bpk_public_forced else bpk.bpk_request_firstname,
-                'submission_lastname': False if r.bpk_public_forced else bpk.bpk_request_lastname,
-                'submission_birthdate_web': False if r.bpk_public_forced else bpk.bpk_request_birthdate,
-                'submission_zip': False if r.bpk_public_forced else bpk.bpk_request_zip,
+                'submission_firstname': False if r.cancellation_for_bpk_private else bpk.bpk_request_firstname,
+                'submission_lastname': False if r.cancellation_for_bpk_private else bpk.bpk_request_lastname,
+                'submission_birthdate_web': False if r.cancellation_for_bpk_private else bpk.bpk_request_birthdate,
+                'submission_zip': False if r.cancellation_for_bpk_private else bpk.bpk_request_zip,
                 #
-                'submission_bpk_request_id': False if r.bpk_public_forced else bpk.id,
-                'submission_bpk_public': False if r.bpk_public_forced else bpk.bpk_public,
-                'submission_bpk_private': False if r.bpk_public_forced else bpk.bpk_private,
+                'submission_bpk_request_id': False if r.cancellation_for_bpk_private else bpk.id,
+                'submission_bpk_public': False if r.cancellation_for_bpk_private else bpk.bpk_public,
+                'submission_bpk_private': r.cancellation_for_bpk_private or bpk.bpk_private,
+                #
                 # TODO: start the debugger and see if field names are in _fields :)
                 #'submission_sosync_fs_id': r.sosync_fs_id if 'sosync_fs_id' in r._fields else False,
             }
 
             # Check if all needed values are available
             # ----------------------------------------
-            mandatory_submission_fields = ('submission_type', 'submission_refnr',
-                                           'submission_firstname', 'submission_lastname', 'submission_birthdate_web')
-            if r.bpk_public_forced:
-                mandatory_submission_fields = mandatory_submission_fields + ('bpk_public_forced',)
+            if r.cancellation_for_bpk_private:
+                mandatory_submission_fields = ('submission_type', 'submission_refnr', 'cancellation_for_bpk_private')
             else:
-                mandatory_submission_fields = mandatory_submission_fields + ('submission_bpk_request_id',
-                                                                             'submission_bpk_public',
-                                                                             'submission_bpk_private')
+                mandatory_submission_fields = ('submission_type',
+                                               'submission_refnr',
+                                               'submission_firstname',
+                                               'submission_lastname',
+                                               'submission_birthdate_web',
+                                               'submission_bpk_request_id',
+                                               'submission_bpk_public',
+                                               'submission_bpk_private')
             missing_fields = (field for field in mandatory_submission_fields if not subm_vals[field])
             if missing_fields:
                 r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
@@ -485,7 +518,8 @@ class ResPartnerFADonationReport(models.Model):
         #     - api.constrain(s) = Values validation
         res = super(ResPartnerFADonationReport, self).create(vals)
 
-        # Compute the state and update the submission values if state is not 'disabled' or 'error'
+        # Compute the state
+        # HINT: Will also compute and write the submission values if state is not 'skipped', 'disabled' or 'error'
         res.update_state_and_submission_information()
 
         # Return the record (create it in db)
@@ -508,8 +542,10 @@ class ResPartnerFADonationReport(models.Model):
         # ATTENTION: After this 'self' is changed in memory and 'res' is only a boolean !
         res = super(ResPartnerFADonationReport, self).write(vals)
 
-        # Compute the state and update the submission values if state is in self._changes_allowed_states()
-        self.update_state_and_submission_information()
+        # Compute the state
+        # HINT: Will also compute and write the submission values if in unsubmitted states
+        if 'state' not in vals:
+            self.update_state_and_submission_information()
 
         # Return the recordset
         return res
