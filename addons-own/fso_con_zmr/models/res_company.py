@@ -19,14 +19,15 @@ logger = logging.getLogger(__name__)
 class CompanyAustrianZMRSettings(models.Model):
     _inherit = 'res.company'
 
+    # ------
     # FIELDS
-    bpk_request_ids = fields.One2many(comodel_name="res.partner.bpk", inverse_name="bpk_request_company_id",
-                                    string="BPK Requests")
+    # ------
+    bpk_request_ids = fields.One2many(string="BPK Requests",
+                                      comodel_name="res.partner.bpk", inverse_name="bpk_request_company_id")
 
     # Donation Reports
-    #donation_report_ids = fields.One2many(comodel_name="res.partner.donation_report",
-    #                                      inverse_name="bpk_company_id",
-    #                                      string="Donation Reports", readonly=True)
+    donation_report_ids = fields.One2many(string="Donation Reports", readonly=True,
+                                          comodel_name="res.partner.donation_report", inverse_name="bpk_company_id")
 
     # Donation Report Submissions
     #donation_report_submission_ids = fields.One2many(comodel_name="res.partner.donation_report.submission",

@@ -35,7 +35,7 @@
                         <page string="Submission">
                             <group>
                                 <group>
-                                    <field name="submission_id_datetime"/>
+                                    <field name="submission_datetime"/>
                                     <field name="submission_url"/>
                                     <field name="submission_fa_dr_type"/>
                                 </group>
@@ -72,12 +72,12 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Donation Report Submissions"
-                  default_order="submission_id_datetime DESC, write_date DESC"
+                  default_order="submission_datetime DESC, write_date DESC"
                   colors="red: state == 'error';grey: state == 'skipped';green: state == 'submitted';blue: state == 'prepared';">
                 <field name="submission_env"/>
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>
-                <field name="submission_id_datetime"/>
+                <field name="submission_datetime"/>
                 <field name="donation_report_ids" invisible="1"/>
                 <field name="state"/>
             </tree>
@@ -94,7 +94,7 @@
                 <field name="donation_report_ids"/>
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>
-                <field name="submission_id_datetime"/>
+                <field name="submission_datetime"/>
                 <field name="state"/>
             </search>
         </field>

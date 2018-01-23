@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report.submission'
-    _order = 'submission_id_datetime DESC'
+    _order = 'submission_datetime DESC'
 
     # ------
     # FIELDS
@@ -49,7 +49,7 @@ class ResPartnerFADonationReport(models.Model):
     #       the donation report submission
     submission_content = fields.Text(string="Submission Content", readonly=True)
 
-    submission_id_datetime = fields.Datetime(string="Submission Date", readonly=True)
+    submission_datetime = fields.Datetime(string="Submission Date", readonly=True)
     submission_url = fields.Char(string="Submission URL", readonly=True)
 
     # This is set by the company from the field res.company > "fa_dr_type"
@@ -78,7 +78,7 @@ class ResPartnerFADonationReport(models.Model):
     # Response
     # --------
     response_http_code = fields.Char(string="Response HTTP Code")
-    response_content = fields.Text(string="Response Content", readonly=True)
+    response_content = fields.Text(string="Response Content (raw)", readonly=True)
     response_time = fields.Float(string="Response Time (ms)", readonly=True)
 
     # TODO: Response XML File from FinanzOnline Data Box or from response_content if it is in there?!?

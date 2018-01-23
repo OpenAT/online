@@ -10,60 +10,75 @@
 
             <form string="Donation Report">
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="new,prepared,submitted"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,response_ok"/>
                 </header>
                 <sheet>
+
                     <group>
                         <group>
-                            <field name="submission_env" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="partner_id" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="bpk_company_id" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="meldungs_jahr" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="betrag" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                            <field name="submission_env"/>
+                            <field name="partner_id"/>
+                            <field name="bpk_company_id"/>
+                            <field name="meldungs_jahr"/>
+                            <field name="betrag"/>
+                            <field name="cancellation_for_bpk_private"/>
                         </group>
                         <group>
-                            <field name="anlage_am_um" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="ze_datum_von" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="ze_datum_bis" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                            <field name="anlage_am_um"/>
+                            <field name="ze_datum_von"/>
+                            <field name="ze_datum_bis"/>
                             <field name="report_erstmeldung_id"/>
                             <field name="skipped_by_id"/>
+                            <field name="info" attrs="{'invisible':[('info','=',False)]}"/>
+                        </group>
+                    </group>
+
+                    <group attrs="{'invisible':[('state','not in',['error',])]}">
+                        <group>
+                            <field name="error_type"/>
+                            <field name="error_code"/>
+                        </group>
+                        <group>
+                            <field name="error_detail"/>
                         </group>
                     </group>
 
                     <notebook>
+
                         <page string="Submission">
                             <group>
                                 <group>
-                                    <field name="submission_id"/>
                                     <field name="submission_type"/>
                                     <field name="submission_refnr"/>
-                                    <field name="submission_id_datetime"/>
-
-                                </group>
-                                <group>
-                                    <field name="submission_id_state"/>
-                                    <field name="submission_id_url"/>
-                                    <field name="submission_id_fa_dr_type"/>
+                                    <field name="submission_bpk_request_id"/>
+                                    <field name="submission_bpk_public"/>
+                                    <field name="submission_bpk_private"/>
                                     <field name="submission_firstname"/>
                                     <field name="submission_lastname"/>
                                     <field name="submission_birthdate_web"/>
                                     <field name="submission_zip"/>
-                                    <field name="submission_bpk_public"/>
+                                </group>
+                                <group>
+                                    <field name="submission_id"/>
+                                    <field name="submission_id_state"/>
+                                    <field name="submission_id_url"/>
+                                    <field name="submission_id_fa_dr_type"/>
+                                    <field name="submission_id_datetime"/>
                                 </group>
                             </group>
                         </page>
+
                         <page string="Response">
-                            <group>
-                                <field name="error"/>
-                                <field name="error_code"/>
-                                <field name="error_detail"/>
-                                <field name="response_content"/>
-                            </group>
+                            <field name="response_error_code"/>
+                            <field name="response_error_detail"/>
+                            <field name="response_content"/>
                         </page>
-                        <page string="Follow-Ups / Skipped Reports">
+
+                        <page string="Follow Up / Skipped">
                             <field name="report_follow_up_ids"/>
                             <field name="skipped"/>
                         </page>
+
                         <page string="System">
                             <group>
                                 <field name="id" readonly="True"/>
@@ -80,14 +95,16 @@
         </field>
     </record>
 
-
     <record model="ir.ui.view" id="res_partner_donation_report_tree">
         <field name="name">res_partner_donation_report_tree</field>
         <field name="model">res.partner.donation_report</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Donation Reports"
-                  colors="red: state == 'error';grey: state == 'skipped';green: state == 'submitted';blue: state == 'prepared';">
+                  colors="red: state in ['error', 'response_nok', 'unexpected_response'];
+                          orange: state =='submitted';
+                          grey: state in ['skipped', 'disabled'];
+                          green: state == 'response_ok';">
                 <field name="submission_env"/>
                 <field name="partner_id"/>
                 <field name="bpk_company_id"/>
@@ -97,7 +114,6 @@
             </tree>
         </field>
     </record>
-
 
     <record model="ir.ui.view" id="res_partner_donation_report_search">
         <field name="name">res_partner_donation_report_search</field>
@@ -111,11 +127,12 @@
                 <field name="meldungs_jahr"/>
                 <field name="betrag"/>
                 <field name="anlage_am_um"/>
-                <field name="error"/>
+                <field name="error_type"/>
                 <field name="error_code"/>
             </search>
         </field>
     </record>
+
     <!-- Now we create actions for the new views -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->

@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 # Austrian Finanzamt Donation Reports (Spendenberichte pro Person fuer ein Jarh)
-# HINT: FA Donation Report = Spendenreport fuer das Finanzamt Oesterreich
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report'
     _order = 'anlage_am_um DESC'
@@ -27,6 +26,7 @@ class ResPartnerFADonationReport(models.Model):
     # FIELDS
     # ------
     # HINT: 'fields' can only be changed in FS-Online in state 'new'
+    # ATTENTION: The 'error' state is only for errors prior to any submission!!! e.g.: bpk_missing
     state = fields.Selection(string="State", readonly=True, default='new',
                              selection=[('new', 'New'),
                                         ('skipped', 'Skipped'),
@@ -37,34 +37,46 @@ class ResPartnerFADonationReport(models.Model):
                                         ('response_nok', 'Rejected by FinanzOnline'),
                                         ('unexpected_response', 'Unexpected Response')])
 
-    # Generic Field for extra Information like
-    info = fields.Text(string="Info", readonly=True)
+    # Error before submission
+    # -----------------------
+    # HINT: These fields can only be filled prior to submission because only donation reports without an error
+    #       will be submitted. For response errors the fields response_error_* are used!
+    error_type = fields.Selection(string="Error Type", readonly=True,
+                                  selection=[('bpk_pending', 'BPK Request Pending'),
+                                             ('bpk_missing', 'BPK Not Found'),
+                                             ('bpk_not_unique', 'BPK Not Unique'),     # multiple partners with same bpk
+                                             ('data_incomplete', 'Data Incomplete'),   # should never happen!
+                                             ])
+    error_code = fields.Char(string="Error Code", redonly=True)
+    error_detail = fields.Text(string="Error Detail", readonly=True)
 
-    # Donation report submission
-    submission_id = fields.Many2one(string="Submission",
-                                    help="submission_id.id is used as the MessageRefId !",
-                                    comodel_name="res.partner.donation_report.submission",
-                                    readonly=True, states={'new': [('readonly', False)]})
+    # Erstmeldung link
+    # ----------------
+    # Erstmeldung
+    report_erstmeldung_id = fields.Many2one(string="Zugehoerige Erstmeldung",
+                                            comodel_name='res.partner.donation_report', readonly=True)
+    # Follow Up reports to this Erstmeldung
+    report_follow_up_ids = fields.One2many(string="Follow-Up Reports", comodel_name="res.partner.donation_report",
+                                           inverse_name="report_erstmeldung_id", readonly=True)
+    # Skipped link
+    # ------------
+    # Skipped by donation report
+    skipped_by_id = fields.Many2one(string="Skipped by Report", comodel_name='res.partner.donation_report',
+                                    readonly=True)
+    # This report skipped these donation reports
+    skipped = fields.One2many(string="Skipped the Reports", comodel_name="res.partner.donation_report",
+                              inverse_name="skipped_by_id", readonly=True)
 
-    # Related Fields from the donation report submission (drs)
-    # TODO: related fields seem to be pretty slow - it may be better to just update them by the write or update method?
-    submission_id_state = fields.Selection(related="submission_id.state", store=True, readonly=True)
-    submission_id_datetime = fields.Datetime(related="submission_id.submission_datetime", store=True,  readonly=True)
-    submission_id_url = fields.Char(related="submission_id.submission_url", store=True,  readonly=True)
-    submission_id_fa_dr_type = fields.Char(related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
-
-    # Data for submission (normally from Fundraising Studio if not a test environment report)
-    # ---------------------------------------------------------------------------------------
+    # Data for submission
+    # -------------------
+    # HINT: Data from FRST if not a test environment donation report
     # ATTENTION: This will determine the submission url!
-    submission_env = fields.Selection(string="Environment", selection=[('t', 'Test'), ('p', 'Production')],
-                                      required=True, readonly=True, states={'new': [('readonly', False)]})
-    # TODO: Create an inverse Field
+    submission_env = fields.Selection(string="FinanzOnline Environment", selection=[('t', 'Test'), ('p', 'Production')],
+                                      default="t", required=True, readonly=True, states={'new': [('readonly', False)]})
     partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True,
                                  readonly=True, states={'new': [('readonly', False)]})
-    # TODO: Create an inverse Field
     bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
                                      readonly=True, states={'new': [('readonly', False)]})
-
     anlage_am_um = fields.Datetime(string="Donation Report Create Date", required=True, default=fields.datetime.now(),
                                    readonly=True, states={'new': [('readonly', False)]},
                                    help=_("This is used for the order of the submission_type computation!"))
@@ -72,13 +84,11 @@ class ResPartnerFADonationReport(models.Model):
                                    readonly=True, states={'new': [('readonly', False)]})
     ze_datum_bis = fields.Datetime(string="Donation Report End", required=True,
                                    readonly=True, states={'new': [('readonly', False)]})
-
     meldungs_jahr = fields.Selection(string="Donation Report Year (Zeitraum)", required=True,
                                      readonly=True, states={'new': [('readonly', False)]},
                                      selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)])
     betrag = fields.Float(string="Donation Report Total (Betrag)", required=True,
                           readonly=True, states={'new': [('readonly', False)]})
-
     # HINT: Set by FRST when it creates a cancellation donation report because:
     #           - The BPK of the related partner has changed and a donation report for the old BPK number was already
     #             submitted
@@ -86,14 +96,8 @@ class ResPartnerFADonationReport(models.Model):
     cancellation_for_bpk_private = fields.Char(string="Cancellation for Private BPK", readonly=True,
                                                help="Cancellation donation report for last submitted donation report "
                                                     "with this private BPK number")
-
-    # # BPK request
-    # # DISABLED because FRST will do the check! and here the submission_bpk_public and submission_bpk_private is enough
-    # # -----------
-    # bpk_id = fields.Many2one(string="Partner/Company BPK", comodel_name='res.partner.bpk', readonly=True)
-    # bpk_state = fields.Selection(string="BPK State", readonly=True)
-    # bpk_public = fields.Char(string="BPK Public", readonly=True)
-    # bpk_private = fields.Char(string="BPK Private", readonly=True)
+    # Optional field for extra information from FRST
+    info = fields.Text(string="Info", readonly=True)
 
     # Fields computed (or recomputed) just before submission to FinanzOnline
     # ----------------------------------------------------------------------
@@ -107,57 +111,39 @@ class ResPartnerFADonationReport(models.Model):
     submission_refnr = fields.Char(string="Reference Number (RefNr)", readonly=True, size=23,
                                    help="Die RefNr muss pro Uebermittler, Jahr und "
                                         "Uebermittlungsart eindeutig sein. (z.B.: 2017KK222111000-2111000")
-
     # HINT: If set the BPK forced field values are copied
+    submission_bpk_request_id = fields.Char(string="BPK Request ID", readonly=True)
+    submission_bpk_public = fields.Char(string="Public BPK (vbPK)", readonly=True)
+    submission_bpk_private = fields.Char(string="Private BPK", readonly=True)
     submission_firstname = fields.Char(string="Firstname", readonly=True)
     submission_lastname = fields.Char(string="Lastname", readonly=True)
     submission_birthdate_web = fields.Date(string="Lastname", readonly=True)
     submission_zip = fields.Char(string="ZIP Code", readonly=True)
-    submission_bpk_request_id = fields.Char(string="BPK Request ID", readonly=True)
-    submission_bpk_public = fields.Char(string="Public BPK (vbPK)", readonly=True)
-    submission_bpk_private = fields.Char(string="Private BPK", readonly=True)
+
+    # Donation report submission link and information
+    # -----------------------------------------------
+    submission_id = fields.Many2one(string="Submission",
+                                    help="submission_id.id is used as the MessageRefId !",
+                                    comodel_name="res.partner.donation_report.submission",
+                                    readonly=True, states={'new': [('readonly', False)]})
+
+    # Related Fields from the donation report submission (drs)
+    # TODO: related fields seem to be pretty slow - it may be better to just update them by the write or update method?
+    submission_id_state = fields.Selection(related="submission_id.state", store=True, readonly=True)
+    submission_id_datetime = fields.Datetime(related="submission_id.submission_datetime", store=True,  readonly=True)
+    submission_id_url = fields.Char(related="submission_id.submission_url", store=True,  readonly=True)
+    submission_id_fa_dr_type = fields.Char(related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
 
     # FinanzOnline XML Response
+    # -------------------------
     # HINT: response_content will only hold the xml snippets related to this donation report based on submission_refnr
     response_content = fields.Text(string="Response Content", readonly=True)
     response_error_code = fields.Char(string="Response Error Code", readonly=True)
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True)
 
-    # Error
-    # -----
-    # HINT: These fields can only be filled prior to submission because only donation reports without an error
-    #       will be submitted. For response errors the fields repsone_error_* are used!
-    error_type = fields.Selection(string="Error Type", readonly=True,
-                                  selection=[('bpk_pending', 'BPK Request Pending'),
-                                             ('bpk_missing', 'BPK Not Found'),
-                                             ('bpk_not_unique', 'BPK Not Unique'),     # multiple partners with same bpk
-                                             ('data_incomplete', 'Data Incomplete'),   # should never happen!
-                                             ])
-    error_code = fields.Char(string="Error Code", redonly=True)
-    error_detail = fields.Text(string="Error Detail", readonly=True)
-
-    # Related Donation Reports
-    # ------------------------
-    # Erstmeldung
-    report_erstmeldung_id = fields.Many2one(string="Zugehoerige Erstmeldung",
-                                            comodel_name='res.partner.donation_report', readonly=True)
-    # Follow Up reports to this Erstmeldung
-    report_follow_up_ids = fields.One2many(string="Follow-Up Reports", comodel_name="res.partner.donation_report",
-                                           inverse_name="report_erstmeldung_id", readonly=True)
-    # Skipped by donation report
-    skipped_by_id = fields.Many2one(string="Skipped by Report", comodel_name='res.partner.donation_report',
-                                    readonly=True)
-    # This report skipped these donation reports
-    skipped = fields.One2many(string="Skipped the Reports", comodel_name="res.partner.donation_report",
-                              inverse_name="skipped_by_id", readonly=True)
-
-    # ---------------
-    # COMPUTED FIELDS
-    # ---------------
-
-    # -------------
-    # FIELD METHODS (compute, onchange, constrains)
-    # -------------
+    # ----------
+    # CONSTRAINS
+    # ----------
     # TODO: check if api.constrains also fires on xmlrpc calls
     @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis')
     def _check_submission_data_constrains(self):
@@ -188,6 +174,9 @@ class ResPartnerFADonationReport(models.Model):
                                             "Please check ze_datum_von and ze_datum_bis."
                                             "") % (r.ze_datum_von, r.ze_datum_bis, r.meldungs_jahr))
 
+    # --------
+    # ONCHANGE (WEB GUI ONLY)
+    # --------
     # Set 'ze_datum_von' and 'ze_datum_bis' by 'meldungsjahr' if they are currently empty
     @api.onchange('meldungs_jahr')
     def _onchange_meldungs_jahr(self):
@@ -209,7 +198,7 @@ class ResPartnerFADonationReport(models.Model):
     def _onchange_environment(self):
         for r in self:
             if r.submission_env:
-                assert(r.submission_env == "t", _("You can only create donation reports for the 'Test' environment!"))
+                assert r.submission_env == "t", _("You can only create donation reports for the 'Test' environment!")
 
     # --------------
     # HELPER METHODS
@@ -234,8 +223,8 @@ class ResPartnerFADonationReport(models.Model):
         for r in self:
             # Search for unsubmitted donation reports that are created before this report
             older_reports = r.sudo().search([('submission_env', '=', r.submission_env),
-                                             ('bpk_company_id', '=', r.bpk_company_id),
-                                             ('partner_id', '=', r.partner_id),
+                                             ('bpk_company_id', '=', r.bpk_company_id.id),
+                                             ('partner_id', '=', r.partner_id.id),
                                              ('meldungs_jahr', '=', r.meldungs_jahr),
                                              ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
                                              ('state', 'in', r._changes_allowed_states()),
@@ -272,8 +261,8 @@ class ResPartnerFADonationReport(models.Model):
     def _last_submitted_report(self):
         assert self.ensure_one(), _("_last_submitted_report() works only for one record at a time!")
         lsr = self.sudo().search([('submission_env', '=', self.submission_env),
-                                  ('bpk_company_id', '=', self.bpk_company_id),
-                                  ('partner_id', '=', self.partner_id),
+                                  ('bpk_company_id', '=', self.bpk_company_id.id),
+                                  ('partner_id', '=', self.partner_id.id),
                                   ('meldungs_jahr', '=', self.meldungs_jahr),
                                   ('submission_bpk_private', '=', self._submission_bpk_private()),
                                   ('state', 'not in', ['new', 'skipped', 'disabled', 'error'])],
@@ -290,8 +279,8 @@ class ResPartnerFADonationReport(models.Model):
         assert self.ensure_one(), _("_get_bpk() works only for one record at a time!")
 
         bpk = self.env['res.partner.bpk']
-        bpk = bpk.sudo().search([('bpk_request_partner_id', '=', self.partner_id),
-                                 ('bpk_request_company_id', '=', self.bpk_company_id)])
+        bpk = bpk.sudo().search([('bpk_request_partner_id', '=', self.partner_id.id),
+                                 ('bpk_request_company_id', '=', self.bpk_company_id.id)])
         if bpk:
             assert len(bpk) == 1, _("More than one BPK Request found for partner %s %s and company %s %s: %s"
                                     "") % (self.partner_id.name, self.partner_id.id,
@@ -362,8 +351,8 @@ class ResPartnerFADonationReport(models.Model):
                                   self.cancellation_for_bpk_private or
                                   self.submission_bpk_private)
         erstmeldung = self.sudo().search([('submission_env', '=', self.submission_env),
-                                          ('partner_id', '=', self.partner_id),
-                                          ('bpk_company_id', '=', self.bpk_company_id),
+                                          ('partner_id', '=', self.partner_id.id),
+                                          ('bpk_company_id', '=', self.bpk_company_id.id),
                                           ('meldungs_jahr', '=', self.meldungs_jahr),
                                           ('submission_bpk_private', '=', self._submission_bpk_private()),
                                           ('submission_type', '=', 'E')])
@@ -385,12 +374,12 @@ class ResPartnerFADonationReport(models.Model):
             # Skip this report if newer reports exists already because of sosync LIFO!
             # HINT: It was already checked above that this report is in a state where changes are allowed.
             newer = r.sudo().search([('submission_env', '=', r.submission_env),
-                                     ('partner_id', '=', r.partner_id),
-                                     ('bpk_company_id', '=', r.bpk_company_id),
+                                     ('partner_id', '=', r.partner_id.id),
+                                     ('bpk_company_id', '=', r.bpk_company_id.id),
                                      ('meldungs_jahr', '=', r.meldungs_jahr),
                                      ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
                                      ('anlage_am_um', '>', r.anlage_am_um)],
-                                    order="anlage_am_um DESC", limit="1")
+                                    order="anlage_am_um DESC", limit=1)
             if newer:
                 r.write({'state': 'skipped', 'skipped_by_id': newer.id, 'submission_id': False,
                          'error_type': False, 'error_code': False, 'error_detail': False})
@@ -430,8 +419,8 @@ class ResPartnerFADonationReport(models.Model):
             # HINT: It is ok if there are donation reports for the same partner with different bpk numbers
             if r.cancellation_for_bpk_private or bpk.bpk_private:
                 # Build the search domain (same company but different partners)
-                domain = [('bpk_request_company_id', '=', r.bpk_company_id),
-                          ('bpk_request_partner_id', '!=', r.partner_id)]
+                domain = [('bpk_request_company_id', '=', r.bpk_company_id.id),
+                          ('bpk_request_partner_id', '!=', r.partner_id.id)]
                 if r.cancellation_for_bpk_private:
                     domain.append(('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private))
                 else:
