@@ -68,7 +68,7 @@ class CompanyAustrianZMRSettings(models.Model):
     bpk_multiple_found = fields.Text(string="BPK Multiple-Person-Matched Message", translate=True)
     bpk_zmr_service_error = fields.Text(string="BPK ZMR-Service-Error Message", translate=True)
 
-    # Austrian Finanz Amt: Finanz Online Webservice Session-Login Data
+    # Austrian Finanzamt: FinanzOnline Webservice Session-Login Data
     # https://www.bmf.gv.at/egovernment/fon/fuer-softwarehersteller/softwarehersteller-funktionen.html#Webservices
     fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)")
     fa_benid = fields.Char(string="Webservicebenutzer ID (benid)")
@@ -92,16 +92,24 @@ class CompanyAustrianZMRSettings(models.Model):
                                 size=9, oldname="fa_orgid")
 
     # Austrian Finanz Amt: Finanz Online Webservice Session and Login Information
-    fa_login_sessionid = fields.Char(string="Finanz Online Login SessionID", readonly=True)
-    fa_login_returncode = fields.Char(string="Finanz Online Login Returncode", readonly=True)
-    fa_login_message = fields.Text(string="Finanz Online Login Message", readonly=True)
+    fa_login_sessionid = fields.Char(string="FinanzOnline Login SessionID", readonly=True)
+
+    fa_login_returncode = fields.Char(string="FinanzOnline Login Returncode", readonly=True)
+    fa_login_message = fields.Text(string="FinanzOnline Login Message", readonly=True)
+    fa_login_time = fields.Datetime(string="FinanzOnline Last Login Request", readonly=True)
+
+    fa_logout_returncode = fields.Char(string="FinanzOnline Logout Returncode", readonly=True)
+    fa_logout_message = fields.Text(string="FinanzOnline Logout Message", readonly=True)
+    fa_logout_time = fields.Datetime(string="FinanzOnline Last Logout Request", readonly=True)
 
     # Austrian Finanz Amt: Finanz Online donation report (Spendenmeldung)
-    # TODO: remove obsolete Field fa_dr_mode
+    # ATTETNION: fa_dr_mode is DEPRICATED!
     fa_dr_mode = fields.Selection(selection=[('T', 'T: Testumgebung'),
                                              ('P', 'P: Echtbetrieb')],
-                                  string="Spendenmeldung Modus (Veraltet)")
+                                  string="Spendenmeldung Modus (Veraltet)", readonly=True)
+
     fa_dr_type = fields.Selection(string="Spendenmeldung Uebermittlungsart",
+                                  help=_("This Field is mandatory for donation report submissions!"),
                                   selection=[('KK', 'KK Einrichtung Kunst und Kultur (gem. § 4a Abs 2 Z 5 EStG)'),
                                              ('SO', 'SO Karitative Einrichtungen (gem § 4a Abs 2 Z3 lit a bis c EStG)'),
                                              ('FW', 'FW Wissenschaftseinrichtungen (gem. 4a Abs 2Z 1 EStG)'),
@@ -169,12 +177,12 @@ class CompanyAustrianZMRSettings(models.Model):
         # Get the template-folder directory
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         soaprequest_templates = pj(addon_path, 'soaprequest_templates')
-        assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at %s") \
-                                                      % soaprequest_templates
+        assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at "
+                                                        "%s") % soaprequest_templates
         # Get the logout-template path
         fo_logout_template = pj(soaprequest_templates, 'fo_logout_j2template.xml')
-        assert os.path.exists(fo_logout_template), _("fo_logout_j2template.xml not found at %s") \
-                                                   % fo_logout_template
+        assert os.path.exists(fo_logout_template), _("fo_logout_j2template.xml not found at "
+                                                     "%s") % fo_logout_template
         # Logout
         response = soap_request(url='https://finanzonline.bmf.gv.at:443/fonws/ws/sessionService',
                                 template=fo_logout_template,
@@ -184,8 +192,18 @@ class CompanyAustrianZMRSettings(models.Model):
         # Process soap xml answer
         parser = etree.XMLParser(remove_blank_text=True)
         response_etree = etree.fromstring(response.content, parser=parser)
+        response_pprint = etree.tostring(response_etree, pretty_print=True)
+
+        # Store the answer and the logout request time
+        c.fa_logout_message = response_pprint
+        c.fa_logout_time = fields.datetime.now()
+
+        # Find and store the return code
         returncode = response_etree.find(".//{*}rc")
         returncode = returncode.text if returncode is not None else False
+        c.fa_logout_returncode = returncode
+
+        # Clear login data if logout was successful
         if returncode == "0":
             c.fa_login_sessionid = False
             c.fa_login_returncode = False
@@ -193,7 +211,6 @@ class CompanyAustrianZMRSettings(models.Model):
             logger.info(_("FinanzOnline logout was successful!"))
             return True
         else:
-            response_pprint = etree.tostring(response_etree, pretty_print=True)
             logger.error(_("FinanzOnline logout error!\n%s") % response_pprint)
             return False
 
@@ -212,7 +229,7 @@ class CompanyAustrianZMRSettings(models.Model):
         c = self
 
         # Check if there is already a session id (if we are already logged in)
-        # TODO: !!! Check somehow is the sessionid is still valid !!!
+        # TODO: !!! Check somehow if the sessionid is still valid !!!
         if c.fa_login_sessionid:
             return c.fa_login_sessionid
 
@@ -234,6 +251,7 @@ class CompanyAustrianZMRSettings(models.Model):
             c.fa_login_sessionid = False
             c.fa_login_returncode = False
             c.fa_login_message = False
+            c.fa_login_time = False
         assert not missing, _("FinanzOnline webservice user information is missing! (%s)\n"
                               "Check company settings for %s (id: %s)") % (missing, c.name, c.id)
 
@@ -248,6 +266,9 @@ class CompanyAustrianZMRSettings(models.Model):
         parser = etree.XMLParser(remove_blank_text=True)
         response_etree = etree.fromstring(response.content, parser=parser)
         response_pprint = etree.tostring(response_etree, pretty_print=True)
+
+        # Store login request time
+        c.fa_login_time = fields.datetime.now()
 
         # Check for http errors
         if response.status_code != 200:

@@ -44,26 +44,21 @@
                 <page string="FinanzOnline Einstellungen">
                     <group string="Spendenmeldung Einstellungen">
                         <field name="fa_dr_type"/>
-                        <field name="fa_dr_mode"/>
+                        <!-- DEPRICATED! -->
+                        <field name="fa_dr_mode" invisible="1"/>
                     </group>
                     <group string="Webservice Login-Daten">
-                        <div  colspan="2" name="finanz_online_buttons" class="oe_button_box oe_inline">
-                            <button name="finanz_online_login" type="object" string="Login"
-                                    attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
-                            <button name="finanz_online_logout" type="object" string="Logout"
-                                    attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
-                        </div>
                         <field name="fa_tid"/>
                         <field name="fa_benid"/>
                         <field name="fa_pin" password="True"/>
                         <field name="fa_herstellerid"/>
-                        <div colspan="2" class="backend-help" attrs="{'invisible': [('vat','!=', False)]}">
+                        <div colspan="2" class="backend-help oe_edit_only" attrs="{'invisible': [('vat','!=', False)]}">
                             <p>
                                 Umsatzsteuer-Identifikations-Nummer (UID-Nummer) des Softwareherstellers.
                             </p>
                         </div>
                         <field name="fa_fastnr_org"/>
-                        <div colspan="2" class="backend-help" attrs="{'invisible': [('vat','!=', False)]}">
+                        <div colspan="2" class="backend-help oe_edit_only" attrs="{'invisible': [('vat','!=', False)]}">
                             <p>
                                 Finanzamt-Steuernummer der Organisation:
                                 Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem
@@ -72,7 +67,7 @@
                             </p>
                         </div>
                         <field name="fa_fastnr_fon_tn"/>
-                        <div colspan="2" class="backend-help" attrs="{'invisible': [('vat','!=', False)]}">
+                        <div colspan="2" class="backend-help oe_edit_only" attrs="{'invisible': [('vat','!=', False)]}">
                             <p>
                                 Finanzamt-Steuernummer des Softwareherstellers:
                                 Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem
@@ -80,8 +75,24 @@
                                 (Sie entspricht nicht der UID Nummer.)
                             </p>
                         </div>
-                        <field name="fa_login_returncode" readonly="1" invisible="1"/>
-                        <field name="fa_login_message" readonly="1"/>
+
+                    </group>
+                    <group string="Webservice Login Status">
+                        <div  colspan="2" name="finanz_online_buttons"
+                              class="oe_button_box oe_inline oe_left" style="margin-bottom: 1em;">
+                            <button name="finanz_online_login" type="object" string="Login"
+                                    attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
+                            <button name="finanz_online_logout" type="object" string="Logout"
+                                    attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
+                        </div>
+
+                        <field name="fa_login_returncode" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
+                        <field name="fa_login_message" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
+                        <field name="fa_login_time" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
+
+                        <field name="fa_logout_returncode" readonly="1" attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
+                        <field name="fa_logout_message" readonly="1" attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
+                        <field name="fa_logout_time" readonly="1" attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
                     </group>
                 </page>
             </xpath>
