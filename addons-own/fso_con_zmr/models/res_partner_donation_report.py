@@ -47,7 +47,7 @@ class ResPartnerFADonationReport(models.Model):
                                              ('bpk_not_unique', 'BPK Not Unique'),     # multiple partners with same bpk
                                              ('data_incomplete', 'Data Incomplete'),   # should never happen!
                                              ])
-    error_code = fields.Char(string="Error Code", redonly=True)
+    error_code = fields.Char(string="Error Code", readonly=True)
     error_detail = fields.Text(string="Error Detail", readonly=True)
 
     # Erstmeldung link
@@ -77,17 +77,23 @@ class ResPartnerFADonationReport(models.Model):
                                  readonly=True, states={'new': [('readonly', False)]})
     bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
                                      readonly=True, states={'new': [('readonly', False)]})
-    anlage_am_um = fields.Datetime(string="Donation Report Create Date", required=True, default=fields.datetime.now(),
-                                   readonly=True, states={'new': [('readonly', False)]},
-                                   help=_("This is used for the order of the submission_type computation!"))
-    ze_datum_von = fields.Datetime(string="Donation Report Start", required=True,
+    anlage_am_um = fields.Datetime(string="Generated at", required=True, default=fields.datetime.now(),
+                                   help=_("Donation Report generation date and time. This is used for the order of the "
+                                          "submission_type computation! Must include all donations available at this "
+                                          "date and time that fall inside ze_datum_von and ze_datum_bis"),
                                    readonly=True, states={'new': [('readonly', False)]})
-    ze_datum_bis = fields.Datetime(string="Donation Report End", required=True,
+    ze_datum_von = fields.Datetime(string="Includes donations from", required=True,
                                    readonly=True, states={'new': [('readonly', False)]})
-    meldungs_jahr = fields.Selection(string="Donation Report Year (Zeitraum)", required=True,
+    ze_datum_bis = fields.Datetime(string="Includes donations to", required=True,
+                                   help=_("Includes all donations up to this date-time which are "
+                                          "available at the time the report is generated (anlage_am_um)."),
+                                   readonly=True, states={'new': [('readonly', False)]})
+    meldungs_jahr = fields.Selection(string="Year", required=True,
+                                     help=_("Donation deduction year (Meldejahr)"),
                                      readonly=True, states={'new': [('readonly', False)]},
                                      selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)])
-    betrag = fields.Float(string="Donation Report Total (Betrag)", required=True,
+    betrag = fields.Float(string="Total", required=True,
+                          help=_("Donation deduction total (Betrag)"),
                           readonly=True, states={'new': [('readonly', False)]})
     # HINT: Set by FRST when it creates a cancellation donation report because:
     #           - The BPK of the related partner has changed and a donation report for the old BPK number was already
@@ -101,7 +107,7 @@ class ResPartnerFADonationReport(models.Model):
 
     # Fields computed (or recomputed) just before submission to FinanzOnline
     # ----------------------------------------------------------------------
-    submission_type = fields.Selection(string="Donation Report Type", readonly=True,
+    submission_type = fields.Selection(string="Type", readonly=True,
                                        selection=[('E', 'Erstuebermittlung'),
                                                   ('A', 'Aenderungsuebermittlung'),
                                                   ('S', 'Stornouebermittlung')])
@@ -113,11 +119,11 @@ class ResPartnerFADonationReport(models.Model):
                                         "Uebermittlungsart eindeutig sein. (z.B.: 2017KK222111000-2111000")
     # HINT: If set the BPK forced field values are copied
     submission_bpk_request_id = fields.Char(string="BPK Request ID", readonly=True)
-    submission_bpk_public = fields.Char(string="Public BPK (vbPK)", readonly=True)
+    submission_bpk_public = fields.Text(string="Public BPK (vbPK)", readonly=True)
     submission_bpk_private = fields.Char(string="Private BPK", readonly=True)
     submission_firstname = fields.Char(string="Firstname", readonly=True)
     submission_lastname = fields.Char(string="Lastname", readonly=True)
-    submission_birthdate_web = fields.Date(string="Lastname", readonly=True)
+    submission_birthdate_web = fields.Date(string="Birthdate Web", readonly=True)
     submission_zip = fields.Char(string="ZIP Code", readonly=True)
 
     # Donation report submission link and information
@@ -228,11 +234,13 @@ class ResPartnerFADonationReport(models.Model):
                                              ('meldungs_jahr', '=', r.meldungs_jahr),
                                              ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
                                              ('state', 'in', r._changes_allowed_states()),
-                                             ('anlage_am_um', '<', r.anlage_am_um)])
+                                             ('anlage_am_um', '<', r.anlage_am_um),
+                                             ('id', '!=', r.id)])
             # Skip older reports and unlink them from any donation_report.submission
             # HINT: We are already the superuser in this environment
-            older_reports.write({'state': 'skipped', 'skipped_by_id': r.id, 'submission_id': False,
-                                 'error_type': False, 'error_code': False, 'error_detail': False})
+            if older_reports:
+                older_reports.write({'state': 'skipped', 'skipped_by_id': r.id, 'submission_id': False,
+                                     'error_type': False, 'error_code': False, 'error_detail': False})
 
     @api.multi
     def _submission_bpk_private(self):
@@ -242,11 +250,6 @@ class ResPartnerFADonationReport(models.Model):
         if self.cancellation_for_bpk_private:
             return self.cancellation_for_bpk_private
 
-        # Get it from the donation report if set
-        # TODO: Maybe this needs to be disabled ?!?
-        # if self.submission_bpk_private:
-        #     return self.submission_bpk_private
-
         # Get it from the currently related bpk record
         bpk = self._get_bpk()
         if bpk:
@@ -254,7 +257,6 @@ class ResPartnerFADonationReport(models.Model):
 
         # Nothing found so we return False
         return False
-
 
     # ATTENTION: Will throw an exception if the found report is the same than 'self'
     @api.multi
@@ -265,11 +267,10 @@ class ResPartnerFADonationReport(models.Model):
                                   ('partner_id', '=', self.partner_id.id),
                                   ('meldungs_jahr', '=', self.meldungs_jahr),
                                   ('submission_bpk_private', '=', self._submission_bpk_private()),
-                                  ('state', 'not in', ['new', 'skipped', 'disabled', 'error'])],
+                                  ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
+                                  ('id', '!=', self.id)],
                                  order="anlage_am_um DESC", limit=1)
         if lsr:
-            assert lsr.id != self.id, _("_last_submitted_report() This donation report (ID %s) is the latest submitted "
-                                        "report! This must be an error! (ID: %s)") % self.id
             assert lsr.state == "response_ok", _("Last submitted donation report  is in state %s but should be "
                                                  "in state 'response_ok'") % (lsr.id, lsr.state)
         return lsr
@@ -332,9 +333,11 @@ class ResPartnerFADonationReport(models.Model):
         bpk = self._get_bpk()
         if bpk:
             # Get the values for the refnr
-            values = (self.meldungs_jahr, self.bpk_company_id.fa_dr_type, self.partner_id.id, bpk.id)
-            assert all(values), _("Can not compute submission_refnr because fields are missing! %s") % str(values)
-            refnr = "%s%s%s-%s" % (self.meldungs_jahr, self.bpk_company_id.fa_dr_type, self.partner_id.id, bpk.id)
+            values = [self.meldungs_jahr, self.bpk_company_id.fa_dr_type, self.partner_id.id, bpk.id]
+            assert all(values), _("Can not compute submission_refnr because fields are missing! "
+                                  "meldungs_jahr: %s, bpk_company_id.fa_dr_type: %s, partner_id.id: %s, bpk.id: %s"
+                                  "") % tuple(values)
+            refnr = "%s%s%s-%s" % tuple(values)
 
             # Check that the last submitted donation report had the same refnr
             lsr = self._last_submitted_report()
@@ -345,14 +348,17 @@ class ResPartnerFADonationReport(models.Model):
         return refnr
 
     @api.multi
-    def compute_report_erstmeldung_id(self, submission_bpk_private=False):
+    def compute_report_erstmeldung_id(self):
         assert self.ensure_one(), _("compute_report_erstmeldung_id() works only for one record at a time!")
         erstmeldung = self.sudo().search([('submission_env', '=', self.submission_env),
                                           ('partner_id', '=', self.partner_id.id),
                                           ('bpk_company_id', '=', self.bpk_company_id.id),
                                           ('meldungs_jahr', '=', self.meldungs_jahr),
                                           ('submission_bpk_private', '=', self._submission_bpk_private()),
-                                          ('submission_type', '=', 'E')])
+                                          ('submission_type', '=', 'E'),
+                                          ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
+                                          ('id', '!=', self.id)],
+                                         order="anlage_am_um DESC", limit=2)
         if erstmeldung:
             assert len(erstmeldung) == 1, _("More than one Erstmeldung found for donation report %s !") % self.id
 
@@ -360,8 +366,41 @@ class ResPartnerFADonationReport(models.Model):
 
     @api.multi
     def update_state_and_submission_information(self):
+
+        # Helper method to clear the correct fields of the report by state
+        def update_report(report, **f):
+            assert 'state' in f, "update_state_and_submission_information(): 'state' must be in fields!"
+            # Clear submission fields
+            if f['state'] in ('disabled', 'error', 'skipped'):
+                f.update({'submission_id': False,
+                          'submission_type': False,
+                          'submission_refnr': False,
+                          'report_erstmeldung_id': False,
+                          #
+                          'submission_firstname': False,
+                          'submission_lastname': False,
+                          'submission_birthdate_web': False,
+                          'submission_zip': False,
+                          #
+                          'submission_bpk_request_id': False,
+                          'submission_bpk_public': False,
+                          'submission_bpk_private': False,
+                          })
+            # Clear error fields
+            if f['state'] != 'error':
+                f.update({'error_type': False,
+                          'error_code': False,
+                          'error_detail': False,
+                          })
+            # Clear skipped by
+            if f['state'] != 'skipped':
+                f.update({'skipped_by_id': False})
+            # Update the report and return
+            report.write(f)
+            return
+
         for r in self:
-            # Skipp older unsubmitted reports
+            # TODO: include 'Skipp older unsubmitted reports' here to use update_report()
             r.skip_older_unsubmitted_reports()
 
             # Avoid any changes to this report if it was skipped or submitted!
@@ -375,24 +414,23 @@ class ResPartnerFADonationReport(models.Model):
                                      ('bpk_company_id', '=', r.bpk_company_id.id),
                                      ('meldungs_jahr', '=', r.meldungs_jahr),
                                      ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
-                                     ('anlage_am_um', '>', r.anlage_am_um)],
+                                     ('anlage_am_um', '>', r.anlage_am_um),
+                                     ('id', '!=', r.id)],
                                     order="anlage_am_um DESC", limit=1)
             if newer:
-                r.write({'state': 'skipped', 'skipped_by_id': newer.id, 'submission_id': False,
-                         'error_type': False, 'error_code': False, 'error_detail': False})
+                update_report(r, state='skipped', skipped_by_id=newer.id)
                 continue
 
             # Check the BPK
             # -------------
             # Donation deduction is disabled for this partner
             if r.partner_id.bpk_state == 'disabled':
-                r.write({'state': 'disabled', 'skipped_by_id': False, 'submission_id': False,
-                         'error_type': False, 'error_code': False, 'error_detail': False})
+                update_report(r, state='disabled')
                 continue
+
             # BPK request pending for this partner
             if r.partner_id.bpk_state == 'pending':
-                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
-                         'error_type': 'bpk_pending', 'error_code': False, 'error_detail': False})
+                update_report(r, state='error', error_type='bpk_pending', error_code=False, error_detail=False)
                 continue
 
             # Search for a related bpk record
@@ -400,8 +438,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # BPK NOT found
             if not bpk or (bpk and bpk.state != 'found'):
-                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
-                         'error_type': 'bpk_missing', 'error_code': False, 'error_detail': False})
+                update_report(r, state='error', error_type='bpk_missing', error_code=False, error_detail=False)
                 continue
 
             # Check if there are any other reports with the same bpk but a different partner
@@ -418,35 +455,41 @@ class ResPartnerFADonationReport(models.Model):
 
                 # If donation reports are found set this report (and other reps if possible) to state 'error'
                 if r_same_bpk:
+                    # Create an error message
                     error_detail = _("Reports found with the same private BPK but a different Partner:\n"
                                      "%s") % "\n".join("Report ID: "+str(rep.id) for rep in (r | r_same_bpk))
-                    rvals = {'state': 'error', 'skipped_by_id': False, 'submission_id': False,
-                             'error_type': 'bpk_not_unique', 'error_code': False, 'error_detail': error_detail}
                     # Update this report
-                    r.write(rvals)
+                    update_report(r, state='error', error_type='bpk_not_unique', error_code=False,
+                                  error_detail=error_detail)
                     # Update other reports if possible
                     for report_same_bpk in r_same_bpk:
                         if report_same_bpk.state in self._changes_allowed_states():
-                            report_same_bpk.write(rvals)
+                            update_report(report_same_bpk, state='error', error_type='bpk_not_unique', error_code=False,
+                                          error_detail=error_detail)
                     continue
 
             # Compute the submission values
             # -----------------------------
             # HINT: If cancellation_for_bpk_private is set we need the values from the related bpk request
-            subm_vals = {
-                'submission_type': r.compute_submission_type(),
-                'submission_refnr': r.compute_submission_refnr(),
-                'report_erstmeldung_id': r.compute_report_erstmeldung_id(),
-                #
-                'submission_firstname': False if r.cancellation_for_bpk_private else bpk.bpk_request_firstname,
-                'submission_lastname': False if r.cancellation_for_bpk_private else bpk.bpk_request_lastname,
-                'submission_birthdate_web': False if r.cancellation_for_bpk_private else bpk.bpk_request_birthdate,
-                'submission_zip': False if r.cancellation_for_bpk_private else bpk.bpk_request_zip,
-                #
-                'submission_bpk_request_id': False if r.cancellation_for_bpk_private else bpk.id,
-                'submission_bpk_public': False if r.cancellation_for_bpk_private else bpk.bpk_public,
-                'submission_bpk_private': r.cancellation_for_bpk_private or bpk.bpk_private,
-            }
+            try:
+                subm_vals = {
+                    'submission_type': r.compute_submission_type(),
+                    'submission_refnr': r.compute_submission_refnr(),
+                    'report_erstmeldung_id': r.compute_report_erstmeldung_id(),
+                    #
+                    'submission_firstname': False if r.cancellation_for_bpk_private else bpk.bpk_request_firstname,
+                    'submission_lastname': False if r.cancellation_for_bpk_private else bpk.bpk_request_lastname,
+                    'submission_birthdate_web': False if r.cancellation_for_bpk_private else bpk.bpk_request_birthdate,
+                    'submission_zip': False if r.cancellation_for_bpk_private else bpk.bpk_request_zip,
+                    #
+                    'submission_bpk_request_id': False if r.cancellation_for_bpk_private else bpk.id,
+                    'submission_bpk_public': False if r.cancellation_for_bpk_private else bpk.bpk_public,
+                    'submission_bpk_private': r.cancellation_for_bpk_private or bpk.bpk_private,
+                }
+            except Exception as e:
+                update_report(r, state='error', error_type='data_incomplete', error_code='exception',
+                              error_detail=repr(e))
+                continue
 
             # Check if all needed values are available
             # ----------------------------------------
@@ -463,17 +506,23 @@ class ResPartnerFADonationReport(models.Model):
                                                'submission_bpk_private')
             missing_fields = [field for field in mandatory_submission_fields if not subm_vals[field]]
             if missing_fields:
-                logger.error("Missing fields %s" % str(missing_fields))
-                r.write({'state': 'error', 'skipped_by_id': False, 'submission_id': False,
-                         'error_type': 'data_incomplete', 'error_code': False,
-                         'error_detail': 'Missing Fields: %s' % ";".join(f for f in missing_fields)})
+                error_detail = 'Missing Donation-Report submission fields: %s' % ";".join(f for f in missing_fields)
+                logger.error(error_detail)
+                update_report(r, state='error', error_type='data_incomplete', error_code=False,
+                              error_detail=error_detail)
                 continue
 
-            # Update the donation report with the computed values
-            # ---------------------------------------------------
-            values = {'state': 'new', 'skipped_by_id': False, 'submission_id': r.submission_id,
+            # Update the donation report
+            # --------------------------
+            values = {'state': 'new', 'skipped_by_id': False,
+                      'submission_id': r.submission_id if r.submission_id else False,
                       'error_type': False, 'error_code': False, 'error_detail': False}
-            r.write(values.update(subm_vals))
+            # Add submission values to vales
+            # HINT: the .update() method returns 'None' so don't use new_dict = values.update(subm_vals) because
+            #       new_dict will be 'None' than.
+            values.update(subm_vals)
+            # Update the donation report
+            r.write(values)
             continue
 
     # ------------
@@ -490,7 +539,8 @@ class ResPartnerFADonationReport(models.Model):
 
         # Compute the state
         # HINT: Will also compute and write the submission values if state is not 'skipped', 'disabled' or 'error'
-        res.update_state_and_submission_information()
+        if res:
+            res.update_state_and_submission_information()
 
         # Return the record (create it in db)
         return res
@@ -514,7 +564,7 @@ class ResPartnerFADonationReport(models.Model):
 
         # Compute the state
         # HINT: Will also compute and write the submission values if in unsubmitted states
-        if vals and 'state' not in vals:
+        if res and (not vals or 'state' not in vals):
             self.update_state_and_submission_information()
 
         # Return the recordset

@@ -45,38 +45,48 @@
 
                     <notebook>
 
+                        <page string="Submission Data">
+                            <group>
+                                <field name="submission_type"/>
+                                <field name="submission_refnr"/>
+                                <field name="submission_bpk_request_id"/>
+                                <field name="submission_bpk_public" invisible="1"/>
+                                <field name="submission_bpk_private"/>
+                                <field name="submission_firstname"/>
+                                <field name="submission_lastname"/>
+                                <field name="submission_birthdate_web"/>
+                                <field name="submission_zip"/>
+                            </group>
+                        </page>
+
                         <page string="Submission">
                             <group>
-                                <group>
-                                    <field name="submission_type"/>
-                                    <field name="submission_refnr"/>
-                                    <field name="submission_bpk_request_id"/>
-                                    <field name="submission_bpk_public"/>
-                                    <field name="submission_bpk_private"/>
-                                    <field name="submission_firstname"/>
-                                    <field name="submission_lastname"/>
-                                    <field name="submission_birthdate_web"/>
-                                    <field name="submission_zip"/>
-                                </group>
-                                <group>
-                                    <field name="submission_id"/>
-                                    <field name="submission_id_state"/>
-                                    <field name="submission_id_url"/>
-                                    <field name="submission_id_fa_dr_type"/>
-                                    <field name="submission_id_datetime"/>
-                                </group>
+                                <field name="submission_id"/>
+                                <field name="submission_id_state"/>
+                                <field name="submission_id_url"/>
+                                <field name="submission_id_fa_dr_type"/>
+                                <field name="submission_id_datetime"/>
                             </group>
                         </page>
 
                         <page string="Response">
-                            <field name="response_error_code"/>
-                            <field name="response_error_detail"/>
-                            <field name="response_content"/>
+                            <group>
+                                <field name="response_error_code"/>
+                                <field name="response_error_detail"/>
+                                <field name="response_content"/>
+                            </group>
                         </page>
 
-                        <page string="Follow Up / Skipped">
-                            <field name="report_follow_up_ids"/>
-                            <field name="skipped"/>
+                        <page string="Follow Ups">
+                            <group>
+                                <field name="report_follow_up_ids"/>
+                            </group>
+                        </page>
+
+                        <page string="Skipped">
+                            <group>
+                                <field name="skipped"/>
+                            </group>
                         </page>
 
                         <page string="System">
@@ -105,11 +115,13 @@
                           orange: state =='submitted';
                           grey: state in ['skipped', 'disabled'];
                           green: state == 'response_ok';">
+                <field name="anlage_am_um"/>
                 <field name="submission_env"/>
                 <field name="partner_id"/>
                 <field name="bpk_company_id"/>
                 <field name="meldungs_jahr"/>
                 <field name="betrag"/>
+                <field name="submission_type"/>
                 <field name="state"/>
             </tree>
         </field>

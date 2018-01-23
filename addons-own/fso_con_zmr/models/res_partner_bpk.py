@@ -159,7 +159,7 @@ class ResPartnerBPK(models.Model):
         res = super(ResPartnerBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
-        if res and self and values and 'state' not in values:
+        if res and (not values or 'state' not in values):
             self.set_bpk_state()
 
         # Update donation reports

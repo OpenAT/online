@@ -414,7 +414,7 @@ class ResPartnerZMRGetBPK(models.Model):
         res = super(ResPartnerZMRGetBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
-        if values and 'bpk_state' not in values:
+        if not values or 'bpk_state' not in values:
             self.set_bpk_state()
 
         # Update the donation reports
