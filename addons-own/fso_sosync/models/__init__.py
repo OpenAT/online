@@ -2,9 +2,9 @@
 
 import sosync
 
+# basics
 import res_partner
 import res_company
-import res_partner_bpk
 
 # Helper
 import partner_merge
@@ -17,3 +17,7 @@ import product_payment_interval
 import product_payment_interval_lines
 import product_website_price_buttons
 import product_template
+
+# bpk and donation reports
+import res_partner_bpk
+import res_partner_donation_report
