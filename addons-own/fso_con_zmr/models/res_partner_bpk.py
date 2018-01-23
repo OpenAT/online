@@ -120,6 +120,19 @@ class ResPartnerBPK(models.Model):
 
         return True
 
+    @api.multi
+    def update_donation_reports(self):
+        # Search if there are any donation reports to update
+        for bpk in self:
+            donation_reports = self.env['res.partner.donation_report']
+            donation_reports = donation_reports.sudo().search(
+                [('partner_id', '=', bpk.bpk_request_partner_id.id),
+                 ('bpk_company_id', '=', bpk.bpk_request_company_id.id),
+                 ('state', 'in', donation_reports._changes_allowed_states())])
+            if donation_reports:
+                # HINT: This will run update_state_and_submission_information()
+                donation_reports.write({})
+
     # ----
     # CRUD
     # ----
@@ -131,7 +144,11 @@ class ResPartnerBPK(models.Model):
         res = super(ResPartnerBPK, self).create(values)
 
         if res:
+            # Compute the state
             res.set_bpk_state()
+
+            # Update donation reports
+            res.update_donation_reports()
 
         return res
 
@@ -142,8 +159,12 @@ class ResPartnerBPK(models.Model):
         res = super(ResPartnerBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
-        if res and self and 'state' not in values:
+        if res and self and values and 'state' not in values:
             self.set_bpk_state()
+
+        # Update donation reports
+        if res:
+            self.update_donation_reports()
 
         return res
 

@@ -374,6 +374,20 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return responses
 
+    @api.multi
+    def update_donation_reports(self):
+        # Search if there are any donation reports to update
+        for partner in self:
+            for bpk in partner.bpk_request_ids:
+                donation_reports = self.env['res.partner.donation_report']
+                donation_reports = donation_reports.sudo().search(
+                    [('partner_id', '=', bpk.bpk_request_partner_id.id),
+                     ('bpk_company_id', '=', bpk.bpk_request_company_id.id),
+                     ('state', 'in', donation_reports._changes_allowed_states())])
+                if donation_reports:
+                    # HINT: This will run update_state_and_submission_information()
+                    donation_reports.write({})
+
     # ----
     # CRUD
     # ----
@@ -388,6 +402,9 @@ class ResPartnerZMRGetBPK(models.Model):
         if res:
             res.set_bpk_state()
 
+            # ATTENTION: The update of the donation reports will already be triggered by set_bpk_state() because
+            #            it uses the write() method! so no need to include it here
+
         return res
 
     @api.multi
@@ -397,8 +414,12 @@ class ResPartnerZMRGetBPK(models.Model):
         res = super(ResPartnerZMRGetBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
-        if 'bpk_state' not in values:
+        if values and 'bpk_state' not in values:
             self.set_bpk_state()
+
+        # Update the donation reports
+        if values and ('bpk_state' in values or 'bpk_request_ids' in values):
+            self.update_donation_reports()
 
         return res
 
