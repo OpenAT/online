@@ -662,8 +662,14 @@ class ResPartnerZMRGetBPK(models.Model):
                     # ATTENTION: This may NOT be correct for different messages for different companies
 
                     # Person was found
+                    log = _("Eine am %s durchgefuehrte BPK Abfrage (ID %s) wurde fuer diese Personendaten "
+                            "im System gefunden!\nWenn sie eine erneute Abfrage erzwingen moechten aendern sie bitte "
+                            "die Personendaten oder loeschen Sie die im System gespeicherte BPK Anfrage.\n\n"
+                            "%s") % (positive_req[0].bpk_request_date,
+                                     positive_req[0].id,
+                                     positive_req[0].bpk_request_log)
                     return _returner("bpk_found", positive_req[0].bpk_request_company_id.bpk_found,
-                                     log=positive_req[0].bpk_request_log)
+                                     log=log)
             except Exception as e:
                 logger.error("check_bpk() %s" % str(repr(e)))
                 pass
@@ -681,16 +687,22 @@ class ResPartnerZMRGetBPK(models.Model):
                 if len(negative_req) >= 1:
                     # Return with negative result
                     # ATTENTION: This may NOT be correct for different messages for different companies
+                    log = _("Eine am %s durchgefuehrte BPK Abfrage (ID %s) wurde fuer diese Personendaten "
+                            "im System gefunden!\nWenn sie eine erneute Abfrage erzwingen moechten aendern sie bitte "
+                            "die Personendaten oder loeschen Sie die im System gespeicherte BPK Anfrage.\n\n"
+                            "%s") % (negative_req[0].bpk_error_request_date,
+                                     negative_req[0].id,
+                                     negative_req[0].bpk_error_request_log)
 
                     # No person matched
                     if 'F230' in negative_req[0].bpk_error_code:
                         return _returner("bpk_not_found", negative_req[0].bpk_request_company_id.bpk_not_found,
-                                         log=negative_req[0].bpk_error_request_log)
+                                         log=log)
 
                     # Multiple person matched
                     if any(code in negative_req[0].bpk_error_code for code in ['F231', 'F233']):
                         return _returner("bpk_multiple_found", negative_req[0].bpk_request_company_id.bpk_multiple_found,
-                                         log=negative_req[0].bpk_error_request_log)
+                                         log=log)
             except Exception as e:
                 logger.error("check_bpk() %s" % str(repr(e)))
                 pass
@@ -709,6 +721,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         r = responses[0]
         r_log = r.get('request_log', '')
+        r_log = "Es wurden folgende Personendatenkombinationen beim ZMR abgefragt:\n\n" + r_log
         company = self.sudo().env['res.company'].browse([r.get("company_id")])
         if r.get("private_bpk") or r.get("public_bpk"):
             return _returner("bpk_found", company.bpk_found, log=r_log)

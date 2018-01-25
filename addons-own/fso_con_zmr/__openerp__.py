@@ -52,5 +52,6 @@ Abfragen zum Zentralen Melderegister in Österreich
         'views/res_partner_donation_report_submissions.xml',
         'views/fsonline_menu.xml',
         'data/bpk_actions.xml',
+        'data/bpk_scheduled_actions.xml',
     ],
 }
