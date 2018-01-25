@@ -16,6 +16,9 @@ class ResPartnerSosync(models.Model):
     #parent_id = fields.Many2one(sosync="True")     # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner in FSO
     #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kann es ausgelassen werden.
 
+    # NEW:
+    bpk_state = fields.Selection(sosync="True")
+
     gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
     #TODO im DEFFERED: lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US
 
