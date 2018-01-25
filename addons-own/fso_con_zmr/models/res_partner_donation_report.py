@@ -77,7 +77,7 @@ class ResPartnerFADonationReport(models.Model):
                                  readonly=True, states={'new': [('readonly', False)]})
     bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
                                      readonly=True, states={'new': [('readonly', False)]})
-    anlage_am_um = fields.Datetime(string="Generated at", required=True, default=fields.datetime.now(),
+    anlage_am_um = fields.Datetime(string="Generated at", required=True,
                                    help=_("Donation Report generation date and time. This is used for the order of the "
                                           "submission_type computation! Must include all donations available at this "
                                           "date and time that fall inside ze_datum_von and ze_datum_bis"),
@@ -151,18 +151,30 @@ class ResPartnerFADonationReport(models.Model):
     # CONSTRAINS
     # ----------
     # TODO: check if api.constrains also fires on xmlrpc calls
-    @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis')
+    @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis',
+                    'anlage_am_um', 'submission_env', 'bpk_company_id', 'partner_id', 'cancellation_for_bpk_private')
     def _check_submission_data_constrains(self):
         now = datetime.datetime.now()
         min_year = 2017
         max_year = int(now.year)+1
         for r in self:
+            # Check anlage_am_um is unique for this partner/company/cancellation_for_bpk_private combination
+            if r.anlage_am_um and r.partner_id and r.bpk_company_id and r.submission_env:
+                same_anlage_am_um = r.sudo().search(
+                    [('submission_env', '=', r.submission_env),
+                     ('bpk_company_id', '=', r.bpk_company_id.id),
+                     ('partner_id', '=', r.partner_id.id),
+                     ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
+                     ('anlage_am_um', '=', r.anlage_am_um),
+                     ('id', '!=', r.id)], limit=1)
+                if same_anlage_am_um:
+                    raise ValidationError(_("Same anlage_am_um datetime found: ID %s") % same_anlage_am_um.id)
 
             # Check year (meldungs_jahr)
             if not r.meldungs_jahr or int(r.meldungs_jahr) < min_year or int(r.meldungs_jahr) > max_year:
                 raise ValidationError(_("Year must be inside %s - %s") % (min_year, max_year))
 
-            # Check total (betrag)
+            # Check total (betrag) is not negative
             if r.betrag < 0:
                 raise ValidationError(_("Total can not be negative!"))
 
@@ -189,6 +201,8 @@ class ResPartnerFADonationReport(models.Model):
         vtz = pytz.timezone("Europe/Vienna")
         for r in self:
             if r.meldungs_jahr:
+                if not r.anlage_am_um:
+                    r.anlage_am_um = fields.datetime.now()
                 if not r.ze_datum_von:
                     year_start = datetime.datetime(int(r.meldungs_jahr), 01, 01, 00, 00, 00)
                     year_start = naive_to_timezone(naive=year_start, naive_tz=vtz, naive_dst=True, target_tz=pytz.UTC)
@@ -282,11 +296,25 @@ class ResPartnerFADonationReport(models.Model):
         bpk = self.env['res.partner.bpk']
         bpk = bpk.sudo().search([('bpk_request_partner_id', '=', self.partner_id.id),
                                  ('bpk_request_company_id', '=', self.bpk_company_id.id)])
+
+        # Check for more than one BPK Request per partner/company
         if bpk:
-            assert len(bpk) == 1, _("More than one BPK Request found for partner %s %s and company %s %s: %s"
-                                    "") % (self.partner_id.name, self.partner_id.id,
-                                           self.bpk_company_id.name, self.bpk_company_id.id,
-                                           " ".join(b.id for b in bpk))
+            if len(bpk) > 1:
+                msg = _("More than one BPK Request found for partner %s %s and company %s %s: %s"
+                        "") % (self.partner_id.name, self.partner_id.id,
+                               self.bpk_company_id.name, self.bpk_company_id.id,
+                               "".join("BPK-ID: %s, " % str(b.id) for b in bpk))
+                logger.error(msg)
+                try:
+                    logger.info(_("Try to correct the BPK Requests for partner %s (ID %s)"))
+                    # Force the BPK request
+                    # HINT: This is save because set_bpk() will recalculate the partner bpk-state first
+                    self.partner_id.sudo().set_bpk()
+                    # Recursively call _get_bpk() again
+                    bpk = self._get_bpk()
+                except Exception as e:
+                    logger.error(repr(e))
+                    raise ValidationError(msg)
 
         # Returns either an empty record set or an record set with one record in it
         return bpk
@@ -399,15 +427,31 @@ class ResPartnerFADonationReport(models.Model):
             report.write(f)
             return
 
+        # Loop through the donation reports
         for r in self:
-            # TODO: include 'Skipp older unsubmitted reports' here to use update_report()
-            r.skip_older_unsubmitted_reports()
+            # Skip older unsubmitted reports
+            # ------------------------------
+            # Search for unsubmitted donation reports that are created before this report
+            reports_to_skip = r.sudo().search([('submission_env', '=', r.submission_env),
+                                               ('partner_id', '=', r.partner_id.id),
+                                               ('bpk_company_id', '=', r.bpk_company_id.id),
+                                               ('meldungs_jahr', '=', r.meldungs_jahr),
+                                               ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
+                                               ('state', 'in', r._changes_allowed_states()),
+                                               ('anlage_am_um', '<', r.anlage_am_um),
+                                               ('id', '!=', r.id)])
+            # Skip older reports and unlink them from any donation_report.submission
+            # HINT: We are already the superuser in this environment
+            for report_to_skip in reports_to_skip:
+                update_report(report_to_skip, state='skipped', skipped_by_id=r.id)
 
             # Avoid any changes to this report if it was skipped or submitted!
+            # ----------------------------------------------------------------
             if r.state not in self._changes_allowed_states():
                 continue
 
             # Skip this report if newer reports exists already because of sosync LIFO!
+            # ------------------------------------------------------------------------
             # HINT: It was already checked above that this report is in a state where changes are allowed.
             newer = r.sudo().search([('submission_env', '=', r.submission_env),
                                      ('partner_id', '=', r.partner_id.id),
@@ -421,14 +465,15 @@ class ResPartnerFADonationReport(models.Model):
                 update_report(r, state='skipped', skipped_by_id=newer.id)
                 continue
 
-            # Check the BPK
-            # -------------
+            # Check Donation Deduction Disabled for this partner
+            # --------------------------------------------------
             # Donation deduction is disabled for this partner
             if r.partner_id.bpk_state == 'disabled':
                 update_report(r, state='disabled')
                 continue
 
-            # BPK request pending for this partner
+            # Check BPK request pending for this partner
+            # ------------------------------------------
             if r.partner_id.bpk_state == 'pending':
                 update_report(r, state='error', error_type='bpk_pending', error_code=False, error_detail=False)
                 continue
@@ -436,7 +481,8 @@ class ResPartnerFADonationReport(models.Model):
             # Search for a related bpk record
             bpk = r._get_bpk()
 
-            # BPK NOT found
+            # Check BPK not found
+            # -------------------
             if not bpk or (bpk and bpk.state != 'found'):
                 update_report(r, state='error', error_type='bpk_missing', error_code=False, error_detail=False)
                 continue
@@ -572,9 +618,17 @@ class ResPartnerFADonationReport(models.Model):
 
     @api.multi
     def unlink(self):
+
+        states_allowed = list(self._changes_allowed_states()) + ['skipped']
         for r in self:
-            if r.state not in self._changes_allowed_states():
-                raise ValidationError(_("Deletion of a donation report is only allowed in the states "
-                                        "%s") % self._changes_allowed_states())
+            # TODO: Check what happens on partner merge and update remaining donation reports with the
+            #       so that the state may switch from error>bpk_no_unique to new
+
+            # Make sure only test donation reports in the correct states can be deleted!
+            # TODO: This may be a problem on partner merges test it!
+            if r.submission_env != 't' or r.state not in states_allowed:
+                raise ValidationError(_("Deletion only allowed for test donation reports in the states"
+                                        " %s") % states_allowed)
+
         return super(ResPartnerFADonationReport, self).unlink()
 

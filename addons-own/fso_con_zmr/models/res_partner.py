@@ -417,9 +417,11 @@ class ResPartnerZMRGetBPK(models.Model):
         if not values or 'bpk_state' not in values:
             self.set_bpk_state()
 
-        # Update the donation reports
-        if values and ('bpk_state' in values or 'bpk_request_ids' in values):
-            self.update_donation_reports()
+        # Update the donation reports on any bpk_state change
+        if res:
+            for r in self:
+                if r.bpk_state != values.get('bpk_state', False):
+                    r.update_donation_reports()
 
         return res
 
@@ -878,6 +880,7 @@ class ResPartnerZMRGetBPK(models.Model):
             # 4.2 Check for multiple bpk records per company
             if bpk_requests_company_ids:
                 if len(bpk_requests_company_ids) != len(set(bpk_requests_company_ids)):
+                    logger.error("Multiple BPK-Requests per company found: Partner %s (ID %s)!" % (r.name, str(r.id)))
                     write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'bpk_request_needed': now()})
                     continue
 
@@ -1048,10 +1051,23 @@ class ResPartnerZMRGetBPK(models.Model):
                 # Create/Update the BPK record with the values of this response
                 bpk = self.env['res.partner.bpk'].sudo().search([('bpk_request_company_id.id', '=', resp['company_id']),
                                                                  ('bpk_request_partner_id.id', '=', p.id)])
-                if bpk:
+
+                if not bpk:
+                    self.env['res.partner.bpk'].sudo().create(values)
+                elif len(bpk) == 1:
                     bpk.write(values)
                 else:
+                    logger.error("Multiple BPK Request found for partner %s (ID %s) and company with ID %s! Trying to "
+                                 "delete existing BPK-Requests %s and create a new one!"
+                                 "" % (p.name, str(p.id), resp['company_id'], bpk.ids))
+                    try:
+                        bpk.unlink()
+                    except Exception as e:
+                        logger.error("Unlinking of multiple BPKs %s per company failed!" % bpk.ids)
+                        raise e
+                    logger.info("Unlinking of multiple BPKs was successful! Creating new BPK record!")
                     self.env['res.partner.bpk'].sudo().create(values)
+
             # NEXT PARTNER:
             # HINT: Reset error counter if no bpk_error_code or the error is known
             error_code = bpk_respones[0].get('bpk_error_code', '')

@@ -80,6 +80,12 @@ class PartnerMerge(models.Model):
                     % partner_to_remove_id)
         partner_to_remove.unlink()
 
+        # EMPTY WRITE
+        # -----------
+        logger.info("merge_partner: Do an empty write({}) for the remaining partner %s to update all state information"
+                    "" % partner_to_keep_id)
+        partner_to_keep.write({})
+
         logger.info("merge_partner: DONE: Merged Partner with id %s into partner with id %s!"
                     % (partner_to_remove_id, partner_to_keep_id))
         return True

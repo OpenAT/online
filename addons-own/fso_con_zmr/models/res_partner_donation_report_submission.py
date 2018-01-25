@@ -155,7 +155,8 @@ class ResPartnerFADonationReport(models.Model):
             # Search for donation reports that are not linked to any sumbission
             potential_donation_reports = self.env['res.partner.donation_report'].sudo().search(
                 [('state', 'in', ['new', 'error']),
-                 ('submission_id', '=', False),
+                 "|", ('submission_id', '=', False),
+                      ('submission_id', '=', r.id),
                  ('submission_env', '=', r.submission_env),
                  ('meldungs_jahr', '=', r.meldungs_jahr),
                  ('bpk_company_id', '=', r.bpk_company_id.id)])
@@ -168,7 +169,8 @@ class ResPartnerFADonationReport(models.Model):
             # Search again but now only for donation reports in state 'new'
             donation_reports = potential_donation_reports.search(
                 [('state', '=', 'new'),
-                 ('submission_id', '=', False),
+                 "|", ('submission_id', '=', False),
+                      ('submission_id', '=', r.id),
                  ('submission_env', '=', r.submission_env),
                  ('meldungs_jahr', '=', r.meldungs_jahr),
                  ('bpk_company_id', '=', r.bpk_company_id.id)])

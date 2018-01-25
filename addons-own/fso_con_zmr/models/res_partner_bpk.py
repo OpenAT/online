@@ -162,10 +162,20 @@ class ResPartnerBPK(models.Model):
         if res and (not values or 'state' not in values):
             self.set_bpk_state()
 
-        # Update donation reports
+        # Update donation reports on any bpk request state change
         if res:
-            self.update_donation_reports()
+            for r in self:
+                if r.state != values.get('state', False):
+                    self.update_donation_reports()
 
+        return res
+
+    @api.multi
+    def unlink(self):
+        # TODO: Update donation reports on unlink if possible
+        # The problem is if res or self still contains any info about the bpk request after unlink
+        # if not we have to set the donation reports to "error" before we unlink the bpk requests ... DEBUG :)
+        res = super(ResPartnerBPK, self).unlink()
         return res
 
     # --------------
