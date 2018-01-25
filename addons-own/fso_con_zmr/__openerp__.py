@@ -49,7 +49,7 @@ Abfragen zum Zentralen Melderegister in Österreich
         'views/res_partner.xml',
         'views/res_partner_bpk.xml',
         'views/res_partner_donation_report.xml',
-        #'views/res_partner_donation_report_submissions.xml',
+        'views/res_partner_donation_report_submissions.xml',
         'views/fsonline_menu.xml',
         'data/bpk_actions.xml',
     ],

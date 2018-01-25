@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Stand: 20.02.2017-->
+<xsd:schema xmlns="https://finanzonline.bmf.gv.at/fon/ws/uebermittlungSonderausgaben" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="https://finanzonline.bmf.gv.at/fon/ws/uebermittlungSonderausgaben" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:element name="SonderausgabenResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Info_Daten" type="Info_Daten" minOccurs="0"/>
+				<xsd:element name="MessageSpec" type="MessageSpec_Type"/>
+				<xsd:element name="SonderausgabenError" type="SonderausgabenError_Type" minOccurs="0" maxOccurs="10000"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="Info_Daten">
+		<xsd:sequence>
+			<xsd:element name="Fastnr_Fon_Tn" type="FASTNR"/>
+			<xsd:element name="Fastnr_Org" type="FASTNR"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Complex Types -->
+	<xsd:complexType name="MessageSpec_Type">
+		<xsd:sequence>
+			<xsd:element name="MessageRefId" type="MessageRefId_Type"/>
+			<xsd:element name="EinbringungsTimestamp" type="xsd:dateTime"/>
+			<xsd:element name="Art" type="Art_EnumType"/>
+			<xsd:element name="Uebermittlung" type="Uebermittlung_EnumType"/>
+			<xsd:element name="Info" type="Info_EnumType"/>
+			<xsd:element name="Error" type="Error_Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SonderausgabenError_Type">
+		<xsd:sequence>
+			<xsd:element name="RefNr" type="RefNrString"/>
+			<xsd:element name="Error" type="Error_Type" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Error_Type">
+		<xsd:sequence>
+			<xsd:element name="Code" type="xsd:string"/>
+			<xsd:element name="Text" type="xsd:string"/>
+			<xsd:element name="Data" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Simple Types -->
+	<xsd:simpleType name="RefNrString">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="23"/>
+			<xsd:minLength value="1"/>
+			<xsd:pattern value="[0-9a-zA-Z\-\\/]{1,23}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MessageRefId_Type">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="36"/>
+			<xsd:minLength value="1"/>
+			<xsd:pattern value="[0-9a-zA-Z\-]{1,36}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FASTNR">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="9"/>
+			<xsd:minLength value="9"/>
+			<xsd:pattern value="[0-9]{1,9}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Info_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="OK"/>
+			<xsd:enumeration value="TWOK"/>
+			<xsd:enumeration value="NOK"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Art_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="UEB_SA"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="Uebermittlung_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="T"/>
+			<xsd:enumeration value="P"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

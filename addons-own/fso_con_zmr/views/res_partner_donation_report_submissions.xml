@@ -7,19 +7,23 @@
         <field name="model">res.partner.donation_report.submission</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-
             <form string="Donation Report Submission">
+
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="new,in_progress,submitted"/>
+                    <button name="prepare" type="object"
+                            attrs="{'invisible':[('state','not in',['new', 'prepared', 'error'])]}"
+                            string="Prepare"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,prepared,response_ok"/>
                 </header>
+
                 <sheet>
                     <group>
-                        <group>
-                            <field name="submission_env" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="meldungs_jahr" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                            <field name="bpk_company_id" attrs="{'readonly': [('state','not in',('new'))]}"/>
+                        <group string="Submission Settings">
+                            <field name="submission_env"/>
+                            <field name="meldungs_jahr"/>
+                            <field name="bpk_company_id"/>
                         </group>
-                        <group>
+                        <group string="System">
                             <field name="id" readonly="True"/>
                             <field name="create_date" readonly="True"/>
                             <field name="create_uid" readonly="True"/>
@@ -28,43 +32,70 @@
                         </group>
                     </group>
 
-                    <notebook>
-                        <page string="Donation Reports">
-                            <field name="donation_report_ids" attrs="{'readonly': [('state','not in',('new'))]}"/>
-                        </page>
-                        <page string="Submission">
-                            <group>
-                                <group>
-                                    <field name="submission_datetime"/>
-                                    <field name="submission_url"/>
-                                    <field name="submission_fa_dr_type"/>
-                                </group>
-                                <group>
-                                    <field name="submission_fa_tid"/>
-                                    <field name="submission_fa_benid"/>
-                                    <field name="submission_fa_herstellerid"/>
+                    <group string="Pre-Submission Errors" attrs="{'invisible':[('error_type','=',False)]}">
+                        <field name="error_type"/>
+                        <field name="error_code"/>
+                        <field name="error_detail"/>
+                    </group>
 
-                                    <field name="submission_fa_fastnr_org"/>
-                                </group>
-                                <field name="submission_log" colspan="2"/>
+                    <notebook>
+                        <page string="Subm. Data">
+                            <group>
+                                <field name="submission_fa_tid"/>
+                                <field name="submission_fa_benid"/>
+                                <field name="submission_fa_login_sessionid"/>
+                                <field name="submission_fa_art"/>
+
+                                <field name="submission_fa_fastnr_fon_tn"/>
+                                <field name="submission_fa_fastnr_org"/>
+
+                                <field name="submission_message_ref_id"/>
+                                <field name="submission_timestamp"/>
+                                <field name="submission_fa_dr_type"/>
+
+                                <field name="submission_fa_herstellerid"/>
+
                             </group>
                         </page>
-                        <page string="Submission Content">
-                            <field name="submission_content"/>
+
+                        <page string="Donation Reports">
+                            <field name="donation_report_ids"/>
                         </page>
+
+                        <page string="Subm. Info">
+                            <group>
+                                <field name="submission_datetime"/>
+                                <field name="submission_url"/>
+                                <field name="submission_content"/>
+                            </group>
+                        </page>
+
+                        <page string="Subm. Log">
+                            <field name="submission_log"/>
+                        </page>
+
                         <page string="Response">
-                            <field name="error_code"/>
-                            <field name="error_detail"/>
-                            <field name="response_http_code"/>
-                            <field name="response_time"/>
-                            <field name="response_content"/>
+                            <group string="Response errors" attrs="{'invisible':[('response_error_type','=',False)]}">
+                                <field name="response_error_type"/>
+                                <field name="response_error_code"/>
+                                <field name="request_duration"/>
+                            </group>
+                            <group>
+                                <field name="response_http_code"/>
+                                <field name="request_duration"/>
+                                <field name="response_content"/>
+                                <field name="response_content_parsed"/>
+                            </group>
                         </page>
                     </notebook>
 
                 </sheet>
+
             </form>
         </field>
     </record>
+
+
 
     <record model="ir.ui.view" id="res_partner_donation_report_submission_tree">
         <field name="name">res_partner_donation_report_submission_tree</field>
@@ -73,7 +104,11 @@
         <field name="arch" type="xml">
             <tree string="Donation Report Submissions"
                   default_order="submission_datetime DESC, write_date DESC"
-                  colors="red: state == 'error';grey: state == 'skipped';green: state == 'submitted';blue: state == 'prepared';">
+                  colors="
+                  red: state in ['error', 'response_nok', 'response_twok', 'unexpected_response'];
+                  orange: state == 'submitted';
+                  green: state == 'response_ok';
+                  blue: state == 'prepared';">
                 <field name="submission_env"/>
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>
@@ -96,9 +131,12 @@
                 <field name="bpk_company_id"/>
                 <field name="submission_datetime"/>
                 <field name="state"/>
+                <field name="submission_env"/>
             </search>
         </field>
     </record>
+
+
     <!-- Now we create actions for the new views -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->

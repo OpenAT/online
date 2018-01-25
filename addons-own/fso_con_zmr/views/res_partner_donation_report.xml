@@ -33,7 +33,7 @@
                         </group>
                     </group>
 
-                    <group attrs="{'invisible':[('state','not in',['error',])]}">
+                    <group attrs="{'invisible':[('error_type','=',False)]}">
                         <group>
                             <field name="error_type"/>
                             <field name="error_code"/>

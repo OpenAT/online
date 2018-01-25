@@ -515,7 +515,7 @@ class ResPartnerFADonationReport(models.Model):
             # Update the donation report
             # --------------------------
             values = {'state': 'new', 'skipped_by_id': False,
-                      'submission_id': r.submission_id if r.submission_id else False,
+                      'submission_id': r.submission_id.id if r.submission_id else False,
                       'error_type': False, 'error_code': False, 'error_detail': False}
             # Add submission values to vales
             # HINT: the .update() method returns 'None' so don't use new_dict = values.update(subm_vals) because
