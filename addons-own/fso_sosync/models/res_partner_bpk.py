@@ -7,6 +7,10 @@ class ResPartnerSosync(models.Model):
     _inherit = ["res.partner.bpk", "base.sosync"]
 
     # FIELDS
+    # ------
+    # NEW:
+    state = fields.Selection(sosync="True")
+
     # res.company
     bpk_request_company_id = fields.Many2one(sosync="True")
 
