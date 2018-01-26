@@ -24,11 +24,9 @@
                             <Uebermittlungsart>{{ submission['Uebermittlungsart']|empty_if_exception_filter }}</Uebermittlungsart>
                             <Zeitraum>{{ submission['Zeitraum']|empty_if_exception_filter }}</Zeitraum>
                         </MessageSpec>
-
                         {%- for report in donation_reports %}
                         {%- if report.get('sub_typ') == 'E' %}
 
-                        <!-- Erstmeldung -->
                         <Sonderausgaben Uebermittlungs_Typ="E">
                             <RefNr>{{ report['RefNr']|empty_if_exception_filter }}</RefNr>
                             <Betrag>{{ report['Betrag']|empty_if_exception_filter }}</Betrag>
@@ -37,7 +35,6 @@
                         {%- endif %}
                         {%- if report.get('sub_typ') == 'A' %}
 
-                        <!-- Aenderungsmeldung -->
                         <Sonderausgaben Uebermittlungs_Typ="A">
                             <RefNr>{{ report['RefNr']|empty_if_exception_filter }}</RefNr>
                             <Betrag>{{ report['Betrag']|empty_if_exception_filter }}</Betrag>
@@ -45,7 +42,6 @@
                         {%- endif %}
                         {%- if report.get('sub_typ') == 'S' %}
 
-                        <!-- Stornierungsmeldung -->
                         <Sonderausgaben Uebermittlungs_Typ="S">
                             <RefNr>{{ report['RefNr']|empty_if_exception_filter }}</RefNr>
                         </Sonderausgaben>

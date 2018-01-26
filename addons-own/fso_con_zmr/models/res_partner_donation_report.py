@@ -71,8 +71,8 @@ class ResPartnerFADonationReport(models.Model):
     # -------------------
     # HINT: Data from FRST if not a test environment donation report
     # ATTENTION: This will determine the submission url!
-    submission_env = fields.Selection(string="FinanzOnline Environment", selection=[('t', 'Test'), ('p', 'Production')],
-                                      default="t", required=True, readonly=True, states={'new': [('readonly', False)]})
+    submission_env = fields.Selection(string="FinanzOnline Environment", selection=[('T', 'Test'), ('P', 'Production')],
+                                      default="T", required=True, readonly=True, states={'new': [('readonly', False)]})
     partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True,
                                  readonly=True, states={'new': [('readonly', False)]})
     bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
@@ -217,8 +217,10 @@ class ResPartnerFADonationReport(models.Model):
     @api.onchange('submission_env')
     def _onchange_environment(self):
         for r in self:
-            if r.submission_env:
-                assert r.submission_env == "t", _("You can only create donation reports for the 'Test' environment!")
+            if r.submission_env != "T":
+                r.submission_env = "T"
+                # raise ValidationError(_("You can only create donation reports for the 'Test' FinanzOnline "
+                #                         "environment manually!"))
 
     # --------------
     # HELPER METHODS
@@ -285,7 +287,7 @@ class ResPartnerFADonationReport(models.Model):
                                   ('id', '!=', self.id)],
                                  order="anlage_am_um DESC", limit=1)
         if lsr:
-            assert lsr.state == "response_ok", _("Last submitted donation report  is in state %s but should be "
+            assert lsr.state == "response_ok", _("Last submitted donation report (ID %s) is in state %s but should be "
                                                  "in state 'response_ok'") % (lsr.id, lsr.state)
         return lsr
 
@@ -626,7 +628,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # Make sure only test donation reports in the correct states can be deleted!
             # TODO: This may be a problem on partner merges test it!
-            if r.submission_env != 't' or r.state not in states_allowed:
+            if r.submission_env not in ['t', 'T'] or r.state not in states_allowed:
                 raise ValidationError(_("Deletion only allowed for test donation reports in the states"
                                         " %s") % states_allowed)
 

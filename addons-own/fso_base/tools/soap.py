@@ -57,7 +57,8 @@ def render_template(template="", **template_args):
 #                is a passphrase in the keys. So if we check for a passphrase we can be sure there will be no timeout
 #                by that! requests has its own timeout so no problem there either!
 #@timeout_decorator.timeout(18, use_signals=False, timeout_exception=GenericTimeoutError)
-def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="", request_data=False, **template_args):
+def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="", request_data=False, timeout=8,
+                 **template_args):
 
     # Check for missing or malformed parameters
     assert all((url, template or request_data)), _("Parameters missing! Required are url and template or request_data.")
@@ -102,7 +103,7 @@ def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="",
     # Send the request (POST)
     # http://docs.python-requests.org/en/master/user/advanced/
     request_data = request_data.encode('utf-8')
-    response = session.post(url, data=request_data, headers=http_header, timeout=8)
+    response = session.post(url, data=request_data, headers=http_header, timeout=timeout)
 
     # Return the Response
     return response

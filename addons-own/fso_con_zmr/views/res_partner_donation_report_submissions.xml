@@ -13,6 +13,9 @@
                     <button name="prepare" type="object"
                             attrs="{'invisible':[('state','not in',['new', 'prepared', 'error'])]}"
                             string="Prepare"/>
+                    <button name="submit" type="object" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['prepared', 'error'])]}"
+                            string="Submit to FinanzOnline!"/>
                     <field name="state" widget="statusbar" statusbar_visible="new,prepared,response_ok"/>
                 </header>
 
