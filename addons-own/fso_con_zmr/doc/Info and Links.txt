@@ -1,0 +1,10 @@
+FinanzOnline Manuals, WSDL, XSD, ... :
+--------------------------------------
+https://www.bmf.gv.at/egovernment/fon/fuer-softwarehersteller/243980.html
+
+
+TestUser for FinanzOnline (at least for the data box) found in the databox manual:
+----------------------------------------------------------------------------------
+tid = 1000103u3032
+benid = webserv99
+pin = webserv99

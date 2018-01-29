@@ -32,7 +32,7 @@ class ResPartnerFADonationReport(models.Model):
                                         ('skipped', 'Skipped'),
                                         ('disabled', 'Donation Deduction Disabled'),
                                         ('error', 'Error'),
-                                        ('submitted', 'Submitted to FinanzOnline'),
+                                        ('submitted', 'Submitted or in Submission to FinanzOnline'),
                                         ('response_ok', 'Accepted by FinanzOnline'),
                                         ('response_nok', 'Rejected by FinanzOnline'),
                                         ('unexpected_response', 'Unexpected Response')])

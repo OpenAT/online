@@ -1,0 +1,19 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dat="https://finanzonline.bmf.gv.at/fon/ws/databox">
+    <x:Header/>
+    <x:Body>
+        <dat:getDataboxRequest>
+            <dat:tid>{{ session['tid']|empty_if_exception_filter }}</dat:tid>
+            <dat:benid>{{ session['benid']|empty_if_exception_filter }}</dat:benid>
+            <dat:id>{{ session['id']|empty_if_exception_filter }}</dat:id>
+
+            <!-- erltyp is "P" for UAB_SA (UAB_SA = Sonderausgaben) -->
+            <dat:erltyp>{{ databox['erltyp']|empty_if_exception_filter or "P" }}</dat:erltyp>
+
+            <!-- Format: e.g.: 2018-01-01T00:00:00 -->
+            <!-- ts_zust_von and ts_zust_bis must be set to get unread AND read documents (status = 1) -->
+            <dat:ts_zust_von>{{ databox['ts_zust_von']|empty_if_exception_filter }}</dat:ts_zust_von>
+            <dat:ts_zust_bis>{{ databox['ts_zust_bis']|empty_if_exception_filter }}</dat:ts_zust_bis>
+
+        </dat:getDataboxRequest>
+    </x:Body>
+</x:Envelope>

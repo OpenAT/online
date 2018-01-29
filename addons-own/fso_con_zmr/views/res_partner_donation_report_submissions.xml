@@ -16,6 +16,9 @@
                     <button name="submit" type="object" class="oe_highlight"
                             attrs="{'invisible':[('state','not in',['prepared', 'error'])]}"
                             string="Submit to FinanzOnline!"/>
+                    <button name="check_response" type="object" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['submitted', 'unexpected_response'])]}"
+                            string="Check Answer from FinanzOnline DataBox!"/>
                     <field name="state" widget="statusbar" statusbar_visible="new,prepared,response_ok"/>
                 </header>
 
@@ -77,7 +80,7 @@
                             <field name="submission_log"/>
                         </page>
 
-                        <page string="Response">
+                        <page string="Subm. Response">
                             <group string="Response errors" attrs="{'invisible':[('response_error_type','=',False)]}">
                                 <field name="response_error_type"/>
                                 <field name="response_error_code"/>
@@ -88,6 +91,14 @@
                                 <field name="request_duration"/>
                                 <field name="response_content"/>
                                 <field name="response_content_parsed"/>
+                            </group>
+                        </page>
+
+                        <page string="Answer (DataBox)">
+                            <group>
+                                <field name="databox_listing"/>
+                                <field name="response_file_applkey"/>
+                                <field name="response_file"/>
                             </group>
                         </page>
                     </notebook>

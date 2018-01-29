@@ -204,7 +204,8 @@ class CompanyAustrianZMRSettings(models.Model):
         c.fa_logout_returncode = returncode
 
         # Clear login data if logout was successful
-        if returncode == "0":
+        # HINT: -1 = Die Session ID ist ungueltig oder abgelaufen.
+        if returncode in ["0", "-1"]:
             c.fa_login_sessionid = False
             c.fa_login_returncode = False
             c.fa_login_message = False
@@ -228,10 +229,13 @@ class CompanyAustrianZMRSettings(models.Model):
         assert self.ensure_one(), _("finanz_online_login() can only be used for one company at a time!")
         c = self
 
-        # Check if there is already a session id (if we are already logged in)
-        # TODO: !!! Check somehow if the sessionid is still valid !!!
-        if c.fa_login_sessionid:
-            return c.fa_login_sessionid
+        # Logout first
+        # ------------
+        # HINT: sessionids are only valid for a couple of minutes in FinanzOnline so its no problem to always try
+        #       to logout because nearly every request to FinanzOnline needs a new session id because the old one is
+        #       expired. -> If possible we should check here if the session id is still valid or not but right now
+        #       i don't know how?
+        c.finanz_online_logout()
 
         # GET THE LOGIN TEMPLATE
         # Get the template-folder directory

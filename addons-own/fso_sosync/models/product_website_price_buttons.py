@@ -7,7 +7,6 @@ class ProductWebsitePriceButtonsSosync(models.Model):
     _inherit = ["product.website_price_buttons", "base.sosync"]
 
     name = fields.Char(sosync="True")
-    active = fields.Boolean(sosync="True")
 
     amount = fields.Float(sosync="True")
     sequence = fields.Integer(sosync="True")

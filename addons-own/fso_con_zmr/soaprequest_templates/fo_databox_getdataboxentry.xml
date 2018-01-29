@@ -1,0 +1,13 @@
+<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dat="https://finanzonline.bmf.gv.at/fon/ws/databox">
+    <x:Header/>
+    <x:Body>
+        <dat:getDataboxEntryRequest>
+            <dat:tid>{{ session['tid']|empty_if_exception_filter }}</dat:tid>
+            <dat:benid>{{ session['benid']|empty_if_exception_filter }}</dat:benid>
+            <dat:id>{{ session['id']|empty_if_exception_filter }}</dat:id>
+
+            <dat:applkey>{{ databox['applkey']|empty_if_exception_filter }}</dat:applkey>
+
+        </dat:getDataboxEntryRequest>
+    </x:Body>
+</x:Envelope>

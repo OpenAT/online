@@ -4,6 +4,7 @@ from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
 from openerp.addons.fso_base.tools.soap import render_template, soap_request
 
+import datetime
 from lxml import etree
 import re
 import os
@@ -24,12 +25,11 @@ class ResPartnerFADonationReport(models.Model):
     # ------
     # FIELDS
     # ------
-    # HINT: submitted = submitted to FinanzOnline even if we get an
     state = fields.Selection(string="State", readonly=True, default='new',
                              selection=[('new', 'New'),
                                         ('prepared', 'Prepared'),
                                         ('error', 'Error'),
-                                        ('submitted', 'Submitted'),
+                                        ('submitted', 'Submitted to FinanzOnline'),
                                         ('response_ok', 'Accepted by FinanzOnline'),
                                         ('response_nok', 'Rejected by FinanzOnline'),
                                         ('response_twok', 'Partially Rejected by FinanzOnline'),
@@ -129,7 +129,7 @@ class ResPartnerFADonationReport(models.Model):
     # --------
     response_http_code = fields.Char(string="Response HTTP Code", readonly=True)
     response_content = fields.Text(string="Response Content (raw)", readonly=True)
-    response_content_parsed = fields.Text(string="Parsed Response Content (XML)", readonly=True)
+    response_content_parsed = fields.Text(string="Response Content (prettyprint)", readonly=True)
 
     response_error_type = fields.Selection(string="Response Error Type", readonly=True,
         selection=[
@@ -150,6 +150,13 @@ class ResPartnerFADonationReport(models.Model):
                    ])
     response_error_code = fields.Char(string="Response Error Code", redonly=True)
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True)
+
+    # DataBox
+    databox_listing = fields.Text(string="Databox File List", readonly=True)
+    response_file_applkey = fields.Char(string="Response File FinanzOnline ID (applkey)", readonly=True,
+                                        help="File Listing from FinanzOnline DataBox")
+    response_file = fields.Text(string="Response File", readonly=True,
+                                help="Response File from FinanzOnline DataBox")
 
     request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
 
@@ -183,13 +190,13 @@ class ResPartnerFADonationReport(models.Model):
     # HELPER METHODS
     # --------------
     def file_upload_error_return_codes(self):
-        furc = {'-1': 'session_id',
-                '-2': 'service_down_maintenance',
-                '-3': 'technical',
-                '-4': 'parser',
-                '-5': 'file_upload_doctype',
+        fuerc = {'-1': 'session_id',
+                 '-2': 'service_down_maintenance',
+                 '-3': 'technical',
+                 '-4': 'parser',
+                 '-5': 'file_upload_doctype',
                 }
-        return furc
+        return fuerc
 
     def mandatory_fields(self):
         return 'submission_env', 'meldungs_jahr', 'bpk_company_id', 'submission_fa_art'
@@ -307,6 +314,7 @@ class ResPartnerFADonationReport(models.Model):
         assert f.get('state', False), "update_submission(): 'state' must be set in fields!"
 
         # Pre submission errors
+        # ---------------------
         error_fields = ['error_type', 'error_code', 'error_detail']
         if any(key in f for key in error_fields):
             assert f['state'] == 'error', "state must be 'error' if any field of %s is to be updated" % error_fields
@@ -318,21 +326,13 @@ class ResPartnerFADonationReport(models.Model):
                   'error_detail': error_detail,
                   })
 
-        # # Clean submission fields in new or error state EXCEPT for the linked donation reports.
-        # if f['state'] in ['error', 'new']:
-        #     f.update({'submission_fa_tid': False,
-        #               'submission_fa_benid': False,
-        #               'submission_fa_login_sessionid': False,
-        #               'submission_fa_art': False,
-        #               'submission_fa_fastnr_fon_tn': False,
-        #               'submission_fa_fastnr_org': False,
-        #               'submission_message_ref_id': False,
-        #               'submission_timestamp': False,
-        #               'submission_fa_dr_type': False,
-        #               'submission_fa_herstellerid': False,
-        #               })
+        # Reset the donation reports for pre submission known errors
+        # ----------------------------------------------------------
+        if f['state'] == 'error' and self.donation_report_ids:
+            self.donation_report_ids.write({'state': 'new'})
 
         # Response errors
+        # ---------------
         response_error_fields = ['response_error_type', 'response_error_code', 'response_error_detail']
         response_error_type = f.get('response_error_type', False)
         response_error_code = f.get('response_error_code', False)
@@ -407,6 +407,9 @@ class ResPartnerFADonationReport(models.Model):
     def submit(self):
         for r in self:
             logger.info("Donation report submission (ID %s) is going to be submitted!" % r.id)
+            # Check the state of the submission:
+            assert r.state in ['new', 'prepared', 'error'], _("(Re)Submission to FinanzOnline is not allowed in state "
+                                                              "%s") % r.state
 
             # Check if the submission values have changed
             # -------------------------------------------
@@ -419,7 +422,8 @@ class ResPartnerFADonationReport(models.Model):
             if not vals:
                 r.update_submission(state='error', error_type='changes_after_prepare',
                                     error_code='compute_submission_values_empty',
-                                    error_detail="Could not compute up to date submission values for comparision!")
+                                    error_detail="Could not compute submission values! "
+                                                 "Maybe there where no donation reports found?")
                 continue
             # Compare most fields
             changed_submission_fields = [k for k in vals
@@ -434,31 +438,34 @@ class ResPartnerFADonationReport(models.Model):
             if changed_submission_fields:
                 r.update_submission(state='error', error_type='changes_after_prepare',
                                     error_code='submission_information_changed',
-                                    error_detail="Submission Data has changed!\nPlease prepare the report again before "
-                                                 "submission!\nFields changed: %s" % changed_submission_fields)
+                                    error_detail="Submission Data has changed!\n"
+                                                 "Please prepare the report again before submission!\n"
+                                                 "Fields changed: %s" % changed_submission_fields)
                 continue
 
-            # Login to FinanzOnline and update the session id and request_data
-            # ----------------------------------------------------------------
-            try:
-                r.bpk_company_id.finanz_online_logout()
-            except Exception as e:
-                logger.warning(_("Logout from FinanzOnline failed:\n%s") % repr(e))
+            # Login to FinanzOnline to get the session id
+            # -------------------------------------------
+            # HINT: Login will automatically do a logout first!
+            error_detail = _('Login to FinanzOnline failed!')
             try:
                 fo_session_id = r.bpk_company_id.finanz_online_login()
             except Exception as e:
-                logger.warning(_("Login to FinanzOnline failed:\n%s") % repr(e))
+                error_detail += "\n%s" % repr(e)
+                logger.warning(error_detail)
                 fo_session_id = False
             if not fo_session_id:
                 r.update_submission(state='error', error_type='submission_exception', error_code='login_failed',
-                                    error_detail="Login to FinanzOnline failed")
+                                    error_detail=error_detail)
                 continue
-            # Replace placeholder ###SessionID### with real session id
+
+            # Prepare Request body (Replace placeholder ###SessionID### with real session id)
+            # -------------------------------------------------------------------------------
             request_data = r.submission_content.replace('###SessionID###', fo_session_id, 1)
 
             # Set all donation reports to state 'submitted' so that they can not be removed from the submission
             # -------------------------------------------------------------------------------------------------
-            # HINT: Nothing else needs to be done because we know all reports have the correct computed infos now
+            # HINT: Nothing else needs to be done because we know all reports have the correct infos by
+            #       compute_submission_values() above.
             logger.info("Set donation report(s) state to 'submitted' for donation-report-submission (ID %s)!" % r.id)
             r.donation_report_ids.write({'state': 'submitted'})
 
@@ -476,6 +483,8 @@ class ResPartnerFADonationReport(models.Model):
                 response = soap_request(url=r.submission_url, http_header=http_header, request_data=request_data,
                                         timeout=120)
             except Exception as e:
+                # ATTENTION: Maybe this should be an 'unexpected_response' error instead of 'error'
+                #            but i think that if there es an exception in 99.9% the file never reached FinanzOnline?
                 logger.error(_("Donation report submission (ID %s) exception!\n%s") % (r.id, repr(e)))
                 r.update_submission(state='error',
                                     error_type='submission_exception',
@@ -499,6 +508,7 @@ class ResPartnerFADonationReport(models.Model):
                                     response_error_code='empty_response_object',
                                     submission_log=submission_log,
                                     request_duration=request_duration)
+                # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
 
             # Update submission log with response data
@@ -511,6 +521,9 @@ class ResPartnerFADonationReport(models.Model):
             # ------------------
             response_http_code = response.status_code
             response_content = response.content
+
+            # Prepare the values
+            # ATTENTION: Submission log is already included!
             vals = {'submission_datetime': submission_datetime,
                     'submission_log': submission_log,
                     'response_http_code': response_http_code,
@@ -519,6 +532,7 @@ class ResPartnerFADonationReport(models.Model):
                     }
 
             # Response http code not 200
+            # --------------------------
             if response.status_code != 200:
                 r.update_submission(state='error',
                                     error_type='http_code_not_200',
@@ -527,12 +541,14 @@ class ResPartnerFADonationReport(models.Model):
                                     **vals)
                 continue
 
-            # Reponse http code 200 but no content ?!?
+            # Response http code 200 but no content
+            # -------------------------------------
             if not response.content:
                 r.update_submission(state='unexpected_response',
                                     response_error_type='unexpected_no_content',
                                     response_error_code='no_response_content',
                                     **vals)
+                # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
 
             # Try to parse the response content as xml
@@ -546,11 +562,10 @@ class ResPartnerFADonationReport(models.Model):
                                     response_error_type='unexpected_parser',
                                     response_error_detail='Content could not be parsed:\n%s' % repr(e),
                                     **vals)
+                # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
 
             # Search for a return code of the file upload service
-            # TODO: Also check if the http error code is not 200 and exit if so
-            # TODO: Check if you get a non 200 response even for twok or nok responses!
             # ---------------------------------------------------
             returncode = response_etree.find(".//{*}rc")
             returncode = returncode.text if returncode is not None else False
@@ -565,8 +580,117 @@ class ResPartnerFADonationReport(models.Model):
                                     **vals)
                 continue
 
-            # TODO: Process the answer xml (ok, nok, twok) and update the donation reports
-            # HINT: To get an example of an FinanzOnline Answer i just store the data for now
-            # -------------------------------------------------------------------------------
-            r.update_submission(state='response_ok', **vals)
+            # FileUpload was successful (The normal response)
+            # -----------------------------------------------
+            r.update_submission(state='submitted', **vals)
             continue
+
+    @api.multi
+    def check_response(self):
+        """
+        Check the Databox of FinanzOnline for a Protocol File and Update the Submission and it's donation reports
+        based on the downloaded File!
+
+        :return: (bool)
+        """
+        # Check ensure_one()
+        assert self.ensure_one(), _("check_response() can only be called for a single record!")
+        s = self
+
+        # Check if we are in a correct state ('submitted' or 'unexpected_response')
+        if s.state not in ['submitted', 'unexpected_response']:
+            raise ValidationError(_("It is not possible to check FinanzOnline Databox response in state %s") % s.state)
+
+        # Check if the Submission date of the donation report is not older than 31 days
+        # (because only documents that are 31 days or less can be listed and downloaded from the databox)
+        submission_datetime = fields.datetime.strptime(s.submission_datetime, fields.DATETIME_FORMAT)
+        download_deadline = submission_datetime + datetime.timedelta(days=30)
+        if fields.datetime.now() > download_deadline:
+            error_msg = _("The answer protocol for submission with ID %s can only be downloaded from the FinanzOnline "
+                          "Databox for 31 days via an webservice request!") % s.id
+            logger.error(error_msg)
+            raise ValidationError(error_msg)
+
+        # Login to FinanzOnline to get the session id
+        # -------------------------------------------
+        # HINT: Login will automatically do a logout first!
+        error_msg = _('Login to FinanzOnline failed!')
+        try:
+            fo_session_id = s.bpk_company_id.finanz_online_login()
+        except Exception as e:
+            error_msg += "\n%s" % repr(e)
+            fo_session_id = False
+        if not fo_session_id:
+            logger.error(error_msg)
+            raise ValidationError(error_msg)
+
+        # Get the FileList from the DataBox
+        # ---------------------------------
+        # HINT: If this is done after 6 or more days and there is still no related file in the data box we will reset
+        #       the submission to state error and therefore the related submission reports to state 'new' because it
+        #       seems that no file was received by Finanzonline for this submission at all!
+        if not s.response_file:
+
+            # Render the request body template
+            addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+            soaprequest_templates = pj(addon_path, 'soaprequest_templates')
+            fo_databox_getdatabox = pj(soaprequest_templates, 'fo_databox_getdatabox.xml')
+            assert os.path.exists(fo_databox_getdatabox), _("fo_databox_getdatabox.xml not found at "
+                                                            "%s") % fo_databox_getdatabox
+            ts_zust_von = submission_datetime - datetime.timedelta(hours=6)
+            ts_zust_bis = ts_zust_von + datetime.timedelta(hours=162)
+            req_body = render_template(template=fo_databox_getdatabox,
+                                       session={'tid': s.bpk_company_id.fa_tid,
+                                                'benid': s.bpk_company_id.fa_benid,
+                                                'id': fo_session_id},
+                                       databox={'erltyp': "P",
+                                                'ts_zust_von': ts_zust_von.replace(microsecond=0).isoformat(),
+                                                'ts_zust_bis': ts_zust_bis.replace(microsecond=0).isoformat()})
+            # Try the request to FinanzOnline
+            error_msg = _('Request to FinanzOnline DataBox failed!')
+            try:
+                http_header = {
+                    'content-type': 'text/xml; charset=utf-8',
+                    'SOAPAction': 'getDatabox'
+                }
+                response = soap_request(url="https://finanzonline.bmf.gv.at/fon/ws/databox",
+                                        http_header=http_header, request_data=req_body,
+                                        timeout=120)
+            except Exception as e:
+                error_msg += "\n%s" % repr(e)
+                raise ValidationError(error_msg)
+
+            # Empty Response
+            if not response:
+                raise ValidationError(error_msg)
+
+            # Process the answer of the 'getDatabox' request
+            error_msg = _('Could not parse the response of the FinanzOnline DataBox request!')
+            try:
+                parser = etree.XMLParser(remove_blank_text=True)
+                response_etree = etree.fromstring(response.content, parser=parser)
+                response_pprint = etree.tostring(response_etree, pretty_print=True)
+            except Exception as e:
+                error_msg += "\n%s" % repr(e)
+                raise ValidationError(error_msg)
+
+            # Force Update the databox_listing field!
+            s.databox_listing = response_pprint or response.content
+
+            # Try to find the returncode and message
+            returncode = response_etree.find(".//{*}rc")
+            returncode = returncode.text if returncode is not None else False
+            returnmsg = response_etree.find(".//{*}msg")
+            returnmsg = returnmsg.text if returnmsg is not None else response_pprint
+
+            # Check if any returncode was found and is not 0
+            if not returncode or returncode != "0":
+                raise ValidationError(_("No return code found in the answer from the FinanzOnline DataBox request!"
+                                        "\n\n%s\n\n%s") % (returnmsg, s.databox_listing))
+
+        # TODO: Download the Answer XML for the submission from the DataBox and store it in the submission
+
+        # TODO: Download the Answer XML file and try to evaluate it
+        # HINT: We will catch exception update the submission to state 'unexpected_response' if any happended.
+
+        # TODO: Update the submission and the related donation reports
