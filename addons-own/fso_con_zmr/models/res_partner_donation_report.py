@@ -455,8 +455,10 @@ class ResPartnerFADonationReport(models.Model):
             # Clear skipped by
             if f['state'] != 'skipped':
                 f.update({'skipped_by_id': False})
-            # Update the report and return
-            report.write(f)
+
+            # Update the report if anything changed and return
+            if any(report[f_name] != f[f_name] for f_name in f):
+                report.write(f)
             return
 
         # Loop through the donation reports
@@ -603,7 +605,9 @@ class ResPartnerFADonationReport(models.Model):
                               'error_type': False,
                               'error_code': False,
                               'error_detail': False})
-            r.write(subm_vals)
+            # Update the report if anything changed
+            if any(r[f_name] != subm_vals[f_name] for f_name in subm_vals):
+                r.write(subm_vals)
             continue
 
     # ------------

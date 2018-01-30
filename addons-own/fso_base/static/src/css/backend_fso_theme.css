@@ -953,3 +953,11 @@ html .openerp .oe_kanban_view .oe_kanban_footer_left .oe_tags .oe_tag {
     text-decoration: underline;
     background-color: inherit;
 }
+
+.openerp .oe_form .oe_form_field_text {
+    max-width: 90%;
+    max-height: 600px;
+    min-height: 60px !important;
+    overflow-y: scroll;
+    border-bottom: 1px solid #f7f7f7;
+}
