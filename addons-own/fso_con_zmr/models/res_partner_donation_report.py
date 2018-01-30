@@ -213,14 +213,12 @@ class ResPartnerFADonationReport(models.Model):
                     r.ze_datum_bis = year_end
 
     # Only allow to create donation reports for the FinanzOnline Test Environment in the FSON GUI.
-    # HINT: Onchange will not be "called" by changes done xmlrpc calls from the sosyncer (TODO Test this ;) )
+    # HINT: Onchange will not be "called" by changes done xmlrpc calls from the sosyncer
     @api.onchange('submission_env')
     def _onchange_environment(self):
         for r in self:
             if r.submission_env != "T":
                 r.submission_env = "T"
-                # raise ValidationError(_("You can only create donation reports for the 'Test' FinanzOnline "
-                #                         "environment manually!"))
 
     # --------------
     # HELPER METHODS
@@ -620,7 +618,6 @@ class ResPartnerFADonationReport(models.Model):
 
     @api.multi
     def unlink(self):
-
         states_allowed = list(self._changes_allowed_states()) + ['skipped']
         for r in self:
             # TODO: Check what happens on partner merge and update remaining donation reports with the
@@ -633,4 +630,3 @@ class ResPartnerFADonationReport(models.Model):
                                         " %s") % states_allowed)
 
         return super(ResPartnerFADonationReport, self).unlink()
-

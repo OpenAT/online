@@ -44,12 +44,17 @@
                         <field name="error_detail"/>
                     </group>
 
+                    <group string="Response errors" attrs="{'invisible':[('response_error_type','=',False)]}">
+                        <field name="response_error_type"/>
+                        <field name="response_error_code"/>
+                        <field name="response_error_detail"/>
+                    </group>
+
                     <notebook>
                         <page string="Subm. Data">
                             <group>
                                 <field name="submission_fa_tid"/>
                                 <field name="submission_fa_benid"/>
-                                <field name="submission_fa_login_sessionid"/>
                                 <field name="submission_fa_art"/>
 
                                 <field name="submission_fa_fastnr_fon_tn"/>
@@ -81,11 +86,6 @@
                         </page>
 
                         <page string="Subm. Response">
-                            <group string="Response errors" attrs="{'invisible':[('response_error_type','=',False)]}">
-                                <field name="response_error_type"/>
-                                <field name="response_error_code"/>
-                                <field name="request_duration"/>
-                            </group>
                             <group>
                                 <field name="response_http_code"/>
                                 <field name="request_duration"/>
@@ -98,6 +98,7 @@
                             <group>
                                 <field name="databox_listing"/>
                                 <field name="response_file_applkey"/>
+                                <field name="response_file_pretty"/>
                                 <field name="response_file"/>
                             </group>
                         </page>

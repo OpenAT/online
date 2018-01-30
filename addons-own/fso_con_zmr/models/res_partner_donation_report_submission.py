@@ -69,7 +69,6 @@ class ResPartnerFADonationReport(models.Model):
     # <fileuploadRequest>
     submission_fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)", readonly=True)
     submission_fa_benid = fields.Char(string="Webservicebenutzer ID (benid)", readonly=True)
-    submission_fa_login_sessionid = fields.Char(string="Session ID (id)", readonly=True)
     submission_fa_art = fields.Selection(string="Uebermitlungsbereich (art)",
                                          selection=[('UEB_SA', 'Sonderausgaben (UEB_SA)')],
                                          default="UEB_SA", readonly=True)
@@ -146,28 +145,16 @@ class ResPartnerFADonationReport(models.Model):
                    ])
     response_error_code = fields.Char(string="Response Error Code", redonly=True)
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True)
+    request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
 
     # DataBox
     databox_listing = fields.Text(string="Databox File List", readonly=True)
     response_file_applkey = fields.Char(string="Response File FinanzOnline ID (applkey)", readonly=True,
                                         help="File Listing from FinanzOnline DataBox")
-    response_file = fields.Text(string="Response File", readonly=True,
+    response_file = fields.Text(string="Response File (raw)", readonly=True,
                                 help="Response File from FinanzOnline DataBox")
-
-    request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
-
-    # -------------------
-    # ONCHANGE (GUI ONLY)
-    # -------------------
-    # Only allow to create donation reports for the FinanzOnline Test Environment in the FSON GUI.
-    # HINT: Onchange will not be "called" by changes done xmlrpc calls from the sosyncer (TODO Test this ;) )
-    @api.onchange('submission_env')
-    def _onchange_environment(self):
-        for r in self:
-            if r.submission_env != "T":
-                r.submission_env = "T"
-                # raise ValidationError(_("You can only create donation reports submissions for the 'Test' "
-                #                         "FinanzOnline environment manually!"))
+    response_file_pretty = fields.Text(string="Response File (pretty)", readonly=True,
+                                       help="Response File from FinanzOnline DataBox")
 
     # ----
     # CRUD
@@ -241,7 +228,7 @@ class ResPartnerFADonationReport(models.Model):
         logger.info("Found %s donation reports for submission %s after donation report update!" % (len_dr, r.id))
 
         # Compute the basic submission values
-        # HINT: submission_fa_login_sessionid is only computed and needed right before submission!
+        # HINT: the session id is only computed and needed right before submission!
         # ATTENTION: submission_timestamp is used for the PREPARATION time of the submission values and NOT
         #            the time of the report submission try!!!
         vals = {
@@ -690,6 +677,7 @@ class ResPartnerFADonationReport(models.Model):
             # HINT: Filename example: "Webservice_UEB_SA_2018-01-29-11.45.07.463000"
             response_file_applkey = False
             response_file = False
+            response_file_pretty = False
             # Loop through the listed files in he xml
             for result in response_etree.iterfind(".//{*}result"):
                 filebez = result.find(".//{*}filebez")
@@ -743,8 +731,16 @@ class ResPartnerFADonationReport(models.Model):
 
                     # Check if the correct submission id is in the file
                     if s.submission_message_ref_id in download_decode:
-                        response_file = download_decode
                         response_file_applkey = applkey
+                        response_file = download_decode
+                        try:
+                            prs = etree.XMLParser(remove_blank_text=True)
+                            response_file_etree = etree.fromstring(response_file.encode('utf-8'), parser=prs)
+                            response_file_pprint = etree.tostring(response_file_etree, pretty_print=True)
+                            response_file_pretty = response_file_pprint
+                        except Exception as e:
+                            logger.error("Could not parse the databox response_file as xml!\n%s" % repr(e))
+                            pass
                         break
 
             # No file found
@@ -754,14 +750,15 @@ class ResPartnerFADonationReport(models.Model):
             # Force update the response_file
             s.response_file_applkey = response_file_applkey
             s.response_file = response_file
+            s.response_file_pretty = response_file_pretty
 
-        # Process the downloaded XML answer and update submission and donation reports
-        # ----------------------------------------------------------------------------
+        # Process the downloaded XML answer file and update submission and donation reports
+        # ---------------------------------------------------------------------------------
         # HINT: For processing exceptions we update the submission to state 'unexpected_response'.
         error_msg = _("Parsing of the answer file from FinanzOnline Databox failed!")
         try:
             parser = etree.XMLParser(remove_blank_text=True)
-            response_etree = etree.fromstring(s.response_file, parser=parser)
+            response_etree = etree.fromstring(s.response_file.encode('utf-8'), parser=parser)
             if not response_etree:
                 raise ValidationError(_("Empty content after xml parsing of the DataBox response file!"))
         except Exception as e:
@@ -872,3 +869,9 @@ class ResPartnerFADonationReport(models.Model):
 
         # If we reached this point something went awfully wrong!
         raise ValidationError("check_response() Sorry but something went wrong! Please contact the support!")
+
+    # TODO: Create a method that "releases" donation reports (set the state to 'error') if they belong to a NOK or TWOK
+    # TODO: donation report submission. Or more generally speaking if the donation report is in the "response_nok"
+    # TODO: state. The problem is that some of the response_nok reasons like 'Erstmeldung bereits uebermittelt' needs
+    # TODO: a deeper investigation if it is ok or not to release the donation report. Therefore we wait until it
+    # TODO: happens the first time until we create this method - if it ever happens :)
