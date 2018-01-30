@@ -89,12 +89,12 @@
                             <group>
                                 <field name="response_http_code"/>
                                 <field name="request_duration"/>
-                                <field name="response_content"/>
                                 <field name="response_content_parsed"/>
+                                <field name="response_content"/>
                             </group>
                         </page>
 
-                        <page string="Answer (DataBox)">
+                        <page string="Answer from DataBox">
                             <group>
                                 <field name="databox_listing"/>
                                 <field name="response_file_applkey"/>

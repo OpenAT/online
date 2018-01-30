@@ -4,6 +4,7 @@ from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
 from openerp.addons.fso_base.tools.soap import render_template, soap_request
 
+import base64
 import datetime
 from lxml import etree
 import re
@@ -90,7 +91,7 @@ class ResPartnerFADonationReport(models.Model):
                                            size=9, readonly=True)
 
     # <data><SonderausgabenUebermittlung><MessageSpec>
-    submission_message_ref_id = fields.Char(string="Paket ID (MessageRefId)", readonly=True)
+    submission_message_ref_id = fields.Char(string="Paket ID (MessageRefId)", readonly=True, size=36)
     submission_timestamp = fields.Char(string="Timestamp (Timestamp)", readonly=True,
                                        help=_("Format: datetime with timezone e.g.: 2012-12-13T12:12:12"))
     submission_fa_dr_type = fields.Char(string="Organisationstyp (Uebermittlungsart)", readonly=True)
@@ -134,12 +135,7 @@ class ResPartnerFADonationReport(models.Model):
     response_error_type = fields.Selection(string="Response Error Type", readonly=True,
         selection=[
                    # <Info>NOK</Info> and <Error><Code>ERR-F-*
-                   ('nok_fastnr_fon_tn', 'Finanzamt-Steuernummer des Softwareherstellers error (fastnr_fon_tn)'),
-                   ('nok_fastnr_org', 'Finanzamt-Steuernummer der Organisation error (fastnr_org)'),
-                   ('nok_fastnr_org_year', 'Unauthorized Year (Meldejahr)'),
-                   ('nok_fastnr_org_dr_type', 'Unauthorized Organisation-Type (dr_type)'),
-                   ('nok_fastnr_fon_tn_access', 'Softwarehersteller not authorized for submission'),
-                   ('nok_year', 'Year outside valid range (Meldejahr)'),
+                   ('nok', 'Donation report submission fully rejected'),
                    # <Info>TWOK</Info>
                    ('twok', 'Donation reports partially rejected'),
                    # Unexpected or no response
@@ -256,7 +252,7 @@ class ResPartnerFADonationReport(models.Model):
             'submission_fa_fastnr_fon_tn': r.bpk_company_id.fa_fastnr_fon_tn,
             'submission_fa_fastnr_org': r.bpk_company_id.fa_fastnr_org,
             # <data><SonderausgabenUebermittlung><MessageSpec>
-            'submission_message_ref_id': "SUBMID%s" % r.id,
+            'submission_message_ref_id': "S_%s_%s" % (r.create_date, r.id),
             'submission_timestamp': fields.datetime.utcnow().replace(microsecond=0).isoformat(),
             'submission_fa_dr_type': r.bpk_company_id.fa_dr_type,
             # <data><SonderausgabenUebermittlung><Sonderausgaben> (for loop)
@@ -345,7 +341,7 @@ class ResPartnerFADonationReport(models.Model):
 
         # Request duration
         f.update({
-            'request_duration': f.get('request_duration', False),
+            'request_duration': f.get('request_duration', False) or self.request_duration,
         })
 
         # Update the submission log with state and error information if any
@@ -528,6 +524,7 @@ class ResPartnerFADonationReport(models.Model):
                     'submission_log': submission_log,
                     'response_http_code': response_http_code,
                     'response_content': response_content,
+                    'response_content_parsed': False,
                     'request_duration': request_duration,
                     }
 
@@ -564,6 +561,7 @@ class ResPartnerFADonationReport(models.Model):
                                     **vals)
                 # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
+            vals['response_content_parsed'] = response_pprint
 
             # Search for a return code of the file upload service
             # ---------------------------------------------------
@@ -588,8 +586,8 @@ class ResPartnerFADonationReport(models.Model):
     @api.multi
     def check_response(self):
         """
-        Check the Databox of FinanzOnline for a Protocol File and Update the Submission and it's donation reports
-        based on the downloaded File!
+        Check the answer file from the Databox of FinanzOnline and update the submission and it's donation reports
+        based on the downloaded file!
 
         :return: (bool)
         """
@@ -602,7 +600,7 @@ class ResPartnerFADonationReport(models.Model):
             raise ValidationError(_("It is not possible to check FinanzOnline Databox response in state %s") % s.state)
 
         # Check if the Submission date of the donation report is not older than 31 days
-        # (because only documents that are 31 days or less can be listed and downloaded from the databox)
+        # HINT: Only documents that are 31 days or less can be listed and downloaded from the databox
         submission_datetime = fields.datetime.strptime(s.submission_datetime, fields.DATETIME_FORMAT)
         download_deadline = submission_datetime + datetime.timedelta(days=30)
         if fields.datetime.now() > download_deadline:
@@ -624,21 +622,19 @@ class ResPartnerFADonationReport(models.Model):
             logger.error(error_msg)
             raise ValidationError(error_msg)
 
-        # Get the FileList from the DataBox
-        # ---------------------------------
-        # HINT: If this is done after 6 or more days and there is still no related file in the data box we will reset
-        #       the submission to state error and therefore the related submission reports to state 'new' because it
-        #       seems that no file was received by Finanzonline for this submission at all!
+        # Get the FileList and download the answer file from the DataBox
+        # --------------------------------------------------------------
         if not s.response_file:
 
             # Render the request body template
+            # HINT: A time range of max 7 days is allowed!
             addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
             soaprequest_templates = pj(addon_path, 'soaprequest_templates')
             fo_databox_getdatabox = pj(soaprequest_templates, 'fo_databox_getdatabox.xml')
-            assert os.path.exists(fo_databox_getdatabox), _("fo_databox_getdatabox.xml not found at "
-                                                            "%s") % fo_databox_getdatabox
+            if not os.path.exists(fo_databox_getdatabox):
+                raise ValidationError(_("Template fo_databox_getdatabox.xml not found at %s") % fo_databox_getdatabox)
             ts_zust_von = submission_datetime - datetime.timedelta(hours=6)
-            ts_zust_bis = ts_zust_von + datetime.timedelta(hours=162)
+            ts_zust_bis = submission_datetime + datetime.timedelta(hours=160)
             req_body = render_template(template=fo_databox_getdatabox,
                                        session={'tid': s.bpk_company_id.fa_tid,
                                                 'benid': s.bpk_company_id.fa_benid,
@@ -646,8 +642,9 @@ class ResPartnerFADonationReport(models.Model):
                                        databox={'erltyp': "P",
                                                 'ts_zust_von': ts_zust_von.replace(microsecond=0).isoformat(),
                                                 'ts_zust_bis': ts_zust_bis.replace(microsecond=0).isoformat()})
-            # Try the request to FinanzOnline
-            error_msg = _('Request to FinanzOnline DataBox failed!')
+
+            # Try the 'list files' request to FinanzOnline DataBox
+            error_msg = _('List files request to FinanzOnline DataBox failed!')
             try:
                 http_header = {
                     'content-type': 'text/xml; charset=utf-8',
@@ -661,11 +658,12 @@ class ResPartnerFADonationReport(models.Model):
                 raise ValidationError(error_msg)
 
             # Empty Response
-            if not response:
+            if not response or not response.content:
+                error_msg += _("\nEmpty Response!")
                 raise ValidationError(error_msg)
 
             # Process the answer of the 'getDatabox' request
-            error_msg = _('Could not parse the response of the FinanzOnline DataBox request!')
+            error_msg = _('Could not parse the response of the FinanzOnline DataBox list files request!')
             try:
                 parser = etree.XMLParser(remove_blank_text=True)
                 response_etree = etree.fromstring(response.content, parser=parser)
@@ -685,12 +683,192 @@ class ResPartnerFADonationReport(models.Model):
 
             # Check if any returncode was found and is not 0
             if not returncode or returncode != "0":
-                raise ValidationError(_("No return code found in the answer from the FinanzOnline DataBox request!"
+                raise ValidationError(_("Unexpected return code in the answer from DataBox file list request!"
                                         "\n\n%s\n\n%s") % (returnmsg, s.databox_listing))
 
-        # TODO: Download the Answer XML for the submission from the DataBox and store it in the submission
+            # Find and download the correct answer file for this submission
+            # HINT: Filename example: "Webservice_UEB_SA_2018-01-29-11.45.07.463000"
+            response_file_applkey = False
+            response_file = False
+            # Loop through the listed files in he xml
+            for result in response_etree.iterfind(".//{*}result"):
+                filebez = result.find(".//{*}filebez")
+                filebez = filebez.text if filebez is not None else ''
+                if "Webservice_UEB_SA".upper() in filebez.upper():
+                    applkey = result.find(".//{*}applkey")
+                    applkey = applkey.text if applkey is not None else ''
+                    if not applkey:
+                        raise ValidationError(_("No 'applkey' found for file %s!\n\n%s") % (filebez, result.text))
+                    logger.info("Download File '%s' from FinanzOnline DataBox (applkey %s)."
+                                "" % (filebez, applkey))
 
-        # TODO: Download the Answer XML file and try to evaluate it
-        # HINT: We will catch exception update the submission to state 'unexpected_response' if any happended.
+                    # Render the request body template
+                    fo_databox_getdataboxentry = pj(soaprequest_templates, 'fo_databox_getdataboxentry.xml')
+                    if not os.path.exists(fo_databox_getdataboxentry):
+                        raise ValidationError(_("Template fo_databox_getdataboxentry.xml not found at "
+                                                                         "%s") % fo_databox_getdataboxentry)
+                    req_body = render_template(template=fo_databox_getdataboxentry,
+                                               session={'tid': s.bpk_company_id.fa_tid,
+                                                        'benid': s.bpk_company_id.fa_benid,
+                                                        'id': fo_session_id},
+                                               databox={'applkey': applkey})
 
-        # TODO: Update the submission and the related donation reports
+                    # Download the protocol file from the FinanzOnline DataBox
+                    error_msg = _("Download of file %s from FinanzOnline Databox failed!") % filebez
+                    try:
+                        http_header = {
+                            'content-type': 'text/xml; charset=utf-8',
+                            'SOAPAction': 'getDataboxEntry'
+                        }
+                        download = soap_request(url="https://finanzonline.bmf.gv.at/fon/ws/databox",
+                                                http_header=http_header, request_data=req_body, timeout=120)
+                    except Exception as e:
+                        error_msg += "\n%s" % repr(e)
+                        raise ValidationError(error_msg)
+                    if not download or not download.content:
+                        error_msg += "\nEmpty response!"
+                        raise ValidationError(error_msg)
+
+                    # Extract and decode the file from the result
+                    error_msg = _("Could not decode content of file %s!") % filebez
+                    try:
+                        download_etree = etree.fromstring(download.content, parser=parser)
+                        download_decode = base64.b64decode(download_etree.find(".//{*}result").text)
+                    except Exception as e:
+                        error_msg += "\n%s" % repr(e)
+                        raise ValidationError(error_msg)
+                    if not download_decode:
+                        error_msg += "\nNo file content after base64 decode!"
+                        raise ValidationError(error_msg)
+
+                    # Check if the correct submission id is in the file
+                    if s.submission_message_ref_id in download_decode:
+                        response_file = download_decode
+                        response_file_applkey = applkey
+                        break
+
+            # No file found
+            if not response_file:
+                raise ValidationError("No protocol file found in FinanzOnline DataBox for this submission!")
+
+            # Force update the response_file
+            s.response_file_applkey = response_file_applkey
+            s.response_file = response_file
+
+        # Process the downloaded XML answer and update submission and donation reports
+        # ----------------------------------------------------------------------------
+        # HINT: For processing exceptions we update the submission to state 'unexpected_response'.
+        error_msg = _("Parsing of the answer file from FinanzOnline Databox failed!")
+        try:
+            parser = etree.XMLParser(remove_blank_text=True)
+            response_etree = etree.fromstring(s.response_file, parser=parser)
+            if not response_etree:
+                raise ValidationError(_("Empty content after xml parsing of the DataBox response file!"))
+        except Exception as e:
+            error_msg += "\n%s" % repr(e)
+            logger.error(error_msg)
+            s.update_submission(state='unexpected_response',
+                                response_error_type='unexpected_parser',
+                                response_error_detail=error_msg)
+            return True
+
+        # Get the <Info> element
+        info = response_etree.find(".//{*}Info")
+        info = info.text if info is not None else ''
+
+        # Unexpected Result
+        if not info or info not in ['OK', 'NOK', 'TWOK']:
+            error_msg = _("Unexpected <Info> content: %s") % info
+            logger.error(error_msg)
+            s.update_submission(state='unexpected_response',
+                                response_error_type='unexpected_parser',
+                                response_error_detail=error_msg)
+            return True
+
+        # Submission was completely accepted
+        if info == "OK":
+            state = "response_ok"
+            # Update donation reports and the submission
+            s.donation_report_ids.write({'state': state,
+                                         'response_content': False,
+                                         'response_error_code': False,
+                                         'response_error_detail': False})
+            s.update_submission(state=state)
+            return True
+
+        # Submission was completely rejected
+        if info == "NOK":
+            state = "response_nok"
+            # Try to get the error info
+            try:
+                code = response_etree.find(".//{*}Code")
+                code = code.text if code is not None else ''
+                text = response_etree.find(".//{*}Text")
+                text = text.text if text is not None else ''
+                if not code:
+                    raise ValidationError(_("Error code not found! (ErrorText: %s)") % text)
+            except Exception as e:
+                error_msg = _("Exception while parsing <Code> and <Text> in answer from DataBox!\n%s") % repr(e)
+                logger.error(error_msg)
+                s.update_submission(state='unexpected_response',
+                                    response_error_type='unexpected_parser',
+                                    response_error_detail=error_msg)
+                return True
+            # Update donation reports and the submission
+            s.donation_report_ids.write({'state': state,
+                                         'response_content': False,
+                                         'response_error_code': code,
+                                         'response_error_detail': text})
+            s.update_submission(state=state,
+                                response_error_type='nok',
+                                response_error_code=code,
+                                response_error_detail=text)
+            return True
+
+        # Submission was partially rejected
+        if info == "TWOK":
+            # HINT: Make sure there are no duplicates in the list because .remove() will only remove the first
+            #       occurrence of the value
+            remaining_ids = list(set(s.donation_report_ids.ids))
+            remaining_ids_length_start = len(remaining_ids)
+            for error_etree in response_etree.iterfind(".//{*}SonderausgabenError"):
+                refnr = error_etree.find(".//{*}RefNr").text
+                code = error_etree.find(".//{*}Code").text
+                text = error_etree.find(".//{*}Text").text
+                if not all((refnr, code, text)):
+                    raise ValidationError(_("Could not process SonderausgabenError: RefNr %s, Code %s, Text %s"
+                                            "") % (refnr, code, text))
+                # Find related donation report
+                dr = s.sudo().search([('id', 'in', s.donation_report_ids.ids), ('submission_refnr', '=', refnr)])
+                if not dr or len(dr) != 1:
+                    raise ValidationError(_("None or multiple donation reports found (IDs %s) for SonderausgabenError: "
+                                            "RefNr %s, Code %s, Text %s"
+                                            "") % (dr.ids if dr else '', refnr, code, text))
+                # Update the 'Not OK' donation report
+                dr.write({'state': 'response_nok',
+                          'response_content': error_etree.text if error_etree is not None else False,
+                          'response_error_code': code,
+                          'response_error_detail': text})
+                # Remove the id from the remaining_ids list
+                remaining_ids.remove(dr.id)
+
+            # Check that we found and removed some donation reports
+            if remaining_ids and len(remaining_ids) >= remaining_ids_length_start:
+                raise ValidationError("Answer from ZMR is partially rejected (TWOK) but no donation reports "
+                                      "with errors could be found!?")
+
+            # Update the remaining donation reports and the submission
+            if remaining_ids:
+                ok_reports = s.sudo().browse(remaining_ids)
+                ok_reports.write({'state': 'response_ok',
+                                  'response_content': False,
+                                  'response_error_code': False,
+                                  'response_error_detail': False})
+            s.update_submission(state='response_twok',
+                                response_error_type='twok',
+                                response_error_code=False,
+                                response_error_detail=False)
+            return True
+
+        # If we reached this point something went awfully wrong!
+        raise ValidationError("check_response() Sorry but something went wrong! Please contact the support!")
