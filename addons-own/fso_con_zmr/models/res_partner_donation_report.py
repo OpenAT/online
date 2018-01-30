@@ -568,7 +568,7 @@ class ResPartnerFADonationReport(models.Model):
                 type_refnr_erstmid = r.compute_type_refnr_erstmid(
                     submission_bpk_private=subm_vals['submission_bpk_private'])
                 # Add these fields to the subm_vals
-                subm_vals.append(type_refnr_erstmid)
+                subm_vals.update(type_refnr_erstmid)
             except Exception as e:
                 update_report(r, state='error', error_type='data_incomplete', error_code='exception',
                               error_detail=repr(e))

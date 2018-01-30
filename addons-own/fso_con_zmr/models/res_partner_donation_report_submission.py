@@ -232,6 +232,7 @@ class ResPartnerFADonationReport(models.Model):
         # HINT: the session id is only computed and needed right before submission!
         # ATTENTION: submission_timestamp is used for the PREPARATION time of the submission values and NOT
         #            the time of the report submission try!!!
+
         vals = {
             # <fileuploadRequest>
             'submission_fa_tid': r.bpk_company_id.fa_tid,
@@ -240,7 +241,7 @@ class ResPartnerFADonationReport(models.Model):
             'submission_fa_fastnr_fon_tn': r.bpk_company_id.fa_fastnr_fon_tn,
             'submission_fa_fastnr_org': r.bpk_company_id.fa_fastnr_org,
             # <data><SonderausgabenUebermittlung><MessageSpec>
-            'submission_message_ref_id': "S_%s_%s" % (r.create_date, r.id),
+            'submission_message_ref_id': "S%s-%s" % (r.id, r.create_date.replace(' ', '-').replace(':', '-')),
             'submission_timestamp': fields.datetime.utcnow().replace(microsecond=0).isoformat(),
             'submission_fa_dr_type': r.bpk_company_id.fa_dr_type,
             # <data><SonderausgabenUebermittlung><Sonderausgaben> (for loop)
@@ -746,7 +747,8 @@ class ResPartnerFADonationReport(models.Model):
 
             # No file found
             if not response_file:
-                raise ValidationError("No protocol file found in FinanzOnline DataBox for this submission!")
+                raise ValidationError("No protocol file found in FinanzOnline DataBox for this submission! "
+                                      "Please try again later!")
 
             # Force update the response_file
             s.response_file_applkey = response_file_applkey

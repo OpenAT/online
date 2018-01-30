@@ -10,6 +10,9 @@
 
             <form string="Donation Report">
                 <header>
+                    <button name="update_state_and_submission_information" type="object"
+                            attrs="{'invisible':[('state','not in',['error'])]}"
+                            string="Update state and submission information"/>
                     <field name="state" widget="statusbar" statusbar_visible="new,response_ok"/>
                 </header>
                 <sheet>
