@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report.submission'
+    _inherit = ['mail.thread']
     _order = 'submission_datetime DESC'
 
     now = fields.datetime.now
@@ -26,7 +27,7 @@ class ResPartnerFADonationReport(models.Model):
     # ------
     # FIELDS
     # ------
-    state = fields.Selection(string="State", readonly=True, default='new',
+    state = fields.Selection(string="State", readonly=True, default='new', track_visibility='onchange',
                              selection=[('new', 'New'),
                                         ('prepared', 'Prepared'),
                                         ('error', 'Error'),
@@ -40,7 +41,7 @@ class ResPartnerFADonationReport(models.Model):
     # ATTENTION: The state error is only valid PRIOR to submission of for file upload service error!
     # ----------------------------------------------------------------------------------------------
     # HIN File Upload Service error means no data could be submitted so we can retry the submission later
-    error_type = fields.Selection(string="Error Type", readonly=True,
+    error_type = fields.Selection(string="Error Type", readonly=True, track_visibility='onchange',
                                   selection=[('data_incomplete', 'Data incomplete'),
                                              ('preparation_error', 'Preparation Error'),
                                              ('changes_after_prepare', 'Preparation data not up to date'),
@@ -57,7 +58,7 @@ class ResPartnerFADonationReport(models.Model):
                                              ('file_upload_doctype', 'Upload Denied for this Document Type'),
                                              ])
     error_code = fields.Char(string="Error Code", redonly=True)
-    error_detail = fields.Text(string="Error Detail", readonly=True)
+    error_detail = fields.Text(string="Error Detail", readonly=True, track_visibility='onchange')
 
     # Company
     # -----------
@@ -131,7 +132,7 @@ class ResPartnerFADonationReport(models.Model):
     response_content = fields.Text(string="Response Content (raw)", readonly=True)
     response_content_parsed = fields.Text(string="Response Content (prettyprint)", readonly=True)
 
-    response_error_type = fields.Selection(string="Response Error Type", readonly=True,
+    response_error_type = fields.Selection(string="Response Error Type", readonly=True, track_visibility='onchange',
         selection=[
                    # <Info>NOK</Info> and <Error><Code>ERR-F-*
                    ('nok', 'Donation report submission fully rejected'),
@@ -144,7 +145,7 @@ class ResPartnerFADonationReport(models.Model):
                    ('unexpected_exception', 'Exception during response processing'),
                    ])
     response_error_code = fields.Char(string="Response Error Code", redonly=True)
-    response_error_detail = fields.Text(string="Response Error Detail", readonly=True)
+    response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange')
     request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
 
     # DataBox
@@ -856,7 +857,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # Update the remaining donation reports and the submission
             if remaining_ids:
-                ok_reports = s.sudo().browse(remaining_ids)
+                ok_reports = s.env['res.partner.donation_report'].sudo().browse(remaining_ids)
                 ok_reports.write({'state': 'response_ok',
                                   'response_content': False,
                                   'response_error_code': False,
@@ -870,8 +871,26 @@ class ResPartnerFADonationReport(models.Model):
         # If we reached this point something went awfully wrong!
         raise ValidationError("check_response() Sorry but something went wrong! Please contact the support!")
 
+    # First simple implementation
     # TODO: Create a method that "releases" donation reports (set the state to 'error') if they belong to a NOK or TWOK
     # TODO: donation report submission. Or more generally speaking if the donation report is in the "response_nok"
     # TODO: state. The problem is that some of the response_nok reasons like 'Erstmeldung bereits uebermittelt' needs
     # TODO: a deeper investigation if it is ok or not to release the donation report. Therefore we wait until it
     # TODO: happens the first time until we create this method - if it ever happens :)
+    @api.multi
+    def release_donation_reports(self):
+        if not self or not self.ensure_one():
+            raise ValidationError(_("release_donation_reports() works only for single records!"))
+        s = self
+        if s.state == 'response_nok' and 'ERR-F-' in s.response_error_code:
+            s.donation_report_ids.write({'state': 'error',
+                                         'submission_id': False,
+                                         'error_type': 'nok_released',
+                                         'error_code': False,
+                                         'error_detail': "Released from rejected submission: %s" % s.id,
+                                         'response_content': False,
+                                         'response_error_code': False,
+                                         'response_error_detail': False})
+        else:
+            raise ValidationError(_("You can not release donation reports for a submission in state %s or without "
+                                    "'ERR-F-...' in response_error_code!") % s.state)

@@ -33,18 +33,20 @@
                         </group>
                     </group>
 
-                    <group attrs="{'invisible':[('error_type','=',False)]}">
-                        <group>
-                            <field name="error_type"/>
-                            <field name="error_code"/>
-                        </group>
-                        <group>
-                            <field name="error_detail"/>
-                        </group>
+                    <group string="Errors" attrs="{'invisible':[('error_type','=',False)]}">
+                        <field name="error_type"/>
+                        <field name="error_code"/>
+                        <field name="error_detail"/>
+                    </group>
+
+                    <group string="Response errors"
+                           attrs="{'invisible':[('response_error_code','=',False),('response_error_detail','=',False)]}">
+                        <field name="response_error_code"/>
+                        <field name="response_error_detail"/>
+                        <field name="response_content"/>
                     </group>
 
                     <notebook>
-
                         <page string="Submission Data">
                             <group>
                                 <field name="submission_type"/>
@@ -66,14 +68,6 @@
                                 <field name="submission_id_url"/>
                                 <field name="submission_id_fa_dr_type"/>
                                 <field name="submission_id_datetime"/>
-                            </group>
-                        </page>
-
-                        <page string="Response">
-                            <group>
-                                <field name="response_error_code"/>
-                                <field name="response_error_detail"/>
-                                <field name="response_content"/>
                             </group>
                         </page>
 
@@ -101,6 +95,10 @@
                     </notebook>
 
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" help="Follow this donation report submission to get status updates." groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>

@@ -19,6 +19,9 @@
                     <button name="check_response" type="object" class="oe_highlight"
                             attrs="{'invisible':[('state','not in',['submitted', 'unexpected_response'])]}"
                             string="Check Answer from FinanzOnline DataBox!"/>
+                    <button name="release_donation_reports" type="object"
+                            attrs="{'invisible':[('state','not in',['response_nok',])]}"
+                            string="Reset donation reports to error state for resubmission!"/>
                     <field name="state" widget="statusbar" statusbar_visible="new,prepared,response_ok"/>
                 </header>
 
@@ -105,7 +108,10 @@
                     </notebook>
 
                 </sheet>
-
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" help="Follow this donation report to get status updates." groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
