@@ -468,6 +468,8 @@ class ResPartnerFADonationReport(models.Model):
             return
 
         # Loop through the donation reports
+        logger.info("update_state_and_submission_information() "
+                    "Compute state and submission information for %s donation reports!" % len(self))
         for r in self:
             # Skip older unsubmitted reports
             # ------------------------------
@@ -659,7 +661,8 @@ class ResPartnerFADonationReport(models.Model):
         # Compute the state
         # HINT: Will also compute and write the submission values if in unsubmitted states
         if res and (not vals or 'state' not in vals):
-            self.update_state_and_submission_information()
+            if not vals.get('submission_id', False):
+                self.update_state_and_submission_information()
 
         # Return the recordset
         return res

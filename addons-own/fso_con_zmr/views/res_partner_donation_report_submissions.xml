@@ -14,7 +14,7 @@
                             attrs="{'invisible':[('state','not in',['new', 'prepared', 'error'])]}"
                             string="Prepare"/>
                     <button name="submit" type="object" class="oe_highlight"
-                            attrs="{'invisible':[('state','not in',['prepared', 'error'])]}"
+                            attrs="{'invisible':[('state','not in',['prepared'])]}"
                             string="Submit to FinanzOnline!"/>
                     <button name="check_response" type="object" class="oe_highlight"
                             attrs="{'invisible':[('state','not in',['submitted', 'unexpected_response'])]}"
@@ -22,7 +22,7 @@
                     <button name="release_donation_reports" type="object"
                             attrs="{'invisible':[('state','not in',['response_nok',])]}"
                             string="Reset donation reports to error state for resubmission!"/>
-                    <field name="state" widget="statusbar" statusbar_visible="new,prepared,response_ok"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,response_ok"/>
                 </header>
 
                 <sheet>

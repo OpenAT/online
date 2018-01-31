@@ -222,26 +222,33 @@ class ResPartnerFADonationReport(models.Model):
 
         # COMPUTE THE SUBMISSION VALUES
         # -----------------------------
-        # Search for donation reports linked to this submission or not linked at all
-        potential_donation_reports = self.env['res.partner.donation_report'].sudo().search(
-            [('state', 'in', ['new', 'error']),
-             "|", ('submission_id', '=', False),
-                  ('submission_id', '=', r.id),
-             ('submission_env', '=', r.submission_env),
-             ('meldungs_jahr', '=', r.meldungs_jahr),
-             ('bpk_company_id', '=', r.bpk_company_id.id)])
-        if not potential_donation_reports:
-            return {}
-        len_pdr = len(potential_donation_reports)
-        logger.info("Found %s donation reports to check and update for submission %s" % (len_pdr, r.id))
+        logger.info("compute_submission_values() START")
 
-        # Update state and submission information for all found donation reports
-        logger.info("Update state and submission information for %s donation reports!" % len_pdr)
-        potential_donation_reports.write({})
-        logger.info("Update state and submission information for %s donation reports done!" % len_pdr)
+        # ---
+        # DISABLED!!! We already rely on the state of the donation reports at this stage ;)
+        # ---
+        # # Search for donation reports linked to this submission or not linked at all
+        # potential_donation_reports = self.env['res.partner.donation_report'].sudo().search(
+        #     [('state', 'in', ['new', 'error']),
+        #      "|", ('submission_id', '=', False),
+        #           ('submission_id', '=', r.id),
+        #      ('submission_env', '=', r.submission_env),
+        #      ('meldungs_jahr', '=', r.meldungs_jahr),
+        #      ('bpk_company_id', '=', r.bpk_company_id.id)])
+        # if not potential_donation_reports:
+        #     return {}
+        # len_pdr = len(potential_donation_reports)
+        # logger.info("Found %s donation reports to check and update for submission %s" % (len_pdr, r.id))
+        #
+        # # Update state and submission information for all found donation reports
+        # logger.info("Update state and submission information for %s donation reports!" % len_pdr)
+        # potential_donation_reports.write({})
+        # logger.info("Update state and submission information for %s donation reports done!" % len_pdr)
 
         # Search again but now only for donation reports in state 'new'
-        donation_reports = potential_donation_reports.search(
+        logger.info("compute_submission_values() Search for donation reports in state new that are not already "
+                    "linked to any submission or are already linked to this sumbission.")
+        donation_reports = self.env['res.partner.donation_report'].sudo().search(
             [('state', '=', 'new'),
              "|", ('submission_id', '=', False),
                   ('submission_id', '=', r.id),
@@ -251,13 +258,13 @@ class ResPartnerFADonationReport(models.Model):
         if not donation_reports:
             return {}
         len_dr = len(donation_reports)
-        logger.info("Found %s donation reports for submission %s after donation report update!" % (len_dr, r.id))
+        logger.info("compute_submission_values() Found %s donation reports for submission (ID %s)!" % (len_dr, r.id))
 
         # Compute the basic submission values
         # HINT: the session id is only computed and needed right before submission!
         # ATTENTION: submission_timestamp is used for the PREPARATION time of the submission values and NOT
         #            the time of the report submission try!!!
-
+        logger.info("compute_submission_values() compute submission values!")
         vals = {
             # <fileuploadRequest>
             'submission_fa_tid': r.bpk_company_id.fa_tid,
@@ -279,6 +286,7 @@ class ResPartnerFADonationReport(models.Model):
 
         # Render the request content template and add it to the submission vals
         # ---------------------------------------------------------------------
+        logger.info("compute_submission_values() Render the submission xml template!")
         # Get the path to the template 'fo_donation_report_j2template.xml '
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         soaprequest_templates = pj(addon_path, 'soaprequest_templates')
@@ -287,6 +295,7 @@ class ResPartnerFADonationReport(models.Model):
                                                                 "%s") % fo_donation_report_j2template
 
         # Prepare the donation reports as a list with nested dicts for the jinja2 template
+        logger.info("compute_submission_values() Render the submission xml template: prepare reports as list!")
         donation_reports_list = [{'sub_typ': do_rep.submission_type,
                                   'RefNr': do_rep.submission_refnr,
                                   'Betrag': "%.2f" % do_rep.betrag,
@@ -295,6 +304,7 @@ class ResPartnerFADonationReport(models.Model):
         # Render the template for the request content (body)
         # ATTENTION: !!! '###SessionID###' will be replaced by submit() with the correct session id !!!
         #            So do not change this here!
+        logger.info("compute_submission_values() Render the submission xml template: render template!")
         content = render_template(template=fo_donation_report_j2template,
                                   submission={
                                       'tid': vals['submission_fa_tid'],
@@ -311,10 +321,11 @@ class ResPartnerFADonationReport(models.Model):
                                   donation_reports=donation_reports_list)
         assert content, _("prepare(): Could not render the submission content (fo_donation_report_j2template.xml) "
                           "for donation report submission %s with vals:\n%s") % (r.id, vals)
-        # TODO: Validate if the content is valid xml and could be decoded to utf8!
+        # TODO: Validate if the content is valid xml and can be decoded to utf8!
         vals.update({'submission_content': content})
 
         # Return the dict with the submission values
+        logger.info("compute_submission_values() END")
         return vals
 
     # Helper method to clear the correct fields of the submission by state
@@ -322,6 +333,7 @@ class ResPartnerFADonationReport(models.Model):
     def update_submission(self, **f):
         assert self.ensure_one(), _("update_submission() will only work for one record at at time!")
         assert f.get('state', False), "update_submission(): 'state' must be set in fields!"
+        logger.info("update_submission() START")
 
         # Pre submission errors
         # ---------------------
@@ -339,6 +351,7 @@ class ResPartnerFADonationReport(models.Model):
         # Reset the donation reports for pre submission known errors
         # ----------------------------------------------------------
         if f['state'] == 'error' and self.donation_report_ids:
+            logger.info("update_submission() Set %s donation reports to state 'new'!" % len(self.donation_report_ids))
             self.donation_report_ids.write({'state': 'new'})
 
         # Response errors
@@ -370,12 +383,15 @@ class ResPartnerFADonationReport(models.Model):
 
         # Update the submission
         # ---------------------
+        logger.info("update_submission() Update the donation report submission!")
         self.write(f)
+        logger.info("update_submission() END")
         return
 
     @api.multi
     def prepare(self):
         for r in self:
+            logger.info("prepare() START")
             # CHECK the report state
             if r.state not in ['new', 'prepared', 'error']:
                 raise ValidationError(_("You can not prepare or update a submission in state %s!") % r.state)
@@ -393,6 +409,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # COMPUTE THE SUBMISSION VALUES
             # -----------------------------
+            logger.info("prepare() Computing sumbission values!")
             try:
                 vals = r.compute_submission_values()
             except Exception as e:
@@ -402,6 +419,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # Check the submission values for completeness
             # --------------------------------------------
+            logger.info("prepare() Check the computed sumbission values!")
             empty_vals = [k for k in vals if not vals[k]]
             if empty_vals:
                 r.update_submission(state='error', error_type='preparation_error',
@@ -410,7 +428,10 @@ class ResPartnerFADonationReport(models.Model):
                 continue
 
             # Preparation successful
+            logger.info("prepare() Preparation of donation report submission was successful! "
+                        "Finally updating the submission and link and update the donation reports!")
             r.update_submission(state='prepared', **vals)
+            logger.info("prepare() END")
             continue
 
     @api.multi
