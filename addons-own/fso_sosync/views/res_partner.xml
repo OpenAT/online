@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data>
 
-    <!-- Extend res.partner form to include extra fields -->
+    <!-- Extend res.partner form to include sosync fields -->
     <record model="ir.ui.view" id="sosync_res_partner_form_fields">
         <field name="name">sosync_res_partner_form_fields</field>
         <field name="model">res.partner</field>
@@ -10,6 +10,46 @@
             <field name="title" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend res.partner tree to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_res_partner_tree_fields">
+        <field name="name">sosync_res_partner_tree_fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend fso_con_zmr res.partner form to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_res_partner_fso_con_zmr_form_fields">
+        <field name="name">sosync_res_partner_fso_con_zmr_form_fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="fso_con_zmr.res_partner_bpk_res_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="write_uid" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend fso_con_zmr res.partner tree to include fs id -->
+    <record model="ir.ui.view" id="sosync_res_partner_fso_con_zmr_tree_fields">
+        <field name="name">sosync_res_partner_fso_con_zmr_tree_fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="fso_con_zmr.res_partner_bpk_res_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="write_date" position="after">
+                <field name="sosync_fs_id"/>
                 <field name="sosync_sync_date"/>
             </field>
         </field>
