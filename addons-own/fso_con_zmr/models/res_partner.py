@@ -378,15 +378,14 @@ class ResPartnerZMRGetBPK(models.Model):
     def update_donation_reports(self):
         # Search if there are any donation reports to update
         for partner in self:
-            for bpk in partner.bpk_request_ids:
-                donation_reports = self.env['res.partner.donation_report']
-                donation_reports = donation_reports.sudo().search(
-                    [('partner_id', '=', bpk.bpk_request_partner_id.id),
-                     ('bpk_company_id', '=', bpk.bpk_request_company_id.id),
-                     ('state', 'in', donation_reports._changes_allowed_states())])
-                if donation_reports:
-                    # HINT: This will run update_state_and_submission_information()
-                    donation_reports.write({})
+            donation_reports = self.env['res.partner.donation_report']
+            donation_reports = donation_reports.sudo().search(
+                [('partner_id', '=', partner.id),
+                 ('state', 'in', donation_reports._changes_allowed_states())]
+            )
+            if donation_reports:
+                # HINT: This will run update_state_and_submission_information()
+                donation_reports.write({})
 
     # ----
     # CRUD
@@ -410,7 +409,8 @@ class ResPartnerZMRGetBPK(models.Model):
     @api.multi
     def write(self, values):
 
-        # ATTENTION: !!! After this 'self' is changed (in memory i guess) 'res' is only a boolean !!!
+        # ATTENTION: !!! After this 'self' is changed (in memory i guess)
+        #                'res' is only a boolean !!!
         res = super(ResPartnerZMRGetBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
@@ -419,9 +419,8 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Update the donation reports on any bpk_state change
         if res:
-            for r in self:
-                if r.bpk_state != values.get('bpk_state', False):
-                    r.update_donation_reports()
+            if 'bpk_request_ids' in values or 'bpk_state' in values:
+                self.update_donation_reports()
 
         return res
 

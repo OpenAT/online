@@ -22,7 +22,7 @@ class CompanyAustrianZMRSettings(models.Model):
     # ------
     # FIELDS
     # ------
-    bpk_request_ids = fields.One2many(string="BPK Requests",
+    bpk_request_ids = fields.One2many(string="BPK Requests", readonly=True,
                                       comodel_name="res.partner.bpk", inverse_name="bpk_request_company_id")
 
     # Donation Reports
@@ -30,9 +30,9 @@ class CompanyAustrianZMRSettings(models.Model):
                                           comodel_name="res.partner.donation_report", inverse_name="bpk_company_id")
 
     # Donation Report Submissions
-    #donation_report_submission_ids = fields.One2many(comodel_name="res.partner.donation_report.submission",
-    #                                                 inverse_name="bpk_company_id",
-    #                                                 string="Donation Report Submissions", readonly=True)
+    donation_report_submission_ids = fields.One2many(comodel_name="res.partner.donation_report.submission",
+                                                     inverse_name="bpk_company_id",
+                                                     string="Donation Report Submissions", readonly=True)
 
     # Basic Settings
     stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')
@@ -103,7 +103,7 @@ class CompanyAustrianZMRSettings(models.Model):
     fa_logout_time = fields.Datetime(string="FinanzOnline Last Logout Request", readonly=True)
 
     # Austrian Finanz Amt: Finanz Online donation report (Spendenmeldung)
-    # ATTETNION: fa_dr_mode is DEPRICATED!
+    # ATTENTION: fa_dr_mode is DEPRICATED and not used anymore - should already be removed everywhere!
     fa_dr_mode = fields.Selection(selection=[('T', 'T: Testumgebung'),
                                              ('P', 'P: Echtbetrieb')],
                                   string="Spendenmeldung Modus (Veraltet)", readonly=True)
@@ -317,3 +317,47 @@ class CompanyAustrianZMRSettings(models.Model):
             msg = response_etree.find(".//{*}msg")
             c.fa_login_message = msg.text if msg is not None else response_pprint
             return False
+
+    @api.multi
+    def update_donation_reports(self):
+        # Search if there are any donation reports to update
+        for c in self:
+            donation_reports = self.env['res.partner.donation_report']
+            donation_reports = donation_reports.sudo().search(
+                [('bpk_company_id', '=', c.id),
+                 ('state', 'in', donation_reports._changes_allowed_states())]
+            )
+            if donation_reports:
+                # HINT: This will run update_state_and_submission_information()
+                donation_reports.write({})
+
+    # ----
+    # CRUD
+    # ----
+    @api.model
+    def create(self, values):
+
+        # Create the company in the current environment (memory only right now i guess)
+        # ATTENTION: self is still empty but the company exits in the 'res' recordset already
+        res = super(CompanyAustrianZMRSettings, self).create(values)
+
+        if res:
+            # Update donation reports
+            res.update_donation_reports()
+
+        return res
+
+    @api.multi
+    def write(self, values):
+
+        # ATTENTION: !!! After this 'self' is changed (in memory i guess)
+        #                'res' is only a boolean !!!
+        res = super(CompanyAustrianZMRSettings, self).write(values)
+
+        # Update donation reports on any change to FinanzOnline related fields
+        if res:
+            fields_to_check = ['fa_herstellerid', 'fa_fastnr_fon_tn', 'fa_fastnr_org', 'fa_dr_type']
+            if any(f in values for f in fields_to_check):
+                self.update_donation_reports()
+
+        return res

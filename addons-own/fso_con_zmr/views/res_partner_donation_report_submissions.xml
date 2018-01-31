@@ -80,7 +80,9 @@
                             <group>
                                 <field name="submission_datetime"/>
                                 <field name="submission_url"/>
-                                <field name="submission_content"/>
+                                <!-- field name="submission_content"/ -->
+                                <field name="submission_content_file" widget="binary" filename="submission_content_filename"/>
+                                <field name="submission_content_filename" invisible="1"/>
                             </group>
                         </page>
 

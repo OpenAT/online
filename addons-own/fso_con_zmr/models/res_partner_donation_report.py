@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import openerp
 from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from openerp.addons.fso_base.tools.datetime import naive_to_timezone
 
+import time
 import datetime
 import pytz
 import hashlib
@@ -676,3 +678,75 @@ class ResPartnerFADonationReport(models.Model):
                                         " %s") % states_allowed)
 
         return super(ResPartnerFADonationReport, self).unlink()
+
+    # ------------------------------------------
+    # SCHEDULER ACTIONS FOR AUTOMATED PROCESSING
+    # ------------------------------------------
+    @api.model
+    def scheduled_set_donation_report_state(self):
+        logger.info(_("scheduled_set_donation_report_state(): START"))
+        now = time.time
+
+        while_start = now()
+
+        # Do it for all donation reports in the correct states
+        donation_reports_to_check_ids = self.search([('state', 'in', self._changes_allowed_states())]).ids
+
+        # Log info about the search
+        total_to_check = len(donation_reports_to_check_ids)
+        logger.info(_("scheduled_set_donation_report_state(): Found a total of %s donation reports to "
+                      "check in %.6f seconds") % (total_to_check, now() - while_start))
+
+        # Start batch processing
+        report_batch = True
+        batch_size = 1000
+        offset = 0
+        while report_batch:
+            start = now()
+
+            # Do every batch in its own environment and therefore in an isolated db-transaction
+            # HINT: This reduces the RAM and saves all "in between" results if the process should crash
+            # You don't need clear caches because they are cleared when "with" finishes
+            with openerp.api.Environment.manage():
+
+                # You don't need close your cr because is closed when finish "with"
+                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+
+                    # Create a new environment with new cursor database
+                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                    # HINT: 'with_env' replaces original env for this method
+                    #       This forces an isolated transaction to commit
+                    report_batch = self.with_env(new_env).browse(
+                        donation_reports_to_check_ids[offset:offset + batch_size])
+
+                    # Increase offset for next batch
+                    offset += batch_size
+
+                    # Compute the state and submission values for the found donation reports
+                    found_reports = report_batch
+                    count = len(found_reports)
+                    found_reports.update_state_and_submission_information()
+
+                    # Commit the changes in the new environment
+                    new_env.cr.commit()  # Don't show a invalid-commit in this case
+
+                    # Log some info for this batch run
+                    duration = now() - start
+                    tpr = 0 if not count or not duration else duration / count
+                    logger.debug(_("scheduled_set_donation_report_state(): "
+                                   "Set update_state_and_submission_information() "
+                                   "done for %s donation reports in %.3f seconds (%.3fs/p)"
+                                   "") % (count, duration, tpr))
+
+            # Log estimated remaining time
+            reports_done = offset - batch_size + len(report_batch)
+            total_duration = now() - while_start
+            time_per_record = 0 if not reports_done else total_duration / reports_done
+            remaining_reports = total_to_check - reports_done
+            time_left = remaining_reports * time_per_record
+            logger.info(_("scheduled_set_donation_report_state(): "
+                          "PROCESSED A TOTAL OF %s DONATION REPORTS IN %.3f SECONDS (%.3fs/p)! "
+                          "%s DONATION REPORTS PENDING (approx %.2f minutes left)"
+                          "") % (reports_done, total_duration, time_per_record, remaining_reports, time_left / 60))
+
+        logger.info(_("scheduled_set_donation_report_state(): END"))

@@ -174,6 +174,8 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="BPK Requests">
+                <field name="display_name"/>
+                <!-- field name="name"/ -->
                 <field name="firstname"/>
                 <field name="lastname"/>
                 <field name="birthdate_web"/>

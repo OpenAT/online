@@ -79,4 +79,41 @@
         <field name="value" eval="'ir.actions.server,%d'%server_action_set_bpk_for_bpkrecords"/>
     </record>
 
+    <!-- ==================================================== -->
+    <!-- DONATION REPORT RECORDS: res.partner.donation_report -->
+    <!-- ==================================================== -->
+
+    <!-- Server Action to run update_state_and_submission_information() for res.partner.donation_report -->
+    <record id="server_action_update_state_and_submission_information" model="ir.actions.server" forcecreate="1">
+        <field name="name">Update state and subm. vals</field>
+        <field name="model_id" ref="model_res_partner_donation_report"/>
+        <field name="state">code</field>
+        <field name="code">
+            <![CDATA[
+            if context.get('active_model') == 'res.partner.donation_report':
+
+                # Find res.partner.donation_report ids
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+
+                # Find res.partner.donation_report ids
+                donation_reports = self.browse(cr, uid, ids, context=context)
+
+                # Run server_action_update_state_and_submission_information() for found donation reports
+                if donation_reports:
+                    donation_reports.update_state_and_submission_information(cr, uid, ids, context=context)
+            ]]>
+        </field>
+    </record>
+    <!-- Add to more menu -->
+    <record id="ir_server_action_update_state_and_submission_information" model="ir.values" forcecreate="1">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner.donation_report'"/>
+        <field name="name">Update state and subm. vals</field>
+        <field name="value" eval="'ir.actions.server,%d'%server_action_update_state_and_submission_information"/>
+    </record>
+
 </data></openerp>

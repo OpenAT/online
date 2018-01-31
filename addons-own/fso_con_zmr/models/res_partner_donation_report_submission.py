@@ -62,8 +62,9 @@ class ResPartnerFADonationReport(models.Model):
 
     # Company
     # -----------
-    bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
-                                     readonly=True, states={'new': [('readonly', False)]})
+    bpk_company_id = fields.Many2one(string="BPK Company", required=True, readonly=True,
+                                     comodel_name='res.company',  inverse_name="donation_report_submission_ids",
+                                     states={'new': [('readonly', False)]})
 
     # Submission data computed in the 'prepare' state and updated right before submission
     # -----------------------------------------------------------------------------------
@@ -120,6 +121,11 @@ class ResPartnerFADonationReport(models.Model):
     submission_content = fields.Text(string="Submission Content", readonly=True,
                                      help=_("The rendered template (which is the 'body' of the submission request!)"))
 
+    submission_content_file = fields.Binary(string="Submission Content File", readonly=True,
+                                            compute="compute_submission_content_file", compute_sudo=True,)
+    submission_content_filename = fields.Char(string="Submission Content Filename", readonly=True,
+                                              compute="compute_submission_content_file", compute_sudo=True,)
+
     # Updated at submission
     # ---------------------
     submission_datetime = fields.Datetime(string="Last submission request", readonly=True,
@@ -156,6 +162,25 @@ class ResPartnerFADonationReport(models.Model):
                                 help="Response File from FinanzOnline DataBox")
     response_file_pretty = fields.Text(string="Response File (pretty)", readonly=True,
                                        help="Response File from FinanzOnline DataBox")
+
+    # ---------------
+    # COMPUTED FIELDS
+    # ---------------
+    @api.depends('submission_content')
+    def compute_submission_content_file(self):
+        for r in self:
+            if r.submission_content:
+                try:
+                    r.submission_content_file = r.submission_content.encode('utf-8', 'ignore').encode('base64')
+                    r.submission_content_filename = "submission_content.xml"
+                except Exception as e:
+                    logger.error("Could not convert submission_content to file:\n%s" % repr(e))
+                    r.submission_content_file = False
+                    r.submission_content_filename = False
+                    pass
+            else:
+                r.submission_content_file = False
+                r.submission_content_filename = False
 
     # ----
     # CRUD

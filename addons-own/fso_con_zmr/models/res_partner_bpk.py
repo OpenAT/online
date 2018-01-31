@@ -17,14 +17,18 @@ class ResPartnerBPK(models.Model):
     # FIELDS
     # ------
     # res.company
-    bpk_request_company_id = fields.Many2one(comodel_name='res.company', string="BPK Request Company",
-                                             required=True, readonly=True, oldname="BPKRequestCompanyID")
+    bpk_request_company_id = fields.Many2one(string="BPK Request Company",
+                                             comodel_name='res.company', inverse_name="bpk_request_ids",
+                                             required=True, readonly=True, oldname="BPKRequestCompanyID",
+                                             )
 
     # res.partner
-    bpk_request_partner_id = fields.Many2one(comodel_name='res.partner', string="BPK Request Partner",
-                                             required=True, readonly=True, oldname="BPKRequestPartnerID")
+    bpk_request_partner_id = fields.Many2one(string="BPK Request Partner",
+                                             comodel_name='res.partner', inverse_name="bpk_request_ids",
+                                             required=True, readonly=True, oldname="BPKRequestPartnerID",
+                                             )
 
-    # ATTENTION: Related fields are pretty slow expecially if no Full Vaccuum is done to the db regualarily
+    # ATTENTION: Related fields are pretty slow especially if no Full Vacuum is done to the db regularly
     #            Therefore this fields will also be updated by set_bpk_state()
     partner_state = fields.Char(string="Partner BPK State", readonly=True)
 
@@ -155,7 +159,8 @@ class ResPartnerBPK(models.Model):
     @api.multi
     def write(self, values):
 
-        # ATTENTION: !!! After this 'self' is changed (in memory i guess) 'res' is only a boolean !!!
+        # ATTENTION: !!! After this 'self' is changed (in memory i guess)
+        #                'res' is only a boolean !!!
         res = super(ResPartnerBPK, self).write(values)
 
         # Compute the bpk_state and bpk_error_code for the partner
@@ -164,18 +169,31 @@ class ResPartnerBPK(models.Model):
 
         # Update donation reports on any bpk request state change
         if res:
-            for r in self:
-                if r.state != values.get('state', False):
-                    self.update_donation_reports()
+            if 'state' in values or 'bpk_private' in values:
+                self.update_donation_reports()
 
         return res
 
     @api.multi
     def unlink(self):
-        # TODO: Update donation reports on unlink if possible
-        # The problem is if res or self still contains any info about the bpk request after unlink
-        # if not we have to set the donation reports to "error" before we unlink the bpk requests ... DEBUG :)
+
+        partner = self.env['res.partner']
+        for bpk in self:
+            if bpk.bpk_request_partner_id:
+                partner = partner | bpk.bpk_request_partner_id
+
+        # HINT: 'res' is a boolean
+        #       'self' still holds all the bpk requests after super is called BUT it is marked as deleted!!!
         res = super(ResPartnerBPK, self).unlink()
+
+        # Update the partner bpk_state and therefore the donation-report state also!
+        try:
+            if res and partner:
+                partner.sudo().write({'bpk_state': 'pending', 'bpk_request_needed': fields.datetime.now()})
+        except Exception as e:
+            logger.error("Could not set bpk_state for partner to pending at bpk-request unlink!")
+            pass
+
         return res
 
     # --------------
