@@ -764,6 +764,7 @@ class ResPartnerZMRGetBPK(models.Model):
         Returns True if all latest bpk request fields matches the current partner data fields
 
         Will return False if no BPK request exits (or none exits for the given companies)
+        Will return False if multiple BPK requests exists for any company
         Will return False if the fields of any BPK request do not match the fields of the partner
         Will return False for a request logic mismatch
         Will return False for unknown errors (if BPKErrorRequest was the latest request and the ErrorCode is unknown)
@@ -774,10 +775,18 @@ class ResPartnerZMRGetBPK(models.Model):
         assert self.ensure_one(), _("all_bpk_requests_matches_partner_data() is only allowed for one partner at once")
         p = self[0]
 
+        # Check if there are multiple bpk requests for this partner for one company
+        # HINT: This will ignore the given companies and bpk_to_check
+        bpk_requests_company_ids = [bpk.bpk_request_company_id.id for bpk in p.bpk_request_ids]
+        if bpk_requests_company_ids:
+            if len(bpk_requests_company_ids) != len(set(bpk_requests_company_ids)):
+                return False
+
         # Limit BPK requests to check to given bpk requests
         bpk_to_check = bpk_to_check or p.bpk_request_ids
 
         # Limit BPK requests to check to given companies
+        # HINT: If companies are given bpk_to_check from the interface will be ignored/overwritten!
         if companies:
             bpk_request_ids = [bpk.id for bpk in p.bpk_request_ids if bpk.bpk_request_company_id.id in companies.ids]
             bpk_to_check = self.env['res.partner.bpk'].browse(bpk_request_ids)
@@ -957,6 +966,7 @@ class ResPartnerZMRGetBPK(models.Model):
             start_time = time.time()
 
             # Limit the ZMR requests to companies with mismatching bpk requests only
+            # TODO: There may be multiple "found" requests per company after an partner merge!
             companies_with_non_matching_requests = self.env['res.company']
             for company in self._find_bpk_companies():
                 if not p.all_bpk_requests_matches_partner_data(companies=company):
