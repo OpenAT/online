@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Austrian Finanzamt Donation Reports (Spendenberichte pro Person fuer ein Jarh)
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report'
-    _inherit = ['mail.thread']
+    #_inherit = ['mail.thread']
     _order = 'anlage_am_um DESC'
 
     now = fields.datetime.now
