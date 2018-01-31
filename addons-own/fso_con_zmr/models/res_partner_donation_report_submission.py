@@ -254,7 +254,8 @@ class ResPartnerFADonationReport(models.Model):
                   ('submission_id', '=', r.id),
              ('submission_env', '=', r.submission_env),
              ('meldungs_jahr', '=', r.meldungs_jahr),
-             ('bpk_company_id', '=', r.bpk_company_id.id)])
+             ('bpk_company_id', '=', r.bpk_company_id.id)],
+            order='create_date')
         if not donation_reports:
             return {}
         len_dr = len(donation_reports)
@@ -458,9 +459,9 @@ class ResPartnerFADonationReport(models.Model):
                 continue
             # Compare most fields
             changed_submission_fields = [k for k in vals
-                                         if vals[k] != r[k] and k not in ['donation_report_ids',
-                                                                          'submission_content',
-                                                                          'submission_timestamp']]
+                                         if k not in ['donation_report_ids',
+                                                      'submission_content',
+                                                      'submission_timestamp'] and vals[k] != r[k]]
             # Compare submission_content (which will indirectly shows if the donation_report_ids stayed the same)
             submission_content_old = re.sub(r'\<Timestamp\>.*\<\/Timestamp\>', '', r.submission_content)
             submission_content_new = re.sub(r'\<Timestamp\>.*\<\/Timestamp\>', '', vals['submission_content'])
