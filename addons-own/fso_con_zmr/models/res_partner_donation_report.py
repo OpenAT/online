@@ -147,10 +147,14 @@ class ResPartnerFADonationReport(models.Model):
 
     # Related Fields from the donation report submission (drs)
     # TODO: related fields seem to be pretty slow - it may be better to just update them by the write or update method?
-    submission_id_state = fields.Selection(related="submission_id.state", store=True, readonly=True)
-    submission_id_datetime = fields.Datetime(related="submission_id.submission_datetime", store=True,  readonly=True)
-    submission_id_url = fields.Char(related="submission_id.submission_url", store=True,  readonly=True)
-    submission_id_fa_dr_type = fields.Char(related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
+    submission_id_state = fields.Selection(string="Submission State",
+                                           related="submission_id.state", store=True, readonly=True)
+    submission_id_datetime = fields.Datetime(string="Submission Datetime",
+                                             related="submission_id.submission_datetime", store=True,  readonly=True)
+    submission_id_url = fields.Char(string="Submission URL",
+                                    related="submission_id.submission_url", store=True,  readonly=True)
+    submission_id_fa_dr_type = fields.Char(string="Submission OrgType",
+                                           related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
 
     # FinanzOnline XML Response
     # -------------------------

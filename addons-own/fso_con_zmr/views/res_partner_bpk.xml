@@ -150,7 +150,7 @@
                 </group>
                 <group string="Group by">
                     <filter string="State" name="state" context="{'group_by':'state'}"/>
-                    <filter string="Partner State" name="state" context="{'group_by':'partner_state'}"/>
+                    <filter string="Partner State" name="partner_state" context="{'group_by':'partner_state'}"/>
                     <filter string="Error Code" context="{'group_by':'bpk_error_code'}"/>
                 </group>
             </search>

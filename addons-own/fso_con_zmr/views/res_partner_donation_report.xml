@@ -134,14 +134,34 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="Donation Reports">
+                <field name="submission_env"/>
                 <field name="partner_id"/>
                 <field name="bpk_company_id"/>
                 <field name="state"/>
                 <field name="meldungs_jahr"/>
+                <field name="submission_type"/>
                 <field name="betrag"/>
                 <field name="anlage_am_um"/>
                 <field name="error_type"/>
                 <field name="error_code"/>
+                <group string="Group by">
+                    <filter string="Environment"
+                            context="{'group_by':'submission_env'}"/>
+                    <filter string="Meldejahr"
+                            context="{'group_by':'meldungs_jahr'}"/>
+                    <filter string="State"
+                            context="{'group_by':'state'}"/>
+                    <filter string="Error Type"
+                            context="{'group_by':'error_type'}"/>
+                    <filter string="Error Code"
+                            context="{'group_by':'error_code'}"/>
+                    <filter string="Meldungs Typ"
+                            context="{'group_by':'submission_type'}"/>
+                    <filter string="Company"
+                            context="{'group_by':'bpk_company_id'}"/>
+                    <filter name="Partner"
+                            context="{'group_by':'partner_id'}"/>
+                </group>
             </search>
         </field>
     </record>

@@ -6,12 +6,10 @@
         <menuitem id="fso_menu_res_partner_bpk_res_partner_menu" action="res_partner_bpk_res_partner_action" parent="menu_fsonline_donationdeduction" sequence="7510"/>
         <menuitem id="fso_menu_res_partner_bpk_menu" action="res_partner_bpk_action" parent="menu_fsonline_donationdeduction" sequence="7520"/>
 
-        <!--
         <menuitem id="fso_menu_res_partner_donation_report_action" action="res_partner_donation_report_action" parent="menu_fsonline_donationdeduction" sequence="7525"
-                  string="Spendenmeldung"/>
+                  string="Spendenmeldungen"/>
         <menuitem id="fso_menu_res_partner_donation_report_submission_action" action="res_partner_donation_report_submission_action" parent="menu_fsonline_donationdeduction" sequence="7526"
-                  string="Spendenmeldung Meldung"/>
-        -->
+                  string="Spendenmeldungen Uebertragung"/>
 
     </data>
 </openerp>
