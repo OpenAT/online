@@ -148,15 +148,15 @@ class ResPartnerFADonationReport(models.Model):
                                     track_visibility='onchange')
 
     # Related Fields from the donation report submission (drs)
-    # TODO: related fields seem to be pretty slow - it may be better to just update them by the write or update method?
-    submission_id_state = fields.Selection(string="Submission State",
-                                           related="submission_id.state", store=True, readonly=True)
-    submission_id_datetime = fields.Datetime(string="Submission Datetime",
-                                             related="submission_id.submission_datetime", store=True,  readonly=True)
-    submission_id_url = fields.Char(string="Submission URL",
-                                    related="submission_id.submission_url", store=True,  readonly=True)
-    submission_id_fa_dr_type = fields.Char(string="Submission OrgType",
-                                           related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
+    # TODO: REMOVE related fields -> must change the last_submitted_report computation for this!
+    # submission_id_state = fields.Selection(string="Submission State",
+    #                                        related="submission_id.state", store=True, readonly=True)
+    # submission_id_datetime = fields.Datetime(string="Submission Datetime",
+    #                                          related="submission_id.submission_datetime", store=True,  readonly=True)
+    # submission_id_url = fields.Char(string="Submission URL",
+    #                                 related="submission_id.submission_url", store=True,  readonly=True)
+    # submission_id_fa_dr_type = fields.Char(string="Submission OrgType",
+    #                                        related="submission_id.submission_fa_dr_type", store=True,  readonly=True)
 
     # FinanzOnline XML Response
     # -------------------------
@@ -247,10 +247,10 @@ class ResPartnerFADonationReport(models.Model):
     def _changes_allowed_fields_after_submission(self):
         f = ('state',
              'info',
-             'submission_id_state',
-             'submission_id_datetime',
-             'submission_id_url',
-             'submission_id_fa_dr_type',
+             #'submission_id_state',
+             #'submission_id_datetime',
+             #'submission_id_url',
+             #'submission_id_fa_dr_type',
              'response_content',
              'response_error_code',
              'response_error_detail')
@@ -315,18 +315,21 @@ class ResPartnerFADonationReport(models.Model):
                                   ('meldungs_jahr', '=', self.meldungs_jahr),
                                   ('cancellation_for_bpk_private', '=', self.cancellation_for_bpk_private),
                                   ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
+                                  ('submission_id','!=',False),
                                   ('id', '!=', self.id)],
-                                 order="submission_id_datetime DESC, anlage_am_um DESC")
+                                 order="anlage_am_um DESC")
 
         # ATTENTION: If the state is 'submitted' or 'unexpected_response' we do not know if the lsr donation report
         #            was accepted by FinanzOnline or not! Therefore we throw an exception!
+        last_submitted_report = self.env['res.partner.donation_report']
         if lsr:
             for l in lsr:
                 if l.state != "response_ok":
-                    raise ValidationError(_("Last submitted donation report (ID %s) is in state %s but should be "
+                    raise ValidationError(_("Submitted donation report (ID %s) is in state %s but should be "
                                             "in state 'response_ok'.") % (l.id, l.state))
-            lsr = lsr[0]
-        return lsr
+                if not last_submitted_report or last_submitted_report.submission_id.submission_datetime < l.submission_id.submission_id.submission_datetime:
+                    last_submitted_report = l
+        return last_submitted_report
 
     @api.multi
     def _compute_refnr(self, submission_bpk_private=False):

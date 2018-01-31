@@ -39,8 +39,7 @@ class ResPartnerDonationReportSosync(models.Model):
 
     # Fields from the Spendenmeldung-Meldung
     # --------------------------------------
-    submission_id_datetime = fields.Datetime(sosync="True")
-    submission_id_url = fields.Char(sosync="True")
+    submission_id_datetime = fields.Datetime(sosync="True")     # Datetime of the submission to finanz online
 
     # Fields set after response from FinanzOnline
     # -------------------------------------------
