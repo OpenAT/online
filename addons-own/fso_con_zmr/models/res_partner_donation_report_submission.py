@@ -122,9 +122,11 @@ class ResPartnerFADonationReport(models.Model):
                                      help=_("The rendered template (which is the 'body' of the submission request!)"))
 
     submission_content_file = fields.Binary(string="Submission Content File", readonly=True,
-                                            compute="compute_submission_content_file", compute_sudo=True,)
+                                            compute="compute_submission_content_file", compute_sudo=True,
+                                            store=True)
     submission_content_filename = fields.Char(string="Submission Content Filename", readonly=True,
-                                              compute="compute_submission_content_file", compute_sudo=True,)
+                                              compute="compute_submission_content_file", compute_sudo=True,
+                                              store=True)
 
     # Updated at submission
     # ---------------------

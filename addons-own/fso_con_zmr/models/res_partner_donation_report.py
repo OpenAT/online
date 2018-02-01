@@ -251,10 +251,7 @@ class ResPartnerFADonationReport(models.Model):
     def _changes_allowed_fields_after_submission(self):
         f = ('state',
              'info',
-             #'submission_id_state',
              'submission_id_datetime',
-             #'submission_id_url',
-             #'submission_id_fa_dr_type',
              'response_content',
              'response_error_code',
              'response_error_detail')
@@ -497,6 +494,8 @@ class ResPartnerFADonationReport(models.Model):
             # Avoid any changes to this report if it was skipped or submitted!
             # ----------------------------------------------------------------
             if r.state not in self._changes_allowed_states():
+                logger.info("update_state_and_submission_information() Will not recompute state and vals because "
+                            "donation report state is %s for donation report (ID %s)" % (r.state, r.id))
                 continue
 
             # Skip this report if newer reports exists already because of sosync LIFO!
