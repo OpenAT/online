@@ -67,6 +67,7 @@
                         <page string="Submission">
                             <group>
                                 <field name="submission_id"/>
+                                <field name="submission_id_datetime"/>
                                 <!-- field name="submission_id_state"/>
                                 <field name="submission_id_url"/>
                                 <field name="submission_id_fa_dr_type"/>
