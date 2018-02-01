@@ -792,7 +792,9 @@ class ResPartnerFADonationReport(models.Model):
                         raise ValidationError(error_msg)
 
                     # Check if the correct submission id is in the file
-                    if s.submission_message_ref_id in download_decode:
+                    # HINT: Check the submission_fa_fastnr_org also just in case we submit all donation reports with
+                    #       one FinanzOnline Teilnehmer and all protocol files for all instances are in one DataBox
+                    if s.submission_message_ref_id in download_decode and s.submission_fa_fastnr_org in download_decode:
                         response_file_applkey = applkey
                         response_file = download_decode
                         try:
