@@ -146,6 +146,10 @@ class ResPartnerFADonationReport(models.Model):
                                     comodel_name="res.partner.donation_report.submission",
                                     readonly=True, states={'new': [('readonly', False)]},
                                     track_visibility='onchange')
+    # HINT: This is the datetime of the (latest) submission (try) to FinanzOnline
+    # HINT: Will be updated by the donation report submission when the status changes to
+    #       submitted or any response status together with the state change
+    submission_id_datetime = fields.Datetime(string="Submission Datetime", readonly=True)
 
     # Related Fields from the donation report submission (drs)
     # TODO: REMOVE related fields -> must change the last_submitted_report computation for this!

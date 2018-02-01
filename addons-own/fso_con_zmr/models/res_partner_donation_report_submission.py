@@ -353,7 +353,7 @@ class ResPartnerFADonationReport(models.Model):
         # ----------------------------------------------------------
         if f['state'] == 'error' and self.donation_report_ids:
             logger.info("update_submission() Set %s donation reports to state 'new'!" % len(self.donation_report_ids))
-            self.donation_report_ids.write({'state': 'new'})
+            self.donation_report_ids.write({'state': 'new', 'submission_id_datetime': False})
 
         # Response errors
         # ---------------
@@ -490,9 +490,15 @@ class ResPartnerFADonationReport(models.Model):
                                     error_detail=error_detail)
                 continue
 
-            # Prepare Request body (Replace placeholder ###SessionID### with real session id)
+            # Prepare Request body(Replace placeholder ###SessionID### with real session id)
             # -------------------------------------------------------------------------------
             request_data = r.submission_content.replace('###SessionID###', fo_session_id, 1)
+
+            # Prepare submission time and log
+            # -------------------------------
+            submission_datetime = fields.datetime.now()
+            submission_log = r.submission_log or ''
+            submission_log += "Submission Request on %s:\n" % submission_datetime
 
             # Set all donation reports to state 'submitted' so that they can not be removed from the submission
             # -------------------------------------------------------------------------------------------------
@@ -504,9 +510,6 @@ class ResPartnerFADonationReport(models.Model):
             # Submit the report to FinanzOnline File Upload Service
             # -----------------------------------------------------
             start_time = time.time()
-            submission_datetime = fields.datetime.now()
-            submission_log = r.submission_log or ''
-            submission_log += "Submission Request on %s:\n" % submission_datetime
             try:
                 http_header = {
                     'content-type': 'text/xml; charset=utf-8',
@@ -563,6 +566,15 @@ class ResPartnerFADonationReport(models.Model):
                     'response_content_parsed': False,
                     'request_duration': request_duration,
                     }
+
+            # Copy the submission datetime to the donation reports now that we have an response
+            # ---------------------------------------------------------------------------------
+            # HINT: submission_id_datetime is set so we know when we submitted (or at least tried to) in the reports
+            #       this is good in FRST and for last submitted report computation in the donation reports
+            # HINT: state must be also set again to avoid the state computation of the donation reports
+            logger.info("Set donation report(s) state to 'submitted' AND the 'submission_id_datetime' after we got an"
+                        "response from Finanz online for donation-report-submission (ID %s)!" % r.id)
+            r.donation_report_ids.write({'state': 'submitted', 'submission_id_datetime': submission_datetime})
 
             # Response http code not 200
             # --------------------------
@@ -663,7 +675,7 @@ class ResPartnerFADonationReport(models.Model):
         if not s.response_file:
 
             # Render the request body template
-            # HINT: A time range of max 7 days is allowed!
+            # HINT: A time range of max 7 days is allowed for the file listing!
             addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
             soaprequest_templates = pj(addon_path, 'soaprequest_templates')
             fo_databox_getdatabox = pj(soaprequest_templates, 'fo_databox_getdatabox.xml')
@@ -731,6 +743,7 @@ class ResPartnerFADonationReport(models.Model):
             for result in response_etree.iterfind(".//{*}result"):
                 filebez = result.find(".//{*}filebez")
                 filebez = filebez.text if filebez is not None else ''
+                logger.info("check_response() Check DataBox File %s" % filebez)
                 if "Webservice_UEB_SA".upper() in filebez.upper():
                     applkey = result.find(".//{*}applkey")
                     applkey = applkey.text if applkey is not None else ''
@@ -837,6 +850,7 @@ class ResPartnerFADonationReport(models.Model):
             state = "response_ok"
             # Update donation reports and the submission
             s.donation_report_ids.write({'state': state,
+                                         'submission_id_datetime': s.submission_datetime,
                                          'response_content': False,
                                          'response_error_code': False,
                                          'response_error_detail': False})
@@ -863,6 +877,7 @@ class ResPartnerFADonationReport(models.Model):
                 return True
             # Update donation reports and the submission
             s.donation_report_ids.write({'state': state,
+                                         'submission_id_datetime': s.submission_datetime,
                                          'response_content': False,
                                          'response_error_code': code,
                                          'response_error_detail': text})
@@ -886,13 +901,16 @@ class ResPartnerFADonationReport(models.Model):
                     raise ValidationError(_("Could not process SonderausgabenError: RefNr %s, Code %s, Text %s"
                                             "") % (refnr, code, text))
                 # Find related donation report
-                dr = s.sudo().search([('id', 'in', s.donation_report_ids.ids), ('submission_refnr', '=', refnr)])
+                dr = s.env['res.partner.donation_report'].sudo().search(
+                    [('submission_id', '=', s.id),
+                     ('submission_refnr', '=', refnr)])
                 if not dr or len(dr) != 1:
                     raise ValidationError(_("None or multiple donation reports found (IDs %s) for SonderausgabenError: "
                                             "RefNr %s, Code %s, Text %s"
                                             "") % (dr.ids if dr else '', refnr, code, text))
                 # Update the 'Not OK' donation report
                 dr.write({'state': 'response_nok',
+                          'submission_id_datetime': s.submission_datetime,
                           'response_content': error_etree.text if error_etree is not None else False,
                           'response_error_code': code,
                           'response_error_detail': text})
@@ -908,6 +926,7 @@ class ResPartnerFADonationReport(models.Model):
             if remaining_ids:
                 ok_reports = s.env['res.partner.donation_report'].sudo().browse(remaining_ids)
                 ok_reports.write({'state': 'response_ok',
+                                  'submission_id_datetime': s.submission_datetime,
                                   'response_content': False,
                                   'response_error_code': False,
                                   'response_error_detail': False})
