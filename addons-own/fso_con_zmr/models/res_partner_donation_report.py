@@ -252,7 +252,7 @@ class ResPartnerFADonationReport(models.Model):
         f = ('state',
              'info',
              #'submission_id_state',
-             #'submission_id_datetime',
+             'submission_id_datetime',
              #'submission_id_url',
              #'submission_id_fa_dr_type',
              'response_content',
