@@ -78,23 +78,24 @@
 
                     </group>
                     <group string="Webservice Login Status">
-                        <div  colspan="2" name="finanz_online_buttons"
-                              class="oe_button_box oe_inline oe_left" style="margin-bottom: 1em;">
-                            <!-- button name="finanz_online_login" type="object" string="Login"
-                                    attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
-                            <button name="finanz_online_logout" type="object" string="Logout"
-                                    attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/ -->
-                            <button name="finanz_online_login" type="object" string="Login"/>
-                            <button name="finanz_online_logout" type="object" string="Logout"/>
-                        </div>
-
-                        <field name="fa_login_returncode" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
-                        <field name="fa_login_message" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
-                        <field name="fa_login_time" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
-
-                        <field name="fa_logout_returncode" readonly="1" attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
-                        <field name="fa_logout_message" readonly="1" attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
-                        <field name="fa_logout_time" readonly="1" attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
+                        <group string="Login">
+                            <div  colspan="2" name="finanz_online_buttons"
+                                  class="oe_button_box oe_inline oe_left" style="margin-bottom: 1em;">
+                                <button name="finanz_online_login" type="object" string="Login"/>
+                            </div>
+                            <field name="fa_login_time" readonly="1" />
+                            <field name="fa_login_returncode" readonly="1" />
+                            <field name="fa_login_message" readonly="1" />
+                        </group>
+                        <group string="Logout">
+                            <div  colspan="2" name="finanz_online_buttons"
+                                  class="oe_button_box oe_inline oe_left" style="margin-bottom: 1em;">
+                                <button name="finanz_online_logout" type="object" string="Logout"/>
+                            </div>
+                            <field name="fa_logout_time" readonly="1"/>
+                            <field name="fa_logout_returncode" readonly="1"/>
+                            <field name="fa_logout_message" readonly="1"/>
+                        </group>
                     </group>
                 </page>
             </xpath>

@@ -247,17 +247,6 @@ class CompanyAustrianZMRSettings(models.Model):
         #       i don't know how?
         c.finanz_online_logout()
 
-        # GET THE LOGIN TEMPLATE
-        # Get the template-folder directory
-        addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        soaprequest_templates = pj(addon_path, 'soaprequest_templates')
-        assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at %s") \
-                                                      % soaprequest_templates
-        # Get the login-template path
-        fo_login_template = pj(soaprequest_templates, 'fo_login_j2template.xml')
-        assert os.path.exists(fo_login_template), _("fo_login_j2template.xml not found at %s") \
-                                                  % fo_login_template
-
         # CHECK FINANZ ONLINE LOGIN DATA
         mandatory_fields = ['fa_tid', 'fa_benid', 'fa_pin']
         missing = [field for field in mandatory_fields if not getattr(c, field)]
@@ -268,6 +257,17 @@ class CompanyAustrianZMRSettings(models.Model):
             c.fa_login_time = False
         assert not missing, _("FinanzOnline webservice user information is missing! (%s)\n"
                               "Check company settings for %s (id: %s)") % (missing, c.name, c.id)
+
+        # GET THE LOGIN TEMPLATE
+        # Get the template-folder directory
+        addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        soaprequest_templates = pj(addon_path, 'soaprequest_templates')
+        assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at %s"
+                                                        "") % soaprequest_templates
+        # Get the login-template path
+        fo_login_template = pj(soaprequest_templates, 'fo_login_j2template.xml')
+        assert os.path.exists(fo_login_template), _("fo_login_j2template.xml not found at %s"
+                                                    "") % fo_login_template
 
         # HTTP SOAP REQUEST
         response = soap_request(url='https://finanzonline.bmf.gv.at:443/fonws/ws/sessionService',
