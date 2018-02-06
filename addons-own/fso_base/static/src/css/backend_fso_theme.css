@@ -92,6 +92,17 @@
     }
 }
 
+/* ATTENTION: Move all non FS-Online items into the more menu (this is done by java script) */
+
+#oe_main_menu_navbar li a[data-xmlid="mail.mail_feeds_main"] {
+    /*margin-right: 100%;*/
+    min-width: 10000px;
+}
+#oe_main_menu_navbar #menu_more_container li a[data-xmlid="mail.mail_feeds_main"] {
+    /*margin-right: 0;*/
+    min-width: 0;
+}
+
 
 /* LEFT MENU */
 .openerp .oe_leftbar > div .oe_footer {
@@ -960,4 +971,10 @@ html .openerp .oe_kanban_view .oe_kanban_footer_left .oe_tags .oe_tag {
     min-height: 60px !important;
     overflow-y: scroll;
     border-bottom: 1px solid #f7f7f7;
+}
+
+/* DASHBOARDS */
+.openerp .oe_dashboard .oe_list .oe_list_content .oe_group_header {
+    background-color: transparent;
+    background-image: none;
 }

@@ -7,7 +7,8 @@
         <menuitem id="menu_fsonline" name="FS-Online" sequence="0" groups="base.group_user"/>
 
         <!-- DASHBOARD -->
-        <menuitem id="menu_fsonline_dashboard" parent="menu_fsonline" name="Dashboard" sequence="1000"/>
+        <menuitem id="menu_fsonline_dashboard" parent="menu_fsonline" name="Dashboards" sequence="1000"/>
+        <menuitem id="menu_fsonline_dashboard_my_dashboard" parent="menu_fsonline_dashboard" name="Mein Dashboard" sequence="1100" action="board.open_board_my_dash_action"/>
 
         <!-- ORGANIZER -->
         <menuitem id="menu_fsonline_organizer" parent="menu_fsonline" name="Organizer" sequence="2000"/>
@@ -19,7 +20,7 @@
         <!-- ============= -->
         <!-- FSO ORGANIZER -->
         <!-- ============= -->
-        <menuitem id="menu_fso_organizer" name="Organizer" sequence="4" groups="base.group_user"/>
+        <menuitem id="menu_fso_organizer" name="Planung" sequence="4" groups="base.group_user"/>
 
         <!-- ORGANIZER -->
         <menuitem id="menu_fso_organizer_organizer" parent="menu_fso_organizer" name="Organizer" sequence="1000" groups="base.group_user"/>
@@ -50,7 +51,7 @@
         <!-- ========== -->
         <!-- FSO SYSTEM -->
         <!-- ========== -->
-        <menuitem id="menu_fsonline_system" name="System |  " sequence="5" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_system" name="System" sequence="5" groups="base.group_user"/>
 
         <!-- ACCESS -->
         <menuitem id="menu_fsonline_access" parent="menu_fsonline_system" name="Access" sequence="9000"/>

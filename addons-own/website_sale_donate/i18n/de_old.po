@@ -6,14 +6,88 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-06 14:09+0000\n"
-"PO-Revision-Date: 2018-02-06 14:09+0000\n"
+"POT-Creation-Date: 2017-10-11 14:25+0000\n"
+"PO-Revision-Date: 2017-10-11 14:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: website_sale_donate
+#: model:email.template,body_html:website_sale_donate.email_template_webshop
+msgid "\n"
+"\n"
+"\n"
+"<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
+"\n"
+"    <h2>\n"
+"        <br />\n"
+"        Hello ${object.partner_id.name},<br />\n"
+"        Thank you very much for your trust!\n"
+"    </h2>\n"
+"    <h3><br />Summary of your transaction:</h3>\n"
+"    <p style=\"padding-left: 14px;\">\n"
+"        ID: <strong>${object.name}</strong><br />\n"
+"        Total: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br />\n"
+"        Date: ${object.date_order}<br />\n"
+"        State: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
+"    </p>\n"
+"    <% set signup_url = object.get_signup_url() %>\n"
+"    % if signup_url:\n"
+"    <p>\n"
+"        <br />You could access your data online if you already have an account:\n"
+"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
+"            &#8226;&nbsp;Access Account\n"
+"        </a>\n"
+"        <br />Or you could create a new one:\n"
+"        <a href=\"${signup_url}\" style=\"display:block; font-size: 16px; padding-left: 14px;\">\n"
+"            &#8226;&nbsp;Register Account\n"
+"        </a>\n"
+"    </p>\n"
+"    % endif\n"
+"    <p>If you have any questions please contact:<br />\n"
+"        <a href=\"mailto:${object.user_id.email or object.company_id.email or ''}?subject=Question%20regarding%20${object.name}\" style=\"display:block; padding-left: 14px;\">\n"
+"            &#8226;&nbsp;&lt;${object.user_id.name or object.company_id.name or ''}&gt; ${object.user_id.email or object.company_id.email or ''}\n"
+"        </a>\n"
+"    </p>\n"
+"    <p>&nbsp;</p>\n"
+"    <h3>\n"
+"        <strong>${object.company_id.name}</strong>\n"
+"    </h3>\n"
+"    <p>\n"
+"        % if object.company_id.street:\n"
+"            ${object.company_id.street}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.street2:\n"
+"            ${object.company_id.street2}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.city or object.company_id.zip:\n"
+"            ${object.company_id.zip} ${object.company_id.city}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.country_id:\n"
+"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
+"        % endif\n"
+"        % if object.company_id.phone:\n"
+"            Tel.:&nbsp;${object.company_id.phone}<br />\n"
+"        % endif\n"
+"        % if object.company_id.email:\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br />\n"
+"        % endif\n"
+"        % if object.company_id.website:\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br />\n"
+"        % endif\n"
+"        % if object.company_id.logo:\n"
+"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
+"        % endif\n"
+"    </p>\n"
+"\n"
+"</div>\n"
+"\n"
+"\n"
+"            "
+msgstr ""
 
 #. module: website_sale_donate
 #: code:addons/website_sale_donate/models/website.py:68
@@ -89,76 +163,81 @@ msgstr "'padding: 0 10px 0 10px' if product.hide_price or product.price == 0 els
 #. module: website_sale_donate
 #: view:website:website_sale.product_price
 msgid "'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'"
-msgstr "'text-danger oe_default_price hidden' if product.price_donate else 'text-danger oe_default_price'"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "'text-muted' if website_sale_order and website_sale_order.amount_delivery else 'text-muted hidden'"
-msgstr "'text-muted' if website_sale_order and website_sale_order.amount_delivery else 'text-muted hidden'"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "'text-muted' if website_sale_order and website_sale_order.amount_tax else 'text-muted hidden'"
-msgstr "'text-muted' if website_sale_order and website_sale_order.amount_tax else 'text-muted hidden'"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.cart
 msgid "'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'"
-msgstr "'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "(= Webpage Categories)"
-msgstr "(= Webpage Categories)"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "(= Webpage Description in Checkoutbox)"
-msgstr "(= Webpage Description in Checkoutbox)"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.phone
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_phone
 msgid "+43 664 123456789"
-msgstr "+43 664 123456789"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_checkout_form_billing_fields
 msgid "-- Create a new address --"
-msgstr "-- Neue Adresse anlegen --"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.post_office_box_web
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_post_office_box_web
 msgid "1242"
-msgstr "1242"
+msgstr ""
+
+#. module: website_sale_donate
+#: model:website.checkout_billing_fields,placeholder:website_sale_donate.birthdate
+msgid "1980-01-30"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.monthly_2
 msgid "2-monthly"
-msgstr "2-monthly"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.birthdate_web
 msgid "30.01.1980"
-msgstr "30.01.1980"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.monthly_4
 msgid "4-monthly"
-msgstr "4-monthly"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.street_number_web
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_street_number_web
 msgid "52a"
-msgstr "52a"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.zip
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_zip
 msgid "56382"
-msgstr "56382"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,information:website_sale_donate.legal_terms_web
@@ -171,15 +250,7 @@ msgid "<p>\n"
 "</p>\n"
 "\n"
 "            "
-msgstr "<p>\n"
-"    Ich erkläre mich mit den AGB von XXX einverstanden\n"
-"    <br>\n"
-"    <a href=\"#\">\n"
-"        Link zu den AGB.\n"
-"    </a>\n"
-"</p>\n"
-"\n"
-"            "
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,information:website_sale_donate.donation_deduction_optout_web
@@ -199,176 +270,203 @@ msgid "<p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanz
 "</p>\n"
 "\n"
 "            "
-msgstr "<p>Ich möchte nicht dass meine Spenden ab 2017 automatisch an das Finanzamt übermittelt werden.</p>\n"
-"<p>Ich erkläre mich damit einverstanden, daß diese daher nicht als Sonderausgabe von der Steuer absetzbar sind.</p><p>\n"
-"<br>\n"
-"</p><p>\n"
-"    <strong>Erklärung (Stand Juni 2016):</strong><br>\n"
-"    Für bestimmte Sonderausgaben, nämlich u.a. Spenden im Sinne des § 4a Einkommensteuergesetz wird für Zahlungen ab dem Jahr 2017 ein verpflichtender automatischer Datenaustausch zwischen der empfangenden Organisation und der Finanzverwaltung eingeführt.<br>\n"
-"    Möchte der Steuerpflichtige keine Datenübermittlung und automatische Berücksichtigung, ist er nicht gehindert, Spenden zu leisten; in diesem Fall ist allerdings die steuerliche Berücksichtigung als Sonderausgabe grundsätzlich ausgeschlossen.<br>\n"
-"    Der Steuerpflichtige verzichtet damit auf die steuerliche Berücksichtigung, was ihm bisher auch frei gestanden ist.<br>\n"
-"    Es ist daher auch nicht vorgesehen, die Sonderausgaben selbst über die Steuererklärung in der Veranlagung geltend zu machen.<br>\n"
-"    <br>\n"
-"    <a href=\"https://www.bmf.gv.at/steuern/selbststaendige-unternehmer/einkommensteuer/FAQ-automatische-Datenuebermittlung-SA.html\">\n"
-"        FAQ automatische Datenübermittlung SA\n"
-"    </a>\n"
-"</p>\n"
-"\n"
-"            "
+msgstr ""
 
 #. module: website_sale_donate
+#: model:website.checkout_billing_fields,information:website_sale_donate.birthdate
 #: model:website.checkout_billing_fields,information:website_sale_donate.birthdate_web
 msgid "<p>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.\n"
 "\n"
 "            </p>"
-msgstr "<p>Um ihre Spenden von der Steuer absetzten zu können ist die Angabe ihres Geburtsdatums erforderlich.\n"
-"\n"
-"            </p>"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "> Open Cart Page"
-msgstr "> Öffne Spendenkorbseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "> Open Checkout Page"
-msgstr "> Öffne Checkout-Seite"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "> Open Confirmation Page for FS-Online Payment Providers"
-msgstr "> Öffne Bestätigungsseite für FS-Online Zahlungsanbieter"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "> Open Payment Page"
-msgstr "> Öffne Zahlungs-Seite"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,description_sale:0
+msgid "A description of the Product that you want to communicate to your customers. This description will be copied to every Sale Order, Delivery Order and Customer Invoice/Refund"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,description_purchase:0
+msgid "A description of the Product that you want to communicate to your suppliers. This description will be copied to every Purchase Order, Receipt and Supplier Invoice/Refund."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,description:0
+msgid "A precise description of the Product, used only for internal information purposes."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "ATTENTION: Be aware that the global setting \"Stay at page after adding a product\n"
 "                                    to the cart\" will be ignored for products with \"Simple Checkout\" set!"
-msgstr "ACHTUNG: Bitte beachten Sie, daß die globale Einstellung 'Auf der Seite bleiben nach\n"
-" dem Hinzufügen eines Produktes zum Spendenkorb' für Artikel bei denen Schneller Checkout ('simple_checkout') aktiviert ist ignoriert wird!"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "ATTENTION: Crowd Funding Bar and Text will only be shown if the funding goal higher than 0!"
-msgstr "ACHTUNG: Der Crowdfunding Balken and Text wird nur angezeigt wenn das Crowdfunding Ziel nicht 0 ist!"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,legal_terms_web:0
+msgid "Accept Legal Terms Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.legal_terms_web
 msgid "Accept Terms and Conditions"
-msgstr "Nutzungsbedingungen akzeptieren"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,accessory_product_ids:0
+msgid "Accessory Products"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Accounting -> Customer Taxes"
-msgstr "Buchhaltung -> Steuersatz der Spender (Kunden)"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Accounting -> Supplier Taxes"
-msgstr "Buchhaltung -> Steuersatz der Lieferanten"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,acquirer_icon:0
 msgid "Acquirer Icon"
-msgstr "Zahlungsanbieter Icon"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:payment.acquirer,acquirer_icon:0
 msgid "Acquirer Icon 120x90 PNG 32Bit"
-msgstr "Zahlungsanbieter Icon 120x90 PNG 32Bit"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:payment.acquirer:website_sale_donate.payment_acquirer_form_recurring
 msgid "Acquirer Name"
-msgstr "Zahlungsanbieter Name"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Acquirers"
-msgstr "Zahlungsanbieter"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,active:0
 #: field:website.checkout_shipping_fields,active:0
 msgid "Active"
-msgstr "Aktiv"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.checkoutbox
 msgid "Add to Cart"
-msgstr "In den Spendenkorb"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,add_to_cart_stay_on_page:0
 msgid "Add to Cart and stay on Page"
-msgstr "Zum Spendenkorb hinzufügen und auf der Seite bleiben"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,button_addtocart_text:0
 #: field:product.template,button_addtocart_text:0
 msgid "Add-To-Cart Button Text"
-msgstr "Zum-Spendenkorb-hinzufügen Button Text"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "All Available Payment Intervals"
-msgstr "Alle verfügbaren Zahlungsintervalle"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "All Donate Product images will be automatically resized and cropped to this\n"
 "                                            dimension for the checkout box and for product listing pages."
-msgstr "Alle Bilder der Spendenartikel werden automatisch auf diese Dimension\n"
-"                                            verkleinert und zugeschnitten für die Checkout-Box und für Artikelübersichtsseiten."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,alternative_product_ids:0
+msgid "Alternative Products"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.website_price_buttons,amount:0
 msgid "Amount"
-msgstr "Betrag"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,amount_title:0
 msgid "Amount (Checkoutbox) Form-Title"
-msgstr "Betrag (Checkoutbox) Form-Titel"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,amount_title:0
 #: field:product.template,amount_title:0
 msgid "Amount Title Overwrite"
-msgstr "Betrag angepasster Titel"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,alternative_product_ids:0
+msgid "Appear on the product page"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,accessory_product_ids:0
+msgid "Appear on the shopping cart"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.product_price
 msgid "Arbitrary Donation"
-msgstr "Freie Spende"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,price_donate:0
 #: field:product.template,price_donate:0
 msgid "Arbitrary Price"
-msgstr "Freie Spendenhöhe"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_published:0
+msgid "Available in the website"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "BASIC PRODUCT SETTINGS"
-msgstr "GRUNDLEGENDE ARTIKELEINSTELLUNGEN"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.categories_search_publish
 #: view:website:website_sale_donate.checkoutbox_small_cart
 #: view:website:website_sale_donate.wsd_button_back_to_page
 msgid "Back"
-msgstr "Zurück"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,button_back_to_page:0
 msgid "Back to Page Button"
-msgstr "Zurück-zur-Seite Button"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,parallax_image:0
@@ -376,228 +474,317 @@ msgstr "Zurück-zur-Seite Button"
 #: field:product.template,parallax_image:0
 #: field:product.template,parallax_image_medium:0
 msgid "Background Parallax Image"
-msgstr "Hintergrund Parallax-Bild"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,desc_short_bottom:0
 #: field:product.template,desc_short_bottom:0
 msgid "Banner Product Description - Bottom"
-msgstr "Banner Artikel-Beschreibung - Unten"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,desc_short:0
 #: field:product.template,desc_short:0
 msgid "Banner Product Description - Center"
-msgstr "Banner Artikel-Beschreibung - Mittig"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,desc_short_top:0
 #: field:product.template,desc_short_top:0
 msgid "Banner Product Description - Top"
-msgstr "Banner Artikel-Beschreibung - Oben"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,list_price:0
+msgid "Base price to compute the customer price. Sometimes called the catalog price."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.payment
 msgid "Bill To:"
-msgstr "Rechnungsadresse:"
+msgstr ""
 
 #. module: website_sale_donate
+#: model:website.checkout_billing_fields,label:website_sale_donate.birthdate
 #: model:website.checkout_billing_fields,label:website_sale_donate.birthdate_web
 msgid "Birthdate"
-msgstr "Geburtsdatum"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,birthdate_web:0
+msgid "Birthdate Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,OrderEmailBody:0
 #: field:website,StatusEmailBody:0
 msgid "Body"
-msgstr "Body"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Button Text"
-msgstr "Button Text"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "CROWDFUNDING SETTINGS"
-msgstr "CROWD-FUNDING EINSTELLUNGEN"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.website_price_buttons,css_classes:0
 #: field:website.checkout_billing_fields,css_classes:0
 #: field:website.checkout_shipping_fields,css_classes:0
 msgid "CSS classes"
-msgstr "CSS Klassen"
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:824
+#: code:addons/website_sale_donate/controllers/main.py:760
 #, python-format
 msgid "Call of json route /shop/payment/transaction/%s will start payment_transaction_logic()"
-msgstr "Call of json route /shop/payment/transaction/%s will start payment_transaction_logic()"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,hr_expense_ok:0
+msgid "Can be Expensed"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,purchase_ok:0
+msgid "Can be Purchased"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,rental:0
+msgid "Can be Rent"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,sale_ok:0
+msgid "Can be Sold"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,landed_cost_ok:0
+msgid "Can constitute a landed cost"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Cart"
-msgstr "Spendenkorb"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Cart Page"
-msgstr "Spendenkorb-Seite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,cart_page_bottom:0
 msgid "Cart Page Bottom Snippet Dropping Area"
-msgstr "Spendenkorb-Seite: Aktiviere unteren Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,cart_page_header:0
 msgid "Cart Page Main Header"
-msgstr "Spendenkorb-Seite: Überschrift"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,cart_page_top:0
 msgid "Cart Page Top Snippet Dropping Area"
-msgstr "Spendenkorb-Seite: Aktiviere oberen Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,button_cart_to_data:0
 msgid "Cart to Data Button"
-msgstr "Spendenkorb-zu-Checkout Button"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,loc_case:0
+msgid "Case"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.payment
 msgid "Change Address"
-msgstr "Adresse ändern"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,membership:0
+msgid "Check if the product is eligible for membership."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.products
 #: view:website:website_sale_donate.checkoutbox_small_cart
 #: view:website:website_sale_donate.website_form
 msgid "Checkout"
-msgstr "Checkout"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_website_checkout_billing_fields
 msgid "Checkout Billing Fields"
-msgstr "Checkout Rechnungsfelder"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 #: field:website,CheckoutFields:0
 msgid "Checkout Fields"
-msgstr "Checkout Felder"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Checkout Page"
-msgstr "Checkout-Seite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkout_page_bottom:0
 msgid "Checkout Page Bottom Snippet Dropping Area"
-msgstr "Checkout-Seite: Aktiviere unteren Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkout_page_header:0
 msgid "Checkout Page Main Header"
-msgstr "Checkout-Seite: Überschrift"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkout_page_top:0
 msgid "Checkout Page Top Snippet Dropping Area"
-msgstr "Checkout-Seite: Aktiviere oberen Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_website_checkout_shipping_fields
 msgid "Checkout Shipping Fields"
-msgstr "Checkout Lieferfelder"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Checkoutbox Settings:"
-msgstr "Checkoutbox Einstellungen:"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.city
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_city
 msgid "City"
-msgstr "Stadt"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,clearfix:0
 #: field:website.checkout_shipping_fields,clearfix:0
 msgid "Clearfix"
-msgstr "Clearfix"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_checkout_form_billing_fields
 msgid "Close"
-msgstr "Beenden"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,uos_coeff:0
+msgid "Coefficient to convert default Unit of Measure to Unit of Sale\n"
+" uos = uom * coeff"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,color:0
+msgid "Color Index"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:website,OrderEmailPartnerTo:0
 #: help:website,StatusEmailPartnerTo:0
 msgid "Comma-separated ids of recipient partners (placeholders may be used here)"
-msgstr "Comma-separated ids of recipient partners (placeholders may be used here)"
+msgstr ""
 
 #. module: website_sale_donate
+#: field:product.product,company_id:0
 #: model:website.checkout_billing_fields,label:website_sale_donate.company_name_web
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_company_name_web
 msgid "Company"
-msgstr "Firma"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.company_name_web
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_company_name_web
 msgid "Company Name (optional)"
-msgstr "Firmenname (optional)"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,company_name_web:0
+msgid "Company Name Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_checkout_form_inside
 msgid "Confirm"
-msgstr "Weiter"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Confirmation"
-msgstr "Bestätigung"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Confirmation Page"
-msgstr "Bestätigungsseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,confirmation_page_bottom:0
 msgid "Confirmation Page Bottom Snippet Dropping Area"
-msgstr "Bestätigungsseite: Aktiviere unteren Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,confirmation_transaction_reference_info:0
 msgid "Confirmation Page Info Text"
-msgstr "Bestätigungsseite: Informationstext"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,confirmation_page_header:0
 msgid "Confirmation Page Main Header"
-msgstr "Bestätigungsseite: Überschrift"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,confirmation_page_top:0
 msgid "Confirmation Page Top Snippet Dropping Area"
-msgstr "Bestätigungsseite: Aktiviere oberen Snippetbereich"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,type:0
+msgid "Consumable: Will not imply stock management for this product. \n"
+"Stockable product: Will imply stock management for this product."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.cart
 msgid "Continue"
-msgstr "Weiter"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,standard_price:0
+msgid "Cost Price"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,standard_price:0
+msgid "Cost price of the product template used for standard stock valuation in accounting and used as a base price on purchase orders. Expressed in the default unit of measure of the product."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,cost_method:0
+msgid "Costing Method"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.country_id
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_country_id
 msgid "Country"
-msgstr "Land"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,auto_create_task:0
+msgid "Create Task Automatically"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.acquirer_lines,create_uid:0
@@ -607,7 +794,7 @@ msgstr "Land"
 #: field:website.checkout_billing_fields,create_uid:0
 #: field:website.checkout_shipping_fields,create_uid:0
 msgid "Created by"
-msgstr "Erstellt von"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.acquirer_lines,create_date:0
@@ -617,358 +804,498 @@ msgstr "Erstellt von"
 #: field:website.checkout_billing_fields,create_date:0
 #: field:website.checkout_shipping_fields,create_date:0
 msgid "Created on"
-msgstr "Erstellt am"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,sale_delay:0
+msgid "Customer Lead Time"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,taxes_id:0
+msgid "Customer Taxes"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "DONATION SETTINGS"
-msgstr "SPENDEN-EINSTELLUNGEN"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,button_data_to_payment:0
 msgid "Data to Payment Button"
-msgstr "Daten-zu-Zahlung Button"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,membership_date_from:0
+msgid "Date from which membership becomes active."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,membership_date_to:0
+msgid "Date until which membership remains active."
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,product_page_template:0
 msgid "Default Layout"
-msgstr "Standard Layout"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,payment_interval_default:0
 #: field:product.template,payment_interval_default:0
 #: field:website,payment_interval_default:0
 msgid "Default Payment Interval"
-msgstr "Standard Zahlungsintervall"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,acquirer_default:0
 msgid "Default Payment Method"
-msgstr "Standard Zahlungsmethode"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,uom_id:0
+msgid "Default Unit of Measure used for all stock operation."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,uom_po_id:0
+msgid "Default Unit of Measure used for purchase orders. It must be in the same category than the default unit of measure."
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,country_default_value:0
 msgid "Default country for checkout page"
-msgstr "Standard Land für die Checkout-Seite"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_opc_payment
 msgid "Delivery"
-msgstr "Lieferung"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "Delivery will be updated after choosing a new delivery method"
-msgstr "Die Lieferung wird nach der Auswahl einer neuen Liefermethode aktualisiert."
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,delivery_title:0
 msgid "Delivery-Option Form-Title"
-msgstr "Lieferoptionen Form-Titel"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "Delivery:"
-msgstr "Lieferung:"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,route_ids:0
+msgid "Depending on the modules installed, this will allow you to define the route of the product: whether it will be bought, manufactured, MTO/MTS,..."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,description:0
+msgid "Description"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Description for Quotations"
-msgstr "Beschreibung für Angebote"
+msgstr ""
 
 #. module: website_sale_donate
+#: field:product.product,quote_description:0
+msgid "Description for the quote"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_description:0
+msgid "Description for the website"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,event_ok:0
+msgid "Determine if a product needs to create automatically an event registration at the confirmation of a sales order line."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,website_sequence:0
+msgid "Determine the display order in the Website E-commerce"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:payment.acquirer,display_name:0
 #: field:product.acquirer_lines,display_name:0
 #: field:product.payment_interval,display_name:0
 #: field:product.payment_interval_lines,display_name:0
+#: field:product.product,display_name:0
+#: field:product.template,display_name:0
 #: field:product.website_price_buttons,display_name:0
+#: field:sale.order,display_name:0
+#: field:sale.order.line,display_name:0
+#: field:website,display_name:0
 #: field:website.checkout_billing_fields,display_name:0
 #: field:website.checkout_shipping_fields,display_name:0
+#: field:website.config.settings,display_name:0
 msgid "Display Name"
-msgstr "Anzeigename"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,do_not_link:0
 #: field:product.template,do_not_link:0
 msgid "Do not link product in cart and product listings"
-msgstr "Artikel nicht auf Artikelübersichtsseiten anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,do_not_send_status_email:0
 msgid "Do not send Confirmation E-Mails on TX-State changes."
-msgstr "Kein E-Mail senden bei Änderung des Zahlungsstatus."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Donate"
-msgstr "Spenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.checkoutbox
 msgid "Donate Now!"
-msgstr "Jetzt Spenden!"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:sale.order.line,price_donate:0
 msgid "Donate Price"
-msgstr "Spendenhöhe"
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,fs_workflow:0
 #: model:product.template,name:website_sale_donate.default_donation_product_template
 msgid "Donation"
-msgstr "Spende"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_cart
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsoweb_donationshop_cart
 msgid "Donation Cart"
-msgstr "Spendenkorb"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,donation_deduction_optout_web:0
+msgid "Donation Deduction OptOut Web"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:res.partner,donation_deduction_optout_web:0
+msgid "Donation Deduction OptOut set by Donor"
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,product_page_template:0
 msgid "Donation Layout"
-msgstr "Spendenlayout"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Donation Product"
-msgstr "Spendenartikel"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.donation_receipt_web
 msgid "Donation Receipt"
-msgstr "Spendenbestätigung"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,donation_receipt_web:0
+msgid "Donation Receipt Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsoweb_donationshop
 #: view:website:website_sale_donate.website_form
 msgid "Donation Shop"
-msgstr "Spendenshop"
+msgstr ""
+
+#. module: website_sale_donate
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_product
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsoweb_donationshop_product
+msgid "Donations & Products"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.small_cart
 msgid "Download"
-msgstr "Download"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.email
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_email
 msgid "EMail"
-msgstr "E-Mail"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Edit Checkout Fields"
-msgstr "Checkout Felder bearbeiten"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Edit Payment Acquirers"
-msgstr "Zahlungsanbieter bearbeiten"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Edit Payment Intervals"
-msgstr "Zahlungsintervalle bearbeiten"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Edit Shipping Fields"
-msgstr "Lieferfelder bearbeiten"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:res.partner,anrede_individuell:0
+msgid "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Enabled"
-msgstr "Aktiviert"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,event_ok:0
+msgid "Event Subscription"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_account_expense:0
+msgid "Expense Account"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:sale.order.line,fs_ptoken:0
 msgid "FS Partner Token"
-msgstr "FS Partner Token"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.cart
 #: view:website:website_sale.checkout
 #: view:website:website_sale.payment
 msgid "False"
-msgstr "False"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,track_incoming:0
+msgid "Forces to specify a Serial Number for all moves containing this product and coming from a Supplier Location"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,track_outgoing:0
+msgid "Forces to specify a Serial Number for all moves containing this product and going to a Customer Location"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,track_all:0
+msgid "Forces to specify a Serial Number on each and every operation related to this product"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,fore_name_web:0
+msgid "Fore Name Web DEPRICATED use partner_firstname addon"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,format:0
 #: field:product.template,format:0
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.ppt_ahch
 msgid "Format:"
-msgstr "Format:"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,track_all:0
+msgid "Full Lots Traceability"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,funding_desc:0
 #: field:product.template,funding_desc:0
 msgid "Funding Description"
-msgstr "Crowdfunding Beschreibung"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,funding_goal:0
 #: field:product.template,funding_goal:0
 msgid "Funding Goal"
-msgstr "Crowdfunding Ziel"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,funding_reached:0
 #: field:product.template,funding_reached:0
 msgid "Funding reached in %"
-msgstr "Ziel erreicht in %"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,funding_user:0
 #: field:product.template,funding_user:0
 msgid "Funding-Campaign User"
-msgstr "Crowdfunding-Initiator Benutzer"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,funding_user_name:0
 #: field:product.template,funding_user_name:0
 msgid "Funding-Campaign User Name"
-msgstr "Crowdfunding-Initiator Name"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,fs_workflow:0
 #: field:product.template,fs_workflow:0
 msgid "Fundraising Studio Workflow"
-msgstr "Fundraising Studio Workflow"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,packaging_ids:0
+msgid "Gives the different ways to package the same product. This has no impact on the picking order and is mainly used if you use the EDI module."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Global Crowdfunding Options"
-msgstr "Globale Crowdfunding Einstellungen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkoutbox_footer:0
 msgid "Global Footer for the Checkoutbox"
-msgstr "Globaler Footer der Checkoutbox"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,weight:0
+msgid "Gross Weight"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:sale.order,has_recurring:0
 msgid "Has order lines with recurring transactions"
-msgstr "Hat Auftragszeilen mit wiederkehrenden Zahlungen"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.funding_text
 msgid "Help"
-msgstr "Hilfe"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_amount_title:0
 #: field:product.template,hide_amount_title:0
 msgid "Hide Amount Title"
-msgstr "Betragsüberschrift ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_categories:0
 #: field:product.template,hide_categories:0
 msgid "Hide Categories Navigation"
-msgstr "Kategorienavigation ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_panelfooter:0
 #: field:product.template,hide_panelfooter:0
 msgid "Hide Checkout Panel Footer"
-msgstr "Checkout-Box Footer ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,hide_delivery_methods:0
 msgid "Hide Delivery Methods"
-msgstr "Liefermethoden ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingbarincp:0
 #: field:product.template,hide_fundingbarincp:0
 msgid "Hide Funding-Bar in Checkout-Panel"
-msgstr "Crowdfunding Balken in der Checkout-Box ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingbarinlist:0
 #: field:product.template,hide_fundingbarinlist:0
 msgid "Hide Funding-Bar in Overview-Pages"
-msgstr "Crowdfunding Balken in Arikelübersichtsseiten ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingbar:0
 #: field:product.template,hide_fundingbar:0
 msgid "Hide Funding-Bar in Page"
-msgstr "Crowdfunding Balken in der Artikelseite ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingdesc:0
 #: field:product.template,hide_fundingdesc:0
 msgid "Hide Funding-Description in Page"
-msgstr "Crowdfunding Beschreibung in der Artikelseite ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingtextincp:0
 #: field:product.template,hide_fundingtextincp:0
 msgid "Hide Funding-Text in Checkout-Panel"
-msgstr "Crowdfunding Beschreibung in der Checkout-Box ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingtextinlist:0
 #: field:product.template,hide_fundingtextinlist:0
 msgid "Hide Funding-Text in Overview-Pages"
-msgstr "Crowdfunding Balken in Arikelübersichtsseiten ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_fundingtext:0
 #: field:product.template,hide_fundingtext:0
 msgid "Hide Funding-Text in Page"
-msgstr "Crowdfunding Beschreibung in der Artikelseite ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_image:0
 #: field:product.template,hide_image:0
 msgid "Hide Image in Checkout Panel"
-msgstr "Artikelbild in der Checkout-Box ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_price:0
 #: field:product.template,hide_price:0
 msgid "Hide Price in Shop overview Pages"
-msgstr "Betrag in Arikelübersichtsseiten ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_quantity:0
 #: field:product.template,hide_quantity:0
 msgid "Hide Product-Quantity-Selector in CP"
-msgstr "Mengenselektor in der Checkout-Box ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_search:0
 #: field:product.template,hide_search:0
 msgid "Hide Search Field"
-msgstr "Suchfeld ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,hide_shipping_address:0
 msgid "Hide Shipping Address"
-msgstr "Lieferadresse ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_salesdesc:0
 #: field:product.template,hide_salesdesc:0
 msgid "Hide Text in Checkout Panel"
-msgstr "Artikelbeschreibung in der Checkout-Box ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,hide_payment:0
 #: field:product.template,hide_payment:0
 msgid "Hide complete Checkout Panel"
-msgstr "Checkout-Box ganz ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.checkoutbox
 msgid "How frequent would you like to donate this amount:"
-msgstr "Wie häufig möchten Sie diesen Betrag spenden:"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.acquirer_lines,id:0
@@ -978,92 +1305,128 @@ msgstr "Wie häufig möchten Sie diesen Betrag spenden:"
 #: field:website.checkout_billing_fields,id:0
 #: field:website.checkout_shipping_fields,id:0
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "If adding the donor as a follower is enabled this E-Mail is send to the\n"
 "                                            donor for every sale order status change!"
-msgstr "Wenn 'Spender als Follower hinzufügen' aktiviert ist wird bei jeder Statusänderung\n"
-"                                            des Auftrages der Spender eine Informations- E-Mail erhalten.!"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,valuation:0
+msgid "If real-time valuation is enabled for a product, the system will automatically write journal entries corresponding to stock moves, with product price as specified by the 'Costing Method'The inventory variation account set on the product category will represent the current inventory value, and the stock input and stock output account will hold the counterpart moves for incoming and outgoing products."
+msgstr ""
 
 #. module: website_sale_donate
 #: help:payment.acquirer,globally_hidden:0
 msgid "If set this payment aqcuierer will only show up if explicitly selected in an one page checkout product acquirer configuration but not in the rest ofthe webshop!"
-msgstr "Ist der Zahlungsanbieter global ausgeblendet wird er nur angezeigt wenn dieser nur bei Artikeln angezeigt bei denen er explizit aktiviert wird."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_account_income:0
+msgid "Income Account"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,cart_indicator:0
 msgid "Indicator Cart"
-msgstr "Schritte-Navigation: Spendenkorbseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkout_indicator:0
 msgid "Indicator Checkout"
-msgstr "Schritte-Navigation: Checkout-Seite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,confirmation_indicator:0
 msgid "Indicator Confirmation"
-msgstr "Schritte-Navigation: Bestätigungsseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_indicator:0
 msgid "Indicator Payment"
-msgstr "Schritte-Navigation: Zahlungsseite"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,anrede_individuell:0
+msgid "Individuelle Anrede"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,information:0
 #: field:website.checkout_shipping_fields,information:0
 msgid "Information"
-msgstr "Information"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Information ->"
-msgstr "Information ->"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Information -> Product Type"
-msgstr "Information -> Artikeltyp"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Information -> Unit of Measure"
-msgstr "Information -> Artikeleinheit"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:website.checkout_billing_fields,information:0
 #: help:website.checkout_shipping_fields,information:0
 msgid "Information Text"
-msgstr "Information Text"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,categ_id:0
+msgid "Internal Category"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_stock_inventory:0
+msgid "Inventory Location"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,valuation:0
+msgid "Inventory Valuation"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_account_invoice
 msgid "Invoice"
-msgstr "Rechnung"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.small_cart
 msgid "Item"
-msgstr "Artikel"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,label:0
 #: field:website.checkout_shipping_fields,label:0
 msgid "Label"
-msgstr "Label"
+msgstr ""
 
 #. module: website_sale_donate
+#: field:payment.acquirer,__last_update:0
 #: field:product.acquirer_lines,__last_update:0
 #: field:product.payment_interval,__last_update:0
 #: field:product.payment_interval_lines,__last_update:0
+#: field:product.product,__last_update:0
+#: field:product.template,__last_update:0
 #: field:product.website_price_buttons,__last_update:0
+#: field:sale.order,__last_update:0
+#: field:sale.order.line,__last_update:0
+#: field:website,__last_update:0
 #: field:website.checkout_billing_fields,__last_update:0
 #: field:website.checkout_shipping_fields,__last_update:0
+#: field:website.config.settings,__last_update:0
 msgid "Last Modified on"
-msgstr "Zuletzt bearbeitet am"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.acquirer_lines,write_uid:0
@@ -1073,7 +1436,7 @@ msgstr "Zuletzt bearbeitet am"
 #: field:website.checkout_billing_fields,write_uid:0
 #: field:website.checkout_shipping_fields,write_uid:0
 msgid "Last Updated by"
-msgstr "Zuletzt bearbeitet von"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.acquirer_lines,write_date:0
@@ -1083,233 +1446,303 @@ msgstr "Zuletzt bearbeitet von"
 #: field:website.checkout_billing_fields,write_date:0
 #: field:website.checkout_shipping_fields,write_date:0
 msgid "Last Updated on"
-msgstr "Zuletzt aktualisiert am"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_button_login_logout
 msgid "Login"
-msgstr "Login"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,button_login:0
 msgid "Login Button"
-msgstr "Login Button"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,packaging_ids:0
+msgid "Logistical Units"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_button_login_logout
 #: view:website:website_sale_donate.wsd_checkout_form_inside
 msgid "Logout"
-msgstr "Abmelden"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,button_logout:0
 msgid "Logout Button"
-msgstr "Logout Button"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.street
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_street
 msgid "Main Street 52"
-msgstr "Musterstrasse 55"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,seller_id:0
+msgid "Main Supplier"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,seller_id:0
+msgid "Main Supplier who has highest priority in Supplier List."
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,mandatory:0
 #: field:website.checkout_shipping_fields,mandatory:0
 msgid "Mandatory"
-msgstr "Mandatory"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,mes_type:0
+msgid "Measure Type"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:product.product,parallax_image_medium:0
 #: help:product.template,parallax_image_medium:0
 msgid "Medium-sized image of the background. It is automatically resized as a 128x128px image, with aspect ratio preserved, only when the image exceeds one of those sizes. Use this field in form views or some kanban views."
-msgstr "Medium-sized image of the background. It is automatically resized as a 128x128px image, with aspect ratio preserved, only when the image exceeds one of those sizes. Use this field in form views or some kanban views."
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.donation_deduction_optout_web
 msgid "Meine Spenden nicht absetzen"
-msgstr "Meine Spenden nicht absetzen"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,membership:0
+msgid "Membership"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,membership_date_to:0
+msgid "Membership End Date"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,membership_date_from:0
+msgid "Membership Start Date"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,purchase_line_warn_msg:0
+msgid "Message for Purchase Order Line"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,sale_line_warn_msg:0
+msgid "Message for Sales Order Line"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,price_donate_min:0
 #: field:product.template,price_donate_min:0
 msgid "Minimum Arbitrary Price"
-msgstr "Minimale Spendenhöhe"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.phone
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_phone
 msgid "Mobile"
-msgstr "Mobile"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.name
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_name
 msgid "Mr. John Doe"
-msgstr "Herr Max Mustermann"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.small_cart_header
 msgid "My Items"
-msgstr "Meine Artikel"
+msgstr ""
 
 #. module: website_sale_donate
+#: field:product.product,name:0
 #: field:product.website_price_buttons,name:0
 #: model:website.checkout_billing_fields,label:website_sale_donate.name
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_name
 msgid "Name"
-msgstr "Name"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,name_zwei:0
+msgid "Name Zwei"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:res.partner,name_zwei:0
+msgid "Name zweite Zeile für Fundraising Studio"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,weight_net:0
+msgid "Net Weight"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.city
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_city
 msgid "New York"
-msgstr "Wien"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.newsletter_web
 msgid "Newsletter"
-msgstr "Newsletter"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,newsletter_web:0
+msgid "Newsletter Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "No Payment-Status E-Mails"
-msgstr "Keine Zahlungsstatus E-Mails"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "No data received from the payment provider."
-msgstr "Keine Daten vom Zahlungsanbieter erhalten."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Normally the buyer will be redirected to the shopping-cart-page if he adds a\n"
 "                                    product. With \"Simple Checkout\" enabled this step is skipped and he will be directly\n"
 "                                    redirected to the page where he can enter his user data."
-msgstr "Normally the buyer will be redirected to the shopping-cart-page if he adds a\n"
-"                                    product. With \"Simple Checkout\" enabled this step is skipped and he will be directly\n"
-"                                    redirected to the page where he can enter his user data."
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,one_page_checkout:0
 msgid "One-Page-Checkout"
-msgstr "One-Page-Checkout"
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,product_page_template:0
 msgid "One-Page-Checkout Layout"
-msgstr "One-Page-Checkout Layout"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,globally_hidden:0
 msgid "Only available for individual Acquirer Config"
-msgstr "Zahlungsanbieter global ausblenden"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:payment.acquirer,submit_button_class:0
 #: help:payment.acquirer,submit_button_text:0
 msgid "Only works in FS-Online Payment Methods"
-msgstr "Funktioniert nur für FS-Online Zahlungsanbieter"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Open Confirmation Page for all other Payment Providers (only possible if product in cart)"
-msgstr "Öffne die standard Bestätigungsseite (kann nur geöffnet werden wenn sich mindestens ein Artikel im Spendenkorb befindet)"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.ppt_ahch
 msgid "Order Number:"
-msgstr "Auftragsnummer:"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_order
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsoweb_donationshop_order
 msgid "Orders"
-msgstr "Aufträge"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.acquirer_lines,acquirer_pre_msg:0
 msgid "Overwrite Default Acquirer Message"
-msgstr "Standard Zahlungsanbieternachricht überschreiben"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.post_office_box_web
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_post_office_box_web
 msgid "P.O. Box"
-msgstr "Postfach"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,parallax_speed:0
 #: field:product.template,parallax_speed:0
 msgid "Parallax Speed"
-msgstr "Parallax Geschwindigkeit"
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:642
+#: model:ir.model,name:website_sale_donate.model_res_partner
+msgid "Partner"
+msgstr ""
+
+#. module: website_sale_donate
+#: code:addons/website_sale_donate/controllers/main.py:578
 #, python-format
 msgid "Pay Now"
-msgstr "Zahlung durchführen!"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.payment
 msgid "Pay Now!"
-msgstr "Zahlung durchführen!"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 #: view:website:website_sale_donate.wsd_opc_payment
 msgid "Payment"
-msgstr "Zahlung"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:account.invoice,wsd_payment_acquirer_id:0
 #: model:ir.model,name:website_sale_donate.model_payment_acquirer
 #: field:product.acquirer_lines,acquirer_id:0
 msgid "Payment Acquirer"
-msgstr "Zahlungsanbieter"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,PaymentAcquirers:0
 msgid "Payment Acquirers"
-msgstr "Zahlungsanbieter"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,product_acquirer_lines_ids:0
 #: field:product.template,product_acquirer_lines_ids:0
 msgid "Payment Acquirers Overwrite"
-msgstr "Individuelle Zahlungsanbieterkonfiguration"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Payment Information"
-msgstr "Bestätigungsseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.payment_interval,name:0
 #: field:product.payment_interval_lines,payment_interval_id:0
 msgid "Payment Interval"
-msgstr "Zahlungsintervall"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:sale.order.line,payment_interval_id:0
 msgid "Payment Interval ID"
-msgstr "Zahlungsintervall ID"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.payment_interval,payment_interval_lines_ids:0
 msgid "Payment Interval Lines"
-msgstr "Zahlungsintervall Zeilen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:sale.order.line,payment_interval_name:0
 #: field:sale.order.line,payment_interval_xmlid:0
 msgid "Payment Interval Name"
-msgstr "Zahlungsintervall Name"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,payment_interval_as_selection:0
 #: field:product.template,payment_interval_as_selection:0
 #: field:website,payment_interval_as_selection:0
 msgid "Payment Interval as Selection List"
-msgstr "Zahlungsintervall als Auswahlliste"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.actions.act_window,name:website_sale_donate.website_sale_donate_payment_interval_action
@@ -1325,102 +1758,123 @@ msgstr "Zahlungsintervall als Auswahlliste"
 #: view:website:website_sale_donate.website_form
 #: field:website,PaymentIntervals:0
 msgid "Payment Intervals"
-msgstr "Zahlungsintervalle"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Payment Method:"
-msgstr "Zahlungsmethode:"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Payment Methods"
-msgstr "Zahlungsmethoden"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Payment Page"
-msgstr "Zahlungsseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_page_bottom:0
 msgid "Payment Page Bottom Snippet Dropping Area"
-msgstr "Zahlungsseite: Aktiviere unteren Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_page_header:0
 msgid "Payment Page Main Header"
-msgstr "Zahlungsseite: Überschrift"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_page_submit_button:0
 msgid "Payment Page Submit Button"
-msgstr "Zahlungsseite: Jetzt-Zahlen Button"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_page_top:0
 msgid "Payment Page Top Snippet Dropping Area"
-msgstr "Zahlungsseite: Aktiviere oberen Snippetbereich"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Payment Reference:"
-msgstr "Zahlungsreferenz:"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 #: field:website,StatusEmail:0
 msgid "Payment Status E-Mail Template"
-msgstr "Zahlungsstatus E-Mail Template"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Payment Status:"
-msgstr "Zahlungsstatus:"
+msgstr ""
+
+#. module: website_sale_donate
+#: model:ir.model,name:website_sale_donate.model_payment_transaction
+msgid "Payment Transaction"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_title:0
 msgid "Payment-Option Form-Title"
-msgstr "Zahlungsseite: Form-Titel"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.ui.menu,name:website_sale_donate.menu_fsonline_donationshop_payment
+#: model:ir.ui.menu,name:website_sale_donate.menu_fsoweb_donationshop_payment
 msgid "Payments"
-msgstr "Zahlungen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,placeholder:0
 #: field:website.checkout_shipping_fields,placeholder:0
 msgid "Placeholder Text"
-msgstr "Platzhalter Text"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:website.checkout_billing_fields,clearfix:0
 #: help:website.checkout_shipping_fields,clearfix:0
 msgid "Places a DIV box with .clearfix after this field"
-msgstr "Platziert ein DIV Element mit der CSS Klasse '.clearfix' nach diesem Feld"
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:579
+#: code:addons/website_sale_donate/controllers/main.py:515
 #, python-format
 msgid "Please add at least one product"
-msgstr "Bitte fügen Sie Ihrem Spendenkorb einen Artikel hinzu."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Please do not forget to set/check this product settings:"
-msgstr "Bitte kontrollieren sie die folgenden Artikeleinstellungen:"
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:766
+#: code:addons/website_sale_donate/controllers/main.py:702
 #, python-format
 msgid "Please select an other acquirer."
-msgstr "Bitte wählen Sie eine andere Zahlungsart."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.product_comment
 msgid "Post"
-msgstr "Senden"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,post_office_box_web:0
+msgid "Post Office Box Web"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,pricelist_id:0
+msgid "Pricelist"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_stock_procurement:0
+msgid "Procurement Location"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_product_product
@@ -1429,362 +1883,531 @@ msgstr "Senden"
 #: selection:product.template,fs_workflow:0
 #: field:product.website_price_buttons,product_id:0
 msgid "Product"
-msgstr "Artikel"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,product_acquirer_lines_ids:0
 msgid "Product Acquirer Lines"
-msgstr "Artikel Zahlungsanbieter"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,attribute_line_ids:0
+msgid "Product Attributes"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,email_template_id:0
+msgid "Product Email Template"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Product Image"
-msgstr "Artikelbild"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,product_manager:0
+msgid "Product Manager"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.checkoutbox
 #: view:website:website_sale_donate.ppt_ahch
 msgid "Product Name"
-msgstr "Artikel Bezeichnung"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,product_page_template:0
 #: field:product.template,product_page_template:0
 msgid "Product Page Template"
-msgstr "Artikelseitenvorlage"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,square_image_x:0
 msgid "Product SquareImage x-Size in Pixel"
-msgstr "Quadratisches Artikelbild x-Größe in Pixel"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,square_image_y:0
 msgid "Product SquareImage y-Size in Pixel"
-msgstr "Quadratisches Artikelbild y-Größe in Pixel"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_product_template
 msgid "Product Template"
-msgstr "Artikelvorlage"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,type:0
+msgid "Product Type"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_product_website_price_buttons
 msgid "Product Website Price Buttons"
-msgstr "Spendenhöhen-Vorschläge"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.checkoutbox
 msgid "Product not available"
-msgstr "der Artikel ist nicht verfügbar."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_stock_production:0
+msgid "Production Location"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.payment_interval,product_template_ids:0
+#: field:product.product,product_variant_ids:0
 msgid "Products"
-msgstr "Artikel"
+msgstr ""
 
 #. module: website_sale_donate
+#: field:product.product,project_id:0
+msgid "Project"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,public_categ_ids:0
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Public Category"
-msgstr "Öffentliche Kategorie"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,description_purchase:0
+msgid "Purchase Description"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,purchase_line_warn:0
+msgid "Purchase Order Line"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,uom_po_id:0
+msgid "Purchase Unit of Measure"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,loc_rack:0
+msgid "Rack"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,recurring_transactions:0
 msgid "Recurring Transactions"
-msgstr "Freigegeben für wiederkehrende Zahlungen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,redirect_url_after_form_feedback:0
 #: field:website,redirect_url_after_form_feedback:0
 msgid "Redirect URL after PP Form-Feedback"
-msgstr "URL die nach der Antwort des Zahlungsanbieters aufgerufen wird"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:payment.acquirer,redirect_url_after_form_feedback:0
 #: help:website,redirect_url_after_form_feedback:0
 msgid "Redirect to this URL after processing the Answer of the Payment Provider instead of /shop/confirmation_static"
-msgstr "zu dieser URL umleiten nach nach der Antwort des Zahlungsanbieters (Standard URL ist .../shop/confirmation_static)"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,payment_redirection_message:0
 msgid "Redirection to PaymentProvider Text"
-msgstr "Unmleitung zum Zahlungsanbieter Text"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:website,OrderEmailBody:0
 #: help:website,StatusEmailBody:0
 msgid "Rich-text/HTML version of the message (placeholders may be used here)"
-msgstr "Rich-text/HTML Version der Nachricht (Platzhalter können verwendet werden)"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:account.invoice,wsd_cat_root_id:0
 msgid "RootCateg."
-msgstr "RootKateg."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,route_ids:0
+msgid "Routes"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,loc_row:0
+msgid "Row"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,description_sale:0
+msgid "Sale Description"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:account.invoice,wsd_so_id:0
 msgid "Sale Order"
-msgstr "Auftrag"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,OrderEmail:0
 msgid "Sale Order E-Mail Template"
-msgstr "E-Mail Template: Auftragsbestätigung"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Sale Order Status E-Mail Template"
-msgstr "E-Mail Template: Auftragsstatus"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,list_price:0
+msgid "Sale Price"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Sales ->"
-msgstr "Verkauf ->"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Sales -> Accessory Products"
-msgstr "Verkauf -> Zubehör Produkte"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Sales -> Alternative Products"
-msgstr "Verkauf -> Alternative Produkte"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_advance_payment_inv
 msgid "Sales Advance Payment Invoice"
-msgstr "Anzahlungsrechnung"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_order
 msgid "Sales Order"
-msgstr "Verkaufsauftrag"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_sale_order_line
+#: field:product.product,sale_line_warn:0
 msgid "Sales Order Line"
-msgstr "Auftragsposition"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Sales Price"
-msgstr "Betrag"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,categ_id:0
+msgid "Select category for the current product"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,event_type_id:0
+msgid "Select event types so when we use this product in sales order lines, it will filter events of this type only."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,purchase_line_warn:0
+#: help:product.product,sale_line_warn:0
+msgid "Selecting the \"Warning\" option will notify user with the message, Selecting \"Blocking Message\" will throw an exception with the message and block the flow. The Message has to be written in the next field."
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,sequence:0
 #: field:product.acquirer_lines,sequence:0
 #: field:product.payment_interval,sequence:0
 #: field:product.payment_interval_lines,sequence:0
+#: field:product.product,website_sequence:0
 #: field:product.website_price_buttons,sequence:0
 #: field:website.checkout_billing_fields,sequence:0
 #: field:website.checkout_shipping_fields,sequence:0
 msgid "Sequence"
-msgstr "Sequenz"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.payment
 msgid "Ship To:"
-msgstr "Lieferanschrift:"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.payment
 #: view:website:website_sale_donate.wsd_checkout_form_billing_fields
 msgid "Ship to the same address"
-msgstr "An dieselbe Adresse"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.wsd_checkout_form_billing_fields
 msgid "Shipping"
-msgstr "Versand"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 #: field:website,ShippingFields:0
 msgid "Shipping Fields"
-msgstr "Lieferfelder"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Shipping and Delivery"
-msgstr "Lieferung und Zustellung"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Shop - Confirmed"
-msgstr "Shop-Bestätigung"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,show:0
 #: field:website.checkout_shipping_fields,show:0
 msgid "Show"
-msgstr "Anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkout_show_login_button:0
 msgid "Show Login Button on Checkout Page"
-msgstr "Login-Button auf der Checkout-Seite anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,variants_as_list:0
 #: field:product.template,variants_as_list:0
 msgid "Show Variants as a List of Products"
-msgstr "Artikelvarianten als Auswahlliste Anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,show_desctop:0
 #: field:product.template,show_desctop:0
 msgid "Show additional Description above Checkout Panel"
-msgstr "Artikelbeschreibung oben in der Checkout-Box anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,show_descbottom:0
 #: field:product.template,show_descbottom:0
 msgid "Show additional Description below Checkout Panel"
-msgstr "Artikelbeschreibung unten in der Checkout-Box anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:website.checkout_billing_fields,show:0
 #: help:website.checkout_shipping_fields,show:0
 msgid "Show field in webpage"
-msgstr "Feld anzeigen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,simple_checkout:0
 #: field:product.template,simple_checkout:0
 msgid "Simple Checkout"
-msgstr "Rasche Checkout"
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,product_page_template:0
 msgid "Simple Layout"
-msgstr "Einfaches Layout"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_size_x:0
+msgid "Size X"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_size_y:0
+msgid "Size Y"
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,parallax_speed:0
 msgid "Slow"
-msgstr "Langsam"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "Small Cart"
-msgstr "Spendenkorb-Widget"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,small_cart_title:0
 msgid "Small Cart Title"
-msgstr "Spendenkorb-Widget Titel"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.product:website_sale_donate.product_form_view_sold_total_button
 #: view:product.template:website_sale_donate.product_template_form_view_sold_total_button
 msgid "Sold Total"
-msgstr "VK Summe"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,uos_id:0
+msgid "Specify a unit of measure here if invoicing is made in another unit of measure than inventory. Keep empty to use the default unit of measure."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,purchase_ok:0
+msgid "Specify if the product can be selected in a purchase order line."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,sale_ok:0
+msgid "Specify if the product can be selected in a sales order line."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,hr_expense_ok:0
+msgid "Specify if the product can be selected in an HR expense line."
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,split_method:0
+msgid "Split Method"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,image_square:0
 #: field:product.template,image_square:0
 msgid "Square Image (Auto crop and zoom)"
-msgstr "Autom. quadratisches Artikelbild"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,cost_method:0
+msgid "Standard Price: The cost price is manually updated at the end of a specific period (usually every year).\n"
+"                    Average Price: The cost price is recomputed at each incoming shipment and used for the product valuation.\n"
+"                    Real Price: The cost price displayed is the price of the last outgoing product (will be use in case of inventory loss for example)."
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.state_id
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_state_id
 msgid "State"
-msgstr "Status"
+msgstr ""
 
 #. module: website_sale_donate
 #: selection:product.template,parallax_speed:0
 msgid "Static"
-msgstr "Statisch"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,state:0
+msgid "Status"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_stock_account_input:0
+msgid "Stock Input Account"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,property_stock_account_output:0
+msgid "Stock Output Account"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.street
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_street
 msgid "Street"
-msgstr "Straße"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.street_number_web
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_street_number_web
 msgid "Street Number"
-msgstr "Straßennummer"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,street_number_web:0
+msgid "Street Number Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.street2
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_street2
 msgid "Street Second Line"
-msgstr "Adresse Zeile 2"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_style_ids:0
+msgid "Styles"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,OrderEmailSubject:0
 #: field:website,StatusEmailSubject:0
 msgid "Subject"
-msgstr "Betreff"
+msgstr ""
 
 #. module: website_sale_donate
 #: help:website,OrderEmailSubject:0
 #: help:website,StatusEmailSubject:0
 msgid "Subject (placeholders may be used here)"
-msgstr "Betreff (Platzhalter können verwendet werden)"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,submit_button_class:0
 msgid "Submit Button CSS classes"
-msgstr "Jetzt-Zahlen Button CSS Klassen"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:payment.acquirer,submit_button_text:0
 msgid "Submit Button Text"
-msgstr "Jetzt-Zahlen Button Text"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,price_suggested_ids:0
 #: view:product.template:website_sale_donate.product_template_form_view
 #: field:product.template,price_suggested_ids:0
 msgid "Suggested Donation-Values"
-msgstr "Vorgeschlagene Spendenbeträge"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.recommended_products
 msgid "Suggested alternatives:"
-msgstr "Vorgeschlagene Artikelalternativen"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,seller_ids:0
+msgid "Supplier"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,seller_delay:0
+msgid "Supplier Lead Time"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,seller_qty:0
+msgid "Supplier Quantity"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,supplier_taxes_id:0
+msgid "Supplier Taxes"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "TIP: If set this url will be opened when the donor returns from the external\n"
 "                                            payment provider page. Can also be set individually by Payment Method and\n"
 "                                            by donation shop category."
-msgstr "TIP: If set this url will be opened when the donor returns from the external\n"
-"                                            payment provider page. Can also be set individually by Payment Method and\n"
-"                                            by donation shop category."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "TIP: If this is enabled only the checkout page will be shown including the cart\n"
 "                                        and the payment method after a donation product is added. It is also possible to\n"
 "                                        enable one page checkout individually by product."
-msgstr "TIP: If this is enabled only the checkout page will be shown including the cart\n"
-"                                        and the payment method after a donation product is added. It is also possible to\n"
-"                                        enable one page checkout individually by product."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "TIP: If this is enabled you will stay on product listing pages after you add a\n"
 "                                        donation product to your donation cart. This is useful if \"Add to cart\" is\n"
 "                                        enabled for product listing pages."
-msgstr "TIP: If this is enabled you will stay on product listing pages after you add a\n"
-"                                        donation product to your donation cart. This is useful if \"Add to cart\" is\n"
-"                                        enabled for product listing pages."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
 msgid "TIP: The default payment interval can also be set by donation product. If\n"
 "                                            nothing is set at the donation product this setting will be used if the selected\n"
 "                                            default payment interval is available for the donation product."
-msgstr "TIP: The default payment interval can also be set by donation product. If\n"
-"                                            nothing is set at the donation product this setting will be used if the selected\n"
-"                                            default payment interval is available for the donation product."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
@@ -1792,10 +2415,7 @@ msgid "TIP: This E-Mail is send to the donor every time the payment status of\n"
 "                                            his or her donation changes. So the first time (and in most cases the only\n"
 "                                            time) it is send if the payment transaction changes from draft to e.g.:\n"
 "                                            done."
-msgstr "TIP: This E-Mail is send to the donor every time the payment status of\n"
-"                                            his or her donation changes. So the first time (and in most cases the only\n"
-"                                            time) it is send if the payment transaction changes from draft to e.g.:\n"
-"                                            done."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
@@ -1803,202 +2423,325 @@ msgid "TIP: This E-Mail together with most other e-mails from FS-Online is\n"
 "                                            normally suppressed by default by the setting \"Do not add as follower automatically\"\n"
 "                                            for the default public res.partner used by the website.\n"
 "                                            (The public res.partner serves as a template for all partners created by the website.)"
-msgstr "TIP: This E-Mail together with most other e-mails from FS-Online is\n"
-"                                            normally suppressed by default by the setting \"Do not add as follower automatically\"\n"
-"                                            for the default public res.partner used by the website.\n"
-"                                            (The public res.partner serves as a template for all partners created by the website.)"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "Taxes may be updated after providing shipping address"
-msgstr "Steuern werden nur nach Aktualisierung der Lieferadresse geändert"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "Taxes:"
-msgstr "Umsatzsteuer :"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "The \"Fundraising Studio Workflow\" field links the corresponding workflow in your\n"
 "                                    Fundraising Studio database. Make sure this field is correctly set!"
-msgstr "The \"Fundraising Studio Workflow\" field links the corresponding workflow in your\n"
-"                                    Fundraising Studio database. Make sure this field is correctly set!"
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:744
+#: help:product.product,sale_delay:0
+msgid "The average delay in days between the confirmation of the customer order and the delivery of the finished products. It's the time you promise to your customers."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,weight:0
+msgid "The gross weight in Kg."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,weight_net:0
+msgid "The net weight in Kg."
+msgstr ""
+
+#. module: website_sale_donate
+#: code:addons/website_sale_donate/controllers/main.py:680
 #, python-format
 msgid "The selected payment method does not support recurring payments!"
-msgstr "Die gewählte Zahlungsart unterstütz keine wiederkehrenden Zahlungen!"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,volume:0
+msgid "The volume in m3."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_account_expense:0
+msgid "This account will be used for invoices instead of the default one to value expenses for the current product."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_account_income:0
+msgid "This account will be used for invoices instead of the default one to value sales for the current product."
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "This is a calculated field and therefore read-only. (Sums up all Sales-Order-Lines not in State Done or Cancelled)"
-msgstr "This is a calculated field and therefore read-only. (Sums up all Sales-Order-Lines not in State Done or Cancelled)"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,seller_qty:0
+msgid "This is minimum quantity to purchase from Main Supplier."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,seller_delay:0
+msgid "This is the average delay in days between the purchase order confirmation and the receipts for this product and for the default supplier. It is used by the scheduler to order requests based on reordering delays."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_stock_production:0
+msgid "This stock location will be used, instead of the default one, as the source location for stock moves generated by manufacturing orders."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_stock_procurement:0
+msgid "This stock location will be used, instead of the default one, as the source location for stock moves generated by procurements."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_stock_inventory:0
+msgid "This stock location will be used, instead of the default one, as the source location for stock moves generated when you do an inventory."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,public_categ_ids:0
+msgid "Those categories are used to group similar products for e-commerce."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,auto_create_task:0
+msgid "Tick this option if you want to create a task automatically each time this product is sold"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:res.partner,title_web:0
+msgid "Title Web"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,OrderEmailPartnerTo:0
 #: field:website,StatusEmailPartnerTo:0
 msgid "To (Partners)"
-msgstr "An (Partners)"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Total Amount:"
-msgstr "Summe:"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.total
 msgid "Total:"
-msgstr "Summe:"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,track_incoming:0
+msgid "Track Incoming Lots"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,track_outgoing:0
+msgid "Track Outgoing Lots"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:account.invoice,wsd_payment_tx_id:0
 msgid "Transaction"
-msgstr "Transaktion"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.ppt_ahch
 #: view:website:website_sale_donate.ppt_donate
 #: view:website:website_sale_donate.ppt_opc
 msgid "True"
-msgstr "True"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,event_type_id:0
+msgid "Type of Event"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.small_cart
 msgid "Unit Price"
-msgstr "Preis/ME"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,uom_id:0
+msgid "Unit of Measure"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,uos_coeff:0
+msgid "Unit of Measure -> UOS Coeff"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,uos_id:0
+msgid "Unit of Sale"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.vat
 msgid "VAT"
-msgstr "UST"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.vat_subjected
 msgid "VAT Subjected"
-msgstr "UST pflichtig"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,validation_rule:0
 #: field:website.checkout_shipping_fields,validation_rule:0
 msgid "Validation Rule"
-msgstr "Validierungsregeln"
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:296
+#: code:addons/website_sale_donate/controllers/main.py:289
 #, python-format
 msgid "Value must be a valid Number."
-msgstr "Der Wert muss eine gültige Nummer sein."
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:294
+#: code:addons/website_sale_donate/controllers/main.py:287
 #, python-format
 msgid "Value must be higher or equal to %s."
-msgstr "Der Wert muss %s oder höher sein."
+msgstr ""
 
 #. module: website_sale_donate
-#: field:product.product,website_visible:0
-#: field:product.template,website_visible:0
-msgid "Visible in Website (computed)"
-msgstr "Sichtbar in der Webseite (berechnet)"
+#: field:product.product,volume:0
+msgid "Volume"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,warranty:0
+msgid "Warranty"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.checkoutbox
 #: view:website:website_sale_donate.funding_page_text
 msgid "We have reached"
-msgstr "Wir haben"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,webshop_download_file:0
 #: field:product.template,webshop_download_file:0
 msgid "WebShop Download File"
-msgstr "WebShop Download Datei"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:product.product,webshop_download_file_name:0
 #: field:product.template,webshop_download_file_name:0
 msgid "WebShop Download File Name"
-msgstr "WebShop Download Dateiname"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Webshop: Behaviour"
-msgstr "Webshop: Steuerung"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Webshop: Product Listings"
-msgstr "Webshop: Artikelübersichtsseiten"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:product.template:website_sale_donate.product_template_form_view
 msgid "Webshop: Product Page"
-msgstr "Webshop: Artikelseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.model,name:website_sale_donate.model_website
 msgid "Website"
-msgstr "Webseite"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.actions.act_window,name:website_sale_donate.website_sale_donate_checkout_fields_action
 #: model:ir.ui.menu,name:website_sale_donate.website_sale_donate_checkout_fields_menu
 msgid "Website Billing Fields"
-msgstr "Webseite Rechungsfelder"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website.checkout_billing_fields:website_sale_donate.website_sale_donate_checkout_fields_form
 #: view:website.checkout_billing_fields:website_sale_donate.website_sale_donate_checkout_fields_search
 #: view:website.checkout_billing_fields:website_sale_donate.website_sale_donate_checkout_fields_tree
 msgid "Website Checkout Fields"
-msgstr "Webseite Checkout-Felder"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website.checkout_shipping_fields:website_sale_donate.website_sale_donate_checkout_shipping_fields_form
 #: view:website.checkout_shipping_fields:website_sale_donate.website_sale_donate_checkout_shipping_fields_search
 #: view:website.checkout_shipping_fields:website_sale_donate.website_sale_donate_checkout_shipping_fields_tree
 msgid "Website Checkout Shipping Fields"
-msgstr "Webseite Checkout-Lieferfelder"
+msgstr ""
 
 #. module: website_sale_donate
-#: field:product.product,website_published_end:0
-#: field:product.template,website_published_end:0
-msgid "Website Published End"
-msgstr "Webseitenanzeige ab"
-
-#. module: website_sale_donate
-#: field:product.product,website_published_start:0
-#: field:product.template,website_published_start:0
-msgid "Website Published Start"
-msgstr "Webseitenanzeige bis"
+#: field:product.product,website_message_ids:0
+msgid "Website Comments"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:ir.actions.act_window,name:website_sale_donate.wsd_checkout_shipping_fields_action
 #: model:ir.ui.menu,name:website_sale_donate.wsd_checkout_shipping_fields_menu
 msgid "Website Shipping Fields"
-msgstr "Webseite Lieferfelder"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_meta_description:0
+msgid "Website meta description"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_meta_keywords:0
+msgid "Website meta keywords"
+msgstr ""
+
+#. module: website_sale_donate
+#: field:product.product,website_meta_title:0
+msgid "Website meta title"
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_stock_account_input:0
+msgid "When doing real-time inventory valuation, counterpart journal items for all incoming stock moves will be posted in this account, unless there is a specific valuation account set on the source location. When not set on the product, the one from the product category is used."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,property_stock_account_output:0
+msgid "When doing real-time inventory valuation, counterpart journal items for all outgoing stock moves will be posted in this account, unless there is a specific valuation account set on the destination location. When not set on the product, the one from the product category is used."
+msgstr ""
+
+#. module: website_sale_donate
+#: help:product.product,email_template_id:0
+msgid "When validating an invoice, an email will be sent to the customerbased on this template. The customer will receive an email for eachproduct linked to an email template."
+msgstr ""
 
 #. module: website_sale_donate
 #: help:payment.acquirer,do_not_send_status_email:0
 msgid "Will not send website_sale_donate.email_template_webshop. Setting used in payment provider controllers!"
-msgstr "Will not send website_sale_donate.email_template_webshop. Setting used in payment provider controllers!"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.product_comment
 msgid "Write a comment..."
-msgstr "Schreiben Sie einen Kommentar ..."
+msgstr ""
 
 #. module: website_sale_donate
-#: code:addons/website_sale_donate/controllers/main.py:747
+#: code:addons/website_sale_donate/controllers/main.py:683
 #, python-format
 msgid "Wrong payment method"
-msgstr "Unzulässige Zahlungsmethode"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.ppt_ahch
 msgid "You can download this item right after the checkout process!"
-msgstr "Sie können diesen Artikel nach dem Checkout direkt herunterladen!"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.website_form
@@ -2006,61 +2749,58 @@ msgid "You can suppress this email for a payment method with the setting:\n"
 "                                            \"Do not send status e-mails\". Which is useful if you want to send a more\n"
 "                                            advanced confirmation E-Mail by a Fundraising Studio Workflow rather than\n"
 "                                            directly by FS-Online."
-msgstr "You can suppress this email for a payment method with the setting:\n"
-"                                            \"Do not send status e-mails\". Which is useful if you want to send a more\n"
-"                                            advanced confirmation E-Mail by a Fundraising Studio Workflow rather than\n"
-"                                            directly by FS-Online."
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website,checkout_title:0
 msgid "Your Data Form-Title"
-msgstr "Ihre-Daten Form-Titel"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.confirmation_static
 msgid "Your Transaction Number"
-msgstr "Ihre Transaktionsnummer"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,label:website_sale_donate.zip
 #: model:website.checkout_shipping_fields,label:website_sale_donate.shipping_zip
 msgid "ZIP"
-msgstr "Postleitzahl"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:payment.acquirer:website_sale_donate.wsd_acquirer_form
 msgid "_top"
-msgstr "_top"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.annually
 msgid "annually"
-msgstr "annually"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.products
 msgid "col-md-3"
-msgstr "col-md-3"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.products
 msgid "col-md-9"
-msgstr "col-md-9"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.product_comment
 msgid "comment"
-msgstr "Kommentar"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.product_comment
 msgid "comments"
-msgstr "Kommentare"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.funding_text
 msgid "for this project!"
-msgstr "für dieses Projekt!"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.cart
@@ -2068,23 +2808,23 @@ msgstr "für dieses Projekt!"
 #: view:website:website_sale.total
 #: view:website:website_sale_donate.small_cart
 msgid "free"
-msgstr "kostenlos"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.half_yearly
 msgid "half-yearly"
-msgstr "half-yearly"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.email
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_email
 msgid "john.doe@test.com"
-msgstr "max.mustermann@test.de"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.monthly
 msgid "monthly"
-msgstr "monthly"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.street2
@@ -2095,46 +2835,45 @@ msgstr ""
 #. module: website_sale_donate
 #: view:website:website_sale.cart
 msgid "not line.product_id.price_donate"
-msgstr "not line.product_id.price_donate"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.product_comment
 msgid "on"
-msgstr "am"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.once_only
 msgid "once-only"
-msgstr "once-only"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale.products_item
 msgid "product_price text-primary"
-msgstr "product_price text-primary"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.categories_search_publish
 msgid "pull-right"
-msgstr "pull-right"
+msgstr ""
 
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.quarterly
 msgid "quarterly"
-msgstr "quarterly"
+msgstr ""
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,res_partner_field_id:0
 #: field:website.checkout_shipping_fields,res_partner_field_id:0
 msgid "res.partner Field"
-msgstr "res.partner Field"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:payment.acquirer:website_sale_donate.payment_acquirer_tree_sequence
 msgid "sequence"
-msgstr "Sequenz"
+msgstr ""
 
 #. module: website_sale_donate
 #: view:website:website_sale_donate.funding_text
 msgid "to fund"
-msgstr "zu unterstützen"
-
+msgstr ""

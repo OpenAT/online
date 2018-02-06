@@ -686,7 +686,7 @@ msgstr "Spendenmeldung"
 #. module: fso_con_zmr
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_form
 msgid "Donation Report Submission"
-msgstr "Spendenmeldung-Übertragung"
+msgstr "Spendenmeldungs-Übertragung"
 
 #. module: fso_con_zmr
 #: model:ir.actions.act_window,name:fso_con_zmr.res_partner_donation_report_submission_action
@@ -696,7 +696,7 @@ msgstr "Spendenmeldung-Übertragung"
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_search
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_tree
 msgid "Donation Report Submissions"
-msgstr "Spendenmeldung-Übertragung"
+msgstr "Spendenm. Übertragung"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_partner_donation_report.py:89
@@ -739,19 +739,19 @@ msgstr "Meldejahr"
 #, python-format
 msgid "Donation report submission (ID %s) exception!\n"
 "%s"
-msgstr "Spendenmeldung-Übertragung (ID %s) Exception!\n"
+msgstr "Spendenmeldungs-Übertragung (ID %s) Exception!\n"
 "%s"
 
 #. module: fso_con_zmr
 #: selection:res.partner.donation_report.submission,response_error_type:0
 msgid "Donation report submission fully rejected"
-msgstr "Spendenmeldung-Übertragung vollständig abgelehnt"
+msgstr "Spendenmeldungs-Übertragung vollständig abgelehnt"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:195
 #, python-format
 msgid "Donation report submissions can not be deleted in state %s !"
-msgstr "Spendenmeldung-Übertragung kann nicht in den Status %s gelöscht werden!"
+msgstr "Spendenmeldungs-Übertragung kann nicht in den Status %s gelöscht werden!"
 
 #. module: fso_con_zmr
 #: selection:res.partner.donation_report.submission,response_error_type:0
@@ -1067,7 +1067,7 @@ msgstr "Folgemeldungen"
 #. module: fso_con_zmr
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_form
 msgid "Follow this donation report to get status updates."
-msgstr "Folgen sie dieser Spendenmeldung-Übertragung um Status-Updates per E-Mail zu erhalten."
+msgstr "Folgen sie dieser Spendenmeldungs-Übertragung um Status-Updates per E-Mail zu erhalten."
 
 #. module: fso_con_zmr
 #: field:res.partner.donation_report,report_follow_up_ids:0
@@ -2065,14 +2065,14 @@ msgstr "Die aktuell berechnete RefNr (%s) und die RefNr (%s) der Erstmeldung sti
 #: help:res.partner.donation_report.submission,submission_content:0
 #, python-format
 msgid "The rendered template (which is the 'body' of the submission request!)"
-msgstr "Die Berechnete Vorlage (welche der 'body' (content) der Spendenmeldung-Übertragung ist!)"
+msgstr "Die Berechnete Vorlage (welche der 'body' (content) der Spendenmeldungs-Übertragung ist!)"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_company.py:112
 #: help:res.company,fa_dr_type:0
 #, python-format
 msgid "This Field is mandatory for donation report submissions!"
-msgstr "Dies ist ein Pflichtfeld für Spendenmeldung-Übertragungen!"
+msgstr "Dies ist ein Pflichtfeld für Spendenmeldungs-Übertragungen!"
 
 #. module: fso_con_zmr
 #: field:res.partner.donation_report.submission,submission_timestamp:0
@@ -2249,7 +2249,7 @@ msgstr "Sie können keine Übertragung im Status %s (erneut) vorbereiten!"
 #: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:967
 #, python-format
 msgid "You can not release donation reports for a submission in state %s or without 'ERR-F-...' in response_error_code!"
-msgstr "Sie können keine Spendenmeldungen freigeben für eine Spendenmeldung-Übertragung im Status %s oder ohne 'ERR-F-...' im Feld response_error_code!"
+msgstr "Sie können keine Spendenmeldungen freigeben für eine Spendenmeldungs-Übertragung im Status %s oder ohne 'ERR-F-...' im Feld response_error_code!"
 
 #. module: fso_con_zmr
 #: view:res.company:fso_con_zmr.company_instance_settings
@@ -2440,7 +2440,7 @@ msgstr "last_bpk_request ist gesetzt"
 #, python-format
 msgid "prepare(): Could not render the submission content (fo_donation_report_j2template.xml) for donation report submission %s with vals:\n"
 "%s"
-msgstr "prepare(): Das Template konnte nicht gerendert werden (fo_donation_report_j2template.xml) für die Spendenmeldung-Übertragung (ID %s) mit den Daten:\n"
+msgstr "prepare(): Das Template konnte nicht gerendert werden (fo_donation_report_j2template.xml) für die Spendenmeldungs-Übertragung (ID %s) mit den Daten:\n"
 "%s"
 
 #. module: fso_con_zmr

@@ -104,6 +104,7 @@ TODO (must be done manually right now):
         'website_crm_extended',
         'website_blog_layouts',
         'cam_hr_overtime_calendar_log',
+        'web_menu_xmlid',
     ],
     'data': [
         'data/setup.xml',

@@ -12,7 +12,7 @@
         <!-- ======= -->
         <!-- FSO WEB -->
         <!-- ======= -->
-        <menuitem id="menu_fsonline_web" name="Web" sequence="4" groups="base.group_user"/>
+        <menuitem id="menu_fsonline_web" name="Webseite" sequence="4" groups="base.group_user"/>
 
         <!-- CRM -->
         <menuitem id="menu_fsonline_web_crm" name="CRM" sequence="10" parent="menu_fsonline_web" groups="base.group_user"/>

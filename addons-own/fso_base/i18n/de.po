@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-04 13:27+0000\n"
-"PO-Revision-Date: 2017-10-04 13:27+0000\n"
+"POT-Creation-Date: 2018-02-06 12:58+0000\n"
+"PO-Revision-Date: 2018-02-06 12:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -221,7 +221,7 @@ msgstr "${object.company_id.name|safe} - Transaction Summary for ${object.name o
 #: code:addons/fso_base/models/res_company.py:19
 #, python-format
 msgid "'Instance Base Port' and 'Instance ID' must be set for the 'Instance Main Company'!"
-msgstr "'Instance Base Port' and 'Instance ID' must be set for the 'Instance Main Company'!"
+msgstr "'Instanz Basis Port' und 'Instanz ID' müssen für die 'Instanz Haupt-Firma' gesetzt sein!"
 
 #. module: fso_base
 #: field:res.partner,legal_terms_web:0
@@ -229,24 +229,55 @@ msgid "Accept Legal Terms Web"
 msgstr "Ich akzeptiere die AGB"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_access
+msgid "Access"
+msgstr "Zugang"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_timesheet
+msgid "Alle Stundenzettel"
+msgstr "Alle Stundenzettel"
+
+#. module: fso_base
+#: field:fs.group,GUIAnzeigen:0
+msgid "Anzeige der Gruppe auf der Oberflaeche"
+msgstr "Anzeige der Gruppe auf der Oberflaeche"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_archive
+msgid "Archiv"
+msgstr "Archiv"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_project_task
+msgid "Aufgaben"
+msgstr "Aufgaben"
+
+#. module: fso_base
 #: field:res.partner,birthdate_web:0
 msgid "Birthdate Web"
 msgstr "Geburtsdatum"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:46
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_calender
+msgid "Calendar"
+msgstr "Kalender"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:71
 #, python-format
 msgid "Certificate file not found at %s"
 msgstr "Zertifikatsdatei nicht gefunden unter %s"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:44
+#: code:addons/fso_base/tools/soap.py:69
 #, python-format
 msgid "Certificate- and Private-Key-File needed if one of them is given!"
-msgstr "Certificate- and Private-Key-File needed if one of them is given!"
+msgstr "Zertifikats- und Private-Key-Datei sind erforderlich wenn eine der Beiden angegeben wird!"
 
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_res_company
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_companies
 msgid "Companies"
 msgstr "Unternehmen"
 
@@ -258,12 +289,17 @@ msgstr "Firmen Name Web"
 #. module: fso_base
 #: field:fs.group,create_uid:0
 msgid "Created by"
-msgstr "Created by"
+msgstr "Erstellt von"
 
 #. module: fso_base
 #: field:fs.group,create_date:0
 msgid "Created on"
-msgstr "Created on"
+msgstr "Erstellt am"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_dashboard
+msgid "Dashboards"
+msgstr "Dashboards"
 
 #. module: fso_base
 #: field:fs.group,display_name:0
@@ -276,6 +312,11 @@ msgid "Donation"
 msgstr "Spende"
 
 #. module: fso_base
+#: field:res.partner,donation_deduction_disabled:0
+msgid "Donation Deduction Disabled"
+msgstr "Spendenabsetzbarkeit Deaktiviert"
+
+#. module: fso_base
 #: field:res.partner,donation_deduction_optout_web:0
 msgid "Donation Deduction OptOut Web"
 msgstr "Meine Spenden nicht autom. absetzen"
@@ -283,7 +324,12 @@ msgstr "Meine Spenden nicht autom. absetzen"
 #. module: fso_base
 #: help:res.partner,donation_deduction_optout_web:0
 msgid "Donation Deduction OptOut set by Donor"
-msgstr "Donation Deduction OptOut set by Donor"
+msgstr "Spendenabsetzbarkeit vom Spender deaktiviert (OptOut)."
+
+#. module: fso_base
+#: help:res.partner,donation_deduction_disabled:0
+msgid "Donation Deduction processing disabled by System"
+msgstr "Spendenabsetzbarkeit vom System deaktiviert."
 
 #. module: fso_base
 #: field:res.partner,donation_receipt_web:0
@@ -296,15 +342,20 @@ msgid "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
 msgstr "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
 
 #. module: fso_base
-#: code:addons/fso_base/models/fs_groups.py:60
+#: field:fs.group,GUIGruppenBearbeitenMoeglich:0
+msgid "Erlaube Benutzeraenderung der Gruppenzugehoerigkeit"
+msgstr "Erlaube Benutzeränderung der Gruppenzugehörigkeit"
+
+#. module: fso_base
+#: code:addons/fso_base/models/fs_groups.py:67
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
 
 #. module: fso_base
-#: field:fs.group,name:0
-msgid "FS Group Name"
-msgstr "FS Gruppename"
+#: selection:product.template,fs_product_type:0
+msgid "Event Ticket"
+msgstr "Event Ticket"
 
 #. module: fso_base
 #: field:product.product,product_variant_fs_group_ids:0
@@ -344,7 +395,7 @@ msgstr "FS-Online Instance System User Group (Do not assign to regular user)"
 #. module: fso_base
 #: view:res.company:fso_base.company_instance_settings
 msgid "FS-Online Settings"
-msgstr "FS-Online Settings"
+msgstr "FS-Online Einstellungen"
 
 #. module: fso_base
 #: field:res.partner,fore_name_web:0
@@ -362,15 +413,29 @@ msgid "Fundraising Studio Groups"
 msgstr "Fundraising Studio Gruppen"
 
 #. module: fso_base
-#: field:product.product,fs_product_type:0
-#: field:product.template,fs_product_type:0
-msgid "Fundraising Studio Type"
-msgstr "Fundraising Studio Typ"
-
-#. module: fso_base
 #: selection:product.template,fs_product_type:0
 msgid "Godparenthood"
 msgstr "Patenschaften"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_groups_menu
+msgid "Groups"
+msgstr "Gruppen"
+
+#. module: fso_base
+#: field:fs.group,name:0
+msgid "Gruppenname"
+msgstr "Gruppenname"
+
+#. module: fso_base
+#: field:fs.group,GruppeLang:0
+msgid "Gruppenname Lang"
+msgstr "Gruppenname Lang"
+
+#. module: fso_base
+#: field:fs.group,NegativGruppe:0
+msgid "Handelt es sich um eine Negativgruppe"
+msgstr "Handelt es sich um eine Negativgruppe"
 
 #. module: fso_base
 #: field:fs.group,id:0
@@ -381,6 +446,11 @@ msgstr "ID"
 #: model:project.task.type,name:fso_base.project_tt_inprogress
 msgid "In Progress"
 msgstr "In Bearbeitung"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_inbox
+msgid "Inbox"
+msgstr "Posteingang"
 
 #. module: fso_base
 #: field:res.partner,anrede_individuell:0
@@ -395,7 +465,7 @@ msgstr "Instanz Base-Port"
 #. module: fso_base
 #: view:res.company:fso_base.company_instance_settings
 msgid "Instance Basics"
-msgstr "Instance Basics"
+msgstr "Instanz Grundeinstellungen"
 
 #. module: fso_base
 #: field:res.company,instance_id:0
@@ -403,19 +473,69 @@ msgid "Instance ID (e.g.: dadi)"
 msgstr "Instanz ID (z.B.: dadi)"
 
 #. module: fso_base
+#: field:res.company,instance_company:0
+msgid "Instance Main Company"
+msgstr "Instanz Haupt-Firma"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_organizer_calender
+msgid "Kalender"
+msgstr "Kalender"
+
+#. module: fso_base
+#: field:fs.group,GUINurEineGleichzeitigGueltig:0
+msgid "Keine Zeitraumueberschneidungen von mehreren Gruppeneintraegen"
+msgstr "Keine Zeitraumüberschneidungen von mehreren Gruppeneinträgen"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_organizer_partner
+msgid "Kontakte"
+msgstr "Kontakte"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_project_analytic
+msgid "Kostenstellen"
+msgstr "Kostenstellen"
+
+#. module: fso_base
 #: field:fs.group,__last_update:0
 msgid "Last Modified on"
-msgstr "Last Modified on"
+msgstr "Zuletzt geändert am"
 
 #. module: fso_base
 #: field:fs.group,write_uid:0
 msgid "Last Updated by"
-msgstr "Last Updated by"
+msgstr "Zuletzt geändert von"
 
 #. module: fso_base
 #: field:fs.group,write_date:0
 msgid "Last Updated on"
-msgstr "Last Updated on"
+msgstr "Zuletzt aktualisiert vom"
+
+#. module: fso_base
+#: field:fs.group,MehrEintraegeInGruppeMoeglich:0
+msgid "Mehr als ein Eintrag in Gruppe moeglich"
+msgstr "Mehr als ein Eintrag in Gruppe möglich"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_dashboard_my_dashboard
+msgid "Mein Dashboard"
+msgstr "Mein Dashboard"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_mytimesheet
+msgid "Mein Stundenzettel"
+msgstr "Mein Stundenzettel"
+
+#. module: fso_base
+#: selection:product.template,fs_product_type:0
+msgid "Membership"
+msgstr "Patenschaft"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg
+msgid "Nachrichten"
+msgstr "Nachrichten"
 
 #. module: fso_base
 #: field:res.partner,name_zwei:0
@@ -443,33 +563,43 @@ msgid "NiceToHave"
 msgstr "NiceToHave"
 
 #. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_fundraising
-msgid "Online Fundraising"
-msgstr "Online Fundraising"
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_notes
+msgid "Notes"
+msgstr "Notizen"
 
 #. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_overview
-msgid "Overview"
-msgstr "Übersicht"
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_organizer_notes
+msgid "Notizen"
+msgstr "Notizen"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:41
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_organizer
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_organizer
+msgid "Organizer"
+msgstr "Termine und Notizen"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:64
 #, python-format
-msgid "Parameters missing! Required are url and template."
-msgstr "Parameter fehlt! Benötigt sind url und template."
+msgid "Parameters missing! Required are url and template or request_data."
+msgstr "Parameter fehlen! Benötigt sind die Ziel-URL und das Template oder die Request-Daten."
+
+#. module: fso_base
+#: field:fs.group,parent_id:0
+msgid "Parent Group"
+msgstr "Eltern Gruppe"
 
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_res_partner
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_partner
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_partner_partner
 msgid "Partner"
 msgstr "Kontakte"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:45
+#: code:addons/fso_base/tools/soap.py:70
 #, python-format
 msgid "Path to cert- or key-file is longer than 255 chars!"
-msgstr "Path to cert- or key-file is longer than 255 chars!"
+msgstr "Pfad zur cert- or key-Datei ist länger als 255 Zeichen!"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_planned
@@ -477,15 +607,20 @@ msgid "Planned"
 msgstr "Geplant"
 
 #. module: fso_base
-#: field:res.partner,post_office_box_web:0
-msgid "Post Office Box Web"
-msgstr "Post Office Box Web"
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer
+msgid "Planung"
+msgstr "Planung"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:47
+#: field:res.partner,post_office_box_web:0
+msgid "Post Office Box Web"
+msgstr "Postfach Web"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:72
 #, python-format
 msgid "Private key file not found at %s"
-msgstr "Private key file not found at %s"
+msgstr "Private-Key Datei nicht gefunden: %s"
 
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_product_product
@@ -496,13 +631,24 @@ msgstr "Produkt"
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_product_template
 msgid "Product Template"
-msgstr "Produktvorlage"
+msgstr "Produkt Template"
 
 #. module: fso_base
-#: code:addons/fso_base/models/fs_groups.py:60
+#: code:addons/fso_base/models/fs_groups.py:67
 #, python-format
 msgid "Product variants exist! Please set the FS-Groups there!"
-msgstr "Product variants exist! Please set the FS-Groups there!"
+msgstr "Es existieren Produktvarianten! Daher müssen Sie die FS-Gruppen bitte bei den Produktvarianten setzen!"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_project
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_project_project
+msgid "Projekte"
+msgstr "Projekte"
+
+#. module: fso_base
+#: field:product.product,seo_url:0
+msgid "SEO URL"
+msgstr "SEO URL"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_scheduledactions
@@ -515,9 +661,19 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 #. module: fso_base
+#: selection:product.template,fs_product_type:0
+msgid "Sponsorship"
+msgstr "Fördererschaft"
+
+#. module: fso_base
 #: field:res.partner,street_number_web:0
 msgid "Street Number Web"
 msgstr "Straßen Nummer Web"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_system
+msgid "System"
+msgstr "System"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_ir_config_menu
@@ -525,9 +681,25 @@ msgid "System Parameters"
 msgstr "Systemparameter"
 
 #. module: fso_base
+#: field:fs.group,TabellentypID:0
+msgid "Tabellentyp ID"
+msgstr "Tabellentyp ID"
+
+#. module: fso_base
 #: field:res.partner,title_web:0
 msgid "Title Web"
 msgstr "Titel Web"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_todo
+msgid "ToDo"
+msgstr "ToDo"
+
+#. module: fso_base
+#: field:product.product,fs_product_type:0
+#: field:product.template,fs_product_type:0
+msgid "Type"
+msgstr "Typ"
 
 #. module: fso_base
 #: code:addons/fso_base/tools/validate.py:42
@@ -554,9 +726,29 @@ msgid "URL must be a string!"
 msgstr "URL muss aus Zeichen bestehen!"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_leave
+msgid "Urlaub u. Abwesenheit"
+msgstr "Urlaub u. Abwesenheit"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_leavereq
+msgid "Urlaubsanspruch erfassen"
+msgstr "Urlaubsanspruch erfassen"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_users_menu
+msgid "Users"
+msgstr "Benutzer"
+
+#. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_waiting
 msgid "Waiting"
 msgstr "Wartend"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime
+msgid "Zeiterfassung"
+msgstr "Zeiterfassung"
 
 #. module: fso_base
 #: view:res.company:fso_base.company_instance_settings

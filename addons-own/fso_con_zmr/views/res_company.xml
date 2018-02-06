@@ -80,10 +80,12 @@
                     <group string="Webservice Login Status">
                         <div  colspan="2" name="finanz_online_buttons"
                               class="oe_button_box oe_inline oe_left" style="margin-bottom: 1em;">
-                            <button name="finanz_online_login" type="object" string="Login"
+                            <!-- button name="finanz_online_login" type="object" string="Login"
                                     attrs="{'invisible': [('fa_login_returncode','=', '0')]}"/>
                             <button name="finanz_online_logout" type="object" string="Logout"
-                                    attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>
+                                    attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/ -->
+                            <button name="finanz_online_login" type="object" string="Login"/>
+                            <button name="finanz_online_logout" type="object" string="Logout"/>
                         </div>
 
                         <field name="fa_login_returncode" readonly="1" attrs="{'invisible': [('fa_login_returncode','!=', '0')]}"/>

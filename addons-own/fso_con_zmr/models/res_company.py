@@ -174,41 +174,51 @@ class CompanyAustrianZMRSettings(models.Model):
         assert not missing, _("FinanzOnline webservice user information is missing! (%s)\n"
                               "Check company settings for %s (id: %s)") % (missing, c.name, c.id)
 
-        # Get the template-folder directory
-        addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        soaprequest_templates = pj(addon_path, 'soaprequest_templates')
-        assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at "
-                                                        "%s") % soaprequest_templates
-        # Get the logout-template path
-        fo_logout_template = pj(soaprequest_templates, 'fo_logout_j2template.xml')
-        assert os.path.exists(fo_logout_template), _("fo_logout_j2template.xml not found at "
-                                                     "%s") % fo_logout_template
-        # Logout
-        response = soap_request(url='https://finanzonline.bmf.gv.at:443/fonws/ws/sessionService',
-                                template=fo_logout_template,
-                                fo_logout={'tid': c.fa_tid,
-                                           'benid': c.fa_benid,
-                                           'id': c.fa_login_sessionid})
-        # Process soap xml answer
-        parser = etree.XMLParser(remove_blank_text=True)
-        response_etree = etree.fromstring(response.content, parser=parser)
-        response_pprint = etree.tostring(response_etree, pretty_print=True)
+        returncode = ''
+        try:
+            # Get the template-folder directory
+            addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+            soaprequest_templates = pj(addon_path, 'soaprequest_templates')
+            assert os.path.exists(soaprequest_templates), _("Folder soaprequest_templates not found at "
+                                                            "%s") % soaprequest_templates
+            # Get the logout-template path
+            fo_logout_template = pj(soaprequest_templates, 'fo_logout_j2template.xml')
+            assert os.path.exists(fo_logout_template), _("fo_logout_j2template.xml not found at "
+                                                         "%s") % fo_logout_template
+            # Logout
+            response = soap_request(url='https://finanzonline.bmf.gv.at:443/fonws/ws/sessionService',
+                                    template=fo_logout_template,
+                                    fo_logout={'tid': c.fa_tid,
+                                               'benid': c.fa_benid,
+                                               'id': c.fa_login_sessionid})
+            # Process soap xml answer
+            parser = etree.XMLParser(remove_blank_text=True)
+            response_etree = etree.fromstring(response.content, parser=parser)
+            response_pprint = etree.tostring(response_etree, pretty_print=True)
 
-        # Store the answer and the logout request time
-        c.fa_logout_message = response_pprint
-        c.fa_logout_time = fields.datetime.now()
+            # Store the answer and the logout request time
+            c.fa_logout_message = response_pprint
+            c.fa_logout_time = fields.datetime.now()
 
-        # Find and store the return code
-        returncode = response_etree.find(".//{*}rc")
-        returncode = returncode.text if returncode is not None else False
-        c.fa_logout_returncode = returncode
+            # Find and store the return code
+            returncode = response_etree.find(".//{*}rc")
+            returncode = returncode.text if returncode is not None else False
+            c.fa_logout_returncode = returncode
+        except Exception as e:
+            logger.error("FinanzOnline Logout Exception:\n%s" % repr(e))
+            c.fa_logout_message = repr(e)
+            c.fa_logout_time = fields.datetime.now()
+            c.fa_logout_returncode = False
+            pass
 
-        # Clear login data if logout was successful
+        # Clear login data
+        c.fa_login_sessionid = False
+        c.fa_login_returncode = False
+        c.fa_login_message = False
+
+        # Return True or False
         # HINT: -1 = Die Session ID ist ungueltig oder abgelaufen.
         if returncode in ["0", "-1"]:
-            c.fa_login_sessionid = False
-            c.fa_login_returncode = False
-            c.fa_login_message = False
             logger.info(_("FinanzOnline logout was successful!"))
             return True
         else:
