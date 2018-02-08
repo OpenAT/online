@@ -92,19 +92,21 @@
             <![CDATA[
             if context.get('active_model') == 'res.partner.donation_report':
 
-                # Find res.partner.donation_report ids
                 ids = []
-                if context.get('active_domain'):
-                    ids = self.search(cr, uid, context['active_domain'], context=context)
-                elif context.get('active_ids'):
-                    ids = context['active_ids']
+                active_domain = context.get('active_domain', '')
+                active_ids = context.get('active_ids', '')
 
-                # Find res.partner.donation_report ids
-                donation_reports = self.browse(cr, uid, ids, context=context)
+                # If there is a search domain but less than 80 (one view) of records are selected it is highly
+                # likely that the user selected only some records and therefore only wants the action to be
+                # executed on those records instead on all records of the domain
+                if (active_ids and not active_domain) or (active_ids and active_domain and len(active_ids) < 80):
+                    ids = active_ids
+                elif active_domain:
+                    ids = self.search(cr, uid, active_domain, context=context)
 
                 # Run server_action_update_state_and_submission_information() for found donation reports
-                if donation_reports:
-                    donation_reports.update_state_and_submission_information(cr, uid, ids, context=context)
+                if ids:
+                    self.update_state_and_submission_information(cr, uid, ids, context=context)
             ]]>
         </field>
     </record>
