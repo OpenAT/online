@@ -77,12 +77,13 @@
 
 #oe_main_menu_navbar #oe_main_menu_placeholder ul.oe_application_menu_placeholder > li:first-child a,
 #oe_main_menu_navbar #oe_main_menu_placeholder ul.oe_application_menu_placeholder > li:first-child button {
-    min-width: inherit;
-    margin: 0 1em;
-    font-size: 20px;
-    padding: 16px 16px 4px 16px;
+    /*min-width: inherit;*/
+    /*margin: 0 1em;*/
+    /*font-size: 20px;*/
+    /*padding: 16px 16px 4px 16px;*/
     margin-left: 0.5em;
-    margin-right: 0.5em;
+    /*margin-right: 0.5em;*/
+    font-weight: bold;
 }
 /* For Mobile (collapsed) Menu View */
 @media (max-width: 768px)

@@ -3,7 +3,7 @@ import logging
 from openerp import api, models, fields, osv
 from openerp.tools.translate import _
 from openerp.addons.fso_base.tools.validate import is_valid_url
-#from openerp.models import BaseModel
+from openerp.exceptions import ValidationError
 
 import requests
 from requests import Request, Session
@@ -168,6 +168,36 @@ class SosyncJob(models.Model):
         for rec in self:
             if rec.child_job_start and rec.child_job_end:
                 rec.child_job_duration = _duration_in_ms(rec.child_job_start, rec.child_job_end)
+                
+    # ATTENTION: Since this is used as a server action do not use any additional interface arguments :(
+    @api.multi
+    def copy_sync_job_to_queue(self, job_limit=100000):
+        if not self:
+            return
+
+        jobs_count = len(self)
+        if jobs_count > job_limit:
+            raise ValidationError(_("You are trying to copy %s sync jobs to the submission queue but only up "
+                                    "to %s are allowed!") % (jobs_count, job_limit))
+        logger.info("Copy %s sync jobs to submission queue!" % len(self))
+
+        job_queue = self.env['sosync.job.queue']
+        now = fields.Datetime.now()
+        for rec in self:
+            data = {'job_date': now,
+                    'job_source_system': rec.job_source_system,
+                    'job_source_model': rec.job_source_model,
+                    'job_source_record_id': rec.job_source_record_id,
+                    'job_source_target_record_id': rec.job_source_target_record_id,
+                    #
+                    'job_source_type': rec.job_source_type,
+                    'job_source_merge_into_record_id': rec.job_source_merge_into_record_id,
+                    'job_source_target_merge_into_record_id': rec.job_source_target_merge_into_record_id,
+                    #
+                    'job_source_sosync_write_date': rec.job_source_sosync_write_date,
+                    'job_source_fields': rec.job_source_fields,
+                    }
+            job_queue.sudo().create(data)
 
 
 # NEW ODOO MODEL: sosync.job.queue

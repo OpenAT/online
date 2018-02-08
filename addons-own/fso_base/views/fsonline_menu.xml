@@ -6,15 +6,15 @@
         <!-- ========= -->
         <menuitem id="menu_fsonline" name="FS-Online" sequence="0" groups="base.group_user"/>
 
-        <!-- DASHBOARD -->
-        <menuitem id="menu_fsonline_dashboard" parent="menu_fsonline" name="Dashboards" sequence="1000"/>
-        <menuitem id="menu_fsonline_dashboard_my_dashboard" parent="menu_fsonline_dashboard" name="Mein Dashboard" sequence="1100" action="board.open_board_my_dash_action"/>
-
         <!-- ORGANIZER -->
         <menuitem id="menu_fsonline_organizer" parent="menu_fsonline" name="Organizer" sequence="2000"/>
         <menuitem id="menu_fsonline_calender" action="calendar.action_calendar_event" parent="menu_fsonline_organizer" name="Calendar" sequence="2010"/>
         <menuitem id="menu_fsonline_notes" action="note.action_note_note" parent="menu_fsonline_organizer" name="Notes" sequence="2010"/>
         <menuitem id="menu_fsonline_partner_partner" action="base.action_partner_form" parent="menu_fsonline_organizer" name="Partner" sequence="2020"/>
+
+        <!-- DASHBOARD -->
+        <menuitem id="menu_fsonline_dashboard" parent="menu_fsonline" name="Dashboards" sequence="2500"/>
+        <menuitem id="menu_fsonline_dashboard_my_dashboard" parent="menu_fsonline_dashboard" name="Meine Dashboards" sequence="2510" action="board.open_board_my_dash_action"/>
 
 
         <!-- ============= -->

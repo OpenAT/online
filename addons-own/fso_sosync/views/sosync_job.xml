@@ -9,6 +9,8 @@
         <field name="arch" type="xml">
             <form string="Sosync Job">
                 <header>
+                    <button name="copy_sync_job_to_queue" type="object"
+                            string="Copy Sync Job to Queue"/>
                     <field name="job_state" widget="statusbar" statusbar_visible="new,inprogress,done"/>
                 </header>
                 <group string="Job Info">
@@ -184,6 +186,35 @@
                 <field name="sync_target_model"/>
                 <field name="sync_target_record_id"/>
                 <field name="write_date"/>
+                <group string="Job Type">
+                    <filter string="Regular-Jobs" domain="[('job_source_type','=',False)]"/>
+                    <filter string="Merge-Jobs" domain="[('job_source_type','=','merge_into')]"/>
+                    <filter string="Delete-Jobs" domain="[('job_source_type','=','delete')]"/>
+                </group>
+                <group string="Job State">
+                    <filter string="Error" domain="[('job_state','=','error')]"/>
+                    <filter string="Done" domain="[('job_state','=','done')]"/>
+                    <filter string="Skipped" domain="[('job_state','=','skipped')]"/>
+                </group>
+                <group string="Parent/Child Jobs">
+                    <filter string="ChildJobs" domain="[('parent_job_id','!=',0)]"/>
+                    <filter string="ParentJobs" domain="[('parent_job_id','=',0)]"/>
+                </group>
+                <group string="Group by JobSource">
+                    <filter string="State" context="{'group_by':'job_state'}"/>
+                    <filter string="ErrorCode" context="{'group_by':'job_error_code'}"/>
+                    <filter string="JobSourceType" context="{'group_by':'job_source_type'}"/>
+                    <filter string="JobSourceSystem" context="{'group_by':'job_source_system'}"/>
+                    <filter string="JobSourceModel" context="{'group_by':'job_source_model'}"/>
+                </group>
+                <group string="Group by SyncSource">
+                    <filter string="SyncSourceSystem" context="{'group_by':'sync_source_system'}"/>
+                    <filter string="SyncSourceModel" context="{'group_by':'sync_source_model'}"/>
+                </group>
+                <group string="Group by SyncTarget">
+                    <filter string="SyncTargetSystem" context="{'group_by':'sync_target_system'}"/>
+                    <filter string="SyncTargetModel" context="{'group_by':'sync_target_model'}"/>
+                </group>
             </search>
         </field>
     </record>

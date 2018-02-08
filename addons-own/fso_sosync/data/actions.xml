@@ -30,6 +30,45 @@
         <field name="value" eval="'ir.actions.server,%d'%submit_sync_job"/>
     </record>
 
+    <!-- ========================= -->
+    <!-- CREATE SOSYNC JOB ACTIONS -->
+    <!-- ========================= -->
+
+    <!-- Server Action to copy sync jobs to the submission queue -->
+    <record id="copy_sync_job_to_queue" model="ir.actions.server">
+        <field name="name">Copy Sync Job to Queue</field>
+        <field name="model_id" ref="model_sosync_job"/>
+        <field name="state">code</field>
+        <field name="code">
+
+            if context.get('active_model') == 'sosync.job':
+                ids = []
+                active_domain = context.get('active_domain', '')
+                active_ids = context.get('active_ids', '')
+
+                # If there is a search domain but less than 80 (one view) of records are selected it is highly
+                # likely that the user selected only some records and therefore only wants the action to be
+                # executed on those records instead on all records of the domain
+                if (active_ids and not active_domain) or (active_ids and active_domain and len(active_ids) &lt; 80):
+                    ids = active_ids
+                elif active_domain:
+                    ids = self.search(cr, uid, active_domain, context=context)
+
+                # Copy the sync jobs to the queue
+                if ids:
+                    # ATTENTION: Always fill ALL interface options in server actions or the mapping from old
+                    #            to new api will fail
+                    self.copy_sync_job_to_queue(cr, uid, ids, context=context)
+        </field>
+    </record>
+    <!-- Add Server Action to the More menu -->
+    <record id="ir_copy_sync_job_to_queue" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'sosync.job'"/>
+        <field name="name">Copy Jobs to Submission Queue</field>
+        <field name="value" eval="'ir.actions.server,%d'%copy_sync_job_to_queue"/>
+    </record>
+
     <!-- ================================= -->
     <!-- CREATE SYNC JOB ACTIONS PER MODEL -->
     <!-- ================================= -->
