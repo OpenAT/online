@@ -122,14 +122,12 @@ class PaymentTransactionFRST(osv.Model):
             invalid_parameters.append(('frst_iban', data.get('frst_iban'), 'At least some value '))
 
         # Check BIC
-        if not data.get('frst_bic'):
-            invalid_parameters.append(('frst_bic', data.get('frst_bic'), 'At least some Value'))
+        # HINT: CHECK DISABLED CAUS SOME CUSTOMMERS DO NOT WANT THE BIC FIELD
+        # if not data.get('frst_bic'):
+        #     invalid_parameters.append(('frst_bic', data.get('frst_bic'), 'At least some Value'))
 
         info_msg = 'FRST Payment Transaction: Invalid Parameters %s' % (pprint.pformat(invalid_parameters))
         _logger.info(info_msg)
-        print '----'
-        print info_msg
-        print '----'
 
         return invalid_parameters
 
