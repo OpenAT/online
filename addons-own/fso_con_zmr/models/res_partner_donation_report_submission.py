@@ -278,7 +278,7 @@ class ResPartnerFADonationReport(models.Model):
             # <data><SonderausgabenUebermittlung><MessageSpec>
             'submission_message_ref_id': "S%s-%s" % (r.id, r.create_date.replace(' ', '-').replace(':', '-')),
             'submission_timestamp': fields.datetime.utcnow().replace(microsecond=0).isoformat(),
-            'submission_fa_dr_type': r.bpk_company_id.fa_dr_type,
+            'submission_fa_dr_type': 'MÖ' if r.bpk_company_id.fa_dr_type == 'MOE' else r.bpk_company_id.fa_dr_type,
             # <data><SonderausgabenUebermittlung><Sonderausgaben> (for loop)
             'donation_report_ids': [(6, 0, donation_reports.ids)],
             # Information copied but not included in the jinja2 template:
