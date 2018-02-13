@@ -1055,7 +1055,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         'bpk_error_request_log': resp.get('request_log') or False,
                     })
                     if values['bpk_error_code'] or values['bpk_error_text']:
-                        errors[p.id] += str(resp.get('faultcode', '')) + ' ' + str(resp.get('faulttext', ''))
+                        errors[p.id] += resp.get('faultcode', '') + ' ' + resp.get('faulttext', '')
 
                 # Create/Update the BPK record with the values of this response
                 bpk = self.env['res.partner.bpk'].sudo().search([('bpk_request_company_id.id', '=', resp['company_id']),
