@@ -63,6 +63,13 @@ class PartnerMerge(models.Model):
             if self.env['account.move.line'].sudo().search([('partner_id', '=', partner_to_remove.id)]):
                 raise ValidationError("You cannot merge a contact with account journal entries!")
 
+        # Delete the BPK Requests
+        # -------------------------
+        if partner_to_remove.bpk_request_ids:
+            logger.info("merge_partner: Unlink the BPK Requests with the ids: %s"
+                        % partner_to_remove.bpk_request_ids.ids)
+            partner_to_remove.bpk_request_ids.unlink()
+
         # MERGE
         # -----
         # HINT: Done in a separate method to avoid new to old api mapping with decorator @api.noguess because

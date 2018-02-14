@@ -59,7 +59,7 @@ class SosyncJob(models.Model):
     # ======
 
     # SYNCJOB
-    job_id = fields.Integer(string="Job ID", readonly=True)
+    job_id = fields.Integer(string="Job ID", readonly=True, index=True)
     job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True)
 
     # SYNCJOB SOURCE
@@ -112,7 +112,8 @@ class SosyncJob(models.Model):
     job_log = fields.Text(string="Job Log", readonly=True)
 
     # PARENT JOB
-    parent_job_id = fields.Integer(string="Parent Job ID", help="Parent Job ID (from field job_id)", readonly=True)
+    parent_job_id = fields.Integer(string="Parent Job ID", help="Parent Job ID (from field job_id)", readonly=True,
+                                   index=True)
 
     # ODOO ONLY (to show a hierarchy view later on in the odoo gui)
     #           (TODO: must be computed fields based on job id and parent_job_id)
@@ -405,8 +406,8 @@ class BaseSosync(models.AbstractModel):
     _name = "base.sosync"
 
     # NEW COMMON FIELDS
-    sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True)
-    sosync_write_date = fields.Char(string="Sosync Write Date", readonly=True,
+    sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True, index=True)
+    sosync_write_date = fields.Char(string="Sosync Write Date", readonly=True, index=True,
                                     help="Last change of one or more sosync-tracked-fields.")
     # HINT: Is a char field to show exact ms
     sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
