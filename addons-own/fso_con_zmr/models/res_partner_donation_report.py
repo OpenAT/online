@@ -49,8 +49,10 @@ class ResPartnerFADonationReport(models.Model):
                                   selection=[('bpk_pending', 'BPK Request Pending'),
                                              ('bpk_missing', 'BPK Not Found'),
                                              ('bpk_not_unique', 'BPK Not Unique'),     # multiple partners with same bpk
-                                             ('data_incomplete', 'Data Incomplete'),   # should never happen!
+                                             ('data_incomplete', 'Data Incomplete'),   # should only happen if comp. data missing
                                              ('nok_released', 'Released from rejected Submission (NOK)'),
+                                             ('zero_but_lsr', 'Donations are already submitted'),
+                                             ('zero_lsr_exception', 'Last submitted report exception'),
                                              ])
     error_code = fields.Char(string="Error Code", readonly=True)
     error_detail = fields.Text(string="Error Detail", readonly=True, track_visibility='onchange')
@@ -493,7 +495,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # Avoid any changes to this report if it was skipped or submitted!
             # ----------------------------------------------------------------
-            if r.state not in self._changes_allowed_states():
+            if r.state and r.state not in self._changes_allowed_states():
                 logger.info("update_state_and_submission_information() Will not recompute state and vals because "
                             "donation report state is %s for donation report (ID %s)" % (r.state, r.id))
                 continue
@@ -512,6 +514,28 @@ class ResPartnerFADonationReport(models.Model):
             if newer:
                 update_report(r, state='skipped', skipped_by_id=newer.id)
                 continue
+
+            # Skip this report if the betrag is 0 and cancellation_for_bpk_private is NOT set!
+            # --------------------------------------------------------------------------------
+            if r.betrag == 0 and not r.cancellation_for_bpk_private:
+                try:
+                    # Check if there is a last submitted donation report with a betrag greater than 0
+                    lsr = r._last_submitted_report()
+                    if lsr and lsr.betrag > 0:
+                        update_report(r, state='error', error_type='zero_but_lsr', error_code=False,
+                                      error_detail="Donations are already submitted! Therefore you must use a "
+                                                   "cancellation donation report (with "
+                                                   "cancellation_for_bpk_private set)!")
+                        continue
+                    else:
+                        update_report(r, state='skipped', skipped_by_id=False,
+                                      info="Skipped because there are no submitted reports or the current betrag is 0")
+                        continue
+                except Exception as e:
+                    update_report(r, state='error', error_type='zero_lsr_exception', error_code=False,
+                                  error_detail="Exception while searching for the last submitted report %s" % repr(e))
+                    continue
+
 
             # Check Donation Deduction Disabled for this partner
             # --------------------------------------------------
@@ -666,7 +690,7 @@ class ResPartnerFADonationReport(models.Model):
 
         # Compute the state
         # HINT: Will also compute and write the submission values if in unsubmitted states
-        if res and (not vals or 'state' not in vals):
+        if res and (not vals or 'state' not in vals or not vals['state']):
             if not vals.get('submission_id', False):
                 self.update_state_and_submission_information()
 
