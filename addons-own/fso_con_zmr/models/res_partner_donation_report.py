@@ -679,7 +679,7 @@ class ResPartnerFADonationReport(models.Model):
             # HINT: Changes must be also allowed in the response_nok state for report release button
             changes_allowed_states = list(self._changes_allowed_states())
             changes_allowed_states.append('response_nok')
-            if r.state not in changes_allowed_states:
+            if r.state and r.state not in changes_allowed_states:
                 changes_allowed_fields = self._changes_allowed_fields_after_submission()
                 if any(vals[field] != r[field] for field in vals if field not in changes_allowed_fields):
                     raise ValidationError(_("Changes to some of the fields in %s are only allowed in the states %s!")
