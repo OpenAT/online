@@ -108,7 +108,7 @@ class CompanyAustrianZMRSettings(models.Model):
                                              ('P', 'P: Echtbetrieb')],
                                   string="Spendenmeldung Modus (Veraltet)", readonly=True)
 
-    # ATTENTION: MOE MUST BE MÖ but Ö is not allowed in selection fields :( - This is replaced in the
+    # ATTENTION: MO MUST BE MÖ but Ö is not allowed in selection fields :( - This is replaced in the
     #            donation_report.submission field submission_fa_dr_type! Check compute_submission_values() for the fix.
     #            It is an ugly fix but right now there seems to be no other quick way
     fa_dr_type = fields.Selection(string="Spendenmeldung Uebermittlungsart",
@@ -120,7 +120,7 @@ class CompanyAustrianZMRSettings(models.Model):
                                              ('SN', 'SN Sammeleinrichtungen Naturschutz (gem § 4a Abs 2 Z 3 lit d und e EStG)'),
                                              ('SG', 'SG gemeinnützige Stiftungen (§ 4b EStG 1988, hinsichtlich Spenden)'),
                                              ('UN', 'UN Universitätetn, Kunsthochschulen, Akademie der bildenden Künste (inkl. Fakultäten, Instituteund besondere Einrichtungen, § 4a Abs 3 Z 1 EStG)'),
-                                             ('MOE', 'MÖ Museen von Körperschaften öffentlichen Rechts (§ 4a Abs 4 lit b EStG)'),
+                                             ('MO', 'MÖ Museen von Körperschaften öffentlichen Rechts (§ 4a Abs 4 lit b EStG)'),    # ATTENTION MO is replaced by MÖ for the donation report
                                              ('MP', 'MP Privatmuseen mit überregionaler Bedeutung (§ 4a Abs 4 lit b EStG)'),
                                              ('FF', 'FF Freiwillige Feuerwehren ( § 4a Abs 6 EStG) und Landesfeuerwehrverbände (§ 4a Abs 6 EStG)'),
                                              ('KR', 'KR Kirchen und Religionsgesellschaften mit verpflichtenden Beiträgen (§ 18 Abs 1 Z 5 EStG)'),
