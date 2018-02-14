@@ -25,8 +25,7 @@ class ResPartnerBPK(models.Model):
     # res.partner
     bpk_request_partner_id = fields.Many2one(string="BPK Request Partner",
                                              comodel_name='res.partner', inverse_name="bpk_request_ids",
-                                             required=True, readonly=True, oldname="BPKRequestPartnerID",
-                                             ondelete="cascade")
+                                             required=True, readonly=True, oldname="BPKRequestPartnerID")
 
     # ATTENTION: Related fields are pretty slow especially if no Full Vacuum is done to the db regularly
     #            Therefore this fields will also be updated by set_bpk_state()
