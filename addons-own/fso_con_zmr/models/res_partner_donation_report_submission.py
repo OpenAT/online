@@ -226,30 +226,13 @@ class ResPartnerFADonationReport(models.Model):
         # -----------------------------
         logger.info("compute_submission_values() START")
 
-        # ---
-        # DISABLED!!! We already rely on the state of the donation reports at this stage ;)
-        # ---
-        # # Search for donation reports linked to this submission or not linked at all
-        # potential_donation_reports = self.env['res.partner.donation_report'].sudo().search(
-        #     [('state', 'in', ['new', 'error']),
-        #      "|", ('submission_id', '=', False),
-        #           ('submission_id', '=', r.id),
-        #      ('submission_env', '=', r.submission_env),
-        #      ('meldungs_jahr', '=', r.meldungs_jahr),
-        #      ('bpk_company_id', '=', r.bpk_company_id.id)])
-        # if not potential_donation_reports:
-        #     return {}
-        # len_pdr = len(potential_donation_reports)
-        # logger.info("Found %s donation reports to check and update for submission %s" % (len_pdr, r.id))
-        #
-        # # Update state and submission information for all found donation reports
-        # logger.info("Update state and submission information for %s donation reports!" % len_pdr)
-        # potential_donation_reports.write({})
-        # logger.info("Update state and submission information for %s donation reports done!" % len_pdr)
-
-        # Search again but now only for donation reports in state 'new'
+        # Search for donation reports to submit
+        # -------------------------------------
+        # ATTENTION: It is very important to sort the donation reports by anlage_am_um descending so that cancellation
+        #            donation reports are before regular reports in the xml file.
+        # HINT: This is already the _order of the res.partner.donation_report model but is added here again for savety!
         logger.info("compute_submission_values() Search for donation reports in state new that are not already "
-                    "linked to any submission or are already linked to this sumbission.")
+                    "linked to any submission or are already linked to this submission.")
         donation_reports = self.env['res.partner.donation_report'].sudo().search(
             [('state', '=', 'new'),
              "|", ('submission_id', '=', False),
@@ -257,13 +240,14 @@ class ResPartnerFADonationReport(models.Model):
              ('submission_env', '=', r.submission_env),
              ('meldungs_jahr', '=', r.meldungs_jahr),
              ('bpk_company_id', '=', r.bpk_company_id.id)],
-            order='create_date')
+            order='partner_id, anlage_am_um ASC, create_date ASC')
         if not donation_reports:
             return {}
         len_dr = len(donation_reports)
         logger.info("compute_submission_values() Found %s donation reports for submission (ID %s)!" % (len_dr, r.id))
 
         # Compute the basic submission values
+        # -----------------------------------
         # HINT: the session id is only computed and needed right before submission!
         # ATTENTION: submission_timestamp is used for the PREPARATION time of the submission values and NOT
         #            the time of the report submission try!!!
@@ -290,6 +274,7 @@ class ResPartnerFADonationReport(models.Model):
         # Render the request content template and add it to the submission vals
         # ---------------------------------------------------------------------
         logger.info("compute_submission_values() Render the submission xml template!")
+
         # Get the path to the template 'fo_donation_report_j2template.xml '
         addon_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         soaprequest_templates = pj(addon_path, 'soaprequest_templates')

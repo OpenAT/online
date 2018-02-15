@@ -21,8 +21,16 @@ logger = logging.getLogger(__name__)
 # Austrian Finanzamt Donation Reports (Spendenberichte pro Person fuer ein Jarh)
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report'
+
+    # ATTENTION: Make sure the same order is used in the compute_submission_values() for the XML generation! This
+    #            is important because the inverse order is used in the donation report state computation when we search
+    #            the last submitted donation report!
+    # HINT: create_date is added to make sure the order of the records in the XML stays the same in prepare() even
+    #       if anlage_am_um is the same for multiple records
+    _order = 'partner_id, anlage_am_um ASC, create_date ASC'
+
+    # DISABLED: too slow!
     #_inherit = ['mail.thread']
-    _order = 'anlage_am_um DESC'
 
     now = fields.datetime.now
 
@@ -74,6 +82,17 @@ class ResPartnerFADonationReport(models.Model):
     skipped = fields.One2many(string="Skipped the Reports", comodel_name="res.partner.donation_report",
                               inverse_name="skipped_by_id", readonly=True)
 
+    # Cancelled link (betrag 0)
+    # -------------------------
+    # The last submitted report that should be cancelled by this cancellation donation report
+    cancelled_lsr_id = fields.Many2one(string="Cancelled Last Submitted Report",
+                                       comodel_name='res.partner.donation_report',
+                                       readonly=True)
+    # The cancellation donation report(s) that cancelled this regular report
+    cancelled_by_ids = fields.One2many(string="Cancelled by Report(s)",
+                                       comodel_name="res.partner.donation_report",
+                                       inverse_name="cancelled_lsr_id", readonly=True)
+
     # Data for submission
     # -------------------
     # HINT: Data from FRST if not a test environment donation report
@@ -83,7 +102,8 @@ class ResPartnerFADonationReport(models.Model):
                                       track_visibility='onchange',)
     partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True,
                                  track_visibility='onchange',
-                                 readonly=True, states={'new': [('readonly', False)]})
+                                 readonly=True, states={'new': [('readonly', False)]},
+                                 index=True)
     bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
                                      track_visibility='onchange',
                                      readonly=True, states={'new': [('readonly', False)]})
@@ -91,7 +111,8 @@ class ResPartnerFADonationReport(models.Model):
                                    help=_("Donation Report generation date and time. This is used for the order of the "
                                           "submission_type computation! Must include all donations available at this "
                                           "date and time that fall inside ze_datum_von and ze_datum_bis"),
-                                   readonly=True, states={'new': [('readonly', False)]})
+                                   readonly=True, states={'new': [('readonly', False)]},
+                                   index=True)
     ze_datum_von = fields.Datetime(string="Includes donations from", required=True,
                                    readonly=True, states={'new': [('readonly', False)]})
     ze_datum_bis = fields.Datetime(string="Includes donations to", required=True,
@@ -260,24 +281,6 @@ class ResPartnerFADonationReport(models.Model):
         return f
 
     @api.multi
-    def skip_older_unsubmitted_reports(self):
-        for r in self:
-            # Search for unsubmitted donation reports that are created before this report
-            older_reports = r.sudo().search([('submission_env', '=', r.submission_env),
-                                             ('bpk_company_id', '=', r.bpk_company_id.id),
-                                             ('partner_id', '=', r.partner_id.id),
-                                             ('meldungs_jahr', '=', r.meldungs_jahr),
-                                             ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
-                                             ('state', 'in', r._changes_allowed_states()),
-                                             ('anlage_am_um', '<', r.anlage_am_um),
-                                             ('id', '!=', r.id)])
-            # Skip older reports and unlink them from any donation_report.submission
-            # HINT: We are already the superuser in this environment
-            if older_reports:
-                older_reports.write({'state': 'skipped', 'skipped_by_id': r.id, 'submission_id': False,
-                                     'error_type': False, 'error_code': False, 'error_detail': False})
-
-    @api.multi
     def _get_bpk(self):
         assert self.ensure_one(), _("_get_bpk() works only for one record at a time!")
 
@@ -308,31 +311,50 @@ class ResPartnerFADonationReport(models.Model):
         return bpk
 
     @api.multi
-    def _last_submitted_report(self):
-        assert self.ensure_one(), _("_last_submitted_report() works only for one record at a time!")
-        # HINT: This should NOT take the submission_bpk_private or the current BPK into account but just return
-        #       the last submitted report!
-        lsr = self.sudo().search([('submission_env', '=', self.submission_env),
-                                  ('bpk_company_id', '=', self.bpk_company_id.id),
-                                  ('partner_id', '=', self.partner_id.id),
-                                  ('meldungs_jahr', '=', self.meldungs_jahr),
-                                  ('cancellation_for_bpk_private', '=', self.cancellation_for_bpk_private),
-                                  ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
-                                  ('submission_id','!=',False),
-                                  ('id', '!=', self.id)],
-                                 order="anlage_am_um DESC")
+    def last_submitted_report(self, submission_bpk_private='ignore'):
+        """
+        Returns the last successfully submitted donation report.
+
+        Throws an exception if the submission state of the last submitted report is not response_ok!
+
+        If a cancellation report and a regular report are submitted in the same submission the
+        anlage_am_um datetime of the regular report (betrag > 0) must be higher than the one of the cancellation
+        reports! Therefore lsr can only be return a cancellation report if no regular report was in the last
+        submission or if submission_bpk_private is given!
+
+        ATTENTION: It should be IMPOSSIBLE that there are two regular donation reports for one person in the same
+                   submission (because all but one regular reports must have been skipped!). There may be a
+                   cancellation report and a regular report on the same submission but then the regular report MUST
+                   be AFTER the cancellation report(s) in the XML! This is ordered by anlage_am_um.
+
+        :return: donation report record set witch exactly one record or no record
+        """
+        assert self.ensure_one(), _("last_submitted_report() works only for one record at a time!")
+
+        domain = [('submission_env', '=', self.submission_env),
+                  ('bpk_company_id', '=', self.bpk_company_id.id),
+                  ('partner_id', '=', self.partner_id.id),
+                  ('meldungs_jahr', '=', self.meldungs_jahr),
+                  ('state', '!=', False),
+                  ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
+                  ('submission_id', '!=', False),
+                  ('submission_id_datetime', '!=', False),
+                  ('id', '!=', self.id)]
+
+        if submission_bpk_private != 'ignore':
+            domain += [('submission_bpk_private', '=', submission_bpk_private)]
+
+        # ATTENTION: Make sure the inverse order is used for the XML record generation in the submission!
+        lsr = self.sudo().search(domain,
+                                 order="submission_id_datetime DESC, anlage_am_um DESC, create_date DESC",
+                                 limit=1)
 
         # ATTENTION: If the state is 'submitted' or 'unexpected_response' we do not know if the lsr donation report
         #            was accepted by FinanzOnline or not! Therefore we throw an exception!
-        last_submitted_report = self.env['res.partner.donation_report']
-        if lsr:
-            for l in lsr:
-                if l.state != "response_ok":
-                    raise ValidationError(_("Submitted donation report (ID %s) is in state %s but should be "
-                                            "in state 'response_ok'.") % (l.id, l.state))
-                if not last_submitted_report or last_submitted_report.submission_id.submission_datetime < l.submission_id.submission_id.submission_datetime:
-                    last_submitted_report = l
-        return last_submitted_report
+        if lsr.state != "response_ok":
+            raise ValidationError(_("Submitted donation report (ID %s) is in state %s but should be "
+                                    "in state 'response_ok'.") % (lsr.id, lsr.state))
+        return lsr
 
     @api.multi
     def _compute_refnr(self, submission_bpk_private=False):
@@ -361,16 +383,16 @@ class ResPartnerFADonationReport(models.Model):
     @api.multi
     def compute_type_refnr_erstmid(self, submission_bpk_private=False):
         """
-        Returns a dictionary with the submission_type, the submission_refnr and the report_erstmeldung_id
+        Returns a dictionary with
+            - submission_type,
+            - submission_refnr
+            - report_erstmeldung_id
+            - cancelled_lsr_id
 
         :return: dict()
         """
         assert self.ensure_one(), _("compute_type_refnr_erstmid() works only for one record at a time!")
         r = self
-
-        # Search for an already submitted donation report (or at least in an unknown submission state)
-        # HINT: _last_submitted_report() takes the the cancellation_for_bpk_private number into account!
-        lsr = r._last_submitted_report()
 
         # Stornierungsmeldung S
         # ---------------------
@@ -378,20 +400,37 @@ class ResPartnerFADonationReport(models.Model):
             if not r.cancellation_for_bpk_private:
                 raise ValidationError(_("cancellation_for_bpk_private must be set for a cancellation donation report!"
                                         " (ID %s)!") % r.id)
+
+            # Search for the last submitted donation report for this cancellation PrivateBPK
+            lsr = r.last_submitted_report(submission_bpk_private=r.cancellation_for_bpk_private)
+
             if not lsr:
-                raise ValidationError(_("No submitted donation reports found for this cancellation donation report "
-                                        " (ID %s)!") % r.id)
-            if not lsr.submission_bpk_private or lsr.submission_bpk_private != r.cancellation_for_bpk_private:
-                raise ValidationError(_("Private BPK of last submitted report is not equal to "
-                                        "cancellation_for_bpk_private!"))
+                raise ValidationError(_("No successfully submitted donation reports (in state response_ok) found for "
+                                        " this cancellation donation report (ID %s)!") % r.id)
+
+            if lsr.cancellation_for_bpk_private:
+                raise ValidationError(_("Last submitted report (ID %s) is already a cancellation donation report!"
+                                        "There should to be no reason to cancel it again (ID %s)!") % (lsr.id, r.id))
+
+            if lsr.submission_type != 'E' and not lsr.report_erstmeldung_id:
+                raise ValidationError(_("Last submitted report (ID %s) has no linked 'Erstmelung'!") % lsr.id)
+
             if not lsr.submission_refnr:
                 raise ValidationError(_("Last submitted report (ID %s) has no RefNr!") % lsr.id)
-            if not lsr.report_erstmeldung_id:
-                raise ValidationError(_("Last submitted report (ID %s) has no linked 'Erstmelung'!") % lsr.id)
+
+            if lsr.submission_type != 'E' and lsr.submission_refnr != lsr.report_erstmeldung_id.submission_refnr:
+                raise ValidationError(_("Last submitted report (ID %s) has a different RefNr %s than it's linked"
+                                        "'Erstmelung' (ID %s) Refnr %s"
+                                        "!") % (lsr.id,
+                                                lsr.submission_refnr,
+                                                lsr.report_erstmeldung_id.id,
+                                                lsr.report_erstmeldung_id.submission_refnr))
+
             return {
                 'submission_type': 'S',
                 'submission_refnr': lsr.submission_refnr,
-                'report_erstmeldung_id': lsr.report_erstmeldung_id,
+                'report_erstmeldung_id': lsr.report_erstmeldung_id.id if lsr.submission_type != 'E' else lsr.id,
+                'cancelled_lsr_id': lsr.id
             }
 
         # For non cancellation donation reports cancellation_for_bpk_private must be empty
@@ -411,21 +450,31 @@ class ResPartnerFADonationReport(models.Model):
                                        ('meldungs_jahr', '=', r.meldungs_jahr),
                                        ('submission_bpk_private', '=', submission_bpk_private),
                                        ('submission_type', '=', 'E'),
-                                       ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
                                        ('id', '!=', r.id)],
                                       order="anlage_am_um DESC", limit=2)
         if erstmeldung:
+            # Check there is only one Erstmeldung for this submission_bpk_private
             if len(erstmeldung) > 1:
-                raise ValidationError(_("Multiple Erstmeldungen found for donation report (ID %s)") % r.id)
+                raise ValidationError(_("Multiple 'Erstmeldungen' found for donation report (ID %s)") % r.id)
+
+            # Check if the state of the Erstmeldung is response_ok
+            if erstmeldung.state != 'response_ok':
+                raise ValidationError(_("State of 'Erstmeldung' (ID %s) is %s but should be 'response_ok'. for donation"
+                                        "report with id %s! Maybe the 'Erstmeldung' was not skipped correctly?"
+                                        "") % (erstmeldung.id, erstmeldung.state, r.id))
+
+            # Check that the RefNr is still the same
             erstm_refnr = erstmeldung.submission_refnr
             test_refnr = r._compute_refnr(submission_bpk_private=submission_bpk_private)
             if erstm_refnr != test_refnr:
-                raise ValidationError(_("The computed Test-RefNr (%s) and the RefNr (%s) of the Erstmeldung do not "
+                raise ValidationError(_("The computed Test-RefNr (%s) and the RefNr (%s) of the 'Erstmeldung' do not "
                                         "match! Maybe company settings have changed?") % (test_refnr, erstm_refnr))
+
             return {
                 'submission_type': 'A',
                 'submission_refnr': erstmeldung.submission_refnr,
                 'report_erstmeldung_id': erstmeldung.id,
+                'cancelled_lsr_id': False
             }
 
         # Erstmeldung E
@@ -434,6 +483,7 @@ class ResPartnerFADonationReport(models.Model):
             'submission_type': 'E',
             'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
             'report_erstmeldung_id': False,
+            'cancelled_lsr_id': False
         }
 
     @api.multi
@@ -480,6 +530,7 @@ class ResPartnerFADonationReport(models.Model):
             # Skip older unsubmitted reports
             # ------------------------------
             # Search for unsubmitted donation reports that are created before this report
+            # HINT: Cancellation report will only skipp cancellation reports and regular reports only reg. reports
             reports_to_skip = r.sudo().search([('submission_env', '=', r.submission_env),
                                                ('partner_id', '=', r.partner_id.id),
                                                ('bpk_company_id', '=', r.bpk_company_id.id),
@@ -496,13 +547,15 @@ class ResPartnerFADonationReport(models.Model):
             # Avoid any changes to this report if it was skipped or submitted!
             # ----------------------------------------------------------------
             if r.state and r.state not in self._changes_allowed_states():
-                logger.info("update_state_and_submission_information() Will not recompute state and vals because "
-                            "donation report state is %s for donation report (ID %s)" % (r.state, r.id))
+                logger.error("update_state_and_submission_information() Will not recompute state and vals because "
+                             "donation report state is %s for donation report (ID %s)" % (r.state, r.id))
                 continue
 
             # Skip this report if newer reports exists already because of sosync LIFO!
             # ------------------------------------------------------------------------
             # HINT: It was already checked above that this report is in a state where changes are allowed.
+            # HINT: Only newer cancellation reports (with matching PrivateBPK) can skipp a cancellation report and
+            #       only newer regular reports can skip a regular report
             newer = r.sudo().search([('submission_env', '=', r.submission_env),
                                      ('partner_id', '=', r.partner_id.id),
                                      ('bpk_company_id', '=', r.bpk_company_id.id),
@@ -517,25 +570,29 @@ class ResPartnerFADonationReport(models.Model):
 
             # Skip this report if the betrag is 0 and cancellation_for_bpk_private is NOT set!
             # --------------------------------------------------------------------------------
+            # HINT: This should only happen if in FRST regular donation exists but none of them seems to be submitted
+            #       and the betrag went down to 0 or donation deduction was disabled!
+            #       If the regular donation reports where already submitted but th state was just not synced to FRST
+            #       this report will go into error state and will never be submitted (which is correct)
             if r.betrag == 0 and not r.cancellation_for_bpk_private:
                 try:
                     # Check if there is a last submitted donation report with a betrag greater than 0
-                    lsr = r._last_submitted_report()
+                    lsr = r.last_submitted_report()
                     if lsr and lsr.betrag > 0:
                         update_report(r, state='error', error_type='zero_but_lsr', error_code=False,
                                       error_detail="Donations are already submitted! Therefore you must use a "
-                                                   "cancellation donation report (with "
-                                                   "cancellation_for_bpk_private set)!")
+                                                   "cancellation donation report (with cancellation_for_bpk_private "
+                                                   "set)! Maybe the state was not synced?")
                         continue
                     else:
                         update_report(r, state='skipped', skipped_by_id=False,
-                                      info="Skipped because there are no submitted reports or the current betrag is 0")
+                                      info="Can be skipped because there are no submitted reports or the "
+                                           "last submitted 'betrag' is already 0")
                         continue
                 except Exception as e:
                     update_report(r, state='error', error_type='zero_lsr_exception', error_code=False,
-                                  error_detail="Exception while searching for the last submitted report %s" % repr(e))
+                                  error_detail="Exception while searching for the last submitted report!\n%s" % repr(e))
                     continue
-
 
             # Check Donation Deduction Disabled for this partner
             # --------------------------------------------------
@@ -559,10 +616,11 @@ class ResPartnerFADonationReport(models.Model):
                 update_report(r, state='error', error_type='bpk_missing', error_code=False, error_detail=False)
                 continue
 
-            # Check if there are any other reports with the same bpk but a different partner
-            # ------------------------------------------------------------------------------
+            # Check if there are any donation reports for this private BPK but for a different partner
+            # ----------------------------------------------------------------------------------------
             # ATTENTION: Such partners must be merged before the donation report can be submitted
             # HINT: It is ok if there are donation reports for the same partner with different bpk numbers
+            # HINT: If is ok if there are other partners with the same BPK but no donation reports
             bpk_private = r.cancellation_for_bpk_private or bpk.bpk_private
             if bpk_private:
                 # Search for donation reports with a different partner but the same private BPK number
@@ -571,7 +629,7 @@ class ResPartnerFADonationReport(models.Model):
                      ('bpk_company_id', '=', r.bpk_company_id.id),
                      ('submission_bpk_private', '=', bpk_private)])
 
-                # If donation reports are found set this report (and other reps if possible) to state 'error'
+                # If donation reports are found set this and the other donation reports to state 'error'
                 if r_same_bpk:
                     # Create an error message
                     error_detail = _("Reports found with the same private BPK but a different Partner:\n"
@@ -617,7 +675,9 @@ class ResPartnerFADonationReport(models.Model):
             # Check if all needed values are available
             # ----------------------------------------
             if r.betrag <= 0:
-                mandatory_submission_fields = ('submission_type', 'submission_refnr', 'cancellation_for_bpk_private')
+                # HINT: submission_bpk_private == cancellation_for_bpk_private for cancellation donation reports
+                #       check the subm_vals above
+                mandatory_submission_fields = ('submission_type', 'submission_refnr', 'submission_bpk_private')
             else:
                 mandatory_submission_fields = ('submission_type',
                                                'submission_refnr',

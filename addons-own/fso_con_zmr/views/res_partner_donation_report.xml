@@ -32,8 +32,12 @@
                             <field name="ze_datum_bis"/>
                             <field name="report_erstmeldung_id"/>
                             <field name="skipped_by_id"/>
-                            <field name="info" attrs="{'invisible':[('info','=',False)]}"/>
+                            <field name="cancelled_lsr_id"/>
                         </group>
+                    </group>
+
+                    <group string="Info" attrs="{'invisible':[('info','=',False)]}">
+                        <field name="info"/>
                     </group>
 
                     <group string="Errors" attrs="{'invisible':[('error_type','=',False)]}">
@@ -68,22 +72,24 @@
                             <group>
                                 <field name="submission_id"/>
                                 <field name="submission_id_datetime"/>
-                                <!-- field name="submission_id_state"/>
-                                <field name="submission_id_url"/>
-                                <field name="submission_id_fa_dr_type"/>
-                                <field name="submission_id_datetime"/ -->
                             </group>
                         </page>
 
-                        <page string="Follow Ups">
+                        <page string="Follow Ups" attrs="{'invisible':[('report_follow_up_ids','=',False)]}">
                             <group>
                                 <field name="report_follow_up_ids"/>
                             </group>
                         </page>
 
-                        <page string="Skipped">
+                        <page string="Skipped" attrs="{'invisible':[('skipped','=',False)]}">
                             <group>
                                 <field name="skipped"/>
+                            </group>
+                        </page>
+
+                        <page string="Cancelled by" attrs="{'invisible':[('cancelled_by_ids','=',False)]}">
+                            <group>
+                                <field name="cancelled_by_ids"/>
                             </group>
                         </page>
 

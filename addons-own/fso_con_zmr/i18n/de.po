@@ -2324,8 +2324,8 @@ msgstr "_get_bpk() funktioniert nicht für multible Datensätze!!"
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_partner_donation_report.py:310
 #, python-format
-msgid "_last_submitted_report() works only for one record at a time!"
-msgstr "_last_submitted_report() funktioniert nicht für multible Datensätze!!"
+msgid "last_submitted_report() works only for one record at a time!"
+msgstr "last_submitted_report() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_partner.py:231
