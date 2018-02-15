@@ -3,7 +3,7 @@ import openerp
 from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
-from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, SUPERUSER_ID
 from openerp.addons.fso_base.tools.datetime import naive_to_timezone
 
 import time
@@ -712,6 +712,37 @@ class ResPartnerFADonationReport(models.Model):
                    for f_name in subm_vals):
                 r.write(subm_vals)
             continue
+
+    @api.multi
+    def manual_force_skipp(self):
+        assert self.ensure_one(), _("manual_force_skipp() works only for one record at a time!")
+        assert self.env.user.id == SUPERUSER_ID, _("manual_force_skipp() must be run by user admin!")
+
+        if self:
+            assert self.state in self._changes_allowed_states(), _("Force skipp not allowed in state %s") % self.state
+            self.write({
+                'state': 'skipped',
+                'info':  '!!! Manually force skipped !!!\n' + (self.info or ''),
+                'submission_id': False,
+                'submission_type': False,
+                'submission_refnr': False,
+                'report_erstmeldung_id': False,
+                'skipped_by_id': False,
+                'cancelled_lsr_id': False,
+                #
+                'submission_firstname': False,
+                'submission_lastname': False,
+                'submission_birthdate_web': False,
+                'submission_zip': False,
+                #
+                'submission_bpk_request_id': False,
+                'submission_bpk_public': False,
+                'submission_bpk_private': False,
+                #
+                'error_type': False,
+                'error_code': False,
+                'error_detail': False,
+            })
 
     # ------------
     # CRUD METHODS
