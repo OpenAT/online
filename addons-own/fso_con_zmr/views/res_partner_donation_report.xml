@@ -19,7 +19,7 @@
 
                     <group>
                         <group>
-                            <field name="submission_env"/>
+                            <field name="submission_env" class="oe_bold"/>
                             <field name="partner_id"/>
                             <field name="bpk_company_id"/>
                             <field name="meldungs_jahr"/>
@@ -27,7 +27,7 @@
                             <field name="cancellation_for_bpk_private"/>
                         </group>
                         <group>
-                            <field name="anlage_am_um"/>
+                            <field name="anlage_am_um" class="oe_bold"/>
                             <field name="ze_datum_von"/>
                             <field name="ze_datum_bis"/>
                             <field name="report_erstmeldung_id"/>
@@ -54,10 +54,10 @@
                     </group>
 
                     <notebook>
-                        <page string="Submission Data">
-                            <group>
-                                <field name="submission_type"/>
-                                <field name="submission_refnr"/>
+                        <page string="Submission">
+                            <group string="Submission Data">
+                                <field name="submission_type" class="oe_bold"/>
+                                <field name="submission_refnr" class="oe_bold"/>
                                 <field name="submission_bpk_request_id"/>
                                 <field name="submission_bpk_public" invisible="1"/>
                                 <field name="submission_bpk_private"/>
@@ -66,28 +66,25 @@
                                 <field name="submission_birthdate_web"/>
                                 <field name="submission_zip"/>
                             </group>
-                        </page>
-
-                        <page string="Submission">
-                            <group>
+                            <group string="Donation Report Submission">
                                 <field name="submission_id"/>
                                 <field name="submission_id_datetime"/>
                             </group>
                         </page>
 
-                        <page string="Follow Ups" attrs="{'invisible':[('report_follow_up_ids','=',False)]}">
+                        <page string="Follow Ups">
                             <group>
                                 <field name="report_follow_up_ids"/>
                             </group>
                         </page>
 
-                        <page string="Skipped" attrs="{'invisible':[('skipped','=',False)]}">
-                            <group>
+                        <page string="Skipped">
+                            <group string="Skipped those reports">
                                 <field name="skipped"/>
                             </group>
                         </page>
 
-                        <page string="Cancelled by" attrs="{'invisible':[('cancelled_by_ids','=',False)]}">
+                        <page string="Cancelled by">
                             <group>
                                 <field name="cancelled_by_ids"/>
                             </group>
@@ -130,6 +127,7 @@
                 <field name="meldungs_jahr"/>
                 <field name="betrag"/>
                 <field name="submission_type"/>
+                <field name="submission_id" string="Sub."/>
                 <field name="state"/>
             </tree>
         </field>
@@ -147,6 +145,7 @@
                 <field name="state"/>
                 <field name="meldungs_jahr"/>
                 <field name="submission_type"/>
+                <field name="submission_id"/>
                 <field name="betrag"/>
                 <field name="anlage_am_um"/>
                 <field name="error_type"/>
@@ -158,12 +157,18 @@
                             context="{'group_by':'meldungs_jahr'}"/>
                     <filter string="State"
                             context="{'group_by':'state'}"/>
+                    <filter string="Meldungs-Typ"
+                            context="{'group_by':'submission_type'}"/>
+                    <filter string="Uebertragung"
+                            context="{'group_by':'submission_id'}"/>
+                </group>
+                <group string="Group by">
                     <filter string="Error Type"
                             context="{'group_by':'error_type'}"/>
                     <filter string="Error Code"
                             context="{'group_by':'error_code'}"/>
-                    <filter string="Meldungs Typ"
-                            context="{'group_by':'submission_type'}"/>
+                </group>
+                <group string="Group by">
                     <filter string="Company"
                             context="{'group_by':'bpk_company_id'}"/>
                     <filter name="Partner"

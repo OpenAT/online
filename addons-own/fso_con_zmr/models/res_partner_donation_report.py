@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Austrian Finanzamt Donation Reports (Spendenberichte pro Person fuer ein Jarh)
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report'
+    _rec_name = 'id'
 
     # ATTENTION: Make sure the same order is used in the compute_submission_values() for the XML generation! This
     #            is important because the inverse order is used in the donation report state computation when we search
@@ -381,7 +382,7 @@ class ResPartnerFADonationReport(models.Model):
         return refnr
 
     @api.multi
-    def compute_type_refnr_erstmid(self, submission_bpk_private=False):
+    def compute_type_refnr_and_links(self, submission_bpk_private=False):
         """
         Returns a dictionary with
             - submission_type,
@@ -391,7 +392,7 @@ class ResPartnerFADonationReport(models.Model):
 
         :return: dict()
         """
-        assert self.ensure_one(), _("compute_type_refnr_erstmid() works only for one record at a time!")
+        assert self.ensure_one(), _("compute_type_refnr_and_links() works only for one record at a time!")
         r = self
 
         # Stornierungsmeldung S
@@ -435,12 +436,12 @@ class ResPartnerFADonationReport(models.Model):
 
         # For non cancellation donation reports cancellation_for_bpk_private must be empty
         if r.cancellation_for_bpk_private:
-            raise ValidationError(_("compute_type_refnr_erstmid() cancellation_for_bpk_private is set but "
+            raise ValidationError(_("compute_type_refnr_and_links() cancellation_for_bpk_private is set but "
                                     "betrag is not 0!"))
 
         # For the computation of an Erstmeldung or Aenderungsmeldung the submission_bpk_private must be known!
         if not submission_bpk_private:
-            raise ValidationError(_("compute_type_refnr_erstmid() submission_bpk_private is not given!"))
+            raise ValidationError(_("compute_type_refnr_and_links() submission_bpk_private is not given!"))
 
         # Aenderungsmeldung A
         # -------------------
@@ -662,11 +663,13 @@ class ResPartnerFADonationReport(models.Model):
                 'submission_zip': False if r.cancellation_for_bpk_private else bpk.bpk_request_zip,
             }
             try:
-                # Compute submission_type, submission_refnr and report_erstmeldung_id
-                type_refnr_erstmid = r.compute_type_refnr_erstmid(
+                # Compute: 'submission_type', 'submission_refnr', 'report_erstmeldung_id' and 'cancelled_lsr_id'
+                type_refnr_erstmid = r.compute_type_refnr_and_links(
                     submission_bpk_private=subm_vals['submission_bpk_private'])
+
                 # Add these fields to the subm_vals
                 subm_vals.update(type_refnr_erstmid)
+
             except Exception as e:
                 update_report(r, state='error', error_type='data_incomplete', error_code='exception',
                               error_detail=repr(e))
@@ -704,7 +707,9 @@ class ResPartnerFADonationReport(models.Model):
                               'error_code': False,
                               'error_detail': False})
             # Update the report if anything changed
-            if any(r[f_name] != subm_vals[f_name] for f_name in subm_vals):
+            # HINT: hasattr(r[f_name], 'id') is to check correctly many2one fields
+            if any(r[f_name].id != subm_vals[f_name] if hasattr(r[f_name], 'id') else r[f_name] != subm_vals[f_name]
+                   for f_name in subm_vals):
                 r.write(subm_vals)
             continue
 

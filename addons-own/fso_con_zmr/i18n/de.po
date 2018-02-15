@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-05 10:09+0000\n"
-"PO-Revision-Date: 2018-02-05 10:09+0000\n"
+"POT-Creation-Date: 2018-02-15 11:26+0000\n"
+"PO-Revision-Date: 2018-02-15 11:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:712
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:698
 #, python-format
 msgid "\n"
 "Empty Response!"
@@ -48,7 +48,7 @@ msgid "%s (ID %s): No BPK-Request response(s)!"
 msgstr "%s (ID %s): Keine Antwort(en) für die BPK-Abfrage(en)!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:445
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:431
 #, python-format
 msgid "(Re)Submission to FinanzOnline is not allowed in state %s"
 msgstr "Übermittlung an FinanzOnline ist im Status %s nicht erlaubt."
@@ -492,7 +492,7 @@ msgid "Birthdate Web"
 msgstr "Geburtsdatum Web"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:350
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:375
 #, python-format
 msgid "Can not compute submission_refnr because fields are missing!\n"
 "meldungs_jahr: %s,\n"
@@ -516,6 +516,21 @@ msgid "Cancellation for Private BPK"
 msgstr "Stornierungsspendenmeldung für private BPK"
 
 #. module: fso_con_zmr
+#: field:res.partner.donation_report,cancelled_lsr_id:0
+msgid "Cancelled Last Submitted Report"
+msgstr "Stornierung für"
+
+#. module: fso_con_zmr
+#: view:res.partner.donation_report:fso_con_zmr.res_partner_donation_report_form
+msgid "Cancelled by"
+msgstr "Storniert von"
+
+#. module: fso_con_zmr
+#: field:res.partner.donation_report,cancelled_by_ids:0
+msgid "Cancelled by Report(s)"
+msgstr "Storniert durch"
+
+#. module: fso_con_zmr
 #: field:res.company,pvpToken_crt_pem:0
 msgid "Certificate (PEM)"
 msgstr "Zertifikat (PEM)"
@@ -531,7 +546,7 @@ msgid "Certificate Path"
 msgstr "Zertifikatspfad"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:661
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:750
 #, python-format
 msgid "Changes to some of the fields in %s are only allowed in the states %s!"
 msgstr "Änderungen an einigen der Felder in %s sind nur in den Status %s erlaubt!"
@@ -562,19 +577,19 @@ msgid "Compute BPK State"
 msgstr "Berechne BPK Status"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:785
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:771
 #, python-format
 msgid "Could not decode content of file %s!"
 msgstr "Dekodierung der Datei %s nicht möglich!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:716
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:702
 #, python-format
 msgid "Could not parse the response of the FinanzOnline DataBox list files request!"
 msgstr "Die Antwort der FinanzOnline DataBox Dateilistenabfrage konnte nicht verarbeitet werden!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:905
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:891
 #, python-format
 msgid "Could not process SonderausgabenError: RefNr %s, Code %s, Text %s"
 msgstr "Sonderausgaben-Fehler konnte nicht verarbeitet werden: RefNr %s, Code %s, Text %s"
@@ -620,7 +635,7 @@ msgid "Date of the last message posted on the record."
 msgstr "Datum und Uhrzeit der letzten Chatter-Nachricht"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:686
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:775
 #, python-format
 msgid "Deletion only allowed for test donation reports in the states %s"
 msgstr "Es können nur Spendenmeldungen für die Test Umgebung gelöscht werden in den Status %s"
@@ -684,6 +699,7 @@ msgid "Donation Report"
 msgstr "Spendenmeldung"
 
 #. module: fso_con_zmr
+#: view:res.partner.donation_report:fso_con_zmr.res_partner_donation_report_form
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_form
 msgid "Donation Report Submission"
 msgstr "Spendenmeldungs-Übertragung"
@@ -699,7 +715,7 @@ msgid "Donation Report Submissions"
 msgstr "Spendenm. Übertragung"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:89
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:112
 #: help:res.partner.donation_report,anlage_am_um:0
 #, python-format
 msgid "Donation Report generation date and time. This is used for the order of the submission_type computation! Must include all donations available at this date and time that fall inside ze_datum_von and ze_datum_bis"
@@ -719,15 +735,15 @@ msgid "Donation Reports"
 msgstr "Spendenmeldungen"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:106
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:130
 #: help:res.partner.donation_report,betrag:0
 #, python-format
 msgid "Donation deduction total (Betrag)"
 msgstr "Betrag"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:101
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:101
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:125
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:102
 #: help:res.partner.donation_report,meldungs_jahr:0
 #: help:res.partner.donation_report.submission,meldungs_jahr:0
 #, python-format
@@ -735,7 +751,7 @@ msgid "Donation deduction year (Meldejahr)"
 msgstr "Meldejahr"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:525
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:511
 #, python-format
 msgid "Donation report submission (ID %s) exception!\n"
 "%s"
@@ -748,7 +764,7 @@ msgid "Donation report submission fully rejected"
 msgstr "Spendenmeldungs-Übertragung vollständig abgelehnt"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:195
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:196
 #, python-format
 msgid "Donation report submissions can not be deleted in state %s !"
 msgstr "Spendenmeldungs-Übertragung kann nicht in den Status %s gelöscht werden!"
@@ -759,7 +775,12 @@ msgid "Donation reports partially rejected"
 msgstr "Spendenmeldungen teilweise abgelehnt"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:769
+#: selection:res.partner.donation_report,error_type:0
+msgid "Donations are already submitted"
+msgstr "Donations are already submitted"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:755
 #, python-format
 msgid "Download of file %s from FinanzOnline Databox failed!"
 msgstr "Download der Protokolldatei %s von der FinanzOnline Databox fehlgeschlagen!"
@@ -778,7 +799,7 @@ msgstr "Eine am %s durchgeführte BPK Abfrage (ID %s) wurde fuer diese Personend
 "%s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:830
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:816
 #, python-format
 msgid "Empty content after xml parsing of the DataBox response file!"
 msgstr "Kein Inhalt gefunden bei der Verarbeiten der DataBox Protokolldatei!"
@@ -826,7 +847,7 @@ msgid "Error Type"
 msgstr "Fehler Typ"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:874
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:860
 #, python-format
 msgid "Error code not found! (ErrorText: %s)"
 msgstr "Fehler Code nicht gefunden! (Fehler-Text: %s)"
@@ -847,7 +868,7 @@ msgid "Exception during response processing"
 msgstr "Exception während der Verarbeitung der Antwort"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:876
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:862
 #, python-format
 msgid "Exception while parsing <Code> and <Text> in answer from DataBox!\n"
 "%s"
@@ -955,7 +976,7 @@ msgid "FinanzOnline Logout Returncode"
 msgstr "FinanzOnline Logout Returncode"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:282
+#: code:addons/fso_con_zmr/models/res_company.py:295
 #, python-format
 msgid "FinanzOnline login error!\n"
 "%s"
@@ -963,7 +984,7 @@ msgstr "FinanzOnline Login Fehler!\n"
 "%s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:314
+#: code:addons/fso_con_zmr/models/res_company.py:327
 #, python-format
 msgid "FinanzOnline login error! Bad returncode:\n"
 "%s"
@@ -971,7 +992,7 @@ msgstr "FinanzOnline Login Fehler! Fehlerhafter Returncode:\n"
 "%s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:304
+#: code:addons/fso_con_zmr/models/res_company.py:317
 #, python-format
 msgid "FinanzOnline login error! Could not find Session ID in:\n"
 "%s"
@@ -979,13 +1000,13 @@ msgstr "FinanzOnline Login Fehler! Session ID konnte nicht gefunden werden in:\n
 "%s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:310
+#: code:addons/fso_con_zmr/models/res_company.py:323
 #, python-format
 msgid "FinanzOnline login was successful!"
 msgstr "FinanzOnline Login erfolgreich!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:215
+#: code:addons/fso_con_zmr/models/res_company.py:228
 #, python-format
 msgid "FinanzOnline logout error!\n"
 "%s"
@@ -993,14 +1014,14 @@ msgstr "FinanzOnline Logout Fehler!\n"
 "%s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:212
+#: code:addons/fso_con_zmr/models/res_company.py:225
 #, python-format
 msgid "FinanzOnline logout was successful!"
 msgstr "FinanzOnline Logout erfolgreich!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:174
-#: code:addons/fso_con_zmr/models/res_company.py:259
+#: code:addons/fso_con_zmr/models/res_company.py:177
+#: code:addons/fso_con_zmr/models/res_company.py:261
 #, python-format
 msgid "FinanzOnline webservice user information is missing! (%s)\n"
 "Check company settings for %s (id: %s)"
@@ -1052,8 +1073,8 @@ msgid "Firstname"
 msgstr "Vorname"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:180
-#: code:addons/fso_con_zmr/models/res_company.py:244
+#: code:addons/fso_con_zmr/models/res_company.py:185
+#: code:addons/fso_con_zmr/models/res_company.py:268
 #: code:addons/fso_con_zmr/models/res_partner.py:216
 #, python-format
 msgid "Folder soaprequest_templates not found at %s"
@@ -1097,7 +1118,7 @@ msgid "Force BPK-Request"
 msgstr "Erzwinge BPK-Anfrage"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:97
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:98
 #: help:res.partner.donation_report.submission,submission_timestamp:0
 #, python-format
 msgid "Format: datetime with timezone e.g.: 2012-12-13T12:12:12"
@@ -1119,7 +1140,7 @@ msgstr "Gefunden mit vorherigen Daten"
 #. module: fso_con_zmr
 #: field:res.partner.donation_report,anlage_am_um:0
 msgid "Generated at"
-msgstr "Generiert am"
+msgstr "Spendenmeldung generiert am"
 
 #. module: fso_con_zmr
 #: field:res.company,bpk_request_url:0
@@ -1198,7 +1219,7 @@ msgid "If checked new messages require your attention."
 msgstr "Wenn neue markierte Nachrichten ihre Aufmerksamkeit benötigen."
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:96
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:120
 #: help:res.partner.donation_report,ze_datum_bis:0
 #, python-format
 msgid "Includes all donations up to this date-time which are available at the time the report is generated (anlage_am_um)."
@@ -1215,6 +1236,7 @@ msgid "Includes donations to"
 msgstr "Berücksichtige Speden bis"
 
 #. module: fso_con_zmr
+#: view:res.partner.donation_report:fso_con_zmr.res_partner_donation_report_form
 #: field:res.partner.donation_report,info:0
 msgid "Info"
 msgstr "Info"
@@ -1236,7 +1258,7 @@ msgid "Is a Follower"
 msgstr "Ist ein Follower"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:650
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:636
 #, python-format
 msgid "It is not possible to check FinanzOnline Databox response in state %s"
 msgstr "Es ist nicht möglich im Status %s die FinanzOnline Antwort in der Databox zu prüfen!"
@@ -1304,16 +1326,33 @@ msgid "Last submission request"
 msgstr "Letzter Übertragungsversuch am"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:386
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:423
+#, python-format
+msgid "Last submitted report (ID %s) has a different RefNr %s than it's linked'Erstmelung' (ID %s) Refnr %s!"
+msgstr "Last submitted report (ID %s) has a different RefNr %s than it's linked'Erstmelung' (ID %s) Refnr %s!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:420
 #, python-format
 msgid "Last submitted report (ID %s) has no RefNr!"
 msgstr "Letzte übermittelte Spendenmeldung (ID %s) hat keine RefNr!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:388
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:417
 #, python-format
 msgid "Last submitted report (ID %s) has no linked 'Erstmelung'!"
 msgstr "Letzte übermittelte Spendenmeldung (ID %s) hat keine verlinkte 'Erstmelung'!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:413
+#, python-format
+msgid "Last submitted report (ID %s) is already a cancellation donation report!There should to be no reason to cancel it again (ID %s)!"
+msgstr "Last submitted report (ID %s) is already a cancellation donation report!There should to be no reason to cancel it again (ID %s)!"
+
+#. module: fso_con_zmr
+#: selection:res.partner.donation_report,error_type:0
+msgid "Last submitted report exception"
+msgstr "Last submitted report exception"
 
 #. module: fso_con_zmr
 #: view:res.partner.bpk:fso_con_zmr.res_partner_bpk_form
@@ -1326,7 +1365,7 @@ msgid "Lastname"
 msgstr "Nachname"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:697
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:683
 #, python-format
 msgid "List files request to FinanzOnline DataBox failed!"
 msgstr "Dateilistenabfrage der FinanzOnline DataBox ist fehlgeschlagen!"
@@ -1342,8 +1381,8 @@ msgid "Login"
 msgstr "Login"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:483
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:665
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:469
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:651
 #, python-format
 msgid "Login to FinanzOnline failed!"
 msgstr "FinanzOnline Login fehlgeschlagen!"
@@ -1397,7 +1436,7 @@ msgid "Mixed BPK Errors!"
 msgstr "Gemischte BPK Fehler!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:289
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:295
 #, python-format
 msgid "More than one BPK Request found for partner %s %s and company %s %s: %s"
 msgstr "Mehr als eine BPK-Abfrage gefunden für die Person (%s %s) und die Firma (%s %s): %s"
@@ -1415,10 +1454,10 @@ msgid "More than one GetBPKReturn xml node found!"
 msgstr "Mehr als ein GetBPKReturn XML Knoten gefunden!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:417
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:459
 #, python-format
-msgid "Multiple Erstmeldungen found for donation report (ID %s)"
-msgstr "Multible Erstmeldungen gefunden für die Spendenmeldung (ID %s)"
+msgid "Multiple 'Erstmeldungen' found for donation report (ID %s)"
+msgstr "Multiple 'Erstmeldungen' found for donation report (ID %s)"
 
 #. module: fso_con_zmr
 #: view:res.partner:fso_con_zmr.res_partner_bpk_res_partner_search
@@ -1450,7 +1489,7 @@ msgid "New"
 msgstr "Neu"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:753
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:739
 #, python-format
 msgid "No 'applkey' found for file %s!\n"
 "\n"
@@ -1501,13 +1540,13 @@ msgid "No responses from request_bpk()!"
 msgstr "Keine Antwort von der Methode request_bpk()!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:380
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:409
 #, python-format
-msgid "No submitted donation reports found for this cancellation donation report  (ID %s)!"
-msgstr "Keine übermittelte Spendenmeldung gefunden für diese Stornierungsspendenmeldung (ID %s)!"
+msgid "No successfully submitted donation reports (in state response_ok) found for  this cancellation donation report (ID %s)!"
+msgstr "No successfully submitted donation reports (in state response_ok) found for  this cancellation donation report (ID %s)!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:912
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:898
 #, python-format
 msgid "None or multiple donation reports found (IDs %s) for SonderausgabenError: RefNr %s, Code %s, Text %s"
 msgstr "Keine oder mehrere Spendenmeldung(en) (IDs %s) gefunden für die Zuordnung des Sonderausgaben-Fehler: RefNr %s, Code %s, Text %s"
@@ -1543,7 +1582,7 @@ msgid "Parser Error"
 msgstr "Verarbeitungs-Fehler"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:825
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:811
 #, python-format
 msgid "Parsing of the answer file from FinanzOnline Databox failed!"
 msgstr "Die Verarbeitung der Protokolldatei aus der FinanzOnline Databox ist fehlgeschlagen!"
@@ -1617,12 +1656,6 @@ msgid "Private BPK"
 msgstr "Private BPK"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:383
-#, python-format
-msgid "Private BPK of last submitted report is not equal to cancellation_for_bpk_private!"
-msgstr "Die private BPK-Nummer der zuletzt übermittelten Spendenmeldung stimmt nicht mit 'cancellation_for_bpk_private' überein!"
-
-#. module: fso_con_zmr
 #: field:res.company,pvpToken_prvkey_pem:0
 msgid "Private Key (PEM)"
 msgstr "Privater Schlüssel (PEM)"
@@ -1660,13 +1693,13 @@ msgid "Released from rejected Submission (NOK)"
 msgstr "Spendenmeldungen von abgelehnter Übertragung lösen!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:213
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:237
 #, python-format
 msgid "Report range seems to be outside of the report year %s! Please check ze_datum_von and ze_datum_bis."
 msgstr "Der Spendenmeldungszeitraum scheint vom Meldejahr abzuweichen %s! Bitte überprüfen Sie die Felder ze_datum_von und ze_datum_bis."
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:553
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:636
 #, python-format
 msgid "Reports found with the same private BPK but a different Partner:\n"
 "%s"
@@ -1794,7 +1827,7 @@ msgid "SO Karitative Einrichtungen (gem § 4a Abs 2 Z3 lit a bis c EStG)"
 msgstr "SO Karitative Einrichtungen (gem § 4a Abs 2 Z3 lit a bis c EStG)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:193
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:217
 #, python-format
 msgid "Same anlage_am_um datetime found: ID %s"
 msgstr "Spendenmeldung mit selben anlage_am_um Zeitstempel gefunden: ID %s"
@@ -1842,6 +1875,11 @@ msgid "Skipped the Reports"
 msgstr "Spendenmeldungen übersprungen"
 
 #. module: fso_con_zmr
+#: view:res.partner.donation_report:fso_con_zmr.res_partner_donation_report_form
+msgid "Skipped those reports"
+msgstr "Folgende Spendenmeldungen wurde durch diese übersprungen"
+
+#. module: fso_con_zmr
 #: selection:res.partner.donation_report.submission,submission_fa_art:0
 msgid "Sonderausgaben (UEB_SA)"
 msgstr "Sonderausgaben (UEB_SA)"
@@ -1881,9 +1919,20 @@ msgid "State missing"
 msgstr "Status fehlt"
 
 #. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:463
+#, python-format
+msgid "State of 'Erstmeldung' (ID %s) is %s but should be 'response_ok'. for donationreport with id %s! Maybe the 'Erstmeldung' was not skipped correctly?"
+msgstr "State of 'Erstmeldung' (ID %s) is %s but should be 'response_ok'. for donationreport with id %s! Maybe the 'Erstmeldung' was not skipped correctly?"
+
+#. module: fso_con_zmr
 #: selection:res.partner.donation_report,submission_type:0
 msgid "Stornouebermittlung"
 msgstr "Stornouebermittlung"
+
+#. module: fso_con_zmr
+#: view:res.partner.donation_report:fso_con_zmr.res_partner_donation_report_tree
+msgid "Sub."
+msgstr "Ü-ID"
 
 #. module: fso_con_zmr
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_form
@@ -1934,7 +1983,7 @@ msgstr "Übertragungs Daten"
 #. module: fso_con_zmr
 #: field:res.partner.donation_report,submission_id_datetime:0
 msgid "Submission Datetime"
-msgstr "Übertragung am"
+msgstr "Übertragen am"
 
 #. module: fso_con_zmr
 #: selection:res.partner.donation_report.submission,error_type:0
@@ -1967,7 +2016,7 @@ msgid "Submit to FinanzOnline!"
 msgstr "Verbindlich einmelden (Übertragung nach FinanzOnline)!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:329
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:356
 #, python-format
 msgid "Submitted donation report (ID %s) is in state %s but should be in state 'response_ok'."
 msgstr "Die eingemeldete Spendenmeldung (ID %s) hat den Status %s: Der Status müsste jedoch 'Akzeptiert' ('response_ok') sein um den Typ dieser Spendenmeldung zu berechnen."
@@ -2006,13 +2055,13 @@ msgid "Teilnehmer Identifikation (tid)"
 msgstr "Teilnehmer Identifikation (tid)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:685
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:671
 #, python-format
 msgid "Template fo_databox_getdatabox.xml not found at %s"
 msgstr "Datei fo_databox_getdatabox.xml nicht gefunden: %s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:760
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:746
 #, python-format
 msgid "Template fo_databox_getdataboxentry.xml not found at %s"
 msgstr "Datei fo_databox_getdataboxentry.xml nicht gefunden: %s"
@@ -2029,46 +2078,46 @@ msgid "Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR"
 msgstr "Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:134
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:135
 #: help:res.partner.donation_report.submission,submission_datetime:0
 #, python-format
 msgid "The Date and Time of the last submission request."
 msgstr "Datum und Zeit des letzten Übertragungsversuches."
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:120
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:121
 #: help:res.partner.donation_report.submission,submission_url:0
 #, python-format
 msgid "The FinanzOnline File Upload Webservice URL (static)"
 msgstr "Die FinanzOnline Datei-Upload-Webservice URL (static)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:404
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:390
 #, python-format
 msgid "The Uebermittlungsbereich (art) must be 'UEB_SA' for Sonderausgaben!"
 msgstr "Der Übermittlungsbereich (art) muss 'UEB_SA' sein für Sonderausgaben!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:657
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:643
 #, python-format
 msgid "The answer protocol for submission with ID %s can only be downloaded from the FinanzOnline Databox for 31 days via an webservice request!"
 msgstr "Die Antwort-Protokolldatei (ID %s) kann von der FinanzOnline Databox nur für 31 Tage nach ihrer Erstellung mittels Webservice heruntergeladen werden!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:421
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:471
 #, python-format
-msgid "The computed Test-RefNr (%s) and the RefNr (%s) of the Erstmeldung do not match! Maybe company settings have changed?"
-msgstr "Die aktuell berechnete RefNr (%s) und die RefNr (%s) der Erstmeldung stimmen nicht überein! Eventuell haben sich die Firmeneinstellungen geändert?"
+msgid "The computed Test-RefNr (%s) and the RefNr (%s) of the 'Erstmeldung' do not match! Maybe company settings have changed?"
+msgstr "The computed Test-RefNr (%s) and the RefNr (%s) of the 'Erstmeldung' do not match! Maybe company settings have changed?"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:122
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:123
 #: help:res.partner.donation_report.submission,submission_content:0
 #, python-format
 msgid "The rendered template (which is the 'body' of the submission request!)"
 msgstr "Die Berechnete Vorlage (welche der 'body' (content) der Spendenmeldungs-Übertragung ist!)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:112
+#: code:addons/fso_con_zmr/models/res_company.py:115
 #: help:res.company,fa_dr_type:0
 #, python-format
 msgid "This Field is mandatory for donation report submissions!"
@@ -2090,13 +2139,13 @@ msgid "Total"
 msgstr "Betrag"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:201
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:225
 #, python-format
 msgid "Total can not be negative!"
 msgstr "Der Betrag darf nicht negativ sein!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:295
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:301
 #, python-format
 msgid "Try to correct the BPK Requests for partner %s (ID %s)"
 msgstr "Versuche die BPK-Abfragen für den Partner %s (ID %s) zu korrigieren"
@@ -2130,7 +2179,7 @@ msgid "Umsatzsteuer-Identifikations-Nummer (UID-Nummer) des Softwareherstellers.
 msgstr "Umsatzsteuer-Identifikations-Nummer (UID-Nummer) des Softwareherstellers."
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:845
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:831
 #, python-format
 msgid "Unexpected <Info> content: %s"
 msgstr "Unerwarteter <Info> Content: %s"
@@ -2142,7 +2191,7 @@ msgid "Unexpected Response"
 msgstr "Unerwartete Antwort"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:736
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:722
 #, python-format
 msgid "Unexpected return code in the answer from DataBox file list request!\n"
 "\n"
@@ -2228,25 +2277,25 @@ msgid "Year"
 msgstr "Jahr"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:197
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:221
 #, python-format
 msgid "Year must be inside %s - %s"
 msgstr "Jahr muss innerhalb von %s - %s sein"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:652
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:741
 #, python-format
 msgid "You can not change the environment once the donation report got created!"
 msgstr "Die Umgebung kann nach der Anlage der Spendenmeldung nicht geändert werden!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:400
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:386
 #, python-format
 msgid "You can not prepare or update a submission in state %s!"
 msgstr "Sie können keine Übertragung im Status %s (erneut) vorbereiten!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:967
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:953
 #, python-format
 msgid "You can not release donation reports for a submission in state %s or without 'ERR-F-...' in response_error_code!"
 msgstr "Sie können keine Spendenmeldungen freigeben für eine Spendenmeldungs-Übertragung im Status %s oder ohne 'ERR-F-...' im Feld response_error_code!"
@@ -2298,34 +2347,28 @@ msgid "Zugehoerige Erstmeldung"
 msgstr "Zugehörige Erstmeldung"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:356
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:381
 #, python-format
 msgid "_compute_refnr() RefNr %s must have 23 or less charachters!"
 msgstr "_compute_refnr() RefNr %s muss 23 oder weniger Zeichen enthalten!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:346
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:371
 #, python-format
 msgid "_compute_refnr() bpk_md5 hash must have 7 or less characters"
 msgstr "_compute_refnr() bpk_md5 muss 7 oder weniger Zeichen enthalten"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:342
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:367
 #, python-format
 msgid "_compute_refnr() works only for one record at a time!"
 msgstr "_compute_refnr() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:280
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:286
 #, python-format
 msgid "_get_bpk() works only for one record at a time!"
 msgstr "_get_bpk() funktioniert nicht für multible Datensätze!!"
-
-#. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:310
-#, python-format
-msgid "last_submitted_report() works only for one record at a time!"
-msgstr "last_submitted_report() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_partner.py:231
@@ -2346,7 +2389,7 @@ msgid "all_mandatory_bpk_fields_are_set() is only allowed for one partner at onc
 msgstr "all_mandatory_bpk_fields_are_set() funktioniert nicht für multible Datensätze!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:377
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:402
 #, python-format
 msgid "cancellation_for_bpk_private must be set for a cancellation donation report! (ID %s)!"
 msgstr "Das cancellation_for_bpk_private Feld muss für Stornierungsspendenmeldungen gesetzt sein! (ID %s)!"
@@ -2358,34 +2401,34 @@ msgid "check_bpk(): Invalid state: %s"
 msgstr "check_bpk(): Ungültiger Status: %s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:645
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:631
 #, python-format
 msgid "check_response() can only be called for a single record!"
 msgstr "check_response() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:222
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:223
 #, python-format
 msgid "compute_submission_values() can only be called for a single record!"
 msgstr "compute_submission_values() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:397
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:439
 #, python-format
-msgid "compute_type_refnr_erstmid() cancellation_for_bpk_private is set but betrag is not 0!"
-msgstr "compute_type_refnr_erstmid() Das Feld cancellation_for_bpk_private für Stornierungsspendenmeldungen ist gesetzt jedoch ist der Betrag nicht 0!"
+msgid "compute_type_refnr_and_links() cancellation_for_bpk_private is set but betrag is not 0!"
+msgstr "compute_type_refnr_and_links() cancellation_for_bpk_private is set but betrag is not 0!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:402
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:444
 #, python-format
-msgid "compute_type_refnr_erstmid() submission_bpk_private is not given!"
-msgstr "compute_type_refnr_erstmid() submission_bpk_private fehlt!"
+msgid "compute_type_refnr_and_links() submission_bpk_private is not given!"
+msgstr "compute_type_refnr_and_links() submission_bpk_private is not given!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:366
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:395
 #, python-format
-msgid "compute_type_refnr_erstmid() works only for one record at a time!"
-msgstr "compute_type_refnr_erstmid() funktioniert nicht für multible Datensätze!!"
+msgid "compute_type_refnr_and_links() works only for one record at a time!"
+msgstr "compute_type_refnr_and_links() works only for one record at a time!"
 
 #. module: fso_con_zmr
 #: help:res.company,pvpToken_crt_pem_filename:0
@@ -2393,7 +2436,7 @@ msgid "crt_pem"
 msgstr "crt_pem"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:305
+#: code:addons/fso_con_zmr/models/res_company.py:318
 #, python-format
 msgid "finanz_online_login() Returncode is ok but session id was not found in \n"
 "%s"
@@ -2401,31 +2444,31 @@ msgstr "finanz_online_login() Der Returncode ist in Ordnung aber die Session ID 
 "%s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:229
+#: code:addons/fso_con_zmr/models/res_company.py:242
 #, python-format
 msgid "finanz_online_login() can only be used for one company at a time!"
 msgstr "finanz_online_login() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:166
+#: code:addons/fso_con_zmr/models/res_company.py:169
 #, python-format
 msgid "finanz_online_logout() can only be used for one company at a time!"
 msgstr "finanz_online_logout() funktioniert nicht für multible Datensätze!!"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:297
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:283
 #, python-format
 msgid "fo_donation_report_j2template.xml not found at %s"
 msgstr "fo_donation_report_j2template.xml nicht gefunden: %s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:248
+#: code:addons/fso_con_zmr/models/res_company.py:272
 #, python-format
 msgid "fo_login_j2template.xml not found at %s"
 msgstr "fo_login_j2template.xml nicht gefunden: %s"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_company.py:184
+#: code:addons/fso_con_zmr/models/res_company.py:189
 #, python-format
 msgid "fo_logout_j2template.xml not found at %s"
 msgstr "fo_logout_j2template.xml nicht gefunden: %s"
@@ -2436,7 +2479,13 @@ msgid "last_bpk_request is set"
 msgstr "last_bpk_request ist gesetzt"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:325
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:333
+#, python-format
+msgid "last_submitted_report() works only for one record at a time!"
+msgstr "last_submitted_report() funktioniert nicht für multible Datensätze!!"
+
+#. module: fso_con_zmr
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:311
 #, python-format
 msgid "prepare(): Could not render the submission content (fo_donation_report_j2template.xml) for donation report submission %s with vals:\n"
 "%s"
@@ -2449,7 +2498,7 @@ msgid "prvkey_pem without password!"
 msgstr "prvkey_pem (ohne passphrase!)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:955
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:941
 #, python-format
 msgid "release_donation_reports() works only for single records!"
 msgstr "release_donation_reports() funktioniert nicht für multible Datensätze!!"
@@ -2509,31 +2558,31 @@ msgid "scheduled_set_bpk(): START: process a maximum of %s partner in %s minutes
 msgstr "scheduled_set_bpk(): START: process a maximum of %s partner in %s minutes"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:761
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:850
 #, python-format
 msgid "scheduled_set_donation_report_state(): END"
 msgstr "scheduled_set_donation_report_state(): END"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:706
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:795
 #, python-format
 msgid "scheduled_set_donation_report_state(): Found a total of %s donation reports to check in %.6f seconds"
 msgstr "scheduled_set_donation_report_state(): Found a total of %s donation reports to check in %.6f seconds"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:756
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:845
 #, python-format
 msgid "scheduled_set_donation_report_state(): PROCESSED A TOTAL OF %s DONATION REPORTS IN %.3f SECONDS (%.3fs/p)! %s DONATION REPORTS PENDING (approx %.2f minutes left)"
 msgstr "scheduled_set_donation_report_state(): PROCESSED A TOTAL OF %s DONATION REPORTS IN %.3f SECONDS (%.3fs/p)! %s DONATION REPORTS PENDING (approx %.2f minutes left)"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:696
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:785
 #, python-format
 msgid "scheduled_set_donation_report_state(): START"
 msgstr "scheduled_set_donation_report_state(): START"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:745
+#: code:addons/fso_con_zmr/models/res_partner_donation_report.py:834
 #, python-format
 msgid "scheduled_set_donation_report_state(): Set update_state_and_submission_information() done for %s donation reports in %.3f seconds (%.3fs/p)"
 msgstr "scheduled_set_donation_report_state(): Set update_state_and_submission_information() done for %s donation reports in %.3f seconds (%.3fs/p)"
@@ -2544,7 +2593,7 @@ msgid "submission_id.id is used as the MessageRefId !"
 msgstr "submission_id.id is used as the MessageRefId !"
 
 #. module: fso_con_zmr
-#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:337
+#: code:addons/fso_con_zmr/models/res_partner_donation_report_submission.py:323
 #, python-format
 msgid "update_submission() will only work for one record at at time!"
 msgstr "update_submission() funktioniert nicht für multible Datensätze!"

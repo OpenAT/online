@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report.submission'
     _inherit = ['mail.thread']
+    _rec_name = 'id'
     _order = 'submission_datetime DESC'
 
     now = fields.datetime.now
