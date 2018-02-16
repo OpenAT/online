@@ -56,11 +56,14 @@ class res_users(models.Model):
 class ResPartnerFSToken(models.Model):
     _name = 'res.partner.fstoken'
 
-    name = fields.Char(string='FS Partner Token', required=True)
+    name = fields.Char(string='FS Partner Token', required=True,
+                       index=True)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner',
-                                 required=True, ondelete='cascade')
+                                 required=True, ondelete='cascade',
+                                 index=True)
     expiration_date = fields.Date(string="Expiration Date", required=True,
-                                  default=fields.datetime.now() + timedelta(days=14))
+                                  default=fields.datetime.now() + timedelta(days=14),
+                                  index=True)
     fs_origin = fields.Char(string="FS Origin")
     last_date_of_use = fields.Date(string="DEPRICATED: Last Date of Use", readonly=True)
     last_datetime_of_use = fields.Datetime(string="Last Date and Time of Use", readonly=True)

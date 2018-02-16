@@ -48,7 +48,8 @@ class ResPartnerFADonationReport(models.Model):
                                         ('submitted', 'Submitted to FinanzOnline'),
                                         ('response_ok', 'Accepted by FinanzOnline'),
                                         ('response_nok', 'Rejected by FinanzOnline'),
-                                        ('unexpected_response', 'Unexpected Response')])
+                                        ('unexpected_response', 'Unexpected Response')],
+                             index=True)
 
     # Error before submission
     # -----------------------
@@ -62,6 +63,7 @@ class ResPartnerFADonationReport(models.Model):
                                              ('nok_released', 'Released from rejected Submission (NOK)'),
                                              ('zero_but_lsr', 'Donations are already submitted'),
                                              ('zero_lsr_exception', 'Last submitted report exception'),
+                                             ('company_data_changed', 'Company Data Changed'),
                                              ])
     error_code = fields.Char(string="Error Code", readonly=True)
     error_detail = fields.Text(string="Error Detail", readonly=True, track_visibility='onchange')
@@ -100,14 +102,16 @@ class ResPartnerFADonationReport(models.Model):
     # ATTENTION: This will determine the submission url!
     submission_env = fields.Selection(string="FinanzOnline Environment", selection=[('T', 'Test'), ('P', 'Production')],
                                       default="T", required=True, readonly=True, states={'new': [('readonly', False)]},
-                                      track_visibility='onchange',)
+                                      track_visibility='onchange',
+                                      index=True)
     partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True,
                                  track_visibility='onchange',
                                  readonly=True, states={'new': [('readonly', False)]},
                                  index=True)
     bpk_company_id = fields.Many2one(string="BPK Company", comodel_name='res.company',  required=True,
                                      track_visibility='onchange',
-                                     readonly=True, states={'new': [('readonly', False)]})
+                                     readonly=True, states={'new': [('readonly', False)]},
+                                     index=True)
     anlage_am_um = fields.Datetime(string="Generated at", required=True,
                                    help=_("Donation Report generation date and time. This is used for the order of the "
                                           "submission_type computation! Must include all donations available at this "
@@ -124,7 +128,8 @@ class ResPartnerFADonationReport(models.Model):
                                      track_visibility='onchange',
                                      help=_("Donation deduction year (Meldejahr)"),
                                      readonly=True, states={'new': [('readonly', False)]},
-                                     selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)])
+                                     selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)],
+                                     index=True)
     betrag = fields.Float(string="Total", required=True,
                           track_visibility='onchange',
                           help=_("Donation deduction total (Betrag)"),
@@ -136,7 +141,8 @@ class ResPartnerFADonationReport(models.Model):
     cancellation_for_bpk_private = fields.Char(string="Cancellation for Private BPK", readonly=True,
                                                track_visibility='onchange',
                                                help="Cancellation donation report for last submitted donation report "
-                                                    "with this private BPK number")
+                                                    "with this private BPK number",
+                                               index=True)
     # Optional field for extra information from FRST
     info = fields.Text(string="Info", readonly=True)
 
@@ -153,11 +159,13 @@ class ResPartnerFADonationReport(models.Model):
     submission_refnr = fields.Char(string="Reference Number (RefNr)", readonly=True, size=23,
                                    track_visibility='onchange',
                                    help="Die RefNr muss pro Uebermittler, Jahr und "
-                                        "Uebermittlungsart eindeutig sein. (z.B.: 2017KK222111000-2111000")
+                                        "Uebermittlungsart eindeutig sein. (z.B.: 2017KK222111000-2111000",
+                                   index=True)
     # HINT: If set the BPK forced field values are copied
     submission_bpk_request_id = fields.Char(string="BPK Request ID", readonly=True)
     submission_bpk_public = fields.Text(string="Public BPK (vbPK)", readonly=True, track_visibility='onchange')
-    submission_bpk_private = fields.Char(string="Private BPK", readonly=True, track_visibility='onchange')
+    submission_bpk_private = fields.Char(string="Private BPK", readonly=True, track_visibility='onchange',
+                                         index=True)
     submission_firstname = fields.Char(string="Firstname", readonly=True)
     submission_lastname = fields.Char(string="Lastname", readonly=True, track_visibility='onchange')
     submission_birthdate_web = fields.Date(string="Birthdate Web", readonly=True)
@@ -169,11 +177,13 @@ class ResPartnerFADonationReport(models.Model):
                                     help="submission_id.id is used as the MessageRefId !",
                                     comodel_name="res.partner.donation_report.submission",
                                     readonly=True, states={'new': [('readonly', False)]},
-                                    track_visibility='onchange')
+                                    track_visibility='onchange',
+                                    index=True)
     # HINT: This is the datetime of the (latest) submission (try) to FinanzOnline
     # HINT: Will be updated by the donation report submission when the status changes to
     #       submitted or any response status together with the state change
-    submission_id_datetime = fields.Datetime(string="Submission Datetime", readonly=True)
+    submission_id_datetime = fields.Datetime(string="Submission Datetime", readonly=True,
+                                             index=True)
 
     # Related Fields from the donation report submission (drs)
     # TODO: REMOVE related fields -> must change the last_submitted_report computation for this!

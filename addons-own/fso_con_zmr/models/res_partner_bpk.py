@@ -20,16 +20,18 @@ class ResPartnerBPK(models.Model):
     bpk_request_company_id = fields.Many2one(string="BPK Request Company",
                                              comodel_name='res.company', inverse_name="bpk_request_ids",
                                              required=True, readonly=True, oldname="BPKRequestCompanyID",
-                                             )
+                                             index=True)
 
     # res.partner
     bpk_request_partner_id = fields.Many2one(string="BPK Request Partner",
                                              comodel_name='res.partner', inverse_name="bpk_request_ids",
-                                             required=True, readonly=True, oldname="BPKRequestPartnerID")
+                                             required=True, readonly=True, oldname="BPKRequestPartnerID",
+                                             index=True)
 
     # ATTENTION: Related fields are pretty slow especially if no Full Vacuum is done to the db regularly
     #            Therefore this fields will also be updated by set_bpk_state()
-    partner_state = fields.Char(string="Partner BPK State", readonly=True)
+    partner_state = fields.Char(string="Partner BPK State", readonly=True,
+                                index=True)
 
     # To make sorting the BPK requests easier
     last_bpk_request = fields.Datetime(string="Last BPK Request", readonly=True)

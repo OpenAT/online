@@ -59,17 +59,24 @@ class SosyncJob(models.Model):
     # ======
 
     # SYNCJOB
-    job_id = fields.Integer(string="Job ID", readonly=True, index=True)
-    job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True)
+    job_id = fields.Integer(string="Job ID", readonly=True,
+                            index=True)
+    job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True,
+                               index=True)
 
     # SYNCJOB SOURCE
-    job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
-    job_source_model = fields.Char(string="Job Source Model", readonly=True)
-    job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
+    job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True,
+                                         index=True)
+    job_source_model = fields.Char(string="Job Source Model", readonly=True,
+                                   index=True)
+    job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True,
+                                          index=True)
     job_source_target_record_id = fields.Integer(string="Job Source Target Record ID", readonly=True,
                                                  help="Only filled if the target system id is already available in the "
-                                                      "job source system at job creation time!")   # NEW
-    job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True)
+                                                      "job source system at job creation time!",
+                                                 index=True)   # NEW
+    job_source_sosync_write_date = fields.Char(string="Job Source sosync_write_date", readonly=True,
+                                               index=True)
     job_source_fields = fields.Text(string="Job Source Fields", readonly=True)
 
     # Additional info for merge and delete sync jobs
@@ -79,7 +86,8 @@ class SosyncJob(models.Model):
                                                                             ("merge_into", "Merge Into")],
                                        help="Job type indicator for special sync jobs. "
                                             "If empty it is processed as a default sync job = 'create' or 'update'",
-                                       readonly=True, default=False)  # NEW
+                                       readonly=True, default=False,
+                                       index=True)  # NEW
     job_source_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Record ID", readonly=True)  # NEW
     job_source_target_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Target Record ID",
                                                             readonly=True)  # NEW
@@ -99,7 +107,8 @@ class SosyncJob(models.Model):
                                             ("done", "Done"),
                                             ("error", "Error"),
                                             ("skipped", "Skipped")],
-                                 string="State", default="new", readonly=True)
+                                 string="State", default="new", readonly=True,
+                                 index=True)
     job_error_code = fields.Selection(selection=[("timeout", "Job timed out"),
                                                  ("run_counter", "Run count exceeded"),
                                                  ("child_job", "Child job error"),
@@ -107,7 +116,8 @@ class SosyncJob(models.Model):
                                                  ("transformation", "Model transformation error"),
                                                  ("cleanup", "Job finalization error"),
                                                  ("unknown", "Unexpected error")],
-                                      string="Error Code", readonly=True)
+                                      string="Error Code", readonly=True,
+                                      index=True)
     job_error_text = fields.Text(string="Error", readonly=True)
     job_log = fields.Text(string="Job Log", readonly=True)
 
@@ -246,7 +256,8 @@ class SosyncJobQueue(models.Model):
     submission_state = fields.Selection(selection=[("new", "New"),
                                                    ("submitted", "Submitted"),
                                                    ("submission_error", "Submission Error")],
-                                        string="State", default="new", readonly=True)
+                                        string="State", default="new", readonly=True,
+                                        index=True)
     submission = fields.Datetime(string="Submission", readonly=True)
     submission_url = fields.Char(sting="Submission URL", readonly=True)
     submission_response_code = fields.Char(string="Response Code", help="HTTP Response Code", readonly=True)

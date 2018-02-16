@@ -332,17 +332,43 @@ class CompanyAustrianZMRSettings(models.Model):
             return False
 
     @api.multi
-    def update_donation_reports(self):
-        # Search if there are any donation reports to update
+    def set_donation_reports_to_error_state(self):
         for c in self:
             donation_reports = self.env['res.partner.donation_report']
-            donation_reports = donation_reports.sudo().search(
-                [('bpk_company_id', '=', c.id),
-                 ('state', 'in', donation_reports._changes_allowed_states())]
-            )
+
+            # Make sure all donation reports that could be submitted will be set to 'error' so they can only be
+            # submitted after a state recomputation.
+            donation_reports = donation_reports.sudo().search([('bpk_company_id', '=', c.id),
+                                                               '|',
+                                                                   ('state', '=', False),
+                                                                   ('state', '=', 'new')])
             if donation_reports:
-                # HINT: This will run update_state_and_submission_information()
-                donation_reports.write({})
+                logger.info("Set the state from new to error for %s donation reports because company data changed!"
+                            "" % len(donation_reports))
+                donation_reports.write({
+                    'state': 'error',
+                    'submission_id': False,
+                    'submission_type': False,
+                    'submission_refnr': False,
+                    'report_erstmeldung_id': False,
+                    'skipped_by_id': False,
+                    'cancelled_lsr_id': False,
+                    #
+                    'submission_firstname': False,
+                    'submission_lastname': False,
+                    'submission_birthdate_web': False,
+                    'submission_zip': False,
+                    #
+                    'submission_bpk_request_id': False,
+                    'submission_bpk_public': False,
+                    'submission_bpk_private': False,
+                    #
+                    'error_type': 'company_data_changed',
+                    'error_code': False,
+                    'error_detail': 'State recomputation is necessary because the company data changed! '
+                                    'Use the prepared scheduled action for this under planed actions.',
+                })
+                logger.info("Set the state to error for %s donation reports DONE!" % len(donation_reports))
 
     # ----
     # CRUD
@@ -371,6 +397,6 @@ class CompanyAustrianZMRSettings(models.Model):
         if res:
             fields_to_check = ['fa_herstellerid', 'fa_fastnr_fon_tn', 'fa_fastnr_org', 'fa_dr_type']
             if any(f in values for f in fields_to_check):
-                self.update_donation_reports()
+                self.set_donation_reports_to_error_state()
 
         return res
