@@ -46,6 +46,7 @@ class ResPartnerFADonationReport(models.Model):
                                   selection=[('data_incomplete', 'Data incomplete'),
                                              ('preparation_error', 'Preparation Error'),
                                              ('changes_after_prepare', 'Preparation data not up to date'),
+                                             ('donation_report_limit', 'Donation report limit exceeded'),
                                              # Submission Exception (Timeout or generic exception)
                                              ('submission_exception', 'Submission Exception'),
                                              # http_error
@@ -231,6 +232,7 @@ class ResPartnerFADonationReport(models.Model):
         # -------------------------------------
         # ATTENTION: It is very important to sort the donation reports by anlage_am_um descending so that cancellation
         #            donation reports are before regular reports in the xml file.
+        # ATTENTION: A maximum of 10000 donation reports are allowed in one file!
         # HINT: This is already the _order of the res.partner.donation_report model but is added here again for savety!
         logger.info("compute_submission_values() Search for donation reports in state new that are not already "
                     "linked to any submission or are already linked to this submission.")
@@ -241,7 +243,7 @@ class ResPartnerFADonationReport(models.Model):
              ('submission_env', '=', r.submission_env),
              ('meldungs_jahr', '=', r.meldungs_jahr),
              ('bpk_company_id', '=', r.bpk_company_id.id)],
-            order='partner_id, anlage_am_um ASC, create_date ASC')
+            order='partner_id, anlage_am_um ASC, create_date ASC', limit=10000)
         if not donation_reports:
             return {}
         len_dr = len(donation_reports)
@@ -430,6 +432,12 @@ class ResPartnerFADonationReport(models.Model):
             # Check the state of the submission:
             assert r.state in ['new', 'prepared', 'error'], _("(Re)Submission to FinanzOnline is not allowed in state "
                                                               "%s") % r.state
+            # Check that a maximum of 10000 donation reports is not exceeded
+            if len(r.donation_report_ids) > 10000:
+                r.update_submission(state='error', error_type='donation_report_limit',
+                                    error_code='',
+                                    error_detail="A maximum of 10000 donation reports are allowed per submission!")
+                continue
 
             # Check if the submission values have changed
             # -------------------------------------------
@@ -772,6 +780,10 @@ class ResPartnerFADonationReport(models.Model):
                     try:
                         download_etree = etree.fromstring(download.content, parser=parser)
                         download_decode = base64.b64decode(download_etree.find(".//{*}result").text)
+                        # Convert the download decode string to a unicode string for comparison with unicode
+                        # strings (e.g.: s.submission_message_ref_id and s.submission_fa_fastnr_org and alike)
+                        if isinstance(download_decode, basestring):
+                            download_decode = download_decode.decode('utf-8')
                     except Exception as e:
                         error_msg += "\n%s" % repr(e)
                         raise ValidationError(error_msg)
@@ -812,7 +824,7 @@ class ResPartnerFADonationReport(models.Model):
         try:
             parser = etree.XMLParser(remove_blank_text=True)
             response_etree = etree.fromstring(s.response_file.encode('utf-8'), parser=parser)
-            if not response_etree:
+            if not len(response_etree):
                 raise ValidationError(_("Empty content after xml parsing of the DataBox response file!"))
         except Exception as e:
             error_msg += "\n%s" % repr(e)
