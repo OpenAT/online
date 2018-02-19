@@ -21,3 +21,4 @@ import product_template
 # bpk and donation reports
 import res_partner_bpk
 import res_partner_donation_report
+import account_fiscalyear

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Fiscal Year extensions for donation report scheduled submission -->
+    <record id="view_account_fiscalyear_form" model="ir.ui.view">
+        <field name="name">Donation Report account.fiscalyear.form</field>
+        <field name="model">account.fiscalyear</field>
+        <field name="inherit_id" ref="account.view_account_fiscalyear_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='period_ids']" position="before">
+                <group string="Scheduled Donation Report Submission Settings">
+                    <group>
+                        <field name="meldezeitraum_start"/>
+                        <field name="meldezeitraum_end"/>
+                        <field name="drg_interval_number"/>
+                        <field name="drg_interval_type"/>
+                    </group>
+                    <group>
+                        <field name="drg_last"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>

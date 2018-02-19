@@ -942,11 +942,6 @@ class ResPartnerFADonationReport(models.Model):
         raise ValidationError("check_response() Sorry but something went wrong! Please contact the support!")
 
     # First simple implementation
-    # TODO: Create a method that "releases" donation reports (set the state to 'error') if they belong to a NOK or TWOK
-    # TODO: donation report submission. Or more generally speaking if the donation report is in the "response_nok"
-    # TODO: state. The problem is that some of the response_nok reasons like 'Erstmeldung bereits uebermittelt' needs
-    # TODO: a deeper investigation if it is ok or not to release the donation report. Therefore we wait until it
-    # TODO: happens the first time until we create this method - if it ever happens :)
     @api.multi
     def release_donation_reports(self):
         if not self or not self.ensure_one():
@@ -964,3 +959,33 @@ class ResPartnerFADonationReport(models.Model):
         else:
             raise ValidationError(_("You can not release donation reports for a submission in state %s or without "
                                     "'ERR-F-...' in response_error_code!") % s.state)
+
+    # ------------------------------------------
+    # SCHEDULER ACTIONS FOR AUTOMATED PROCESSING
+    # ------------------------------------------
+    # TODO: Before this gets programmed we must discuss where to set and store the start and end of the
+    # TODO: Meldezeitraum per Meldejahr
+    # HINT: This should be started every day and then get the Meldezeitraum from the account.fiscalyear!
+    #       account.fiscalyear! It checks if it needs to be run at all (inside Meldezeitraum) for every possible
+    #       Meldejahr (now - 6 Years) and if the current day is the correct Meldetag for this instance
+    @api.model
+    def scheduled_submission(self):
+        logger.info("scheduled_submission() START")
+        logger.error("scheduled_submission() This method is NOT yet programmed but just prepared!")
+        logger.info("scheduled_submission() END")
+        return True
+
+    @api.model
+    def scheduled_databox_check(self):
+        logger.info("scheduled_databox_check() START")
+
+        # Search for submitted donation reports
+        submitted = self.sudo().search([('state', '=', 'submitted')])
+        logger.info("scheduled_databox_check() Found %s submitted donation reports" % len(submitted))
+
+        # Check the databox answers
+        for r in submitted:
+            logger.info("scheduled_databox_check() Check DataBox answer for %s" % r.submission_message_ref_id)
+            r.check_response()
+
+        logger.info("scheduled_databox_check() END")

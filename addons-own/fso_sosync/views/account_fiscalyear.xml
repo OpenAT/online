@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- SOSYNC Fiscal Year extensions -->
+    <record id="view_account_fiscalyear_form" model="ir.ui.view">
+        <field name="name">SOSYNC account.fiscalyear.form</field>
+        <field name="model">account.fiscalyear</field>
+        <field name="inherit_id" ref="fso_con_zmr.view_account_fiscalyear_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='drg_last']" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>

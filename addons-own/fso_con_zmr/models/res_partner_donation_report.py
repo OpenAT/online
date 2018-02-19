@@ -889,3 +889,21 @@ class ResPartnerFADonationReport(models.Model):
                           "") % (reports_done, total_duration, time_per_record, remaining_reports, time_left / 60))
 
         logger.info(_("scheduled_set_donation_report_state(): END"))
+
+    @api.model
+    def cron_compute_donation_report_state(self):
+        """
+        This will set the state computation cron nextcall date to now
+        :return: boolean
+        """
+        action = self.env.ref('fso_con_zmr.ir_cron_scheduled_set_donation_report_state')
+        if action:
+            try:
+                # HINT: The related cron job is in data.xml
+                # HINT: The cron job will run scheduled_set_donation_report_state()
+                # now = fields.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                now = time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+                action.write({'active': True, 'nextcall': now})
+            except Exception as e:
+                logger.error("Could not set execution date of ir_cron.ir_cron_scheduled_set_donation_report_state to "
+                             "now! \n%s" % repr(e))

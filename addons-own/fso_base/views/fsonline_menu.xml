@@ -70,6 +70,8 @@
         <menuitem id="menu_fsonline_scheduledactions" action="base.ir_cron_act" parent="menu_fsonline_settings" sequence="10900"/>
         <!-- System Parameters -->
         <menuitem id="menu_fsonline_ir_config_menu" action="base.ir_config_list_action" parent="menu_fsonline_settings" sequence="10990"/>
+        <!-- Fiscal Years -->
+        <menuitem id="menu_fsonline_fiscalyear" action="account.action_account_fiscalyear" parent="menu_fsonline_settings" sequence="10995"/>
 
     </data>
 </openerp>

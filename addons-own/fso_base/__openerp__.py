@@ -93,6 +93,7 @@ TODO (must be done manually right now):
         'web_searchbar_full_width',
         'website_seo_url',
         'website_seo_url_product',
+        'cron_run_manually',
         # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',

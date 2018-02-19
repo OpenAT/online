@@ -59,6 +59,7 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         'views/res_partner.xml',
         'views/res_company.xml',
         'views/templates_backend_css.xml',
+        'views/account_fiscalyear.xml',
         'data/actions.xml',
         'data/scheduled_actions.xml',
         'data/user_sosync.xml',

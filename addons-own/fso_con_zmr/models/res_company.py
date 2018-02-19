@@ -370,6 +370,9 @@ class CompanyAustrianZMRSettings(models.Model):
                 })
                 logger.info("Set the state to error for %s donation reports DONE!" % len(donation_reports))
 
+        logger.info("Recompute state for donation reports by a cron job in the background!")
+        donation_reports.cron_compute_donation_report_state()
+
     # ----
     # CRUD
     # ----
@@ -397,6 +400,7 @@ class CompanyAustrianZMRSettings(models.Model):
         if res:
             fields_to_check = ['fa_herstellerid', 'fa_fastnr_fon_tn', 'fa_fastnr_org', 'fa_dr_type']
             if any(f in values for f in fields_to_check):
+                logger.info("Company data relevant for donation reports changed!")
                 self.set_donation_reports_to_error_state()
 
         return res
