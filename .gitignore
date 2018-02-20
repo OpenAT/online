@@ -29,6 +29,7 @@ o8_*/
 /*.log
 /*.pid
 data_dir
+core_copy.lock
 
 #pycharm
 .idea/
