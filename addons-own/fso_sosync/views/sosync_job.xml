@@ -72,7 +72,7 @@
                                 <field name="write_uid" readonly="True"/>
                             </group>
                         </group>
-                        <group>
+                        <group string="Job Logs">
                             <field name="job_source_fields"/>
                             <field name="job_error_code"/>
                             <field name="job_error_text"/>
