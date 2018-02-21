@@ -25,6 +25,9 @@
                                                attrs="{'required': [('instance_company', '=', True)]}"/>
                                     </group>
                                 </group>
+                                <group>
+                                    <field name="instance_ini"/>
+                                </group>
                             </page>
                         </notebook>
                     </page>

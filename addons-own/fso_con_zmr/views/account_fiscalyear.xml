@@ -10,6 +10,8 @@
             <xpath expr="//field[@name='period_ids']" position="before">
                 <group string="Scheduled Donation Report Submission Settings">
                     <group>
+                        <field name="ze_datum_von"/>
+                        <field name="ze_datum_bis"/>
                         <field name="meldezeitraum_start"/>
                         <field name="meldezeitraum_end"/>
                         <field name="drg_interval_number"/>

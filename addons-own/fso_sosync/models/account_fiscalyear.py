@@ -13,7 +13,9 @@ class AccountFiscalYearSosync(models.Model):
     date_start = fields.Date(sosync="True")
     date_stop = fields.Date(sosync="True")
 
-    # For donation report sumbmission
+    # For donation report submission
+    ze_datum_von = fields.Datetime(sosync="True")
+    ze_datum_bis = fields.Datetime(sosync="True")
     meldezeitraum_start = fields.Datetime(sosync="True")
     meldezeitraum_end = fields.Datetime(sosync="True")
     drg_interval_number = fields.Integer(sosync="True")

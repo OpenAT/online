@@ -10,10 +10,16 @@ class AccountFiscalYear(models.Model):
     # FIELDS
     # ------
 
+    # Betrachtungszeitraum
+    ze_datum_von = fields.Datetime(string="Betrachtungszeitraum Start",
+                                   help="Include donations starting with this date and time")
+    ze_datum_bis = fields.Datetime(string="Betrachtungszeitraum Ende",
+                                   help="Include donations starting up to and including this date and time")
+
     # Set by the FRST account manager e.g.: Marcus
     meldezeitraum_start = fields.Datetime(string="Meldezeitraum Start",
                                           help="Scheduled Donation Report Submission Start")
-    meldezeitraum_end = fields.Datetime(string="Meldezeitraum End",
+    meldezeitraum_end = fields.Datetime(string="Meldezeitraum Ende",
                                         help="Scheduled Donation Report Submission End")
 
     # HINT: drg = Donation Report Generation

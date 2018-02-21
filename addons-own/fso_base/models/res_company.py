@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import api, models, fields
 from openerp.tools.translate import _
+import os
 
 
 class CompanyInstanceSettings(models.Model):
@@ -9,6 +10,24 @@ class CompanyInstanceSettings(models.Model):
     instance_company = fields.Boolean(string='Instance Main Company')
     instance_base_port = fields.Char(string='Instance Base Port', size=5)
     instance_id = fields.Char(string='Instance ID (e.g.: dadi)', size=5)
+
+    # Instance Info Fields
+    instance_ini = fields.Text(string="Instance.ini", readonly=True, compute='_compute_instance_ini')
+
+    @api.depends('instance_company', 'instance_id')
+    def _compute_instance_ini(self):
+        instance_ini = ''
+        instance_comp = self.search([('instance_company', '=', True), ('instance_id', '!=', False)], limit=1)
+        # Get the instance.ini file and store its content
+        # TODO: Get the addons paths and search these paths and up for an instance.ini
+        if instance_comp:
+            instance_ini_file = '/opt/online/'+instance_comp.instance_id+'/instance.ini'
+            if os.path.isfile(instance_ini_file):
+                with open(instance_ini_file, 'r') as f:
+                    instance_ini = f.read()
+
+        for r in self:
+            r.instance_ini = instance_ini
 
     @api.model
     def _check_instance_company(self, vals):
