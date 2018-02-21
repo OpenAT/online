@@ -72,14 +72,12 @@
                                 <field name="write_uid" readonly="True"/>
                             </group>
                         </group>
-                        <label for="job_source_fields"/>
-                        <field name="job_source_fields"/>
-                        <label for="job_error_code"/>
-                        <field name="job_error_code"/>
-                        <label for="job_error_text"/>
-                        <field name="job_error_text"/>
-                        <label for="job_log"/>
-                        <field name="job_log"/>
+                        <group>
+                            <field name="job_source_fields"/>
+                            <field name="job_error_code"/>
+                            <field name="job_error_text"/>
+                            <field name="job_log"/>
+                        </group>
                     </page>
                     <page string="Child Jobs">
                         <group>
