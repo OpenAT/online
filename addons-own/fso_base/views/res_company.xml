@@ -25,7 +25,7 @@
                                                attrs="{'required': [('instance_company', '=', True)]}"/>
                                     </group>
                                 </group>
-                                <group>
+                                <group string="Instance Config and Log">
                                     <field name="instance_ini"/>
                                 </group>
                             </page>
