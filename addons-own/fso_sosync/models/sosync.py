@@ -94,8 +94,10 @@ class SosyncJob(models.Model):
 
     # SYNCJOB INFO
     job_fetched = fields.Datetime(string="Job Fetched Date", readonly=True)
-    job_start = fields.Char(string="Job Start", readonly=True)
-    job_end = fields.Char(string="Job End", readonly=True)
+    job_start = fields.Char(string="Job Start", readonly=True,
+                            index=True)
+    job_end = fields.Char(string="Job End", readonly=True,
+                          index=True)
     job_duration = fields.Integer(string="Job Duration (ms)", compute='_job_duration', readonly=True)
     job_run_count = fields.Integer(string="Job Run Count", readonly=True,
                                    help="Restarts triggered by changed source data in between job processing")
@@ -137,14 +139,18 @@ class SosyncJob(models.Model):
     child_job_duration = fields.Integer(string="Child Processing Duration", compute="_child_duration", readonly=True)
 
     # SYNCHRONIZATION SOURCE
-    sync_source_system = fields.Selection(selection=_systems, string="Source System", readonly=True)
-    sync_source_model = fields.Char(string="Source Model", readonly=True)
+    sync_source_system = fields.Selection(selection=_systems, string="Source System", readonly=True,
+                                          index=True)
+    sync_source_model = fields.Char(string="Source Model", readonly=True,
+                                    index=True)
     sync_source_record_id = fields.Integer(string="Source Record ID", readonly=True)
     sync_source_merge_into_record_id = fields.Integer(string="Source Merge-Into Record ID", readonly=True)  # NEW
 
     # SYNCHRONIZATION TARGET
-    sync_target_system = fields.Selection(selection=_systems, string="Target System", readonly=True)
-    sync_target_model = fields.Char(string="Target Model", readonly=True)
+    sync_target_system = fields.Selection(selection=_systems, string="Target System", readonly=True,
+                                          index=True)
+    sync_target_model = fields.Char(string="Target Model", readonly=True,
+                                    index=True)
     sync_target_record_id = fields.Integer(string="Target Record ID", readonly=True)
     sync_target_merge_into_record_id = fields.Integer(string="Target Merge-Into Record ID", readonly=True)  # NEW
 
@@ -159,7 +165,6 @@ class SosyncJob(models.Model):
     sync_start = fields.Char(string="Sync Start", readonly=True)
     sync_end = fields.Char(string="Sync End", readonly=True)
     sync_duration = fields.Integer(string="Sync Duration (ms)", compute="_target_request_duration", readonly=True)
-
 
     # COMPUTED FIELDS METHODS
     @api.depends('job_start', 'job_end')
