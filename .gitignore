@@ -29,6 +29,8 @@ o8_*/
 /*.log
 /*.pid
 data_dir
+
+# Install core copy lock file
 core_copy.lock
 
 #pycharm
