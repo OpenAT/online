@@ -419,7 +419,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # Update the donation reports on any bpk_state change
         if res:
-            if 'bpk_request_ids' in values or 'bpk_state' in values:
+            if not values or 'bpk_request_ids' in values or 'bpk_state' in values:
                 self.update_donation_reports()
 
         return res

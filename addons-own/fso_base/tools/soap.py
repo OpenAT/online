@@ -59,6 +59,23 @@ def render_template(template="", **template_args):
 #@timeout_decorator.timeout(18, use_signals=False, timeout_exception=GenericTimeoutError)
 def soap_request(url="", template="", http_header={}, crt_pem="", prvkey_pem="", request_data=False, timeout=8,
                  **template_args):
+    """
+    Will do a simple SOAP request. and return the response object
+
+    ATTENTION: The request data must be unicode!
+               It will be encoded to UTF-8 before we send the request.
+               Jinja always expect unicode inputs and will output unicode (output = the rendered template)
+
+    :param url:
+    :param template:
+    :param http_header:
+    :param crt_pem:
+    :param prvkey_pem:
+    :param request_data: template path or unicode string (will be encoded to utf-8)
+    :param timeout:
+    :param template_args:
+    :return: response object
+    """
 
     # Check for missing or malformed parameters
     assert all((url, template or request_data)), _("Parameters missing! Required are url and template or request_data.")

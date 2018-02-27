@@ -14,10 +14,14 @@ class AccountFiscalYearSosync(models.Model):
     date_stop = fields.Date(sosync="True")
 
     # For donation report submission
-    ze_datum_von = fields.Datetime(sosync="True")
-    ze_datum_bis = fields.Datetime(sosync="True")
-    meldezeitraum_start = fields.Datetime(sosync="True")
-    meldezeitraum_end = fields.Datetime(sosync="True")
-    drg_interval_number = fields.Integer(sosync="True")
-    drg_interval_type = fields.Selection(sosync="True")
-    drg_last = fields.Datetime(sosync="True")
+    ze_datum_von = fields.Datetime(sosync="True")               # Spenden / Buchungen included from
+    ze_datum_bis = fields.Datetime(sosync="True")               # Spenden / Buchungen included up to
+
+    meldezeitraum_start = fields.Datetime(sosync="True")        # Auto submit start
+    meldezeitraum_end = fields.Datetime(sosync="True")          # Auto submit end
+
+    drg_interval_number = fields.Integer(sosync="True")         # FRST scheduler interval number
+    drg_interval_type = fields.Selection(sosync="True")         # FRST scheduler interval unit e.g.: days or month
+
+    drg_next_run = fields.Datetime(sosync="True")       # Next scheduled run for donation report checks/generation STP in FRST
+    drg_last = fields.Datetime(sosync="True")           # Last scheduled run of the donation report checks/generation STP in FRST

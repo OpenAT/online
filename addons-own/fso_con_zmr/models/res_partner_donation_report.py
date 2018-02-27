@@ -324,7 +324,9 @@ class ResPartnerFADonationReport(models.Model):
     @api.multi
     def last_submitted_report(self, submission_bpk_private='ignore'):
         """
-        Returns the last successfully submitted donation report.
+        Returns the last successfully submitted donation report
+        OR the last submitted donation report with an 'ERR-U-008' error wich means that there was already an
+        'Erstmeldung' for this donation report (e.g.: if the customer did a manual 'Spendenmeldung' in FinanzOnline)
 
         Throws an exception if the submission state of the last submitted report is not response_ok!
 
@@ -359,6 +361,12 @@ class ResPartnerFADonationReport(models.Model):
         lsr = self.sudo().search(domain,
                                  order="submission_id_datetime DESC, anlage_am_um DESC, create_date DESC",
                                  limit=1)
+
+        # Return the lsr also on an ERR-U-008
+        # ATTENTION: ERR-U-008' error means that there was already an 'Erstmeldung' for this donation report
+        #            e.g.: if the customer did a manual 'Spendenmeldung' in the FinanzOnline Website
+        if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.error_code or '':
+            return lsr
 
         # ATTENTION: If the state is 'submitted' or 'unexpected_response' we do not know if the lsr donation report
         #            was accepted by FinanzOnline or not! Therefore we throw an exception!
@@ -555,6 +563,34 @@ class ResPartnerFADonationReport(models.Model):
             for report_to_skip in reports_to_skip:
                 update_report(report_to_skip, state='skipped', skipped_by_id=r.id)
 
+            # Search for other reports with the same anlage_am_um date
+            # --------------------------------------------------------
+            # HINT: This may only happen after a merge of two partners because anlage_am_um is checked in create()
+            reports_same_date = r.sudo().search([('submission_env', '=', r.submission_env),
+                                                 ('partner_id', '=', r.partner_id.id),
+                                                 ('bpk_company_id', '=', r.bpk_company_id.id),
+                                                 ('meldungs_jahr', '=', r.meldungs_jahr),
+                                                 ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
+                                                 ('state', 'in', r._changes_allowed_states()),
+                                                 ('anlage_am_um', '=', r.anlage_am_um),
+                                                 ('id', '!=', r.id)])
+            if reports_same_date:
+                msg = _("update_state_and_submission_information() Report(s) (%s) with same anlage_am_um as "
+                        "this report (ID %s) found! Maybe there was a partner merge? Skipping all unsubmitted reports "
+                        "because a new donation report total is expected for the partner %s (ID %s)! "
+                        "" % (reports_same_date.ids, r.id, r.partner_id.name, r.partner_id.id))
+                logger.warning(msg)
+                msg = (r.info or '') + msg
+                logger.info("update_state_and_submission_information() Skipp other reports with same anlage_am_um "
+                            "date (IDS %s)" % reports_same_date.ids)
+                for report_same_date in reports_same_date:
+                    update_report(report_same_date, state='skipped', skipped_by_id=r.id, info=msg)
+                if r.state in self._changes_allowed_states():
+                    logger.info("update_state_and_submission_information() Skipp report (ID %s) because other reports "
+                                "with the same anlage_am_um date where found!" % r.id)
+                    update_report(r, state='skipped', skipped_by_id=False, info=msg)
+                continue
+
             # Avoid any changes to this report if it was skipped or submitted!
             # ----------------------------------------------------------------
             if r.state and r.state not in self._changes_allowed_states():
@@ -583,7 +619,7 @@ class ResPartnerFADonationReport(models.Model):
             # --------------------------------------------------------------------------------
             # HINT: This should only happen if in FRST regular donation exists but none of them seems to be submitted
             #       and the betrag went down to 0 or donation deduction was disabled!
-            #       If the regular donation reports where already submitted but th state was just not synced to FRST
+            #       If the regular donation reports where already submitted but the state was just not synced to FRST
             #       this report will go into error state and will never be submitted (which is correct)
             if r.betrag == 0 and not r.cancellation_for_bpk_private:
                 try:
@@ -596,6 +632,7 @@ class ResPartnerFADonationReport(models.Model):
                                                    "set)! Maybe the state was not synced?")
                         continue
                     else:
+                        # HINT: All other reports should already be skipped at this point!
                         update_report(r, state='skipped', skipped_by_id=False,
                                       info="Can be skipped because there are no submitted reports or the "
                                            "last submitted 'betrag' is already 0")

@@ -265,7 +265,7 @@ class ResPartnerFADonationReport(models.Model):
             # <data><SonderausgabenUebermittlung><MessageSpec>
             'submission_message_ref_id': "S%s-%s" % (r.id, r.create_date.replace(' ', '-').replace(':', '-')),
             'submission_timestamp': fields.datetime.utcnow().replace(microsecond=0).isoformat(),
-            'submission_fa_dr_type': 'MÖ' if r.bpk_company_id.fa_dr_type == 'MO' else r.bpk_company_id.fa_dr_type,
+            'submission_fa_dr_type': u'MÖ' if r.bpk_company_id.fa_dr_type == 'MO' else r.bpk_company_id.fa_dr_type,
             # <data><SonderausgabenUebermittlung><Sonderausgaben> (for loop)
             'donation_report_ids': [(6, 0, donation_reports.ids)],
             # Information copied but not included in the jinja2 template:
@@ -295,6 +295,8 @@ class ResPartnerFADonationReport(models.Model):
         # Render the template for the request content (body)
         # ATTENTION: !!! '###SessionID###' will be replaced by submit() with the correct session id !!!
         #            So do not change this here!
+        # HINT: Jinja expects unicode and will return unicode!
+        #       https://stackoverflow.com/questions/22181944/using-utf-8-characters-in-a-jinja2-template
         logger.info("compute_submission_values() Render the submission xml template: render template!")
         content = render_template(template=fo_donation_report_j2template,
                                   submission={

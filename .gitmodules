@@ -90,3 +90,7 @@
 	path = addons-thirdparty/llc/access-addons
 	url = https://github.com/it-projects-llc/access-addons.git
 	branch = 8.0
+[submodule "addons-thirdparty/llc/odoo-saas-tools"]
+	path = addons-thirdparty/llc/odoo-saas-tools
+	url = https://github.com/it-projects-llc/odoo-saas-tools.git
+	branch = 8.0
