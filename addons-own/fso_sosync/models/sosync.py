@@ -484,6 +484,7 @@ class BaseSosync(models.AbstractModel):
                                     "job_source_target_merge_into_record_id": job_source_target_merge_into_record_id,
                                     })
             logger.debug("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
+        return True
 
     @api.model
     def create(self, values, **kwargs):
