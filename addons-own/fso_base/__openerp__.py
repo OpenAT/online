@@ -56,6 +56,7 @@ TODO (must be done manually right now):
 - Auto setup account chart for AT and taxes
 - Auto setup real time warehouse transactions (accounts and setting)
 
+
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",

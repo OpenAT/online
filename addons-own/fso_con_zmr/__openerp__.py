@@ -27,8 +27,7 @@
 FS-Online fso_con_zmr
 =====================
 
-Abfragen zum Zentralen Melderegister in Österreich
-  - GetBPK für die Spendenabsetzbarkeit
+This addon determines the BPK number from FinanzOnline for partners and allows to submit donation reports.
 
     """,
     'author': "Datadialog - Michael Karrer",

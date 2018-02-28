@@ -32,6 +32,8 @@ FS-Online fso_sosync
 
 Additional Information
 ----------------------
+The partner merge is also incuded in this addon!
+Please check and extend partner_merge.py for new models if needed!
 
 New instance pillar options:
 ----------------------------
