@@ -644,14 +644,16 @@ class ResPartnerFADonationReport(models.Model):
 
             # Check Donation Deduction Disabled for this partner
             # --------------------------------------------------
+            # HINT: Exclude cancellation donation reports
             # Donation deduction is disabled for this partner
-            if r.partner_id.bpk_state == 'disabled':
+            if not r.cancellation_for_bpk_private and r.partner_id.bpk_state == 'disabled':
                 update_report(r, state='disabled')
                 continue
 
             # Check BPK request pending for this partner
             # ------------------------------------------
-            if r.partner_id.bpk_state == 'pending':
+            # HINT: Exclude cancellation donation reports
+            if not r.cancellation_for_bpk_private and r.partner_id.bpk_state == 'pending':
                 update_report(r, state='error', error_type='bpk_pending', error_code=False, error_detail=False)
                 continue
 
@@ -660,7 +662,8 @@ class ResPartnerFADonationReport(models.Model):
 
             # Check BPK not found
             # -------------------
-            if not bpk or (bpk and bpk.state != 'found'):
+            # HINT: Exclude cancellation donation reports
+            if not r.cancellation_for_bpk_private and (not bpk or (bpk and bpk.state != 'found')):
                 update_report(r, state='error', error_type='bpk_missing', error_code=False, error_detail=False)
                 continue
 
