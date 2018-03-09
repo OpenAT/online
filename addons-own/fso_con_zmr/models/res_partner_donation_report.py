@@ -200,8 +200,14 @@ class ResPartnerFADonationReport(models.Model):
     # -------------------------
     # HINT: response_content will only hold the xml snippets related to this donation report based on submission_refnr
     response_content = fields.Text(string="Response Content", readonly=True)
-    response_error_code = fields.Char(string="Response Error Code", readonly=True, track_visibility='onchange',)
-    response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange',)
+    response_error_code = fields.Char(string="Response Error Code", readonly=True, track_visibility='onchange')
+    response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange')
+    response_error_orig_refnr = fields.Char(string="Response ERR-U-008 orig. RefNr",
+                                            help="The last submitted report was rejected with an ERR-U-008. This means "
+                                                 "the report was rejected because an Erstmeldung existed already in "
+                                                 "FinanzOnline. This happens if donation reports are submitted "
+                                                 "manually by the organisation or by other service providers.",
+                                            readonly=True, track_visibility='onchange')
 
     # ----------
     # CONSTRAINS
@@ -363,15 +369,24 @@ class ResPartnerFADonationReport(models.Model):
                                  limit=1)
 
         # Return the lsr also on an ERR-U-008
-        # ATTENTION: ERR-U-008' error means that there was already an 'Erstmeldung' for this donation report
+        # ATTENTION: ERR-U-008 error means that there was already an 'Erstmeldung' for this donation report
         #            e.g.: if the customer did a manual 'Spendenmeldung' in the FinanzOnline Website
-        if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.error_code or '':
+        if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.response_error_code or '':
+            return lsr
+
+        # Return the lsr also on an ERR-U-006
+        # ATTENTION: ERR-U-006 error means that the lsr was an "Aenderungsmeldung" but that there was no previous
+        #            donation report with for the RefNr (submission_refnr) of the Aenderungsmeldung
+        #            (or the ZR or Env changed). This may only happen if donation reports where submitted by other
+        #            systems or we have a bug so that we calculated RefNr of the Aenderungsmeldung instead of taking
+        #            it from the former lsr.
+        if lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
             return lsr
 
         # ATTENTION: If the state is 'submitted' or 'unexpected_response' we do not know if the lsr donation report
         #            was accepted by FinanzOnline or not! Therefore we throw an exception!
         if lsr.state != "response_ok":
-            raise ValidationError(_("Submitted donation report (ID %s) is in state %s but should be "
+            raise ValidationError(_("Submitted donation report (ID %s) is in state '%s' but should be "
                                     "in state 'response_ok'.") % (lsr.id, lsr.state))
         return lsr
 
@@ -460,6 +475,21 @@ class ResPartnerFADonationReport(models.Model):
         # For the computation of an Erstmeldung or Aenderungsmeldung the submission_bpk_private must be known!
         if not submission_bpk_private:
             raise ValidationError(_("compute_type_refnr_and_links() submission_bpk_private is not given!"))
+
+        # Erstmeldung for special error code(s)
+        # -------------------------------------
+        lsr = r.last_submitted_report()
+        # Catch special case last submitted report was rejected with 'ERR-U-006'
+        if lsr and lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
+            # Create an Erstmeldung instead of an Aenderungsmeldung
+            # HINT: Either to get the original RefNr. by the following ERR-U-008 or because an Erstmeldung is allowed
+            #       after a Stornierungsmeldung: !!! To be tested !!!
+            return {
+                'submission_type': 'E',
+                'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
+                'report_erstmeldung_id': False,
+                'cancelled_lsr_id': False
+            }
 
         # Aenderungsmeldung A
         # -------------------

@@ -31,8 +31,8 @@ class ResPartnerSosync(models.Model):
     lastname = fields.Char(sosync="True")           # Name
     name_zwei = fields.Char(sosync="True")          # Name2
     phone = fields.Char(sosync="True")              # Festnetznummer # TODO: GL2K hat das falsch verwendet ummappen Andere kontrollieren Joe vermitteln
-    mobile = fields.Char(sosync="True")             # Mobilnummer
-    fax = fields.Char(sosync="True")                # Fax
+    mobile = fields.Char(sosync="True")             # Mobilnummer   # !!! TODO: ADD TO SOSYNC V1 !!!
+    fax = fields.Char(sosync="True")                # Fax           # !!! NOT IN SOSYNC V1 !!!
     email = fields.Char(sosync="True")              # EMail
 
     # Kanalsperren
@@ -46,11 +46,11 @@ class ResPartnerSosync(models.Model):
     #            zeitlich begrenzten angelegt wird.
     street = fields.Char(sosync="True")
     street_number_web = fields.Char(sosync="True")
-    #street2 = fields.Char(sosync="True")               # Nicht in FS vorhanden
+    #street2 = fields.Char(sosync="True")               # Nicht in FS vorhanden #
     #TODO im DEFFERED: post_office_box_web = fields.Char(sosync="True")    # Post Box Adresszusatz fuer CH
     city = fields.Char(sosync="True")
     zip = fields.Char(sosync="True")
-    country_id = fields.Many2one(sosync="True")     # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind
+    country_id = fields.Many2one(sosync="True")         # Gehoert zum Adressblock! Country wird gesynced da alle ISO-Codes bereits in FS vorhanden sind     # TODO: Check if needed in sosync v1 !!! NOT IN SOSYNC V1 !!!
 
     # Website related fields
     #website_published = fields.Boolean(sosync="True")  # Nicht in FS vorhanden
@@ -74,7 +74,7 @@ class ResPartnerSosync(models.Model):
 
     donation_receipt_web = fields.Boolean(sosync="True")            # Spendenquittung bitte pruefen ob ERstzlos streichbar - TODO: Vorhanden Kunden pruefen wo im Einsatz
     donation_deduction_optout_web = fields.Boolean(sosync="True")   # Spenden nicht autom. absetzen gesetzt vom Spender. TODO: Mit korrekter FS Gruppe verschalten!
-    donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!
+    donation_deduction_disabled = fields.Boolean(sosync="True")     # Spenden nicht autom. absetzen gesetzt vom System. TODO: Mit Korrekter FS Gruppe verschalten!      # !!! TODO: ADD TO SOSYNC V1 !!!
 
     #legal_terms_web = fields.Boolean(sosync="True")                 # Accept legal terms (webshop) derzit nur in FSO
 

@@ -118,4 +118,33 @@
         <field name="value" eval="'ir.actions.server,%d'%server_action_update_state_and_submission_information"/>
     </record>
 
+
+    <!-- =============================================================== -->
+    <!-- DONATION REPORT RECORDS: res.partner.donation_report.submission -->
+    <!-- =============================================================== -->
+    <!-- Server Action to run process_response_file() for res.partner.donation_report.submission -->
+    <record id="server_action_process_response_file" model="ir.actions.server" forcecreate="1">
+        <field name="name">(Re-)Process DataBox Response File!</field>
+        <field name="model_id" ref="model_res_partner_donation_report_submission"/>
+        <field name="state">code</field>
+        <field name="code">
+            <![CDATA[
+            if context.get('active_model') == 'res.partner.donation_report.submission':
+
+                active_ids = context.get('active_ids', '')
+
+                if len(active_ids) == 1:
+                    self.process_response_file(cr, uid, active_ids, context=context)
+
+            ]]>
+        </field>
+    </record>
+    <!-- Add to more menu -->
+    <record id="ir_server_action_process_response_file" model="ir.values" forcecreate="1">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner.donation_report.submission'"/>
+        <field name="name">(Re-)Process DataBox Response File!</field>
+        <field name="value" eval="'ir.actions.server,%d'%server_action_process_response_file"/>
+    </record>
+
 </data></openerp>

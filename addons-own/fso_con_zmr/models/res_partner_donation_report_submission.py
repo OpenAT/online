@@ -349,14 +349,17 @@ class ResPartnerFADonationReport(models.Model):
 
         # Response errors
         # ---------------
-        response_error_fields = ['response_error_type', 'response_error_code', 'response_error_detail']
+        response_error_fields = ['response_error_type', 'response_error_code', 'response_error_detail',
+                                 'response_error_orig_refnr']
         response_error_type = f.get('response_error_type', False)
         response_error_code = f.get('response_error_code', False)
         response_error_detail = f.get('response_error_detail', False)
+        response_error_orig_refnr = f.get('response_error_orig_refnr', False)
         f.update({
             'response_error_type': response_error_type,
             'response_error_code': response_error_code,
             'response_error_detail': response_error_detail,
+            'response_error_orig_refnr': response_error_orig_refnr,
         })
 
         # Request duration
@@ -574,7 +577,7 @@ class ResPartnerFADonationReport(models.Model):
                         "response from Finanz online for donation-report-submission (ID %s)!" % r.id)
             r.donation_report_ids.write({'state': 'submitted', 'submission_id_datetime': submission_datetime})
 
-            # Response http code not 200
+            # Response http code NOT 200
             # --------------------------
             if response.status_code != 200:
                 r.update_submission(state='error',
@@ -584,8 +587,8 @@ class ResPartnerFADonationReport(models.Model):
                                     **vals)
                 continue
 
-            # Response http code 200 but no content
-            # -------------------------------------
+            # Response http code IS 200 but no content
+            # ----------------------------------------
             if not response.content:
                 r.update_submission(state='unexpected_response',
                                     response_error_type='unexpected_no_content',
@@ -628,6 +631,165 @@ class ResPartnerFADonationReport(models.Model):
             # -----------------------------------------------
             r.update_submission(state='submitted', **vals)
             continue
+
+    @api.multi
+    def process_response_file(self):
+        """
+        Process the downloaded response file
+        :return: (bool)
+        """
+        # Check ensure_one()
+        assert self.ensure_one(), _("process_response() can only be called for a single record!")
+        s = self
+
+        # Make sure there is already a DataBox protocol file (response file) downloaded!
+        assert s.response_file, _("process_response() No downloaded response file from FinanzOnline found!")
+
+        # Process the downloaded XML answer file and update submission and donation reports
+        # ---------------------------------------------------------------------------------
+        # HINT: For processing exceptions we update the submission to state 'unexpected_response'.
+        error_msg = _("Parsing of the answer file from FinanzOnline Databox failed!")
+        try:
+            parser = etree.XMLParser(remove_blank_text=True)
+            response_etree = etree.fromstring(s.response_file.encode('utf-8'), parser=parser)
+            if not len(response_etree):
+                raise ValidationError(_("Empty content after xml parsing of the DataBox response file!"))
+        except Exception as e:
+            error_msg += "\n%s" % repr(e)
+            logger.error(error_msg)
+            s.update_submission(state='unexpected_response',
+                                response_error_type='unexpected_parser',
+                                response_error_detail=error_msg)
+            return True
+
+        # Get the <Info> element
+        info = response_etree.find(".//{*}Info")
+        info = info.text if info is not None else ''
+
+        # Unexpected Result
+        if not info or info not in ['OK', 'NOK', 'TWOK']:
+            error_msg = _("Unexpected <Info> content: %s") % info
+            logger.error(error_msg)
+            s.update_submission(state='unexpected_response',
+                                response_error_type='unexpected_parser',
+                                response_error_detail=error_msg)
+            return True
+
+        # Submission was completely accepted
+        if info == "OK":
+            state = "response_ok"
+            # Update donation reports and the submission
+            s.donation_report_ids.write({'state': state,
+                                         'submission_id_datetime': s.submission_datetime,
+                                         'response_content': False,
+                                         'response_error_code': False,
+                                         'response_error_detail': False})
+            s.update_submission(state=state)
+            return True
+
+        # Submission was completely rejected
+        if info == "NOK":
+            state = "response_nok"
+            # Try to get the error info
+            try:
+                code = response_etree.find(".//{*}Code")
+                code = code.text if code is not None else ''
+                text = response_etree.find(".//{*}Text")
+                text = text.text if text is not None else ''
+                data = response_etree.find(".//{*}Data")
+                data = data.text if data is not None else ''
+                if not code:
+                    raise ValidationError(_("Error code not found! (ErrorText: %s)") % text)
+            except Exception as e:
+                error_msg = _("Exception while parsing <Code> and <Text> in answer from DataBox!\n%s") % repr(e)
+                logger.error(error_msg)
+                s.update_submission(state='unexpected_response',
+                                    response_error_type='unexpected_parser',
+                                    response_error_detail=error_msg)
+                return True
+            # Update the donation reports of this submission
+            s.donation_report_ids.write({'state': state,
+                                         'submission_id_datetime': s.submission_datetime,
+                                         'response_content': False,
+                                         'response_error_code': code,
+                                         })
+            # Update the donation report submission
+            s.update_submission(state=state,
+                                response_error_type='nok',
+                                response_error_code=code,
+                                response_error_detail=text + data,
+                                )
+            return True
+
+        # Submission was partially rejected
+        if info == "TWOK":
+            # HINT: Make sure there are no duplicates in the list because .remove() will only remove the first
+            #       occurrence of the value
+            remaining_ids = list(set(s.donation_report_ids.ids))
+            remaining_ids_length_start = len(remaining_ids)
+            # Loop through the TWOK errors: <SonderausgabenError>
+            for error_etree in response_etree.iterfind(".//{*}SonderausgabenError"):
+                refnr = error_etree.find(".//{*}RefNr").text
+                code = error_etree.find(".//{*}Code").text
+                text = error_etree.find(".//{*}Text").text
+                if not all((refnr, code, text)):
+                    raise ValidationError(_("Data missing for SonderausgabenError! RefNr %s, Code %s, Text %s"
+                                            "") % (refnr, code, text))
+
+                # Get <Data> if available to get the original RefNr. for ERR-U-008 errors
+                data = error_etree.find(".//{*}Data")
+                data = data.text if data is not None else ''
+
+                # Find related donation report
+                dr = s.env['res.partner.donation_report'].sudo().search(
+                    [('submission_id', '=', s.id),
+                     ('submission_refnr', '=', refnr)])
+                if not dr or len(dr) != 1:
+                    raise ValidationError(_("None or multiple donation reports found (IDs %s) for SonderausgabenError: "
+                                            "RefNr %s, Code %s, Text %s"
+                                            "") % (dr.ids if dr else '', refnr, code, text))
+
+                # Compute content
+                try:
+                    content = etree.tostring(error_etree, encoding='utf-8')
+                    if content:
+                        content = content.decode('utf-8')
+                    else:
+                        content = False
+                except:
+                    content = False
+
+                # Update the rejected donation report
+                dr.write({'state': 'response_nok',
+                          'submission_id_datetime': s.submission_datetime,
+                          'response_content': content,
+                          'response_error_code': code,
+                          'response_error_detail': text + ' ' + data if data else text,
+                          'response_error_orig_refnr': data if 'ERR-U-008' in code or '' else False})
+
+                # Remove the id from the remaining_ids donation reports list
+                remaining_ids.remove(dr.id)
+
+            # Check that we found at least one rejected donation reports for this TWOK submission
+            if remaining_ids and len(remaining_ids) >= remaining_ids_length_start:
+                raise ValidationError("Answer from ZMR is partially rejected (TWOK) but no donation reports "
+                                      "with errors could be found!?")
+
+            # Update the accepted donation reports
+            if remaining_ids:
+                ok_reports = s.env['res.partner.donation_report'].sudo().browse(remaining_ids)
+                ok_reports.write({'state': 'response_ok',
+                                  'submission_id_datetime': s.submission_datetime,
+                                  'response_content': False,
+                                  'response_error_code': False,
+                                  'response_error_detail': False})
+
+            # Update the donation report submission
+            s.update_submission(state='response_twok',
+                                response_error_type='twok',
+                                response_error_code=False,
+                                response_error_detail=False)
+            return True
 
     @api.multi
     def check_response(self):
@@ -819,125 +981,8 @@ class ResPartnerFADonationReport(models.Model):
             s.response_file = response_file
             s.response_file_pretty = response_file_pretty
 
-        # Process the downloaded XML answer file and update submission and donation reports
-        # ---------------------------------------------------------------------------------
-        # HINT: For processing exceptions we update the submission to state 'unexpected_response'.
-        error_msg = _("Parsing of the answer file from FinanzOnline Databox failed!")
-        try:
-            parser = etree.XMLParser(remove_blank_text=True)
-            response_etree = etree.fromstring(s.response_file.encode('utf-8'), parser=parser)
-            if not len(response_etree):
-                raise ValidationError(_("Empty content after xml parsing of the DataBox response file!"))
-        except Exception as e:
-            error_msg += "\n%s" % repr(e)
-            logger.error(error_msg)
-            s.update_submission(state='unexpected_response',
-                                response_error_type='unexpected_parser',
-                                response_error_detail=error_msg)
-            return True
-
-        # Get the <Info> element
-        info = response_etree.find(".//{*}Info")
-        info = info.text if info is not None else ''
-
-        # Unexpected Result
-        if not info or info not in ['OK', 'NOK', 'TWOK']:
-            error_msg = _("Unexpected <Info> content: %s") % info
-            logger.error(error_msg)
-            s.update_submission(state='unexpected_response',
-                                response_error_type='unexpected_parser',
-                                response_error_detail=error_msg)
-            return True
-
-        # Submission was completely accepted
-        if info == "OK":
-            state = "response_ok"
-            # Update donation reports and the submission
-            s.donation_report_ids.write({'state': state,
-                                         'submission_id_datetime': s.submission_datetime,
-                                         'response_content': False,
-                                         'response_error_code': False,
-                                         'response_error_detail': False})
-            s.update_submission(state=state)
-            return True
-
-        # Submission was completely rejected
-        if info == "NOK":
-            state = "response_nok"
-            # Try to get the error info
-            try:
-                code = response_etree.find(".//{*}Code")
-                code = code.text if code is not None else ''
-                text = response_etree.find(".//{*}Text")
-                text = text.text if text is not None else ''
-                if not code:
-                    raise ValidationError(_("Error code not found! (ErrorText: %s)") % text)
-            except Exception as e:
-                error_msg = _("Exception while parsing <Code> and <Text> in answer from DataBox!\n%s") % repr(e)
-                logger.error(error_msg)
-                s.update_submission(state='unexpected_response',
-                                    response_error_type='unexpected_parser',
-                                    response_error_detail=error_msg)
-                return True
-            # Update donation reports and the submission
-            s.donation_report_ids.write({'state': state,
-                                         'submission_id_datetime': s.submission_datetime,
-                                         'response_content': False,
-                                         'response_error_code': code,
-                                         'response_error_detail': text})
-            s.update_submission(state=state,
-                                response_error_type='nok',
-                                response_error_code=code,
-                                response_error_detail=text)
-            return True
-
-        # Submission was partially rejected
-        if info == "TWOK":
-            # HINT: Make sure there are no duplicates in the list because .remove() will only remove the first
-            #       occurrence of the value
-            remaining_ids = list(set(s.donation_report_ids.ids))
-            remaining_ids_length_start = len(remaining_ids)
-            for error_etree in response_etree.iterfind(".//{*}SonderausgabenError"):
-                refnr = error_etree.find(".//{*}RefNr").text
-                code = error_etree.find(".//{*}Code").text
-                text = error_etree.find(".//{*}Text").text
-                if not all((refnr, code, text)):
-                    raise ValidationError(_("Could not process SonderausgabenError: RefNr %s, Code %s, Text %s"
-                                            "") % (refnr, code, text))
-                # Find related donation report
-                dr = s.env['res.partner.donation_report'].sudo().search(
-                    [('submission_id', '=', s.id),
-                     ('submission_refnr', '=', refnr)])
-                if not dr or len(dr) != 1:
-                    raise ValidationError(_("None or multiple donation reports found (IDs %s) for SonderausgabenError: "
-                                            "RefNr %s, Code %s, Text %s"
-                                            "") % (dr.ids if dr else '', refnr, code, text))
-                # Update the 'Not OK' donation report
-                dr.write({'state': 'response_nok',
-                          'submission_id_datetime': s.submission_datetime,
-                          'response_content': error_etree.text if error_etree is not None else False,
-                          'response_error_code': code,
-                          'response_error_detail': text})
-                # Remove the id from the remaining_ids list
-                remaining_ids.remove(dr.id)
-
-            # Check that we found and removed some donation reports
-            if remaining_ids and len(remaining_ids) >= remaining_ids_length_start:
-                raise ValidationError("Answer from ZMR is partially rejected (TWOK) but no donation reports "
-                                      "with errors could be found!?")
-
-            # Update the remaining donation reports and the submission
-            if remaining_ids:
-                ok_reports = s.env['res.partner.donation_report'].sudo().browse(remaining_ids)
-                ok_reports.write({'state': 'response_ok',
-                                  'submission_id_datetime': s.submission_datetime,
-                                  'response_content': False,
-                                  'response_error_code': False,
-                                  'response_error_detail': False})
-            s.update_submission(state='response_twok',
-                                response_error_type='twok',
-                                response_error_code=False,
-                                response_error_detail=False)
+        # Process the response file
+        if s.process_response_file():
             return True
 
         # If we reached this point something went awfully wrong!
