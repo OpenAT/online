@@ -494,12 +494,6 @@ class ResPartnerFADonationReport(models.Model):
                 'cancelled_lsr_id': False
             }
 
-        # If the last submitted report for this submission_bpk_private is was ERR-U-008 there should already
-        # exist a cancellation donation report for the 'response_error_orig_refnr' of the ERR-U-008 donation report.
-        # Until this cancellation donation report was not successfully submitted and accepted by FinanzOnline we
-        # should not send any additional regular donation reports
-        # TODO:
-
         # Aenderungsmeldung A
         # -------------------
         # HINT: Since we search for the erstmeldung with the submission_bpk_private we will not find an erstmeldung
