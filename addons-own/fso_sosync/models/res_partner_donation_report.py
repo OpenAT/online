@@ -46,3 +46,4 @@ class ResPartnerDonationReportSosync(models.Model):
     response_content = fields.Text(sosync="True")
     response_error_code = fields.Char(sosync="True")
     response_error_detail = fields.Text(sosync="True")
+    response_error_orig_refnr = fields.Char(sosync="True")      # ERR-U-008 unbek. RefNr.
