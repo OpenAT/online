@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report.submission'
     _inherit = ['mail.thread']
-    _rec_name = 'id'
+    #_rec_name = 'name'
     _order = 'submission_datetime DESC'
 
     now = fields.datetime.now
@@ -28,6 +28,9 @@ class ResPartnerFADonationReport(models.Model):
     # ------
     # FIELDS
     # ------
+    name = fields.Char(string="Name", compute="compute_name", readonly=True,
+                       compute_sudo=True, store=False)
+
     state = fields.Selection(string="State", readonly=True, default='new', track_visibility='onchange',
                              selection=[('new', 'New'),
                                         ('prepared', 'Prepared'),
@@ -36,7 +39,14 @@ class ResPartnerFADonationReport(models.Model):
                                         ('response_ok', 'Accepted by FinanzOnline'),
                                         ('response_nok', 'Rejected by FinanzOnline'),
                                         ('response_twok', 'Partially Rejected by FinanzOnline'),
-                                        ('unexpected_response', 'Unexpected Response')])
+                                        ('unexpected_response', 'Unexpected Response')],
+                             index=True)
+
+    manual = fields.Boolean(string="Manual Submission", track_visibility='onchange',
+                            help="If set donation reports can only be added manually to this submission!"
+                                 "The 'Prepare' button will not add new donation reports automatically to this "
+                                 "submission!",
+                            readonly=True, states={'new': [('readonly', False)], 'error': [('readonly', False)]})
 
     # Error fields for states 'error'
     # ATTENTION: The state error is only valid PRIOR to submission of for file upload service error!
@@ -59,61 +69,78 @@ class ResPartnerFADonationReport(models.Model):
                                              ('parser', 'Parser Error'),
                                              ('file_upload_doctype', 'Upload Denied for this Document Type'),
                                              ])
-    error_code = fields.Char(string="Error Code", redonly=True)
+    error_code = fields.Char(string="Error Code", redonly=True, track_visibility='onchange',)
     error_detail = fields.Text(string="Error Detail", readonly=True, track_visibility='onchange')
 
     # Company
     # -----------
     bpk_company_id = fields.Many2one(string="BPK Company", required=True, readonly=True,
                                      comodel_name='res.company',  inverse_name="donation_report_submission_ids",
-                                     states={'new': [('readonly', False)]})
+                                     states={'new': [('readonly', False)]},
+                                     track_visibility='onchange',
+                                     index=True)
 
     # Submission data computed in the 'prepare' state and updated right before submission
     # -----------------------------------------------------------------------------------
     # <fileuploadRequest>
-    submission_fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)", readonly=True)
-    submission_fa_benid = fields.Char(string="Webservicebenutzer ID (benid)", readonly=True)
+    submission_fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)", readonly=True,
+                                    track_visibility='onchange',)
+    submission_fa_benid = fields.Char(string="Webservicebenutzer ID (benid)", readonly=True,
+                                      track_visibility='onchange',)
     submission_fa_art = fields.Selection(string="Uebermitlungsbereich (art)",
                                          selection=[('UEB_SA', 'Sonderausgaben (UEB_SA)')],
-                                         default="UEB_SA", readonly=True)
+                                         default="UEB_SA", readonly=True,
+                                         track_visibility='onchange',)
     submission_env = fields.Selection(string="FinanzOnline Environment (uebermittlung)",
                                       default="T",
                                       selection=[('T', 'Test'), ('P', 'Production')],
-                                      required=True, readonly=True, states={'new': [('readonly', False)]})
+                                      required=True, readonly=True, states={'new': [('readonly', False)]},
+                                      track_visibility='onchange',
+                                      index=True)
 
     # <data><SonderausgabenUebermittlung><Info_Daten>
     submission_fa_fastnr_fon_tn = fields.Char(string="Finanzamt-Steuernummer des Softwareherstellers (Fastnr_Fon_Tn)",
                                               help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus"
                                                    " dem Finanzamt (03-98) und aus der Steuernummer (7-stellig) "
                                                    "zusammen. (ohne Trennzeichen) (Fastnr_Fon_Tn)",
-                                              size=9, readonly=True)
+                                              size=9, readonly=True,
+                                              track_visibility='onchange',)
     submission_fa_fastnr_org = fields.Char(string="Finanzamt-Steuernummer der Organisation (Fastnr_Org)",
                                            help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus "
                                                 "dem Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
                                                 "(ohne Trennzeichen) (Fastnr_Org)",
-                                           size=9, readonly=True)
+                                           size=9, readonly=True,
+                                           track_visibility='onchange',)
 
     # <data><SonderausgabenUebermittlung><MessageSpec>
-    submission_message_ref_id = fields.Char(string="Paket ID (MessageRefId)", readonly=True, size=36)
+    submission_message_ref_id = fields.Char(string="Paket ID (MessageRefId)", readonly=True, size=36,
+                                            track_visibility='onchange',
+                                            index=True)
     submission_timestamp = fields.Char(string="Timestamp (Timestamp)", readonly=True,
-                                       help=_("Format: datetime with timezone e.g.: 2012-12-13T12:12:12"))
-    submission_fa_dr_type = fields.Char(string="Organisationstyp (Uebermittlungsart)", readonly=True)
+                                       help=_("Format: datetime with timezone e.g.: 2012-12-13T12:12:12"),
+                                       track_visibility='onchange',)
+    submission_fa_dr_type = fields.Char(string="Organisationstyp (Uebermittlungsart)", readonly=True,
+                                        track_visibility='onchange',)
 
     meldungs_jahr = fields.Selection(string="Year", required=True,
                                      help=_("Donation deduction year (Meldejahr)"),
                                      readonly=True, states={'new': [('readonly', False)]},
-                                     selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)])
+                                     selection=[(str(i), str(i)) for i in range(2017, int(now().year)+11)],
+                                     track_visibility='onchange',
+                                     index=True)
 
     # <data><SonderausgabenUebermittlung><Sonderausgaben> (for loop)
     donation_report_ids = fields.One2many(string="Donation Reports",
                                           comodel_name='res.partner.donation_report', inverse_name="submission_id",
-                                          readonly=True, states={'new': [('readonly', False)]})
+                                          readonly=True, states={'new': [('readonly', False)]},
+                                          index=True)
 
     # Information copied but not included in the template:
     submission_fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)",
                                              help="Umsatzsteuer-Identifikations-Nummer (UID-Nummer) des "
                                                   "Softwareherstellers.",
-                                             size=24, readonly=True)
+                                             size=24, readonly=True,
+                                             track_visibility='onchange',)
 
     # Content and "Submit-to-URL"
     # ---------------------------
@@ -133,7 +160,8 @@ class ResPartnerFADonationReport(models.Model):
     # Updated at submission
     # ---------------------
     submission_datetime = fields.Datetime(string="Last submission request", readonly=True,
-                                          help=_("The Date and Time of the last submission request."))
+                                          help=_("The Date and Time of the last submission request."),
+                                          index=True)
     submission_log = fields.Text(string="Submission Log", readonly=True)
 
     # Response (updated after submission based on the answer)
@@ -153,7 +181,8 @@ class ResPartnerFADonationReport(models.Model):
                    ('unexpected_no_content', 'Response content empty or missing'),
                    ('unexpected_parser', 'Response could not be parsed'),
                    ('unexpected_exception', 'Exception during response processing'),
-                   ])
+                   ],
+                                           index=True)
     response_error_code = fields.Char(string="Response Error Code", redonly=True)
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange')
     request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
@@ -170,6 +199,12 @@ class ResPartnerFADonationReport(models.Model):
     # ---------------
     # COMPUTED FIELDS
     # ---------------
+    @api.depends('submission_message_ref_id', 'meldungs_jahr', 'submission_env')
+    def compute_name(self):
+        for r in self:
+            name = 'S' + str(r.id) + '_' + r.submission_env + r.meldungs_jahr + '_' + str(r.create_date).split()[0]
+            r.name = name
+
     @api.depends('submission_content')
     def compute_submission_content_file(self):
         for r in self:
@@ -236,16 +271,29 @@ class ResPartnerFADonationReport(models.Model):
         # HINT: This is already the _order of the res.partner.donation_report model but is added here again for savety!
         logger.info("compute_submission_values() Search for donation reports in state new that are not already "
                     "linked to any submission or are already linked to this submission.")
-        donation_reports = self.env['res.partner.donation_report'].sudo().search(
-            [('state', '=', 'new'),
-             "|", ('submission_id', '=', False),
-                  ('submission_id', '=', r.id),
-             ('submission_env', '=', r.submission_env),
-             ('meldungs_jahr', '=', r.meldungs_jahr),
-             ('bpk_company_id', '=', r.bpk_company_id.id)],
-            order='partner_id, anlage_am_um ASC, create_date ASC', limit=10000)
+        if r.manual:
+            # Only use donation reports that are already linked to this submission in manual mode
+            donation_reports = self.env['res.partner.donation_report'].sudo().search(
+                [('state', '=', 'new'),
+                 ('submission_id', '=', r.id),
+                 ('submission_env', '=', r.submission_env),
+                 ('meldungs_jahr', '=', r.meldungs_jahr),
+                 ('bpk_company_id', '=', r.bpk_company_id.id)],
+                order='partner_id, anlage_am_um ASC, create_date ASC', limit=10000)
+        else:
+            # Use donation reports that are already linked to this report or not linked to any submission yet
+            donation_reports = self.env['res.partner.donation_report'].sudo().search(
+                [('state', '=', 'new'),
+                 "|", ('submission_id', '=', False),
+                      ('submission_id', '=', r.id),
+                 ('submission_env', '=', r.submission_env),
+                 ('meldungs_jahr', '=', r.meldungs_jahr),
+                 ('bpk_company_id', '=', r.bpk_company_id.id)],
+                order='partner_id, anlage_am_um ASC, create_date ASC', limit=10000)
+
         if not donation_reports:
-            return {}
+            raise ValidationError(_("Preparation failed: No donation reports to submit found!"))
+
         len_dr = len(donation_reports)
         logger.info("compute_submission_values() Found %s donation reports for submission (ID %s)!" % (len_dr, r.id))
 

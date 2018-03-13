@@ -23,12 +23,9 @@ class ResPartnerFADonationReport(models.Model):
     _name = 'res.partner.donation_report'
     _rec_name = 'id'
 
-    # ATTENTION: Make sure the same order is used in the compute_submission_values() for the XML generation! This
-    #            is important because the inverse order is used in the donation report state computation when we search
-    #            the last submitted donation report!
     # HINT: create_date is added to make sure the order of the records in the XML stays the same in prepare() even
     #       if anlage_am_um is the same for multiple records
-    _order = 'partner_id, anlage_am_um ASC, create_date ASC'
+    _order = 'partner_id, anlage_am_um DESC, create_date DESC'
 
     # DISABLED: too slow!
     #_inherit = ['mail.thread']
@@ -171,11 +168,17 @@ class ResPartnerFADonationReport(models.Model):
     submission_birthdate_web = fields.Date(string="Birthdate Web", readonly=True)
     submission_zip = fields.Char(string="ZIP Code", readonly=True)
 
+    # Additional BPK Info
+    submission_bpk_state = fields.Char(string="Partner BPK-State", readonly=True)
+    submission_dd_disabled = fields.Char(string="Donation Deduction Disabled", readonly=True)
+    submission_dd_optout = fields.Char(string="Donation Deduction OptOut", readonly=True)
+
     # Donation report submission link and information
     # -----------------------------------------------
     submission_id = fields.Many2one(string="Submission",
                                     help="submission_id.id is used as the MessageRefId !",
                                     comodel_name="res.partner.donation_report.submission",
+                                    domain="[('state','in',('new','prepared','error'))]",
                                     readonly=True, states={'new': [('readonly', False)]},
                                     track_visibility='onchange',
                                     index=True)
@@ -200,26 +203,47 @@ class ResPartnerFADonationReport(models.Model):
     # -------------------------
     # HINT: response_content will only hold the xml snippets related to this donation report based on submission_refnr
     response_content = fields.Text(string="Response Content", readonly=True)
-    response_error_code = fields.Char(string="Response Error Code", readonly=True, track_visibility='onchange')
+    response_error_code = fields.Char(string="Response Error Code", readonly=True, track_visibility='onchange',
+                                      index=True)
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange')
     response_error_orig_refnr = fields.Char(string="Response ERR-U-008 orig. RefNr",
                                             help="The last submitted report was rejected with an ERR-U-008. This means "
                                                  "the report was rejected because an Erstmeldung existed already in "
                                                  "FinanzOnline. This happens if donation reports are submitted "
                                                  "manually by the organisation or by other service providers.",
-                                            readonly=True, track_visibility='onchange')
+                                            readonly=True, track_visibility='onchange',
+                                            index=True)
 
     # ----------
     # CONSTRAINS
     # ----------
     # TODO: check if api.constrains also fires on xmlrpc calls
     @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis',
-                    'anlage_am_um', 'submission_env', 'bpk_company_id', 'partner_id', 'cancellation_for_bpk_private')
+                    'anlage_am_um', 'submission_env', 'bpk_company_id', 'partner_id', 'cancellation_for_bpk_private',
+                    'submission_id')
     def _check_submission_data_constrains(self):
         now = datetime.datetime.now()
         min_year = 2017
         max_year = int(now.year)+1
+
         for r in self:
+            # Make sure none of this fields are changed if it is already submitted
+            if r.state and r.state not in r._changes_allowed_states():
+                raise ValidationError(_("Changes to report (ID %s) not allowed in state: %s") % (r.id, r.state))
+
+            # Make sure it is impossible to change the submission_id to an already submitted submission
+            if r.submission_id and r.submission_id.state not in ('new', 'prepared', 'error'):
+                raise ValidationError(_("Adding a report (ID %s) to a submission (ID %s) in state '%s' is not allowed!"
+                                        "") % (r.id, r.submission_id.id, r.submission_id.state))
+
+            # Make sure the Submission fits the report
+            if r.submission_id and (r.submission_env != r.submission_id.submission_env
+                                    or r.meldungs_jahr != r.submission_id.meldungs_jahr
+                                    or r.bpk_company_id != r.submission_id.bpk_company_id):
+                raise ValidationError(_("Adding report (ID %s) to submission (ID %s) is not allowed because"
+                                        "'submission_env' or 'meldungs_jahr' or 'bpk_company_id' do not match!"
+                                        "") % (r.id, r.submission_id.id))
+
             # Check anlage_am_um is unique for this partner/company/cancellation_for_bpk_private combination
             if r.anlage_am_um and r.partner_id and r.bpk_company_id and r.submission_env:
                 same_anlage_am_um = r.sudo().search(
@@ -248,7 +272,7 @@ class ResPartnerFADonationReport(models.Model):
                 year_end += datetime.timedelta(15)
                 von = datetime.datetime.strptime(r.ze_datum_von, DEFAULT_SERVER_DATETIME_FORMAT)
                 bis = datetime.datetime.strptime(r.ze_datum_bis, DEFAULT_SERVER_DATETIME_FORMAT)
-                print r.ze_datum_von
+                #print r.ze_datum_von
                 if von < year_start or bis > year_end:
                     raise ValidationError(_("Report range seems to be outside of the report year %s! "
                                             "Please check ze_datum_von and ze_datum_bis."
@@ -479,11 +503,25 @@ class ResPartnerFADonationReport(models.Model):
         if not submission_bpk_private:
             raise ValidationError(_("compute_type_refnr_and_links() submission_bpk_private not given!"))
 
-        # Erstmeldung for special error code(s)
-        # -------------------------------------
+        # Get the last submitted donation report (lsr) for this bpk
+        # ---------------------------------------------------------
         lsr = r.last_submitted_report(submission_bpk_private=submission_bpk_private)
 
-        # Catch special case last submitted report was rejected with 'ERR-U-006'
+        # Erstmeldung E: if the lsr for this BPK was a cancellation donation report
+        # -------------------------------------------------------------------------
+        # After a cancellation an 'Erstmeldung' must be send.
+        if lsr and lsr.betrag == 0 and lsr.cancellation_for_bpk_private:
+            return {
+                'submission_type': 'E',
+                'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
+                'report_erstmeldung_id': False,
+                'cancelled_lsr_id': False
+            }
+
+        # Erstmeldung E: if lsr for this BPK was error ERR-U-006
+        # ------------------------------------------------------
+        # Catch special case last submitted report was rejected with 'ERR-U-006' - Refnr. unknown
+        # ATTENTION: This may happen if the FinanzOnline 'Steuernummer' of the org. is changed.
         if lsr and lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
             # ATTENTION: Create an Erstmeldung instead of an Aenderungsmeldung! Either to get the original RefNr. by
             #            the response of ERR-U-008 or because an Erstmeldung is allowed after a 'Stornierungsmeldung'!
@@ -494,72 +532,74 @@ class ResPartnerFADonationReport(models.Model):
                 'cancelled_lsr_id': False
             }
 
+        # Erstmeldung E: if lsr for this BPK was error ERR-U-008
+        # ------------------------------------------------------
+        # If the last submitted report for this submission_bpk_private had an ERR-U-008 there should
+        # already exist a cancellation donation report for the 'response_error_orig_refnr' of the ERR-U-008 .
+        # donation report!
+        # ATTENTION: This may happen if the organisation manually submitted donation reports via the FinanzOnline
+        #            webpage (or if any other unknown source submitted donation reports).
+        if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.response_error_code or '':
+            # If the last submitted report for this submission_bpk_private had an ERR-U-008 there should
+            # already exist a cancellation donation report for the 'response_error_orig_refnr' of the ERR-U-008 .
+            # donation report!
+            #
+            # TODO: Maybe we need to wait until we can send the 'new' Erstmeldung and should set it to 'error'
+            # TODO: first? (This is only needed if the same RefNr. is used for the cancellation and the new regular
+            # TODO: donation report, which is unlikely because RefNr. must be unique in one submission)
+            #
+            return {
+                'submission_type': 'E',
+                'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
+                'report_erstmeldung_id': False,
+                'cancelled_lsr_id': False
+            }
+
         # Aenderungsmeldung A
         # -------------------
-        # HINT: Since we search for the erstmeldung with the submission_bpk_private we will not find an erstmeldung
-        #       if the BPK of the partner changed. This is exactly the expected behaviour because we need an
-        #       'Erstmeldung' for any new/different BPK
-        erstmeldung = r.sudo().search([('submission_env', '=', r.submission_env),
-                                       ('partner_id', '=', r.partner_id.id),
-                                       ('bpk_company_id', '=', r.bpk_company_id.id),
-                                       ('meldungs_jahr', '=', r.meldungs_jahr),
-                                       ('submission_bpk_private', '=', submission_bpk_private),
-                                       ('submission_type', '=', 'E'),
-                                       ('id', '!=', r.id)],
-                                      order="anlage_am_um DESC", limit=2)
-        if erstmeldung:
-            # Check there is only one Erstmeldung for this submission_bpk_private
-            if len(erstmeldung) > 1:
-                raise ValidationError(_("Multiple 'Erstmeldungen' found for donation report (ID %s)") % r.id)
+        # If there is a lsr for this BPK this donation report would be an 'Aenderungsmeldung'
+        if lsr:
 
-            # ERR-U-008 Handling
-            # ATTENTION: This would return an 'erstmeldung' !
-            if erstmeldung.state == 'response_nok' and 'ERR-U-008' in erstmeldung.response_error_code or '':
-                # If the last submitted Erstmeldung for this submission_bpk_private had an ERR-U-008 there should
-                # already exist a cancellation donation report for the 'response_error_orig_refnr' of the ERR-U-008 .
-                # donation report!
-                # Until this cancellation donation report was not successfully submitted and accepted by FinanzOnline
-                # we maybe should not send any additional regular donation reports...
-                # TODO: Maybe we need to wait until we can send the 'new' Erstmeldung and should set it to Error first?
-                return {
-                    'submission_type': 'E',
-                    'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
-                    'report_erstmeldung_id': False,
-                    'cancelled_lsr_id': False
-                }
+            # Check if the state of the lsr is 'response_ok' (other special cases are handled already)
+            if lsr.state != 'response_ok':
+                raise ValidationError(_("State of the last submitted report (ID %s) for this BPK is %s but should be "
+                                        "'response_ok'! Therefore the submission_type could not be computed for this "
+                                        "donation report (ID %s)") % (lsr.id, lsr.state, r.id))
+            # Check that the lsr is an 'Erstmeldung' or has a linked 'Erstmeldung'
+            assert lsr.submission_type == 'E' or lsr.report_erstmeldung_id, _(
+                "The last submitted report (ID %s) for this report (ID %s) is not an 'Erstmeldung' and has no linked "
+                "'Erstmeldung'!") % (lsr.id, r.id)
 
-            # Check if the state of the Erstmeldung is response_ok
-            if erstmeldung.state != 'response_ok':
-                raise ValidationError(_("State of 'Erstmeldung' (ID %s) is %s but should be 'response_ok'. for donation"
-                                        "report with id %s! Maybe the 'Erstmeldung' was not skipped correctly?"
-                                        "") % (erstmeldung.id, erstmeldung.state, r.id))
-
-            # Check that the RefNr is still the same
-            erstm_refnr = erstmeldung.submission_refnr
+            # Check if the RefNr. changed
+            # HINT: If only the partner.id changed but the the rest is the same it must have been a partner merge
+            #       in this case it is ok to use the 'Erstmeldung' Refnr.
+            erstm_refnr = lsr.submission_refnr
             test_refnr = r._compute_refnr(submission_bpk_private=submission_bpk_private)
             if erstm_refnr != test_refnr:
-                ref_mismatch_msg = _("The computed Test-RefNr (%s) and the RefNr (%s) of the 'Erstmeldung' do "
-                                     "not match! Maybe company settings have changed or private BPK mismatch?"
-                                     "The partner id was not checked to allow the merge of partner."
-                                     "" % (test_refnr, erstm_refnr))
-                # HINT: If only the partner.id changed but the the rest is the same it must have been a partner merge
-                #       in this case it is ok to use the 'Erstmeldung' Refnr.
-                #
-                # Check if Meldejahr, CompanyType or Private BPK are the same BUT ignore partner_id to allow merges)
-                if (r.meldungs_jahr != erstmeldung.meldungs_jahr or
-                        r.bpk_company_id.fa_dr_type != erstmeldung.submission_id.submission_fa_dr_type or
-                        submission_bpk_private != erstmeldung.submission_bpk_private):
+                ref_mismatch_msg = _("The computed Test-RefNr '%s' (ID %s) and the RefNr '%s' of the last submitted "
+                                     "report (ID %s) do not match! Maybe company 'Submission Type' or the BPK has "
+                                     "changed? The partner id was NOT checked to allow partner merging!"
+                                     "") % (test_refnr, r.id, erstm_refnr, lsr.id)
+                logger.warning(ref_mismatch_msg)
+
+                # Check if Meldejahr, CompanyType and Private BPK are still the same
+                if (r.meldungs_jahr != lsr.meldungs_jahr or
+                        r.bpk_company_id.fa_dr_type != lsr.submission_id.submission_fa_dr_type or
+                        submission_bpk_private != lsr.submission_bpk_private):
                     raise ValidationError(ref_mismatch_msg)
 
+            # ATTENTION: We use the submission_refnr from the last submitted report in case the partner id
+            #            changed after a partner merge.
             return {
                 'submission_type': 'A',
-                'submission_refnr': erstmeldung.submission_refnr,
-                'report_erstmeldung_id': erstmeldung.id,
+                'submission_refnr': lsr.submission_refnr,
+                'report_erstmeldung_id': lsr.id if lsr.submission_type == 'E' else lsr.report_erstmeldung_id.id,
                 'cancelled_lsr_id': False
             }
 
         # Erstmeldung E
         # -------------
+        # Since we found no last submitted report for this bpk this must be an 'Erstmeldung'
         return {
             'submission_type': 'E',
             'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
@@ -588,6 +628,10 @@ class ResPartnerFADonationReport(models.Model):
                           'submission_bpk_request_id': False,
                           'submission_bpk_public': False,
                           'submission_bpk_private': False,
+                          # Additional Info
+                          'submission_bpk_state': False,
+                          'submission_dd_disabled': False,
+                          'submission_dd_optout': False,
                           })
             # Clear error fields
             if f['state'] != 'error':
@@ -708,7 +752,9 @@ class ResPartnerFADonationReport(models.Model):
             # --------------------------------------------------
             # HINT: Exclude cancellation donation reports
             # Donation deduction is disabled for this partner
-            if not r.cancellation_for_bpk_private and r.partner_id.bpk_state == 'disabled':
+            if not r.cancellation_for_bpk_private and (r.partner_id.bpk_state == 'disabled'
+                                                       or r.partner_id.donation_deduction_optout_web
+                                                       or r.partner_id.donation_deduction_disabled):
                 update_report(r, state='disabled')
                 continue
 
@@ -773,6 +819,10 @@ class ResPartnerFADonationReport(models.Model):
                 'submission_lastname': False if r.cancellation_for_bpk_private else bpk.bpk_request_lastname,
                 'submission_birthdate_web': False if r.cancellation_for_bpk_private else bpk.bpk_request_birthdate,
                 'submission_zip': False if r.cancellation_for_bpk_private else bpk.bpk_request_zip,
+                # Add additional Info
+                'submission_bpk_state': False if r.cancellation_for_bpk_private else r.partner_id.bpk_state,
+                'submission_dd_disabled': False if r.cancellation_for_bpk_private else r.partner_id.donation_deduction_disabled,
+                'submission_dd_optout': False if r.cancellation_for_bpk_private else r.partner_id.donation_deduction_optout_web,
             }
             try:
                 # Compute: 'submission_type', 'submission_refnr', 'report_erstmeldung_id' and 'cancelled_lsr_id'

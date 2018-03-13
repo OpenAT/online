@@ -63,8 +63,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
     # BPK fields for processing and filtering
     bpk_disabled = fields.Boolean(string="BPK Disabled", compute="_compute_bpk_disabled", readonly=True)
-    # HINT: This should be named bpk_state instead of bpk_state - left unchanged to keep compatibility with
-    #       FRST and sosync (v1, v2)
+
     # HINT: Donation Reports will be colored: found and linked: black, found and linked: blue, found and send: green)
     bpk_state = fields.Selection(selection=[
         ('new', 'New'),                                         # No bpk requests and no companies with zmr access data
@@ -74,7 +73,9 @@ class ResPartnerZMRGetBPK(models.Model):
         ('found', 'Found'),                                     # Found with current data (dr black, blue or green)
         ('error_max_tries', 'Error (max retries reached)'),     # Too many tries with unkown error (dr red)
         ('error', 'Error')],                                    # Not found with current partner data (dr red)
-        string="BPK State", readonly=True)
+        string="BPK State", readonly=True,
+        track_visibility='onchange', index=True)
+
     # HINT: Is computed by set_bpk_state()
     bpk_error_code = fields.Char(string="BPK-Error Code", readonly=True)
 

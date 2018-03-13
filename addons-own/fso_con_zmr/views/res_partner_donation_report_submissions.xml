@@ -27,10 +27,15 @@
 
                 <sheet>
                     <group>
+                        <field name="name" readonly="True"/>
+                    </group>
+                    <group>
                         <group string="Submission Settings">
+
                             <field name="submission_env"/>
                             <field name="meldungs_jahr"/>
                             <field name="bpk_company_id"/>
+                            <field name="manual"/>
                         </group>
                         <group string="System">
                             <field name="id" readonly="True"/>
@@ -73,7 +78,7 @@
                         </page>
 
                         <page string="Donation Reports">
-                            <field name="donation_report_ids"/>
+                            <field name="donation_report_ids" readonly="True"/>
                         </page>
 
                         <page string="Subm. Info">
@@ -132,11 +137,11 @@
                   orange: state == 'submitted';
                   green: state == 'response_ok';
                   blue: state == 'prepared';">
+                <field name="name"/>
                 <field name="submission_env"/>
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>
                 <field name="submission_datetime"/>
-                <field name="donation_report_ids" invisible="1"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -149,6 +154,7 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="Donation Report Submissions">
+                <field name="name"/>
                 <field name="donation_report_ids"/>
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>

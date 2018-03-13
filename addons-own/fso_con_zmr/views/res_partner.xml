@@ -18,6 +18,7 @@
                             <field name="bpk_forced_zip"/>
                         </group>
                         <group string="BPK Processing Status">
+                            <field name="bpk_state"/>
                             <field name="bpk_request_needed"/>
                             <field name="last_bpk_request"/>
                             <field name="bpk_request_error_tries"/>
@@ -38,6 +39,25 @@
                                 <field name="bpk_error_request_date" string="BPK Fehler am"/>
                                 <field name="bpk_error_code"/>
                                 <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Donation Reports">
+                        <field name="donation_report_ids" colspan="2" nolabel="1"
+                               colors="red: state in ['error', 'response_nok', 'unexpected_response'];
+                                       orange: state =='submitted';
+                                       grey: state in ['skipped', 'disabled'];
+                                       green: state == 'response_ok';">
+                            <tree string="Donation Reports">
+                                <field name="betrag"/>
+                                <field name="anlage_am_um"/>
+                                <field name="submission_type"/>
+                                <field name="state"/>
+                                <field name="submission_id" string="Sub."/>
+                                <field name="meldungs_jahr"/>
+                                <field name="submission_env"/>
+                                <field name="bpk_company_id"/>
+                                <field name="id"/>
                             </tree>
                         </field>
                     </group>
@@ -119,6 +139,9 @@
                             <field name="bpk_request_error" attrs="{'invisible': [('bpk_request_error', '=', False)]}"/>
                             <field name="bpk_error_code" attrs="{'invisible': [('bpk_error_code', '=', False)]}"/>
                         </group>
+                    </group>
+                    <group string="BPK Requests">
+                        <button name="action_set_bpk" type="object" string="Force BPK Request"/>
                         <field name="bpk_request_ids" colspan="2" nolabel="1">
                             <tree string="BPK Requests"
                                   default_order="bpk_request_partner_id,bpk_request_company_id"
@@ -127,14 +150,36 @@
                                           green:state == 'found';">
                                 <field name="bpk_request_company_id"/>
                                 <field name="bpk_request_date" string="BPK gefunden am"/>
-                                <!-- field name="bpk_private"/ -->
                                 <field name="bpk_error_request_date" string="BPK Fehler am"/>
                                 <field name="bpk_error_code"/>
                                 <field name="state"/>
                             </tree>
                         </field>
                     </group>
+                    <group string="Donation Reports">
+                        <field name="donation_report_ids" colspan="2" nolabel="1"
+                               colors="red: state in ['error', 'response_nok', 'unexpected_response'];
+                                       orange: state =='submitted';
+                                       grey: state in ['skipped', 'disabled'];
+                                       green: state == 'response_ok';">
+                            <tree string="Donation Reports">
+                                <field name="betrag"/>
+                                <field name="anlage_am_um"/>
+                                <field name="submission_type"/>
+                                <field name="state"/>
+                                <field name="submission_id" string="Sub."/>
+                                <field name="meldungs_jahr"/>
+                                <field name="submission_env"/>
+                                <field name="bpk_company_id"/>
+                                <field name="id"/>
+                            </tree>
+                        </field>
+                    </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" help="Follow this partner" groups="base.group_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>

@@ -20,7 +20,6 @@
                     <field name="newsletter_web"/>
                     <field name="donation_receipt_web"/>
                     <field name="legal_terms_web"/>
-                    <field name="donation_deduction_optout_web"/>
                 </field>
             </field>
         </record>

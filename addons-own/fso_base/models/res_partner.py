@@ -19,10 +19,12 @@ class ResPartner(models.Model):
     # HINT: SPAK Spendenabsetzbarkeit - Felder zum deaktivieren der automatischen Spendenabsetzung
     #       = keine BPK Anfragen und keine Spendenuebermittlung an das ZMR
     # ATTENTION: These fields are here because they may be useful even without fso_con_zmr
-    donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web', index=True,
-                                                   help="Donation Deduction OptOut set by Donor")
-    donation_deduction_disabled = fields.Boolean(string='Donation Deduction Disabled', index=True,
-                                                 help="Donation Deduction processing disabled by System")
+    donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web',
+                                                   help="Donation Deduction OptOut set by Donor",
+                                                   track_visibility='onchange', index=True,)
+    donation_deduction_disabled = fields.Boolean(string='Donation Deduction Disabled',
+                                                 help="Donation Deduction processing disabled by System",
+                                                 track_visibility='onchange', index=True,)
 
     legal_terms_web = fields.Boolean(string='Accept Legal Terms Web')
     birthdate_web = fields.Date(string='Birthdate Web', index=True,)

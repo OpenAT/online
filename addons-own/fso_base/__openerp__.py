@@ -118,6 +118,7 @@ TODO (must be done manually right now):
         'views/fsonline_menu.xml',
         'views/templates_backend_css.xml',
         'views/res_company.xml',
+        'views/res_partner.xml',
         'views/fs_groups.xml',
     ],
 }

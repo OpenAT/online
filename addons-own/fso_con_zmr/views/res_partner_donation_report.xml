@@ -24,7 +24,7 @@
                     <group>
                         <group>
                             <field name="submission_env" class="oe_bold"/>
-                            <field name="partner_id"/>
+                            <field name="partner_id" context="{'form_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_form', 'tree_view_ref' : 'fso_con_zmr.res_partner_bpk_res_partner_tree'}"/>
                             <field name="bpk_company_id"/>
                             <field name="meldungs_jahr"/>
                             <field name="betrag"/>
@@ -61,15 +61,22 @@
                     <notebook>
                         <page string="Submission">
                             <group string="Submission Data">
-                                <field name="submission_type" class="oe_bold"/>
-                                <field name="submission_refnr" class="oe_bold"/>
-                                <field name="submission_bpk_request_id"/>
-                                <field name="submission_bpk_public" invisible="1"/>
-                                <field name="submission_bpk_private"/>
-                                <field name="submission_firstname"/>
-                                <field name="submission_lastname"/>
-                                <field name="submission_birthdate_web"/>
-                                <field name="submission_zip"/>
+                                <group>
+                                    <field name="submission_type" class="oe_bold"/>
+                                    <field name="submission_refnr" class="oe_bold"/>
+                                    <field name="submission_bpk_private"/>
+                                </group>
+                                <group>
+                                    <field name="submission_bpk_state"/>
+                                    <field name="submission_dd_disabled"/>
+                                    <field name="submission_dd_optout"/>
+                                    <field name="submission_bpk_request_id"/>
+                                    <field name="submission_bpk_public" invisible="1"/>
+                                    <field name="submission_firstname"/>
+                                    <field name="submission_lastname"/>
+                                    <field name="submission_birthdate_web"/>
+                                    <field name="submission_zip"/>
+                                </group>
                             </group>
                             <group string="Donation Report Submission">
                                 <field name="submission_id"/>
@@ -125,15 +132,16 @@
                           orange: state =='submitted';
                           grey: state in ['skipped', 'disabled'];
                           green: state == 'response_ok';">
-                <field name="anlage_am_um"/>
-                <field name="submission_env"/>
                 <field name="partner_id"/>
-                <field name="bpk_company_id"/>
-                <field name="meldungs_jahr"/>
                 <field name="betrag"/>
+                <field name="anlage_am_um"/>
                 <field name="submission_type"/>
-                <field name="submission_id" string="Sub."/>
                 <field name="state"/>
+                <field name="submission_id" string="Sub."/>
+                <field name="meldungs_jahr"/>
+                <field name="submission_env"/>
+                <field name="bpk_company_id"/>
+                <field name="id"/>
             </tree>
         </field>
     </record>
@@ -150,34 +158,98 @@
                 <field name="state"/>
                 <field name="meldungs_jahr"/>
                 <field name="submission_type"/>
+                <field name="submission_refnr"/>
+                <field name="submission_bpk_private"/>
                 <field name="submission_id"/>
+                <field name="submission_id_datetime"/>
                 <field name="betrag"/>
                 <field name="anlage_am_um"/>
                 <field name="error_type"/>
                 <field name="error_code"/>
+                <field name="response_error_code"/>
+                <field name="response_error_detail"/>
+                <field name="response_error_orig_refnr"/>
+
+                <group string="Filter by">
+                    <filter string="New-to-submit"
+                            domain="[('state','=','new')]"/>
+                    <filter string="Not-submitted-with-errors"
+                            domain="[('state','=','error')]"/>
+                </group>
+                <group string="Filter by">
+                    <filter string="Cancellation-Reports"
+                            domain="[('cancellation_for_bpk_private','!=',False)]"/>
+                    <filter string="Regular-Reports"
+                            domain="[('cancellation_for_bpk_private','=',False)]"/>
+                </group>
+                <group string="Filter by">
+                    <filter string="Erstmeldung"
+                            domain="[('submission_type','=','E')]"/>
+                    <filter string="Aenderungsmeldung"
+                            domain="[('submission_type','=','A')]"/>
+                    <filter string="Stornierungsmeldung"
+                            domain="[('submission_type','=','S')]"/>
+                </group>
+                <group string="Filter by">
+                    <filter string="Skipped"
+                            domain="[('state','=','skipped')]"/>
+                    <filter string="Disabled"
+                            domain="[('state','=','disabled')]"
+                            help="Donation Deduction Disabled"/>
+                    <filter string="Submitted"
+                            domain="[('state','=','submitted')]"
+                            help="Submitted and waiting for response, or no response from FinanzOnline"/>
+                    <filter string="Accepted"
+                            domain="[('state','=','response_ok')]"
+                            help="Accepted by Finanzonline"/>
+                    <filter string="Rejected"
+                            domain="[('state','=','response_nok')]"
+                            help="Rejected by FinanzOnline"/>
+                    <filter string="Unexpected-Response"
+                            domain="[('state','=','unexpected_response')]"
+                            help="Answer from FinanzOnline could not be processed!"/>
+                </group>
+
                 <group string="Group by">
-                    <filter string="Environment"
-                            context="{'group_by':'submission_env'}"/>
-                    <filter string="Meldejahr"
-                            context="{'group_by':'meldungs_jahr'}"/>
                     <filter string="State"
                             context="{'group_by':'state'}"/>
-                    <filter string="Meldungs-Typ"
-                            context="{'group_by':'submission_type'}"/>
-                    <filter string="Uebertragung"
-                            context="{'group_by':'submission_id'}"/>
-                </group>
-                <group string="Group by">
-                    <filter string="Error Type"
-                            context="{'group_by':'error_type'}"/>
-                    <filter string="Error Code"
-                            context="{'group_by':'error_code'}"/>
-                </group>
-                <group string="Group by">
+                    <filter string="Meldejahr"
+                            context="{'group_by':'meldungs_jahr'}"/>
+                    <filter string="Environment"
+                            context="{'group_by':'submission_env'}"/>
                     <filter string="Company"
                             context="{'group_by':'bpk_company_id'}"/>
                     <filter name="Partner"
                             context="{'group_by':'partner_id'}"/>
+                </group>
+                <group string="Group by">
+                    <filter string="Meldungs-Typ"
+                            context="{'group_by':'submission_type'}"/>
+                    <filter string="Generation-Date"
+                            context="{'group_by':'anlage_am_um'}"
+                            help="Donation Report Generation Date"/>
+                    <filter string="Submission-ID"
+                            context="{'group_by':'submission_id'}"/>
+                    <filter string="Submission-Date"
+                            context="{'group_by':'submission_id_datetime'}"/>
+                    <filter string="RefNr"
+                            context="{'group_by':'submission_refnr'}"/>
+                    <filter string="Private-BPK"
+                            context="{'group_by':'submission_bpk_private'}"/>
+                </group>
+                <group string="Group by">
+                    <filter string="Pre-Subm-Error"
+                            context="{'group_by':'error_type'}"/>
+                    <filter string="Pre-Subm-Error-Code"
+                            context="{'group_by':'error_code'}"/>
+                </group>
+                <group string="Group by">
+                    <filter string="Response-Error"
+                            context="{'group_by':'response_error_code'}"/>
+                    <filter string="Response-Error-Detail"
+                            context="{'group_by':'response_error_detail'}"/>
+                    <filter string="Response-Error-RefNr"
+                            context="{'group_by':'response_error_orig_refnr'}"/>
                 </group>
             </search>
         </field>
