@@ -183,14 +183,15 @@ class ResPartnerFADonationReport(models.Model):
                    ('unexpected_exception', 'Exception during response processing'),
                    ],
                                            index=True)
-    response_error_code = fields.Char(string="Response Error Code", redonly=True)
+    response_error_code = fields.Char(string="Response Error Code", readonly=True, track_visibility='onchange')
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange')
     request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
 
     # DataBox
     databox_listing = fields.Text(string="Databox File List", readonly=True)
     response_file_applkey = fields.Char(string="Response File FinanzOnline ID (applkey)", readonly=True,
-                                        help="File Listing from FinanzOnline DataBox")
+                                        help="File Listing from FinanzOnline DataBox",
+                                        track_visibility='onchange')
     response_file = fields.Text(string="Response File (raw)", readonly=True,
                                 help="Response File from FinanzOnline DataBox")
     response_file_pretty = fields.Text(string="Response File (pretty)", readonly=True,
