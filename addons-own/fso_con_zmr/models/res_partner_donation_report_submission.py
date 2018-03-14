@@ -1091,7 +1091,10 @@ class ResPartnerFADonationReport(models.Model):
 
         # Check the databox answers
         for r in submitted:
-            logger.info("scheduled_databox_check() Check DataBox answer for %s" % r.submission_message_ref_id)
-            r.check_response()
+            try:
+                logger.info("scheduled_databox_check() Check DataBox answer for %s" % r.submission_message_ref_id)
+                r.check_response()
+            except (AssertionError, ValidationError) as e:
+                logger.error("scheduled_databox_check() FAILED!\n%s" % repr(e))
 
         logger.info("scheduled_databox_check() END")
