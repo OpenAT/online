@@ -36,7 +36,10 @@ class AccountFiscalYear(models.Model):
 
     drg_next_run = fields.Datetime(string="Next Scheduled DRG in FRST", readonly=True,
                                    help="Next scheduled run for donation report checks/generation STP in FRST")
+
     drg_last = fields.Datetime(string="Last DRG in FRST", readonly=True,
                                help="Last scheduled run of the donation report checks/generation STP in FRST")
+    drg_last_count = fields.Integer(string="Number of Rep. for last DRG", readonly=True,
+                                    help="Number of Donation Report(s) generated at the last scheduled run in FRST")
 
     # TODO: Add some validation (fiscal year must match meldezeitraum_start etc.)

@@ -1077,7 +1077,21 @@ class ResPartnerFADonationReport(models.Model):
     @api.model
     def scheduled_submission(self):
         logger.info("scheduled_submission() START")
-        logger.error("scheduled_submission() This method is NOT yet programmed but just prepared!")
+
+        # Check for any account.fiscalyear where we are within meldezeitraum_start and meldezeitraum_end
+        # AND if drg_last and drg_last_count is ok:
+
+            # Check if not send, non manual, submission(s) exits
+
+            # 'Prepare' any not send non manual submission
+
+            # Check if 'new' donation reports exits
+            # e.g.: if no submission existed or more than 10000 reports where there
+
+            # Create submission until no more non linked donation reports exists
+
+            # Submit all submission to FinanzOnline
+
         logger.info("scheduled_submission() END")
         return True
 

@@ -226,7 +226,7 @@
                     <filter string="Meldungs-Typ"
                             context="{'group_by':'submission_type'}"/>
                     <filter string="Generation-Date"
-                            context="{'group_by':'anlage_am_um'}"
+                            context="{'group_by':'anlage_am_um:day'}"
                             help="Donation Report Generation Date"/>
                     <filter string="Submission-ID"
                             context="{'group_by':'submission_id'}"/>
