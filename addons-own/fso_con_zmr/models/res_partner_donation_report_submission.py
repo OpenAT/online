@@ -203,7 +203,17 @@ class ResPartnerFADonationReport(models.Model):
     @api.depends('submission_message_ref_id', 'meldungs_jahr', 'submission_env')
     def compute_name(self):
         for r in self:
-            name = 'S' + str(r.id) + '_' + r.submission_env + r.meldungs_jahr + '_' + str(r.create_date).split()[0]
+            name = 'S' + str(r.id)
+            try:
+                if r.submission_env:
+                    name += '_' + r.submission_env
+                if r.meldungs_jahr:
+                    name += '_' + r.meldungs_jahr
+                if r.create_date:
+                    name += '_' + str(r.create_date).split()[0]
+            except Exception as e:
+                logger.warning("Field 'name' computation of donation report submission failed: %s" % repr(e))
+                pass
             r.name = name
 
     @api.depends('submission_content')
