@@ -381,6 +381,10 @@ class ResPartnerFADonationReport(models.Model):
                                  order="submission_id_datetime DESC, anlage_am_um DESC, create_date DESC",
                                  limit=1)
 
+        # Return the empty record set if no lsr was found
+        if not lsr:
+            return lsr
+
         # Return the lsr also on an ERR-U-008
         # ATTENTION: ERR-U-008 error means that there was already an 'Erstmeldung' for this donation report
         #            e.g.: if the customer did a manual 'Spendenmeldung' in the FinanzOnline Website
@@ -401,6 +405,8 @@ class ResPartnerFADonationReport(models.Model):
         if lsr.state != "response_ok":
             raise ValidationError(_("Submitted donation report (ID %s) is in state '%s' but should be "
                                     "in state 'response_ok'.") % (lsr.id, lsr.state))
+
+        # An lsr was found with state 'response_ok'
         return lsr
 
     @api.multi
@@ -495,6 +501,17 @@ class ResPartnerFADonationReport(models.Model):
         # ---------------------------------------------------------
         lsr = r.last_submitted_report(submission_bpk_private=submission_bpk_private)
 
+        # Erstmeldung E
+        # -------------
+        if not lsr:
+            # Since we found no last submitted report for this bpk this must be an 'Erstmeldung'
+            return {
+                'submission_type': 'E',
+                'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
+                'report_erstmeldung_id': False,
+                'cancelled_lsr_id': False
+            }
+
         # Erstmeldung E: if the lsr for this BPK was a cancellation donation report
         # -------------------------------------------------------------------------
         # After a cancellation an 'Erstmeldung' must be send.
@@ -527,7 +544,7 @@ class ResPartnerFADonationReport(models.Model):
         # donation report!
         # ATTENTION: This may happen if the organisation manually submitted donation reports via the FinanzOnline
         #            webpage (or if any other unknown source submitted donation reports).
-        if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.response_error_code or '':
+        if lsr and lsr.state == 'response_nok' and 'ERR-U-008' in lsr.response_error_code or '':
             # If the last submitted report for this submission_bpk_private had an ERR-U-008 there should
             # already exist a cancellation donation report for the 'response_error_orig_refnr' of the ERR-U-008 .
             # donation report!
@@ -585,15 +602,8 @@ class ResPartnerFADonationReport(models.Model):
                 'cancelled_lsr_id': False
             }
 
-        # Erstmeldung E
-        # -------------
-        # Since we found no last submitted report for this bpk this must be an 'Erstmeldung'
-        return {
-            'submission_type': 'E',
-            'submission_refnr': r._compute_refnr(submission_bpk_private=submission_bpk_private),
-            'report_erstmeldung_id': False,
-            'cancelled_lsr_id': False
-        }
+        # If we came to this far something went awfully wrong!
+        raise ValidationError("This point should never be reached while computing the submission_type!")
 
     @api.multi
     def update_state_and_submission_information(self):
