@@ -83,12 +83,19 @@ class SosyncJob(models.Model):
     # HINT: It would be best if this information could be retrieved from the job source system by the sync flow
     #       but for now this is the quicker next-best-alternative
     job_source_type = fields.Selection(string="Job Source Type", selection=[("delete", "Delete"),
-                                                                            ("merge_into", "Merge Into")],
+                                                                            ("merge_into", "Merge Into"),
+                                                                            ("temp", "Temporary Flow")
+                                                                            ],
                                        help="Job type indicator for special sync jobs. "
                                             "If empty it is processed as a default sync job = 'create' or 'update'",
                                        readonly=True, default=False,
-                                       index=True)  # NEW
-    job_source_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Record ID", readonly=True)  # NEW
+                                       index=True)
+    job_source_type_info = fields.Char(string='Indicator for temporary sync flows', readonly=True, index=True,
+                                       help="Indicator for repair sync flows (to group by later on) "
+                                            "e.g.: 'donation_deduction_disabled_repair' This should NOT be used for"
+                                            "long descriptions!")
+
+    job_source_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Record ID", readonly=True)
     job_source_target_merge_into_record_id = fields.Integer(string="Job Source Merge-Into Target Record ID",
                                                             readonly=True)  # NEW
 
