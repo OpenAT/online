@@ -231,7 +231,7 @@
                     <filter string="Submission-ID"
                             context="{'group_by':'submission_id'}"/>
                     <filter string="Submission-Date"
-                            context="{'group_by':'submission_id_datetime'}"/>
+                            context="{'group_by':'submission_id_datetime:day'}"/>
                     <filter string="RefNr"
                             context="{'group_by':'submission_refnr'}"/>
                     <filter string="Private-BPK"
