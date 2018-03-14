@@ -219,7 +219,7 @@ class ResPartnerFADonationReport(models.Model):
     # ----------
     # TODO: check if api.constrains also fires on xmlrpc calls
     @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis',
-                    'anlage_am_um', 'submission_env', 'bpk_company_id', 'partner_id', 'cancellation_for_bpk_private',
+                    'anlage_am_um', 'submission_env', 'bpk_company_id', 'cancellation_for_bpk_private',
                     'submission_id')
     def _check_submission_data_constrains(self):
         now = datetime.datetime.now()
@@ -228,7 +228,7 @@ class ResPartnerFADonationReport(models.Model):
 
         for r in self:
             # Make sure none of this fields are changed if it is already submitted
-            if r.state and r.state not in r._changes_allowed_states():
+            if r.state and r.state not in list(r._changes_allowed_states()) + ['skipped']:
                 raise ValidationError(_("Changes to report (ID %s) not allowed in state: %s") % (r.id, r.state))
 
             # Make sure it is impossible to change the submission_id to an already submitted submission
@@ -243,18 +243,6 @@ class ResPartnerFADonationReport(models.Model):
                 raise ValidationError(_("Adding report (ID %s) to submission (ID %s) is not allowed because"
                                         "'submission_env' or 'meldungs_jahr' or 'bpk_company_id' do not match!"
                                         "") % (r.id, r.submission_id.id))
-
-            # Check anlage_am_um is unique for this partner/company/cancellation_for_bpk_private combination
-            if r.anlage_am_um and r.partner_id and r.bpk_company_id and r.submission_env:
-                same_anlage_am_um = r.sudo().search(
-                    [('submission_env', '=', r.submission_env),
-                     ('bpk_company_id', '=', r.bpk_company_id.id),
-                     ('partner_id', '=', r.partner_id.id),
-                     ('cancellation_for_bpk_private', '=', r.cancellation_for_bpk_private),
-                     ('anlage_am_um', '=', r.anlage_am_um),
-                     ('id', '!=', r.id)], limit=1)
-                if same_anlage_am_um:
-                    raise ValidationError(_("Same anlage_am_um datetime found: ID %s") % same_anlage_am_um.id)
 
             # Check year (meldungs_jahr)
             if not r.meldungs_jahr or int(r.meldungs_jahr) < min_year or int(r.meldungs_jahr) > max_year:

@@ -3,6 +3,7 @@ from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
 from openerp.addons.fso_base.tools.soap import render_template, soap_request
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 import base64
 import datetime
@@ -1069,28 +1070,65 @@ class ResPartnerFADonationReport(models.Model):
     # ------------------------------------------
     # SCHEDULER ACTIONS FOR AUTOMATED PROCESSING
     # ------------------------------------------
-    # TODO: Before this gets programmed we must discuss where to set and store the start and end of the
-    # TODO: Meldezeitraum per Meldejahr
     # HINT: This should be started every day and then get the Meldezeitraum from the account.fiscalyear!
     #       account.fiscalyear! It checks if it needs to be run at all (inside Meldezeitraum) for every possible
     #       Meldejahr (now - 6 Years) and if the current day is the correct Meldetag for this instance
     @api.model
     def scheduled_submission(self):
         logger.info("scheduled_submission() START")
+        #now = fields.datetime.utcnow()
 
+        # Search for fiscal years
+        # min_datetime = fields.datetime.strptime('2016.12.01 00:00:00', DEFAULT_SERVER_DATETIME_FORMAT)
+        # fiscal_years = self.env['account.fiscalyear'].sudo().search([
+        #     ('date_start', '>=', min_datetime.strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
+        #     #('meldezeitraum_start', '!=', False),
+        #     #('meldezeitraum_end', '!=', False),
+        #     #('date_start', '!=', False),
+        #     #('date_stop', '!=', False),
+        # ])
+        # if not fiscal_years:
+        #     logger.warning("scheduled_submission() No fiscal year found to auto-generate submission for!")
+        #
+        # # Process every fiscal year
+        # for y in fiscal_years:
+        #
+        #     # Get the meldejahr
+        #     # -----------------
+        #     # Assert that the range of the fiscal year is approx a year (365 days +- 20 days)
+        #     time_range = y.date_stop - y.date_start
+        #     assert (365+20) > time_range.days > (365-20), _(
+        #         "scheduled_submission() fiscal year has suspicious number of days: %s") % time_range.days
+        #
+        #     # Find all years in the datetime range
+        #     years_in_rage = range(y.date_start.year, y.date_stop.year+1)
+        #
+        #     if len(years_in_rage) == 1:
+        #         meldejahr = years_in_rage[0]
+        #
+        #         # Calculate delta from date_start to end of year
+        #         date_start_end_of_year
+        #         diff_start = date_start_end_of_year - y.date_start
+        #
+        #
+        #         # Calculate delta from start of year to date_stop
+        #         diff_stop = y.date_stop - date_stop_start_of_year
+        #         # take the Year from the date with more days
+
+        # ==========
         # Check for any account.fiscalyear where we are within meldezeitraum_start and meldezeitraum_end
         # AND if drg_last and drg_last_count is ok:
-
-            # Check if not send, non manual, submission(s) exits
-
-            # 'Prepare' any not send non manual submission
-
-            # Check if 'new' donation reports exits
-            # e.g.: if no submission existed or more than 10000 reports where there
-
-            # Create submission until no more non linked donation reports exists
-
-            # Submit all submission to FinanzOnline
+        #
+        #     Check if not send, non manual, submission(s) exits
+        #
+        #     'Prepare' any not send non manual submission
+        #
+        #     Check if 'new' donation reports exits
+        #     e.g.: if no submission existed or more than 10000 reports where there
+        #
+        #     Create submission until no more non linked donation reports exists
+        #
+        #     Submit all submission to FinanzOnline
 
         logger.info("scheduled_submission() END")
         return True

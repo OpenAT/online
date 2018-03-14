@@ -1,6 +1,9 @@
 # -*- coding: utf-'8' "-*-"
 from openerp import api, models, fields
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 # addon account (already in fso_base)
 class AccountFiscalYear(models.Model):
@@ -42,4 +45,21 @@ class AccountFiscalYear(models.Model):
     drg_last_count = fields.Integer(string="Number of Rep. for last DRG", readonly=True,
                                     help="Number of Donation Report(s) generated at the last scheduled run in FRST")
 
-    # TODO: Add some validation (fiscal year must match meldezeitraum_start etc.)
+    # # TODO: WORK IN PROGRESS compute meldejahr
+    # meldungs_jahr = fields.Char(string="Meldejahr", readonly=True, compute="compute_meldungs_jahr")
+    #
+    # # ---------------
+    # # COMPUTED FIELDS
+    # # ---------------
+    #
+    # @api.depends('date_start', 'date_stop')
+    # def compute_meldungs_jahr(self):
+    #     for r in self:
+    #         # Compute meldejahr
+    #
+    #         # Check time range
+    #         time_range = y.date_stop - y.date_start
+    #         if not ((365+20) > time_range.days > (365-20)):
+    #             logger.warning("fiscalyear: Suspicious number of days: %s" % time_range.days)
+    #             r.meldungs_jahr = False
+    #             continue
