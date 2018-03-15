@@ -481,6 +481,20 @@ class ResPartnerFADonationReport(models.Model):
                                                 lsr.report_erstmeldung_id.id,
                                                 lsr.report_erstmeldung_id.submission_refnr))
 
+            # Cancellation donation report for ERR-U-008
+            if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.response_error_code or '':
+                if not lsr.response_error_orig_refnr:
+                    raise ValidationError(_("Last submitted report (ID %s) is an Erstmeldung with ERR-U-008 but"
+                                            "the field 'response_error_orig_refnr' is empty! (donation report id %s)"
+                                            "") % (lsr.id, r.id))
+                return {
+                    'submission_type': 'S',
+                    'submission_refnr': lsr.response_error_orig_refnr,
+                    'report_erstmeldung_id': lsr.report_erstmeldung_id.id if lsr.submission_type != 'E' else lsr.id,
+                    'cancelled_lsr_id': lsr.id
+                }
+
+            # Normal cancellation donation report
             return {
                 'submission_type': 'S',
                 'submission_refnr': lsr.submission_refnr,
