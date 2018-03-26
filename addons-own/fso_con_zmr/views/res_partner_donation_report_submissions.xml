@@ -20,7 +20,10 @@
                             attrs="{'invisible':[('state','not in',['submitted', 'unexpected_response'])]}"
                             string="Check Answer from FinanzOnline DataBox!"/>
                     <button name="release_donation_reports" type="object"
-                            attrs="{'invisible':[('state','not in',['response_nok',])]}"
+                            attrs="{'invisible':['|',
+                            ('state','not in',['response_nok',]),
+                            ('error_code','not in',['-4',]),
+                            ]}"
                             string="Reset donation reports to error state for resubmission!"/>
                     <field name="state" widget="statusbar" statusbar_visible="new,response_ok"/>
                 </header>
