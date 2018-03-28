@@ -12,6 +12,7 @@
                     <group>
                         <field name="ze_datum_von"/>
                         <field name="ze_datum_bis"/>
+                        <field name="meldungs_jahr"/>
                         <field name="meldezeitraum_start"/>
                         <field name="meldezeitraum_end"/>
                         <field name="drg_interval_number"/>

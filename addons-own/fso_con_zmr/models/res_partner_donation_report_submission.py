@@ -1071,64 +1071,115 @@ class ResPartnerFADonationReport(models.Model):
     # SCHEDULER ACTIONS FOR AUTOMATED PROCESSING
     # ------------------------------------------
     # HINT: This should be started every day and then get the Meldezeitraum from the account.fiscalyear!
-    #       account.fiscalyear! It checks if it needs to be run at all (inside Meldezeitraum) for every possible
+    #       It checks if it needs to be run at all (inside Meldezeitraum) for every possible
     #       Meldejahr (now - 6 Years) and if the current day is the correct Meldetag for this instance
     @api.model
     def scheduled_submission(self):
         logger.info("scheduled_submission() START")
-        #now = fields.datetime.utcnow()
+        now = fields.datetime.utcnow()
+
+        def prepare(subm):
+            logger.info("scheduled_submission() Prepare donation report submission (ID %s, NAME %s) "
+                        "" % (subm.id, subm.name))
+            try:
+                subm.prepare()
+            except Exception as e:
+                logger.error("scheduled_submission() Could not prepare submission (ID %s):\n%s"
+                             "" % (subm.id, repr(e)))
+                return False
+
+            if subm.state != 'prepared':
+                logger.error("scheduled_submission() Preparing of submission (ID %s, NAME %s) failed "
+                             "with state '%s' and error type '%s'" % (subm.id, subm.name, subm.state, subm.error_type))
+                return False
+
+            logger.info("scheduled_submission() Successfully prepares submission (ID %s)" % subm.id )
+            return True
+
+        def submit(subm):
+            logger.info("scheduled_submission() Submit donation report submission (ID %s, NAME %s) to "
+                        "FinanzOnline!" % (subm.id, subm.name))
+            try:
+                subm.submit()
+            except Exception as e:
+                logger.error("scheduled_submission() Could not submit submission (ID %s):\n%s"
+                             "" % (subm.id, repr(e)))
+                return False
+
+            if subm.state != 'submitted':
+                logger.error("scheduled_submission() Submitting submission (ID %s, NAME %s) failed "
+                             "with state %s and error type %s" % (subm.id, subm.name, subm.state, subm.error_type))
+                return False
+
+            logger.info("scheduled_submission() Successfully submitted submission (ID %s) to FinanzOnline" % subm.id)
+            return True
 
         # Search for fiscal years
-        # min_datetime = fields.datetime.strptime('2016.12.01 00:00:00', DEFAULT_SERVER_DATETIME_FORMAT)
-        # fiscal_years = self.env['account.fiscalyear'].sudo().search([
-        #     ('date_start', '>=', min_datetime.strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
-        #     #('meldezeitraum_start', '!=', False),
-        #     #('meldezeitraum_end', '!=', False),
-        #     #('date_start', '!=', False),
-        #     #('date_stop', '!=', False),
-        # ])
-        # if not fiscal_years:
-        #     logger.warning("scheduled_submission() No fiscal year found to auto-generate submission for!")
-        #
-        # # Process every fiscal year
-        # for y in fiscal_years:
-        #
-        #     # Get the meldejahr
-        #     # -----------------
-        #     # Assert that the range of the fiscal year is approx a year (365 days +- 20 days)
-        #     time_range = y.date_stop - y.date_start
-        #     assert (365+20) > time_range.days > (365-20), _(
-        #         "scheduled_submission() fiscal year has suspicious number of days: %s") % time_range.days
-        #
-        #     # Find all years in the datetime range
-        #     years_in_rage = range(y.date_start.year, y.date_stop.year+1)
-        #
-        #     if len(years_in_rage) == 1:
-        #         meldejahr = years_in_rage[0]
-        #
-        #         # Calculate delta from date_start to end of year
-        #         date_start_end_of_year
-        #         diff_start = date_start_end_of_year - y.date_start
-        #
-        #
-        #         # Calculate delta from start of year to date_stop
-        #         diff_stop = y.date_stop - date_stop_start_of_year
-        #         # take the Year from the date with more days
+        spak_start = fields.datetime.strptime('2016-12-01 00:00:00', DEFAULT_SERVER_DATETIME_FORMAT)
+        fiscal_years = self.env['account.fiscalyear'].sudo().search([
+            ('date_start', '!=', False),
+            ('date_stop', '!=', False),
+            ('meldezeitraum_start', '!=', False),
+            ('meldezeitraum_end', '!=', False),
+            ('ze_datum_von', '>=', spak_start.strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
+            ('ze_datum_bis', '!=', False),
+        ])
+        if not fiscal_years:
+            logger.warning("scheduled_submission() No fiscal year found to auto-generate submission for!")
 
-        # ==========
-        # Check for any account.fiscalyear where we are within meldezeitraum_start and meldezeitraum_end
-        # AND if drg_last and drg_last_count is ok:
-        #
-        #     Check if not send, non manual, submission(s) exits
-        #
-        #     'Prepare' any not send non manual submission
-        #
-        #     Check if 'new' donation reports exits
-        #     e.g.: if no submission existed or more than 10000 reports where there
-        #
-        #     Create submission until no more non linked donation reports exists
-        #
-        #     Submit all submission to FinanzOnline
+        # Process every fiscal year
+        for y in fiscal_years:
+            assert y.meldungs_jahr, "scheduled_submission() meldungs_jahr missing for fiscal year (ID %s)" % y.id
+
+            start = datetime.datetime.strptime(y.meldezeitraum_start, DEFAULT_SERVER_DATETIME_FORMAT)
+            end = datetime.datetime.strptime(y.meldezeitraum_end, DEFAULT_SERVER_DATETIME_FORMAT)
+
+            if not bool(start < now < end):
+                logger.info("scheduled_submission() fiscal year (ID %s) outside Meldezeitraum" % y.id)
+                continue
+
+            # TODO: check if 'drg_last' and 'drg_last_count' is ok (if donation reports are already synced)
+
+            # Process existing submissions (only non manual)
+            existing = self.sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('state', 'in', ['new', 'prepared', 'error']),
+                ('manual', '=', False),
+                ('submission_env', '=', 'P'),
+            ])
+
+            for s in existing:
+                # Prepare existing submissions
+                if not prepare(s):
+                    continue
+
+                # Submit to FinanzOnline
+                # HINT: state is already 'new' or prepare(s) would have failed and would continue with the next subm.
+                # submit(s) # TODO: Enable after tests
+
+            # Check for non linked donation reports in state new
+            reports = True
+            max_subm = 10
+            while reports and max_subm > 0:
+                max_subm -= 1
+                reports = self.env['res.partner.donation_report'].sudo().search([
+                    ('meldungs_jahr', '=', y.meldungs_jahr),
+                    ('submission_id', '=', False),
+                    ('state', '=', 'new'),
+                    ('submission_env', '=', 'P'),
+                ])
+                if reports:
+                    # Create a new submission
+                    new_subm = self.sudo().create(
+                        {'submission_env': 'P',
+                         'bpk_company_id': y.company_id.id,
+                         'meldungs_jahr': y.meldungs_jahr,
+                         })
+                    # Prepare new submission
+                    assert prepare(new_subm), "scheduled_submission() preparation of new submission failed! " \
+                                              "(ID %s)" % new_subm.id
+                    # Submit new submission
+                    # submit(s) # TODO: Enable after tests
 
         logger.info("scheduled_submission() END")
         return True

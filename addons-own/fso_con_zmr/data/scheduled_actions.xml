@@ -55,7 +55,7 @@
          fields meldezeitraum_start and meldezeitraum_end ... from account.fiscalyear
     -->
     <record id="ir_cron_scheduled_donation_report_submission" model="ir.cron" forcecreate="1">
-        <field name="name">Donation Reports: Scheduled Submission to FinanzOnline (!!! TODO !!!)</field>
+        <field name="name">Donation Reports: Scheduled Submission to FinanzOnline</field>
         <field name="priority" eval="2201" />
         <field name="active" eval="False"/>
         <field name="interval_number">6</field>
