@@ -27,3 +27,5 @@ class AccountFiscalYearSosync(models.Model):
 
     drg_last = fields.Datetime(sosync="True")           # Last scheduled run of the donation report checks/generation STP in FRST
     drg_last_count = fields.Integer(sosync="True")      # Count of donation reports generated at the last scheduled run in FRST
+
+    meldungs_jahr = fields.Char(sosync="True")          # computed field based on ze_datum_von and ze_datum_bis
