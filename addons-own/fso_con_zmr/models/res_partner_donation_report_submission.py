@@ -188,6 +188,9 @@ class ResPartnerFADonationReport(models.Model):
                                            index=True)
     response_error_code = fields.Char(string="Response Error Code", readonly=True, track_visibility='onchange')
     response_error_detail = fields.Text(string="Response Error Detail", readonly=True, track_visibility='onchange')
+    response_error_orig_refnr = fields.Char(string="Response Error Orig RefNr", readonly=True,
+                                            track_visibility='onchange')
+
     request_duration = fields.Char(string="Request Duration (seconds)", readonly=True)
 
     # DataBox
@@ -800,7 +803,7 @@ class ResPartnerFADonationReport(models.Model):
 
                 # Get <Data> if available to get the original RefNr. for ERR-U-008 errors
                 data = error_etree.find(".//{*}Data")
-                data = data.text if data is not None else ''
+                data = data.text if data is not None else False
 
                 # Find related donation report
                 dr = s.env['res.partner.donation_report'].sudo().search(
@@ -827,7 +830,7 @@ class ResPartnerFADonationReport(models.Model):
                           'response_content': content,
                           'response_error_code': code,
                           'response_error_detail': text + ' ' + data if data else text,
-                          'response_error_orig_refnr': data if 'ERR-U-008' in code or '' else False})
+                          'response_error_orig_refnr': data if data and 'ERR-U-008' in code else False})
 
                 # Remove the id from the remaining_ids donation reports list
                 remaining_ids.remove(dr.id)

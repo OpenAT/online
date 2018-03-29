@@ -58,6 +58,7 @@
                     <group string="Response errors" attrs="{'invisible':[('response_error_type','=',False)]}">
                         <field name="response_error_type"/>
                         <field name="response_error_code"/>
+                        <field name="response_error_orig_refnr"/>
                         <field name="response_error_detail"/>
                     </group>
 
