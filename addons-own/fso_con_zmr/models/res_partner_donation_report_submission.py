@@ -3,6 +3,8 @@ from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
 from openerp.addons.fso_base.tools.soap import render_template, soap_request
+from openerp.addons.fso_base.tools.email_tools import send_internal_email
+from openerp.addons.fso_base.tools.server_tools import is_production_server
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 import base64
@@ -1079,39 +1081,62 @@ class ResPartnerFADonationReport(models.Model):
         now = fields.datetime.utcnow()
 
         def prepare(subm):
-            logger.info("scheduled_submission() Prepare donation report submission (ID %s, NAME %s) "
-                        "" % (subm.id, subm.name))
+            rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
+            subm_info = "(ID='%s', NAME='%s', REPS='%s')" % (subm.id, subm.name, rep_count)
+            logger.info("scheduled_submission() Prepare donation report submission %s" % subm_info)
+
+            # Prepare messages
+            msg_error = "scheduled_submission() ERROR: Could NOT prepare donation report submission! %s" % subm_info
+            msg_success = "scheduled_submission() Successfully prepared donation report submission! %s" % subm_info
+
             try:
                 subm.prepare()
             except Exception as e:
-                logger.error("scheduled_submission() Could not prepare submission (ID %s):\n%s"
-                             "" % (subm.id, repr(e)))
+                msg = "%s\n%s" % (msg_error, repr(e))
+                logger.error(msg)
+                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg)
                 return False
 
             if subm.state != 'prepared':
-                logger.error("scheduled_submission() Preparing of submission (ID %s, NAME %s) failed "
-                             "with state '%s' and error type '%s'" % (subm.id, subm.name, subm.state, subm.error_type))
+                logger.error(msg_error)
+                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg_error)
                 return False
 
-            logger.info("scheduled_submission() Successfully prepares submission (ID %s)" % subm.id )
+            send_internal_email(odoo_env_obj=subm.env, subject=msg_success, body=msg_success)
+            logger.info(msg_success)
             return True
 
         def submit(subm):
-            logger.info("scheduled_submission() Submit donation report submission (ID %s, NAME %s) to "
-                        "FinanzOnline!" % (subm.id, subm.name))
+            rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
+            subm_info = "(ID='%s', NAME='%s', REPS='%s')" % (subm.id, subm.name, rep_count)
+            logger.info("scheduled_submission() Submit donation report submission %s to FinanzOnline" % subm_info)
+
+            # ATTENTION: Do NOT send the submission if we are on a dev server!
+            if not is_production_server():
+                logger.warning("Will not auto-submit donation report submission (ID %s) on a development server!"
+                               "" % subm.id)
+                return False
+
+            # Prepare messages
+            msg_error = "scheduled_submission() ERROR: Submission to FinanzOnline FAILED! %s " % subm_info
+            msg_success = "scheduled_submission() Successfully submitted %s to FinanzOnline" % subm_info
+
+            # Submit the donation report submission to FinanzOnline
             try:
                 subm.submit()
             except Exception as e:
-                logger.error("scheduled_submission() Could not submit submission (ID %s):\n%s"
-                             "" % (subm.id, repr(e)))
+                msg = "%s\n%s" % (msg_error, repr(e))
+                logger.error(msg)
+                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg)
                 return False
 
             if subm.state != 'submitted':
-                logger.error("scheduled_submission() Submitting submission (ID %s, NAME %s) failed "
-                             "with state %s and error type %s" % (subm.id, subm.name, subm.state, subm.error_type))
+                logger.error(msg_error)
+                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg_error)
                 return False
 
-            logger.info("scheduled_submission() Successfully submitted submission (ID %s) to FinanzOnline" % subm.id)
+            send_internal_email(odoo_env_obj=subm.env, subject=msg_success, body=msg_success)
+            logger.info(msg_success)
             return True
 
         # Search for fiscal years
@@ -1140,6 +1165,19 @@ class ResPartnerFADonationReport(models.Model):
 
             # TODO: check if 'drg_last' and 'drg_last_count' is ok (if donation reports are already synced)
 
+            # Warn if any unsubmitted manual production donation report submissions exists
+            manual_not_send = self.sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('state', 'in', ['new', 'prepared', 'error']),
+                ('manual', '=', True),
+                ('submission_env', '=', 'P'),
+            ])
+            if manual_not_send:
+                manual_msg = ("scheduled_submission() WARNING! Unsubmitted MANUAL donation report submission found! "
+                              "(%s)" % manual_not_send.ids)
+                logger.warning(manual_msg)
+                send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
+
             # Process existing submissions (only non manual)
             existing = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1154,20 +1192,26 @@ class ResPartnerFADonationReport(models.Model):
                     continue
 
                 # Submit to FinanzOnline
-                # HINT: state is already 'new' or prepare(s) would have failed and would continue with the next subm.
-                # submit(s) # TODO: Enable after tests
+                # HINT: state is already 'prepared' or prepare(s) above would have failed
+                submit(s)
 
             # Check for non linked donation reports in state new
             reports = True
             max_subm = 10
             while reports and max_subm > 0:
                 max_subm -= 1
+                if max_subm <= 0:
+                    max_subm_msg = "scheduled_submission() ERROR! More than 9 submission-creation tries!"
+                    logger.error(max_subm_msg)
+                    send_internal_email(odoo_env_obj=self.env, subject=max_subm_msg)
+
                 reports = self.env['res.partner.donation_report'].sudo().search([
                     ('meldungs_jahr', '=', y.meldungs_jahr),
                     ('submission_id', '=', False),
                     ('state', '=', 'new'),
                     ('submission_env', '=', 'P'),
                 ])
+
                 if reports:
                     # Create a new submission
                     new_subm = self.sudo().create(
@@ -1179,7 +1223,7 @@ class ResPartnerFADonationReport(models.Model):
                     assert prepare(new_subm), "scheduled_submission() preparation of new submission failed! " \
                                               "(ID %s)" % new_subm.id
                     # Submit new submission
-                    # submit(s) # TODO: Enable after tests
+                    submit(s)
 
         logger.info("scheduled_submission() END")
         return True

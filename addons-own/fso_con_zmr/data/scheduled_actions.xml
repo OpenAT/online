@@ -38,12 +38,12 @@
     <!-- Scheduled Check to update donation reports state and submission values -->
     <record id="ir_cron_scheduled_set_donation_report_state" model="ir.cron" forcecreate="1">
         <field name="name">Donation Reports: Update State and Submission Information</field>
-        <field name="priority" eval="2200" />
+        <field name="priority" eval="2202" />
         <field name="active" eval="True"/>
         <field name="interval_number">7</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
-        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 01:30:00')" />
+        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 10:00:00')" />
         <field name="doall" eval="False"/>
         <field name="model">res.partner.donation_report</field>
         <field name="function">scheduled_set_donation_report_state</field>
@@ -51,17 +51,14 @@
     </record>
 
     <!-- Scheduled donation reports submission -->
-    <!-- Check every 6 hours if a new donation report submission must be created and send to FinanzOnline based on the
-         fields meldezeitraum_start and meldezeitraum_end ... from account.fiscalyear
-    -->
     <record id="ir_cron_scheduled_donation_report_submission" model="ir.cron" forcecreate="1">
         <field name="name">Donation Reports: Scheduled Submission to FinanzOnline</field>
         <field name="priority" eval="2201" />
         <field name="active" eval="False"/>
-        <field name="interval_number">6</field>
-        <field name="interval_type">hours</field>
+        <field name="interval_number">7</field>
+        <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
-        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 02:30:00')" />
+        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 20:00:00')" />
         <field name="doall" eval="False"/>
         <field name="model">res.partner.donation_report.submission</field>
         <field name="function">scheduled_submission</field>
@@ -71,12 +68,12 @@
     <!-- Scheduled FinanzOnline DataBox Check for Donation Report Submission(s) Answers -->
     <record id="ir_cron_scheduled_databox_check" model="ir.cron" forcecreate="1">
         <field name="name">Donation Reports: Scheduled DataBox (Answer) Check</field>
-        <field name="priority" eval="2202" />
+        <field name="priority" eval="2200" />
         <field name="active" eval="True"/>
         <field name="interval_number">4</field>
         <field name="interval_type">hours</field>
         <field name="numbercall">-1</field>
-        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 01:30:00')" />
+        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 21:00:00')" />
         <field name="doall" eval="False"/>
         <field name="model">res.partner.donation_report.submission</field>
         <field name="function">scheduled_databox_check</field>

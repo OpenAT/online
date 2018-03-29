@@ -4,7 +4,7 @@ from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, SUPERUSER_ID
-from openerp.addons.fso_base.tools.datetime import naive_to_timezone
+from openerp.addons.fso_base.tools.datetime_tools import naive_to_timezone
 
 import time
 import datetime
@@ -656,7 +656,8 @@ class ResPartnerFADonationReport(models.Model):
                 f.update({'skipped_by_id': False})
 
             # Update the report if anything changed and return
-            if any(report[f_name] != f[f_name] for f_name in f):
+            # HINT: '... or False' is for comparison of empty records sets and alike !
+            if any((report[f_name] or False) != (f[f_name] or False) for f_name in f):
                 report.write(f)
             return
 
