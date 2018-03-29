@@ -1223,10 +1223,9 @@ class ResPartnerFADonationReport(models.Model):
                          'meldungs_jahr': y.meldungs_jahr,
                          })
                     # Prepare new submission
-                    assert prepare(new_subm), "scheduled_submission() preparation of new submission failed! " \
-                                              "(ID %s)" % new_subm.id
-                    # Submit new submission
-                    submit(s)
+                    if prepare(new_subm):
+                        # Submit new submission
+                        submit(new_subm)
 
         logger.info("scheduled_submission() END")
         return True
