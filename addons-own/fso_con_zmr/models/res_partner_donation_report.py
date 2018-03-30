@@ -306,7 +306,8 @@ class ResPartnerFADonationReport(models.Model):
              'submission_id_datetime',
              'response_content',
              'response_error_code',
-             'response_error_detail')
+             'response_error_detail',
+             'response_error_orig_refnr',)
         return f
 
     @api.multi
@@ -952,7 +953,8 @@ class ResPartnerFADonationReport(models.Model):
             changes_allowed_states.append('response_nok')
             if r.state and r.state not in changes_allowed_states:
                 changes_allowed_fields = self._changes_allowed_fields_after_submission()
-                if any(vals[field] != r[field] for field in vals if field not in changes_allowed_fields):
+                if any((vals[field] or False) != (r[field] or False) for field in vals
+                       if field not in changes_allowed_fields):
                     raise ValidationError(_("Changes to some of the fields in %s are only allowed in the states %s!")
                                           % (vals, str(self._changes_allowed_states())))
 

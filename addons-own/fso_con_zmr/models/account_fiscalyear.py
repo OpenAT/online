@@ -56,7 +56,7 @@ class AccountFiscalYear(models.Model):
     # ---------------
     # API CONSTRAINTS
     # ---------------
-    @api.constrains('date_start', 'date_end', 'ze_datum_von', 'ze_datum_bis',
+    @api.constrains('date_start', 'date_stop', 'ze_datum_von', 'ze_datum_bis',
                     'meldezeitraum_start', 'meldezeitraum_end')
     def _constrain_donation_report_dates(self):
 
@@ -105,7 +105,7 @@ class AccountFiscalYear(models.Model):
                 if date_stop:
                     ze_end_range = date_stop - ze_datum_bis
                     if abs(ze_end_range.days) > 30:
-                        raise ValidationError(_("Fiscal year date_end and ze_datum_bis differ more than 30 days!"))
+                        raise ValidationError(_("Fiscal year date_stop and ze_datum_bis differ more than 30 days!"))
 
             # Check Meldezeitraum
             if meldezeitraum_start or meldezeitraum_end:
@@ -149,28 +149,34 @@ class AccountFiscalYear(models.Model):
             # Check time range
             time_range = date_stop - date_start
             if not check_range(time_range.days):
-                logger.warning("compute_meldungs_jahr(): Suspicious number of days: %s" % time_range.days)
+                logger.warning("compute_meldungs_jahr(): Suspicious number of days for Betrachtungszeitraum: %s"
+                               "" % time_range.days)
                 y.meldungs_jahr = False
                 continue
 
-            # Find the year in the date range with the most time
+            # Compute meldungs_jahr based on Betrachtungszeitraum
+            # ---
+            # HINT: since range would not include the "Target/Max" value we have to use +1
             years_in_range = range(date_start.year, date_stop.year + 1)
-            if len(years_in_range) == 1:
-                y.meldungs_jahr = str(years_in_range[0])
-                continue
+            start = date_start
+            end = date_stop + datetime.timedelta(1)
 
-            # Calculate delta from date_start to end of year
-            date_start_end_of_year = datetime.datetime(date_start.year, 12, 31, 23, 59, 59)
-            date_start_range = date_start_end_of_year - date_start
+            # Find the year in the date range with the most days
+            max_year = {'year': 0, 'days': 0}
+            for year in years_in_range:
+                year_start = datetime.datetime(year, 1, 1, 0, 0)
+                year_end = datetime.datetime(year + 1, 1, 1, 0, 0)
 
-            # Calculate delta from start of year to date_stop
-            date_stop_start_of_year = datetime.datetime(date_stop.year, 1, 1, 0, 0)
-            date_stop_range = date_stop - date_stop_start_of_year
+                days_in_year = min(end, year_end) - max(start, year_start)
+                days_in_year = days_in_year.days
 
-            y_range = date_start_range if date_start_range > date_stop_range else date_stop_range
-            if not check_range(y_range.days):
-                logger.warning("compute_meldungs_jahr(): Suspicious number of days for meldejahr: %s" % y_range.days)
+                if int(max_year['days']) < int(days_in_year):
+                    max_year = {'year': year, 'days': days_in_year}
+
+            # Update meldungs_jahr
+            if check_range(max_year['days']):
+                y.meldungs_jahr = str(max_year['year'])
+            else:
+                logger.warning("compute_meldungs_jahr(): Suspicious number of days for Meldejahr: %s"
+                               "" % max_year['days'])
                 y.meldungs_jahr = False
-                continue
-
-            y.meldungs_jahr = date_start.year if date_start_range > date_stop_range else date_stop.year

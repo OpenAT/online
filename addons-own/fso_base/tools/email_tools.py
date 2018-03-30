@@ -26,10 +26,10 @@ def send_internal_email(odoo_env_obj=None, fromaddr='', toaddr='', subject='', b
 
             fromaddr = "fson-%s@datadialog.net" % dbname if not fromaddr else fromaddr
             toaddr = "admin@datadialog.net" if not toaddr else toaddr
-            subject = "FSON[%s](%s) %s: %s" % (dbname, nowstr, user, subject)
+            subject = "FSON[%s] %s: %s" % (dbname, nowstr, subject)
             body = subject if not body else body
         except Exception as e:
-            logger.warning("send_internal_email() could not get instance info!\n%s" % repr(e))
+            logger.warning("send_internal_email() Could not get instance info!\n%s" % repr(e))
 
     try:
         # Prepare e-mail

@@ -502,6 +502,14 @@ class ResPartnerFADonationReport(models.Model):
             # Check the state of the submission:
             assert r.state in ['new', 'prepared', 'error'], _("(Re)Submission to FinanzOnline is not allowed in state "
                                                               "%s") % r.state
+
+            # Only allow production submission if we are on a production server
+            if r.submission_env != 'T' and not is_production_server():
+                dev_srv_error_msg = ("Submission of production (P) donation report submissions is only allowed on "
+                                     "production servers!")
+                logger.error(dev_srv_error_msg)
+                raise ValidationError(dev_srv_error_msg)
+
             # Check that a maximum of 10000 donation reports is not exceeded
             if len(r.donation_report_ids) > 10000:
                 r.update_submission(state='error', error_type='donation_report_limit',
@@ -1084,58 +1092,61 @@ class ResPartnerFADonationReport(models.Model):
         now = fields.datetime.utcnow()
 
         def prepare(subm):
-            rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
-            subm_info = "(ID='%s', NAME='%s', REPS='%s')" % (subm.id, subm.name, rep_count)
-            logger.info("scheduled_submission() Prepare donation report submission %s" % subm_info)
+            subm_info = "ID='%s', NAME='%s'" % (subm.id, subm.name)
+            logger.info("scheduled_submission() Prepare donation-report-submission %s" % subm_info)
 
             # Prepare messages
-            msg_error = "scheduled_submission() ERROR: Could NOT prepare donation report submission! %s" % subm_info
-            msg_success = "scheduled_submission() Successfully prepared donation report submission! %s" % subm_info
+            msg_error = "scheduled_submission() ERROR: Prepare donation-report-submission failed! %s" % subm_info
 
             try:
                 subm.prepare()
             except Exception as e:
-                msg = "%s\n%s" % (msg_error, repr(e))
+                msg = "%s\n\n%s" % (msg_error, repr(e))
                 logger.error(msg)
                 send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg)
                 return False
 
             if subm.state != 'prepared':
                 logger.error(msg_error)
-                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg_error)
+                body = "%s\n\n%s\n\n%s\n\n%s\n\n" % (msg_error, subm.error_type, subm.error_code, subm.error_detail)
+                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=body)
                 return False
 
+            rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
+            subm_info = "ID='%s', NAME='%s', REPS='%s'" % (subm.id, subm.name, rep_count)
+            msg_success = "scheduled_submission() SUCCESS: Prepared donation-report-submission! %s" % subm_info
             send_internal_email(odoo_env_obj=subm.env, subject=msg_success, body=msg_success)
             logger.info(msg_success)
             return True
 
         def submit(subm):
             rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
-            subm_info = "(ID='%s', NAME='%s', REPS='%s')" % (subm.id, subm.name, rep_count)
-            logger.info("scheduled_submission() Submit donation report submission %s to FinanzOnline" % subm_info)
+            subm_info = "ID='%s', NAME='%s', REPS='%s'" % (subm.id, subm.name, rep_count)
+            logger.info("scheduled_submission() Submit donation-report-submission %s to FinanzOnline" % subm_info)
 
             # ATTENTION: Do NOT send the submission if we are on a dev server!
             if not is_production_server():
-                logger.warning("Will not auto-submit donation report submission (ID %s) on a development server!"
+                logger.warning("Will not auto-submit donation-report-submission (ID %s) on a development server!"
                                "" % subm.id)
                 return False
 
             # Prepare messages
             msg_error = "scheduled_submission() ERROR: Submission to FinanzOnline FAILED! %s " % subm_info
-            msg_success = "scheduled_submission() Successfully submitted %s to FinanzOnline" % subm_info
+            msg_success = "scheduled_submission() SUCCESS: Submitted %s to FinanzOnline!" % subm_info
 
             # Submit the donation report submission to FinanzOnline
             try:
                 subm.submit()
             except Exception as e:
-                msg = "%s\n%s" % (msg_error, repr(e))
+                msg = "%s\n\n%s" % (msg_error, repr(e))
                 logger.error(msg)
                 send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg)
                 return False
 
             if subm.state != 'submitted':
                 logger.error(msg_error)
-                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg_error)
+                body = "%s\n\n%s\n\n%s\n\n%s\n\n" % (msg_error, subm.error_type, subm.error_code, subm.error_detail)
+                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=body)
                 return False
 
             send_internal_email(odoo_env_obj=subm.env, subject=msg_success, body=msg_success)
@@ -1143,6 +1154,7 @@ class ResPartnerFADonationReport(models.Model):
             return True
 
         # Search for fiscal years
+        # HINT: Thsi will get all configured fiscal years for all companies
         spak_start = fields.datetime.strptime('2016-12-01 00:00:00', DEFAULT_SERVER_DATETIME_FORMAT)
         fiscal_years = self.env['account.fiscalyear'].sudo().search([
             ('date_start', '!=', False),
@@ -1171,6 +1183,7 @@ class ResPartnerFADonationReport(models.Model):
             # Warn if any unsubmitted manual production donation report submissions exists
             manual_not_send = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
                 ('state', 'in', ['new', 'prepared', 'error']),
                 ('manual', '=', True),
                 ('submission_env', '=', 'P'),
@@ -1181,9 +1194,10 @@ class ResPartnerFADonationReport(models.Model):
                 logger.warning(manual_msg)
                 send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
 
-            # Process existing submissions (only non manual)
+            # Process existing submissions (only production and non manual)
             existing = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
                 ('state', 'in', ['new', 'prepared', 'error']),
                 ('manual', '=', False),
                 ('submission_env', '=', 'P'),
@@ -1210,6 +1224,7 @@ class ResPartnerFADonationReport(models.Model):
 
                 reports = self.env['res.partner.donation_report'].sudo().search([
                     ('meldungs_jahr', '=', y.meldungs_jahr),
+                    ('bpk_company_id', '=', y.company_id.id),
                     ('submission_id', '=', False),
                     ('state', '=', 'new'),
                     ('submission_env', '=', 'P'),
@@ -1244,6 +1259,6 @@ class ResPartnerFADonationReport(models.Model):
                 logger.info("scheduled_databox_check() Check DataBox answer for %s" % r.submission_message_ref_id)
                 r.check_response()
             except (AssertionError, ValidationError) as e:
-                logger.error("scheduled_databox_check() FAILED!\n%s" % repr(e))
+                logger.error("scheduled_databox_check() ERROR: Check response FAILED!\n%s" % repr(e))
 
         logger.info("scheduled_databox_check() END")
