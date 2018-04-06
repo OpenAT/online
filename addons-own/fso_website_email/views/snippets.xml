@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- SNIPPETS: Add E-Mail Designer Snippets -->
+    <template id="fso_email_designer_snippets"
+              inherit_id="website_mail.email_designer_snippets"
+              name="fso_email_designer_snippets">
+
+        <!-- SNIPPET MENU -->
+        <xpath expr="//div[1]/ul[1]/li[last()]" position="after">
+            <li><a href="#snippet_email_khm_blocks" data-toggle="tab">KHM Blocks</a></li>
+            <li><a href="#snippet_email_khm_elements" data-toggle="tab">KHM Elements</a></li>
+            <!--li><a href="#snippet_email_fso_placeholder" data-toggle="tab">Placeholder Elements</a></li-->
+        </xpath>
+
+        <!-- SNIPPETS -->
+        <xpath expr="//div[@class='tab-content'][1]/div[last()]" position="after">
+            <div id="snippet_email_khm_blocks" class="tab-pane fade in">
+
+                <!-- SNIPPET START: KHM LOGO BLOCK -->
+                <div>
+                    <!-- Icon and name -->
+                    <div class="oe_snippet_thumbnail">
+                        <img class="oe_snippet_thumbnail_img"
+                             src="/website/static/src/img/blocks/block_text_block.png"/>
+                        <span class="oe_snippet_thumbnail_title">KHM Logo</span>
+                    </div>
+                    <!-- Content -->
+                    <div class="oe_snippet_body" style="padding:0px; margin:0px">
+                        <table width="600" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td width="15" align="left" valign="top" class="width15">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="15" height="1"/>
+                                    </td>
+                                    <td width="570" align="center" valign="top">
+                                        <img src="/fso_website_email/static/src/images/logo-khm.png"
+                                             width="205" height="128"/>
+                                    </td>
+                                    <td width="15" align="left" valign="top" class="width15">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="15" height="1"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                 <!-- SNIPPET END: KHM LOGO BLOCK -->
+                </div>
+
+                <!-- SNIPPET START: KHM IMAGE BLOCK -->
+                <div>
+                    <!-- Icon and name -->
+                    <div class="oe_snippet_thumbnail">
+                        <img class="oe_snippet_thumbnail_img"
+                             src="/website/static/src/img/blocks/block_text_block.png"/>
+                        <span class="oe_snippet_thumbnail_title">KHM Image</span>
+                    </div>
+                    <!-- Content -->
+                    <div class="oe_snippet_body" style="padding:0px; margin:0px">
+                        <table width="600" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td width="15" align="left" valign="top" class="width15">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="15" height="1"/>
+                                    </td>
+                                    <td width="570" align="left" valign="top" class="width600">
+                                        <a href="#">
+                                            <img src="/fso_website_email/static/src/images/klimtbruecke.jpg"
+                                                 width="570" height="370" border="0" style="display:block;"
+                                                 alt="klimtbruecke nl"/>
+                                        </a>
+                                    </td>
+                                    <td width="15" align="left" valign="top" class="width15">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="15" height="1"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                 <!-- SNIPPET END: KHM IMAGE BLOCK -->
+                </div>
+
+                <!-- SNIPPET START: KHM TEXT BLOCK -->
+                <div>
+                    <!-- Icon and name -->
+                    <div class="oe_snippet_thumbnail">
+                        <img class="oe_snippet_thumbnail_img"
+                             src="/website/static/src/img/blocks/block_text_block.png"/>
+                        <span class="oe_snippet_thumbnail_title">KHM Text</span>
+                    </div>
+                    <!-- Content -->
+                    <div class="oe_snippet_body" style="padding:0px; margin:0px">
+                        <table width="600" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td width="15" align="left" valign="top" class="width100">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="15" height="1"/>
+                                    </td>
+
+                                    <td width="570" align="left" valign="top">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="20" height="1"/>
+
+                                        <table width="570" border="0" cellspacing="0" cellpadding="0"
+                                               class="breakTable600">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="210" align="left" valign="top">
+
+                                                        <table width="210" border="0" cellspacing="0" cellpadding="0">
+
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td width="210" align="left" valign="top"
+                                                                        class="headline">
+                                                                        <div id="px16">
+                                                                            <font face="Georgia, Times New Roman, Times, serif"
+                                                                                  size="3" color="#000000"
+                                                                                  style="font-size:16px; text-transform:uppercase;">
+                                                                                <span class="headline1mobile">
+                                                                                    <strong>Newsletter</strong>
+                                                                                </span>
+                                                                            </font>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+
+
+                                                                <tr>
+                                                                    <td width="210" height="15" align="left"
+                                                                        valign="top"
+                                                                        class="hide600">
+                                                                        <img src="/fso_website_email/static/src/images/lineh1.jpg"
+                                                                             width="210" height="15"/>
+                                                                    </td>
+                                                                </tr>
+
+
+                                                                <tr class="displayBlock">
+                                                                    <td width="210" height="25" align="left"
+                                                                        valign="top">
+                                                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                                             width="1" height="25"/>
+                                                                    </td>
+                                                                </tr>
+
+
+                                                            </tbody>
+                                                        </table>
+
+                                                    </td>
+
+                                                    <td width="20" align="left" valign="top" class="hide450">
+                                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                             width="20" height="1"/>
+                                                    </td>
+
+                                                    <td width="340" align="left" valign="top" class="width450">
+
+                                                        <table width="340" border="0" cellspacing="0" cellpadding="0">
+
+                                                            <tbody>
+                                                                <tr class="displayNone">
+                                                                    <td width="340" height="35" align="left"
+                                                                        valign="top">
+                                                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                                             width="1" height="35"/>
+                                                                    </td>
+                                                                </tr>
+
+
+                                                                <tr>
+                                                                    <td width="340" align="left" valign="top"
+                                                                        class="litext">
+                                                                        <div id="px14">
+                                                                            <font face="Georgia, Times New Roman, Times, serif"
+                                                                                  size="2" color="#000000"
+                                                                                  style="font-size:14px" class="litext">
+                                                                                <span class="largemobiletext">
+                                                                                    <div style="text-align: justify;">
+                                                                                        Sehr
+                                                                                        geehrte Damen und Herren,
+                                                                                        <br/>
+                                                                                        <br/>heute vor 100 Jahren starb
+                                                                                        der
+                                                                                        bedeutende österreichische Maler
+                                                                                        Gustav Klimt (1862–1918). Ihm zu
+                                                                                        Ehren haben wir im prachtvollen
+                                                                                        Stiegenhaus des Museums heuer
+                                                                                        erneut
+                                                                                        die Klimt-Brücke errichtet, um
+                                                                                        Ihnen
+                                                                                        ab 13.2. die Betrachtung seiner
+                                                                                        Meisterwerke "Aug in Aug" zu
+                                                                                        ermöglichen.
+                                                                                        <br/>
+                                                                                        <br/>Im Februar bieten wir Ihnen
+                                                                                        zudem ein ganz besonderes
+                                                                                        Jahreskarten-Special zum
+                                                                                        Valentinstag sowie viele weitere
+                                                                                        spannende Angebote im und um das
+                                                                                        Museum - viel Spaß und Freude
+                                                                                        beim
+                                                                                        Entdecken!
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </span>
+                                                                            </font>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+                                                    </td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td width="15" align="left" valign="top" class="width100">
+                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                             width="15" height="1"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                <!-- SNIPPET END: KHM TEXT BLOCK -->
+                </div>
+
+
+
+
+            </div>
+        </xpath>
+
+        <!-- SNIPPET OPTIONS -->
+        <xpath expr="//div[@id='snippet_options']" position="inside">
+
+            <!-- Image/Media Options -->
+            <div data-snippet-option-id='media'
+                data-selector="img:not(.cke_iframe):not([data-oe-id]), .media_iframe_video, span.fa, i.fa, .glyphicon">
+                <li><a href="#" class="edition">Change...</a></li>
+            </div>
+
+        </xpath>
+
+    </template>
+
+</data>
+</openerp>

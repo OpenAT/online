@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <!-- EXTEND the E-Mail View -->
+    <record id="email_template_theme" model="ir.ui.view">
+        <field name="name">Theme Fields</field>
+        <field name="model">email.template</field>
+        <field name="inherit_id" ref="email_template.email_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@string='Content']" position="after">
+                <page string="Theme">
+                    <group name="FS-Online_Main_Company">
+                        <field name="theme_body_attributes"/>
+                        <field name="theme_head"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="email_template_theme_minimal" model="ir.ui.view">
+        <field name="name">Theme Fields</field>
+        <field name="model">email.template</field>
+        <field name="inherit_id" ref="mass_mailing.email_template_form_minimal"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@string='Body']" position="after">
+                <page string="Theme">
+                    <group name="FS-Online_Main_Company">
+                        <field name="theme_body_attributes"/>
+                        <field name="theme_head"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</data>
+</openerp>

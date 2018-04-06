@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- SNIPPETS: Add E-Mail Designer Snippets -->
+    <template id="fso_email_designer_theme_khm"
+              inherit_id="website.layout"
+              name="E-Mail Template Theme fields">
+
+        <xpath expr="//head[1]/*[last()]" position="after">
+            <meta name="mike" content="initial-scale=1"/>
+            <t t-if="record and record.theme_head">
+                <t t-raw="record.theme_head"/>
+            </t>
+        </xpath>
+
+    </template>
+
+</data>
+</openerp>
