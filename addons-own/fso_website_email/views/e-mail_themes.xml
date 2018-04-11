@@ -12,9 +12,160 @@
             <t t-if="record and record.theme_head">
                 <t t-raw="record.theme_head"/>
             </t>
+            <t t-set="bob" t-value="dict()"/>
+            <t t-if="record and record.theme_body_attributes">
+                <t t-set="bob" t-value="record.theme_body_attributes"/>
+            </t>
         </xpath>
 
+        <!-- xpath expr="//body[1]" position="attributes">
+            <attribute name="t-att-bob">record.theme_body_attributes</attribute>
+        </xpath -->
+
     </template>
+
+    <template id="editor_toolbar" name="FSO email editor toolbar">
+        <!-- Editor toolbar -->
+        <t t-if="website and menu_data">
+            <nav id="oe_main_menu_navbar" class="navbar navbar-inverse" role="navigation">
+
+                <ul id="oe_editzone" class="nav navbar-nav hidden-xs" style="padding-left: 20px; display: none;"
+                    groups="base.group_website_publisher">
+                    <li>
+                        <button type="button" data-action="edit" class="btn btn-primary btn-xs">Edit</button>
+                    </li>
+                </ul>
+
+                <ul id="oe_systray" class="nav navbar-nav navbar-right pull-right hidden-xs">
+                    <!-- Mobile -->
+                    <li>
+                        <a data-action="show-mobile-preview" href="#">
+                            <span title="Mobile preview">
+                                <i class="fa fa-mobile"/>
+                            </span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </t>
+    </template>
+
+
+    <template id="layout" name="FS-Online E-Mail Editor layout">
+        <html t-att-lang="lang and lang.replace('_', '-')"
+              t-att-data-website-id="website and website.id or None"
+              t-att-data-editable="'1' if editable else None"
+              t-att-data-translatable="'1' if translatable else None"
+              t-att-data-view-xmlid="xmlid if editable else None"
+              t-att-data-main-object="repr(main_object) if editable else None"
+              t-att-data-oe-company-name="res_company.name">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="initial-scale=1"/>
+                <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object
+                and main_object.website_meta_description or website_meta_description"/>
+                <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object
+                and main_object.website_meta_keywords or website_meta_keywords"/>
+                <meta name="generator" content="Odoo"/>
+
+                <title>
+                    FS-Online E-Mail Editor
+                </title>
+
+                <!-- Set language -->
+                <t t-set="languages" t-value="website.get_languages() if website else None"/>
+                <t t-if="request and request.website_multilang and website">
+                    <t t-foreach="website.get_alternate_languages(request.httprequest)" t-as="lg">
+                        <link rel="alternate" t-att-hreflang="lg['hreflang']" t-att-href="lg['href']"/>
+                    </t>
+                </t>
+
+                <!-- Load java script into head -->
+                <t t-call-assets="web.assets_common" t-js="false"/>
+                <t t-call-assets="website.assets_frontend" t-js="false"/>
+                <t t-call-assets="website.assets_editor" t-js="false"/>
+
+                <!-- Maybe this is not needed? -->
+                <!-- t t-raw="head or ''" name='layout_head'/ -->
+
+                <!-- Load head section of e-mail template -->
+                <t t-if="record and record.theme_head">
+                    <t t-raw="record.theme_head"/>
+                </t>
+            </head>
+            <body>
+
+                <t t-call="fso_website_email.editor_toolbar"/>
+
+                <!-- Content -->
+                <div id="wrapwrap">
+                    <!-- header></header -->
+                    <main>
+                        <t t-raw="0"/>
+                    </main>
+                    <!-- footer><div id="footer_container"></div></footer -->
+                </div>
+
+                <!-- Load css at end of body -->
+                <t t-call-assets="web.assets_common" t-css="false"/>
+                <t t-call-assets="website.assets_frontend" t-css="false"/>
+                <t t-call-assets="website.assets_editor" t-css="false"/>
+            </body>
+        </html>
+
+    </template>
+
+    <!-- FSO Email Designer -->
+    <template id="email_designer" name="FSO Email Designer">
+        <t t-call="fso_website_email.layout">
+            <div id="wrap" class="container" t-ignore="True">
+                <div id="email_designer">
+
+                    <!-- e-mail body field (either body_html or body) editable by snippets -->
+                    <div t-if="body_field == 'body_html'" class="col-sm-offset-2">
+                        <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+                    </div>
+                    <div t-if="body_field == 'body'" class="col-sm-offset-2">
+                        <div t-field="record.body" id="email_body" class="o_mail_body"/>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- FSO Email Preview -->
+    <template id="email_preview" name="FSO Email Preview">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+        <html>
+            <head>
+                <t t-if="record and record.theme_head">
+                    <t t-raw="record.theme_head"/>
+                </t>
+            </head>
+            <body>
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="100%" align="center" valign="top">
+                            <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" class="formWidth">
+                                <tr>
+                                    <td width="600" bgcolor="#e8e6e4">
+
+                                        <!-- e-mail body -->
+                                        <t t-if="record and record.body_html">
+                                            <t t-raw="record.body_html"/>
+                                        </t>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+        </html>
+    </template>
+
 
 </data>
 </openerp>
