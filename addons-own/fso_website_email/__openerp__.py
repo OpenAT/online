@@ -48,8 +48,13 @@ editor and it's tools like the href edit pop-up window.
     ],
     'data': [
         'views/views.xml',
+        'views/email_base.xml',
+        # To remove/refactor
         'views/snippets.xml',
         'views/e-mail_themes.xml',
+        'views/email_templates.xml',
+        # Refactored/New
+        'views/email_selection.xml',
     ],
     'qweb': [
     ],

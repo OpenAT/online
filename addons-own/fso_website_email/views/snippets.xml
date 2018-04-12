@@ -10,7 +10,8 @@
         <!-- SNIPPET MENU -->
         <xpath expr="//div[1]/ul[1]/li[last()]" position="after">
             <li><a href="#snippet_email_khm_blocks" data-toggle="tab">KHM Blocks</a></li>
-            <li><a href="#snippet_email_khm_elements" data-toggle="tab">KHM Elements</a></li>
+            <!-- li><a href="#snippet_email_khm_elements" data-toggle="tab">KHM Elements</a></li -->
+            <li><a href="#snippet_seriendruckfelder" data-toggle="tab">Seriendruckfelder</a></li>
             <!--li><a href="#snippet_email_fso_placeholder" data-toggle="tab">Placeholder Elements</a></li-->
         </xpath>
 

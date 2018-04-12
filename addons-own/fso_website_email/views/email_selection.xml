@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- SELECT E-Mail Template -->
+    <template id="fso_email_selection"
+              name="FSON E-Mail Template Selection">
+
+        <t t-call="fso_website_email.layout">
+            <div id="wrap" class="container" t-ignore="True">
+
+                <div id="email_template" class="mb32">
+
+                    <!-- FSON E-Mail QWEB VIEWS -->
+                    <h1 class="page-header mt32">
+                        E-Mail Themes
+                    </h1>
+                    <div class="row" name="email_template_views">
+                        <div t-foreach="template_views" t-as="template_view" class="col-md-3 col-sm-4 text-center">
+                            <div class="email_preview_border">
+                                <div t-esc="template_view.arch" class="email_preview js_content"/>
+                            </div>
+                            <h4 t-field="template_view.name"/>
+                            <button class="btn btn-primary"
+                                    href="#">New from Theme</button>
+                        </div>
+                    </div>
+
+                    <!-- FSON E-Mail Templates -->
+                    <h1 class="page-header mt16">
+                        E-Mail Templates
+                    </h1>
+                    <div class="row" name="email_templates">
+                        <div t-foreach="templates" t-as="template" class="col-md-3 col-sm-4 text-center">
+                            <div class="email_preview_border">
+                                <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
+                            </div>
+                            <h4 t-field="template.name"/>
+                            <p>(<span t-field="template.fso_template_view_id.name"/>)</p>
+                            <a class="btn btn-primary"
+                                    t-att-href="'/fso/email/edit?template_id='+str(template.id)">Edit</a>
+                            <button class="btn btn-info">Copy</button>
+                            <a class="btn btn-warning"
+                                    t-att-href="'/fso/email/preview?template_id='+str(template.id)">View</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+
+    </template>
+
+
+</data>
+</openerp>

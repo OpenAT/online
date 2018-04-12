@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-    <!-- EXTEND the E-Mail View -->
+    <!-- EXTEND the email.template FORM -->
     <record id="email_template_theme" model="ir.ui.view">
         <field name="name">Theme Fields</field>
         <field name="model">email.template</field>
@@ -9,8 +9,9 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@string='Content']" position="after">
                 <page string="Theme">
-                    <group name="FS-Online_Main_Company">
-                        <field name="theme_body_attributes"/>
+                    <group name="fson_email">
+                        <field name="fso_email_template"/>
+                        <field name="fso_template_view_id"/>
                         <field name="theme_head"/>
                     </group>
                 </page>
@@ -25,11 +26,25 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@string='Body']" position="after">
                 <page string="Theme">
-                    <group name="FS-Online_Main_Company">
-                        <field name="theme_body_attributes"/>
+                    <group name="fson_email">
+                        <field name="fso_email_template"/>
+                        <field name="fso_template_view_id"/>
                         <field name="theme_head"/>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- EXTEND ir.ui.view FORM -->
+    <record id="ir_ui_view_email_theme" model="ir.ui.view">
+        <field name="name">Email Theme Fields</field>
+        <field name="model">ir.ui.view</field>
+        <field name="inherit_id" ref="base.view_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='priority']" position="after">
+                <field name="fso_email_template"/>
+                <field name="fso_email_template_ids"  widget="many2many_tags"/>
             </xpath>
         </field>
     </record>

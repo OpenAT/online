@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- BASIC FSON E-Mail Template -->
+    <template id="fso_email_template_default"
+              name="Fundraising Studio Default E-Mail Template">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+            <html>
+                <head>
+                    <t t-if="record and record.theme_head">
+                        <t t-raw="record.theme_head"/>
+                    </t>
+                </head>
+                <body>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td width="100%" align="center" valign="top">
+                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td width="600" bgcolor="#e8e6e4">
+
+                                            <!-- e-mail body -->
+                                            <t t-if="record and record.body_html">
+                                                <t t-raw="record.body_html"/>
+                                            </t>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+            </html>
+    </template>
+
+    <!-- KHMA FSON E-Mail Template -->
+    <template id="fso_email_template_khma"
+              name="KHMA E-Mail Template">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+            <html>
+                <head>
+                    <t t-if="record and record.theme_head">
+                        <t t-raw="record.theme_head"/>
+                    </t>
+                </head>
+                <body>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td width="100%" align="center" valign="top">
+                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td width="600" bgcolor="#e8e6e4">
+
+                                            <!-- e-mail body -->
+                                            <t t-if="record and record.body_html">
+                                                <t t-raw="record.body_html"/>
+                                            </t>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+            </html>
+    </template>
+
+</data>
+</openerp>
