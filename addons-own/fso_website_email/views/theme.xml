@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <!--
+        Common Sub-Templates for the E-Mail Themes and Templates
+    -->
+
+    <template id="email_head_common">
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="initial-scale=1"/>
+        <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>
+        <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>
+        <meta name="generator" content="Odoo"/>
+
+        <title>
+            FS-Online E-Mail Editor
+        </title>
+
+        <!-- Set language -->
+        <t t-set="languages" t-value="website.get_languages() if website else None"/>
+        <t t-if="request and request.website_multilang and website">
+            <t t-foreach="website.get_alternate_languages(request.httprequest)" t-as="lg">
+                <link rel="alternate" t-att-hreflang="lg['hreflang']" t-att-href="lg['href']"/>
+            </t>
+        </t>
+
+        <!-- Load custom header code from email.template -->
+        <t t-if="record and record.theme_head">
+            <t t-raw="record.theme_head"/>
+        </t>
+
+        <t t-if="email_editor_mode">
+            <!-- Load java script into head -->
+            <t t-call-assets="web.assets_common" t-js="false"/>
+            <t t-call-assets="website.assets_frontend" t-js="false"/>
+            <t t-call-assets="website.assets_editor" t-js="false"/>
+        </t>
+    </template>
+
+    <template id="email_js_common">
+        <t t-if="email_editor_mode">
+            <!-- Load java script -->
+            <t t-call-assets="web.assets_common" t-css="false"/>
+            <t t-call-assets="website.assets_frontend" t-css="false"/>
+            <t t-call-assets="website.assets_editor" t-css="false"/>
+        </t>
+    </template>
+
+</data>
+</openerp>

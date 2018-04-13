@@ -23,6 +23,7 @@
     <!-- FSO Email Designer -->
     <template id="email_designer" name="FSO Email Designer">
         <t t-call="fso_website_email.layout">
+
             <div id="wrap" class="container" t-ignore="True">
                 <div id="email_designer">
 
@@ -36,6 +37,7 @@
 
                 </div>
             </div>
+
         </t>
     </template>
 

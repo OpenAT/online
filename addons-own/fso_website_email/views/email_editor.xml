@@ -2,68 +2,66 @@
 <openerp>
 <data>
 
-    <!-- BASIC FSON E-Mail Template -->
-    <template id="fso_email_template_default"
-              name="Fundraising Studio Default E-Mail Template">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
-            <html>
-                <head>
-                    <t t-if="record and record.theme_head">
-                        <t t-raw="record.theme_head"/>
-                    </t>
-                </head>
-                <body>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                            <td width="100%" align="center" valign="top">
-                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td width="600" bgcolor="#e8e6e4">
 
-                                            <!-- e-mail body -->
-                                            <t t-if="record and record.body_html">
-                                                <t t-raw="record.body_html"/>
-                                            </t>
+    <!-- EDITOR TOOLBAR -->
+    <template id="editor_toolbar" name="FSO email editor toolbar">
+        <t t-if="email_editor_mode and website and menu_data">
+            <nav id="oe_main_menu_navbar" class="navbar navbar-inverse" role="navigation">
 
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </body>
-            </html>
+                <ul id="oe_editzone" class="nav navbar-nav hidden-xs" style="padding-left: 20px; display: none;"
+                    groups="base.group_website_publisher">
+                    <li>
+                        <button type="button" data-action="edit" class="btn btn-primary btn-xs">Edit</button>
+                    </li>
+                </ul>
+
+                <ul id="oe_systray" class="nav navbar-nav navbar-right pull-right hidden-xs">
+                    <!-- Mobile Preview -->
+                    <li>
+                        <a data-action="show-mobile-preview" href="#">
+                            <span title="Mobile preview">
+                                <i class="fa fa-mobile"/>
+                            </span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </t>
     </template>
 
-    <!-- KHMA FSON E-Mail Template -->
-    <template id="fso_email_template_khma"
-              name="KHMA E-Mail Template">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
-            <html>
-                <head>
-                    <t t-if="record and record.theme_head">
-                        <t t-raw="record.theme_head"/>
-                    </t>
-                </head>
-                <body>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                            <td width="100%" align="center" valign="top">
-                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td width="600" bgcolor="#e8e6e4">
 
-                                            <!-- e-mail body -->
-                                            <t t-if="record and record.body_html">
-                                                <t t-raw="record.body_html"/>
-                                            </t>
+    <!-- FSO EMAIL EDITOR -->
+    <template id="email_editor" name="FSON Email Editor">
 
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </body>
-            </html>
+        <!-- editor enabled -->
+        <t t-if="email_editor_mode">
+
+            <div id="wrapwrap">
+                <header>
+
+                </header>
+                <main>
+                    <div id="wrap" class="container" t-ignore="True">
+                        <div id="email_designer">
+                            <div class="col-sm-offset-2">
+                                <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer>
+
+                </footer>
+            </div>
+
+        </t>
+
+        <!-- editor disabled -->
+        <t t-if="not email_editor_mode">
+            <t t-raw="record.body_html"/>
+        </t>
+
     </template>
 
 </data>

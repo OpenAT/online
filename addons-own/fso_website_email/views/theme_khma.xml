@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- KHMA FSON E-Mail Template -->
+    <!-- HINT: Make sure you enable field fso_email_template in ir.ui.view to show this theme on the /fso/email/select page -->
+    <template id="theme_khma"
+              name="E-Mail Theme KHMA">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+        <html t-att-lang="lang and lang.replace('_', '-')"
+              t-att-data-website-id="website and website.id or None"
+              t-att-data-editable="'1' if editable else None"
+              t-att-data-translatable="'1' if translatable else None"
+              t-att-data-view-xmlid="xmlid if editable else None"
+              t-att-data-main-object="repr(main_object) if editable else None"
+              t-att-data-oe-company-name="res_company.name if editable else None">
+
+            <head>
+                <!-- Load common header code -->
+                <t t-call="fso_website_email.email_head_common"/>
+            </head>
+
+            <body bgcolor="#e8e6e4">
+                <!-- EDITOR TOOLBAR -->
+                <t t-call="fso_website_email.editor_toolbar"/>
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="100%" align="center" valign="top">
+                            <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="600" bgcolor="#e8e6e4">
+
+                                        <!-- E-MAIL BODY (raw or editor) -->
+                                        <t t-call="fso_website_email.email_editor"/>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Load editor java script -->
+                <t t-call="fso_website_email.email_js_common"/>
+
+                <!-- Load custom snippets for this template -->
+                <!-- TODO: Get Snippet url by java script from head meta tag and add this js to
+                           email_js_common template -->
+                <t t-if="email_editor_mode">
+                    <script type="text/javascript">
+                        //<![CDATA[
+                            (function () {
+                                'use strict';
+                                var website = openerp.website;
+                                website.if_dom_contains('#email_designer', function () {
+                                    website.snippet.BuildingBlock.include({
+                                        _get_snippet_url: function () {
+                                            return '/fso/email/snippets?snippets_template=theme_khma_snippets';
+                                        }
+                                    });
+                                });
+                            })();
+                        //]]>
+                    </script>
+                </t>
+            </body>
+        </html>
+    </template>
+
+</data>
+</openerp>

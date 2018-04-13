@@ -35,13 +35,22 @@ class FSOEmailEditor(http.Controller):
         if not template or not template.fso_template_view_id:
             return request.redirect('/fso/email/select')
 
-        result = request.render("fso_website_email.email_designer",
-                              {'html_sanitize': html_sanitize,
-                               'record': template,
-                               'body_field': 'body_html',
-                               })
+        result = request.render(template.fso_template_view_id.xml_id,
+                                {'html_sanitize': html_sanitize,
+                                 'email_editor_mode': True,
+                                 'record': template,
+                                 })
 
         return result
+
+    # ATTENTION: The Java script call to this json route seems to be bugged or special because no kwargs
+    #            are accepted by the controller and self is EMPTY therfore we need to get the URL fragments
+    #            from request.httprequest.args
+    @http.route(['/fso/email/snippets'], type='json', auth="user", website=True)
+    def snippets(self):
+        snippets_template = 'fso_website_email.' + str(request.httprequest.values.get('snippets_template', ''))
+        print snippets_template
+        return request.website._render(snippets_template)
 
     @http.route('/fso/email/preview', type='http', auth="user", website=True)
     def email_preview(self, template_id, **kw):
@@ -52,5 +61,34 @@ class FSOEmailEditor(http.Controller):
 
         return request.render(template.fso_template_view_id.xml_id,
                               {'html_sanitize': html_sanitize,
+                               'email_editor_mode': False,
                                'record': template,
                                })
+
+    @http.route('/fso/email/create', type='http', auth="user", website=True)
+    def email_create(self, template_model,  template_id, **kw):
+        if not template_model or not template_id or template_model not in ('email.template', 'ir.ui.view'):
+            return request.redirect('/fso/email/select')
+
+        template_id = int(template_id)
+
+        # # TODO model = get id of res.partner model to link it in the new email.template record
+        #
+        # # TODO: New e-mail template from theme (ir.ui.view)
+        # if template_model == 'ir.ui.view':
+        #     view = request.env[template_model].browse([template_id])
+        #     if not view:
+        #         request.redirect('/fso/email/select')
+        #     request.env['email.template'].sudo().create({
+        #         'name': 'Test',
+        #         'model': 1,
+        #         'fso_email_template': True,
+        #         'fso_template_view_id': view.id,
+        #     })
+        #
+        # # TODO: Copy existing e-mail template
+        # if template_model == 'email.template':
+        #     pass
+
+        # Return to the e-mail theme/template selection page
+        return request.redirect('/fso/email/select')

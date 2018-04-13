@@ -2,33 +2,7 @@
 <openerp>
 <data>
 
-    <!-- Stripped down version of the website editor toolbar -->
-    <template id="editor_toolbar" name="FSO email editor toolbar">
-        <!-- Editor toolbar -->
-        <t t-if="website and menu_data">
-            <nav id="oe_main_menu_navbar" class="navbar navbar-inverse" role="navigation">
 
-                <ul id="oe_editzone" class="nav navbar-nav hidden-xs" style="padding-left: 20px; display: none;"
-                    groups="base.group_website_publisher">
-                    <li>
-                        <button type="button" data-action="edit" class="btn btn-primary btn-xs">Edit</button>
-                    </li>
-                </ul>
-
-                <ul id="oe_systray" class="nav navbar-nav navbar-right pull-right hidden-xs">
-                    <!-- Mobile Preview -->
-                    <li>
-                        <a data-action="show-mobile-preview" href="#">
-                            <span title="Mobile preview">
-                                <i class="fa fa-mobile"/>
-                            </span>
-                        </a>
-                    </li>
-
-                </ul>
-            </nav>
-        </t>
-    </template>
 
     <!-- Stripped down version of website.layout -->
     <template id="layout" name="FS-Online E-Mail Editor">
