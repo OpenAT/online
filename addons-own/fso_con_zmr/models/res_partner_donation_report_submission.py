@@ -1228,6 +1228,32 @@ class ResPartnerFADonationReport(models.Model):
                             logger.warning(manual_msg)
                             send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
 
+            # Skip autom. donation report submission if still inside of cron task interval
+            else:
+                # Find last submitted donation report for this fiscal year
+                last_submitted = self.sudo().search([
+                    ('meldungs_jahr', '=', y.meldungs_jahr),
+                    ('bpk_company_id', '=', y.company_id.id),
+                    ('state', 'not in', ['new', 'prepared', 'error']),
+                    ('manual', '=', False),
+                    ('submission_env', '=', 'P'),
+                ], limit=1, order='submission_datetime DESC')
+
+                # Skip if last submission is newer than fiscal year interval
+                if last_submitted:
+
+                    cron_task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission')
+
+                    if not y.drg_interval_type or y.drg_interval_type != 'days':
+                        logger.error("Interval type must be set to 'days' for field 'drg_interval_type'!")
+
+                    ls_sd = datetime.datetime.strptime(last_submitted.submission_datetime,
+                                                       DEFAULT_SERVER_DATETIME_FORMAT)
+                    if now < (ls_sd + datetime.timedelta(days=y.drg_interval_number or 7)):
+                        logger.info("scheduled_submission() Skipping auto submission because last submission still"
+                                    "in interval range set at fiscal year!")
+                        continue
+
             # Check for unsubmitted manual donation report submissions
             manual_not_send = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1303,3 +1329,19 @@ class ResPartnerFADonationReport(models.Model):
                 logger.error("scheduled_databox_check() ERROR: Check response FAILED!\n%s" % repr(e))
 
         logger.info("scheduled_databox_check() END")
+
+    # ------------------------
+    # Install / Update Methods (called by XML file action records)
+    # ------------------------
+
+    # HINT: Called by file: delete_action_on_install_update.xml
+    @api.model
+    def check_scheduled_tasks(self):
+        logger.info("Check if the scheduled task for autom. donation report submission must be renewed.")
+
+        # Recreate odoo scheduler task for autom. donation report submission if interval or type where changed by user
+        task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission')
+        if task and (task.interval_number != 1 or task.interval_type != 'days'):
+            logger.warning("fso_con_zmr check_scheduled_tasks(). Deleting cron task %s on install/update to "
+                           "recreate it with correct values")
+            task.unlink()

@@ -19,9 +19,9 @@
                         <field name="drg_interval_type"/>
                     </group>
                     <group>
-                        <field name="drg_last"/>
-                        <field name="drg_last_count"/>
                         <field name="drg_next_run"/>
+                        <field name="drg_last_count"/>
+                        <field name="drg_last"/>
                     </group>
                 </group>
             </xpath>
