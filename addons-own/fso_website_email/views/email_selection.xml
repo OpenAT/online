@@ -2,6 +2,78 @@
 <openerp>
 <data>
 
+    <!-- E-MAIL TEMPLATE SELECTION LAYOUT -->
+    <!-- Stripped down version of website.layout -->
+    <template id="layout" name="FS-Online E-Mail Selection Website Layout">
+
+        <html t-att-lang="lang and lang.replace('_', '-')"
+              t-att-data-website-id="website and website.id or None"
+              t-att-data-editable="'1' if editable else None"
+              t-att-data-translatable="'1' if translatable else None"
+              t-att-data-view-xmlid="xmlid if editable else None"
+              t-att-data-main-object="repr(main_object) if editable else None"
+              t-att-data-oe-company-name="res_company.name">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="initial-scale=1"/>
+                <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>
+                <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>
+                <meta name="generator" content="Odoo"/>
+
+                <title>
+                    FS-Online E-Mail Editor
+                </title>
+
+                <!-- Set language -->
+                <t t-set="languages" t-value="website.get_languages() if website else None"/>
+                <t t-if="request and request.website_multilang and website">
+                    <t t-foreach="website.get_alternate_languages(request.httprequest)" t-as="lg">
+                        <link rel="alternate" t-att-hreflang="lg['hreflang']" t-att-href="lg['href']"/>
+                    </t>
+                </t>
+
+                <!-- Load java script into head -->
+                <t t-call-assets="web.assets_common" t-js="false"/>
+                <t t-call-assets="website.assets_frontend" t-js="false"/>
+                <t t-call-assets="website.assets_editor" t-js="false"/>
+
+                <!-- Maybe this is not needed? -->
+                <t t-raw="head or ''" name='layout_head'/>
+
+                <!-- Load head field of e-mail template -->
+                <t t-if="record and record.theme_head">
+                    <t t-raw="record.theme_head"/>
+                </t>
+            </head>
+            <body bgcolor="#e8e6e4">
+
+                <!-- Load editor toolbar -->
+                <t t-if="body_field">
+                    <t t-call="fso_website_email.editor_toolbar"/>
+                </t>
+
+                <!-- Content -->
+                <div id="wrapwrap">
+                    <header>
+
+                    </header>
+                    <main>
+                        <t t-raw="0"/>
+                    </main>
+                    <footer>
+
+                    </footer>
+                </div>
+
+                <!-- Load css at end of body -->
+                <t t-call-assets="web.assets_common" t-css="false"/>
+                <t t-call-assets="website.assets_frontend" t-css="false"/>
+                <t t-call-assets="website.assets_editor" t-css="false"/>
+            </body>
+        </html>
+
+    </template>
+
     <!-- SELECT E-Mail Template -->
     <template id="fso_email_selection"
               name="FSON E-Mail Template Selection">

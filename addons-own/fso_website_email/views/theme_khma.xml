@@ -15,8 +15,479 @@
               t-att-data-oe-company-name="res_company.name if editable else None">
 
             <head>
-                <!-- Load common header code -->
+                <!-- Load common header code (html-tags and css) -->
                 <t t-call="fso_website_email.email_head_common"/>
+
+                <!-- KHM Template: Custom css and html-tags -->
+                <meta t-if="not email_editor_mode" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+                <style type="text/css">
+                    &lt;!--
+                    p {
+                        padding-top: 0px;
+                        margin-top: 0px;
+                    }
+
+                    img {
+                        display: block;
+                    }
+
+                    html #divBdy img {
+                        display: block;
+                    }
+
+                    a {
+                        color: #000000;
+                        text-decoration: underline;
+                    }
+
+                    a:hover {
+                        color: #000000;
+                        text-decoration: underline;
+                    }
+
+                    #px10 {
+                        font-size: 10px;
+                    }
+
+                    #px11 {
+                        font-size: 11px;
+                    }
+
+                    #px12 {
+                        font-size: 12px;
+                    }
+
+                    #px13 {
+                        font-size: 13px;
+                    }
+
+                    #px14 {
+                        font-size: 14px;
+                    }
+
+                    #px15 {
+                        font-size: 15px;
+                    }
+
+                    td {
+                        font-family: Georgia, "Times New Roman", Times, serif;
+                        font-size: 14px;
+                        line-height: 21px;
+                        color: #000000;
+                    }
+
+                    .headline {
+                        line-height: 25px;
+                    }
+
+                    .button {
+                        border-top: 1px solid #000000;
+                        border-bottom: 1px solid #000000;
+                    }
+
+                    .button a {
+                        text-decoration: none;
+                    }
+
+                    .impressumText {
+                        line-height: 17px;
+                    }
+
+                    .displayNone {
+                        display: none;
+                    }
+
+                    .displayBlock {
+                        display: block;
+                    }
+
+                    .formWidth {
+                        width: auto !important;
+                    }
+
+                    * {
+                        -webkit-text-size-adjust: none
+                    }
+
+                    @media (min-width: 640px) {
+                        [class*="hide640"] {
+                            display: none !important;
+                        }
+                    }
+
+                    @media (max-width: 640px) {
+                        /* normal size */
+                        [class*="stretchImage"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        img[class*="stretchWidth"] {
+                            width: 100% !important;
+                        }
+
+                        table {
+                            width: 100%;
+                        }
+
+                        [class*="formWidth"] {
+                            width: 100%;
+                        }
+
+                        [class*="breakTable640"], .[class*="breakTable640"] tbody, [class*="breakTable640"] tr, [class*="breakTable640"] td, [class*="breakCell640"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        [class*="padding"] {
+                            padding: 10px;
+                        }
+
+                        [class*="stretchImage"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="stretchImage80"] img {
+                            width: 80% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="Center"] img {
+                            text-align: center !important;
+                        }
+                    }
+
+                    @media (max-width: 600px) {
+                        /* mobile */
+                        [class*="breakTable600"], [class*="breakTable600"] tbody, [class*="breakTable600"] tr, [class*="breakTable600"] td, [class*="breakCell600"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        /*html, body, a, td, font, p, div, span, .litext, .litext font, .litext span, .litext div {
+                            font-size:2em !important;
+                        }*/
+                        [class*="stopBreak600"] td {
+                            display: table-cell;
+                        }
+
+                        [class*="stretchImage600"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="padding600"] {
+                            padding: 10px;
+                        }
+
+                        [class*="hide600"], [class*="hide600"] img {
+                            display: none;
+                        }
+
+                        [class*="paddingOutside"] {
+                            padding-left: 10px;
+                            padding-right: 10px
+                        }
+
+                        [class*="impressumText"] {
+                            display: block !important;
+                            width: auto !important;
+                            text-align: left;
+                        }
+
+                        [class*="width1000"], [class*="width1000"] img {
+                            width: 15px !important;
+                        }
+
+                        [class*="button"] {
+                            font-size: 14px !important;
+                            width: 100px !important;
+                            margin-bottom: 20px !important;
+                            padding-top: 5px !important;
+                            padding-bottom: 5px !important;
+                        }
+
+                        [class*="button"] a, [class*="button"] font {
+                            font-size: 15px !important;
+                        }
+
+                        [class*="icon_text_padding_600"] {
+                            padding-right: 10px;
+                        }
+
+                        [class*="icon_padding_600"] {
+                            padding-right: 5px;
+                        }
+
+                        [class*="width15"], [class*="width15"] img {
+                            width: 0px !important;
+                        }
+
+                        [class*="width100"], [class*="width100"] img {
+                            width: 0px !important;
+                        }
+
+                        [class*="width600"] img {
+                            max-width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="displayNone"] {
+                            display: block !important;
+                        }
+
+                        [class*="displayBlock"] {
+                            display: none !important;
+                        }
+
+                        [class*="mobileLink"] {
+                            display: none !important;
+                        }
+
+                        /*td, p, span, a {
+                            font-family:Georgia, "Times New Roman", Times, serif !important;
+                            font-size:16px !important;
+                            line-height:26px !important;
+                            color:#000000 !important;
+                        }*/
+                        [class*="buttonLast"] {
+                            width: 90px !important;
+                        }
+
+                        [class*="largemobiletext"], [class*="largemobiletext"] td, [class*="largemobiletext"] p, [class*="largemobiletext"] span, [class*="largemobiletext"] a, [class*="button"] p, [class*="button"] span, [class*="button"] font, [class*="buttonmobile"] {
+                            font-size: 30px !important;
+                            line-height: 40px !important;
+                        }
+
+                        [class*="headline1mobile"] a, [class*="headline1mobile"] p, [class*="headline1mobile"], [class*="headline2mobile"], [class*="headline2mobile"] a, [class*="headline2mobile"] p {
+                            font-size: 35px;
+                            line-height: 40px !important;
+                        }
+
+                        [class*="headline3mobile"] a, [class*="headline3mobile"] p, [class*="headline3mobile"], [class*="headline4mobile"], [class*="headline4mobile"] a, [class*="headline4mobile"] p {
+                            font-size: 30px;
+                            line-height: 35px !important;
+                        }
+
+                        [class*="impressumText"] p, [class*="impressumText"] a {
+                            color: #777777 !important;
+                            font-size: 25px !important;
+                            line-height: 35px !important;
+                        }
+                    }
+
+                    @media (max-width: 550px) {
+                        /* mobile */
+                        [class*="breakTable550"], [class*="breakTable550"] tbody, [class*="breakTable550"] tr, [class*="breakTable550"] td, [class*="breakCell550"] {
+                            display: block;
+                            width: auto !important;
+                        }
+                    }
+
+                    @media (max-width: 500px) {
+                        /* mobile */
+                        [class*="breakTable500"], [class*="breakTable500"] tbody, [class*="breakTable500"] tr, [class*="breakTable500"] td, [class*="breakCell500"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        [class*="stopBreak500"] td {
+                            display: table-cell;
+                        }
+
+                        [class*="stretchImage500"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="padding500"] {
+                            padding: 10px;
+                        }
+
+                        [class*="hide500"] {
+                            display: none !important;
+                        }
+
+                        img[class*="hide500"] {
+                            display: none !important;
+                        }
+
+                        [class*="paddingOutside"] {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                        }
+
+                        [class*="icon_text_padding_500"] {
+                            padding-right: 10px;
+                        }
+
+                        [class*="icon_padding_500"] {
+                            padding-right: 5px;
+                        }
+
+                        body [class*="stretch500Image80"] img {
+                            width: 80% !important;
+                            height: auto !important;
+                            display: inline-block !important;
+                        }
+
+                        [class*="picPadding450"] img {
+                            padding-bottom: 10px;
+                        }
+
+                        [class*="Center500"] {
+                            text-align: center !important;
+                        }
+
+                        [class*="picPaddingTopBottom500"] {
+                            padding-bottom: 10px;
+                            padding-top: 10px;
+                        }
+                    }
+
+                    @media (max-width: 450px) {
+                        /* mobile */
+                        [class*="breakTable450"], [class*="breakTable450"] tbody, [class*="breakTable450"] tr, [class*="breakTable450"] td, [class*="breakCell450"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        [class*="stopBreak450"] td {
+                            display: table-cell;
+                        }
+
+                        [class*="hide450"] {
+                            display: none !important;
+                        }
+
+                        img[class*="hide450"] {
+                            display: none !important;
+                        }
+
+                        [class*="picPadding450"] img {
+                            padding-bottom: 10px;
+                        }
+
+                        [id*="standardnone"] {
+                            display: block !important;
+                        }
+
+                        [class*="stretch450Image80"] img {
+                            width: 80% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="Center450"] {
+                            text-align: center !important;
+                        }
+
+                        [class*="width450"] {
+                            width: 360px !important;
+                        }
+                    }
+
+                    @media (max-width: 400px) {
+                        /* mobile */
+                        [class*="breakTable400"], [class*="breakTable400"] tbody, [class*="breakTable400"] tr, [class*="breakTable400"] td, [class*="breakCell400"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        [class*="stopBreak400"] td {
+                            display: table-cell;
+                        }
+
+                        [class*="stretchImage400"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="padding400"] {
+                            padding: 10px;
+                        }
+
+                        [class*="hide400"] {
+                            display: none;
+                        }
+
+                        [class*="padding400bottom"] img {
+                            padding-bottom: 10px;
+                        }
+
+                        [class*="button"] {
+                            font-size: 14px !important;
+                            width: 100px !important;
+                            margin-bottom: 25px !important;
+                        }
+                    }
+
+                    @media (max-width: 300px) {
+                        /* mobile */
+                        [class*="breakTable300"], [class*="breakTable300"] tbody, [class*="breakTable300"] tr, [class*="breakTable300"] td, [class*="breakCell300"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        [class*="stopBreak300"] td {
+                            display: table-cell;
+                        }
+
+                        [class*="stretchImage300"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="padding300"] {
+                            padding: 10px;
+                        }
+
+                        [class*="hide300"] {
+                            display: none;
+                        }
+                    }
+
+                    @media (max-width: 200px) {
+                        /* mobile */
+                        [class*="breakTable200"], [class*="breakTable200"] tbody, [class*="breakTable200"] tr, [class*="breakTable200"] td, [class*="breakCell200"] {
+                            display: block;
+                            width: auto !important;
+                        }
+
+                        [class*="stopBreak200"] td {
+                            display: table-cell;
+                        }
+
+                        [class*="stretchImage200"] img {
+                            width: 100% !important;
+                            height: auto !important;
+                        }
+
+                        [class*="padding200"] {
+                            padding: 10px;
+                        }
+
+                        [class*="hide200"] {
+                            display: none;
+                        }
+                    }
+
+                    .fwdNote, #fwdNote {
+                        width: 600px;
+                        margin: 0 auto;
+                        font-family: Georgia, "Times New Roman", Times, serif;
+                        font-size: 14px;
+                        line-height: 21px;
+                        color: #000000;
+                        display: block;
+                    }
+
+                    --&gt;
+                </style>
+                <base t-if="not email_editor_mode" target="_blank"/>
+
+                <!-- Editor CSS Overwrites -->
+                <link t-if="email_editor_mode" rel='stylesheet' href='/fso_website_email/static/src/css/theme_khma_editor.css' t-ignore="true"/>
             </head>
 
             <body bgcolor="#e8e6e4">
@@ -41,27 +512,9 @@
                 </table>
 
                 <!-- Load editor java script -->
-                <t t-call="fso_website_email.email_js_common"/>
-
-                <!-- Load custom snippets for this template -->
-                <!-- TODO: Get Snippet url by java script from head meta tag and add this js to
-                           email_js_common template -->
-                <t t-if="email_editor_mode">
-                    <script type="text/javascript">
-                        //<![CDATA[
-                            (function () {
-                                'use strict';
-                                var website = openerp.website;
-                                website.if_dom_contains('#email_designer', function () {
-                                    website.snippet.BuildingBlock.include({
-                                        _get_snippet_url: function () {
-                                            return '/fso/email/snippets?snippets_template=theme_khma_snippets';
-                                        }
-                                    });
-                                });
-                            })();
-                        //]]>
-                    </script>
+                <t t-call="fso_website_email.email_js_common">
+                    <!-- TODO: Custom Snippets Template XML-ID -->
+                    <t t-set="snippets_template" t-value="'fso_website_email.theme_khma_snippets'"/>
                 </t>
             </body>
         </html>

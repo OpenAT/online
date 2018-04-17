@@ -9,6 +9,16 @@ from urllib import urlencode
 
 class FSOEmailEditor(http.Controller):
 
+    # CUSTOM EDITOR SNIPPETS
+    # ATTENTION: The Java script call to this json route seems to be bugged or at least 'special' because no kwargs
+    #            are accepted by the controller and self is EMPTY therefore we need to get the URL fragments
+    #            from request.httprequest.args
+    @http.route(['/fso/email/snippets'], type='json', auth="user", website=True)
+    def snippets(self):
+        snippets_template = str(request.httprequest.values.get('snippets_template', ''))
+        return request.website._render(snippets_template)
+
+    # SELECT EMAIL THEME OR TEMPLATE
     @http.route('/fso/email/select', type='http', auth="user", website=True)
     def email_select(self, **kw):
         """ Overview of email templates to create, edit or copy email templates"""
@@ -28,6 +38,7 @@ class FSOEmailEditor(http.Controller):
                                'templates': templates
                                })
 
+    # EMAIL-EDITOR
     @http.route('/fso/email/edit', type='http', auth="user", website=True)
     def email_edit(self, template_id, **kw):
         template = request.env['email.template'].browse([int(template_id)]) if template_id else False
@@ -43,15 +54,7 @@ class FSOEmailEditor(http.Controller):
 
         return result
 
-    # ATTENTION: The Java script call to this json route seems to be bugged or special because no kwargs
-    #            are accepted by the controller and self is EMPTY therfore we need to get the URL fragments
-    #            from request.httprequest.args
-    @http.route(['/fso/email/snippets'], type='json', auth="user", website=True)
-    def snippets(self):
-        snippets_template = 'fso_website_email.' + str(request.httprequest.values.get('snippets_template', ''))
-        print snippets_template
-        return request.website._render(snippets_template)
-
+    # E-MAIL PREVIEW (RAW HTML)
     @http.route('/fso/email/preview', type='http', auth="user", website=True)
     def email_preview(self, template_id, **kw):
         template = request.env['email.template'].browse([int(template_id)]) if template_id else False
@@ -65,6 +68,7 @@ class FSOEmailEditor(http.Controller):
                                'record': template,
                                })
 
+    # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING TEMPLATE
     @http.route('/fso/email/create', type='http', auth="user", website=True)
     def email_create(self, template_model,  template_id, **kw):
         if not template_model or not template_id or template_model not in ('email.template', 'ir.ui.view'):

@@ -2,7 +2,6 @@
 <openerp>
 <data>
 
-
     <!-- EDITOR TOOLBAR -->
     <template id="editor_toolbar" name="FSO email editor toolbar">
         <t t-if="email_editor_mode and website and menu_data">
@@ -37,15 +36,15 @@
         <!-- editor enabled -->
         <t t-if="email_editor_mode">
 
-            <div id="wrapwrap">
+            <div id="wrapwrap" contenteditable="false">
                 <header>
 
                 </header>
                 <main>
                     <div id="wrap" class="container" t-ignore="True">
                         <div id="email_designer">
-                            <div class="col-sm-offset-2">
-                                <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+                            <div class="col">
+                                <div t-field="record.body_html" id="email_body_html" class="o_mail_body" contenteditable="false"/>
                             </div>
                         </div>
                     </div>
