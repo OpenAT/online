@@ -55,10 +55,10 @@
         <field name="name">Donation Reports: Scheduled Submission to FinanzOnline</field>
         <field name="priority" eval="2201" />
         <field name="active" eval="False"/>
-        <field name="interval_number">7</field>
+        <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
-        <field name="nextcall" eval="(DateTime.today() + timedelta((4 - DateTime.today().weekday()) % 7 + 1)).strftime('%Y-%m-%d 20:00:00')" />
+        <field name="nextcall" eval="(DateTime.today() + timedelta(days=1)).strftime('%Y-%m-%d 05:00:00')" />
         <field name="doall" eval="False"/>
         <field name="model">res.partner.donation_report.submission</field>
         <field name="function">scheduled_submission</field>

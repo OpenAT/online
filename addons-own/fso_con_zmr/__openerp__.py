@@ -51,6 +51,8 @@ This addon determines the BPK number from FinanzOnline for partners and allows t
         'views/res_partner_donation_report_submissions.xml',
         'views/account_fiscalyear.xml',
         'views/fsonline_menu.xml',
+        #
+        'data/install_update_actions.xml',
         'data/server_actions.xml',
         'data/scheduled_actions.xml',
     ],
