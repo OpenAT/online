@@ -494,7 +494,10 @@
                 <!-- EDITOR TOOLBAR -->
                 <t t-call="fso_website_email.editor_toolbar"/>
 
+
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+                    <!-- Content -->
                     <tr>
                         <td width="100%" align="center" valign="top">
                             <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -509,15 +512,321 @@
                             </table>
                         </td>
                     </tr>
+
+                <t t-call="fso_website_email.theme_khma_footer"/>
+
                 </table>
 
                 <!-- Load editor java script -->
                 <t t-call="fso_website_email.email_js_common">
-                    <!-- TODO: Custom Snippets Template XML-ID -->
+                    <!-- Custom Snippets Template XML-ID -->
                     <t t-set="snippets_template" t-value="'fso_website_email.theme_khma_snippets'"/>
                 </t>
             </body>
         </html>
+    </template>
+
+
+    <!-- KHMA Footer 600px -->
+    <template id="theme_khma_footer">
+        <!-- Footer separator -->
+        <tr>
+            <td width="100%" align="center" valign="top">
+                <table width="600" border="0" cellspacing="0" cellpadding="0" class="line">
+                    <tbody>
+                        <tr>
+                            <td width="15" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="25"/>
+                            </td>
+                            <td width="570" height="25" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="25"/>
+                            </td>
+                            <td width="15" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="25"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="1"/>
+                            </td>
+                            <td width="570" height="1" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/dotline.jpg"
+                                     width="570" height="1"/>
+                            </td>
+                            <td width="15" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="1"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="25"/>
+                            </td>
+                            <td width="570" height="25" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="25"/>
+                            </td>
+                            <td width="15" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="25"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+        <!-- Footer Links -->
+        <tr>
+            <td width="100%" align="center" valign="top">
+                <table width="600" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr>
+                            <td width="15" align="left" valign="top" class="width1000">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="1"/>
+                            </td>
+                            <td>
+                                <table width="570" border="0" cellspacing="0" cellpadding="0"
+                                       class="breakTable600">
+                                    <tbody>
+                                        <tr>
+                                            <td width="5" align="left" valign="top">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="5" height="1"/>
+                                            </td>
+                                            <td width="148" align="center" valign="top" class="button">
+                                                <font face="Georgia, Times New Roman, Times, serif" size="2"
+                                                      color="#000000" style="font-size:12px">
+                                                    <a href="#">
+                                                        <span class="buttonmobile">Newsletter abbestellen
+                                                        </span>
+                                                    </a>
+                                                </font>
+                                            </td>
+                                            <td width="14" align="left" valign="top">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="14" height="1"/>
+                                            </td>
+                                            <td width="150" align="center" valign="top" class="button">
+                                                <font face="Georgia, Times New Roman, Times, serif" size="2"
+                                                      color="#000000" style="font-size:12px">
+                                                    <a href="#">
+                                                        <span class="buttonmobile">Newsletter weiterleiten
+                                                        </span>
+                                                    </a>
+                                                </font>
+                                            </td>
+                                            <td width="14" align="left" valign="top">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="14" height="1"/>
+                                            </td>
+                                            <td width="135" align="center" valign="top" class="button">
+                                                <font face="Georgia, Times New Roman, Times, serif" size="2"
+                                                      color="#000000" style="font-size:12px">
+                                                    <a href="/meine-daten">
+                                                        <span class="buttonmobile">Meine Daten ändern</span>
+                                                    </a>
+                                                </font>
+                                            </td>
+                                            <td width="14" align="left" valign="top">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="14" height="1"/>
+                                            </td>
+                                            <td width="85" align="center" valign="top"
+                                                class="button buttonLast">
+                                                <a target="_self" href="#top">
+                                                    <font face="Georgia, Times New Roman, Times, serif"
+                                                          size="2" color="#000000" style="font-size:12px">
+                                                        Seitenanfang
+                                                    </font>
+                                                </a>
+                                            </td>
+                                            <td width="5" align="left" valign="top">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="5" height="1"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td width="15" align="left" valign="top" class="width1000">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="1"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+        <!-- Spacer -->
+        <tr>
+            <td width="100%" align="center" valign="top" contenteditable="false">
+                <table width="600" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr>
+                            <td width="600" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="600" height="35"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+        <!-- Footer Address -->
+        <tr>
+            <td width="100%" align="center" valign="top" contenteditable="false">
+                <table width="600" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr>
+                            <td width="15" align="left" valign="top" class="width100">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="1"/>
+                            </td>
+                            <td width="570" align="left" valign="top">
+                                <table width="570" border="0" cellspacing="0" cellpadding="0"
+                                       class="breakTable600">
+                                    <tbody>
+                                        <tr>
+                                            <td width="334" align="left" valign="top" class="impressumText">
+                                                <div id="px12">
+                                                    <font face="Georgia, Times New Roman, Times, serif"
+                                                          size="2" color="#777777" style="font-size:12px">
+                                                        <strong>KUNSTHISTORISCHES</strong>
+                                                        <br/>
+                                                        <strong>MUSEUM WIEN</strong>
+                                                        <br/>
+                                                        Maria Theresien-Platz
+                                                        <br/>
+                                                        1010 Wien
+                                                        <br/>
+                                                        T +43 1 525 24-0
+                                                        <br/>
+                                                        info@khm.at
+                                                        <br/>
+                                                        www.khm.at
+                                                    </font>
+                                                </div>
+                                            </td>
+                                            <td width="31" align="left" valign="top">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="31" height="1"/>
+                                            </td>
+
+                                            <td width="205" align="right" valign="top">
+                                                <table width="205" border="0" align="right" cellpadding="0"
+                                                       cellspacing="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td width="205" align="right" valign="top"
+                                                                class="impressumText">
+                                                                <div id="px12">
+                                                                    <font face="Georgia, Times New Roman, Times, serif"
+                                                                          size="2" color="#777777"
+                                                                          style="font-size:12px">
+                                                                        KOMMUNIKATION
+                                                                        <br/>
+                                                                        UND MARKETING
+                                                                        <br/>
+                                                                        T+ 43 1 525 24 - 4025
+                                                                        <br/>
+                                                                        F +43 1 525 24 - 4098
+                                                                        <div width="205" align="right" valign="top">
+                                                                            <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                                                 width="205" height="15"/>
+                                                                        </div>
+                                                                        <table border="0" cellpadding="0"
+                                                                               cellspacing="0">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <a href="https://www.instagram.com/kunsthistorischesmuseumvienna/">
+                                                                                            <img alt="instagram"
+                                                                                                 border="0"
+                                                                                                 height="22"
+                                                                                                 src="/fso_website_email/static/src/images/instagram.png"
+                                                                                                 style=" border-width: 0px"
+                                                                                                 width="22"/>
+                                                                                        </a>
+                                                                                    </td>
+                                                                                    <td width="20">
+                                                                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                                                             width="20"
+                                                                                             height="1"/>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a href="https://www.youtube.com/khmwien">
+                                                                                            <img alt="YouTube"
+                                                                                                 border="0"
+                                                                                                 height="22"
+                                                                                                 src="/fso_website_email/static/src/images/youtube.png"
+                                                                                                 style=" border-width: 0px"
+                                                                                                 width="20"/>
+                                                                                        </a>
+                                                                                    </td>
+                                                                                    <td width="20">
+                                                                                        <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                                                             width="20"
+                                                                                             height="1"/>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a href="https://www.facebook.com/KHMWien/">
+                                                                                            <img alt="Facebook"
+                                                                                                 border="0"
+                                                                                                 height="18"
+                                                                                                 src="/fso_website_email/static/src/images/facebook.png"
+                                                                                                 style=" border-width: 0px"
+                                                                                                 width="9"/>
+                                                                                        </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </font>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td width="15" align="left" valign="top" class="width100">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="15" height="1"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+        <!-- Final spacer -->
+        <tr>
+            <td width="100%" align="center" valign="top" contenteditable="false">
+                <table width="600" border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr>
+                            <td width="600" align="left" valign="top">
+                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                     width="600" height="60"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
     </template>
 
 </data>

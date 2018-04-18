@@ -12,9 +12,13 @@
                     <li>
                         <button type="button" data-action="edit" class="btn btn-primary btn-xs">Edit</button>
                     </li>
+
                 </ul>
 
                 <ul id="oe_systray" class="nav navbar-nav navbar-right pull-right hidden-xs">
+                    <li>
+                        <a href="/fso/email/select" class="btn btn-primary btn-xs" style="margin: 0 5px; color: #fff; text-decoration: none;">Back to Selection</a>
+                    </li>
                     <!-- Mobile Preview -->
                     <li>
                         <a data-action="show-mobile-preview" href="#">

@@ -1,0 +1,10 @@
+
+.email_template_delete {
+    position: absolute;
+    right: 15px;
+    z-index: 1900;
+}
+
+.email_template_delete > a {
+    padding: 2px 3px;
+}

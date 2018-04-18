@@ -37,6 +37,9 @@
                 <t t-call-assets="website.assets_frontend" t-js="false"/>
                 <t t-call-assets="website.assets_editor" t-js="false"/>
 
+                <!-- Editor CSS Overwrites -->
+                <link rel='stylesheet' href='/fso_website_email/static/src/css/editor_selection.css' t-ignore="true"/>
+
                 <!-- Maybe this is not needed? -->
                 <t t-raw="head or ''" name='layout_head'/>
 
@@ -93,27 +96,42 @@
                                 <div t-esc="template_view.arch" class="email_preview js_content"/>
                             </div>
                             <h4 t-field="template_view.name"/>
-                            <button class="btn btn-primary"
-                                    href="#">New from Theme</button>
+                            <a class="btn btn-primary"
+                               t-att-href="'/fso/email/create?template_id='+str(template_view.id)+'&amp;template_model=ir.ui.view'">
+                                New from Theme
+                            </a>
                         </div>
                     </div>
 
                     <!-- FSON E-Mail Templates -->
-                    <h1 class="page-header mt16">
+                    <h1 class="page-header" style="margin-top: 1em;">
                         E-Mail Templates
                     </h1>
                     <div class="row" name="email_templates">
-                        <div t-foreach="templates" t-as="template" class="col-md-3 col-sm-4 text-center">
+                        <div t-foreach="templates" t-as="template" class="col-md-3 col-sm-4 text-center" style="margin-bottom: 2em;">
+                            <div class="email_template_delete">
+                                <a class="btn-danger"
+                                   t-att-href="'/fso/email/delete?template_id='+str(template.id)">
+                                    Delete
+                                </a>
+                            </div>
                             <div class="email_preview_border">
                                 <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
                             </div>
                             <h4 t-field="template.name"/>
                             <p>(<span t-field="template.fso_template_view_id.name"/>)</p>
                             <a class="btn btn-primary"
-                                    t-att-href="'/fso/email/edit?template_id='+str(template.id)">Edit</a>
-                            <button class="btn btn-info">Copy</button>
+                               t-att-href="'/fso/email/edit?template_id='+str(template.id)">
+                                Edit
+                            </a>
+                            <a class="btn btn-info"
+                               t-att-href="'/fso/email/create?template_id='+str(template.id)+'&amp;template_model=email.template'">
+                                Copy
+                            </a>
                             <a class="btn btn-warning"
-                                    t-att-href="'/fso/email/preview?template_id='+str(template.id)">View</a>
+                               t-att-href="'/fso/email/preview?template_id='+str(template.id)">
+                                View
+                            </a>
                         </div>
                     </div>
 

@@ -3,6 +3,8 @@
 from openerp import http
 from openerp.http import request
 
+import datetime
+
 from openerp.tools.mail import html_sanitize
 from urllib import urlencode
 
@@ -74,25 +76,51 @@ class FSOEmailEditor(http.Controller):
         if not template_model or not template_id or template_model not in ('email.template', 'ir.ui.view'):
             return request.redirect('/fso/email/select')
 
+        # Theme (ir.ui.view) or email.template id
         template_id = int(template_id)
+        # res.partner model id
+        ir_model_res_partner_id = request.env['ir.model'].sudo().search([('model', '=', 'res.partner')])[0].id
+        # New email.template name
+        new_name = datetime.datetime.now().strftime('E-Mail Template (%Y-%m-%d %H:%M:%S)')
 
-        # # TODO model = get id of res.partner model to link it in the new email.template record
-        #
-        # # TODO: New e-mail template from theme (ir.ui.view)
-        # if template_model == 'ir.ui.view':
-        #     view = request.env[template_model].browse([template_id])
-        #     if not view:
-        #         request.redirect('/fso/email/select')
-        #     request.env['email.template'].sudo().create({
-        #         'name': 'Test',
-        #         'model': 1,
-        #         'fso_email_template': True,
-        #         'fso_template_view_id': view.id,
-        #     })
-        #
-        # # TODO: Copy existing e-mail template
-        # if template_model == 'email.template':
-        #     pass
+        # New e-mail template from theme (ir.ui.view)
+        if template_model == 'ir.ui.view':
+            theme_view = request.env[template_model].browse([template_id])
+            if not theme_view:
+                request.redirect('/fso/email/select')
+            request.env['email.template'].sudo().create({
+                'name': new_name,
+                'model_id': ir_model_res_partner_id,
+                'fso_email_template': True,
+                'fso_template_view_id': theme_view.id,
+            })
+            return request.redirect('/fso/email/select')
+
+        # Copy existing e-mail template
+        if template_model == 'email.template':
+            template_to_copy = request.env[template_model].browse([template_id])
+            if not template_to_copy:
+                request.redirect('/fso/email/select')
+            request.env['email.template'].sudo().create({
+                'name': new_name,
+                'model_id': template_to_copy.model_id.id,
+                'fso_email_template': template_to_copy.fso_email_template,
+                'fso_template_view_id': template_to_copy.fso_template_view_id.id,
+                'body_html': template_to_copy.body_html,
+            })
+            return request.redirect('/fso/email/select')
 
         # Return to the e-mail theme/template selection page
+        return request.redirect('/fso/email/select')
+
+    # DELETE E-MAIL TEMPLATE
+    @http.route('/fso/email/delete', type='http', auth="user", website=True)
+    def email_delete(self,  template_id, **kw):
+        if not template_id:
+            return request.redirect('/fso/email/select')
+        template_id = int(template_id)
+
+        template_to_delete = request.env['email.template'].browse([template_id])
+        template_to_delete.unlink()
+
         return request.redirect('/fso/email/select')
