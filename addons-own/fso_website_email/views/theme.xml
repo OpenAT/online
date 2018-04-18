@@ -48,8 +48,10 @@
             <t t-call-assets="website.assets_editor" t-css="false"/>
         </t>
 
-        <!-- load snippets from custom tag -->
+
         <t t-if="email_editor_mode">
+
+            <!-- Load snippets from custom tag -->
             <script type="text/javascript">
                 //<![CDATA[
                     (function () {
@@ -65,7 +67,11 @@
                     })();
                 //]]>
             </script>
+
+            <!-- Load custom CKEditor settings -->
+            <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_settings.js"></script>
         </t>
+
     </template>
 
 </data>

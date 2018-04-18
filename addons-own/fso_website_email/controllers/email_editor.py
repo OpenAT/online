@@ -20,7 +20,7 @@ class FSOEmailEditor(http.Controller):
         snippets_template = str(request.httprequest.values.get('snippets_template', ''))
         return request.website._render(snippets_template)
 
-    # SELECT EMAIL THEME OR TEMPLATE
+    # SELECTION PAGE FOR THEMES AND TEMPLATES
     @http.route('/fso/email/select', type='http', auth="user", website=True)
     def email_select(self, **kw):
         """ Overview of email templates to create, edit or copy email templates"""
