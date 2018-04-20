@@ -5,13 +5,13 @@
         Common Sub-Templates for the E-Mail Themes and Templates
     -->
 
-    <!-- COMMON HEAD TAGS -->
-    <template id="email_head_common">
+    <!-- COMMON <head> -->
+    <template id="theme_head_common">
         <meta charset="utf-8"/>
         <meta name="viewport" content="initial-scale=1"/>
         <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>
         <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>
-        <meta name="generator" content="Odoo"/>
+        <meta name="generator" content="Fundraising Studio Online"/>
 
         <title>
             FS-Online E-Mail Editor
@@ -25,53 +25,35 @@
             </t>
         </t>
 
-        <!-- Load custom header code from email.template -->
-        <t t-if="record and record.theme_head">
-            <t t-raw="record.theme_head"/>
-        </t>
+        <!-- Load custom head code from qweb template -->
+        <t t-raw="0"/>
 
+        <!-- EDITOR CSS -->
         <t t-if="email_editor_mode">
-            <!-- Load java script into head -->
+            <!-- Load common editor css into head -->
             <t t-call-assets="web.assets_common" t-js="false"/>
             <t t-call-assets="website.assets_frontend" t-js="false"/>
             <t t-call-assets="website.assets_editor" t-js="false"/>
+            <!-- Load custom editor css -->
+            <link t-if='editor_css' rel='stylesheet' t-att-href='editor_css' t-ignore="true"/>
         </t>
     </template>
 
-    <!-- COMMON JAVA SCRIPT -->
-    <template id="email_js_common">
 
-        <!-- common java script -->
+    <!-- COMMON <body> -->
+    <template id="theme_body_common">
+        <!-- EDITOR toolbar -->
         <t t-if="email_editor_mode">
-            <t t-call-assets="web.assets_common" t-css="false"/>
-            <t t-call-assets="website.assets_frontend" t-css="false"/>
-            <t t-call-assets="website.assets_editor" t-css="false"/>
+            <t t-call="fso_website_email.editor_toolbar"/>
         </t>
 
+        <!-- Template body code -->
+        <t t-raw="0"/>
 
+        <!-- EDITOR configuration -->
         <t t-if="email_editor_mode">
-
-            <!-- Load snippets from custom tag -->
-            <script type="text/javascript">
-                //<![CDATA[
-                    (function () {
-                        'use strict';
-                        var website = openerp.website;
-                        website.if_dom_contains('#email_designer', function () {
-                            website.snippet.BuildingBlock.include({
-                                _get_snippet_url: function () {
-                                    return '/fso/email/snippets?snippets_template=]]><t t-esc="snippets_template"/><![CDATA[';
-                                }
-                            });
-                        });
-                    })();
-                //]]>
-            </script>
-
-            <!-- Load custom CKEditor settings -->
-            <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_settings.js"></script>
+            <t t-call="fso_website_email.editor_js"/>
         </t>
-
     </template>
 
 </data>

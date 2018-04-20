@@ -2,12 +2,42 @@
 <openerp>
 <data>
 
+
+    <!-- EDITOR java script -->
+    <template id="editor_js">
+        <!-- Load common editor java script -->
+        <t t-call-assets="web.assets_common" t-css="false"/>
+        <t t-call-assets="website.assets_frontend" t-css="false"/>
+        <t t-call-assets="website.assets_editor" t-css="false"/>
+
+        <!-- Load custom snippets -->
+        <script t-if="snippets_template" type="text/javascript">
+            //<![CDATA[
+                (function () {
+                    'use strict';
+                    var website = openerp.website;
+                    website.if_dom_contains('#email_designer', function () {
+                        website.snippet.BuildingBlock.include({
+                            _get_snippet_url: function () {
+                                return '/fso/email/snippets?snippets_template=]]><t t-esc="snippets_template"/><![CDATA[';
+                            }
+                        });
+                    });
+                })();
+            //]]>
+        </script>
+
+        <!-- Load custom CKEditor settings -->
+        <script t-if="editor_js" type="text/javascript" t-att-src="editor_js"></script>
+    </template>
+
+
     <!-- EDITOR TOOLBAR -->
     <template id="editor_toolbar" name="FSO email editor toolbar">
         <t t-if="email_editor_mode and website and menu_data">
-            <nav id="oe_main_menu_navbar" class="navbar navbar-inverse" role="navigation">
+            <nav id="oe_main_menu_navbar" class="navbar" role="navigation">
 
-                <ul id="oe_editzone" class="nav navbar-nav hidden-xs" style="padding-left: 20px; display: none;"
+                <ul id="oe_editzone" class="nav navbar-nav hidden-xs" style="display: none;"
                     groups="base.group_website_publisher">
                     <li>
                         <button type="button" data-action="edit" class="btn btn-primary btn-xs">Edit</button>
@@ -17,7 +47,7 @@
 
                 <ul id="oe_systray" class="nav navbar-nav navbar-right pull-right hidden-xs">
                     <li>
-                        <a href="/fso/email/select" class="btn btn-primary btn-xs" style="margin: 0 5px; color: #fff; text-decoration: none;">Back to Selection</a>
+                        <a href="/fso/email/select" class="btn btn-primary btn-xs">Back to Selection</a>
                     </li>
                     <!-- Mobile Preview -->
                     <li>
@@ -34,7 +64,7 @@
     </template>
 
 
-    <!-- FSO EMAIL EDITOR -->
+    <!-- EDITOR -->
     <template id="email_editor" name="FSON Email Editor">
 
         <!-- editor enabled -->
@@ -66,6 +96,7 @@
         </t>
 
     </template>
+
 
 </data>
 </openerp>

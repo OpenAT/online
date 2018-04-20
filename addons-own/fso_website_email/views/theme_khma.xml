@@ -3,7 +3,9 @@
 <data>
 
     <!-- KHMA FSON E-Mail Template -->
-    <!-- HINT: Make sure you enable field fso_email_template in ir.ui.view to show this theme on the /fso/email/select page -->
+    <!-- ATTENTION: !!! Make sure you set field 'fso_email_template' to True in ir.ui.view
+                    !!! to show this theme on the /fso/email/select page
+    -->
     <template id="theme_khma"
               name="E-Mail Theme KHMA">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
         <html t-att-lang="lang and lang.replace('_', '-')"
@@ -14,11 +16,18 @@
               t-att-data-main-object="repr(main_object) if editable else None"
               t-att-data-oe-company-name="res_company.name if editable else None">
 
-            <head>
-                <!-- Load common header code (html-tags and css) -->
-                <t t-call="fso_website_email.email_head_common"/>
+            <!-- TEMPLATE SETTINGS -->
+            <!-- ================= -->
+            <t t-set="snippets_template" t-value="'fso_website_email.theme_khma_snippets'"/>
+            <t t-set="editor_js" t-value="'/fso_website_email/static/src/js/ckeditor_settings.js'"/>
+            <t t-set="editor_css" t-value="'/fso_website_email/static/src/css/theme_khma_editor.css'"/>
+            <!-- ================= -->
 
-                <!-- KHM Template: Custom css and html-tags -->
+            <head>
+                <!-- common head -->
+                <t t-call="fso_website_email.theme_head_common">
+                    <!-- KHMA TEMPLATE <head> PARTS -->
+                </t>
                 <meta t-if="not email_editor_mode" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
                 <style type="text/css">
                     &lt;!--
@@ -485,50 +494,40 @@
                     --&gt;
                 </style>
                 <base t-if="not email_editor_mode" target="_blank"/>
-
-                <!-- Editor CSS Overwrites -->
-                <link t-if="email_editor_mode" rel='stylesheet' href='/fso_website_email/static/src/css/theme_khma_editor.css' t-ignore="true"/>
             </head>
 
             <body bgcolor="#e8e6e4">
-                <!-- EDITOR TOOLBAR -->
-                <t t-call="fso_website_email.editor_toolbar"/>
+                <!-- common body -->
+                <t t-call="fso_website_email.theme_body_common">
+                    <!-- KHMA TEMPLATE <body> PARTS -->
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <!-- content row -->
+                        <tr>
+                            <td width="100%" align="center" valign="top">
+                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td width="600" bgcolor="#e8e6e4">
 
+                                            <!-- SNIPPETS (html_body field of email.template) -->
+                                            <t t-call="fso_website_email.email_editor"/>
 
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-                    <!-- Content -->
-                    <tr>
-                        <td width="100%" align="center" valign="top">
-                            <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td width="600" bgcolor="#e8e6e4">
-
-                                        <!-- E-MAIL BODY (raw or editor) -->
-                                        <t t-call="fso_website_email.email_editor"/>
-
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                <t t-call="fso_website_email.theme_khma_footer"/>
-
-                </table>
-
-                <!-- Load editor java script -->
-                <t t-call="fso_website_email.email_js_common">
-                    <!-- Custom Snippets Template XML-ID -->
-                    <t t-set="snippets_template" t-value="'fso_website_email.theme_khma_snippets'"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- footer row -->
+                        <t t-call="fso_website_email.theme_khma_footer_600"/>
+                    </table>
                 </t>
             </body>
+
         </html>
     </template>
 
 
     <!-- KHMA Footer 600px -->
-    <template id="theme_khma_footer">
+    <template id="theme_khma_footer_600">
         <!-- Footer separator -->
         <tr>
             <td width="100%" align="center" valign="top">

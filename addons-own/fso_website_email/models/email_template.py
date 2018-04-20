@@ -11,6 +11,7 @@ class EmailTemplate(models.Model):
                                            comodel_name="ir.ui.view", inverse_name="fso_email_template_ids",
                                            domain="[('fso_email_template','=',True)]")
 
-    theme_head = fields.Text(string="<head> content")
+    # REMOVED because ir.ui.view is enough!
+    # theme_head = fields.Text(string="<head> content")
 
     # TODO: Computed field with final html: fso_email_html

@@ -12,7 +12,6 @@
                     <group name="fson_email">
                         <field name="fso_email_template"/>
                         <field name="fso_template_view_id"/>
-                        <field name="theme_head"/>
                     </group>
                 </page>
             </xpath>
@@ -29,7 +28,6 @@
                     <group name="fson_email">
                         <field name="fso_email_template"/>
                         <field name="fso_template_view_id"/>
-                        <field name="theme_head"/>
                     </group>
                 </page>
             </xpath>

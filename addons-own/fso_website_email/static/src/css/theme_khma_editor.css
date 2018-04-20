@@ -1,8 +1,81 @@
+/* Overwrite problematic backend bootstrap css settings in editor mode */
 body {
     background-color: #e8e6e4;
 }
 
+/* Width of the email template theme */
 .o_mail_body {
     width: 600px;
     margin-left: -16px;
+}
+
+
+/* Normal navigation bar */
+#oe_main_menu_navbar {
+    min-height: 41px;
+    border: none;
+    border-bottom: 1px #3379b7 dotted;
+    margin: 0;
+    background: none;
+    background-color: #fff;
+}
+#oe_main_menu_navbar li a,
+#oe_main_menu_navbar li button {
+    padding: 4px 8px 4px 8px;
+    margin: 0;
+    font-size: 13px;
+}
+#oe_main_menu_navbar .nav>li>a.btn:hover,
+#oe_main_menu_navbar .nav>li>a.btn:focus {
+    text-decoration: none;
+    background-color: #265a88;
+}
+
+/* Editor navigation bar (CKEDITOR) */
+#website-top-navbar,
+#website-top-navbar.navbar-inverse {
+    min-height: 40px;
+    height: 40px;
+    border: none;
+    margin: 0;
+    background: none;
+    background-color: #fafafa;
+}
+#website-top-navbar form {
+    line-height: 38px;
+}
+#website-top-navbar form button,
+#website-top-navbar form a {
+    margin-top: 0;
+}
+#website-top-navbar form a[data-action='cancel'] {
+    color: #eb0000;
+    padding-left: 0;
+    padding-top: 2px;
+}
+#website-top-navbar form a.btn-link:hover,
+#website-top-navbar form a.btn-link:focus {
+    color: red;
+}
+#oe_editzone {
+    margin-top: 5px;
+    margin-left: 8px;
+}
+#oe_systray {
+    margin-top: 5px;
+}
+#website-top-navbar #oe_rte_toolbar {
+    margin-top: 4px;
+}
+#website-top-navbar li.navbar-form {
+    margin-top: 9px !important;
+}
+
+/* Make sure snippet menu is on top of editor navigation bar */
+.oe_overlay {
+    z-index: 1049;
+}
+
+#oe_manipulators a {
+    text-decoration: none;
 }
