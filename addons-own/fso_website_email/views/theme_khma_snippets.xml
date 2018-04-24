@@ -281,19 +281,17 @@
                                 <span class="oe_snippet_thumbnail_title">KHM SimpleText</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_block khma_text" style="padding:0px; margin:0px" contenteditable="false">
-                                <table width="600" border="0" cellspacing="0" cellpadding="0" contenteditable="false">
+                            <div class="oe_snippet_body ckediting_disabled khma_block khma_text" contenteditable="false" style="padding:0px; margin:0px">
+                                <table width="600" border="0" cellspacing="0" cellpadding="0">
                                     <tbody>
                                         <tr>
                                             <td width="15" align="left" valign="top" class="width100">
                                                 <img src="/fso_website_email/static/src/images/spacer.gif"
                                                      width="15" height="1"/>
                                             </td>
-
                                             <td width="570" align="left" valign="top">
                                                 <img src="/fso_website_email/static/src/images/spacer.gif"
                                                      width="20" height="1"/>
-
                                                 <table width="570" border="0" cellspacing="0" cellpadding="0"
                                                        class="breakTable600">
                                                     <tbody>
@@ -302,26 +300,32 @@
 
                                                                 <table width="210" border="0" cellspacing="0"
                                                                        cellpadding="0">
-
                                                                     <tbody>
-
-                                                                        <!-- Left Info column -->
                                                                         <tr>
-                                                                            <td class="khma_left_info" style="padding:0px; margin:0px" width="210" align="left" valign="top" contenteditable="false">
-                                                                                <div class="khma_drop_in_left_info_text px16" contenteditable="false">
-                                                                                    <font face="Georgia, Times New Roman, Times, serif"
-                                                                                          size="3" color="#000000"
-                                                                                          style="font-size:16px; text-transform:uppercase;">
-                                                                                        <span class="headline3mobile" contenteditable="false">
-                                                                                            <span contenteditable="true">
-                                                                                                InfoText
-                                                                                            </span>
-                                                                                        </span>
-                                                                                    </font>
+                                                                            <td width="210" align="left" valign="top">
+
+                                                                                <!-- Left Info Text 210px (drop in area) -->
+                                                                                <div class="khma_left_info ckediting_disabled" contenteditable="false" style="padding:0px; margin:0px">
+
+                                                                                    <div class="ckediting_disabled khma_drop_in_left_info_text" contenteditable="false">
+                                                                                        <div  class="headline3mobile"
+                                                                                              style="color:#000000; text-align:left; font-size:16px; text-transform:uppercase; font-family:Georgia, Times New Roman, Times, serif;"
+                                                                                              color="#000000" face="Georgia, Times New Roman, Times, serif">
+
+                                                                                                <!-- Left Info Headline -->
+                                                                                                <div class="ckediting_enabled" contenteditable="true">
+                                                                                                    <div>
+                                                                                                        InfoText
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                        </div>
+                                                                                    </div>
+
                                                                                 </div>
+
                                                                             </td>
                                                                         </tr>
-
                                                                     </tbody>
                                                                 </table>
 
@@ -336,7 +340,6 @@
 
                                                                 <table width="340" border="0" cellspacing="0"
                                                                        cellpadding="0">
-
                                                                     <tbody>
                                                                         <tr class="displayNone">
                                                                             <td width="340" height="35" align="left"
@@ -345,60 +348,22 @@
                                                                                      width="1" height="35"/>
                                                                             </td>
                                                                         </tr>
-
-
                                                                         <tr>
-                                                                            <td width="340" align="left" valign="top"
-                                                                                class="litext">
-                                                                                <div id="px14">
-                                                                                    <font face="Georgia, Times New Roman, Times, serif"
-                                                                                          size="2" color="#000000"
-                                                                                          style="font-size:14px"
-                                                                                          class="litext">
-                                                                                        <span class="largemobiletext">
-                                                                                            <div style="text-align: justify;" contenteditable="true">
-                                                                                                Sehr
-                                                                                                geehrte Damen und
-                                                                                                Herren,
-                                                                                                <br/>
-                                                                                                <br/>heute vor 100
-                                                                                                Jahren starb
-                                                                                                der
-                                                                                                bedeutende
-                                                                                                österreichische Maler
-                                                                                                Gustav Klimt
-                                                                                                (1862–1918). Ihm zu
-                                                                                                Ehren haben wir im
-                                                                                                prachtvollen
-                                                                                                Stiegenhaus des Museums
-                                                                                                heuer
-                                                                                                erneut
-                                                                                                die Klimt-Brücke
-                                                                                                errichtet, um
-                                                                                                Ihnen
-                                                                                                ab 13.2. die Betrachtung
-                                                                                                seiner
-                                                                                                Meisterwerke "Aug in
-                                                                                                Aug" zu
-                                                                                                ermöglichen.
-                                                                                                <br/>
-                                                                                                <br/>Im Februar bieten
-                                                                                                wir Ihnen
-                                                                                                zudem ein ganz
-                                                                                                besonderes
-                                                                                                Jahreskarten-Special zum
-                                                                                                Valentinstag sowie viele
-                                                                                                weitere
-                                                                                                spannende Angebote im
-                                                                                                und um das
-                                                                                                Museum - viel Spaß und
-                                                                                                Freude
-                                                                                                beim
-                                                                                                Entdecken!
-                                                                                                <br/>
-                                                                                            </div>
-                                                                                        </span>
-                                                                                    </font>
+                                                                            <td width="340" align="left" valign="top">
+                                                                                <div  class="litext largemobiletext"
+                                                                                      style="text-align: justify; font-size:14px, font-family: Georgia, Times New Roman, Times, serif;"
+                                                                                      color="#000000"
+                                                                                      face="Georgia, Times New Roman, Times, serif">
+
+                                                                                    <!-- Right Text 340px (drop in area) -->
+                                                                                    <div class="khm_content ckediting_enabled" contenteditable="true">
+                                                                                        <div>
+                                                                                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+                                                                                            sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+                                                                                            sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+                                                                                        </div>
+                                                                                    </div>
+
                                                                                 </div>
                                                                             </td>
                                                                         </tr>
@@ -449,8 +414,8 @@
                                 <span class="oe_snippet_thumbnail_title">Image 340</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_drop_in_image_340" style="padding:0px; margin:0px">
-                                <a href="#">
+                            <div class="oe_snippet_body khma_drop_in_image_340 ckediting_disabled" contenteditable="false" style="padding:0px; margin:0px">
+                                <a href="#" class="ckediting_enabled" contenteditable="true">
                                     <img src="/fso_website_email/static/src/images/logo-khm.png"
                                          width="340" border="0" style="display:block; border-width: 0px;"
                                          alt="Klimt Nuda Veritas"/>
@@ -468,14 +433,18 @@
                             </div>
                             <!-- Content -->
                             <div class="oe_snippet_body ckediting_disabled khma_drop_in_left_info_text" contenteditable="false">
-                                <font face="Georgia, Times New Roman, Times, serif" size="3" color="#000000"
-                                      style="font-size:16px; text-transform:uppercase;">
-                                    <span class="headline3mobile">
-                                        <span class="ckediting_enabled" contenteditable="true">
-                                            InfoText
-                                        </span>
-                                    </span>
-                                </font>
+                                <div  class="headline3mobile"
+                                      style="color:#000000; text-align:left; font-size:16px; text-transform:uppercase; font-family:Georgia, Times New Roman, Times, serif;"
+                                      color="#000000" face="Georgia, Times New Roman, Times, serif">
+
+                                        <!-- Left Info Headline -->
+                                        <div class="ckediting_enabled" contenteditable="true">
+                                            <div>
+                                                InfoText
+                                            </div>
+                                        </div>
+
+                                </div>
                             </div>
                         </div>
 
@@ -488,8 +457,8 @@
                                 <span class="oe_snippet_thumbnail_title">Left-Info Image</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body ckediting_enabled khma_drop_in_left_info_image" contenteditable="true">
-                                <a href="#">
+                            <div class="oe_snippet_body ckediting_disabled khma_drop_in_left_info_image" contenteditable="false">
+                                <a href="#" class="ckediting_enabled" contenteditable="true">
                                     <img src="/fso_website_email/static/src/images/logo-khm.png"
                                          width="210" border="0" style="display:block;"
                                          alt="khm_info_image"/>
@@ -534,8 +503,8 @@
 
                         <!-- SNIPPETS: khma_block -->
                         <div data-snippet-option-id='khma_block'
-                             data-selector=".oe_snippet_body.khma_block, .khma_block"
-                             data-selector-siblings="[data-oe-field='body_html'] > *"
+                             data-selector=".khma_block"
+                             data-selector-siblings="[data-oe-field='body_html'] > div"
                              data-selector-children="[data-oe-field='body_html']">
                         </div>
 

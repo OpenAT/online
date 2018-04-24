@@ -31,6 +31,9 @@
                 <meta t-if="not email_editor_mode" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
                 <style type="text/css">
                     &lt;!--
+                    body {
+                        background-color: #e8e6e4;
+                    }
                     p {
                         padding-top: 0px;
                         margin-top: 0px;
