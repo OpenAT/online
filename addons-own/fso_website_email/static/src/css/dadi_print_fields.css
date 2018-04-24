@@ -1,0 +1,26 @@
+/* Dadi Print Fields (Seriendruckfelder) */
+
+/* Change color in edit mode only */
+#wrapwrap .dadi_drop_in_print_field > span {
+    color: mediumturquoise;
+    background-color: lightgrey;
+}
+
+/* hide/display fields in preview and edit mode */
+.dadi_drop_in_print_field > span {
+    display: none;
+
+}
+
+.dadi_drop_in_print_field.pf_anrede > span.pf_anrede {
+    display: initial;
+}
+.dadi_drop_in_print_field.pf_title > span.pf_title {
+    display: initial;
+}
+.dadi_drop_in_print_field.pf_firstname > span.pf_firstname {
+    display: initial;
+}
+.dadi_drop_in_print_field.pf_lastname > span.pf_lastname {
+    display: initial;
+}

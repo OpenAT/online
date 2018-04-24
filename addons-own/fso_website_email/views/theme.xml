@@ -37,6 +37,9 @@
             <!-- Load custom editor css -->
             <link t-if='editor_css' rel='stylesheet' t-att-href='editor_css' t-ignore="true"/>
         </t>
+
+        <!-- CSS for snippet-drop-in dadi_print_fields (Seriendruckfelder) -->
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/dadi_print_fields.css' t-ignore="true"/>
     </template>
 
 

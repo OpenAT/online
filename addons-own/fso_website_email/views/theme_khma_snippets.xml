@@ -14,7 +14,7 @@
                         <a href="#snippet_email_structure" data-toggle="tab">Snippets</a>
                     </li>
                     <li>
-                        <a href="#snippet_email_elements" data-toggle="tab">Snippet-Elemente</a>
+                        <a href="#snippet_email_fields" data-toggle="tab">Special</a>
                     </li>
                 </ul>
 
@@ -29,29 +29,30 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/khm_spacer.png"/>
                                 <span class="oe_snippet_thumbnail_title">Spacer 35</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_block khma_spacer_35" style="padding:0px; margin:0px">
-                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" contenteditable="false">
+                            <div class="oe_snippet_body ckediting_disabled khma_block khma_spacer_35" contenteditable="false" style="padding:0px; margin:0px">
+                                <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" >
                                     <tr>
                                         <td height="35"><img src="/fso_website_email/static/src/images/spacer.gif" width="1" height="35"/></td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
+                        <span class="snippet_menu_vertical_divider"/>
 
                         <!-- KHM LOGO -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/khm_logo.png"/>
                                 <span class="oe_snippet_thumbnail_title">KHM Logo</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_block khma_logo" style="padding:0px; margin:0px" contenteditable="false">
+                            <div class="oe_snippet_body ckediting_disabled khma_block khma_logo" contenteditable="false" style="padding:0px; margin:0px">
                                 <table width="600" border="0" cellspacing="0" cellpadding="0">
                                     <tbody>
                                         <tr>
@@ -59,62 +60,10 @@
                                                 <img src="/fso_website_email/static/src/images/spacer.gif"
                                                      width="15" height="1"/>
                                             </td>
-                                            <td width="570" align="center" valign="top" contenteditable="true">
-                                                <img src="/fso_website_email/static/src/images/logo-khm.png"
-                                                     width="205" height="128"/>
-                                            </td>
-                                            <td width="15" align="left" valign="top" class="width15">
-                                                <img src="/fso_website_email/static/src/images/spacer.gif"
-                                                     width="15" height="1"/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- KHM BIG IMAGE -->
-                        <div>
-                            <!-- Icon and name -->
-                            <div class="oe_snippet_thumbnail">
-                                <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
-                                <span class="oe_snippet_thumbnail_title">BIG IMAGE</span>
-                            </div>
-                            <!-- Content -->
-                            <div class="oe_snippet_body khma_block khma_big_image" style="padding:0px; margin:0px" contenteditable="false">
-                                <table width="600" border="0" cellspacing="0" cellpadding="0" contenteditable="false">
-                                    <tbody>
-                                        <tr>
-                                            <td width="15" align="left" valign="top" class="width15">
-                                                <img src="/fso_website_email/static/src/images/spacer.gif"
-                                                     width="15" height="1"/>
-                                            </td>
-                                            <td width="570" align="left" valign="top" class="width600">
-                                                <a href="#" contenteditable="true">
-                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg"
-                                                         width="570" height="370" border="0" style="display:block;"
-                                                         alt="klimtbruecke nl"/>
-                                                </a>
-                                            </td>
-                                            <td width="15" align="left" valign="top" class="width15">
-                                                <img src="/fso_website_email/static/src/images/spacer.gif"
-                                                     width="15" height="1"/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="15" align="left" valign="top" class="width15">
-                                                <img src="/fso_website_email/static/src/images/spacer.gif"
-                                                     width="15" height="1"/>
-                                            </td>
-                                            <td width="570" height="25" align="right" valign="bottom">
-                                                <div id="px14">
-                                                    <font face="Georgia, Times New Roman, Times, serif"
-                                                          size="2" color="#777777" style="font-size:14px">
-                                                        <span contenteditable="true">
-                                                            1. Januar 2000
-                                                        </span>
-                                                    </font>
+                                            <td width="570" align="center" valign="top">
+                                                <div class="ckediting_enabled" contenteditable="true" style="padding:0px; margin:0px">
+                                                    <img src="/fso_website_email/static/src/images/logo-khm.png"
+                                                         width="205" height="128"/>
                                                 </div>
                                             </td>
                                             <td width="15" align="left" valign="top" class="width15">
@@ -127,28 +76,90 @@
                             </div>
                         </div>
 
+
+                        <!-- KHM BIG IMAGE -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/big_image.png"/>
+                                <span class="oe_snippet_thumbnail_title">BIG IMAGE</span>
+                            </div>
+                            <!-- Content -->
+                            <div class="oe_snippet_body ckediting_disabled khma_block khma_big_image" contenteditable="false" style="padding:0px; margin:0px">
+                                <table width="600" border="0" cellspacing="0" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td width="15" align="left" valign="top" class="width15">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="15" height="1"/>
+                                            </td>
+                                            <td width="570" align="left" valign="top" class="width600">
+
+                                                <!-- Big Image -->
+                                                <div class="ckediting_enabled" contenteditable="true" style="padding:0px; margin:0px">
+                                                    <a href="#">
+                                                        <img src="/fso_website_email/static/src/images/klimtbruecke.jpg"
+                                                             width="570" height="370" border="0" style="display:block;"
+                                                             alt="klimtbruecke nl"/>
+                                                    </a>
+                                                </div>
+
+                                            </td>
+                                            <td width="15" align="left" valign="top" class="width15">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="15" height="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="15" align="left" valign="top" class="width15">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="15" height="1"/>
+                                            </td>
+                                            <td width="570" height="25" align="right" valign="bottom">
+                                                <div  style="text-align: right; font-size:14px, font-family: Georgia, Times New Roman, Times, serif; color: #777777;"
+                                                      color="#777777" face="Georgia, Times New Roman, Times, serif">
+
+                                                    <!-- Big Image Annotation Text -->
+                                                    <div class="ckediting_enabled" contenteditable="true">
+                                                        <div>
+                                                            1. Januar 2000
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </td>
+                                            <td width="15" align="left" valign="top" class="width15">
+                                                <img src="/fso_website_email/static/src/images/spacer.gif"
+                                                     width="15" height="1"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <span class="snippet_menu_vertical_divider"/>
+
                         <!-- KHM TEXT BLOCK -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/khm_text.png"/>
                                 <span class="oe_snippet_thumbnail_title">KHM Text</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_block khma_text" style="padding:0px; margin:0px" contenteditable="false">
-                                <table width="600" border="0" cellspacing="0" cellpadding="0" contenteditable="false">
+                            <div class="oe_snippet_body ckediting_disabled khma_block khma_text" contenteditable="false" style="padding:0px; margin:0px">
+                                <table width="600" border="0" cellspacing="0" cellpadding="0">
                                     <tbody>
                                         <tr>
                                             <td width="15" align="left" valign="top" class="width100">
                                                 <img src="/fso_website_email/static/src/images/spacer.gif"
                                                      width="15" height="1"/>
                                             </td>
-
                                             <td width="570" align="left" valign="top">
                                                 <img src="/fso_website_email/static/src/images/spacer.gif"
                                                      width="20" height="1"/>
-
                                                 <table width="570" border="0" cellspacing="0" cellpadding="0"
                                                        class="breakTable600">
                                                     <tbody>
@@ -157,29 +168,26 @@
 
                                                                 <table width="210" border="0" cellspacing="0"
                                                                        cellpadding="0">
-
                                                                     <tbody>
                                                                         <tr>
                                                                             <td width="210" align="left" valign="top"
                                                                                 class="headline">
-                                                                                <div id="px16">
-                                                                                    <font face="Georgia, Times New Roman, Times, serif"
-                                                                                          size="3" color="#000000"
-                                                                                          style="font-size:16px; text-transform:uppercase;">
-                                                                                        <span class="headline1mobile">
-                                                                                            <strong contenteditable="false">
-                                                                                                <span contenteditable="true">
-                                                                                                    Newsletter
-                                                                                                </span>
-                                                                                            </strong>
-                                                                                        </span>
-                                                                                    </font>
+                                                                                <div  class="headline1mobile"
+                                                                                      style="color:#000000; text-align:left; font-size:16px; font-weight:bold; text-transform:uppercase; font-family:Georgia, Times New Roman, Times, serif;"
+                                                                                      color="#000000" face="Georgia, Times New Roman, Times, serif">
+
+                                                                                        <!-- Left Info Headline -->
+                                                                                        <div class="ckediting_enabled" contenteditable="true">
+                                                                                            <div>
+                                                                                                <strong>Newsletter</strong>
+                                                                                            </div>
+                                                                                        </div>
+
                                                                                 </div>
+
                                                                             </td>
                                                                         </tr>
-
-
-                                                                        <tr contenteditable="false">
+                                                                        <tr>
                                                                             <td width="210" height="15" align="left"
                                                                                 valign="top"
                                                                                 class="hide600">
@@ -187,23 +195,23 @@
                                                                                      width="210" height="15"/>
                                                                             </td>
                                                                         </tr>
-
-
-                                                                        <tr class="displayBlock" contenteditable="false">
+                                                                        <tr class="displayBlock">
                                                                             <td width="210" height="25" align="left"
                                                                                 valign="top">
                                                                                 <img src="/fso_website_email/static/src/images/spacer.gif"
                                                                                      width="1" height="25"/>
                                                                             </td>
                                                                         </tr>
-
-                                                                        <!-- Left Info column -->
                                                                         <tr>
-                                                                            <td class="khma_left_info" style="padding:0px; margin:0px" width="210" align="left" valign="top" contenteditable="false">
+                                                                            <td width="210" align="left" valign="top">
+
+                                                                                <!-- Left Info Text 210px (drop in area) -->
+                                                                                <div class="khma_left_info ckediting_disabled" contenteditable="false" style="padding:0px; margin:0px">
+
+                                                                                </div>
 
                                                                             </td>
                                                                         </tr>
-
                                                                     </tbody>
                                                                 </table>
 
@@ -218,7 +226,6 @@
 
                                                                 <table width="340" border="0" cellspacing="0"
                                                                        cellpadding="0">
-
                                                                     <tbody>
                                                                         <tr class="displayNone">
                                                                             <td width="340" height="35" align="left"
@@ -227,60 +234,22 @@
                                                                                      width="1" height="35"/>
                                                                             </td>
                                                                         </tr>
-
-
                                                                         <tr>
-                                                                            <td width="340" align="left" valign="top"
-                                                                                class="litext">
-                                                                                <div id="px14">
-                                                                                    <font face="Georgia, Times New Roman, Times, serif"
-                                                                                          size="2" color="#000000"
-                                                                                          style="font-size:14px"
-                                                                                          class="litext">
-                                                                                        <span class="largemobiletext">
-                                                                                            <div style="text-align: justify;" contenteditable="true">
-                                                                                                Sehr
-                                                                                                geehrte Damen und
-                                                                                                Herren,
-                                                                                                <br/>
-                                                                                                <br/>heute vor 100
-                                                                                                Jahren starb
-                                                                                                der
-                                                                                                bedeutende
-                                                                                                österreichische Maler
-                                                                                                Gustav Klimt
-                                                                                                (1862–1918). Ihm zu
-                                                                                                Ehren haben wir im
-                                                                                                prachtvollen
-                                                                                                Stiegenhaus des Museums
-                                                                                                heuer
-                                                                                                erneut
-                                                                                                die Klimt-Brücke
-                                                                                                errichtet, um
-                                                                                                Ihnen
-                                                                                                ab 13.2. die Betrachtung
-                                                                                                seiner
-                                                                                                Meisterwerke "Aug in
-                                                                                                Aug" zu
-                                                                                                ermöglichen.
-                                                                                                <br/>
-                                                                                                <br/>Im Februar bieten
-                                                                                                wir Ihnen
-                                                                                                zudem ein ganz
-                                                                                                besonderes
-                                                                                                Jahreskarten-Special zum
-                                                                                                Valentinstag sowie viele
-                                                                                                weitere
-                                                                                                spannende Angebote im
-                                                                                                und um das
-                                                                                                Museum - viel Spaß und
-                                                                                                Freude
-                                                                                                beim
-                                                                                                Entdecken!
-                                                                                                <br/>
-                                                                                            </div>
-                                                                                        </span>
-                                                                                    </font>
+                                                                            <td width="340" align="left" valign="top">
+                                                                                <div  class="litext largemobiletext"
+                                                                                      style="text-align: justify; font-size:14px, font-family: Georgia, Times New Roman, Times, serif;"
+                                                                                      color="#000000"
+                                                                                      face="Georgia, Times New Roman, Times, serif">
+
+                                                                                    <!-- Right Text 340px (drop in area) -->
+                                                                                    <div class="khm_content ckediting_enabled" contenteditable="true">
+                                                                                        <div>
+                                                                                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+                                                                                            sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+                                                                                            sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+                                                                                        </div>
+                                                                                    </div>
+
                                                                                 </div>
                                                                             </td>
                                                                         </tr>
@@ -308,7 +277,7 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/khm_simple_text.png"/>
                                 <span class="oe_snippet_thumbnail_title">KHM SimpleText</span>
                             </div>
                             <!-- Content -->
@@ -451,25 +420,19 @@
                                 </table>
                             </div>
                         </div>
+                        <span class="snippet_menu_vertical_divider_small"/>
 
-                    </div>
-
-                    <!-- ================ -->
-                    <!-- Snippet-Elemente -->
-                    <!-- ================ -->
-                    <div id="snippet_email_elements" class="tab-pane fade">
-
-                        <!-- Small Image Drop Inn -->
+                        <!-- Drop Inn: khma_drop_in_image_50 -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/drop_in_image_50.png"/>
                                 <span class="oe_snippet_thumbnail_title">Image 50</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_drop_in" style="padding:0px; margin:0px" contenteditable="false">
-                                <a href="#" contenteditable="true">
+                            <div class="oe_snippet_body ckediting_disabled khma_drop_in_image_50" contenteditable="false" style="padding:0px; margin:0px">
+                                <a href="#" class="ckediting_enabled" contenteditable="true">
                                     <img alt="UWD_Logo_RZ_400x400_sw" height="50"
                                          src="/fso_website_email/static/src/images/logo-khm.png"
                                          style="border-width: 0px; margin-top: 5px; margin-bottom: 5px;" vspace="5"/>
@@ -477,17 +440,17 @@
                             </div>
                         </div>
 
-                        <!-- Large Image Drop Inn -->
+                        <!-- Drop Inn: khma_drop_in_image_340 -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
-                                <span class="oe_snippet_thumbnail_title">Image 350</span>
+                                     src="/fso_website_email/static/src/icons/drop_in_image_350.png"/>
+                                <span class="oe_snippet_thumbnail_title">Image 340</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_drop_in_image_350" style="padding:0px; margin:0px" contenteditable="false">
-                                <a href="#" contenteditable="true">
+                            <div class="oe_snippet_body khma_drop_in_image_340" style="padding:0px; margin:0px">
+                                <a href="#">
                                     <img src="/fso_website_email/static/src/images/logo-khm.png"
                                          width="340" border="0" style="display:block; border-width: 0px;"
                                          alt="Klimt Nuda Veritas"/>
@@ -495,21 +458,20 @@
                             </div>
                         </div>
 
-                        <!-- Text Block Left - Text Drop Inn -->
+                        <!-- Drop Inn: Left-Info Text -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/drop_in_left_info_text.png"/>
                                 <span class="oe_snippet_thumbnail_title">Left-Info Text</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_drop_in_left_info_text px16" contenteditable="false">
-                                <font face="Georgia, Times New Roman, Times, serif"
-                                      size="3" color="#000000"
+                            <div class="oe_snippet_body ckediting_disabled khma_drop_in_left_info_text" contenteditable="false">
+                                <font face="Georgia, Times New Roman, Times, serif" size="3" color="#000000"
                                       style="font-size:16px; text-transform:uppercase;">
-                                    <span class="headline3mobile" contenteditable="false">
-                                        <span contenteditable="true">
+                                    <span class="headline3mobile">
+                                        <span class="ckediting_enabled" contenteditable="true">
                                             InfoText
                                         </span>
                                     </span>
@@ -517,23 +479,51 @@
                             </div>
                         </div>
 
-                        <!-- Text Block Left - Image Drop Inn -->
+                        <!-- Drop Inn: Left-Info Image -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                     src="/fso_website_email/static/src/icons/drop_in_left_info_image.png"/>
                                 <span class="oe_snippet_thumbnail_title">Left-Info Image</span>
                             </div>
                             <!-- Content -->
-                            <div class="oe_snippet_body khma_drop_in_left_info_image" contenteditable="false">
-                                <a href="#" contenteditable="true">
+                            <div class="oe_snippet_body ckediting_enabled khma_drop_in_left_info_image" contenteditable="true">
+                                <a href="#">
                                     <img src="/fso_website_email/static/src/images/logo-khm.png"
                                          width="210" border="0" style="display:block;"
                                          alt="khm_info_image"/>
                                 </a>
                             </div>
                         </div>
+                        <span class="snippet_menu_vertical_divider"/>
+
+                    </div>
+
+                    <!-- ================ -->
+                    <!-- Snippet-Elemente -->
+                    <!-- ================ -->
+                    <div id="snippet_email_fields" class="tab-pane fade">
+
+                        <!-- TODO: Seriendruckfelder -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/website/static/src/img/blocks/block_text_block.png"/>
+                                <span class="oe_snippet_thumbnail_title">Seriendruckfeld</span>
+                            </div>
+                            <!-- Content -->
+                            <span class="oe_snippet_body ckediting_disabled dadi_drop_in_print_field pf_lastname"
+                                  contentEditable="false">
+                                <span class="pf_anrede">Herr</span>
+                                <span class="pf_title">Dr.</span>
+                                <span class="pf_firstname">Maximilian</span>
+                                <span class="pf_lastname">Mustermann</span>
+                            </span>
+                        </div>
+
+                        <!-- TODO: SIGNATURBLOECK -->
 
                     </div>
 
@@ -542,40 +532,52 @@
                     <!-- =============== -->
                     <div id="snippet_options" class="hidden">
 
-                        <!-- div data-snippet-option-id='content'
-                             data-selector="[data-oe-field='body_html'] > div, .oe_snippet_body"
-                             data-selector-siblings="[data-oe-field='body_html'] > *"
-                             data-selector-children="[data-oe-field='body_html']">
-                        </div -->
-
-                        <!-- div data-snippet-option-id='khma_drop_in_elements'
-                            data-selector=".khma_drop_in"
-                            data-selector-siblings="p, p > span"
-                            data-selector-children=".content">
-                        </div -->
-
-                        <!-- Identify snippets -->
-                        <div data-snippet-option-id='content'
-                             data-selector="[data-oe-field='body_html'] > div, .oe_snippet_body.khma_block, .khma_block"
+                        <!-- SNIPPETS: khma_block -->
+                        <div data-snippet-option-id='khma_block'
+                             data-selector=".oe_snippet_body.khma_block, .khma_block"
                              data-selector-siblings="[data-oe-field='body_html'] > *"
                              data-selector-children="[data-oe-field='body_html']">
                         </div>
 
-                        <!-- Identify snippet drop-ins -->
-                        <div data-snippet-option-id='khma_drop_in_elements'
-                             data-selector=".khma_drop_in"
-                             data-selector-children=".largemobiletext">
+                        <!-- DROP_IN: khma_drop_in_image_340, khma_drop_in_image_50 -->
+                        <div data-snippet-option-id='khma_drop_in_image_340'
+                             data-selector=".khma_drop_in_image_340,
+                                            .khma_drop_in_image_50"
+                             data-selector-children=".khm_content"
+                             data-selector-siblings=".khm_content > div">
                         </div>
 
-                        <div data-snippet-option-id='khma_drop_in_image_350'
-                             data-selector=".khma_drop_in_image_350"
-                             data-selector-children=".largemobiletext">
+                        <!-- DROP_IN: khma_drop_in_left_info_text, khma_drop_in_left_info_image -->
+                        <div data-snippet-option-id='khma_drop_in_left_info'
+                             data-selector=".khma_drop_in_left_info_text,
+                                            .khma_drop_in_left_info_image"
+                             data-selector-children=".khma_left_info"
+                             data-selector-siblings=".khma_left_info > *">
                         </div>
 
-                        <div data-snippet-option-id='khma_drop_in_left_info_text'
-                             data-selector=".khma_drop_in_left_info_text, .khma_drop_in_left_info_image"
-                             data-selector-siblings=".khma_drop_in_left_info_text, .khma_drop_in_left_info_image"
-                             data-selector-children=".khma_left_info">
+                        <!-- DROP_IN: dadi_drop_in_print_field -->
+                        <div data-snippet-option-id='dadi_drop_in_print_field'
+                             data-selector=".dadi_drop_in_print_field"
+                             data-selector-children=".khm_content > div"
+                             data-selector-siblings=".dadi_drop_in_print_field">
+                            <!-- Snippet Options Menu -->
+                            <li class="dropdown-submenu" data-required="true">
+                                <a href="#">Select Field</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value="pf_anrede">
+                                        <a>Anrede (Herr)</a>
+                                    </li>
+                                    <li data-value="pf_title">
+                                        <a>Title (Dr.)</a>
+                                    </li>
+                                    <li data-value="pf_firstname">
+                                        <a>Firstname</a>
+                                    </li>
+                                    <li data-value="pf_lastname">
+                                        <a>Lastname</a>
+                                    </li>
+                                </ul>
+                            </li>
                         </div>
                     </div>
 

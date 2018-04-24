@@ -27,6 +27,16 @@ class ResPartnerFADonationReport(models.Model):
     #       if anlage_am_um is the same for multiple records
     _order = 'partner_id, anlage_am_um DESC, create_date DESC'
 
+    # Create combined index for faster tree view
+    def _auto_init(self, cr, context=None):
+        res = super(ResPartnerFADonationReport, self)._auto_init(cr, context=context)
+        cr.execute('SELECT indexname FROM pg_indexes '
+                   'WHERE indexname = \'res_partner_donation_report_partner_id_anlage_am_um_create_date_index\'')
+        if not cr.fetchone():
+            cr.execute('CREATE INDEX res_partner_donation_report_partner_id_anlage_am_um_create_date_index '
+                       'ON res_partner_donation_report (partner_id, anlage_am_um DESC, create_date DESC)')
+        return res
+
     # DISABLED: too slow!
     #_inherit = ['mail.thread']
 
@@ -35,6 +45,9 @@ class ResPartnerFADonationReport(models.Model):
     # ------
     # FIELDS
     # ------
+    # Add an index to create_date
+    create_date = fields.Datetime(index=True)
+
     # HINT: 'fields' can only be changed in FS-Online in state 'new'
     # ATTENTION: The 'error' state is only for errors prior to any submission!!! e.g.: bpk_missing
     state = fields.Selection(string="State", readonly=True, default='new', track_visibility='onchange',

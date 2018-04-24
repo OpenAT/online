@@ -1,16 +1,34 @@
 /* Overwrite problematic backend bootstrap css settings in editor mode */
+/* background-color was already added to khma email theme */
 body {
     background-color: #e8e6e4;
 }
 
-/* Width of the email template theme */
-.o_mail_body {
+/* EDITOR: Basics */
+#email_body_html.o_mail_body {
     width: 600px;
-    margin-left: -16px;
+    margin: 0 auto;
+    padding: 0;
+    display: table;
+}
+.oe_drop_zone.oe_insert {
+    height: 24px;
+    margin-top: -4px;
+    margin-bottom: -20px;
+    /*width: 100%;*/
+    /*position: absolute;*/
+    /*z-index: 1000;*/
+}
+/* Snippet buttons and dotted outline z-index */
+.oe_overlay {
+    /*z-index: 1049;*/
+}
+/* no text decoration for snippet option buttons */
+#oe_manipulators a {
+    text-decoration: none;
 }
 
-
-/* Normal navigation bar */
+/* EDITOR: Normal navigation bar */
 #oe_main_menu_navbar {
     min-height: 41px;
     border: none;
@@ -22,16 +40,18 @@ body {
 #oe_main_menu_navbar li a,
 #oe_main_menu_navbar li button {
     padding: 4px 8px 4px 8px;
-    margin: 0;
+    margin: 0 5px;
     font-size: 13px;
 }
-#oe_main_menu_navbar .nav>li>a.btn:hover,
-#oe_main_menu_navbar .nav>li>a.btn:focus {
-    text-decoration: none;
-    background-color: #265a88;
+#oe_main_menu_navbar .btn-default:hover {
+    background-color: #f7f7f7;
+    text-decoration: underline;
+}
+#oe_main_menu_navbar .dropdown-submenu > a:after {
+    margin-right: 0;
 }
 
-/* Editor navigation bar (CKEDITOR) */
+/* EDITOR: Editing navigation bar (CKEDITOR) */
 #website-top-navbar,
 #website-top-navbar.navbar-inverse {
     min-height: 40px;
@@ -71,11 +91,64 @@ body {
     margin-top: 9px !important;
 }
 
-/* Make sure snippet menu is on top of editor navigation bar */
-.oe_overlay {
-    z-index: 1049;
+
+/* SNIPPET MENU */
+#oe_snippets .tab-content {
+    margin: 0;
+    padding: 5px 15px;
+    background: #282828;
+}
+#oe_snippets .tab-content > div {
+    background: #282828;
+}
+body #oe_snippets .nav > li.active {
+    background: none !important;
+}
+.navbar #oe_snippets .navbar-nav > .open > a:focus,
+.navbar #oe_snippets .navbar-nav > .active > a:focus,
+.navbar-inverse #oe_snippets .navbar-nav > .open > a:focus,
+.navbar-inverse #oe_snippets .navbar-nav > .active > a:focus,
+.navbar #oe_snippets .navbar-nav > .open > a:hover,
+.navbar #oe_snippets .navbar-nav > .active > a:hover,
+.navbar-inverse #oe_snippets .navbar-nav > .open > a:hover,
+.navbar-inverse #oe_snippets .navbar-nav > .active > a:hover,
+.navbar #oe_snippets .navbar-nav > .open > a,
+.navbar #oe_snippets .navbar-nav > .active > a,
+.navbar-inverse #oe_snippets .navbar-nav > .open > a,
+.navbar-inverse #oe_snippets .navbar-nav > .active > a {
+    background: none;
+    background-image: none;
+    background-repeat: no-repeat;
+    filter: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.snippet_menu_vertical_divider {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: initial;
+    width: 0;
+    height: 75px;
+    margin: 6px 11px 5px 10px;
+    border-left: 2px #5f5f5f dotted;
+}
+.snippet_menu_vertical_divider_small {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: initial;
+    width: 0;
+    height: 75px;
+    margin: 6px 2px 5px 2px;
+    /*border-left: 2px #5f5f5f dotted;*/
 }
 
-#oe_manipulators a {
-    text-decoration: none;
-}

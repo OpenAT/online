@@ -54,9 +54,26 @@ class SosyncJob(models.Model):
     # CONSTANTS
     _systems = [("fso", "FS-Online"), ("fs", "Fundraising Studio")]
 
+    # Default order
+    _order = 'job_start DESC, write_date DESC, job_date DESC, job_fetched DESC'
+
+    # Create combined index for faster tree view
+    def _auto_init(self, cr, context=None):
+        res = super(SosyncJob, self)._auto_init(cr, context=context)
+        cr.execute('SELECT indexname FROM pg_indexes '
+                   'WHERE indexname = \'sosync_job_job_start_write_date_job_date_job_fetched_index\'')
+        if not cr.fetchone():
+            cr.execute('CREATE INDEX sosync_job_job_start_write_date_job_date_job_fetched_index '
+                       'ON sosync_job (job_start DESC, write_date DESC, job_date DESC, job_fetched DESC)')
+        return res
+
     # ======
     # FIELDS
     # ======
+    # Add an index to create_date
+    create_date = fields.Datetime(index=True)
+    # Add an index to write_date
+    write_date = fields.Datetime(index=True)
 
     # SYNCJOB
     job_id = fields.Integer(string="Job ID", readonly=True,
