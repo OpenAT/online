@@ -58,17 +58,20 @@ class FSOEmailEditor(http.Controller):
 
     # E-MAIL PREVIEW (RAW HTML)
     @http.route('/fso/email/preview', type='http', auth="user", website=True)
-    def email_preview(self, template_id, **kw):
+    def email_preview(self, template_id, raw=False, **kw):
         template = request.env['email.template'].browse([int(template_id)]) if template_id else False
 
         if not template or not template.fso_template_view_id:
             return request.redirect('/fso/email/select')
 
-        return request.render(template.fso_template_view_id.xml_id,
-                              {'html_sanitize': html_sanitize,
-                               'email_editor_mode': False,
-                               'record': template,
-                               })
+        if raw:
+            return template.fso_email_html_parsed
+        else:
+            return request.render(template.fso_template_view_id.xml_id,
+                                  {'html_sanitize': html_sanitize,
+                                   'email_editor_mode': False,
+                                   'record': template,
+                                   })
 
     # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING TEMPLATE
     @http.route('/fso/email/create', type='http', auth="user", website=True)
