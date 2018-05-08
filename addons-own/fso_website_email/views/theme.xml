@@ -30,16 +30,39 @@
 
         <!-- EDITOR CSS -->
         <t t-if="email_editor_mode">
-            <!-- Load common editor css into head -->
+            <!-- Load default odoo editor css into head -->
             <t t-call-assets="web.assets_common" t-js="false"/>
             <t t-call-assets="website.assets_frontend" t-js="false"/>
             <t t-call-assets="website.assets_editor" t-js="false"/>
-            <!-- Load custom editor css -->
+
+            <!-- Common editor CSS -->
+            <link rel='stylesheet' href='/fso_website_email/static/src/css/editor.css' t-ignore="true"/>
+
+            <!-- Theme specific editor CSS -->
             <link t-if='editor_css' rel='stylesheet' t-att-href='editor_css' t-ignore="true"/>
         </t>
 
-        <!-- CSS for snippet-drop-in dadi_print_fields (Seriendruckfelder) -->
-        <link rel='stylesheet' href='/fso_website_email/static/src/css/dadi_print_fields.css' t-ignore="true"/>
+        <!-- PRINT FIELDS -->
+        <!-- link rel='stylesheet' href='/fso_website_email/static/src/css/dadi_print_fields.css' t-ignore="true"/ -->
+        <style type="text/css" id="fs_print_fields_styles">
+            /* Change color in edit mode only */
+            #wrapwrap .drop_in_print_field > span {
+                color: white;
+                background-color: darkgrey;
+            }
+
+            /* hide/display fields in preview and edit mode */
+            .drop_in_print_field > span {
+                display: none;
+
+            }
+            <t t-set="print_fields" t-value="request.env['fso.print_field'].search([])"/>
+            <t t-foreach="print_fields" t-as="print_field">
+                .drop_in_print_field.<t t-esc="print_field.css_class"/> > span.<t t-esc="print_field.css_class"/> {
+                    display: initial;
+                }
+            </t>
+        </style>
     </template>
 
 

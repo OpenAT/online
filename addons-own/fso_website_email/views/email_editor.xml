@@ -6,7 +6,7 @@
     <!-- EDITOR java script -->
     <template id="editor_js">
 
-        <!-- Load common editor java script -->
+        <!-- Load default odoo editor java script -->
         <t t-call-assets="web.assets_common" t-css="false"/>
         <t t-call-assets="website.assets_frontend" t-css="false"/>
         <t t-call-assets="website.assets_editor" t-css="false"/>
@@ -28,7 +28,7 @@
             //]]>
         </script>
 
-        <!-- Load custom CKEditor settings -->
+        <!-- Load custom CKEditor java script settings -->
         <script t-if="editor_js" type="text/javascript" t-att-src="editor_js"></script>
     </template>
 

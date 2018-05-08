@@ -7,7 +7,7 @@
                     !!! to show this theme on the /fso/email/select page
     -->
     <template id="theme_khma"
-              name="E-Mail Theme KHMA">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+              name="KHMA Theme">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
         <html t-att-lang="lang and lang.replace('_', '-')"
               t-att-data-website-id="website and website.id or None"
               t-att-data-editable="'1' if editable else None"

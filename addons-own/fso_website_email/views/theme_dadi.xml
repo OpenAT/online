@@ -3,7 +3,7 @@
 <data>
 
     <template id="theme_dadi"
-              name="E-Mail Theme Dadi">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+              name="Default Theme">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
         <html t-att-lang="lang and lang.replace('_', '-')"
               t-att-data-website-id="website and website.id or None"
               t-att-data-editable="'1' if editable else None"

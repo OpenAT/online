@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fso_print_field_user,access_fso_print_field_user,model_fso_print_field,base.group_user,1,0,0,0
+access_fso_print_field_manager,access_fso_print_field_manager,model_fso_print_field,fso_print_fields.group_fso_print_field_manager,1,1,1,1
+access_fso_print_field_group_user,access_fso_print_field_group_user,model_fso_print_field_group,base.group_user,1,0,0,0
+access_fso_print_field_group_manager,access_fso_print_field_group_manager,model_fso_print_field_group,fso_print_fields.group_fso_print_field_manager,1,1,1,1

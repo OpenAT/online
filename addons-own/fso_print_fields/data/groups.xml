@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+        <record id="pfg_person" model="fso.print_field.group">
+            <field name="sequence" eval="1"/>
+            <field name="name">Person</field>
+        </record>
+    
+        <record id="pfg_person_extra" model="fso.print_field.group">
+            <field name="sequence" eval="2"/>
+            <field name="name">Person Extra</field>
+        </record>
+    
+        <record id="pfg_person_bpk" model="fso.print_field.group">
+            <field name="sequence" eval="3"/>
+            <field name="name">Person BPK</field>
+        </record>
+    
+        <record id="pfg_system" model="fso.print_field.group">
+            <field name="sequence" eval="4"/>
+            <field name="name">System</field>
+        </record>
+
+</data></openerp>

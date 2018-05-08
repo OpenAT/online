@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!--
+        COMMON SNIPPET SUBTEMPLATES
+        
+        These templates should be used in email themes
+    -->
+    
+    <!-- Fundraising Studio Print Field Snippet -->
+    <template id="fs_print_field_snippet">
+        <t t-set="print_fields" t-value="request.env['fso.print_field'].search([])"/>
+        <div>
+            <!-- Icon and name -->
+            <div class="oe_snippet_thumbnail">
+                <img class="oe_snippet_thumbnail_img"
+                     src="/fso_website_email/static/src/icons/drop_in_print_field.png"/>
+                <span class="oe_snippet_thumbnail_title">Print Field</span>
+            </div>
+            <!-- Content -->
+            <span t-att-class="'oe_snippet_body ckediting_disabled drop_in drop_in_print_field ' + print_fields[0].css_class if print_fields else ''"
+                  contenteditable="false">
+                <t t-foreach="print_fields" t-as="print_field">
+                    <span t-att-class="print_field.css_class"><t t-esc="print_field.fs_email_placeholder"/></span>
+                </t>
+            </span>
+        </div>
+    </template>
+    
+    <!-- Fundraising Studio Print Field Snippet Options Menu -->
+    <template id="fs_print_field_snippet_options">
+        <!-- TODO: honour 'exclude_in_email_theme_ids' field -->
+        <t t-set="groups" t-value="request.env['fso.print_field.group'].search([])"/>
+        <li class="dropdown-submenu" data-required="true">
+            <a tabindex="-1" href="#">Print Field</a>
+            <ul class="dropdown-menu">
+                <t t-foreach="groups" t-as="group">
+                    <li class="dropdown-submenu">
+                        <a tabindex="-2" href="#"><t t-esc="group.name"/></a>
+                        <ul class="dropdown-menu">
+                            <t t-foreach="group.print_field_ids" t-as="print_field">
+                                <li t-att-data-value='print_field.css_class'><a><t t-esc="print_field.fs_email_placeholder"/></a></li>
+                            </t>
+                        </ul>
+                    </li>
+                </t>
+            </ul>
+        </li>
+    </template>
+    
+</data></openerp>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!--
+        fso.print_field.group
+    -->
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="fso_print_field_group_form">
+        <field name="name">fso_print_field_group_form</field>
+        <field name="model">fso.print_field.group</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Fundraising Studio Print Field Groups">
+                <group>
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="print_field_ids"/>
+                    <field name="exclude_in_email_theme_ids"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="fso_print_field_group_tree">
+        <field name="name">fso_print_field_group_tree</field>
+        <field name="model">fso.print_field.group</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Fundraising Studio Print Field Groups">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="print_field_ids"/>
+                <field name="exclude_in_email_theme_ids"/>
+            </tree>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="fso_print_field_group_search">
+        <field name="name">fso_print_field_group_search</field>
+        <field name="model">fso.print_field.group</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Fundraising Studio Print Field Groups">
+                <field name="name"/>
+                <field name="print_field_ids"/>
+                <field name="exclude_in_email_theme_ids"/>
+                <field name="sequence"/>
+            </search>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="fso_print_field_group_action" model="ir.actions.act_window" >
+        <field name="name">Print Field Groups</field>
+        <field name="res_model">fso.print_field.group</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="fso_print_field_group_search"/>
+    </record>
+    <record id="fso_print_field_group_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="fso_print_field_group_tree"/>
+        <field name="act_window_id" ref="fso_print_field_group_action"/>
+    </record>
+    <record id="fso_print_field_group_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fso_print_field_group_form"/>
+        <field name="act_window_id" ref="fso_print_field_group_action"/>
+    </record>
+    <!-- MENU -->
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="fso_print_field_group_menu" action="fso_print_field_group_action" parent="fso_base.menu_fsonline_settings" sequence="10300"/>
+        
+
+</data></openerp>

@@ -21,19 +21,11 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_website_email",
-    'summary': """Website E-Mail Editor Extensions""",
+    'name': "FS-Online fso_print_fields",
+    'summary': """FS-Online print fields (Seriendruckfelder)""",
     'description': """
 
-FS-Online fso_website_email
-===========================
-
-Edit E-Mail templates through the website editor.
-
-E-Mail templates are still jinja2 templates and not QWeb by now!
-
-This addon includes new example snippets and basic E-Mail templates as well as extensions to the java front end 
-editor and it's tools like the href edit pop-up window.
+Fundraising Studio Print Fields for E-Mail Templates or Document Templates
 
     """,
     'author': "Datadialog - Michael Karrer",
@@ -44,21 +36,14 @@ editor and it's tools like the href edit pop-up window.
     'application': True,
     'auto_install': False,
     'depends': [
-        'website_mail',
-        'fso_print_fields',
+        'fso_base',
     ],
     'data': [
-        'views/views.xml',
-        #
-        'views/email_editor.xml',
-        'views/email_selection.xml',
-        'views/theme.xml',
-        'views/snippets.xml',
-        'views/theme_dadi.xml',
-        'views/theme_dadi_snippets.xml',
-        'views/theme_khma.xml',
-        'views/theme_khma_snippets.xml',
-    ],
-    'qweb': [
+        'security/security_groups.xml',
+        'security/ir.model.access.csv',
+        'views/fso_print_field.xml',
+        'views/fso_print_field_group.xml',
+        'data/groups.xml',
+        'data/print_fields.xml',
     ],
 }

@@ -18,6 +18,7 @@ class FSOEmailEditor(http.Controller):
     @http.route(['/fso/email/snippets'], type='json', auth="user", website=True)
     def snippets(self):
         snippets_template = str(request.httprequest.values.get('snippets_template', ''))
+
         return request.website._render(snippets_template)
 
     # SELECTION PAGE FOR THEMES AND TEMPLATES

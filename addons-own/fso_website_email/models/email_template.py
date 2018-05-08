@@ -19,41 +19,6 @@ except:
 class EmailTemplate(models.Model):
     _inherit = 'email.template'
 
-    def fs_print_fields(self):
-        return {
-            "PersonID": "PersonID",
-            "Formularnummer": "Formularnummer",
-            "AnredeLang": "AnredeLang",
-            "Anrede": "Herr",
-            "AnredeLower": "AnredeLower",
-            "Jahresbeitrag": "Jahresbeitrag",
-            "Teilbeitrag": "Teilbeitrag",
-            "Zahlungsintervall": "jährlich",
-            "NaechsteVorlageAmMonatJahr": "NaechsteVorlageAmMonatJahr",
-            "MandatsID": "MandatsID",
-            "Patentier": "Patentier",
-            "WunschSpendenbetrag": "€ 150",
-            "IBAN": "IBAN",
-            "NameBeschenkter": "NameBeschenkter",
-            "NameSchenker": "NameSchenker",
-            "Email": "maximilian.mustermann@meinedomain.com",
-            "Name": "Mustermann",
-            "Vorname": "Maximilian",
-            "TitelNachname": "TitelNachname",
-            "AnredeKurz": "AnredeKurz",
-            "Patenkind": "Patenkind",
-            "PatenkindVorname": "PatenkindVorname",
-            "Zahlungsreferenz": "Zahlungsreferenz",
-            "xGuid": "xGuid",
-            "Geburtsdatum": "01.01.1980",
-            "BPKVorname": "BPKVorname",
-            "BPKNachName": "BPKNachName",
-            "BPKGeburtsdatum": "BPKGeburtsdatum",
-            "BPKPLZ": "9000",
-            "BetragSpendenquittung": "BetragSpendenquittung",
-            "Emaildatum": "01.01.2018",
-        }
-
     # ------
     # FIELDS
     # ------

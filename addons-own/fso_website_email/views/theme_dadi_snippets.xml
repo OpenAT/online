@@ -14,7 +14,7 @@
                         <a href="#snippet_email_blocks" data-toggle="tab">Snippets</a>
                     </li>
                     <li>
-                        <a href="#snippet_email_fields" data-toggle="tab">Special</a>
+                        <a href="#snippet_email_special" data-toggle="tab">Special</a>
                     </li>
                 </ul>
 
@@ -31,39 +31,22 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/fso_website_email/static/src/icons/banner.png"/>
-                                <span class="oe_snippet_thumbnail_title">BANNER</span>
+                                     src="/fso_website_email/static/src/icons/snippet_block_banner.png"/>
+                                <span class="oe_snippet_thumbnail_title">Banner</span>
                             </div>
                             <!-- Content -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner" contenteditable="false"
                                  style="padding:0; margin:0; border:none;" width="100%" align="center" valign="top">
-
                                 <!-- CENTERING TABLE -->
                                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                     <tr>
-                                        <td align="center" valign="top">
-                                            <!-- FLEXIBLE CONTAINER -->
-                                            <table border="0" cellpadding="0" cellspacing="0" width="600"
-                                                   class="flexibleContainer">
-                                                <tr>
-                                                    <td align="center" valign="top" width="600"
-                                                        class="flexibleContainerCell">
-                                                        <!-- CONTENT TABLE -->
-                                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                            <tr>
-                                                                <td class="ckediting_enabled" contenteditable="true"
-                                                                    valign="top">
-                                                                    <a href="#">
-                                                                        <img src="/fso_website_email/static/src/images/banner_600.png"
-                                                                             class="flexibleImage"
-                                                                             style="max-width:600px;" width="600" border="0"/>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
+                                        <td class="ckediting_enabled" contenteditable="true"
+                                            align="center" valign="top">
+                                            <a href="#">
+                                                <img src="/fso_website_email/static/src/images/banner_600.png"
+                                                     class="flexibleImage"
+                                                     style="max-width:600px;" width="600" border="0"/>
+                                            </a>
                                         </td>
                                     </tr>
                                 </table>
@@ -76,8 +59,8 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/fso_website_email/static/src/icons/text_intro.png"/>
-                                <span class="oe_snippet_thumbnail_title">Text Intro</span>
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
+                                <span class="oe_snippet_thumbnail_title">Intro Text</span>
                             </div>
                             <!-- Content -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_intro" contenteditable="false"
@@ -131,28 +114,15 @@
 
                     </div>
 
+                    
                     <!-- ================ -->
                     <!-- Special          -->
                     <!-- ================ -->
-                    <div id="snippet_email_fields" class="tab-pane fade">
+                    <div id="snippet_email_special" class="tab-pane fade">
 
-                        <!-- TODO: Seriendruckfelder -->
-                        <div>
-                            <!-- Icon and name -->
-                            <div class="oe_snippet_thumbnail">
-                                <img class="oe_snippet_thumbnail_img"
-                                     src="/website/static/src/img/blocks/block_text_block.png"/>
-                                <span class="oe_snippet_thumbnail_title">Seriendruckfeld</span>
-                            </div>
-                            <!-- Content -->
-                            <span class="oe_snippet_body ckediting_disabled dadi_drop_in_print_field pf_lastname"
-                                  contentEditable="false">
-                                <span class="pf_anrede">Herr</span>
-                                <span class="pf_title">Dr.</span>
-                                <span class="pf_firstname">Maximilian</span>
-                                <span class="pf_lastname">Mustermann</span>
-                            </span>
-                        </div>
+                        <!-- Fundraising Studio Print Fields -->
+                        <t t-call="fso_website_email.fs_print_field_snippet" />
+                        <span class="snippet_menu_vertical_divider"/>
 
                     </div>
 
@@ -161,53 +131,24 @@
                     <!-- =============== -->
                     <div id="snippet_options" class="hidden">
 
-                        <!-- SNIPPETS: khma_block -->
-                        <div data-snippet-option-id='khma_block'
-                             data-selector=".khma_block"
+                        <!-- SNIPPET: snippet_block -->
+                        <div data-snippet-option-id='snippet_block'
+                             data-selector=".snippet_block"
                              data-selector-siblings="[data-oe-field='body_html'] > div"
                              data-selector-children="[data-oe-field='body_html']">
                         </div>
 
-                        <!-- DROP_IN: khma_drop_in_image_340, khma_drop_in_image_50 -->
-                        <div data-snippet-option-id='khma_drop_in_image_340'
-                             data-selector=".khma_drop_in_image_340,
-                                            .khma_drop_in_image_50"
-                             data-selector-children=".khm_content"
-                             data-selector-siblings=".khm_content > div">
+                        <!-- DROP_IN: drop_in_print_field -->
+                        <div data-snippet-option-id='drop_in_print_field'
+                             data-selector=".drop_in_print_field"
+                             data-selector-children=".ckediting_enabled"
+                             data-selector-siblings=".ckediting_enabled > *">
+                            
+                            <!-- Fundraising Studio Print Field Options -->
+                            <t t-call="fso_website_email.fs_print_field_snippet_options"/>
+                            
                         </div>
 
-                        <!-- DROP_IN: khma_drop_in_left_info_text, khma_drop_in_left_info_image -->
-                        <div data-snippet-option-id='khma_drop_in_left_info'
-                             data-selector=".khma_drop_in_left_info_text,
-                                            .khma_drop_in_left_info_image"
-                             data-selector-children=".khma_left_info"
-                             data-selector-siblings=".khma_left_info > *">
-                        </div>
-
-                        <!-- DROP_IN: dadi_drop_in_print_field -->
-                        <div data-snippet-option-id='dadi_drop_in_print_field'
-                             data-selector=".dadi_drop_in_print_field"
-                             data-selector-children=".khm_content > div"
-                             data-selector-siblings=".dadi_drop_in_print_field">
-                            <!-- Snippet Options Menu -->
-                            <li class="dropdown-submenu" data-required="true">
-                                <a href="#">Select Field</a>
-                                <ul class="dropdown-menu">
-                                    <li data-value="pf_anrede">
-                                        <a>Anrede (Herr)</a>
-                                    </li>
-                                    <li data-value="pf_title">
-                                        <a>Title (Dr.)</a>
-                                    </li>
-                                    <li data-value="pf_firstname">
-                                        <a>Firstname</a>
-                                    </li>
-                                    <li data-value="pf_lastname">
-                                        <a>Lastname</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </div>
                     </div>
 
                 </div>
