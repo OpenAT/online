@@ -21,7 +21,7 @@
             <span t-att-class="'oe_snippet_body ckediting_disabled drop_in drop_in_print_field ' + print_fields[0].css_class if print_fields else ''"
                   contenteditable="false">
                 <t t-foreach="print_fields" t-as="print_field">
-                    <span t-att-class="print_field.css_class"><t t-esc="print_field.fs_email_placeholder"/></span>
+                    <span t-att-class="print_field.css_class" t-att-data-fs-email-placeholder="print_field.fs_email_placeholder" t-att-title="print_field.fs_email_placeholder"><t t-esc="print_field.name"/></span>
                 </t>
             </span>
         </div>

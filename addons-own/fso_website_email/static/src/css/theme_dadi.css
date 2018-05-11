@@ -1,0 +1,350 @@
+/*////// RESET STYLES //////*/
+body, #bodyTable, #bodyCell {
+    height: 100% !important;
+    margin: 0;
+    padding: 0;
+    width: 100% !important;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+img, a img {
+    border: 0;
+    outline: none;
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    margin: 1em 0;
+}
+
+/*////// FONTS //////*/
+h1, h2, h3, h4, h5, h6,
+.headerCell, .footerCell,
+.textContent, .textContentLast,
+.buttonContent,
+.emailCalendarDay, .emailCalendarMonth {
+    font-family: "Open Sans", -apple-system, "Segoe UI", sans-serif;
+}
+
+/*////// CLIENT-SPECIFIC STYLES //////*/
+.ReadMsgBody {
+    width: 100%;
+}
+
+.ExternalClass {
+    width: 100%;
+}
+
+/* Force Hotmail/Outlook.com to display emails at full width. */
+.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
+    line-height: 100%;
+}
+
+/* Force Hotmail/Outlook.com to display line heights normally. */
+table, td {
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+}
+
+/* Remove spacing between tables in Outlook 2007 and up. */
+#outlook a {
+    padding: 0;
+}
+
+/* Force Outlook 2007 and up to provide a "view in browser" message. */
+img {
+    -ms-interpolation-mode: bicubic;
+    height: auto;
+}
+
+/* Force IE to smoothly render resized images. */
+body, table, td, p, a, li, blockquote {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Prevent Windows- and Webkit-based mobile platforms from changing declared text sizes. */
+
+/*////// FRAMEWORK STYLES //////*/
+.flexibleContainerCell {
+    padding-top: 40px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.bottomShim {
+    padding-bottom: 20px;
+}
+
+.imageContent, .imageContentLast {
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.nestedContainerCell {
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+/*////// GENERAL STYLES //////*/
+html, body, #bodyTable {
+    background-color: #F0F0F0;
+}
+
+#bodyCell {
+    padding-bottom: 40px;
+    padding-top: 40px;
+    background-color: #F0F0F0;
+}
+
+#emailBody {
+    background-color: #FFFFFF;
+    border: 0px solid #DDDDDD;
+    border-collapse: separate;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 16px;
+    line-height: 125%;
+    text-align: left;
+}
+
+.textContent, .textContentLast {
+    color: #1a1e25;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 145%;
+    text-align: left;
+    padding-bottom: 20px;
+}
+
+.textContent a, .textContentLast a {
+    color: #007593;
+    text-decoration: underline;
+}
+
+.headerCell, .footerCell {
+    font-size: 11px;
+    color: #000000;
+}
+
+.headerCell {
+    padding-top: 20px;
+}
+
+.footerCell {
+    padding-bottom: 20px;
+}
+
+.headerCell a, .footerCell a {
+    font-size: 11px;
+    color: #000000;
+}
+
+.nestedContainer {
+    background-color: #ededf5;
+    border-radius: 3px;
+}
+
+.nestedContainer h1, .nestedContainer h2, .nestedContainer h3 {
+    color: #000000;
+}
+
+.nestedContainer .textContent, .nestedContainer .textContentLast {
+    color: #000000;
+}
+
+.nestedContainer .emailButton {
+    background-color: #000000;
+}
+
+.emailButton {
+    background-color: #007593;
+    border-collapse: separate;
+    border-radius: 5px;
+}
+
+.buttonContent {
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 100%;
+    padding: 15px;
+    text-align: center;
+}
+
+.buttonContent a {
+    color: #FFFFFF;
+    display: block;
+    text-decoration: none;
+}
+
+.emailCalendar {
+    background-color: #ffffff;
+}
+
+.emailCalendarMonth {
+    background-color: #ededf5;
+    color: #000000;
+    font-size: 12px;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.emailCalendarDay {
+    color: #000000;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.logoCell {
+    padding: 80px 0;
+}
+
+/*////// EDITOR STYLES //////*/
+/**
+* @style Kop1
+*/
+h1 {
+    font-weight: 700;
+    font-size: 48px;
+    color: #000000;
+    margin-bottom: 30px;
+}
+
+/**
+* @style Kop2
+*/
+h2 {
+    font-weight: 700;
+    font-size: 21px;
+    color: #000000;
+}
+
+/**
+* @style Kop3
+*/
+h3 {
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+    text-transform: uppercase;
+}
+
+/*////// DRAGNDROP STYLES //////*/
+.dojoDndItemOver {
+    outline: solid 1px orange;
+}
+
+/*////// MOBILE STYLES //////*/
+@media only screen and (max-width: 480px) {
+    /*////// CLIENT-SPECIFIC STYLES //////*/
+    body {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Force iOS Mail to render the email at full width. */
+    /*////// FRAMEWORK STYLES //////*/
+    /*
+        CSS selectors are written in attribute
+        selector format to prevent Yahoo Mail
+        from rendering media query styles on
+        desktop.
+    */
+    table[id="emailBody"], table[class="flexibleContainer"] {
+        width: 100% !important;
+    }
+
+    /*
+        The following style rule makes any
+        image classed with 'flexibleImage'
+        fluid when the query activates.
+        Make sure you add an inline max-width
+        to those images to prevent them
+        from blowing out.
+        We gave them different classes for each width, because Mailchimp mixes max-widths between different formats.
+    */
+    img[class="flexibleImage"] {
+        height: auto !important;
+        width: 100% !important;
+    }
+
+    /*
+        Make buttons in the email span the
+        full width of their container, allowing
+        for left- or right-handed ease of use.
+    */
+    table[class="emailButton"] {
+        width: 100% !important;
+    }
+
+    td[class="buttonContent"] {
+        padding: 0 !important;
+    }
+
+    td[class="buttonContent"] a {
+        padding: 15px !important;
+    }
+
+    td[class="textContentLast"], td[class="imageContentLast"] {
+        padding-top: 20px !important;
+    }
+
+    /*////// GENERAL STYLES //////*/
+    td[id="bodyCell"] {
+        padding-top: 10px !important;
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
+}
+
+/*////// SNIPPET OPTION STYLES //////*/
+*.dadi_bg_red {
+    background-color: red;
+}
+
+*.dadi_bg_green {
+    background-color: green;
+}
+
+*.dadi_bg_blue {
+    background-color: blue;
+}
+
+*.dadi_fg_red .textContent {
+    background-color: red;
+}
+
+*.dadi_fg_green .textContent {
+    background-color: green;
+}
+
+*.dadi_fg_blue .textContent {
+    background-color: blue;
+    color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+*.dadi_fg_blue .textContent * {
+    color: white;
+}

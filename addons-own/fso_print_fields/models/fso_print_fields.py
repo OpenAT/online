@@ -14,7 +14,7 @@ class FsoPrintField(models.Model):
 
     # Fundraising Studio Placeholder
     fs_email_placeholder = fields.Char(string="Fundraising Studio E-Mail Placeholder", required=True,
-                                       help="e.g.: %Name%", readonly=True)
+                                       help="e.g.: %Name%", readonly=False)
 
     css_class = fields.Char(string="CSS Class", readonly=True, compute="_compute_css_class", store=True)
 

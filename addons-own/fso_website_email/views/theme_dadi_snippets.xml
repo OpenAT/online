@@ -84,7 +84,7 @@
                                             <table border="0" cellpadding="0" cellspacing="0" width="600"
                                                    class="flexibleContainer">
                                                 <tr>
-                                                    <td align="center" valign="top" width="600"
+                                                    <td align="center" valign="top" width="560"
                                                         class="flexibleContainerCell">
                                                         <!-- CONTENT TABLE -->
                                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -136,13 +136,65 @@
                              data-selector=".snippet_block"
                              data-selector-siblings="[data-oe-field='body_html'] > div"
                              data-selector-children="[data-oe-field='body_html']">
+                            <!-- Snippet options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Background</a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-submenu">
+                                        <a tabindex="-2" href="#">Strong</a>
+                                        <ul class="dropdown-menu">
+                                            <li data-value='dadi_bg_red'><a>Red</a></li>
+                                            <li data-value='dadi_bg_green'><a>Green</a></li>
+                                            <li data-value='dadi_bg_blue'><a>Blue</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-submenu">
+                                        <a tabindex="-2" href="#">Light</a>
+                                        <ul class="dropdown-menu">
+                                            <li data-value='dadi_bg_light_grey'><a>Light Grey</a></li>
+                                            <li data-value='dadi_bg_light_yellow'><a>Light Yellow</a></li>
+                                            <li data-value='dadi_bg_light_blue'><a>Light Blue</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </div>
+                        
+                        <!-- SNIPPET: snippet_block foreground options -->
+                        <div data-snippet-option-id='snippet_block_2'
+                             data-selector=".snippet_block">
+                            <!-- Snippet options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Foreground</a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-submenu">
+                                        <a tabindex="-2" href="#">Strong</a>
+                                        <ul class="dropdown-menu">
+                                            <li data-value='dadi_fg_red'><a>Red</a></li>
+                                            <li data-value='dadi_fg_green'><a>Green</a></li>
+                                            <li data-value='dadi_fg_blue'><a>Blue</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-submenu">
+                                        <a tabindex="-2" href="#">Light</a>
+                                        <ul class="dropdown-menu">
+                                            <li data-value='dadi_fg_light_grey'><a>Light Grey</a></li>
+                                            <li data-value='dadi_fg_light_yellow'><a>Light Yellow</a></li>
+                                            <li data-value='dadi_fg_light_blue'><a>Light Blue</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
                         </div>
 
                         <!-- DROP_IN: drop_in_print_field -->
                         <div data-snippet-option-id='drop_in_print_field'
                              data-selector=".drop_in_print_field"
-                             data-selector-children=".ckediting_enabled"
-                             data-selector-siblings=".ckediting_enabled > *">
+                             data-selector-children=".ckediting_enabled,
+                             .ckediting_enabled p, .ckediting_enabled pre, .ckediting_enabled strong,
+                             .ckediting_enabled h1, .ckediting_enabled h2, .ckediting_enabled h3, .ckediting_enabled h4, .ckediting_enabled h5, .ckediting_enabled h6,
+                             .ckediting_enabled div"
+                             data-selector-siblings=".drop_in_print_field">
                             
                             <!-- Fundraising Studio Print Field Options -->
                             <t t-call="fso_website_email.fs_print_field_snippet_options"/>

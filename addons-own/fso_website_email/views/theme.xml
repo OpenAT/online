@@ -43,7 +43,6 @@
         </t>
 
         <!-- PRINT FIELDS -->
-        <!-- link rel='stylesheet' href='/fso_website_email/static/src/css/dadi_print_fields.css' t-ignore="true"/ -->
         <style type="text/css" id="fs_print_fields_styles">
             /* Change color in edit mode only */
             #wrapwrap .drop_in_print_field > span {

@@ -30,8 +30,6 @@ FS-Online fso_website_email
 
 Edit E-Mail templates through the website editor.
 
-E-Mail templates are still jinja2 templates and not QWeb by now!
-
 This addon includes new example snippets and basic E-Mail templates as well as extensions to the java front end 
 editor and it's tools like the href edit pop-up window.
 
@@ -52,12 +50,12 @@ editor and it's tools like the href edit pop-up window.
         #
         'views/email_editor.xml',
         'views/email_selection.xml',
+        #
         'views/theme.xml',
         'views/snippets.xml',
+        #
         'views/theme_dadi.xml',
         'views/theme_dadi_snippets.xml',
-        'views/theme_khma.xml',
-        'views/theme_khma_snippets.xml',
     ],
     'qweb': [
     ],

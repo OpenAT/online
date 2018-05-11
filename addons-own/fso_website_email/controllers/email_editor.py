@@ -59,7 +59,7 @@ class FSOEmailEditor(http.Controller):
 
     # E-MAIL PREVIEW (RAW HTML)
     @http.route('/fso/email/preview', type='http', auth="user", website=True)
-    def email_preview(self, template_id, raw=False, **kw):
+    def email_preview(self, template_id, raw=True, **kw):
         template = request.env['email.template'].browse([int(template_id)]) if template_id else False
 
         if not template or not template.fso_template_view_id:
