@@ -51,7 +51,10 @@ class EmailTemplate(models.Model):
                                                          'record': r,
                                                          })
 
-                # Parse Seriendruckfelder
+                # Update fso_email_html field
+                r.fso_email_html = content
+
+                # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
                 # HINT: Will auto-detect encoding and concert to unicode
                 html_soup = BeautifulSoup(content, "lxml")
@@ -63,9 +66,6 @@ class EmailTemplate(models.Model):
                     pf.replace_with(fs_string)
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
                 content = html_soup.prettify(formatter="minimal")
-
-                # Update fso_email_html field
-                r.fso_email_html = content
 
                 # Get base_url to replace relative urls with absolute urls
                 try:

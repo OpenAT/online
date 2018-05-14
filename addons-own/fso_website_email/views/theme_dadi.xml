@@ -94,7 +94,11 @@
 
                             <!-- EMAIL CONTAINER -->
                             <tr>
+                                
+                                <!-- bodyCell width: 100% padding: 0 left and right  -->
                                 <td align="center" valign="top" id="bodyCell">
+                                    
+                                    <!-- emailBody width: 600 px padding: 0  margin: 0 -->
                                     <table border="0" cellpadding="0" cellspacing="0" width="600" id="emailBody">
                                         <tr>
                                             <td align="center" valign="top">

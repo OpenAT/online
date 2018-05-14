@@ -1,11 +1,6 @@
-/*////// RESET STYLES //////*/
-body, #bodyTable, #bodyCell {
-    height: 100% !important;
-    margin: 0;
-    padding: 0;
-    width: 100% !important;
-}
-
+/* ------------ */
+/* RESET STYLES */
+/* ------------ */
 table {
     border-collapse: collapse;
 }
@@ -25,7 +20,9 @@ p {
     margin: 1em 0;
 }
 
-/*////// FONTS //////*/
+/* ----- */
+/* FONTS */
+/* ----- */
 h1, h2, h3, h4, h5, h6,
 .headerCell, .footerCell,
 .textContent, .textContentLast,
@@ -34,7 +31,10 @@ h1, h2, h3, h4, h5, h6,
     font-family: "Open Sans", -apple-system, "Segoe UI", sans-serif;
 }
 
-/*////// CLIENT-SPECIFIC STYLES //////*/
+
+/* ---------------------- */
+/* CLIENT-SPECIFIC STYLES */
+/* ---------------------- */
 .ReadMsgBody {
     width: 100%;
 }
@@ -71,15 +71,68 @@ body, table, td, p, a, li, blockquote {
     -webkit-text-size-adjust: 100%;
 }
 
-/* Prevent Windows- and Webkit-based mobile platforms from changing declared text sizes. */
 
-/*////// FRAMEWORK STYLES //////*/
+/* --------- */
+/* FRAMEWORK */
+/* --------- */
+
+/* MAIN CONTAINERS */
+/* --------------- */
+/* html > body > #bodyTable > #bodyCell > #emailBody > div.snippet_block > table.centeringTable > table.flexibleContainer > td.flexibleContainerCell */
+/* 100%   100%   100%         100%        600px        100%                100%                   600px                     20px 560px 20px          */
+
+html, body, #bodyTable, #bodyCell {
+    height: 100% !important;
+    margin: 0;
+    padding: 0;
+    width: 100% !important;
+    background-color: #F0F0F0;
+}
+
+#bodyCell {
+    padding-bottom: 40px;
+    padding-top: 40px;
+    background-color: #F0F0F0;
+}
+
+#emailBody {
+    width: 600px;
+    overflow: hidden;
+    /* styles */
+    background-color: #FFFFFF;
+    border: 0px solid #DDDDDD;
+    border-collapse: separate;
+    border-radius: 5px;
+}
+
+.snippet_block {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    text-align: center;
+    vertical-align: top;
+}
+
+.centeringTable {
+    width: 100%;
+    border: none;
+}
+
+.flexibleContainer {
+    width: 600px;
+    padding: 0;
+    margin: 0;
+}
+
 .flexibleContainerCell {
+    width: 560px;
     padding-top: 40px;
     padding-right: 20px;
     padding-left: 20px;
 }
 
+/* OTHER CONTAINER */
 .bottomShim {
     padding-bottom: 20px;
 }
@@ -95,25 +148,8 @@ body, table, td, p, a, li, blockquote {
     padding-left: 20px;
 }
 
+
 /*////// GENERAL STYLES //////*/
-html, body, #bodyTable {
-    background-color: #F0F0F0;
-}
-
-#bodyCell {
-    padding-bottom: 40px;
-    padding-top: 40px;
-    background-color: #F0F0F0;
-}
-
-#emailBody {
-    background-color: #FFFFFF;
-    border: 0px solid #DDDDDD;
-    border-collapse: separate;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
 h1, h2, h3, h4, h5, h6 {
     font-size: 16px;
     line-height: 125%;
@@ -219,6 +255,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 80px 0;
 }
 
+
 /*////// EDITOR STYLES //////*/
 /**
 * @style Kop1
@@ -248,6 +285,7 @@ h3 {
     color: #000000;
     text-transform: uppercase;
 }
+
 
 /*////// DRAGNDROP STYLES //////*/
 .dojoDndItemOver {

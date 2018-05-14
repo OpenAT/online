@@ -18,7 +18,7 @@
                     <field name="fs_email_placeholder"/>
                     <field name="css_class"/>
                     <field name="group_ids"/>
-                    <field name="exclude_in_email_theme_ids" widget=""/>
+                    <field name="exclude_in_email_theme_ids"/>
                 </group>
             </form>
         </field>

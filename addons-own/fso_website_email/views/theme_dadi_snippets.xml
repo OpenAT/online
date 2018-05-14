@@ -34,11 +34,10 @@
                                      src="/fso_website_email/static/src/icons/snippet_block_banner.png"/>
                                 <span class="oe_snippet_thumbnail_title">Banner</span>
                             </div>
-                            <!-- Content -->
-                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner" contenteditable="false"
-                                 style="padding:0; margin:0; border:none;" width="100%" align="center" valign="top">
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner" contenteditable="false">
                                 <!-- CENTERING TABLE -->
-                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <table class="centeringTable" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td class="ckediting_enabled" contenteditable="true"
                                             align="center" valign="top">
@@ -62,16 +61,15 @@
                                      src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
                                 <span class="oe_snippet_thumbnail_title">Intro Text</span>
                             </div>
-                            <!-- Content -->
-                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_intro" contenteditable="false"
-                                 style="padding:0; margin:0; border:none;" width="100%" align="center" valign="top">
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_intro" contenteditable="false">
                                 <!-- CENTERING TABLE -->
                                 <!--
                                     The centering table keeps the content
                                     tables centered in the emailBody table,
                                     in case its width is set to 100%.
                                 -->
-                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <table class="centeringTable" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td align="center" valign="top">
                                             <!-- FLEXIBLE CONTAINER -->
@@ -81,10 +79,12 @@
                                                 Most content tables within can then be
                                                 given 100% widths.
                                             -->
-                                            <table border="0" cellpadding="0" cellspacing="0" width="600"
+                                            <!-- flexibleContainer 600 px 0 padding 0 margin -->
+                                            <table border="0" cellpadding="0" cellspacing="0"
                                                    class="flexibleContainer">
                                                 <tr>
-                                                    <td align="center" valign="top" width="560"
+                                                    <!-- flexibleContainerCell 560 px 20 padding left and right 0 margin -->
+                                                    <td align="center" valign="top"
                                                         class="flexibleContainerCell">
                                                         <!-- CONTENT TABLE -->
                                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
