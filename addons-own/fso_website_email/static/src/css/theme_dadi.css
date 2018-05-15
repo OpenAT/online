@@ -1,3 +1,14 @@
+/* ----- */
+/* FONTS */
+/* ----- */
+h1, h2, h3, h4, h5, h6,
+.headerCell, .footerCell,
+.textContent, .textContentLast,
+.buttonContent,
+.emailCalendarDay, .emailCalendarMonth {
+    font-family: "Open Sans", -apple-system, "Segoe UI", sans-serif;
+}
+
 /* ------------ */
 /* RESET STYLES */
 /* ------------ */
@@ -19,18 +30,6 @@ h1, h2, h3, h4, h5, h6 {
 p {
     margin: 1em 0;
 }
-
-/* ----- */
-/* FONTS */
-/* ----- */
-h1, h2, h3, h4, h5, h6,
-.headerCell, .footerCell,
-.textContent, .textContentLast,
-.buttonContent,
-.emailCalendarDay, .emailCalendarMonth {
-    font-family: "Open Sans", -apple-system, "Segoe UI", sans-serif;
-}
-
 
 /* ---------------------- */
 /* CLIENT-SPECIFIC STYLES */
@@ -71,28 +70,28 @@ body, table, td, p, a, li, blockquote {
     -webkit-text-size-adjust: 100%;
 }
 
-
 /* --------- */
 /* FRAMEWORK */
 /* --------- */
 
 /* MAIN CONTAINERS */
 /* --------------- */
-/* html > body > #bodyTable > #bodyCell > #emailBody > div.snippet_block > table.centeringTable > table.flexibleContainer > td.flexibleContainerCell */
-/* 100%   100%   100%         100%        600px        100%                100%                   600px                     20px 560px 20px          */
+
+/* html > body > #bodyTable > #bodyCell > #emailBody  */
+/* 100%   100%   100%         100%        600px       */
 
 html, body, #bodyTable, #bodyCell {
     height: 100% !important;
+    width: 100% !important;
     margin: 0;
     padding: 0;
-    width: 100% !important;
     background-color: #F0F0F0;
+    border: 0 solid transparent;
 }
 
 #bodyCell {
     padding-bottom: 40px;
     padding-top: 40px;
-    background-color: #F0F0F0;
 }
 
 #emailBody {
@@ -100,11 +99,13 @@ html, body, #bodyTable, #bodyCell {
     overflow: hidden;
     /* styles */
     background-color: #FFFFFF;
-    border: 0px solid #DDDDDD;
+    border: none;
     border-collapse: separate;
-    border-radius: 5px;
+    border-radius: 0;
 }
 
+/* div.snippet_block > table.centeringTable > table.flexibleContainer > td.flexibleContainerCell */
+/* 100%                100%                   600px                     20px 560px 20px          */
 .snippet_block {
     width: 100%;
     padding: 0;
@@ -123,37 +124,68 @@ html, body, #bodyTable, #bodyCell {
     width: 600px;
     padding: 0;
     margin: 0;
+    border: none;
 }
 
 .flexibleContainerCell {
-    width: 560px;
-    padding-top: 40px;
-    padding-right: 20px;
-    padding-left: 20px;
+    /* TODO: check if 560px is needed or if 100% is ok on most mail clients */
+    /*width: 560px;*/
+    width: 100%;
+    padding: 0 20px;
 }
 
-/* OTHER CONTAINER */
-.bottomShim {
-    padding-bottom: 20px;
-}
-
-.imageContent, .imageContentLast {
-    padding-bottom: 20px;
-    text-align: center;
+/* table.nestedContainer > td.nestedContainerCell > table.contentTable > td.textContent */
+/* 100%                    ?px 100% ?px             100%                 100%           */
+.nestedContainer {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
 }
 
 .nestedContainerCell {
-    padding-top: 20px;
-    padding-right: 20px;
-    padding-left: 20px;
+    width: 100%;
+    /*padding: 0 20px;*/
 }
 
+.contentTable {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
 
-/*////// GENERAL STYLES //////*/
+.textContent {
+    width: 100%;
+}
+
+/* ------ */
+/* STYLES */
+/* ------ */
+.imageContent, .imageContentLast {
+    text-align: center;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-size: 16px;
+    /*color: #000000;*/
     line-height: 125%;
     text-align: left;
+}
+h1 {
+    font-weight: 700;
+    font-size: 48px;
+    margin-bottom: 30px;
+}
+h2 {
+    font-weight: 700;
+    font-size: 21px;
+    margin-bottom: 16px;
+}
+h3 {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 14px;
 }
 
 .textContent, .textContentLast {
@@ -162,7 +194,6 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
     line-height: 145%;
     text-align: left;
-    padding-bottom: 20px;
 }
 
 .textContent a, .textContentLast a {
@@ -188,23 +219,6 @@ h1, h2, h3, h4, h5, h6 {
     color: #000000;
 }
 
-.nestedContainer {
-    background-color: #ededf5;
-    border-radius: 3px;
-}
-
-.nestedContainer h1, .nestedContainer h2, .nestedContainer h3 {
-    color: #000000;
-}
-
-.nestedContainer .textContent, .nestedContainer .textContentLast {
-    color: #000000;
-}
-
-.nestedContainer .emailButton {
-    background-color: #000000;
-}
-
 .emailButton {
     background-color: #007593;
     border-collapse: separate;
@@ -226,90 +240,35 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: none;
 }
 
-.emailCalendar {
-    background-color: #ffffff;
-}
 
-.emailCalendarMonth {
-    background-color: #ededf5;
-    color: #000000;
-    font-size: 12px;
-    font-weight: bold;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.emailCalendarDay {
-    color: #000000;
-    font-size: 64px;
-    font-weight: 700;
-    line-height: 100%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    text-align: center;
-}
-
-.logoCell {
-    padding: 80px 0;
-}
-
-
-/*////// EDITOR STYLES //////*/
-/**
-* @style Kop1
-*/
-h1 {
-    font-weight: 700;
-    font-size: 48px;
-    color: #000000;
-    margin-bottom: 30px;
-}
-
-/**
-* @style Kop2
-*/
-h2 {
-    font-weight: 700;
-    font-size: 21px;
-    color: #000000;
-}
-
-/**
-* @style Kop3
-*/
-h3 {
-    font-weight: 700;
-    font-size: 16px;
-    color: #000000;
-    text-transform: uppercase;
-}
-
-
-/*////// DRAGNDROP STYLES //////*/
-.dojoDndItemOver {
-    outline: solid 1px orange;
-}
-
-/*////// MOBILE STYLES //////*/
+/* ------------- */
+/* MOBILE STYLES */
+/* ------------- */
 @media only screen and (max-width: 480px) {
-    /*////// CLIENT-SPECIFIC STYLES //////*/
+    /* CLIENT-SPECIFIC STYLES */
     body {
         width: 100% !important;
         min-width: 100% !important;
     }
 
     /* Force iOS Mail to render the email at full width. */
-    /*////// FRAMEWORK STYLES //////*/
+    /* FRAMEWORK STYLES */
     /*
         CSS selectors are written in attribute
         selector format to prevent Yahoo Mail
         from rendering media query styles on
         desktop.
     */
-    table[id="emailBody"], table[class="flexibleContainer"] {
+    table[id="emailBody"],
+    table[class="flexibleContainer"] {
         width: 100% !important;
+    }
+
+    table.flexibleContainerRight,
+    table.flexibleContainerLeft {
+        width: 100% !important;
+        text-align: center !important;
+        margin-bottom: 1em;
     }
 
     /*
@@ -321,9 +280,10 @@ h3 {
         from blowing out.
         We gave them different classes for each width, because Mailchimp mixes max-widths between different formats.
     */
-    img[class="flexibleImage"] {
+    img.flexibleImage {
         height: auto !important;
         width: 100% !important;
+        max-width: 460px;
     }
 
     /*
@@ -347,7 +307,7 @@ h3 {
         padding-top: 20px !important;
     }
 
-    /*////// GENERAL STYLES //////*/
+    /* GENERAL STYLES */
     td[id="bodyCell"] {
         padding-top: 10px !important;
         padding-right: 10px !important;
@@ -355,34 +315,310 @@ h3 {
     }
 }
 
-/*////// SNIPPET OPTION STYLES //////*/
-*.dadi_bg_red {
-    background-color: red;
+/* ---------------------------- */
+/* SNIPPETS AND SNIPPET OPTIONS */
+/* ---------------------------- */
+
+/*  ----------------
+    dadi_sb_fg_width
+    dadi_sb_bg_width
+    ---------------- */
+.dadi_sb_bg_normal .flexibleContainerCell,
+div.dadi_sb_fg_normal .flexibleContainerCell .nestedContainerCell {
+    /*width: 560px;*/
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.dadi_sb_bg_full .flexibleContainerCell,
+div.dadi_sb_fg_full .flexibleContainerCell .nestedContainerCell {
+    /*width: 600px;*/
+    padding-left: 0;
+    padding-right: 0;
+}
+.dadi_sb_bg_narrow .flexibleContainerCell,
+div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
+    /*width: 520px;*/
+    padding-left: 40px;
+    padding-right: 40px;
 }
 
-*.dadi_bg_green {
-    background-color: green;
+/*  ----------------
+    dadi_sb_fg_color
+    dadi_sb_bg_color
+    ---------------- */
+.dadi_sb_bg_transparent .flexibleContainerCell,
+.dadi_sb_fg_transparent .flexibleContainerCell .nestedContainerCell {
+    background-color: transparent;
 }
 
-*.dadi_bg_blue {
-    background-color: blue;
+.dadi_sb_bg_darkgrey .flexibleContainerCell,
+.dadi_sb_fg_darkgrey .flexibleContainerCell .nestedContainerCell {
+    background-color: #929292;
 }
-
-*.dadi_fg_red .textContent {
-    background-color: red;
-}
-
-*.dadi_fg_green .textContent {
-    background-color: green;
-}
-
-*.dadi_fg_blue .textContent {
-    background-color: blue;
+.dadi_sb_fg_darkgrey .flexibleContainerCell .nestedContainerCell .textContent {
     color: white;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 
-*.dadi_fg_blue .textContent * {
+.dadi_sb_bg_grey .flexibleContainerCell,
+.dadi_sb_fg_grey .flexibleContainerCell .nestedContainerCell {
+    background-color: #a1a4a5;
+}
+
+/* use this for the background color :) */
+.dadi_sb_bg_lightgrey .flexibleContainerCell,
+.dadi_sb_fg_lightgrey .flexibleContainerCell .nestedContainerCell {
+    background-color: #f0f0f0;
+}
+
+.dadi_sb_bg_orange .flexibleContainerCell,
+.dadi_sb_fg_orange .flexibleContainerCell .nestedContainerCell {
+    background-color: #ff6827;
+}
+.dadi_sb_fg_orange .flexibleContainerCell .nestedContainerCell .textContent {
     color: white;
+}
+
+.dadi_sb_fg_darkgrey .flexibleContainerCell .nestedContainerCell,
+.dadi_sb_fg_grey .flexibleContainerCell .nestedContainerCell,
+.dadi_sb_fg_lightgrey .flexibleContainerCell .nestedContainerCell,
+.dadi_sb_fg_orange .flexibleContainerCell .nestedContainerCell {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 3px;
+}
+
+/*
+    snippet_block_spacer
+*/
+.snippet_block.snippet_block_spacer .flexibleContainerCell {
+    padding: 0;
+}
+.snippet_block_spacer_top,
+.snippet_block_spacer_bottom {
+    display: block;
+    height: 0px;
+    min-height: 0px;
+    font-size: 0px;
+    line-height: 0px;
+    padding: 0;
+    border: none;
+}
+.snippet_block_spacer_top {
+    padding-top: 9px;
+    border-bottom: 1px solid transparent;
+}
+.snippet_block_spacer_bottom {
+    padding-top: 10px;
+}
+
+.dadi_sb_spacer_medium .snippet_block_spacer_top {
+    padding-top: 19px;
+}
+.dadi_sb_spacer_medium .snippet_block_spacer_bottom {
+    padding-top: 20px;
+}
+.dadi_sb_spacer_large .snippet_block_spacer_top {
+    padding-top: 39px;
+}
+.dadi_sb_spacer_large .snippet_block_spacer_bottom {
+    padding-top: 40px;
+}
+
+.dadi_sb_spacer_solid .snippet_block_spacer_top {
+    border-bottom: 1px solid #404040;
+}
+.dadi_sb_spacer_dotted .snippet_block_spacer_top {
+    border-bottom: 1px dotted #404040;
+}
+.dadi_sb_spacer_dashed .snippet_block_spacer_top {
+    border-bottom: 1px dashed #404040;
+}
+
+/*
+    snippet_block_banner
+*/
+.snippet_block_banner .flexibleImage,
+.snippet_block_banner.dadi_sb_bg_normal .flexibleImage {
+    width: 560px;
+    max-width: 560px;
+}
+.snippet_block_banner.dadi_sb_bg_full .flexibleImage {
+    width: 600px;
+    max-width: 600px;
+}
+.snippet_block_banner.dadi_sb_bg_narrow .flexibleImage {
+    width: 520px;
+    max-width: 520px;
+}
+
+/*
+    snippet_block_text_intro
+*/
+.snippet_block_text_intro .flexibleContainerCell {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+/*
+    snippet_block_text_image_left
+*/
+.snippet_block_text_image_left .flexibleContainerCell {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.snippet_block_text_image_left .flexibleContainerLeft,
+.snippet_block_text_image_left .flexibleContainerLeft .flexibleImage {
+    width: 200px;
+}
+.snippet_block_text_image_left .flexibleContainerRight,
+.snippet_block_text_image_left .flexibleContainerRight .flexibleImage {
+    width: 340px;
+}
+.snippet_block_text_image_left.dadi_sb_fg_darkgrey .flexibleContainerRight,
+.snippet_block_text_image_left.dadi_sb_fg_grey .flexibleContainerRight,
+.snippet_block_text_image_left.dadi_sb_fg_lightgrey .flexibleContainerRight,
+.snippet_block_text_image_left.dadi_sb_fg_orange .flexibleContainerRight {
+    width: 300px;
+}
+
+
+/*
+    snippet_block_text_image_right
+*/
+.snippet_block_text_image_right .flexibleContainerCell {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.snippet_block_text_image_right .flexibleContainerLeft,
+.snippet_block_text_image_right .flexibleContainerLeft .flexibleImage {
+    width: 340px;
+}
+.snippet_block_text_image_right .flexibleContainerRight,
+.snippet_block_text_image_right .flexibleContainerRight .flexibleImage {
+    width: 200px;
+}
+.snippet_block_text_image_right.dadi_sb_fg_darkgrey .flexibleContainerLeft,
+.snippet_block_text_image_right.dadi_sb_fg_grey .flexibleContainerLeft,
+.snippet_block_text_image_right.dadi_sb_fg_lightgrey .flexibleContainerLeft,
+.snippet_block_text_image_right.dadi_sb_fg_orange .flexibleContainerLeft {
+    width: 300px;
+}
+
+/*
+    snippet_block_text_twocol
+*/
+.snippet_block_text_twocol .flexibleContainerCell {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.snippet_block_text_twocol .flexibleContainerLeft,
+.snippet_block_text_twocol .flexibleContainerLeft .flexibleImage {
+    width: 270px;
+}
+.snippet_block_text_twocol .flexibleContainerRight,
+.snippet_block_text_twocol .flexibleContainerRight .flexibleImage {
+    width: 270px;
+}
+.snippet_block_text_twocol.dadi_sb_fg_darkgrey .flexibleContainerLeft,
+.snippet_block_text_twocol.dadi_sb_fg_grey .flexibleContainerLeft,
+.snippet_block_text_twocol.dadi_sb_fg_lightgrey .flexibleContainerLeft,
+.snippet_block_text_twocol.dadi_sb_fg_orange .flexibleContainerLeft {
+    width: 250px;
+}
+.snippet_block_text_twocol.dadi_sb_fg_darkgrey .flexibleContainerRight,
+.snippet_block_text_twocol.dadi_sb_fg_grey .flexibleContainerRight,
+.snippet_block_text_twocol.dadi_sb_fg_lightgrey .flexibleContainerRight,
+.snippet_block_text_twocol.dadi_sb_fg_orange .flexibleContainerRight {
+    width: 250px;
+}
+
+/*
+    drop_in_button
+*/
+.drop_in_button {
+    display: inline;
+    display: inline-block;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.drop_in_button a {
+    display: block;
+    border-radius: 6px;
+    background-color: #007593;
+    border: 1px solid transparent;
+    padding: 2px 16px;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.drop_in_button.dadi_di_button_transparent a {
+    background-color: transparent;
+    border: 1px solid #929292;
+}
+.drop_in_button.dadi_di_button_transparent a {
+    color: black;
+}
+.drop_in_button.dadi_di_button_black a {
+    background-color: #000000;
+}
+.drop_in_button.dadi_di_button_green a {
+    background-color: #458b3f;
+}
+.drop_in_button.dadi_di_button_yellow a {
+    background-color: #ffd752;
+}
+.drop_in_button.dadi_di_button_yellow a{
+    color: black;
+}
+.drop_in_button.dadi_di_button_red a {
+    background-color: #b23132;
+}
+
+.drop_in_button.dadi_di_button_medium,
+.drop_in_button.dadi_di_button_medium a {
+    font-size: 36px;
+    line-height: 60px;
+    border-radius: 12px;
+}
+.drop_in_button.dadi_di_button_large,
+.drop_in_button.dadi_di_button_large a {
+    font-size: 48px;
+    line-height: 80px;
+    border-radius: 14px;
+    font-weight: 700;
+}
+.drop_in_button.dadi_di_button_huge,
+.drop_in_button.dadi_di_button_huge a {
+    font-size: 64px;
+    line-height: 120px;
+    border-radius: 18px;
+    font-weight: 700;
+}
+
+.drop_in_button.dadi_di_button_fullcenter {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.drop_in_button.dadi_di_button_fullcenter a {
+    display: inline;
+}
+.drop_in_button.dadi_di_button_fullleft {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+.drop_in_button.dadi_di_button_fullleft a {
+    display: inline;
+}
+.drop_in_button.dadi_di_button_fullright {
+    display: block;
+    width: 100%;
+    text-align: right;
+}
+.drop_in_button.dadi_di_button_fullright a {
+    display: inline;
 }

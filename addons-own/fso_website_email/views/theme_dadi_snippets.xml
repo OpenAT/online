@@ -1,6 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        
+        <template id="snippet_block">
+            <!-- CENTERING TABLE -->
+            <!--
+                The centering table keeps the content
+                tables centered in the emailBody table,
+                in case its width is set to 100%.
+            -->
+            <table class="centeringTable" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td align="center" valign="top">
+                        <!-- FLEXIBLE CONTAINER -->
+                        <!--
+                            The flexible container has a set width
+                            that gets overridden by the media query.
+                            Most content tables within can then be
+                            given 100% widths.
+                        -->
+                        <!-- flexibleContainer 600 px 0 padding 0 margin -->
+                        <table class="flexibleContainer" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                
+                                <!-- flexibleContainerCell 560 px 20 padding left and right 0 margin -->
+                                <td class="flexibleContainerCell" align="center" valign="top">
+                                    
+                                    <!-- Nested Container -->
+                                    <table class="nestedContainer" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                
+                                                <!-- Nested Container Cell -->
+                                                <td class="nestedContainerCell" align="center" valign="top">
+                    
+                    
+                                                    <!-- CONTENT TABLE -->
+                                                    <table class="contentTable" border="0" cellpadding="0" cellspacing="0">
+                                                        <tr>
+                                                            
+                                                            <t t-if="nockedit">
+                                                                <td class="textContent">
+                                                                    
+                                                                    <t t-raw="0"/>
+                                                                    
+                                                                </td>
+                                                            </t>
+                                                            
+                                                            <t t-if="not nockedit">
+                                                                <td class="textContent ckediting_enabled" contenteditable="true">
+                                                                    
+                                                                    <t t-raw="0"/>
+                                                                    
+                                                                </td>
+                                                            </t>
+
+                                                        </tr>
+                                                    </table>
+                
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </template>
 
         <!-- Dadi Default E-Mail Theme Snippets -->
         <template id="theme_dadi_snippets"
@@ -25,8 +94,36 @@
                     <!-- Snippets         -->
                     <!-- ================ -->
                     <div id="snippet_email_blocks" class="tab-pane fade in active">
+                        
+                        <!-- SPACER -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/snippet_block_spacer.png"/>
+                                <span class="oe_snippet_thumbnail_title">Spacer</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_spacer"
+                                 contenteditable="false">
+                                
+                                <t t-call="fso_website_email.snippet_block">
+                                    <t t-set="nockedit" t-value="True"/>
+                                    
+                                    <div class="snippet_block_spacer_top">
+                                        &amp;nbsp;
+                                    </div>
+                                    <div class="snippet_block_spacer_bottom">
+                                        &amp;nbsp;
+                                    </div>
+                                    
+                                </t>
+                                
+                            </div>
+                        </div>
+                        <span class="snippet_menu_vertical_divider"/>
 
-                        <!-- BANNER -->
+                        <!-- BANNER IMAGE -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
@@ -35,25 +132,23 @@
                                 <span class="oe_snippet_thumbnail_title">Banner</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
-                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner" contenteditable="false">
-                                <!-- CENTERING TABLE -->
-                                <table class="centeringTable" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td class="ckediting_enabled" contenteditable="true"
-                                            align="center" valign="top">
-                                            <a href="#">
-                                                <img src="/fso_website_email/static/src/images/banner_600.png"
-                                                     class="flexibleImage"
-                                                     style="max-width:600px;" width="600" border="0"/>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </table>
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner dadi_sb_bg_full"
+                                 contenteditable="false">
+                                
+                                <t t-call="fso_website_email.snippet_block">
 
+                                    <a href="#">
+                                        <img src="/fso_website_email/static/src/images/banner_600.png"
+                                             class="flexibleImage snippet_block_banner_image"/>
+                                    </a>
+                                    
+                                </t>
+                                
                             </div>
                         </div>
+                        <span class="snippet_menu_vertical_divider"/>
 
-                        <!-- TEXT_INTRO  -->
+                        <!-- TEXT  -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
@@ -63,62 +158,195 @@
                             </div>
                             <!-- SNIPPET BLOCK -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_intro" contenteditable="false">
-                                <!-- CENTERING TABLE -->
-                                <!--
-                                    The centering table keeps the content
-                                    tables centered in the emailBody table,
-                                    in case its width is set to 100%.
-                                -->
-                                <table class="centeringTable" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td align="center" valign="top">
-                                            <!-- FLEXIBLE CONTAINER -->
-                                            <!--
-                                                The flexible container has a set width
-                                                that gets overridden by the media query.
-                                                Most content tables within can then be
-                                                given 100% widths.
-                                            -->
-                                            <!-- flexibleContainer 600 px 0 padding 0 margin -->
-                                            <table border="0" cellpadding="0" cellspacing="0"
-                                                   class="flexibleContainer">
-                                                <tr>
-                                                    <!-- flexibleContainerCell 560 px 20 padding left and right 0 margin -->
-                                                    <td align="center" valign="top"
-                                                        class="flexibleContainerCell">
-                                                        <!-- CONTENT TABLE -->
-                                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                            <tr>
+                                <t t-call="fso_website_email.snippet_block">
 
-                                                                <td class="textContent ckediting_enabled" contenteditable="true"
-                                                                    valign="top">
-                                                                    <h1>Intro</h1>
-                                                                    <p>Vestibulum vitae metus sed purus elementum malesuada.
-                                                                    Aliquam feugiat metus ut orci. Etiam scelerisque lacus
-                                                                    eu tellus. Praesent neque est, placerat in, rhoncus nec,
-                                                                    tempor eleifend, sem.
-                                                                    ...
-                                                                    </p>
-                                                                </td>
-
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
+                                    <h1>Intro</h1>
+                                    <p>
+                                        Vestibulum vitae metus sed purus elementum malesuada.
+                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus
+                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,
+                                        tempor eleifend, sem.
+                                        ...
+                                    </p>
+                                    
+                                </t>
                             </div>
                         </div>
+                        
+                        <!-- TEXT WITH IMAGE LEFT -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
+                                <span class="oe_snippet_thumbnail_title">Image Left</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_image_left" contenteditable="false">
+                                <t t-call="fso_website_email.snippet_block">
+                                    <t t-set="nockedit" t-value="True"/>
+    
+                                    <!-- CONTENT TABLE LEFT -->
+                                    <table class="flexibleContainerLeft" align="left" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                
+                                                <td align="left" valign="top" class="imageContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                </td>
+            
+                                            </tr>
+                                        </tbody>
+                                    </table>
+    
+                                    <!-- CONTENT TABLE RIGHT -->
+                                    <table class="flexibleContainerRight" align="right" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                
+                                                <td valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <h3>Right</h3>
+                                                    <p>
+                                                        Vestibulum vitae metus sed purus elementum
+                                                        malesuada. Aliquam feugiat metus ut orci. Etiam
+                                                        scelerisque lacus eu tellus. ...
+                                                    </p>
+                                                </td>
+            
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                </t>
+                            </div>
+                        </div>
+                        
+                        <!-- TEXT WITH IMAGE RIGHT -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
+                                <span class="oe_snippet_thumbnail_title">Image Right</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_image_right" contenteditable="false">
+                                <t t-call="fso_website_email.snippet_block">
+                                    <t t-set="nockedit" t-value="True"/>
+    
+                                    <!-- CONTENT TABLE LEFT -->
+                                    <table class="flexibleContainerLeft" align="left" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                
+                                                <td valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <h3>Left</h3>
+                                                    <p>
+                                                        Vestibulum vitae metus sed purus elementum
+                                                        malesuada. Aliquam feugiat metus ut orci. Etiam
+                                                        scelerisque lacus eu tellus. ...
+                                                    </p>
+                                                </td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+    
+                                    <!-- CONTENT TABLE RIGHT -->
+                                    <table class="flexibleContainerRight" align="right" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+    
+                                                <td align="left" valign="top" class="imageContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                </td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                </t>
+                            </div>
+                        </div>
+                        
+                        <!-- TEXT TWO COLUMNS -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
+                                <span class="oe_snippet_thumbnail_title">Text TwoCol</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_twocol" contenteditable="false">
+                                <t t-call="fso_website_email.snippet_block">
+                                    <t t-set="nockedit" t-value="True"/>
+
+                                    <!-- CONTENT TABLE LEFT -->
+                                    <table class="flexibleContainerLeft" align="left" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                
+                                                <td align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                    <h3>Left</h3>
+                                                    <p>
+                                                        Vestibulum vitae metus sed purus elementum
+                                                        malesuada. Aliquam feugiat metus ut orci. Etiam
+                                                        scelerisque lacus eu tellus. ...
+                                                    </p>
+                                                </td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+    
+                                    <!-- CONTENT TABLE RIGHT -->
+                                    <table class="flexibleContainerRight" align="right" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+    
+                                                <td align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                    <h3>Right</h3>
+                                                    <p>
+                                                        Vestibulum vitae metus sed purus elementum
+                                                        malesuada. Aliquam feugiat metus ut orci. Etiam
+                                                        scelerisque lacus eu tellus. ...
+                                                    </p>
+                                                </td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    
+                                </t>
+                            </div>
+                        </div>
+                        <span class="snippet_menu_vertical_divider"/>
 
                     </div>
-
                     
+                  
                     <!-- ================ -->
                     <!-- Special          -->
                     <!-- ================ -->
                     <div id="snippet_email_special" class="tab-pane fade">
+                        
+                        <!-- Button Links -->
+                        <!-- SPACER -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/snippet_block_spacer.png"/>
+                                <span class="oe_snippet_thumbnail_title">Button</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <span class="oe_snippet_body ckediting_enabled drop_in drop_in_button" contenteditable="true">
+                                <a href="#">BUTTON</a>
+                            </span>
+                        </div>
 
                         <!-- Fundraising Studio Print Fields -->
                         <t t-call="fso_website_email.fs_print_field_snippet" />
@@ -126,79 +354,174 @@
 
                     </div>
 
-                    <!-- =============== -->
-                    <!-- SNIPPET OPTIONS -->
-                    <!-- =============== -->
+                    <!-- =========================== -->
+                    <!-- SNIPPET TARGETS AND OPTIONS -->
+                    <!-- =========================== -->
                     <div id="snippet_options" class="hidden">
-
-                        <!-- SNIPPET: snippet_block -->
+                        
+                        <!-- SNIPPET(S): snippet_block -->
+                        <!-- ========================= -->
                         <div data-snippet-option-id='snippet_block'
                              data-selector=".snippet_block"
                              data-selector-siblings="[data-oe-field='body_html'] > div"
                              data-selector-children="[data-oe-field='body_html']">
+                        </div>
+                        
+                        <!-- OPTION_GROUP: dadi_sb_spacer_height -->
+                        <div data-snippet-option-id='dadi_sb_spacer_height'
+                             data-selector=".snippet_block_spacer">
                             <!-- Snippet options menu -->
                             <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Background</a>
+                                <a tabindex="-1" href="#">Spacer Size</a>
                                 <ul class="dropdown-menu">
-                                    <li class="dropdown-submenu">
-                                        <a tabindex="-2" href="#">Strong</a>
-                                        <ul class="dropdown-menu">
-                                            <li data-value='dadi_bg_red'><a>Red</a></li>
-                                            <li data-value='dadi_bg_green'><a>Green</a></li>
-                                            <li data-value='dadi_bg_blue'><a>Blue</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown-submenu">
-                                        <a tabindex="-2" href="#">Light</a>
-                                        <ul class="dropdown-menu">
-                                            <li data-value='dadi_bg_light_grey'><a>Light Grey</a></li>
-                                            <li data-value='dadi_bg_light_yellow'><a>Light Yellow</a></li>
-                                            <li data-value='dadi_bg_light_blue'><a>Light Blue</a></li>
-                                        </ul>
-                                    </li>
+                                    <li data-value='dadi_sb_spacer_normal'><a>Normal</a></li>
+                                    <li data-value='dadi_sb_spacer_medium'><a>Medium</a></li>
+                                    <li data-value='dadi_sb_spacer_large'><a>Large</a></li>
+                                </ul>
+                            </li>
+                        </div>
+                        <!-- OPTION_GROUP: dadi_sb_spacer_style -->
+                        <div data-snippet-option-id='dadi_sb_spacer_style'
+                             data-selector=".snippet_block_spacer">
+                            <!-- Snippet options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Spacer Style</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_sb_spacer_none'><a>None</a></li>
+                                    <li data-value='dadi_sb_spacer_dotted'><a>Dotted</a></li>
+                                    <li data-value='dadi_sb_spacer_dashed'><a>Dashed</a></li>
+                                    <li data-value='dadi_sb_spacer_solid'><a>Solid</a></li>
                                 </ul>
                             </li>
                         </div>
                         
-                        <!-- SNIPPET: snippet_block foreground options -->
-                        <div data-snippet-option-id='snippet_block_2'
-                             data-selector=".snippet_block">
+                        <!-- OPTION_GROUP: dadi_sb_fg_color -->
+                        <div data-snippet-option-id='dadi_sb_fg_color'
+                             data-selector=".snippet_block_text_intro,
+                                            .snippet_block_text_image_left,
+                                            .snippet_block_text_image_right">
                             <!-- Snippet options menu -->
                             <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">Foreground</a>
+                                <a tabindex="-1" href="#">Foreground Style</a>
                                 <ul class="dropdown-menu">
-                                    <li class="dropdown-submenu">
-                                        <a tabindex="-2" href="#">Strong</a>
-                                        <ul class="dropdown-menu">
-                                            <li data-value='dadi_fg_red'><a>Red</a></li>
-                                            <li data-value='dadi_fg_green'><a>Green</a></li>
-                                            <li data-value='dadi_fg_blue'><a>Blue</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown-submenu">
-                                        <a tabindex="-2" href="#">Light</a>
-                                        <ul class="dropdown-menu">
-                                            <li data-value='dadi_fg_light_grey'><a>Light Grey</a></li>
-                                            <li data-value='dadi_fg_light_yellow'><a>Light Yellow</a></li>
-                                            <li data-value='dadi_fg_light_blue'><a>Light Blue</a></li>
-                                        </ul>
-                                    </li>
+                                    <li data-value='dadi_sb_fg_transparent'><a>Transparent</a></li>
+                                    <li data-value='dadi_sb_fg_lightgrey'><a>Background Grey</a></li>
+                                    <li data-value='dadi_sb_fg_grey'><a>Grey</a></li>
+                                    <li data-value='dadi_sb_fg_darkgrey'><a>Dark Grey</a></li>
+                                    <li data-value='dadi_sb_fg_orange'><a>Orange</a></li>
                                 </ul>
                             </li>
                         </div>
-
-                        <!-- DROP_IN: drop_in_print_field -->
+                        
+                        <!-- OPTION_GROUP: dadi_sb_fg_width -->
+                        <div data-snippet-option-id='dadi_sb_fg_width'
+                             data-selector=".snippet_block_text_intro, .snippet_block_spacer">
+                            <!-- Snippet options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Foreground Width</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_sb_fg_full'><a>Full Width</a></li>
+                                    <li data-value='dadi_sb_fg_normal'><a>Normal</a></li>
+                                    <li data-value='dadi_sb_fg_narrow'><a>Narrow</a></li>
+                                </ul>
+                            </li>
+                        </div>
+                        
+                        <!-- OPTION_GROUP: dadi_sb_bg_color -->
+                        <div data-snippet-option-id='dadi_sb_bg_color'
+                             data-selector=".snippet_block">
+                            <!-- Snippet options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Background Style</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_sb_bg_transparent'><a>Transparent</a></li>
+                                    <li data-value='dadi_sb_bg_lightgrey'><a>Background Grey</a></li>
+                                    <li data-value='dadi_sb_bg_grey'><a>Grey</a></li>
+                                    <li data-value='dadi_sb_bg_darkgrey'><a>Dark Grey</a></li>
+                                    <li data-value='dadi_sb_bg_orange'><a>Orange</a></li>
+                                </ul>
+                            </li>
+                        </div>
+                        
+                        <!-- OPTION_GROUP: dadi_sb_bg_width -->
+                        <div data-snippet-option-id='dadi_sb_bg_width'
+                             data-selector="
+                                            .snippet_block_banner,
+                                            .snippet_block_text_intro">
+                            <!-- Snippet options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Background Width</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_sb_bg_full'><a>Full Width</a></li>
+                                    <li data-value='dadi_sb_bg_normal'><a>Normal</a></li>
+                                    <li data-value='dadi_sb_bg_narrow'><a>Narrow</a></li>
+                                </ul>
+                            </li>
+                        </div>
+                        
+                        <!-- DROP_IN(s): drop_in -->
+                        <!-- =================== -->
+                        <div data-snippet-option-id='drop_in'
+                             data-selector=".drop_in"
+                             data-selector-children="
+                                 .ckediting_enabled div, .ckediting_enabled p, .ckediting_enabled pre, .ckediting_enabled strong,
+                                 .ckediting_enabled h1, .ckediting_enabled h2, .ckediting_enabled h3, .ckediting_enabled h4, .ckediting_enabled h5, .ckediting_enabled h6,
+                                 "
+                             data-selector-siblings=".drop_in">
+                        </div>
+                        
+                        <!-- OPTION_GROUP: drop_in_print_field -->
                         <div data-snippet-option-id='drop_in_print_field'
-                             data-selector=".drop_in_print_field"
-                             data-selector-children=".ckediting_enabled,
-                             .ckediting_enabled p, .ckediting_enabled pre, .ckediting_enabled strong,
-                             .ckediting_enabled h1, .ckediting_enabled h2, .ckediting_enabled h3, .ckediting_enabled h4, .ckediting_enabled h5, .ckediting_enabled h6,
-                             .ckediting_enabled div"
-                             data-selector-siblings=".drop_in_print_field">
-                            
+                             data-selector=".drop_in_print_field">
                             <!-- Fundraising Studio Print Field Options -->
                             <t t-call="fso_website_email.fs_print_field_snippet_options"/>
-                            
+                        </div>
+                        
+                        <!-- OPTION_GROUP: drop_in_button_style -->
+                        <div data-snippet-option-id='drop_in_button_style'
+                             data-selector=".drop_in_button">
+                            <!-- drop_in options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Style</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_di_button_default'><a>Default</a></li>
+                                    <li data-value='dadi_di_button_transparent'><a>Transparent</a></li>
+                                    <li data-value='dadi_di_button_black'><a>Black</a></li>
+                                    <li data-value='dadi_di_button_green'><a>Green</a></li>
+                                    <li data-value='dadi_di_button_yellow'><a>Yellow</a></li>
+                                    <li data-value='dadi_di_button_red'><a>Red</a></li>
+                                </ul>
+                            </li>
+                        </div>
+                        
+                        <!-- OPTION_GROUP: drop_in_button_size -->
+                        <div data-snippet-option-id='drop_in_button_size'
+                             data-selector=".drop_in_button">
+                            <!-- drop_in options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Size</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_di_button_normal'><a>Normal</a></li>
+                                    <li data-value='dadi_di_button_medium'><a>Medium</a></li>
+                                    <li data-value='dadi_di_button_large'><a>Large</a></li>
+                                    <li data-value='dadi_di_button_huge'><a>Huge</a></li>
+                                </ul>
+                            </li>
+                        </div>
+                        
+                        <!-- OPTION_GROUP: drop_in_button_width -->
+                        <div data-snippet-option-id='drop_in_button_width'
+                             data-selector=".drop_in_button">
+                            <!-- drop_in options menu -->
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Position</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='dadi_di_button_inline'><a>In Line</a></li>
+                                    <li data-value='dadi_di_button_fullcenter'><a>Center</a></li>
+                                    <li data-value='dadi_di_button_fullleft'><a>Left</a></li>
+                                    <li data-value='dadi_di_button_fullright'><a>Right</a></li>
+                                </ul>
+                            </li>
                         </div>
 
                     </div>

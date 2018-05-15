@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
+    
+    <template id="theme_dadi_assets">
+        <style type="text/sass">
+            $test: 666px
+        </style>
+        <link href="/fso_website_email/static/src/sass/theme_dadi.sass" rel="stylesheet" type="text/sass"/>
+    </template>
 
     <template id="theme_dadi"
               name="Default Theme">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
@@ -27,13 +34,15 @@
                 <meta name="viewport" content="width=device-width"/>
 
                 <title t-esc="record.subject"/>
-
+                
+                <!-- CSS STYLES -->
+                <!-- ========== -->
                 <!-- Google Fonts -->
                 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css'/>
-
-                <!-- CSS STYLES -->
+                <!-- Theme CSS -->
                 <link href="/fso_website_email/static/src/css/theme_dadi.css" rel="stylesheet" type='text/css' />
                 
+                <!-- TODO keep comments -->
                 <!--
                     Outlook Conditional CSS
 
@@ -74,6 +83,7 @@
                     }
                 </style>
                 <![endif]-->
+                
             </head>
 
 
@@ -85,21 +95,21 @@
                     <center>
                         <table id="bodyTable" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
 
-                            <!-- TOP LINKS -->
+                            <!-- HEADER -->
                             <tr>
                                 <td class="headerCell" align="center">
                                     <a href="#" target="_blank">View e-mail in browser</a>
                                 </td>
                             </tr>
 
-                            <!-- EMAIL CONTAINER -->
+                            <!-- EMAIL CONTAINER (CONTENT) -->
                             <tr>
                                 
                                 <!-- bodyCell width: 100% padding: 0 left and right  -->
                                 <td align="center" valign="top" id="bodyCell">
                                     
                                     <!-- emailBody width: 600 px padding: 0  margin: 0 -->
-                                    <table border="0" cellpadding="0" cellspacing="0" width="600" id="emailBody">
+                                    <table border="0" cellpadding="0" cellspacing="0" id="emailBody">
                                         <tr>
                                             <td align="center" valign="top">
 
