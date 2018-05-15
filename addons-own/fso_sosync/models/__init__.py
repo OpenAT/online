@@ -9,7 +9,7 @@ import res_company
 # Helper
 import partner_merge
 
-# Product related imports
+# Product related
 import payment_acquierer
 import product_uom
 import product_acquierer_lines
@@ -22,3 +22,6 @@ import product_template
 import res_partner_bpk
 import res_partner_donation_report
 import account_fiscalyear
+
+# Newsletter Tool
+import email_template
