@@ -43,46 +43,51 @@
                 <link href="/fso_website_email/static/src/css/theme_dadi.css" rel="stylesheet" type='text/css' />
                 
                 <!-- TODO keep comments -->
-                <!--
-                    Outlook Conditional CSS
-
-                    These two style blocks target Outlook 2007 & 2010 specifically, forcing
-                    columns into a single vertical stack as on mobile clients. This is
-                    primarily done to avoid the 'page break bug' and is optional.
-
-                    Third block targets Outlook 2013, having troubles with webfonts
-
-                    More information here:
-                    http://templates.mailchimp.com/development/css/outlook-conditional-css
-                -->
-                <!--[if mso 12]>
-                <style type="text/css">
-                    .flexibleContainer {
-                        display: block !important;
-                        width: 100% !important;
-                    }
-                </style>
-                <![endif]-->
-                <!--[if mso 14]>
-                <style type="text/css">
-                    .flexibleContainer {
-                        display: block !important;
-                        width: 100% !important;
-                    }
-                </style>
-                <![endif]-->
-                <!--[if mso 15]>
-                <style type="text/css">
-                    h1, h2, h3, h4, h5, h6,
-                    .headerCell, .footerCell,
-                    .textContent, .textContentLast,
-                    .buttonContent,
-                    .emailCalendarDay, .emailCalendarMonth {
-                        font-family: Arial, sans-serif !important;
-                        mso-line-height-rule: exactly;
-                    }
-                </style>
-                <![endif]-->
+                <t t-set='ie_comments'>
+                <![CDATA[
+                    <!--
+                        Outlook Conditional CSS
+    
+                        These two style blocks target Outlook 2007 & 2010 specifically, forcing
+                        columns into a single vertical stack as on mobile clients. This is
+                        primarily done to avoid the page break bug and is optional.
+    
+                        Third block targets Outlook 2013, having troubles with webfonts
+    
+                        More information here:
+                        http://templates.mailchimp.com/development/css/outlook-conditional-css
+                    -->
+                    <!--[if mso 12]>
+                    <style type="text/css">
+                        .flexibleContainer {
+                            display: block !important;
+                            width: 100% !important;
+                        }
+                    </style>
+                    <![endif]-->
+                    <!--[if mso 14]>
+                    <style type="text/css">
+                        .flexibleContainer {
+                            display: block !important;
+                            width: 100% !important;
+                        }
+                    </style>
+                    <![endif]-->
+                    <!--[if mso 15]>
+                    <style type="text/css">
+                        h1, h2, h3, h4, h5, h6,
+                        .headerCell, .footerCell,
+                        .textContent, .textContentLast,
+                        .buttonContent,
+                        .emailCalendarDay, .emailCalendarMonth {
+                            font-family: Arial, sans-serif !important;
+                            mso-line-height-rule: exactly;
+                        }
+                    </style>
+                    <![endif]-->
+                ]]>
+                </t>
+                <t t-raw="ie_comments"/>
                 
             </head>
 
