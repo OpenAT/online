@@ -11,6 +11,6 @@ class EmailTemplateSosync(models.Model):
     subject = fields.Char(sosync="True")  # EmailBetreff
     email_from = fields.Char(sosync="True")  # EmailVon
     reply_to = fields.Char(sosync="True")  # EmailAntwortAn
-    fso_template_view_id = fields.Many2one(sosync=True)
+    fso_template_view_id = fields.Many2one(sosync="True")
     body_html = fields.Html(sosync="True")
     fso_email_html_parsed = fields.Text(sosync="True")  # EmailHTML
