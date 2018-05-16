@@ -110,12 +110,27 @@
                                 <t t-call="fso_website_email.snippet_block">
                                     <t t-set="nockedit" t-value="True"/>
                                     
-                                    <div class="snippet_block_spacer_top">
-                                        &amp;nbsp;
-                                    </div>
-                                    <div class="snippet_block_spacer_bottom">
-                                        &amp;nbsp;
-                                    </div>
+                                    <!-- CONTENT TABLE TOP -->
+                                    <table class="snippet_block_spacer_top" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    &amp;nbsp;
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+    
+                                    <!-- CONTENT TABLE BOTTOM -->
+                                    <table class="snippet_block_spacer_bottom" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    &amp;nbsp;
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                     
                                 </t>
                                 
@@ -129,7 +144,7 @@
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
                                      src="/fso_website_email/static/src/icons/snippet_block_banner.png"/>
-                                <span class="oe_snippet_thumbnail_title">Banner</span>
+                                <span class="oe_snippet_thumbnail_title">Image</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner dadi_sb_bg_full"
@@ -154,7 +169,7 @@
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
                                      src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
-                                <span class="oe_snippet_thumbnail_title">Intro Text</span>
+                                <span class="oe_snippet_thumbnail_title">Text</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_intro" contenteditable="false">
@@ -178,7 +193,7 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_image_left.png"/>
                                 <span class="oe_snippet_thumbnail_title">Image Left</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
@@ -226,7 +241,7 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_image_right.png"/>
                                 <span class="oe_snippet_thumbnail_title">Image Right</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
@@ -274,8 +289,8 @@
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/fso_website_email/static/src/icons/snippet_block_text_intro.png"/>
-                                <span class="oe_snippet_thumbnail_title">Text TwoCol</span>
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_twocol.png"/>
+                                <span class="oe_snippet_thumbnail_title">Two Columns</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_twocol" contenteditable="false">
@@ -334,18 +349,19 @@
                     <div id="snippet_email_special" class="tab-pane fade">
                         
                         <!-- Button Links -->
-                        <!-- SPACER -->
+                        <!-- https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
                         <div>
                             <!-- Icon and name -->
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
-                                     src="/fso_website_email/static/src/icons/snippet_block_spacer.png"/>
+                                     src="/fso_website_email/static/src/icons/drop_in_button.png"/>
                                 <span class="oe_snippet_thumbnail_title">Button</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
                             <span class="oe_snippet_body ckediting_enabled drop_in drop_in_button" contenteditable="true">
                                 <a href="#">BUTTON</a>
                             </span>
+                            
                         </div>
 
                         <!-- Fundraising Studio Print Fields -->

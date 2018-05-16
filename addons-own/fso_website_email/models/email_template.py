@@ -64,6 +64,14 @@ class EmailTemplate(models.Model):
                     pf_span = pf.find_all(class_=pf_class[0])
                     fs_string = pf_span[0].get("data-fs-email-placeholder")
                     pf.replace_with(fs_string)
+
+                # Repair urls (e.g.: www.google.at > https://www.google.at)
+                anchors = html_soup.find_all('a')
+                for a in anchors:
+                    href = a.get('href', '').strip()
+                    if href and not (href.startswith('/') or href.startswith('http') or href.startswith('mailto')):
+                        a['href'] = 'https://'+href
+
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
                 content = html_soup.prettify(formatter="minimal")
 
@@ -76,13 +84,27 @@ class EmailTemplate(models.Model):
                 get_param = self.env['ir.config_parameter'].get_param
                 base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
 
-                # Inline CSS and set absolute URLs with Premailer
+                # Inline CSS and convert relative to absolute URLs with premailer
                 premailer_obj = Premailer(content, base_url=base_url, preserve_internal_links=True,
                                           keep_style_tags=True, strip_important=False, align_floating_images=False,
                                           remove_unset_properties=False, include_star_selectors=False)
                 content = premailer_obj.transform(pretty_print=True)
 
-                # Pretty print html
+                # Convert URLS to "ranner multimailer" tracking URLS
+                # Target Example: %redirector%/https//www.global2000.at/ceta-verhindern
+                html_soup = BeautifulSoup(content, "lxml")
+                anchors = html_soup.find_all('a')
+                for a in anchors:
+                    href = a.get('href', '').strip()
+                    href = href if '://' in href else ''
+                    if href and href.startswith('http') and 'dadi_notrack' not in a.get('class', ''):
+                        protocol, address = href.split('://', 1)
+                        a['href'] = '%redirector%/' + protocol + '//' + address
+
+                # Output html in unicode and keep most html entities (done by formatter="minimal")
+                content = html_soup.prettify(formatter="minimal")
+
+                # DISABLED: Pretty print html, css and js
                 # try:
                 #     content = HTMLBeautifier.beautify(content, indent=4)
                 # except:
