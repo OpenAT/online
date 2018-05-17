@@ -9,6 +9,9 @@ class ResUsersSosync(models.Model):
     # Login name e.g.: "admin" or "max.mustermann@datadialog.net"
     login = fields.Char(sosync="True")
 
+    # Is the user account enabled or disabled (also hidden in view and searches in FSON if active=False)
+    active = fields.Boolean(sosync="True")
+
     # Linked res.partner
     partner_id = fields.Many2one(sosync="True")
 
