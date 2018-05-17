@@ -11,6 +11,6 @@ class EmailTemplateSosync(models.Model):
     subject = fields.Char(sosync="True")  # EmailBetreff
     email_from = fields.Char(sosync="True")  # EmailVon
     reply_to = fields.Char(sosync="True")  # EmailAntwortAn
-    fso_template_view_id = fields.Many2one(sosync="True")
-    body_html = fields.Html(sosync="True")
-    fso_email_html_parsed = fields.Text(sosync="True")  # EmailHTML
+    fso_template_view_id = fields.Many2one(sosync="True")   # Not Synced by usefull for syncjob creation
+    body_html = fields.Html(sosync="True")                  # Not synced but usefull for syncjob creation
+    fso_email_html_parsed = fields.Text(sosync="True")  # EmailHTML TODO cumputed fields will not trigger sync jobs!

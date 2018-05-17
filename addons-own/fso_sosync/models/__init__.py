@@ -5,6 +5,8 @@ import sosync
 # basics
 import res_partner
 import res_company
+import res_users
+import res_groups
 
 # Helper
 import partner_merge

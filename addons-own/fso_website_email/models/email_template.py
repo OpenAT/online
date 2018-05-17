@@ -69,7 +69,10 @@ class EmailTemplate(models.Model):
                 anchors = html_soup.find_all('a')
                 for a in anchors:
                     href = a.get('href', '').strip()
-                    if href and not (href.startswith('/') or href.startswith('http') or href.startswith('mailto')):
+                    href = href if '://' not in href else ''
+                    if href and not (
+                            href.startswith('#') or href.startswith('/') or
+                            href.startswith('http') or href.startswith('mailto')):
                         a['href'] = 'https://'+href
 
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
