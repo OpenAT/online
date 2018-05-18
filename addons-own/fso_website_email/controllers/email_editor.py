@@ -27,12 +27,21 @@ class FSOEmailEditor(http.Controller):
         """ Overview of email templates to create, edit or copy email templates"""
 
         # Get E-Mail QWEB Template Views
-        template_views = request.env['ir.ui.view'].sudo().search([('fso_email_template', '=', True)])
+        template_views = request.env['ir.ui.view'].sudo().search(
+            [('fso_email_template', '=', True)], order="write_date DESC")
 
         # Get E-Mail Templates
         templates = request.env['email.template'].sudo().search([
             ('fso_email_template', '=', True),
-            ('fso_template_view_id', '!=', False)])
+            ('fso_template_view_id', '!=', False)], order="write_date DESC")
+
+        # TODO: Save changes
+        print "KWARGS: %s" % kw
+        odoo_model = kw.pop('odoo_model', '')
+        odoo_record_id = kw.pop('odoo_record_id', '')
+        if odoo_model and odoo_record_id and kw:
+            rec = request.env[odoo_model].browse(int(odoo_record_id))
+            rec.write(kw)
 
         # Render the templates overview page
         return request.render('fso_website_email.fso_email_selection',

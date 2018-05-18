@@ -8,3 +8,76 @@
 .email_template_delete > a {
     padding: 2px 3px;
 }
+
+/* FORM CONTROLLS */
+.make_relative {
+    position: relative;
+    width: 100%;
+}
+
+.form-group,
+.input-group {
+    width: 100%;
+}
+
+/* Submit Button */
+.submit-button .btn,
+.form-control,
+.input-group-addon {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+}
+.submit-button {
+    position: absolute;
+    bottom: 0px;
+    right: -20px;
+    z-index: 50;
+    background-color: #e8e8e8;
+    background-color: transparent;
+    padding: 8px 7px 8px 10px;
+    border-radius: 60px;
+}
+.submit-button button.btn {
+    color: #2e6da4;
+    color: transparent;
+}
+form:active .submit-button,
+form:focus-within .submit-button,
+form:focus .submit-button,
+form:hover .submit-button,
+form:active .submit-button button[type="submit"].btn,
+form:focus-within .submit-button button[type="submit"].btn,
+form:focus .submit-button button[type="submit"].btn,
+form:hover .submit-button button[type="submit"].btn {
+    color: #337ab7;
+    background-color: #e6e6e6;
+}
+form:active .submit-button,
+form:focus-within .submit-button,
+form:focus .submit-button,
+form:hover .submit-button {
+    box-shadow: #c6c6c6 1px 1px 4px;
+}
+
+/* theme selection input */
+.form-group.theme_selector {
+    margin:0;
+    text-align: center;
+}
+.form-group.theme_selector .input-group {
+    display: inline-block;
+    /*padding-right: 5px;*/
+}
+.form-group.theme_selector .form-control {
+    font-size: 14px;
+    font-weight: normal;
+    text-align-last:center;
+    height: 20px;
+}

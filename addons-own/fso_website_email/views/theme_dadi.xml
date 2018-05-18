@@ -41,8 +41,7 @@
                 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css'/>
                 <!-- Theme CSS -->
                 <link href="/fso_website_email/static/src/css/theme_dadi.css" rel="stylesheet" type='text/css' />
-                
-                <!-- TODO keep comments -->
+                <!-- Internet Explorer Basics -->
                 <t t-set='ie_comments'>
                 <![CDATA[
                     <!--
@@ -119,7 +118,7 @@
                                             <td align="center" valign="top">
 
                                                 <!-- SNIPPETS (html_body field of email.template) -->
-                                                <t t-call="fso_website_email.email_editor"/>
+                                                <t t-call="fso_website_email.content"/>
 
                                             </td>
                                         </tr>
