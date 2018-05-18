@@ -130,7 +130,7 @@
                 <div id="wrap" t-ignore="True">
                     
                     <!-- Basic email.template fields -->
-                    <div id="email_template_settings" class="collapse">
+                    <div id="email_template_settings" class="collapse in">
                         <div class="email_template_settings_content">
                             <div class="edit_info">
                                 <span class="label label-danger">
