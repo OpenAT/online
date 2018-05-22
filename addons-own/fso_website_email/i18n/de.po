@@ -1,0 +1,478 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_website_email
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-05-22 14:34+0000\n"
+"PO-Revision-Date: 2018-05-22 14:34+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "&nbsp;"
+msgstr "&nbsp;"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "2018-02-24 12:58:31"
+msgstr "2018-02-24 12:58:31"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "2018-02-24 16:12:10"
+msgstr "2018-02-24 16:12:10"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "2018-03-01 08:53:41"
+msgstr "2018-03-01 08:53:41"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "2018-03-01 14:56:11"
+msgstr "2018-03-01 14:56:11"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "2018-04-03 07:35:12"
+msgstr "2018-04-03 07:35:12"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Actions"
+msgstr "Aktionen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "BUTTON"
+msgstr "BUTTON"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Back to E-Mail Selection"
+msgstr "Zurück zur Auswahl"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Back to Selection"
+msgstr "Zurück zur Auswahl"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Background Grey"
+msgstr "Hintergrund Grau"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Background Style"
+msgstr "Hintergrundstil"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Background Width"
+msgstr "Hintergrundbreite Width"
+
+#. module: fso_website_email
+#: field:email.template,fso_template_view_id:0
+msgid "Based on"
+msgstr "Basiert auf"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Black"
+msgstr "Schwarz"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Button"
+msgstr "Button"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Center"
+msgstr "Mitte"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "Copy"
+msgstr "Kopie"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Create Version"
+msgstr "Erstelle Version"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Dark Grey"
+msgstr "Dunkelgrau"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Dashed"
+msgstr "Strichliert"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Default"
+msgstr "Standard"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "Delete"
+msgstr "Delete"
+
+#. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:9
+#, python-format
+msgid "Discard"
+msgstr "Verwerfen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Dotted"
+msgstr "Gepunktet"
+
+#. module: fso_website_email
+#: field:email.template,fso_email_html:0
+msgid "E-Mail HTML"
+msgstr "E-Mail HTML"
+
+#. module: fso_website_email
+#: field:email.template,fso_email_html_parsed:0
+msgid "E-Mail HTML parsed"
+msgstr "E-Mail HTML parsed"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "E-Mail-Template Name"
+msgstr "E-Mail-Template Name"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "E-Mail-Theme Name"
+msgstr "E-Mail-Theme Name"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+#: view:website:fso_website_email.fso_email_selection
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Edit HTML"
+msgstr "Bearbeite HTML"
+
+#. module: fso_website_email
+#: model:ir.model,name:fso_website_email.model_email_template
+msgid "Email Templates"
+msgstr "E-Mail-Vorlagen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.layout
+msgid "FS-Online E-Mail Editor"
+msgstr "FS-Online E-Mail Editor"
+
+#. module: fso_website_email
+#: field:ir.ui.view,fso_email_template:0
+msgid "FSON E-Mail Template"
+msgstr "FSON E-Mail Vorlage"
+
+#. module: fso_website_email
+#: field:email.template,fso_email_template:0
+msgid "FSON Template"
+msgstr "FSON Vorlage"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Foreground Style"
+msgstr "Vordergrundstil"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Foreground Width"
+msgstr "Vordergrundbreite"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.email_editor
+msgid "From:"
+msgstr "Von:"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Full Width"
+msgstr "Gesamte Breite"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Green"
+msgstr "Grün"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Grey"
+msgstr "Gray"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Huge"
+msgstr "Rießig"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Image"
+msgstr "Bild"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Image Left"
+msgstr "Bild Links"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Image Right"
+msgstr "Bild Rechts"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "In Line"
+msgstr "In Line"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Intro"
+msgstr "Intro"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Large"
+msgstr "Groß"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Left"
+msgstr "Links"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Medium"
+msgstr "Mittel"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Mobile preview"
+msgstr "Handy-Vorschau"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Narrow"
+msgstr "Verschmälern"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "New Template"
+msgstr "Neue Vorlage"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "None"
+msgstr "Keine"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Normal"
+msgstr "Normal"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Orange"
+msgstr "Orange"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.email_editor
+msgid "Please press the 'Edit' button in the upper left to edit these fields!"
+msgstr "Bitte drücken Sie den 'Bearbeiten' Button oben links um diese Felder zu editieren."
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Position"
+msgstr "Position"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Preview"
+msgstr "Vorschau"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fs_print_field_snippet
+#: view:website:fso_website_email.fs_print_field_snippet_options
+msgid "Print Field"
+msgstr "Seriendruckfeld"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Red"
+msgstr "Rot"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.email_editor
+msgid "Reply To:"
+msgstr "Antwort An:"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Restore Version"
+msgstr "Version wiederherstellen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Right"
+msgstr "Rechts"
+
+#. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:7
+#, python-format
+msgid "Save"
+msgstr "Speichern"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "Select Theme"
+msgstr "Theme auswählen"
+
+#. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:12
+#: view:website:fso_website_email.editor_toolbar
+#, python-format
+msgid "Show/Hide Settings"
+msgstr "Einstellungen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Size"
+msgstr "Größe"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Snippets"
+msgstr "Snippets"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Solid"
+msgstr "Durchgehend"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Spacer"
+msgstr "Abstandshalter"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Spacer Size"
+msgstr "Größe"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Spacer Style"
+msgstr "Stil"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Special"
+msgstr "Extras"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Style"
+msgstr "Stil"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.email_editor
+msgid "Subject:"
+msgstr "Betreff:"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "Templates"
+msgstr "Vorlagen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Text"
+msgstr "Text"
+
+#. module: fso_website_email
+#: view:email.template:fso_website_email.email_template_theme
+#: view:email.template:fso_website_email.email_template_theme_minimal
+msgid "Theme"
+msgstr "Theme"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "Themes"
+msgstr "Themes"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Transparent"
+msgstr "Transparent"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Two Columns"
+msgstr "2-spaltig"
+
+#. module: fso_website_email
+#: field:ir.ui.view,fso_email_template_ids:0
+msgid "Used by E-Mails Templates"
+msgstr "Verwendet in E-Mail Vorlagen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Vestibulum vitae metus sed purus elementum\n"
+"                                                        malesuada. Aliquam feugiat metus ut orci. Etiam\n"
+"                                                        scelerisque lacus eu tellus. ..."
+msgstr "Vestibulum vitae metus sed purus elementum\n"
+"                                                        malesuada. Aliquam feugiat metus ut orci. Etiam\n"
+"                                                        scelerisque lacus eu tellus. ..."
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Vestibulum vitae metus sed purus elementum malesuada.\n"
+"                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus\n"
+"                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,\n"
+"                                        tempor eleifend, sem.\n"
+"                                        ..."
+msgstr "Vestibulum vitae metus sed purus elementum malesuada.\n"
+"                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus\n"
+"                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,\n"
+"                                        tempor eleifend, sem.\n"
+"                                        ..."
+
+#. module: fso_website_email
+#: view:website:fso_website_email.fso_email_selection
+msgid "View"
+msgstr "View"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_dadi
+msgid "View e-mail in browser"
+msgstr "E-Mail im Browser anzeigen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_default_snippets
+msgid "Yellow"
+msgstr "Gelb"

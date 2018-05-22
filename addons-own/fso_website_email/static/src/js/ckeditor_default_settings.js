@@ -7,7 +7,7 @@
 
         _config: function () {
             // Run the original method to modify it's result
-            var config =  this._super();
+            var config = this._super();
 
             // Custom editor skin
             // https://ckeditor.com/cke4/addons/skins/all?page=1
