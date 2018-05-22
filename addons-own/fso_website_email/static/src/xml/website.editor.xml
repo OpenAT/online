@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- HINT: These templates must be loaded by java script see 'load_templates.js' -->
+<templates id="template" xml:space="preserve">
+    <t t-extend="website.editorbar">
+        <t t-jquery="form.navbar-form" t-operation="inner">
+            <button type="button" data-action="save" class="btn btn-primary btn-xs">Save</button>
+            <a href="#" data-action="cancel" class="btn btn-default btn-xs">
+                <span class="text-danger">Discard</span>
+            </a>
+            <a role="button" data-toggle="collapse" href="#email_template_settings"
+               class="btn btn-link btn-xs hidden-xs hide-email-settings">
+                Show/Hide Settings
+            </a>
+        </t>
+    </t>
+</templates>

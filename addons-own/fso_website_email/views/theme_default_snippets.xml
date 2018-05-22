@@ -72,7 +72,7 @@
         </template>
 
         <!-- Dadi Default E-Mail Theme Snippets -->
-        <template id="theme_dadi_snippets"
+        <template id="theme_default_snippets"
                   name="DADI E-Mail Theme Snippets">
 
             <div class="scroll" t-ignore="1">

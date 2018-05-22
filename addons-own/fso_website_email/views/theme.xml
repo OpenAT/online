@@ -5,48 +5,38 @@
         Common Sub-Templates for the E-Mail Themes and Templates
     -->
     
-    <!-- CONTENT (body_html) -->
-    <template id="content">
-        <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+    <!-- ASSETS EDIT MODE -->
+    <template id="theme_assets_editmode">
+        <!-- Common Editor CSS -->
+        <link href='/fso_website_email/static/src/css/editor_common.css' rel='stylesheet' type='text/css' t-ignore="true"/>
+        
+        <!-- Load additional templates -->
+        <script type="text/javascript" src="/fso_website_email/static/src/js/load_templates.js"/>
+        
+        <!-- CKEditor -->
+        <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_common.js"/>
+        <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_default_settings.js"/>
+        
+        <!-- Snippets -->
+        <script type="text/javascript">
+            //<![CDATA[
+                (function () {
+                    'use strict';
+                    var website = openerp.website;
+                    website.if_dom_contains('#email_designer', function () {
+                        website.snippet.BuildingBlock.include({
+                            _get_snippet_url: function () {
+                                return '/fso/email/snippets?snippets_template=fso_website_email.theme_default_snippets';
+                            }
+                        });
+                    });
+                })();
+            //]]>
+        </script>
     </template>
-
-    <!-- COMMON <head> -->
-    <template id="theme_head_common">
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="initial-scale=1"/>
-        <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>
-        <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>
-        <meta name="generator" content="Fundraising Studio Online"/>
-
-        <title>
-            FS-Online E-Mail Editor
-        </title>
-
-        <!-- Set language -->
-        <t t-set="languages" t-value="website.get_languages() if website else None"/>
-        <t t-if="request and request.website_multilang and website">
-            <t t-foreach="website.get_alternate_languages(request.httprequest)" t-as="lg">
-                <link rel="alternate" t-att-hreflang="lg['hreflang']" t-att-href="lg['href']"/>
-            </t>
-        </t>
-
-        <!-- Load custom head code from qweb template -->
-        <t t-raw="0"/>
-
-        <!-- EDITOR CSS -->
-        <t t-if="email_editor_mode">
-            <!-- Load default odoo editor css into head -->
-            <t t-call-assets="web.assets_common" t-js="false"/>
-            <t t-call-assets="website.assets_frontend" t-js="false"/>
-            <t t-call-assets="website.assets_editor" t-js="false"/>
-
-            <!-- Common editor CSS -->
-            <link rel='stylesheet' href='/fso_website_email/static/src/css/editor.css' t-ignore="true"/>
-
-            <!-- Theme specific editor CSS -->
-            <link t-if='editor_css' rel='stylesheet' t-att-href='editor_css' t-ignore="true"/>
-        </t>
-
+    
+    <!-- ASSETS COMMON -->
+    <template id="theme_assets_common">
         <!-- PRINT FIELDS -->
         <style type="text/css" id="fs_print_fields_styles">
             /* Change color in edit mode only */
@@ -67,6 +57,140 @@
                 }
             </t>
         </style>
+        
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
+    </template>
+    
+    <!-- ASSETS THEME DEFAULT EDITMODE -->
+    <template id="theme_default_assets_editmode">
+        <!-- Snippets -->
+        <script type="text/javascript">
+            //<![CDATA[
+                (function () {
+                    'use strict';
+                    var website = openerp.website;
+                    website.if_dom_contains('#email_designer', function () {
+                        website.snippet.BuildingBlock.include({
+                            _get_snippet_url: function () {
+                                return '/fso/email/snippets?snippets_template=fso_website_email.theme_default_snippets';
+                            }
+                        });
+                    });
+                })();
+            //]]>
+        </script>
+    </template>
+    
+    <!-- ASSETS THEME DEFAULT -->
+    <template id="theme_default_assets">
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
+    </template>
+    
+    
+    <!-- E-MAIL CONTENT ('body_html' field for snippets) -->
+    <template id="content">
+        <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+    </template>
+    
+    
+    <!-- COMMON <head> -->
+    <template id="theme_head_common">
+        <meta charset="utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="initial-scale=1"/>
+        <meta name="generator" content="Fundraising Studio Online"/>
+        
+        <!--<meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>-->
+        <!--<meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>-->
+
+        <title>
+            <t t-esc="record.subject if record and record.subject else 'FS-Online E-Mail Editor'"/>
+        </title>
+
+        <!-- Set language -->
+        <t t-set="languages" t-value="website.get_languages() if website else None"/>
+        <t t-if="request and request.website_multilang and website">
+            <t t-foreach="website.get_alternate_languages(request.httprequest)" t-as="lg">
+                <link rel="alternate" t-att-hreflang="lg['hreflang']" t-att-href="lg['href']"/>
+            </t>
+        </t>
+
+        <!-- EDITOR ASSETS -->
+        <t t-if="email_editor_mode">
+            <!-- Odoo framework CSS assets -->
+            <t t-call-assets="web.assets_common" t-js="false"/>
+            <t t-call-assets="website.assets_frontend" t-js="false"/>
+            <t t-call-assets="website.assets_editor" t-js="false"/>
+            
+            <!-- Common CSS edit mode assets -->
+            <t t-call-assets="fso_website_email.theme_assets_editmode" t-js="false"/>
+            
+            <!-- Theme default CSS edit mode assets -->
+            <t t-if="load_default_theme">
+                <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-js="false"/>
+            </t>
+        </t>
+        
+        <!-- COMMON CSS ASSETS -->
+        <t t-call-assets="fso_website_email.theme_assets_common" t-js="false"/>
+        
+        <!-- THEME DEFAULT CSS ASSETS -->
+        <t t-if="load_default_theme">
+            <t t-call-assets="fso_website_email.theme_default_assets" t-js="false"/>
+        </t>
+        
+        <!-- INTERNET EXPLORER HACKS FOR DEFAULT THEME -->
+        <t t-if="load_default_theme">
+            <t t-set='ie_comments'>
+            <![CDATA[
+                <!--
+                    Outlook Conditional CSS
+    
+                    These two style blocks target Outlook 2007 & 2010 specifically, forcing
+                    columns into a single vertical stack as on mobile clients. This is
+                    primarily done to avoid the page break bug and is optional.
+    
+                    Third block targets Outlook 2013, having troubles with webfonts
+    
+                    More information here:
+                    http://templates.mailchimp.com/development/css/outlook-conditional-css
+                -->
+                <!--[if mso 12]>
+                <style type="text/css">
+                    .flexibleContainer {
+                        display: block !important;
+                        width: 100% !important;
+                    }
+                </style>
+                <![endif]-->
+                <!--[if mso 14]>
+                <style type="text/css">
+                    .flexibleContainer {
+                        display: block !important;
+                        width: 100% !important;
+                    }
+                </style>
+                <![endif]-->
+                <!--[if mso 15]>
+                <style type="text/css">
+                    h1, h2, h3, h4, h5, h6,
+                    .headerCell, .footerCell,
+                    .textContent, .textContentLast,
+                    .buttonContent,
+                    .emailCalendarDay, .emailCalendarMonth {
+                        font-family: Arial, sans-serif !important;
+                        mso-line-height-rule: exactly;
+                    }
+                </style>
+                <![endif]-->
+            ]]>
+            </t>
+            <t t-raw="ie_comments"/>
+        </t>
+        
+        <!-- Load custom head code from qweb template if any -->
+        <t t-raw="0"/>
+        
     </template>
 
 
@@ -76,13 +200,36 @@
         <!-- EDITOR ENABLED -->
         <t t-if="email_editor_mode">
             <t t-call="fso_website_email.email_editor">
+                <!-- Theme content -->
                 <t t-raw="0"/>
+            </t>
+            
+            <!-- Odoo framework java script assets -->
+            <t t-call-assets="web.assets_common" t-css="false"/>
+            <t t-call-assets="website.assets_frontend" t-css="false"/>
+            <t t-call-assets="website.assets_editor" t-css="false"/>
+            
+            <!-- Common java script edit mode assets -->
+            <t t-call-assets="fso_website_email.theme_assets_editmode" t-css="false"/>
+            
+            <!-- Theme default edit mode java script assets -->
+            <t t-if="load_default_theme">
+                <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-css="false"/>
             </t>
         </t>
         
         <!-- EDITOR DISABLED -->
         <t t-if="not email_editor_mode">
+            <!-- Theme content -->
             <t t-raw="0"/>
+        </t>
+        
+        <!-- JAVA SCRIPT ASSETS IN ALL MODES -->
+        <!-- Common java script assets -->
+        <t t-call-assets="fso_website_email.theme_assets_common" t-css="false"/>
+        <!-- Theme default java script assets -->
+        <t t-if="load_default_theme">
+            <t t-call-assets="fso_website_email.theme_default_assets" t-css="false"/>
         </t>
         
     </template>

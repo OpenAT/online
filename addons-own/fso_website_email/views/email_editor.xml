@@ -1,38 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-
-
-    <!-- EDITOR java script -->
-    <template id="editor_js">
-
-        <!-- Load default odoo editor java script -->
-        <t t-call-assets="web.assets_common" t-css="false"/>
-        <t t-call-assets="website.assets_frontend" t-css="false"/>
-        <t t-call-assets="website.assets_editor" t-css="false"/>
-
-        <!-- Load custom snippets -->
-        <script t-if="snippets_template" type="text/javascript">
-            //<![CDATA[
-                (function () {
-                    'use strict';
-                    var website = openerp.website;
-                    website.if_dom_contains('#email_designer', function () {
-                        website.snippet.BuildingBlock.include({
-                            _get_snippet_url: function () {
-                                return '/fso/email/snippets?snippets_template=]]><t t-esc="snippets_template"/><![CDATA[';
-                            }
-                        });
-                    });
-                })();
-            //]]>
-        </script>
-
-        <!-- Load custom CKEditor java script settings -->
-        <script t-if="editor_js" type="text/javascript" t-att-src="editor_js"></script>
-    </template>
-
-
+    
     <!-- EDITOR TOOLBAR -->
     <template id="editor_toolbar" name="FSO email editor toolbar">
         <t t-if="email_editor_mode and website and menu_data">
@@ -43,18 +12,19 @@
                     <li>
                         <button type="button" data-action="edit" class="btn btn-primary btn-xs">Edit</button>
                     </li>
-                    <li>
-                        <button type="button" role="button" data-toggle="collapse"
-                                href="#email_template_settings" aria-expanded="false" aria-controls="collapseExample"
-                                class="btn btn-default btn-xs">Show/Hide Settings</button>
-                    </li>
-
-                    <!-- Customize -->
+                    
+                    <!-- Actions Menu -->
                     <li class="dropdown" id="customize-menu" groups="base.group_website_designer">
                         <a id="customize-menu-button" class="dropdown-toggle" data-toggle="dropdown" href="#">
                             Actions <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="#email_template_settings" role="button" data-toggle="collapse">
+                                    Show/Hide Settings
+                                </a>
+                            </li>
+                            <li class="divider"></li>
                             <li>
                                 <a href="/fso/email/select">Back to E-Mail Selection</a>
                             </li>
@@ -130,7 +100,7 @@
                 <div id="wrap" t-ignore="True">
                     
                     <!-- Basic email.template fields -->
-                    <div id="email_template_settings" class="collapse in">
+                    <div id="email_template_settings" class="collapse">
                         <div class="email_template_settings_content">
                             <div class="edit_info">
                                 <span class="label label-danger">
@@ -177,8 +147,6 @@
             </footer -->
         </div>
         
-        <!-- Load custom CK-Editor Configuration -->
-        <t t-call="fso_website_email.editor_js"/>
     </template>
 
 

@@ -2,11 +2,68 @@
 <openerp>
 <data>
     
+    <!-- ASSETS THEME DADI -->
     <template id="theme_dadi_assets">
-        <style type="text/sass">
-            $test: 666px
+        <!-- EXAMPLE: Load local css files or even external style sheets and or js -->
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css' t-ignore="true"/>
+        
+        <!-- EXAMPLE: Theme CSS -->
+        <style>
+        
         </style>
-        <link href="/fso_website_email/static/src/sass/theme_dadi.sass" rel="stylesheet" type="text/sass"/>
+    </template>
+    
+    <!-- ASSETS THEME DADI EDITMODE -->
+    <template id="theme_dadi_assets_editmode">
+        <!-- EXAMPLE: Load custom snippets template -->
+        <script type="text/javascript">
+            //<![CDATA[
+                (function () {
+                    'use strict';
+                    var website = openerp.website;
+                    website.if_dom_contains('#email_designer', function () {
+                        website.snippet.BuildingBlock.include({
+                            _get_snippet_url: function () {
+                                return '/fso/email/snippets?snippets_template=fso_website_email.theme_dadi_snippets';
+                            }
+                        });
+                    });
+                })();
+            //]]>
+        </script>
+        
+        <!-- EXAMPLE: Override the CKEditor Settings for edit mode -->
+        <script>
+            (function () {
+                'use strict';
+                // Overwrite class method of website/static/src/js/website.editor.js@839
+                // to append/set/override CKEDITOR.config for wrapwrap editor
+                openerp.website.RTE = openerp.website.RTE.extend({
+                    _config: function () {
+                        // Run the original method to modify it's result
+                        var config =  this._super();
+                        // Add Custom font and font background colors
+                        config.colorButton_colors = 'fafafa,aaaaaa,cccccc';
+                        // return the config
+                        return config;
+                    }
+                });
+            })();
+        </script>
+        
+        <!-- EXAMPLE: Change color and background of print fields in edit mode -->
+        <style>
+        
+        </style>
+    </template>
+    
+    <!-- THEME DADI SNIPPETS -->
+    <template id="theme_dadi_snippets">
+        <!-- HINT: Check 'Load custom snippets template' in template
+                   'theme_dadi_assets_editmode' from above -->
+        <!-- HINT: For this theme it would not be necessary to load snippets at all
+             but it is here as an example :) -->
+        <t t-call="fso_website_email.theme_default_snippets"/>
     </template>
 
     <template id="theme_dadi"
@@ -21,78 +78,27 @@
 
             <!-- TEMPLATE SETTINGS -->
             <!-- ================= -->
-            <t t-set="snippets_template" t-value="'fso_website_email.theme_dadi_snippets'"/>
-            <t t-set="editor_js" t-value="'/fso_website_email/static/src/js/ckeditor_settings.js'"/>
-            <t t-set="editor_css" t-value="'/fso_website_email/static/src/css/theme_dadi_editor.css'"/>
+            <t t-set="load_default_theme" t-value="True"/>
             <!-- ================= -->
 
             <head>
-                <!-- Common <head> tags for all Themes -->
+                <!-- COMMON CSS ASSETS AND <head> TAGS -->
                 <t t-call="fso_website_email.theme_head_common"/>
-
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-                <meta name="viewport" content="width=device-width"/>
-
-                <title t-esc="record.subject"/>
                 
-                <!-- CSS STYLES -->
-                <!-- ========== -->
-                <!-- Google Fonts -->
-                <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css'/>
-                <!-- Theme CSS -->
-                <link href="/fso_website_email/static/src/css/theme_dadi.css" rel="stylesheet" type='text/css' />
-                <!-- Internet Explorer Basics -->
-                <t t-set='ie_comments'>
-                <![CDATA[
-                    <!--
-                        Outlook Conditional CSS
-    
-                        These two style blocks target Outlook 2007 & 2010 specifically, forcing
-                        columns into a single vertical stack as on mobile clients. This is
-                        primarily done to avoid the page break bug and is optional.
-    
-                        Third block targets Outlook 2013, having troubles with webfonts
-    
-                        More information here:
-                        http://templates.mailchimp.com/development/css/outlook-conditional-css
-                    -->
-                    <!--[if mso 12]>
-                    <style type="text/css">
-                        .flexibleContainer {
-                            display: block !important;
-                            width: 100% !important;
-                        }
-                    </style>
-                    <![endif]-->
-                    <!--[if mso 14]>
-                    <style type="text/css">
-                        .flexibleContainer {
-                            display: block !important;
-                            width: 100% !important;
-                        }
-                    </style>
-                    <![endif]-->
-                    <!--[if mso 15]>
-                    <style type="text/css">
-                        h1, h2, h3, h4, h5, h6,
-                        .headerCell, .footerCell,
-                        .textContent, .textContentLast,
-                        .buttonContent,
-                        .emailCalendarDay, .emailCalendarMonth {
-                            font-family: Arial, sans-serif !important;
-                            mso-line-height-rule: exactly;
-                        }
-                    </style>
-                    <![endif]-->
-                ]]>
+                <!-- THEME DADI CSS ASSETS IN EDIT MODE -->
+                <t t-if="email_editor_mode">
+                    <t t-call-assets="fso_website_email.theme_dadi_assets_editmode" t-js="false"/>
                 </t>
-                <t t-raw="ie_comments"/>
                 
+                <!-- THEME DADI CSS ASSETS -->
+                <t t-call-assets="fso_website_email.theme_dadi_assets" t-js="false"/>
+                
+                <meta name="viewport" content="width=device-width"/>
             </head>
 
 
             <body>
-
+                <!-- EDITOR MODE AND COMMON JAVA SCRIPT ASSETS -->
                 <t t-call="fso_website_email.theme_body_common">
 
                     <!-- Dadi Template based on mailchimp boilerplate -->
@@ -117,7 +123,7 @@
                                         <tr>
                                             <td align="center" valign="top">
 
-                                                <!-- SNIPPETS (html_body field of email.template) -->
+                                                <!-- CONTENT ('html_body' field of email.template) -->
                                                 <t t-call="fso_website_email.content"/>
 
                                             </td>
@@ -137,12 +143,20 @@
                     </center>
 
                 </t>
+                
+                <!-- THEME DADI JAVA SCRIPT ASSETS IN EDIT MODE -->
+                <t t-if="email_editor_mode">
+                    <t t-call-assets="fso_website_email.theme_dadi_assets_editmode" t-css="false"/>
+                </t>
+                
+                <!-- THEME DADI JAVA SCRIPT ASSETS -->
+                <t t-call-assets="fso_website_email.theme_dadi_assets" t-css="false"/>
             </body>
 
         </html>
     </template>
 
-    <!-- Enable the dadi template for the fso/email/select page as an E-Mail Template -->
+    <!-- Enable the boolean field 'fso_email_template' to show this view at 'fso/email/select' -->
     <record id="fso_website_email.theme_dadi" model="ir.ui.view">
         <field name="fso_email_template" eval="True"/>
     </record>

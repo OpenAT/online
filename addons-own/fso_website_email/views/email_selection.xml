@@ -38,7 +38,7 @@
                 <t t-call-assets="website.assets_editor" t-js="false"/>
 
                 <!-- Editor CSS Overwrites -->
-                <link rel='stylesheet' href='/fso_website_email/static/src/css/editor_selection.css' t-ignore="true"/>
+                <link rel='stylesheet' href='/fso_website_email/static/src/css/email_selection.css' t-ignore="true"/>
 
                 <!-- Maybe this is not needed? -->
                 <t t-raw="head or ''" name='layout_head'/>

@@ -65,15 +65,20 @@ body .oe_mobile_preview.modal .modal-content .modal-header .modal-title {
 #website-top-navbar form a {
     margin-top: 0;
 }
-#website-top-navbar form a[data-action='cancel'] {
-    color: #eb0000;
-    padding-left: 0;
-    padding-top: 2px;
+#website-top-navbar form a.btn-link:hover {
+    color: inherit;
 }
-#website-top-navbar form a.btn-link:hover,
-#website-top-navbar form a.btn-link:focus {
-    color: red;
+#website-top-navbar form a.btn-link:focus,
+#website-top-navbar form a.btn-link:active {
+    color: inherit;
 }
+a.hide-email-settings,
+a:hover.hide-email-settings,
+a:focus.hide-email-settings {
+    border-left: 1px solid #acacac;
+    margin-left: 6px;
+}
+
 #oe_editzone {
     margin-top: 5px;
     margin-left: 8px;
