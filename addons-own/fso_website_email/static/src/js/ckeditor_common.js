@@ -34,11 +34,11 @@
 
 
         bind_data: function () {
-            console.log('bind_data()');
+            // console.log('bind_data()');
 
             var classes = null;
             classes = this.element && this.element.getAttribute("class") || '';
-            console.log('bind_data() this.element.class: ' + classes);
+            // console.log('bind_data() this.element.class: ' + classes);
 
             // search for class in classes
             var donottrack = classes.indexOf('link-donottrack') !== -1;
@@ -55,7 +55,7 @@
         },
 
         make_link: function (url, new_window, label, classes) {
-            console.log('make_link(): ' + classes);
+            // console.log('make_link(): ' + classes);
             classes = classes.replace(/undefined/g, '') || '';
             classes = classes.replace(/\s{2,}/g, ' ').trim();
 
@@ -75,13 +75,8 @@
                 classes = classes.replace(/link-withtoken/g, '')
             }
 
-            // classes += ' ';
-            // classes += this.$("input[class='link-donottrack']:checked").attr('class') || '';
-            // classes += ' ';
-            // classes += this.$("input[class='link-withtoken']:checked").attr('class') || '';
-
             classes = classes.replace(/\s{2,}/g, ' ').trim();
-            console.log('make_link() after: ' + classes);
+            // console.log('make_link() after: ' + classes);
             return this._super(url, new_window, label, classes);
         },
 
