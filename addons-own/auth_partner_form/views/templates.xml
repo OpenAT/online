@@ -172,7 +172,7 @@
                                                                                t-att-checked="True if partner[f_name] else ''"
                                                                                t-att-required="field.mandatory"/>
                                                                     </t>
-                                                                    <t t-esc="field.label"/>
+                                                                    <t t-raw="field.label"/>
                                                                 </label>
                                                                 <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
                                                                 <t t-if="field.information">

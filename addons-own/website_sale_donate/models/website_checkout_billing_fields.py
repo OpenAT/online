@@ -21,3 +21,4 @@ class website_checkout_billing_fields(models.Model):
     css_classes = fields.Char(string='CSS classes', default='col-lg-6')
     clearfix = fields.Boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field')
     information = fields.Html(string='Information', help='Information Text', translate=True)
+    # TODO: add nodata and style from auth partner form
