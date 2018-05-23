@@ -74,7 +74,7 @@ class FSOEmailEditor(http.Controller):
         if not template or not template.fso_template_view_id:
             return request.redirect('/fso/email/select')
 
-        if raw:
+        if raw is True:
             return template.fso_email_html_parsed
         else:
             return request.render(template.fso_template_view_id.xml_id,

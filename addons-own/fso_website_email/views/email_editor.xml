@@ -24,13 +24,10 @@
                                     Show/Hide Settings
                                 </a>
                             </li>
-                            <li class="divider"></li>
                             <li>
-                                <a href="/fso/email/select">Back to E-Mail Selection</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a t-att-href="'/fso/email/preview?template_id='+str(record.id) if record else ''" target="_blank">Preview</a>
+                                <a t-att-href="'/fso/email/preview?template_id='+str(record.id) if record else ''" target="_blank">
+                                    Preview
+                                </a>
                             </li>
                             <li class="divider"></li>
                             <li>
@@ -55,6 +52,10 @@
                                         <a href="#">2018-02-24 12:58:31</a>
                                     </li>
                                 </ul>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="/fso/email/select">Back to E-Mail Selection</a>
                             </li>
                             <li class="divider"></li>
                             <li>

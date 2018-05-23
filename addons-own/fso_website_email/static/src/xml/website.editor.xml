@@ -24,32 +24,29 @@
             <div></div>
         </t>
         
-        <!-- TODO: New Settings Checkboxes
-             Java Script: It's pretty hard to figure out how to transfer settings to the link dialog and back
-                          Therefore this is disabled by now :(
-        -->
-        <!--<t t-jquery="div.form-horizontal:first" t-operation="before">-->
-            <!--<div id="link-dialog-donottrack" class="form-horizontal">-->
-                <!--<div class="form-group">-->
-                    <!--<div class="col-sm-offset-2 col-sm-10">-->
-                        <!--<div class="checkbox">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="link-donottrack" name="link-donottrack"/> Do Not Track-->
-                            <!--</label>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="form-group">-->
-                    <!--<div class="col-sm-offset-2 col-sm-10">-->
-                        <!--<div class="checkbox">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="link-withtoken" name="link-withtoken"/> Generate Login-Token-->
-                            <!--</label>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</t>-->
+        <!-- TODO: New Settings Checkboxes -->
+        <t t-jquery="div.form-horizontal:first" t-operation="before">
+            <div id="link-dialog-donottrack" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="link-donottrack" name="link-donottrack"/> Do Not Track
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="link-withtoken" name="link-withtoken"/> Generate Login-Token
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
     </t>
     
 </templates>

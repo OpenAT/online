@@ -2,8 +2,15 @@
 
 from openerp import models, fields, api
 from openerp.tools.translate import _
-from openerp.http import request, controllers_per_module
 from openerp.tools.mail import html_sanitize
+
+from openerp.http import request, controllers_per_module
+#from openerp.addons.web.http import request
+
+from openerp.addons.fso_website_email.controllers.email_editor import FSOEmailEditor
+
+import requests
+
 
 try:
     from bs4 import BeautifulSoup
@@ -44,15 +51,28 @@ class EmailTemplate(models.Model):
                 # If i want to call the controller method 'email_preview' directly it would need to:
                 # https://www.odoo.com/de_DE/forum/hilfe-1/question/how-to-invoke-a-controller-function-from-inside-a-model-function-87620
 
+                # TODO: Change this to an URL CALL of preview !!!
                 # Render the ir.ui.view qweb template with r.body_html field
                 # HINT: Will output an UTF-8 encoded str
                 content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
                                                          'email_editor_mode': False,
                                                          'record': r,
+                                                         'debug': 'assets',
                                                          })
 
-                # Update fso_email_html field
-                r.fso_email_html = content
+                # Get base_url to replace relative urls with absolute urls
+                try:
+                    req = request
+                    host_url = req.httprequest.host_url
+                except Exception as e:
+                    host_url = ''
+                get_param = self.env['ir.config_parameter'].get_param
+                base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
+                # print "base_url %s" % base_url
+
+                # response = requests.get(base_url.rstrip('/') +
+                #                         '/fso/email/preview?template_id=' +
+                #                         str(r.fso_template_view_id.id))
 
                 # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
@@ -65,7 +85,7 @@ class EmailTemplate(models.Model):
                     fs_string = pf_span[0].get("data-fs-email-placeholder")
                     pf.replace_with(fs_string)
 
-                # Repair urls (e.g.: www.google.at > https://www.google.at)
+                # Repair anchors <a> (e.g.: www.google.at > https://www.google.at)
                 anchors = html_soup.find_all('a')
                 for a in anchors:
                     href = a.get('href', '').strip()
@@ -75,17 +95,22 @@ class EmailTemplate(models.Model):
                             href.startswith('http') or href.startswith('mailto')):
                         a['href'] = 'https://'+href
 
+                # # Repair style <link> tags for premailer for theme assets
+                # stylesheets = html_soup.find_all('link')
+                # base_url_no_slash = base_url.rstrip('/')
+                # for link in stylesheets:
+                #     if 'stylesheet' in link.get('rel', '') and not link.get('type', '').strip():
+                #         link['type'] = 'text/css'
+                #         href = link.get('href', '').strip()
+                #         if 'web/css' in href:
+                #             link['href'] = base_url_no_slash + href
+                #             print link['href']
+
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
                 content = html_soup.prettify(formatter="minimal")
 
-                # Get base_url to replace relative urls with absolute urls
-                try:
-                    req = request
-                    host_url = req.httprequest.host_url
-                except Exception as e:
-                    host_url = ''
-                get_param = self.env['ir.config_parameter'].get_param
-                base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
+                # Update fso_email_html field
+                r.fso_email_html = content
 
                 # Inline CSS and convert relative to absolute URLs with premailer
                 premailer_obj = Premailer(content, base_url=base_url, preserve_internal_links=True,

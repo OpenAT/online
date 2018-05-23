@@ -3,7 +3,6 @@
 
     openerp.website.EditorBar = openerp.website.EditorBar.extend({
         edit: function () {
-            console.log('THIS WORKS');
             /**
              * website/static/src(js/website.editor.js@339
              *
