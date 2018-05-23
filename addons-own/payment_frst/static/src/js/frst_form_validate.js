@@ -9,7 +9,7 @@ $(document).ready(function () {
                 iban: true
             },
             frst_bic: {
-                required: true,
+                required: false,
                 bic: true
             }
         },
@@ -22,7 +22,7 @@ $(document).ready(function () {
                 iban: true
             },
             frst_bic: {
-                required: true,
+                required: false,
                 bic: true
             }
         },

@@ -31,7 +31,6 @@
                     <label class="control-label" for="frst_bic">BIC</label>
                     <input type="text" name='frst_bic' class="form-control" id="frst_bic"
                            placeholder="Enter BIC"
-                           required="True"
                            data-rule-bic="True"
                            t-att-value="partner_values['frst_bic']"/>
                 </div>

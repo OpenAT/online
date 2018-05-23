@@ -136,20 +136,21 @@ class PaymentTransactionFRST(osv.Model):
         _logger.info('Validated frst payment for tx %s: set as pending' % (tx.reference))
 
         # Create Bank Account with IBAN and BIC (res.partner.bank) for current res_partner
-        iban = data.get('frst_iban')
-        bic = data.get('frst_bic')
-        partner = tx['partner_id']
-        partner_id = partner.id
-        bank_accounts = self.pool['res.partner.bank']
-        accounts = bank_accounts.search(cr, uid,
-                                        [('partner_id', '=', partner_id), ('acc_number', '=', iban)])
-        if not accounts:
-            bank_accounts.create(cr, SUPERUSER_ID,
-                                 {'state': 'iban',
-                                  'partner_id': partner_id,
-                                  'acc_number': iban,
-                                  'bank_bic': bic, },
-                                context=context)
+        iban = data.get('frst_iban', False)
+        bic = data.get('frst_bic', False)
+        if iban:
+            partner = tx['partner_id']
+            partner_id = partner.id
+            bank_accounts = self.pool['res.partner.bank']
+            accounts = bank_accounts.search(cr, uid,
+                                            [('partner_id', '=', partner_id), ('acc_number', '=', iban)])
+            if not accounts:
+                bank_accounts.create(cr, SUPERUSER_ID,
+                                     {'state': 'iban',
+                                      'partner_id': partner_id,
+                                      'acc_number': iban,
+                                      'bank_bic': bic, },
+                                     context=context)
 
         # Update State, Iban And BIC
         return tx.write({'state': 'pending', 'frst_iban': iban, 'frst_bic': bic, })
