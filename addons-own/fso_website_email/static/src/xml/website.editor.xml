@@ -20,7 +20,7 @@
     <!-- Link Dialog -->
     <t t-extend="website.editor.dialog.link">
         <!-- Remove the two link style div boxes -->
-        <t t-jquery="div.link-style" t-operation="replace">
+        <t t-jquery="div.link-style:first" t-operation="replace">
             <div></div>
         </t>
         
@@ -31,7 +31,7 @@
                     <div class="col-sm-offset-2 col-sm-10">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" id="link-donottrack" name="link-donottrack"/> Do Not Track
+                                <input type="checkbox" name="link-donottrack" class="link-donottrack" value=""/> Do Not Track
                             </label>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="col-sm-offset-2 col-sm-10">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" id="link-withtoken" name="link-withtoken"/> Generate Login-Token
+                                <input type="checkbox" name="link-withtoken" class="link-withtoken" value=""/> Generate Login-Token
                             </label>
                         </div>
                     </div>

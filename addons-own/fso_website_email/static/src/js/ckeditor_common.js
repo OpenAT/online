@@ -25,29 +25,64 @@
 
     // another try
     openerp.website.editor.RTELinkDialog = openerp.website.editor.RTELinkDialog.extend({
-        bind_data: function () {
-            // TODO: get classes 'link-donottrack' and 'link-withtoken' and update input fields accordingly
-            var res = this._super();
+        // bind_data: function () {
+        //     // TODO: get classes 'link-donottrack' and 'link-withtoken' and update input fields accordingly
+        //     var res = this._super();
+        //
+        //     return res;
+        // },
 
-            console.log('bind_data(): ' + this.element.getAttribute('class'));
-            return res;
+
+        bind_data: function () {
+            console.log('bind_data()');
+
+            var classes = null;
+            classes = this.element && this.element.getAttribute("class") || '';
+            console.log('bind_data() this.element.class: ' + classes);
+
+            // search for class in classes
+            var donottrack = classes.indexOf('link-donottrack') !== -1;
+            var withtoken  = classes.indexOf('link-withtoken') !== -1;
+
+            // set input fields in link dialog
+            this.$("input[class='link-donottrack']").prop('checked', donottrack);
+            this.$("input[class='link-withtoken']").prop('checked', withtoken);
+
+            var result = null;
+            result = this._super();
+
+            return result;
         },
 
         make_link: function (url, new_window, label, classes) {
-            var res = this._super(url, new_window, label, classes);
             console.log('make_link(): ' + classes);
+            classes = classes.replace(/undefined/g, '') || '';
+            classes = classes.replace(/\s{2,}/g, ' ').trim();
 
-            var donottrack = this.$("input[name='link-donottrack']:checked").val();
-            console.log('link-donottrack: ' + donottrack);
+            // do not track
+            if (this.$("input[class='link-donottrack']").prop("checked")) {
+                classes += ' link-donottrack';
+            }
+            else {
+                classes = classes.replace(/link-donottrack/g, '')
+            }
 
-            var withtoken = this.$("input[name='link-withtoken']:checked").val();
-            console.log('link-withtoken: ' + withtoken);
+            // with token
+            if (this.$("input[class='link-withtoken']").prop("checked")) {
+                classes += ' link-withtoken';
+            }
+            else {
+                classes = classes.replace(/link-withtoken/g, '')
+            }
 
-            // TODO: append classes if checkboxes are set
-            classes += ' link-donottrack link-withtoken';
-            console.log('classes after: ' + classes);
+            // classes += ' ';
+            // classes += this.$("input[class='link-donottrack']:checked").attr('class') || '';
+            // classes += ' ';
+            // classes += this.$("input[class='link-withtoken']:checked").attr('class') || '';
 
-            return res;
+            classes = classes.replace(/\s{2,}/g, ' ').trim();
+            console.log('make_link() after: ' + classes);
+            return this._super(url, new_window, label, classes);
         },
 
     })
