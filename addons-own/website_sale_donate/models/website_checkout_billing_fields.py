@@ -13,7 +13,7 @@ class website_checkout_billing_fields(models.Model):
     sequence = fields.Integer(string='Sequence', default=1000)
     show = fields.Boolean(string='Show', help='Show field in webpage')
     res_partner_field_id = fields.Many2one(comodel_name='ir.model.fields', string="res.partner Field",
-                                           domain="[('model_id.model', '=', 'res.partner')]", required=True)
+                                           domain="[('model_id.model', '=', 'res.partner')]")
     mandatory = fields.Boolean(string='Mandatory')
     label = fields.Char(string='Label', translate=True)
     placeholder = fields.Char(string='Placeholder Text', translate=True)

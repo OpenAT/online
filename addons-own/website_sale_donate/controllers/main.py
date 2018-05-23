@@ -492,7 +492,7 @@ class website_sale_donate(website_sale):
     # Set mandatory billing and shipping fields
     def _get_mandatory_billing_fields(self):
         billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([])
+        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False)])
         mandatory_bill = []
         for field in billing_fields:
             if field.mandatory:
@@ -502,7 +502,7 @@ class website_sale_donate(website_sale):
 
     def _get_optional_billing_fields(self):
         billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([])
+        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False)])
         optional_bill = []
         for field in billing_fields:
             if not field.mandatory:

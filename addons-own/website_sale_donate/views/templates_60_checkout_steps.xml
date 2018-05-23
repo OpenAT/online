@@ -220,147 +220,161 @@
 
             <!-- BILLING ADDRESS FORM GENERATOR -->
             <t t-foreach="billing_fields or []" t-as="billing_field">
-                <t t-set="f_name" t-value="billing_field.res_partner_field_id.name"/>
-                <t t-set="f_type" t-value="billing_field.res_partner_field_id.ttype"/>
-                <t t-set="css_classes" t-value="billing_field.css_classes"/>
-                <t t-set="validation_rule" t-value="{}"/>
-                <t t-if="billing_field.validation_rule">
-                    <t t-set="validation_rule" t-value="dict(item.split('=') for item in billing_field.validation_rule.split(';'))"/>
-                </t>
-
                 <t t-if="billing_field.show">
-
-                    <!-- FIELD GENERATORS: BILLING FIELDS -->
-                    <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
-                        <!-- FORM GROUP -->
-                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                            <!-- LABEL for all fields -->
-                            <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
-                                   t-att-for="f_name">
-                                <!-- BOOLEAN FIELDS -->
-                                <t t-if="f_type == 'boolean'">
-                                    <input type="checkbox"
-                                           t-att-name="f_name"
-                                           t-att-value="checkout.get(f_name)"
-                                           t-att-checked="True if checkout.get(f_name) else ''"
-                                           t-att-required="billing_field.mandatory"/>
-                                </t>
-                                <t t-esc="billing_field.label"/>
-                            </label>
-                            <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
-                            <t t-if="billing_field.information">
-                                <!-- Modal Box Button-Link -->
-                                <href type="button"
-                                        class="btn-link information-modal-box-trigger"
-                                        data-toggle="modal"
-                                        t-att-data-target="'#information-'+f_name">
-                                    <span class="glyphicon glyphicon-info-sign"/>
-                                </href>
-                                <!-- Modal Box -->
-                                <div class="modal fade"
-                                     t-att-id="'information-'+f_name"
-                                     role="dialog">
-                                    <div class="modal-dialog">
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close"
-                                                        data-dismiss="modal">&amp;times;</button>
-                                                <h4 class="modal-title">
-                                                    <t t-esc="billing_field.label"/>
-                                                </h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <t t-raw="billing_field.information"/>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                    Close
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </t>
-                            <!-- CHAR FIELDS -->
-                            <t t-if="f_type == 'char'">
-                                <input type="text"
-                                       t-att-name="f_name"
-                                       class="form-control"
-                                       t-att-value="checkout.get(f_name)"
-                                       t-att-placeholder="billing_field.placeholder"
-                                       t-att-required="billing_field.mandatory"
-                                       t-att="validation_rule"
-                                />
-                            </t>
-                            <!-- DATE FIELDS -->
-                            <t t-if="f_type == 'date'">
-                                <t t-set="date_de"
-                                   t-value="datetime.datetime.strftime(datetime.datetime.strptime(checkout.get(f_name),'%Y-%m-%d'), '%d.%m.%Y') if checkout.get(f_name) else None"
-                                />
-                                <input type="text"
-                                       t-att-name="f_name"
-                                       class="form-control"
-                                       t-att-value="date_de"
-                                       t-att-placeholder="billing_field.placeholder"
-                                       t-att-required="billing_field.mandatory"
-                                       t-att="validation_rule"
-                                />
-                            </t>
-                            <!-- SELECTION FIELDS -->
-                            <!-- TODO: option to render selection fields as radio buttons -->
-                            <t t-if="f_type == 'selection'">
-                                <select t-att-name="f_name" class="form-control"
-                                        t-att-required="billing_field.mandatory">
-                                    <!-- Default empty option -->
-                                    <option value=""><t t-esc="billing_field.placeholder"/></option>
-                                    <!-- Selection Values as options -->
-                                    <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
-                                        <!-- Set default country from res.config if none selected -->
-                                        <option t-att-value="option[0]"
-                                                t-att-selected="True if checkout.get(f_name) == option[0] else ''">
-                                            <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </t>
-                            <!-- SPECIAL FIELD: BILLING COUNTRY -->
-                            <t t-if="f_name == 'country_id'">
-                                <select t-att-name="f_name"
-                                        class="form-control"
-                                        t-att-required="billing_field.mandatory">
-                                    <option value=""><t t-esc="billing_field.placeholder"/></option>
-                                    <t t-foreach="countries or []" t-as="country">
-                                        <!-- Set default country from res.config if none selected -->
-                                        <option t-att-value="country.id"
-                                                t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''">
-                                            <t t-esc="country.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                            </t>
-                            <!-- SPECIAL FIELD: BILLING STATE -->
-                            <t t-if="f_name == 'state_id'">
-                                <select t-att-name="f_name"
-                                        class="form-control"
-                                        t-att-required="billing_field.mandatory">
-                                    <option value=""><t t-esc="billing_field.placeholder"/></option>
-                                    <t t-foreach="states or []" t-as="state">
-                                        <option t-att-value="state.id" style="display:none;"
-                                                t-att-data-country_id="state.country_id.id"
-                                                t-att-selected="state.id == checkout.get('state_id')">
-                                            <t t-esc="state.name"/>
-                                        </option>
-                                    </t>
-                                </select>
+                    <t t-set="css_classes" t-value="billing_field.css_classes"/>
+                    
+                    <!-- Render field as snippet-dropping-area -->
+                    <t t-if="not billing_field.res_partner_field_id">
+                        <div t-att-class="css_classes if css_classes else 'col-lg-12'">
+                            <div t-field="billing_field.information" class="oe_structure billing_field_snippet"/>
+                            <t t-if="billing_field.clearfix">
+                                <div class="clearfix"/>
                             </t>
                         </div>
                     </t>
-
-                    <!-- CLEARFIX DIV -->
-                    <t t-if="billing_field.clearfix">
-                        <div t-att-class="'clearfix clearfix-' + f_name"/>
+                
+                    <!-- Render field as field -->
+                    <t t-if="billing_field.res_partner_field_id">
+                        <t t-set="f_name" t-value="billing_field.res_partner_field_id.name"/>
+                        <t t-set="f_type" t-value="billing_field.res_partner_field_id.ttype"/>
+                        <t t-set="validation_rule" t-value="{}"/>
+                        <t t-if="billing_field.validation_rule">
+                            <t t-set="validation_rule" t-value="dict(item.split('=') for item in billing_field.validation_rule.split(';'))"/>
+                        </t>
+                        
+                        <!-- FIELD GENERATORS: BILLING FIELDS -->
+                        <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
+                            <!-- FORM GROUP -->
+                            <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
+                                <!-- LABEL for all fields -->
+                                <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
+                                       t-att-for="f_name">
+                                    <!-- BOOLEAN FIELDS -->
+                                    <t t-if="f_type == 'boolean'">
+                                        <input type="checkbox"
+                                               t-att-name="f_name"
+                                               t-att-value="checkout.get(f_name)"
+                                               t-att-checked="True if checkout.get(f_name) else ''"
+                                               t-att-required="billing_field.mandatory"/>
+                                    </t>
+                                    <t t-raw="billing_field.label"/>
+                                </label>
+                                <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
+                                <t t-if="billing_field.information">
+                                    <!-- Modal Box Button-Link -->
+                                    <href type="button"
+                                            class="btn-link information-modal-box-trigger"
+                                            data-toggle="modal"
+                                            t-att-data-target="'#information-'+f_name">
+                                        <span class="glyphicon glyphicon-info-sign"/>
+                                    </href>
+                                    <!-- Modal Box -->
+                                    <div class="modal fade"
+                                         t-att-id="'information-'+f_name"
+                                         role="dialog">
+                                        <div class="modal-dialog">
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal">&amp;times;</button>
+                                                    <h4 class="modal-title">
+                                                        <t t-esc="billing_field.label"/>
+                                                    </h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <t t-raw="billing_field.information"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                <!-- CHAR FIELDS -->
+                                <t t-if="f_type == 'char'">
+                                    <input type="text"
+                                           t-att-name="f_name"
+                                           class="form-control"
+                                           t-att-value="checkout.get(f_name)"
+                                           t-att-placeholder="billing_field.placeholder"
+                                           t-att-required="billing_field.mandatory"
+                                           t-att="validation_rule"
+                                    />
+                                </t>
+                                <!-- DATE FIELDS -->
+                                <t t-if="f_type == 'date'">
+                                    <t t-set="date_de"
+                                       t-value="datetime.datetime.strftime(datetime.datetime.strptime(checkout.get(f_name),'%Y-%m-%d'), '%d.%m.%Y') if checkout.get(f_name) else None"
+                                    />
+                                    <input type="text"
+                                           t-att-name="f_name"
+                                           class="form-control"
+                                           t-att-value="date_de"
+                                           t-att-placeholder="billing_field.placeholder"
+                                           t-att-required="billing_field.mandatory"
+                                           t-att="validation_rule"
+                                    />
+                                </t>
+                                <!-- SELECTION FIELDS -->
+                                <!-- TODO: option to render selection fields as radio buttons -->
+                                <t t-if="f_type == 'selection'">
+                                    <select t-att-name="f_name" class="form-control"
+                                            t-att-required="billing_field.mandatory">
+                                        <!-- Default empty option -->
+                                        <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                        <!-- Selection Values as options -->
+                                        <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                            <!-- Set default country from res.config if none selected -->
+                                            <option t-att-value="option[0]"
+                                                    t-att-selected="True if checkout.get(f_name) == option[0] else ''">
+                                                <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </t>
+                                <!-- SPECIAL FIELD: BILLING COUNTRY -->
+                                <t t-if="f_name == 'country_id'">
+                                    <select t-att-name="f_name"
+                                            class="form-control"
+                                            t-att-required="billing_field.mandatory">
+                                        <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                        <t t-foreach="countries or []" t-as="country">
+                                            <!-- Set default country from res.config if none selected -->
+                                            <option t-att-value="country.id"
+                                                    t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''">
+                                                <t t-esc="country.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </t>
+                                <!-- SPECIAL FIELD: BILLING STATE -->
+                                <t t-if="f_name == 'state_id'">
+                                    <select t-att-name="f_name"
+                                            class="form-control"
+                                            t-att-required="billing_field.mandatory">
+                                        <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                        <t t-foreach="states or []" t-as="state">
+                                            <option t-att-value="state.id" style="display:none;"
+                                                    t-att-data-country_id="state.country_id.id"
+                                                    t-att-selected="state.id == checkout.get('state_id')">
+                                                <t t-esc="state.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </t>
+                            </div>
+                        </t>
+    
+                        <!-- CLEARFIX DIV -->
+                        <t t-if="billing_field.clearfix">
+                            <div t-att-class="'clearfix clearfix-' + f_name"/>
+                        </t>
                     </t>
+                    
                 </t>
             </t>
 
