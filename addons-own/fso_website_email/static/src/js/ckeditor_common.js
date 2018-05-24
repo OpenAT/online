@@ -25,13 +25,6 @@
 
     // another try
     openerp.website.editor.RTELinkDialog = openerp.website.editor.RTELinkDialog.extend({
-        // bind_data: function () {
-        //     // TODO: get classes 'link-donottrack' and 'link-withtoken' and update input fields accordingly
-        //     var res = this._super();
-        //
-        //     return res;
-        // },
-
 
         bind_data: function () {
             // console.log('bind_data()');

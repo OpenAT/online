@@ -8,13 +8,16 @@
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css' t-ignore="true"/>
         
         <!-- EXAMPLE: Theme CSS -->
-        <style>
-        
+        <style type="text/css">
+            body {
+                background-color: red;
+            }
         </style>
     </template>
     
     <!-- ASSETS THEME DADI EDITMODE -->
     <template id="theme_dadi_assets_editmode">
+        
         <!-- EXAMPLE: Load custom snippets template -->
         <script type="text/javascript">
             //<![CDATA[
@@ -33,7 +36,8 @@
         </script>
         
         <!-- EXAMPLE: Override the CKEditor Settings for edit mode -->
-        <script>
+        <script type="text/javascript">
+            //<![CDATA[
             (function () {
                 'use strict';
                 // Overwrite class method of website/static/src/js/website.editor.js@839
@@ -49,6 +53,7 @@
                     }
                 });
             })();
+            //]]>
         </script>
         
         <!-- EXAMPLE: Change color and background of print fields in edit mode -->

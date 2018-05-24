@@ -35,8 +35,6 @@ class FSOEmailEditor(http.Controller):
             ('fso_email_template', '=', True),
             ('fso_template_view_id', '!=', False)], order="write_date DESC")
 
-        # TODO: Save changes
-        print "KWARGS: %s" % kw
         odoo_model = kw.pop('odoo_model', '')
         odoo_record_id = kw.pop('odoo_record_id', '')
         if odoo_model and odoo_record_id and kw:
@@ -125,6 +123,36 @@ class FSOEmailEditor(http.Controller):
 
         # Return to the e-mail theme/template selection page
         return request.redirect('/fso/email/select')
+
+    # NEW E-MAIL Version
+    @http.route('/fso/email/version/create', type='http', auth="user", website=True)
+    def email_version_create(self, template_id, **kw):
+        if not template_id:
+            return request.redirect('/fso/email/select')
+
+        # Get e-mail template
+        template = request.env['email.template'].sudo().browse([int(template_id)])
+
+        # Create new version
+        template.create_version()
+
+        # Return to the e-mail theme/template selection page
+        return request.redirect('/fso/email/edit?template_id='+template_id)
+
+    # NEW E-MAIL Version
+    @http.route('/fso/email/version/restore', type='http', auth="user", website=True)
+    def email_version_restore(self, template_id, version_id, **kw):
+        if not template_id or not version_id:
+            return request.redirect('/fso/email/select')
+
+        # Get e-mail template
+        template = request.env['email.template'].sudo().browse([int(template_id)])
+
+        # Create new version and restore selected version
+        template.restore_version(version_id=version_id)
+
+        # Return to the e-mail theme/template selection page
+        return request.redirect('/fso/email/edit?template_id=' + template_id)
 
     # DELETE E-MAIL TEMPLATE
     @http.route('/fso/email/delete', type='http', auth="user", website=True)

@@ -10,7 +10,7 @@ from openerp.http import request, controllers_per_module
 from openerp.addons.fso_website_email.controllers.email_editor import FSOEmailEditor
 
 import requests
-
+import datetime
 
 try:
     from bs4 import BeautifulSoup
@@ -34,15 +34,26 @@ class EmailTemplate(models.Model):
     # ------
     # FIELDS
     # ------
+    active = fields.Boolean(string="Active", default=True)
+
+    # Mark this as an FSON E-Mail Template and link Theme (ir.ui.view)
     fso_email_template = fields.Boolean(string='FSON Template')
     fso_template_view_id = fields.Many2one(string='Based on',
                                            comodel_name="ir.ui.view", inverse_name="fso_email_template_ids",
                                            domain="[('fso_email_template','=',True)]")
 
+    # Compute final html
     fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', compute_sudo=True, store=True,
                                  readonly=True)
     fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', compute_sudo=True,
                                         store=True, readonly=True)
+
+    # Store Versions (copies of email.template)
+    version_ids = fields.One2many(comodel_name="email.template", inverse_name="version_of_email_id",
+                                  string='Available Versions')
+
+    version_of_email_id = fields.Many2one(comodel_name="email.template", inverse_name="version_ids",
+                                          string='Version of')
 
     @api.depends('body_html', 'fso_template_view_id')
     def _compute_html(self):
@@ -140,3 +151,53 @@ class EmailTemplate(models.Model):
 
                 # Update fso_email_html_parsed field
                 r.fso_email_html_parsed = content
+
+    @api.multi
+    def create_version(self, version_name=''):
+        assert self.ensure_one(), _("E-Mail Template Versions can only be created for a single E-Mail Template")
+        r = self
+        version_name = version_name or datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        version = r.copy(default={
+            'active': False,
+            'name': version_name,
+            'version_ids': False,
+            'version_of_email_id': r.id,
+            #'fso_email_html': r.fso_email_html,
+            #'fso_email_html_parsed': r.fso_email_html_parsed,
+        })
+        # Hack because 'name' will always be set by copy even if in default dict
+        version.name = version_name
+        return version
+
+    @api.multi
+    def restore_version(self, version_id=False):
+        assert self.ensure_one(), _("E-Mail Template Versions can only be restored for a single E-Mail Template")
+        assert not self.version_of_email_id, _("You can not restore a version of a version!")
+
+        # ATTENTION: Non active records are not shown in version_ids therefore it appears empty
+        #assert version_id in self.version_ids.ids, _("Version is not a Version of this E-Mail Template")
+
+        r = self
+
+        # Find the version
+        version = self.sudo().browse([int(version_id)])
+        assert version, _("Version to restore was not found!")
+        assert version.version_of_email_id.id == r.id, _("Version is not a Version of this E-Mail Template")
+
+        # Get data to restore
+        data_to_restore = version.copy_data()[0]
+
+        # Exclude fields that should not be restored
+        # TODO: ADD the sosync field to the MAGIC_COLUMNS in models.py in fso_sosync so they will not be
+        #       copied by default :)
+        data_to_restore = {key: value for (key, value) in data_to_restore.items() if key not in (
+            'active', 'name', 'version_of_email_id', 'version_ids',
+            'sosync_write_date', 'sosync_sync_date', 'sosync_fs_id')}
+
+        # Create a new version from current data first
+        assert r.create_version(), _("Could not create a version of the email template before restore!")
+
+        # Update email template
+        r.sudo().write(data_to_restore)
+
+        return True

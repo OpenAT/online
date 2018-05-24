@@ -31,26 +31,30 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="#">Create Version</a>
+                                <a t-att-href="'/fso/email/version/create?template_id='+str(record.id) if record else ''">
+                                    Create Version
+                                </a>
                             </li>
                             <li class="dropdown-submenu">
                                 <a href="#">Restore Version</a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li>
-                                        <a href="#">2018-04-03 07:35:12</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">2018-03-01 14:56:11</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">2018-03-01 08:53:41</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">2018-02-24 16:12:10</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">2018-02-24 12:58:31</a>
-                                    </li>
+                                    <t t-set="versions"
+                                       t-value="request.env['email.template'].search([('active', '=', False), ('version_of_email_id', '=', record.id)], order='write_date DESC')"/>
+                                    <t if="versions">
+                                        <!-- ATTENTION: active=False records are not shown in version_ids therefore we need the search -->
+                                        <t t-foreach="versions" t-as="version">
+                                            <li>
+                                                <a t-att-href="'/fso/email/version/restore?template_id=' + str(record.id) + '&amp;version_id=' + str(version.id) if record and version else ''">
+                                                    <t t-esc="version.name"/>
+                                                </a>
+                                            </li>
+                                        </t>
+                                    </t>
+                                    <t if="not versions">
+                                        <li>
+                                            <a href="#">No Version available</a>
+                                        </li>
+                                    </t>
                                 </ul>
                             </li>
                             <li class="divider"></li>

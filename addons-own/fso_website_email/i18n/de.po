@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-22 14:34+0000\n"
-"PO-Revision-Date: 2018-05-22 14:34+0000\n"
+"POT-Creation-Date: 2018-05-24 11:18+0000\n"
+"PO-Revision-Date: 2018-05-24 11:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,39 +16,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
-msgid "&nbsp;"
-msgstr "&nbsp;"
-
-#. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "2018-02-24 12:58:31"
-msgstr "2018-02-24 12:58:31"
-
-#. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "2018-02-24 16:12:10"
-msgstr "2018-02-24 16:12:10"
-
-#. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "2018-03-01 08:53:41"
-msgstr "2018-03-01 08:53:41"
-
-#. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "2018-03-01 14:56:11"
-msgstr "2018-03-01 14:56:11"
-
-#. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "2018-04-03 07:35:12"
-msgstr "2018-04-03 07:35:12"
-
-#. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
 msgid "Actions"
 msgstr "Aktionen"
+
+#. module: fso_website_email
+#: field:email.template,active:0
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: fso_website_email
+#: field:email.template,version_ids:0
+msgid "Available Versions"
+msgstr "Verfügbare Versionen"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
@@ -106,6 +86,12 @@ msgid "Copy"
 msgstr "Kopie"
 
 #. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:198
+#, python-format
+msgid "Could not create a version of the email template before restore!"
+msgstr "Could not create a version of the email template before restore!"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
 msgid "Create Version"
 msgstr "Erstelle Version"
@@ -128,14 +114,21 @@ msgstr "Standard"
 #. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
 msgid "Delete"
-msgstr "Delete"
+msgstr "Löschen"
 
 #. module: fso_website_email
 #. openerp-web
-#: code:addons/fso_website_email/static/src/xml/website.editor.xml:9
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:11
 #, python-format
 msgid "Discard"
 msgstr "Verwerfen"
+
+#. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:34
+#, python-format
+msgid "Do Not Track"
+msgstr "Link nicht tracken"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
@@ -153,14 +146,26 @@ msgid "E-Mail HTML parsed"
 msgstr "E-Mail HTML parsed"
 
 #. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:157
+#, python-format
+msgid "E-Mail Template Versions can only be created for a single E-Mail Template"
+msgstr "E-Mail Template Versions can only be created for a single E-Mail Template"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:174
+#, python-format
+msgid "E-Mail Template Versions can only be restored for a single E-Mail Template"
+msgstr "E-Mail Template Versions can only be restored for a single E-Mail Template"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
 msgid "E-Mail-Template Name"
-msgstr "E-Mail-Template Name"
+msgstr "E-Mail Vorlage Name"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
 msgid "E-Mail-Theme Name"
-msgstr "E-Mail-Theme Name"
+msgstr "E-Mail Theme Name"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
@@ -176,7 +181,7 @@ msgstr "Bearbeite HTML"
 #. module: fso_website_email
 #: model:ir.model,name:fso_website_email.model_email_template
 msgid "Email Templates"
-msgstr "E-Mail-Vorlagen"
+msgstr "E-Mail Vorlagen"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.layout
@@ -214,6 +219,13 @@ msgid "Full Width"
 msgstr "Gesamte Breite"
 
 #. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:43
+#, python-format
+msgid "Generate Login-Token"
+msgstr "Link mit automatischer Anmeldung (Token)"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
 msgid "Green"
 msgstr "Grün"
@@ -221,7 +233,7 @@ msgstr "Grün"
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
 msgid "Grey"
-msgstr "Gray"
+msgstr "Grau"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
@@ -271,7 +283,7 @@ msgstr "Mittel"
 #. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
 msgid "Mobile preview"
-msgstr "Handy-Vorschau"
+msgstr "Mobile Anwendung Voransicht"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
@@ -282,6 +294,11 @@ msgstr "Verschmälern"
 #: view:website:fso_website_email.fso_email_selection
 msgid "New Template"
 msgstr "Neue Vorlage"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "No Version available"
+msgstr "Keine Versionen verfügbar"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
@@ -341,7 +358,7 @@ msgstr "Rechts"
 
 #. module: fso_website_email
 #. openerp-web
-#: code:addons/fso_website_email/static/src/xml/website.editor.xml:7
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:9
 #, python-format
 msgid "Save"
 msgstr "Speichern"
@@ -353,11 +370,11 @@ msgstr "Theme auswählen"
 
 #. module: fso_website_email
 #. openerp-web
-#: code:addons/fso_website_email/static/src/xml/website.editor.xml:12
+#: code:addons/fso_website_email/static/src/xml/website.editor.xml:14
 #: view:website:fso_website_email.editor_toolbar
 #, python-format
 msgid "Show/Hide Settings"
-msgstr "Einstellungen"
+msgstr "Ein-/Ausblenden Einstellungen"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
@@ -441,26 +458,21 @@ msgid "Used by E-Mails Templates"
 msgstr "Verwendet in E-Mail Vorlagen"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
-msgid "Vestibulum vitae metus sed purus elementum\n"
-"                                                        malesuada. Aliquam feugiat metus ut orci. Etiam\n"
-"                                                        scelerisque lacus eu tellus. ..."
-msgstr "Vestibulum vitae metus sed purus elementum\n"
-"                                                        malesuada. Aliquam feugiat metus ut orci. Etiam\n"
-"                                                        scelerisque lacus eu tellus. ..."
+#: code:addons/fso_website_email/models/email_template.py:185
+#, python-format
+msgid "Version is not a Version of this E-Mail Template"
+msgstr "Version is not a Version of this E-Mail Template"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
-msgid "Vestibulum vitae metus sed purus elementum malesuada.\n"
-"                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus\n"
-"                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,\n"
-"                                        tempor eleifend, sem.\n"
-"                                        ..."
-msgstr "Vestibulum vitae metus sed purus elementum malesuada.\n"
-"                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus\n"
-"                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,\n"
-"                                        tempor eleifend, sem.\n"
-"                                        ..."
+#: field:email.template,version_of_email_id:0
+msgid "Version of"
+msgstr "Version von"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:184
+#, python-format
+msgid "Version to restore was not found!"
+msgstr "Version to restore was not found!"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
@@ -476,3 +488,10 @@ msgstr "E-Mail im Browser anzeigen"
 #: view:website:fso_website_email.theme_default_snippets
 msgid "Yellow"
 msgstr "Gelb"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:175
+#, python-format
+msgid "You can not restore a version of a version!"
+msgstr "You can not restore a version of a version!"
+
