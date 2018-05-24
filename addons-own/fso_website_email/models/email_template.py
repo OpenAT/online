@@ -44,9 +44,9 @@ class EmailTemplate(models.Model):
 
     # Compute final html
     fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', compute_sudo=True, store=True,
-                                 readonly=True)
+                                 readonly=True, translate=True)
     fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', compute_sudo=True,
-                                        store=True, readonly=True)
+                                        store=True, readonly=True, translate=True)
 
     # Store Versions (copies of email.template)
     version_ids = fields.One2many(comodel_name="email.template", inverse_name="version_of_email_id",
