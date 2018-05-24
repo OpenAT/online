@@ -35,12 +35,27 @@
                                     Create Version
                                 </a>
                             </li>
-                            <li class="dropdown-submenu">
-                                <a href="#">Restore Version</a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <t t-set="versions"
-                                       t-value="request.env['email.template'].search([('active', '=', False), ('version_of_email_id', '=', record.id)], order='write_date DESC')"/>
-                                    <t if="versions">
+                            
+                            <t t-set="versions"
+                               t-value="request.env['email.template'].search([('active', '=', False), ('version_of_email_id', '=', record.id)], order='write_date DESC')"/>
+                            
+                            <t t-if="versions">
+                                <li class="dropdown-submenu">
+                                    <a href="#">Show Version</a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <!-- ATTENTION: active=False records are not shown in version_ids therefore we need the search -->
+                                        <t t-foreach="versions" t-as="version">
+                                            <li>
+                                                <a t-att-href="'/fso/email/preview?template_id=' + str(version.id) if version else ''" target="_blank">
+                                                    <t t-esc="version.name"/>
+                                                </a>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#">Restore Version</a>
+                                    <ul class="dropdown-menu" role="menu">
                                         <!-- ATTENTION: active=False records are not shown in version_ids therefore we need the search -->
                                         <t t-foreach="versions" t-as="version">
                                             <li>
@@ -49,14 +64,10 @@
                                                 </a>
                                             </li>
                                         </t>
-                                    </t>
-                                    <t if="not versions">
-                                        <li>
-                                            <a href="#">No Version available</a>
-                                        </li>
-                                    </t>
-                                </ul>
-                            </li>
+                                    </ul>
+                                </li>
+                            </t>
+                            
                             <li class="divider"></li>
                             <li>
                                 <a href="/fso/email/select">Back to E-Mail Selection</a>

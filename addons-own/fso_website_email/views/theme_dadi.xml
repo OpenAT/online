@@ -10,7 +10,7 @@
         <!-- EXAMPLE: Theme CSS -->
         <style type="text/css">
             body {
-                background-color: red;
+                background-color: inherit;
             }
         </style>
     </template>

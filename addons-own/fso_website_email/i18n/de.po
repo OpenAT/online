@@ -495,3 +495,7 @@ msgstr "Gelb"
 msgid "You can not restore a version of a version!"
 msgstr "You can not restore a version of a version!"
 
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Show Version"
+msgstr "Version anzeigen"
