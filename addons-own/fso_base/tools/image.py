@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
+import base64
+import os
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
 from PIL import Image
+
+
+from openerp.tools.translate import _
+import logging
+logger = logging.getLogger(__name__)
 
 
 def resize_to_thumbnail(img, box=(440, 440), fit='mid'):
@@ -44,3 +51,41 @@ def resize_to_thumbnail(img, box=(440, 440), fit='mid'):
     background_stream = StringIO.StringIO()
     img.save(background_stream, filetype)
     return background_stream.getvalue().encode('base64')
+
+
+# Get a screen-shot for the target URL
+# http://randomdotnext.com/selenium-phantomjs-on-aws-ec2-ubuntu-instance-headless-browser-automation/
+# TODO: Add Timeouts
+def screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=int()):
+    # Import selenium
+    try:
+        from selenium import webdriver
+    except ImportError:
+        logger.error(_('Could not import selenium for screen-shot generation of %s!') % url)
+        return False
+
+    # Load PhantomJS()
+    try:
+        driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
+    except Exception as error:
+        logger.error(_('Could not load PhantomJS() for screen-shot generation of %s!\n\n%s\n') % (url, error))
+        return False
+
+    # Generate screen-shot
+    try:
+        driver.set_window_size(src_width, src_height)
+        driver.get(url)
+        image = driver.get_screenshot_as_png()
+        image = base64.b64encode(image)
+    except Exception as error:
+        logger.warning('Could not generate screen-shot for url:\n\n%s\n' % error)
+        return False
+
+    # Resize Image
+    if tgt_width or tgt_height:
+        x = tgt_width or 320
+        y = tgt_height or 240
+        image = resize_to_thumbnail(image, box=(x, y), fit='top')
+
+    # Return Image
+    return image

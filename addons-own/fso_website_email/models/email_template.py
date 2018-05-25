@@ -6,8 +6,11 @@ from openerp.tools.mail import html_sanitize
 from openerp.exceptions import ValidationError
 from openerp.http import request, controllers_per_module
 from openerp.addons.fso_base.tools.validate import is_valid_email
+from openerp.addons.fso_base.tools.image import screenshot
 
 import datetime
+import os
+import tempfile
 try:
     from bs4 import BeautifulSoup
 except:
@@ -21,9 +24,24 @@ except:
 # except:
 #     pass
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class EmailTemplate(models.Model):
     _inherit = 'email.template'
+
+    @api.model
+    def get_base_url(self):
+        # Get base_url to replace relative urls with absolute urls
+        try:
+            req = request
+            host_url = req.httprequest.host_url
+        except Exception as e:
+            host_url = ''
+        get_param = self.env['ir.config_parameter'].get_param
+        base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
+        return base_url
 
     # ------
     # FIELDS
@@ -37,12 +55,16 @@ class EmailTemplate(models.Model):
                                            domain="[('fso_email_template','=',True)]")
 
     # Compute final html
-    fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', compute_sudo=True, store=True,
+    fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', store=True,
                                  readonly=True, translate=True)
-    fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', compute_sudo=True,
-                                        store=True, readonly=True, translate=True)
+    fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', store=True,
+                                        readonly=True, translate=True)
+    screenshot = fields.Binary(string="Screenshot", compute='_compute_html', store=True,
+                               readonly=True)
 
     # Store Versions (copies of email.template)
+    # HINT: version_ids will be empty because One2Many will not show inactive records but it is still here for
+    #       completeness
     version_ids = fields.One2many(comodel_name="email.template", inverse_name="version_of_email_id",
                                   string='Available Versions')
 
@@ -64,7 +86,6 @@ class EmailTemplate(models.Model):
                 # If i want to call the controller method 'email_preview' directly it would need to:
                 # https://www.odoo.com/de_DE/forum/hilfe-1/question/how-to-invoke-a-controller-function-from-inside-a-model-function-87620
 
-                # TODO: Change this to an URL CALL of preview !!!
                 # Render the ir.ui.view qweb template with r.body_html field
                 # HINT: Will output an UTF-8 encoded str
                 content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
@@ -73,14 +94,8 @@ class EmailTemplate(models.Model):
                                                          'debug': 'assets',
                                                          })
 
-                # Get base_url to replace relative urls with absolute urls
-                try:
-                    req = request
-                    host_url = req.httprequest.host_url
-                except Exception as e:
-                    host_url = ''
-                get_param = self.env['ir.config_parameter'].get_param
-                base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
+                # Get the base url of current request or from ir.config parameters
+                base_url = self.get_base_url()
 
                 # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
@@ -148,6 +163,37 @@ class EmailTemplate(models.Model):
 
                 # Update fso_email_html_parsed field
                 r.fso_email_html_parsed = content
+
+                # Try to generate a screenshot
+                tmp = tempfile.NamedTemporaryFile(bufsize=0, suffix=".html", delete=True)
+                try:
+                    tmp.write(content.encode(encoding='utf-8'))
+                    screenshot_url = 'file://'+tmp.name
+                    screenshot_img = screenshot(screenshot_url,
+                                                src_width=1024, src_height=1181, tgt_width=260, tgt_height=300)
+                    r.screenshot = screenshot_img or False
+                except Exception as e:
+                    logger.error("Could not create screenshot for e-mail template:\n%s" % repr(e))
+                    r.screenshot = False
+                finally:
+                    tmp.close()
+
+    @api.multi
+    def compute_screenshot(self):
+        for r in self:
+            # Get the base url of current request or from ir.config parameters
+            base_url = self.get_base_url()
+
+            # Get a screenshot
+            screenshot_url = base_url.rstrip('/') + '/fso/email/preview?template_id=' + str(r.id)
+            try:
+                screenshot_img = screenshot(screenshot_url,
+                                            src_width=1024, src_height=1181, tgt_width=260, tgt_height=300)
+            except Exception as e:
+                logger.error("Could not create screenshot for e-mail template:\n%s" % repr(e))
+                screenshot_img = False
+            r.screenshot = screenshot_img
+
 
     @api.multi
     def create_version(self, version_name=''):

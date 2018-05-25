@@ -135,8 +135,15 @@
                                     Delete
                                 </a>
                             </div>
+                            
                             <div class="email_preview_border">
-                                <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
+                                <t t-if="template.screenshot">
+                                    <span t-field="template.screenshot"
+                                          t-field-options='{"widget": "image", "class": "media-object"}'/>
+                                </t>
+                                <t t-if="not template.screenshot">
+                                    <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
+                                </t>
                             </div>
                             
                             <!-- Template Name and Theme -->
@@ -194,7 +201,7 @@
                                 Copy
                             </a>
                             <a class="btn btn-warning"
-                               t-att-href="'/fso/email/preview?template_id='+str(template.id)">
+                               t-att-href="'/fso/email/preview?template_id='+str(template.id)" target="_blank">
                                 View
                             </a>
                         </div>

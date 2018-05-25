@@ -30,7 +30,7 @@
     <!-- Fundraising Studio Print Field Snippet Options Menu -->
     <template id="fs_print_field_snippet_options">
         <!-- TODO: honour 'exclude_in_email_theme_ids' field -->
-        <t t-set="groups" t-value="request.env['fso.print_field.group'].search([])"/>
+        <t t-set="groups" t-value="request.env['fso.print_field.group'].search([]) if request and request.env else []"/>
         <li class="dropdown-submenu" data-required="true">
             <a tabindex="-1" href="#">Print Field</a>
             <ul class="dropdown-menu">
