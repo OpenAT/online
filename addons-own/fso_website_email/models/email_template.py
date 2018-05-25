@@ -3,25 +3,19 @@
 from openerp import models, fields, api
 from openerp.tools.translate import _
 from openerp.tools.mail import html_sanitize
-
+from openerp.exceptions import ValidationError
 from openerp.http import request, controllers_per_module
-#from openerp.addons.web.http import request
+from openerp.addons.fso_base.tools.validate import is_valid_email
 
-from openerp.addons.fso_website_email.controllers.email_editor import FSOEmailEditor
-
-import requests
 import datetime
-
 try:
     from bs4 import BeautifulSoup
 except:
     pass
-
 try:
     from premailer import Premailer
 except:
     pass
-
 # try:
 #     from html5print import HTMLBeautifier
 # except:
@@ -55,6 +49,14 @@ class EmailTemplate(models.Model):
     version_of_email_id = fields.Many2one(comodel_name="email.template", inverse_name="version_ids",
                                           string='Version of')
 
+    @api.constrains('email_from', 'reply_to')
+    def _constrain_email_address(self):
+        for r in self:
+            if r.email_from and not is_valid_email(r.email_from):
+                raise ValidationError(_("Field 'email_from' contains no valid e-mail address!"))
+            if r.reply_to and not is_valid_email(r.reply_to):
+                raise ValidationError(_("Field 'reply_to' contains no valid e-mail address!"))
+
     @api.depends('body_html', 'fso_template_view_id')
     def _compute_html(self):
         for r in self:
@@ -79,11 +81,6 @@ class EmailTemplate(models.Model):
                     host_url = ''
                 get_param = self.env['ir.config_parameter'].get_param
                 base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
-                # print "base_url %s" % base_url
-
-                # response = requests.get(base_url.rstrip('/') +
-                #                         '/fso/email/preview?template_id=' +
-                #                         str(r.fso_template_view_id.id))
 
                 # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
@@ -106,7 +103,7 @@ class EmailTemplate(models.Model):
                             href.startswith('http') or href.startswith('mailto')):
                         a['href'] = 'https://'+href
 
-                # # Repair style <link> tags for premailer for theme assets
+                # # DISABLED: Repair style <link> tags for premailer for theme assets
                 # stylesheets = html_soup.find_all('link')
                 # base_url_no_slash = base_url.rstrip('/')
                 # for link in stylesheets:

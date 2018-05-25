@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import validators
+from email.utils import parseaddr
 import socket
 from urlparse import urlparse
 from openerp.tools.translate import _
@@ -42,3 +43,15 @@ def is_valid_url(url, dns_check=True):
             raise URLDNSError(_('URL DNS check failed!\n%s\n%s\n') % (url, e))
 
     return True
+
+
+def is_valid_email(email):
+    """
+    :param email: (str) email address in the format "Mike Test <mike@test.com>" or just "mike@test.com"
+    :return: (boolean) True or False
+    """
+    assert isinstance(email, (str, unicode)), _("E-Mail must be a string!")
+
+    # TODO: Add MX and DNS Test option (could be done by library "flanker")
+
+    return validators.email(parseaddr(email)[1]) is True

@@ -349,7 +349,7 @@ msgstr "Antwort An:"
 #. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
 msgid "Restore Version"
-msgstr "Version wiederherstellen"
+msgstr "Version herstellen"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
