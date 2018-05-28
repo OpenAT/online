@@ -37,27 +37,6 @@
     
     <!-- ASSETS COMMON -->
     <template id="theme_assets_common">
-        <!-- PRINT FIELDS -->
-        <style type="text/css" id="fs_print_fields_styles">
-            /* Change color in edit mode only */
-            #wrapwrap .drop_in_print_field > span {
-                color: white;
-                background-color: darkgrey;
-            }
-
-            /* hide/display fields in preview and edit mode */
-            .drop_in_print_field > span {
-                display: none;
-
-            }
-            <t t-set="print_fields" t-value="request.env['fso.print_field'].search([]) if request and request.website else []"/>
-            <t t-foreach="print_fields" t-as="print_field">
-                .drop_in_print_field.<t t-esc="print_field.css_class"/> > span.<t t-esc="print_field.css_class"/> {
-                    display: initial;
-                }
-            </t>
-        </style>
-        
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
     </template>
     
@@ -125,7 +104,7 @@
             <!-- Common CSS edit mode assets -->
             <t t-call-assets="fso_website_email.theme_assets_editmode" t-js="false"/>
             
-            <!-- Theme default CSS edit mode assets -->
+            <!-- Theme 'DEFAULT' CSS edit mode assets -->
             <t t-if="load_default_theme">
                 <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-js="false"/>
             </t>
@@ -134,7 +113,29 @@
         <!-- COMMON CSS ASSETS -->
         <t t-call-assets="fso_website_email.theme_assets_common" t-js="false"/>
         
-        <!-- THEME DEFAULT CSS ASSETS -->
+        <!-- PRINT FIELDS CSS -->
+        <!-- HINT: Can not put this in assets because t-call-assets will not receive any variables! -->
+        <style type="text/css" id="fs_print_fields_styles">
+            /* Change color in edit mode only */
+            #wrapwrap .drop_in_print_field > span {
+                color: white;
+                background-color: darkgrey;
+            }
+
+            /* hide/display fields in preview and edit mode */
+            .drop_in_print_field > span {
+                display: none;
+            }
+            
+            <!--<t t-set="print_fields" t-value="request.env['fso.print_field'].search([])"/>-->
+            <t t-foreach="print_fields" t-as="print_field">
+                .drop_in_print_field.<t t-esc="print_field.css_class"/> > span.<t t-esc="print_field.css_class"/> {
+                    display: initial;
+                }
+            </t>
+        </style>
+
+        <!-- THEME 'DEFAULT' CSS ASSETS -->
         <t t-if="load_default_theme">
             <t t-call-assets="fso_website_email.theme_default_assets" t-js="false"/>
         </t>
