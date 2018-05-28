@@ -50,7 +50,7 @@
                 display: none;
 
             }
-            <t t-set="print_fields" t-value="request.env['fso.print_field'].search([]) if request else []"/>
+            <t t-set="print_fields" t-value="request.env['fso.print_field'].search([]) if request and hasattr(request, '__self__') else []"/>
             <t t-foreach="print_fields" t-as="print_field">
                 .drop_in_print_field.<t t-esc="print_field.css_class"/> > span.<t t-esc="print_field.css_class"/> {
                     display: initial;
