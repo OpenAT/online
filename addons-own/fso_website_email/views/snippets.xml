@@ -9,7 +9,7 @@
     
     <!-- Fundraising Studio Print Field Snippet -->
     <template id="fs_print_field_snippet">
-        <!--<t t-set="print_fields" t-value="request.env['fso.print_field'].search([]) if request and hasattr(request, '__self__') else []"/>-->
+        <t t-set="print_fields" t-value="request.env['fso.print_field'].search([]) if request and request.website else []"/>
         <div>
             <!-- Icon and name -->
             <div class="oe_snippet_thumbnail">
