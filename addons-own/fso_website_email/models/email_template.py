@@ -179,21 +179,25 @@ class EmailTemplate(models.Model):
                     tmp.close()
 
     @api.multi
-    def compute_screenshot(self):
+    def write(self, values):
+        # ATTENTION: After this 'self' is changed (in memory i guess) 'res' is only a boolean
+        res = super(EmailTemplate, self).write(values)
+
+        # Immediately submit the related sync job for FRST e-mail templates
         for r in self:
-            # Get the base url of current request or from ir.config parameters
-            base_url = self.get_base_url()
-
-            # Get a screenshot
-            screenshot_url = base_url.rstrip('/') + '/fso/email/preview?template_id=' + str(r.id)
-            try:
-                screenshot_img = screenshot(screenshot_url,
-                                            src_width=1024, src_height=1181, tgt_width=260, tgt_height=300)
-            except Exception as e:
-                logger.error("Could not create screenshot for e-mail template:\n%s" % repr(e))
-                screenshot_img = False
-            r.screenshot = screenshot_img
-
+            if r.fso_email_template and r.fso_template_view_id and r.body_html:
+                try:
+                    sync_job = self.env['sosync.job.queue'].sudo().search([
+                        ('job_source_system', '=', 'fso'),
+                        ('job_source_model', '=', 'email.template'),
+                        ('job_source_record_id', '=', r.id),
+                        ('submission_state', '=', 'new'),
+                    ], limit=1)
+                    if sync_job:
+                            sync_job.submit_sync_job()
+                except Exception as e:
+                    logger.error("Immediate sync_job submission failed!\n%s" % repr(e))
+                    pass
 
     @api.multi
     def create_version(self, version_name=''):
@@ -205,8 +209,6 @@ class EmailTemplate(models.Model):
             'name': version_name,
             'version_ids': False,
             'version_of_email_id': r.id,
-            #'fso_email_html': r.fso_email_html,
-            #'fso_email_html_parsed': r.fso_email_html_parsed,
         })
         # Hack because 'name' will always be set by copy even if in default dict
         version.name = version_name

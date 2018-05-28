@@ -385,8 +385,6 @@ class SosyncJobQueue(models.Model):
                                  'submission_response_code': response.status_code,
                                  'submission_response_body': response.content})
 
-        return
-
     # --------------------------------------------------
     # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE SUBMISSION
     # --------------------------------------------------
