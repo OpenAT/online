@@ -45,7 +45,8 @@ class FSOEmailEditor(http.Controller):
         return request.render('fso_website_email.fso_email_selection',
                               {'html_sanitize': html_sanitize,
                                'template_views': template_views,
-                               'templates': templates
+                               'templates': templates,
+                               'print_fields': request.env['fso.print_field'].search([]),
                                })
 
     # EMAIL-EDITOR
@@ -60,6 +61,7 @@ class FSOEmailEditor(http.Controller):
                                 {'html_sanitize': html_sanitize,
                                  'email_editor_mode': True,
                                  'record': template,
+                                 'print_fields': request.env['fso.print_field'].search([]),
                                  })
 
         return result
@@ -79,6 +81,7 @@ class FSOEmailEditor(http.Controller):
                                   {'html_sanitize': html_sanitize,
                                    'email_editor_mode': False,
                                    'record': template,
+                                   'print_fields': request.env['fso.print_field'].search([]),
                                    })
 
     # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING TEMPLATE

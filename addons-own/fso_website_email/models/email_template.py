@@ -91,7 +91,7 @@ class EmailTemplate(models.Model):
                 content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
                                                          'email_editor_mode': False,
                                                          'record': r,
-                                                         'debug': 'assets',
+                                                         'print_fields': request.env['fso.print_field'].search([]),
                                                          })
 
                 # Get the base url of current request or from ir.config parameters
