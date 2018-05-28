@@ -9,7 +9,9 @@
     
     <!-- Fundraising Studio Print Field Snippet -->
     <template id="fs_print_field_snippet">
-        <t t-set="print_fields" t-value="request.env['fso.print_field'].search([]) if request and request.website else []"/>
+        <!-- HINT: request.env['fso.print_field'].search([]) can be used here because this template will only be
+                   loaded in edit mode and there request is always bound already! Do not use it in other templates than for the snippet bar! -->
+        <t t-set="print_fields" t-value="print_fields or request.env['fso.print_field'].search([]) if request and request.env else []"/>
         <div>
             <!-- Icon and name -->
             <div class="oe_snippet_thumbnail">

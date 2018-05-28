@@ -114,7 +114,7 @@
         <t t-call-assets="fso_website_email.theme_assets_common" t-js="false"/>
         
         <!-- PRINT FIELDS CSS -->
-        <!-- HINT: Can not put this in assets because t-call-assets will not receive any variables! -->
+        <!-- HINT: I put this here because t-call-assets will not receive any variables! -->
         <style type="text/css" id="fs_print_fields_styles">
             /* Change color in edit mode only */
             #wrapwrap .drop_in_print_field > span {
