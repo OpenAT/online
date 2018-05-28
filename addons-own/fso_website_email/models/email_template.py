@@ -79,6 +79,7 @@ class EmailTemplate(models.Model):
             if r.reply_to and not is_valid_email(r.reply_to):
                 raise ValidationError(_("Field 'reply_to' contains no valid e-mail address!"))
 
+    @api.one
     @api.depends('body_html', 'fso_template_view_id')
     def _compute_html(self):
         for r in self:
@@ -88,10 +89,11 @@ class EmailTemplate(models.Model):
 
                 # Render the ir.ui.view qweb template with r.body_html field
                 # HINT: Will output an UTF-8 encoded str
+                print_fields = self.env['fso.print_field'].search([])
                 content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
                                                          'email_editor_mode': False,
                                                          'record': r,
-                                                         'print_fields': self.env['fso.print_field'].search([]),
+                                                         'print_fields': print_fields,
                                                          })
 
                 # Get the base url of current request or from ir.config parameters
