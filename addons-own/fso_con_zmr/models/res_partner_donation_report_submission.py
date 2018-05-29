@@ -433,14 +433,23 @@ class ResPartnerFADonationReport(models.Model):
         })
 
         # Update the submission log with state and error information if any
-        submission_log = f.get('submission_log', False)
-        if submission_log:
+        if f.get('submission_log', False):
+            # Always append to the existing submission log of the donation report submission
+            submission_log = self.submission_log or ''
+
+            # Append submission_log from kwargs
+            submission_log += f['submission_log']
+
+            # Append log with state and error information
             submission_log += "state: %s\n" % f['state']
             all_error_fields = error_fields + response_error_fields
             for error_f in all_error_fields:
                 if locals().get(error_f, False):
                     submission_log += "%s:\n%s\n" % (error_f, locals().get(error_f))
             submission_log += "----------------------------------------\n\n"
+
+            # update submission log in f
+            f['submission_log'] = submission_log
 
         # Update the submission
         # ---------------------
@@ -569,18 +578,20 @@ class ResPartnerFADonationReport(models.Model):
             request_data = r.submission_content.replace('###SessionID###', fo_session_id, 1)
 
             # Prepare submission time and log
+            # HINT: update_submission() will always append the submission_log to any existing submission_log
             # -------------------------------
             submission_datetime = fields.datetime.now()
-            submission_log = r.submission_log or ''
-            submission_log += "Submission Request on %s:\n" % submission_datetime
+            submission_log = "Submission Request on %s:\n" % submission_datetime
 
+            # -------------------------------------------------------------------------------------------------
             # Set all donation reports to state 'submitted' so that they can not be removed from the submission
             # -------------------------------------------------------------------------------------------------
             # HINT: Nothing else needs to be done because we know all reports have the correct infos by
             #       compute_submission_values() above.
             logger.info("Set donation report(s) state to 'submitted' for donation-report-submission (ID %s)!" % r.id)
-            r.donation_report_ids.write({'state': 'submitted'})
+            r.donation_report_ids.write({'state': 'submitted', 'submission_id_datetime': submission_datetime})
 
+            # -----------------------------------------------------
             # Submit the report to FinanzOnline File Upload Service
             # -----------------------------------------------------
             start_time = time.time()
@@ -608,51 +619,51 @@ class ResPartnerFADonationReport(models.Model):
             except:
                 request_duration = False
 
+            # ---------------------
+            # Evaluate the response
+            # ---------------------
+
             # Check for an empty response object
             # ----------------------------------
+            # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+            # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+            #            exist in the DataBox 48 hours after the submission_datetime
             if not response:
                 submission_log += "EMPTY RESPONSE OBJECT!\n"
                 r.update_submission(state='unexpected_response',
                                     response_error_type='unexpected_no_response',
                                     response_error_code='empty_response_object',
+                                    submission_datetime=submission_datetime,
                                     submission_log=submission_log,
                                     request_duration=request_duration)
-                # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
 
-            # Update submission log with response data
-            # ----------------------------------------
-            submission_log += "Response HTTP Status Code: %s\n" % response.status_code
-            submission_log += "Response Content:\n%s\n" % response.content
-
-            # ------------------
-            # Parse the response
-            # ------------------
+            # Prepare submission values
+            # -------------------------
+            # Get response code and answer
             response_http_code = response.status_code
             response_content = response.content
 
-            # Prepare the values
-            # ATTENTION: Submission log is already included!
+            # Update submission log with response information
+            submission_log += "Response HTTP Status Code: %s\n" % response_http_code
+            submission_log += "Response Content:\n%s\n" % response_content
+
+            # Prepare the submission values
             vals = {'submission_datetime': submission_datetime,
                     'submission_log': submission_log,
+                    #
                     'response_http_code': response_http_code,
                     'response_content': response_content,
                     'response_content_parsed': False,
+                    #
                     'request_duration': request_duration,
                     }
 
-            # Copy the submission datetime to the donation reports now that we have an response
-            # ---------------------------------------------------------------------------------
-            # HINT: submission_id_datetime is set so we know when we submitted (or at least tried to) in the reports
-            #       this is good in FRST and for last submitted report computation in the donation reports
-            # HINT: state must be also set again to avoid the state computation of the donation reports
-            logger.info("Set donation report(s) state to 'submitted' AND the 'submission_id_datetime' after we got an"
-                        "response from Finanz online for donation-report-submission (ID %s)!" % r.id)
-            r.donation_report_ids.write({'state': 'submitted', 'submission_id_datetime': submission_datetime})
-
-            # Response http code NOT 200
-            # --------------------------
-            if response.status_code != 200:
+            # Response with error from FinanzOnline
+            # -------------------------------------
+            # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
+            # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
+            if response_http_code != 200:
                 r.update_submission(state='error',
                                     error_type='http_code_not_200',
                                     error_code=response_http_code,
@@ -662,37 +673,61 @@ class ResPartnerFADonationReport(models.Model):
 
             # Response http code IS 200 but no content
             # ----------------------------------------
+            # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+            # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+            #            exist in the DataBox 48 hours after the submission_datetime
             if not response.content:
                 r.update_submission(state='unexpected_response',
                                     response_error_type='unexpected_no_content',
                                     response_error_code='no_response_content',
                                     **vals)
-                # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
 
-            # Try to parse the response content as xml
-            # ----------------------------------------
+            # Evaluate the response content
+            # -----------------------------
             try:
+                # Try to Parse the content as xml
                 parser = etree.XMLParser(remove_blank_text=True)
                 response_etree = etree.fromstring(response.content, parser=parser)
                 response_pprint = etree.tostring(response_etree, pretty_print=True)
             except Exception as e:
+                # Answer could not be parsed
+                # --------------------------
+                # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+                # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+                #            exist in the DataBox 48 hours after the submission_datetime
                 r.update_submission(state='unexpected_response',
                                     response_error_type='unexpected_parser',
                                     response_error_detail='Content could not be parsed:\n%s' % repr(e),
                                     **vals)
-                # HINT: Will not reset the donation reports to state 'new' because this should never happen!
                 continue
+
+            # Add the pretty printed answer to the submission values
             vals['response_content_parsed'] = response_pprint
 
             # Search for a return code of the file upload service
-            # ---------------------------------------------------
             returncode = response_etree.find(".//{*}rc")
             returncode = returncode.text if returncode is not None else False
             returnmsg = response_etree.find(".//{*}msg")
             returnmsg = returnmsg.text if returnmsg is not None else response_pprint
-            # File Upload Service error
-            if returncode and returncode != '0':
+
+            # No return code found in answer
+            # ------------------------------
+            # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+            # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+            #            exist in the DataBox 48 hours after the submission_datetime
+            if not returncode:
+                r.update_submission(state='unexpected_response',
+                                    response_error_type='unexpected_parser',
+                                    response_error_detail='Found no return code in answer:\n%s' % response_pprint,
+                                    **vals)
+                continue
+
+            # FinanzOnline File Upload known ERROR
+            # ------------------------------------
+            # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
+            # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
+            elif returncode != '0':
                 r.update_submission(state='error',
                                     error_type=r.file_upload_error_return_codes().get(returncode, 'file_upload_error'),
                                     error_code=returncode,
@@ -702,8 +737,9 @@ class ResPartnerFADonationReport(models.Model):
 
             # FileUpload was successful (The normal response)
             # -----------------------------------------------
-            r.update_submission(state='submitted', **vals)
-            continue
+            else:
+                r.update_submission(state='submitted', **vals)
+                continue
 
     @api.multi
     def process_response_file(self):
@@ -880,9 +916,20 @@ class ResPartnerFADonationReport(models.Model):
         if s.state not in ['submitted', 'unexpected_response']:
             raise ValidationError(_("It is not possible to check FinanzOnline Databox response in state %s") % s.state)
 
+        # Try to get the last submission date
+        if not s.submission_datetime and s.state == 'unexpected_response':
+            # HINT: This is a hack to get the latest submission_datetime from the submission log
+            #       This is necessary because submission_datetime was not stored for empty responses earlier
+            # HINT: [-1] will get only the last result from findall
+            submission_datetime = ''.join(re.findall(
+                ur"(?u)(?<=Submission Request on )\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}", s.submission_log
+            )[-1])
+            submission_datetime = fields.datetime.strptime(submission_datetime, '%Y-%m-%d %H:%M:%S')
+        else:
+            submission_datetime = fields.datetime.strptime(s.submission_datetime, fields.DATETIME_FORMAT)
+
         # Check if the Submission date of the donation report is not older than 31 days
         # HINT: Only documents that are 31 days or less can be listed and downloaded from the databox
-        submission_datetime = fields.datetime.strptime(s.submission_datetime, fields.DATETIME_FORMAT)
         download_deadline = submission_datetime + datetime.timedelta(days=30)
         if fields.datetime.now() > download_deadline:
             error_msg = _("The answer protocol for submission with ID %s can only be downloaded from the FinanzOnline "
@@ -953,7 +1000,7 @@ class ResPartnerFADonationReport(models.Model):
                 error_msg += "\n%s" % repr(e)
                 raise ValidationError(error_msg)
 
-            # Force Update the databox_listing field!
+            # Update the databox_listing field!
             s.databox_listing = response_pprint or response.content
 
             # Try to find the returncode and message
@@ -972,6 +1019,7 @@ class ResPartnerFADonationReport(models.Model):
             response_file_applkey = False
             response_file = False
             response_file_pretty = False
+
             # Loop through the listed files in he xml
             for result in response_etree.iterfind(".//{*}result"):
                 filebez = result.find(".//{*}filebez")
@@ -1044,10 +1092,25 @@ class ResPartnerFADonationReport(models.Model):
                             pass
                         break
 
-            # No file found
+            # No response file could be found
             if not response_file:
-                raise ValidationError("No protocol file found in FinanzOnline DataBox for this submission! "
-                                      "Please try again later!")
+                # HINT: If we can not find a response file for a submission in state 'unexpected_response'
+                #       24 Hours after it's submission we consider it as not received by FinanzOnline and therefore
+                #       change the state to 'error'
+                if s.state == 'unexpected_response':
+                    if datetime.datetime.now() > submission_datetime + datetime.timedelta(hours=24):
+                        msg = "No response file found after 24 hours for donation report submission in state " \
+                              "'unexpected_response'! Setting state of submission to 'error'!"
+                        logger.warning(msg)
+                        s.update_submission(state='error',
+                                            error_type='file_upload_error',
+                                            error_code=False,
+                                            error_detail=msg,
+                                            submission_log=msg)
+                        return True
+                else:
+                    raise ValidationError("No protocol file found in FinanzOnline DataBox for this submission! "
+                                          "Please try again later!")
 
             # Force update the response_file
             s.response_file_applkey = response_file_applkey
