@@ -1229,6 +1229,7 @@ class ResPartnerFADonationReport(models.Model):
         ])
         if not fiscal_years:
             logger.warning("scheduled_submission() No fiscal year found to auto-generate submission for!")
+            return
 
         # Process every fiscal year
         for y in fiscal_years:
@@ -1246,11 +1247,10 @@ class ResPartnerFADonationReport(models.Model):
                             "" % (y.meldungs_jahr, y.id))
                 continue
 
-            # Check if there are already newer submitted submissions than drg_last
+            # Check 'auto submission needed' based on drg_last and drg_last_count
+            # -------------------------------------------------------------------
             if y.drg_last and y.drg_last_count:
                 drg_last = datetime.datetime.strptime(y.drg_last, DEFAULT_SERVER_DATETIME_FORMAT)
-
-                # Skipp automatic donation report submission for this meldejahr if newer submissions exists already
                 newer_than_drg_last = self.sudo().search([
                     ('meldungs_jahr', '=', y.meldungs_jahr),
                     ('bpk_company_id', '=', y.company_id.id),
@@ -1260,15 +1260,18 @@ class ResPartnerFADonationReport(models.Model):
                     ('submission_datetime', '>', y.drg_last),
                     ('create_date', '>', y.drg_last),
                 ])
+
+                # Newer submission found!
+                # SKIPP automatic donation report submission for this meldejahr
                 if newer_than_drg_last:
                     logger.info("scheduled_submission() Submissions newer than last donation report generation in FRST "
                                 "found for meldejahr %s (ID %s). Submission ids: %s. Skipping automatic submission!"
                                 "" % (y.meldungs_jahr, y.id, newer_than_drg_last.ids))
-                    # TODO: Check if the number of new donation reports matches drg_last_count and send warning if not
                     continue
 
-                # Check if the donation reports are synced already
+                # No submission found later than drg_last (Donation report generation in FRST)
                 else:
+
                     # Check if the number of new donation reports matches drg_last_count
                     new_reports = self.env['res.partner.donation_report'].sudo().search([
                         ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1276,13 +1279,18 @@ class ResPartnerFADonationReport(models.Model):
                         ('submission_env', '=', 'P'),
                         ('create_date', '>', y.drg_last),
                     ])
+
+                    # SKIPP automatic donation report submission if less than 24 hours and not enough donation reports!
+                    # HINT: This works because the auto submission is run every day - so after 24h it will
+                    #       submit the reports even if less than drg_last_count are found.
                     if not new_reports or len(new_reports) < y.drg_last_count:
-                        # Wait up to 24 hours for the sync to finish
                         if now < (drg_last + datetime.timedelta(hours=24)):
                             logger.info("scheduled_submission() WARNING! There may be unsynced donation reports! "
                                         "Waiting for 24 hours since drg_last for sync to finish! Skipping this "
                                         "meldejahr for next run %s (ID %s)" % (y.meldungs_jahr, y.id))
                             continue
+                        # Not enough donation reports synced AFTER 24 hours:
+                        # Send a warning and go on with the auto submission
                         else:
                             manual_msg = ("scheduled_submission() WARNING! There may be unsynced donation reports! "
                                           "New reports found in FSON: %s Number of reports created in FRST: %s"
@@ -1291,7 +1299,8 @@ class ResPartnerFADonationReport(models.Model):
                             logger.warning(manual_msg)
                             send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
 
-            # Skip autom. donation report submission if still inside of cron task interval
+            # Check 'auto submission needed' based on cron_task interval
+            # -----------------------------------------------------------
             else:
                 # Find last submitted donation report for this fiscal year
                 last_submitted = self.sudo().search([
@@ -1300,13 +1309,11 @@ class ResPartnerFADonationReport(models.Model):
                     ('state', 'not in', ['new', 'prepared', 'error']),
                     ('manual', '=', False),
                     ('submission_env', '=', 'P'),
+                    ('submission_datetime', '!=', False),
                 ], limit=1, order='submission_datetime DESC')
 
-                # Skip if last submission is newer than fiscal year interval
+                # Skipping auto submission because last submission still in interval range set at fiscal year
                 if last_submitted:
-
-                    cron_task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission')
-
                     if not y.drg_interval_type or y.drg_interval_type != 'days':
                         logger.error("Interval type must be set to 'days' for field 'drg_interval_type'!")
 
@@ -1317,7 +1324,8 @@ class ResPartnerFADonationReport(models.Model):
                                     "in interval range set at fiscal year!")
                         continue
 
-            # Check for unsubmitted manual donation report submissions
+            # Check and warn for unsubmitted manual donation report submissions
+            # -----------------------------------------------------------------
             manual_not_send = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
                 ('bpk_company_id', '=', y.company_id.id),
@@ -1331,7 +1339,8 @@ class ResPartnerFADonationReport(models.Model):
                 logger.warning(manual_msg)
                 send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
 
-            # Submit non manual existing donation report submissions
+            # Submit non-manual existing submissions
+            # --------------------------------------
             existing = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
                 ('bpk_company_id', '=', y.company_id.id),
@@ -1343,7 +1352,8 @@ class ResPartnerFADonationReport(models.Model):
                 if prepare(s):
                     submit(s)
 
-            # Submit non linked donation reports
+            # Auto-Submit non linked donation reports
+            # ---------------------------------------
             reports = True
             max_subm = 10
             while reports and max_subm > 0:
@@ -1379,8 +1389,8 @@ class ResPartnerFADonationReport(models.Model):
     def scheduled_databox_check(self):
         logger.info("scheduled_databox_check() START")
 
-        # Search for submitted donation reports
-        submitted = self.sudo().search([('state', '=', 'submitted')])
+        # Search for submissions in state 'submitted' and 'unexpected_response'
+        submitted = self.sudo().search([('state', 'in', ['submitted', 'unexpected_response'])])
         logger.info("scheduled_databox_check() Found %s submitted donation reports" % len(submitted))
 
         # Check the databox answers
@@ -1396,7 +1406,6 @@ class ResPartnerFADonationReport(models.Model):
     # ------------------------
     # Install / Update Methods (called by XML file action records)
     # ------------------------
-
     # HINT: Called by file: delete_action_on_install_update.xml
     @api.model
     def check_scheduled_tasks(self):

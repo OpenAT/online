@@ -95,6 +95,9 @@ TODO (must be done manually right now):
         'website_seo_url',
         'website_seo_url_product',
         'cron_run_manually',
+        'smile_web_export',
+        'smile_web_search_range',
+        'smile_web_search_timedelta',
         # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',
