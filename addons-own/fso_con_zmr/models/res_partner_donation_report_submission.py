@@ -1412,7 +1412,10 @@ class ResPartnerFADonationReport(models.Model):
         logger.info("Check if the scheduled task for autom. donation report submission must be renewed.")
 
         # Recreate odoo scheduler task for autom. donation report submission if interval or type where changed by user
-        task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission')
+        try:
+            task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission')
+        except:
+            task = False
         if task and (task.interval_number != 1 or task.interval_type != 'days'):
             logger.warning("fso_con_zmr check_scheduled_tasks(). Deleting cron task %s on install/update to "
                            "recreate it with correct values")
