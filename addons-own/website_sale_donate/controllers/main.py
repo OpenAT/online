@@ -492,42 +492,34 @@ class website_sale_donate(website_sale):
     # Set mandatory billing and shipping fields
     def _get_mandatory_billing_fields(self):
         billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False)])
-        mandatory_bill = []
-        for field in billing_fields:
-            if field.mandatory:
-                mandatory_bill.append(field.res_partner_field_id.name)
-        #print "mandatory_bill %s" % mandatory_bill
+        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
+                                                ('show', '=', True),
+                                                ('mandatory', '=', True)])
+        mandatory_bill = [field.res_partner_field_id.name for field in billing_fields]
         return mandatory_bill
 
     def _get_optional_billing_fields(self):
         billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False)])
-        optional_bill = []
-        for field in billing_fields:
-            if not field.mandatory:
-                optional_bill.append(field.res_partner_field_id.name)
-        #print "optional_bill %s" % optional_bill
+        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
+                                                ('show', '=', True),
+                                                ('mandatory', '=', False)])
+        optional_bill = [field.res_partner_field_id.name for field in billing_fields]
         return optional_bill
 
     def _get_mandatory_shipping_fields(self):
         shipping_fields = request.env['website.checkout_shipping_fields']
-        shipping_fields = shipping_fields.search([])
-        mandatory_ship = []
-        for field in shipping_fields:
-            if field.mandatory:
-                mandatory_ship.append(field.res_partner_field_id.name)
-        #print "mandatory_ship %s" % mandatory_ship
+        shipping_fields = shipping_fields.search([('res_partner_field_id', '!=', False),
+                                                  ('show', '=', True),
+                                                  ('mandatory', '=', True)])
+        mandatory_ship = [field.res_partner_field_id.name for field in shipping_fields]
         return mandatory_ship
 
     def _get_optional_shipping_fields(self):
         shipping_fields = request.env['website.checkout_shipping_fields']
-        shipping_fields = shipping_fields.search([])
-        optional_ship = []
-        for field in shipping_fields:
-            if not field.mandatory:
-                optional_ship.append(field.res_partner_field_id.name)
-        #print "optional_ship %s" % optional_ship
+        shipping_fields = shipping_fields.search([('res_partner_field_id', '!=', False),
+                                                  ('show', '=', True),
+                                                  ('mandatory', '=', False)])
+        optional_ship = [field.res_partner_field_id.name for field in shipping_fields]
         return optional_ship
 
     # =================

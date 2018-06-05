@@ -246,7 +246,8 @@
                         <t t-if="f_type in ('boolean', 'char', 'selection', 'date') or f_name in ['country_id', 'state_id']">
                             <!-- FORM GROUP -->
                             <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
-                                <!-- LABEL for all fields -->
+                                
+                                <!-- ALL FIELD TYPES: LABEL -->
                                 <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
                                        t-att-for="f_name">
                                     <!-- BOOLEAN FIELDS -->
@@ -259,7 +260,8 @@
                                     </t>
                                     <t t-raw="billing_field.label"/>
                                 </label>
-                                <!-- MODAL BOX (LINK AND CONTENT) for all fields -->
+                                
+                                <!-- ALL FIELD TYPES: MODAL BOX -->
                                 <t t-if="billing_field.information">
                                     <!-- Modal Box Button-Link -->
                                     <href type="button"
@@ -294,17 +296,19 @@
                                         </div>
                                     </div>
                                 </t>
+                                
                                 <!-- CHAR FIELDS -->
                                 <t t-if="f_type == 'char'">
                                     <input type="text"
                                            t-att-name="f_name"
                                            class="form-control"
-                                           t-att-value="checkout.get(f_name)"
+                                           t-att-value="checkout.get(f_name) if not billing_field.nodata else ''"
                                            t-att-placeholder="billing_field.placeholder"
                                            t-att-required="billing_field.mandatory"
                                            t-att="validation_rule"
                                     />
                                 </t>
+                                
                                 <!-- DATE FIELDS -->
                                 <t t-if="f_type == 'date'">
                                     <t t-set="date_de"
@@ -313,30 +317,84 @@
                                     <input type="text"
                                            t-att-name="f_name"
                                            class="form-control"
-                                           t-att-value="date_de"
+                                           t-att-value="date_de if not billing_field.nodata else ''"
                                            t-att-placeholder="billing_field.placeholder"
                                            t-att-required="billing_field.mandatory"
                                            t-att="validation_rule"
                                     />
                                 </t>
+                                
                                 <!-- SELECTION FIELDS -->
-                                <!-- TODO: option to render selection fields as radio buttons -->
                                 <t t-if="f_type == 'selection'">
-                                    <select t-att-name="f_name" class="form-control"
-                                            t-att-required="billing_field.mandatory">
-                                        <!-- Default empty option -->
-                                        <option value=""><t t-esc="billing_field.placeholder"/></option>
-                                        <!-- Selection Values as options -->
-                                        <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
-                                            <!-- Set default country from res.config if none selected -->
-                                            <option t-att-value="option[0]"
-                                                    t-att-selected="True if checkout.get(f_name) == option[0] else ''">
-                                                <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
-                                            </option>
+                                    
+                                    <!--<select t-att-name="f_name" -->
+                                            <!--class="form-control"-->
+                                            <!--t-att-required="billing_field.mandatory">-->
+                                        <!--&lt;!&ndash; Default empty option &ndash;&gt;-->
+                                        <!--<option value=""><t t-esc="billing_field.placeholder"/></option>-->
+                                        <!--&lt;!&ndash; Selection Values as options &ndash;&gt;-->
+                                        <!--<t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">-->
+                                            <!--&lt;!&ndash; Set default country from res.config if none selected &ndash;&gt;-->
+                                            <!--<option t-att-value="option[0]"-->
+                                                    <!--t-att-selected="True if checkout.get(f_name) == option[0] else ''">-->
+                                                <!--<t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>-->
+                                            <!--</option>-->
+                                        <!--</t>-->
+                                    <!--</select>-->
+                                    
+                                    <!-- Selection Field: List Style -->
+                                    <t t-if="billing_field.style == 'selection' or not billing_field.style">
+                                        <select t-att-id="f_name"
+                                                t-att-name="f_name"
+                                                class="form-control"
+                                                t-att-required="billing_field.mandatory">
+                                            <!-- Default empty option -->
+                                            <option value=""><t t-esc="billing_field.placeholder"/></option>
+                                            <!-- Selection Values as options -->
+                                            <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                                <!-- Create Option List -->
+                                                <option t-att-value="option[0]"
+                                                        t-att-selected="True if checkout.get(f_name) == option[0] and not billing_field.nodata else ''">
+                                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </t>
+
+                                    <!-- Selection Field: Radio Buttons Style -->
+                                    <t t-if="billing_field.style in ('radio', 'radio_selectnone')">
+                                        <t t-if="billing_field.style == 'radio_selectnone'">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio"
+                                                           t-att-id="f_name + '_noselection'"
+                                                           t-att-name="f_name"
+                                                           value=""
+                                                           t-att-checked="True if not partner[f_name] and not checkout.get(f_name) else None"
+                                                    />
+                                                    <t t-esc="billing_field.placeholder or 'No Selection'"/>
+                                                </label>
+                                            </div>
                                         </t>
-                                    </select>
+                                        <t t-foreach="request.env['res.partner']._columns[f_name].selection or []" t-as="option">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio"
+                                                           t-att-id="option[0]"
+                                                           t-att-name="f_name"
+                                                           t-att-value="option[0]"
+                                                           t-att-checked="True if checkout.get(f_name) == option[0] and not billing_field.nodata else None"
+                                                    />
+                                                    <t t-esc="dict(request.env['res.partner'].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                </label>
+                                            </div>
+                                        </t>
+                                    </t>                                    
+                                    
+                                    
                                 </t>
-                                <!-- SPECIAL FIELD: BILLING COUNTRY -->
+                                
+                                <!-- Special field rendered as selection: country_id -->
                                 <t t-if="f_name == 'country_id'">
                                     <select t-att-name="f_name"
                                             class="form-control"
@@ -345,13 +403,14 @@
                                         <t t-foreach="countries or []" t-as="country">
                                             <!-- Set default country from res.config if none selected -->
                                             <option t-att-value="country.id"
-                                                    t-att-selected="'True' if (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''">
+                                                    t-att-selected="'True' if not billing_field.nodata and (country.id == checkout.get('country_id') or (country.id != checkout.get('country_id') and country.code == website.country_default_value.code)) else ''">
                                                 <t t-esc="country.name"/>
                                             </option>
                                         </t>
                                     </select>
                                 </t>
-                                <!-- SPECIAL FIELD: BILLING STATE -->
+                                
+                                <!-- Special field rendered as selection: state_id -->
                                 <t t-if="f_name == 'state_id'">
                                     <select t-att-name="f_name"
                                             class="form-control"
@@ -360,12 +419,13 @@
                                         <t t-foreach="states or []" t-as="state">
                                             <option t-att-value="state.id" style="display:none;"
                                                     t-att-data-country_id="state.country_id.id"
-                                                    t-att-selected="state.id == checkout.get('state_id')">
+                                                    t-att-selected="True if state.id == checkout.get('state_id') and not billing_field.nodata else None">
                                                 <t t-esc="state.name"/>
                                             </option>
                                         </t>
                                     </select>
                                 </t>
+                                
                             </div>
                         </t>
     
