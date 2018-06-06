@@ -1,36 +1,3 @@
-/* ----- */
-/* FONTS */
-/* ----- */
-h1, h2, h3, h4, h5, h6,
-.headerCell, .footerCell,
-.textContent, .textContentLast,
-.buttonContent,
-.emailCalendarDay, .emailCalendarMonth {
-    font-family: "Open Sans", -apple-system, "Segoe UI", sans-serif;
-}
-
-/* ------------ */
-/* RESET STYLES */
-/* ------------ */
-table {
-    border-collapse: collapse;
-}
-
-img, a img {
-    border: 0;
-    outline: none;
-    text-decoration: none;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-    padding: 0;
-}
-
-p {
-    margin: 1em 0;
-}
-
 /* ---------------------- */
 /* CLIENT-SPECIFIC STYLES */
 /* ---------------------- */
@@ -45,7 +12,6 @@ p {
 /* Force Hotmail/Outlook.com to display emails at full width. */
 .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
     line-height: 100%;
-    /*line-height: initial;*/
 }
 
 /* Force Hotmail/Outlook.com to display line heights normally. */
@@ -80,16 +46,28 @@ body, table, td, p, a, li, blockquote, div {
 /* MAIN CONTAINERS */
 /* --------------- */
 
-/* html > body > #bodyTable > #bodyCell > #emailBody  */
-/* 100%   100%   100%         100%        600px       */
-
-html, body, #bodyTable, #bodyCell {
+/* RESET ODOO THEME SETTINGS FIRST */
+html, body, #wrapwrap, #wrap, #bodyTable, #bodyCell {
     height: 100% !important;
     width: 100% !important;
-    margin: 0;
-    padding: 0;
-    background-color: #F0F0F0;
+}
+html, body, #wrapwrap, #wrap, #bodyTable, #bodyCell,
+footer > #footer, footer > .container,
+header > #header, header > .container{
+    background: none;
+    /*background-color: #F0F0F0;*/
     border: 0 solid transparent;
+    margin: 0 auto;
+    padding: 0;
+    max-width: initial;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+/* html > body > #bodyTable > #bodyCell > #emailBody  */
+/* 100%   100%   100%         100%        600px       */
+html, body, #bodyTable, #bodyCell {
+    background-color: #F0F0F0;
 }
 
 #bodyCell {
@@ -99,6 +77,7 @@ html, body, #bodyTable, #bodyCell {
 
 #emailBody {
     width: 600px;
+    margin: 0 auto;
     overflow: hidden;
     /* styles */
     background-color: #FFFFFF;
@@ -162,94 +141,10 @@ html, body, #bodyTable, #bodyCell {
     width: 100%;
 }
 
-/* ------ */
-/* STYLES */
-/* ------ */
-.imageContent, .imageContentLast {
-    text-align: center;
-}
 
-h1, h2, h3, h4, h5, h6 {
-    font-size: 16px;
-    /*color: #000000;*/
-    line-height: 125%;
-    /*line-height: initial;*/
-    text-align: left;
-}
-h1 {
-    font-weight: 700;
-    font-size: 48px;
-    margin-bottom: 30px;
-}
-h2 {
-    font-weight: 700;
-    font-size: 21px;
-    margin-bottom: 16px;
-}
-h3 {
-    font-weight: 700;
-    font-size: 16px;
-    margin-bottom: 14px;
-}
-
-.textContent, .textContentLast {
-    color: #1a1e25;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 145%;
-    /*line-height: initial;*/
-    text-align: left;
-}
-
-.textContent a, .textContentLast a {
-    color: #007593;
-    text-decoration: underline;
-}
-
-.headerCell, .footerCell {
-    font-size: 11px;
-    color: #000000;
-}
-
-.headerCell {
-    padding-top: 20px;
-}
-
-.footerCell {
-    padding-bottom: 20px;
-}
-
-.headerCell a, .footerCell a {
-    font-size: 11px;
-    color: #000000;
-}
-
-.emailButton {
-    background-color: #007593;
-    border-collapse: separate;
-    border-radius: 5px;
-}
-
-.buttonContent {
-    color: #FFFFFF;
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 100%;
-    /*line-height: initial;*/
-    padding: 15px;
-    text-align: center;
-}
-
-.buttonContent a {
-    color: #FFFFFF;
-    display: block;
-    text-decoration: none;
-}
-
-
-/* ------------- */
-/* MOBILE STYLES */
-/* ------------- */
+/* ----------------------- */
+/* FRAMEWORK MOBILE STYLES */
+/* ----------------------- */
 @media only screen and (max-width: 480px) {
     /* CLIENT-SPECIFIC STYLES */
     body {

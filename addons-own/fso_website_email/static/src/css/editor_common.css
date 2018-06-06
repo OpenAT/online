@@ -13,11 +13,21 @@ body .oe_mobile_preview.modal .modal-content .modal-header .modal-title {
     font-size: 12px;
 }
 
+/* Edit button for image links */
+.hover-edition-button {
+    position: absolute !important;
+}
+
 /* Snippet Drop Zone Size */
 .oe_drop_zone.oe_insert {
     height: 24px;
     margin-top: -4px;
     margin-bottom: -20px;
+}
+/* FIX FOR DROPZONE INDICATORS */
+/* ATTENTION: REMOVE THIS IF IT CAUSES ANY TROUBLES */
+#emailBody {
+    position: relative;
 }
 
 /* no text decoration for snippet option buttons */

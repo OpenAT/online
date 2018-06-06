@@ -6,6 +6,7 @@
     -->
     
     <!-- ASSETS EDIT MODE -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_assets_editmode">
         <!-- Common Editor CSS -->
         <link href='/fso_website_email/static/src/css/editor_common.css' rel='stylesheet' type='text/css' t-ignore="true"/>
@@ -36,11 +37,13 @@
     </template>
     
     <!-- ASSETS COMMON -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_assets_common">
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
     </template>
     
     <!-- ASSETS THEME DEFAULT EDITMODE -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_default_assets_editmode">
         <!-- Snippets -->
         <script type="text/javascript">
@@ -61,6 +64,7 @@
     </template>
     
     <!-- ASSETS THEME DEFAULT -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_default_assets">
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
     </template>

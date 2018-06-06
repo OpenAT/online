@@ -477,13 +477,12 @@
                         
                         <!-- DROP_IN(s): drop_in -->
                         <!-- =================== -->
-                        <div data-snippet-option-id='drop_in'
+                        <div data-snippet-option-id="drop_in"
                              data-selector=".drop_in"
-                             data-selector-children="
-                                 .ckediting_enabled div, .ckediting_enabled p, .ckediting_enabled pre, .ckediting_enabled strong,
-                                 .ckediting_enabled h1, .ckediting_enabled h2, .ckediting_enabled h3, .ckediting_enabled h4, .ckediting_enabled h5, .ckediting_enabled h6,
-                                 "
-                             data-selector-siblings=".drop_in">
+                             data-selector-siblings=".drop_in"
+                             data-selector-children=".snippet_block .ckediting_enabled p,
+                                                     .snippet_block .ckediting_enabled h1, .snippet_block .ckediting_enabled h2, .snippet_block .ckediting_enabled h3, .snippet_block .ckediting_enabled h4, .snippet_block .ckediting_enabled h5, .snippet_block .ckediting_enabled h6,
+                                                     .snippet_block .ckediting_enabled span, .snippet_block .ckediting_enabled strong, .snippet_block .ckediting_enabled pre">
                         </div>
                         
                         <!-- OPTION_GROUP: drop_in_print_field -->

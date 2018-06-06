@@ -3,19 +3,20 @@
 <data>
     
     <!-- ASSETS THEME DADI -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag  (even if just empty) MUST exist in an assets template -->
     <template id="theme_dadi_assets">
         <!-- EXAMPLE: Load local css files or even external style sheets and or js -->
+        <link href='/fso_website_email/static/src/css/theme_dadi.css' rel='stylesheet' type='text/css' t-ignore="true"/>
+        
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css' t-ignore="true"/>
         
-        <!-- EXAMPLE: Theme CSS -->
-        <style type="text/css">
-            body {
-                background-color: inherit;
-            }
+        <style>
+        
         </style>
     </template>
     
     <!-- ASSETS THEME DADI EDITMODE -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_dadi_assets_editmode">
         
         <!-- EXAMPLE: Load custom snippets template -->
@@ -102,13 +103,13 @@
             </head>
 
 
-            <body>
+            <body class="ckediting_disabled">
                 <!-- EDITOR MODE AND COMMON JAVA SCRIPT ASSETS -->
                 <t t-call="fso_website_email.theme_body_common">
 
                     <!-- Dadi Template based on mailchimp boilerplate -->
                     <center>
-                        <table id="bodyTable" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+                        <table id="bodyTable" class="ckediting_disabled" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
 
                             <!-- HEADER -->
                             <tr>
