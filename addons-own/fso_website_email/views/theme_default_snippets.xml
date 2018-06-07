@@ -358,7 +358,8 @@
                                 <span class="oe_snippet_thumbnail_title">Button</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
-                            <span class="oe_snippet_body ckediting_enabled drop_in drop_in_button" contenteditable="true">
+                            <span class="oe_snippet_body ckediting_enabled drop_in drop_in_button dadi_di_button_default dadi_di_button_normal dadi_di_button_inline"
+                                  contenteditable="true">
                                 <a href="#">BUTTON</a>
                             </span>
                             
@@ -387,9 +388,10 @@
                         <div data-snippet-option-id='dadi_sb_spacer_height'
                              data-selector=".snippet_block_spacer">
                             <!-- Snippet options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Spacer Size</a>
                                 <ul class="dropdown-menu">
+                                    <li data-value='dadi_sb_spacer_none'><a>None</a></li>
                                     <li data-value='dadi_sb_spacer_normal'><a>Normal</a></li>
                                     <li data-value='dadi_sb_spacer_medium'><a>Medium</a></li>
                                     <li data-value='dadi_sb_spacer_large'><a>Large</a></li>
@@ -400,7 +402,7 @@
                         <div data-snippet-option-id='dadi_sb_spacer_style'
                              data-selector=".snippet_block_spacer">
                             <!-- Snippet options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Spacer Style</a>
                                 <ul class="dropdown-menu">
                                     <li data-value='dadi_sb_spacer_none'><a>None</a></li>
@@ -417,9 +419,10 @@
                                             .snippet_block_text_image_left,
                                             .snippet_block_text_image_right">
                             <!-- Snippet options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Foreground Style</a>
                                 <ul class="dropdown-menu">
+                                    <li data-value=''><a>None</a></li>
                                     <li data-value='dadi_sb_fg_transparent'><a>Transparent</a></li>
                                     <li data-value='dadi_sb_fg_lightgrey'><a>Background Grey</a></li>
                                     <li data-value='dadi_sb_fg_grey'><a>Grey</a></li>
@@ -433,9 +436,10 @@
                         <div data-snippet-option-id='dadi_sb_fg_width'
                              data-selector=".snippet_block_text_intro, .snippet_block_spacer">
                             <!-- Snippet options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Foreground Width</a>
                                 <ul class="dropdown-menu">
+                                    <li data-value=''><a>None</a></li>
                                     <li data-value='dadi_sb_fg_full'><a>Full Width</a></li>
                                     <li data-value='dadi_sb_fg_normal'><a>Normal</a></li>
                                     <li data-value='dadi_sb_fg_narrow'><a>Narrow</a></li>
@@ -447,9 +451,10 @@
                         <div data-snippet-option-id='dadi_sb_bg_color'
                              data-selector=".snippet_block">
                             <!-- Snippet options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Background Style</a>
                                 <ul class="dropdown-menu">
+                                    <li data-value=''><a>None</a></li>
                                     <li data-value='dadi_sb_bg_transparent'><a>Transparent</a></li>
                                     <li data-value='dadi_sb_bg_lightgrey'><a>Background Grey</a></li>
                                     <li data-value='dadi_sb_bg_grey'><a>Grey</a></li>
@@ -465,9 +470,10 @@
                                             .snippet_block_banner,
                                             .snippet_block_text_intro">
                             <!-- Snippet options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Background Width</a>
                                 <ul class="dropdown-menu">
+                                    <li data-value=''><a>None</a></li>
                                     <li data-value='dadi_sb_bg_full'><a>Full Width</a></li>
                                     <li data-value='dadi_sb_bg_normal'><a>Normal</a></li>
                                     <li data-value='dadi_sb_bg_narrow'><a>Narrow</a></li>
@@ -496,7 +502,7 @@
                         <div data-snippet-option-id='drop_in_button_style'
                              data-selector=".drop_in_button">
                             <!-- drop_in options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Style</a>
                                 <ul class="dropdown-menu">
                                     <li data-value='dadi_di_button_default'><a>Default</a></li>
@@ -513,7 +519,7 @@
                         <div data-snippet-option-id='drop_in_button_size'
                              data-selector=".drop_in_button">
                             <!-- drop_in options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Size</a>
                                 <ul class="dropdown-menu">
                                     <li data-value='dadi_di_button_normal'><a>Normal</a></li>
@@ -528,7 +534,7 @@
                         <div data-snippet-option-id='drop_in_button_width'
                              data-selector=".drop_in_button">
                             <!-- drop_in options menu -->
-                            <li class="dropdown-submenu">
+                            <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Position</a>
                                 <ul class="dropdown-menu">
                                     <li data-value='dadi_di_button_inline'><a>In Line</a></li>

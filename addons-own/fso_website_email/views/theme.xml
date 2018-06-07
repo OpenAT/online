@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-    <!--
-        Common Sub-Templates for the E-Mail Themes and Templates
-    -->
+
+    <!-- E-MAIL CONTENT ('body_html' field for snippets) -->
+    <template id="content">
+        <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+    </template>
     
-    <!-- ASSETS EDIT MODE -->
+    
+    <!-- COMMON ASSETS EDIT MODE (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
-    <template id="theme_assets_editmode">
+    <template id="common_assets_editmode">
         <!-- Common Editor CSS -->
-        <link href='/fso_website_email/static/src/css/editor_common.css' rel='stylesheet' type='text/css' t-ignore="true"/>
+        <link href='/fso_website_email/static/src/css/common_editmode.css' rel='stylesheet' type='text/css' t-ignore="true"/>
         
         <!-- Load additional templates -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/load_templates.js"/>
@@ -18,34 +21,19 @@
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_common.js"/>
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_default_settings.js"/>
         
-        <!-- Snippets -->
-        <script type="text/javascript">
-            //<![CDATA[
-                (function () {
-                    'use strict';
-                    var website = openerp.website;
-                    website.if_dom_contains('#email_designer', function () {
-                        website.snippet.BuildingBlock.include({
-                            _get_snippet_url: function () {
-                                return '/fso/email/snippets?snippets_template=fso_website_email.theme_default_snippets';
-                            }
-                        });
-                    });
-                })();
-            //]]>
-        </script>
     </template>
     
-    <!-- ASSETS COMMON -->
+    <!-- COMMON ASSETS (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
-    <template id="theme_assets_common">
-        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
+    <template id="common_assets">
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/common.css' t-ignore="true"/>
     </template>
     
-    <!-- ASSETS THEME DEFAULT EDITMODE -->
+    
+    <!-- THEME 'DEFAULT': EDITOR ASSETS (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_default_assets_editmode">
-        <!-- Snippets -->
+        <!-- Set Snippets Template URL to avoid loading the website snippets -->
         <script type="text/javascript">
             //<![CDATA[
                 (function () {
@@ -63,16 +51,11 @@
         </script>
     </template>
     
-    <!-- ASSETS THEME DEFAULT -->
+    <!-- THEME 'DEFAULT': ASSETS (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_default_assets">
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
-    </template>
-    
-    
-    <!-- E-MAIL CONTENT ('body_html' field for snippets) -->
-    <template id="content">
-        <div t-field="record.body_html" id="email_body_html" class="o_mail_body"/>
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default_snippet.css' t-ignore="true"/>
     </template>
     
     
@@ -83,8 +66,8 @@
         <meta name="viewport" content="initial-scale=1"/>
         <meta name="generator" content="Fundraising Studio Online"/>
         
-        <!--<meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>-->
-        <!--<meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>-->
+        <meta name="description" t-att-content="main_object and 'website_meta_description' in main_object and main_object.website_meta_description or website_meta_description"/>
+        <meta name="keywords" t-att-content="main_object and 'website_meta_keywords' in main_object and main_object.website_meta_keywords or website_meta_keywords"/>
 
         <title>
             <t t-esc="record.subject if record and record.subject else 'FS-Online E-Mail Editor'"/>
@@ -98,27 +81,29 @@
             </t>
         </t>
 
-        <!-- EDITOR ASSETS -->
+        <!-- ====================== -->
+        <!-- EDIT MODE ASSETS (CSS) -->
+        <!-- ====================== -->
         <t t-if="email_editor_mode">
-            <!-- Odoo framework CSS assets -->
+            <!-- Odoo -->
             <t t-call-assets="web.assets_common" t-js="false"/>
             <t t-call-assets="website.assets_frontend" t-js="false"/>
             <t t-call-assets="website.assets_editor" t-js="false"/>
             
-            <!-- Common CSS edit mode assets -->
-            <t t-call-assets="fso_website_email.theme_assets_editmode" t-js="false"/>
+            <!-- Common -->
+            <t t-call-assets="fso_website_email.common_assets_editmode" t-js="false"/>
             
-            <!-- Theme 'DEFAULT' CSS edit mode assets -->
+            <!-- Theme 'DEFAULT' -->
             <t t-if="load_default_theme">
                 <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-js="false"/>
             </t>
         </t>
         
-        <!-- COMMON CSS ASSETS -->
-        <t t-call-assets="fso_website_email.theme_assets_common" t-js="false"/>
-        
-        <!-- PRINT FIELDS CSS -->
-        <!-- HINT: I put this here because t-call-assets will not receive any variables! -->
+        <!-- ============ -->
+        <!-- ASSETS (CSS) -->
+        <!-- ============ -->
+        <!-- Print Fields -->
+        <!-- ATTENTION: Not able to put in assets because <t-call-assets ...> will not receive any variables! -->
         <style type="text/css" id="fs_print_fields_styles">
             /* Change color in edit mode only */
             #wrapwrap .drop_in_print_field > span {
@@ -138,13 +123,16 @@
                 }
             </t>
         </style>
-
-        <!-- THEME 'DEFAULT' CSS ASSETS -->
+        
+        <!-- Common-->
+        <t t-call-assets="fso_website_email.common_assets" t-js="false"/>
+        
+        <!-- Theme 'DEFAULT' -->
         <t t-if="load_default_theme">
             <t t-call-assets="fso_website_email.theme_default_assets" t-js="false"/>
         </t>
         
-        <!-- INTERNET EXPLORER HACKS FOR DEFAULT THEME -->
+        <!-- Theme 'DEFAULT': Internet Explorer Hacks -->
         <t t-if="load_default_theme">
             <t t-set='ie_comments'>
             <![CDATA[
@@ -193,7 +181,7 @@
             <t t-raw="ie_comments"/>
         </t>
         
-        <!-- Load custom head code from qweb template if any -->
+        <!-- CODE INJECTION (all inside <t t-call> ... </t> -->
         <t t-raw="0"/>
         
     </template>
@@ -204,20 +192,24 @@
         
         <!-- EDITOR ENABLED -->
         <t t-if="email_editor_mode">
+            
+            <!-- Wrap email editor (#wrapwrap) around theme content -->
             <t t-call="fso_website_email.email_editor">
                 <!-- Theme content -->
                 <t t-raw="0"/>
             </t>
             
-            <!-- Odoo framework java script assets -->
+            <!-- ASSETS EDITMODE (JS) -->
+            <!-- ==================== -->
+            <!-- Odoo -->
             <t t-call-assets="web.assets_common" t-css="false"/>
             <t t-call-assets="website.assets_frontend" t-css="false"/>
             <t t-call-assets="website.assets_editor" t-css="false"/>
             
-            <!-- Common java script edit mode assets -->
-            <t t-call-assets="fso_website_email.theme_assets_editmode" t-css="false"/>
+            <!-- Common -->
+            <t t-call-assets="fso_website_email.common_assets_editmode" t-css="false"/>
             
-            <!-- Theme default edit mode java script assets -->
+            <!-- Theme 'DEFAULT' -->
             <t t-if="load_default_theme">
                 <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-css="false"/>
             </t>
@@ -229,10 +221,12 @@
             <t t-raw="0"/>
         </t>
         
-        <!-- JAVA SCRIPT ASSETS IN ALL MODES -->
-        <!-- Common java script assets -->
-        <t t-call-assets="fso_website_email.theme_assets_common" t-css="false"/>
-        <!-- Theme default java script assets -->
+        <!-- ASSETS (JS) -->
+        <!-- =========== -->
+        <!-- Common -->
+        <t t-call-assets="fso_website_email.common_assets" t-css="false"/>
+        
+        <!-- Theme 'DEFAULT' -->
         <t t-if="load_default_theme">
             <t t-call-assets="fso_website_email.theme_default_assets" t-css="false"/>
         </t>
