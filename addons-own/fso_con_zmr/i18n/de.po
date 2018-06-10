@@ -224,7 +224,7 @@ msgstr "BPK mehrfach verwendet"
 #: model:ir.ui.menu,name:fso_con_zmr.fso_menu_res_partner_bpk_res_partner_menu
 #: model:ir.ui.menu,name:fso_con_zmr.res_partner_bpk_res_partner_menu
 msgid "BPK Partner"
-msgstr "Kontakte (geplant)"
+msgstr "Personen"
 
 #. module: fso_con_zmr
 #: field:res.company,bpk_found:0
@@ -712,7 +712,7 @@ msgstr "Spendenmeldungs-Übertragung"
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_search
 #: view:res.partner.donation_report.submission:fso_con_zmr.res_partner_donation_report_submission_tree
 msgid "Donation Report Submissions"
-msgstr "Spendenm. Übertragung"
+msgstr "FinanzOnline Übertrag."
 
 #. module: fso_con_zmr
 #: code:addons/fso_con_zmr/models/res_partner_donation_report.py:112
