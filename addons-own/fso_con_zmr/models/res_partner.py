@@ -945,6 +945,9 @@ class ResPartnerZMRGetBPK(models.Model):
         for p in self:
             errors[p.id] = ""
 
+            # TODO: If force_request is set to True we need to completely delete the BPK Request(s) before we compute
+            # TODO: the state
+
             # Check if a BPK request is still needed/possible
             # HINT: This will update the partner bpk_state field
             p.set_bpk_state()
