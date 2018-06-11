@@ -47,8 +47,10 @@
                     _config: function () {
                         // Run the original method to modify it's result
                         var config =  this._super();
-                        // Add Custom font and font background colors
+                        
+                        // Custom text and text-background colors
                         config.colorButton_colors = 'fafafa,aaaaaa,cccccc';
+                        
                         // return the config
                         return config;
                     }
