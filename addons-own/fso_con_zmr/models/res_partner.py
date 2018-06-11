@@ -514,13 +514,21 @@ class ResPartnerZMRGetBPK(models.Model):
         birthdate = escape(birthdate) if birthdate else ''
         zipcode = escape(zipcode) if zipcode else ''
 
-        responses = {}
         responses_first = {}
+        responses = {}
 
-        # 1.) Try with full birthdate and cleaned names
-        responses_first = _request_with_log(first_clean, last_clean, birthdate, '')
+        # 0.) First try with nearly unchanged data
+        # HINT: Cleanup will remove just the special chars (or Austrian ZMR will fail with 'non xml valid chars')
+        first_basic_clean = clean_name(firstname, full_cleanup=False)
+        last_basic_clean = clean_name(lastname, full_cleanup=False)
+        responses_first = _request_with_log(first_basic_clean, last_basic_clean, birthdate, zipcode)
         if self.response_ok(responses_first):
             return responses_first
+
+        # 1.) Try with full birthdate and cleaned names
+        responses = _request_with_log(first_clean, last_clean, birthdate, '')
+        if self.response_ok(responses):
+            return responses
 
         # 2.) Try with zipcode, full birthdate and cleaned names
         if zipcode:
@@ -567,15 +575,6 @@ class ResPartnerZMRGetBPK(models.Model):
                 responses = _request_with_log(first_clean_nosplit, last_clean, year, zipcode)
                 if self.response_ok(responses):
                     return responses
-
-        # 6.) Last try with nearly unchanged data
-        # HINT: Will remove all special chars (or Austrian ZMR will fail with an 'non xml valid chars' error)
-        first_basic_clean = clean_name(firstname, full_cleanup=False)
-        last_basic_clean = clean_name(lastname, full_cleanup=False)
-        if not responses or first_basic_clean != first_clean or last_basic_clean != last_clean:
-            responses = _request_with_log(first_basic_clean, last_basic_clean, birthdate, zipcode)
-            if self.response_ok(responses):
-                return responses
 
         # Update log also in responses_first
         for r in responses_first:
