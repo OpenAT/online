@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sosync
+import wizard
 
 # basics
 import res_partner

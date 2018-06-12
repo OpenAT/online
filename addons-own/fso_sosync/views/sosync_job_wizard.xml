@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <record model="ir.ui.view" id="delete_syncjob_wizard_form_view">
+        <field name="name">Delete done sync jobs</field>
+        <field name="model">sosync.job.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Delete sync jobs">
+                <group string="Select Jobs to delete">
+                    <field name="delete_jobs_before"/>
+                    <field name="delete_jobs_state"/>
+                </group>
+                <group string="Found jobs to delete">
+                    <field name="sync_job_ids"/>
+                </group>
+                <footer>
+                    <h1>WARNING: Deletion can not be undone!</h1>
+                    <br />
+                    <button name="delete_sync_jobs" type="object"
+                            string="Delete sync jobs" class="oe_highlight"/>
+                    or
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <act_window id="launch_delete_syncjob_wizard"
+                name="Mass delete sync jobs"
+                src_model="sosync.job"
+                res_model="sosync.job.wizard"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"/>
+    
+</data></openerp>
