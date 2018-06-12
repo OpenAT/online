@@ -190,7 +190,8 @@ class ResPartnerBPK(models.Model):
         # Update the partner bpk_state and therefore the donation-report state also!
         try:
             if res and partner:
-                partner.sudo().write({'bpk_state': 'pending', 'bpk_request_needed': fields.datetime.now()})
+                partner.sudo().write({'bpk_state': 'pending', 'bpk_request_needed': fields.datetime.now(),
+                                      'bpk_request_error_tries': 0})
         except Exception as e:
             logger.error("Could not set bpk_state for partner to pending at bpk-request unlink!")
             pass

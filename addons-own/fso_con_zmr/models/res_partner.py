@@ -118,7 +118,7 @@ class ResPartnerZMRGetBPK(models.Model):
         #       rate-limiting schemes.
         return ['404', '408', '429', '500', '502', '503', '504']
 
-    def _zmr_error_codes(self, include_temporal=False):
+    def _zmr_error_codes(self, temporary_only=False):
         """
         szr-3.0-anwenderdokumentation_v3_4.pdf
 
@@ -156,13 +156,14 @@ class ResPartnerZMRGetBPK(models.Model):
         :return:
         """
 
-        # Only the most common codes are inkluded for now. Extend as needed
-        # Used in all_bpk_requests_matches_partner_data
-        codes = ('F230', 'F231', 'F233')
-        if include_temporal:
-            codes += ('F490', 'F501', 'F502', 'F504')
-
-        return codes
+        if temporary_only:
+            # Temporary errors
+            temporary_errors = ('F490', 'F501', 'F502', 'F504')
+            return temporary_errors
+        else:
+            # Expected (regular) errors
+            expected_errors = ('F230', 'F231', 'F233')
+            return expected_errors
 
     # ----------------
     # INTERNAL METHODS
@@ -335,11 +336,11 @@ class ResPartnerZMRGetBPK(models.Model):
                     responses.append(result)
                     continue
 
-                # Check for http error codes
-                if response.status_code != 200:
+                # Check for errors
+                error_code = response_etree.find(".//faultcode")
+                if response.status_code != 200 or error_code is not None:
                     result['response_http_error_code'] = response.status_code
                     result['response_content'] = response_pprint
-                    error_code = response_etree.find(".//faultcode")
                     result['faultcode'] = error_code.text if error_code is not None else str(response.status_code)
                     error_text = response_etree.find(".//faultstring")
                     result['faulttext'] = error_text.text if error_text is not None else response.reason or 'Unknown!'
@@ -494,7 +495,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
         # CHECK INPUT DATA
         if not all((firstname, lastname, birthdate)):
-            raise ValueError(_("request_bpk() Firstname, Lastname and Birthdate are needed for a BPK request!"))
+            raise ValueError(_("request_bpk() Firstname, Lastname and a valid Birthdate are needed for a BPK request!"))
 
         # firstname cleanup
         first_clean = clean_name(firstname, split=True) or clean_name(firstname, split=False)
@@ -751,8 +752,10 @@ class ResPartnerZMRGetBPK(models.Model):
         for r in self:
             if any(r[f] for f in self._bpk_forced_fields()):
                 if all(r[f] for f in self._bpk_forced_fields()):
+                    # TODO: Maybe we should also check here if Birthdate is not in the future?
                     return True
             elif all(r[f] for f in self._bpk_regular_fields()):
+                # TODO: Maybe we should also check here if Birthdate is not in the future?
                 return True
 
         return False
@@ -766,7 +769,7 @@ class ResPartnerZMRGetBPK(models.Model):
         Will return False if multiple BPK requests exists for any company
         Will return False if the fields of any BPK request do not match the fields of the partner
         Will return False for a request logic mismatch
-        Will return False for unknown errors (if BPKErrorRequest was the latest request and the ErrorCode is unknown)
+        Will return False for unknown or temporal errors (missing error code)
 
         :param companies: Only compare the bpk requests for given companies
         :return:
@@ -812,9 +815,9 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Last BPK request returned an error: Prepare BPK data from BPKErrorRequest
             if bpk.bpk_error_request_date > bpk.bpk_request_date:
-                # Check for unknown BPK errors
-                # HINT: For file imports there may not be any error code at all
-                if not bpk.bpk_error_code or not any(code in bpk.bpk_error_code for code in self._zmr_error_codes()):
+                # Check for unknown errors (without faultcode, may happen for file imports) or temporary errors
+                temporal_zmr_error_codes = self._zmr_error_codes(temporary_only=True)
+                if not bpk.bpk_error_code or any(code in bpk.bpk_error_code for code in temporal_zmr_error_codes):
                     return False
                 # Check the request logic version
                 if bpk.bpk_error_request_version != self.request_bpk(version=True):
@@ -892,7 +895,8 @@ class ResPartnerZMRGetBPK(models.Model):
                     write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'bpk_request_needed': now()})
                     continue
 
-            # 4.3 Check if the partner data matches all bpk requests
+            # 4.3 Check if the current partner data still matches all bpk requests
+            # HINT: This will also check for temporary errors, request version and others!
             if r.bpk_request_ids:
                 if not r.all_bpk_requests_matches_partner_data():
                     write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'bpk_request_needed': now()})
@@ -1089,7 +1093,9 @@ class ResPartnerZMRGetBPK(models.Model):
             logger.info("set_bpk(): errors: %s" % errors[p.id])
             p.write({'last_bpk_request': now(),
                      'bpk_request_error': errors[p.id] or False,
-                     'bpk_request_error_tries': 0 if not error_code or error_known else p.bpk_request_error_tries + 1})
+                     'bpk_request_error_tries': 0 if bpk_respones[0].get('private_bpk', '') or error_known
+                                                else p.bpk_request_error_tries + 1,
+                     })
             #p.set_bpk_state()
             continue
 
