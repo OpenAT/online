@@ -22,7 +22,7 @@ class DeleteSyncJobWizard(models.TransientModel):
                                                     ("skipped", "Skipped")],
                                          string="In State", default='done')
 
-    sync_job_ids = fields.Many2many('sosync.job.queue', string="Sync Jobs to Delete",
+    sync_job_ids = fields.Many2many('sosync.job', string="Sync Jobs to Delete",
                                     readonly=True, compute="_compute_sync_job_ids")
 
     @api.onchange('delete_jobs_before', 'delete_jobs_state')

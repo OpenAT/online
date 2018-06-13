@@ -14,5 +14,31 @@
         <field name="function">scheduled_job_queue_submission</field>
         <field name="args" eval="'()'"/>
     </record>
+    
+    <record id="ir_cron_scheduled_job_queue_cleanup" model="ir.cron">
+        <field name="name">SOSYNC: Clean sosync queue</field>
+        <field name="priority" eval="3000" />
+        <field name="active" eval="True"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">sosync.job.queue</field>
+        <field name="function">delete_old_jobs</field>
+        <field name="args" eval="'()'"/>
+    </record>
+    
+    <record id="ir_cron_scheduled_job_cleanup" model="ir.cron">
+        <field name="name">SOSYNC: Clean sosync jobs</field>
+        <field name="priority" eval="3000" />
+        <field name="active" eval="True"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">sosync.job</field>
+        <field name="function">delete_old_jobs</field>
+        <field name="args" eval="'()'"/>
+    </record>
 
 </data></openerp>

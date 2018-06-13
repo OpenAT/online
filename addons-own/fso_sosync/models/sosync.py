@@ -4,6 +4,7 @@ from openerp import api, models, fields, osv
 from openerp.tools.translate import _
 from openerp.addons.fso_base.tools.validate import is_valid_url
 from openerp.exceptions import ValidationError
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 import requests
 from requests import Request, Session
@@ -239,6 +240,20 @@ class SosyncJob(models.Model):
                     }
             job_queue.sudo().create(data)
 
+    # -----------------------------------------------
+    # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE CLEANUP
+    # -----------------------------------------------
+    @api.model
+    def delete_old_jobs(self):
+        delete_before = datetime.datetime.now() - datetime.timedelta(days=90)
+        delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+        domain = [('write_date', '<=', delete_before),
+                  ('job_state', 'in', ['done', 'skipped'])]
+        jobs_to_delete = self.search(domain)
+        if jobs_to_delete:
+            logger.warning("Found %s sync jobs for cleanup" % len(jobs_to_delete))
+            jobs_to_delete.unlink()
+
 
 # NEW ODOO MODEL: sosync.job.queue
 class SosyncJobQueue(models.Model):
@@ -436,6 +451,20 @@ class SosyncJobQueue(models.Model):
 
         # Log processing info
         logger.info("Processed %s Sync Jobs" % processed_jobs_counter)
+
+    # -----------------------------------------------
+    # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE CLEANUP
+    # -----------------------------------------------
+    @api.model
+    def delete_old_jobs(self):
+        delete_before = datetime.datetime.now() - datetime.timedelta(days=30)
+        delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+        domain = [('job_date', '<=', delete_before),
+                  ('submission_state', '=', 'submitted')]
+        jobs_to_delete = self.search(domain)
+        if jobs_to_delete:
+            logger.warning("Found %s jobs in job queue for cleanup" % len(jobs_to_delete))
+            jobs_to_delete.unlink()
 
 
 # NEW ABSTRACT MODEL: base.sosync
