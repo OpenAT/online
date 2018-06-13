@@ -67,7 +67,7 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         'data/actions.xml',
         'data/scheduled_actions.xml',
         'data/user_sosync.xml',
-        'data/actions_on_update_install.xml',
+        #'data/actions_on_update_install.xml',
     ],
     'qweb': [
         "static/src/xml/base.xml",
