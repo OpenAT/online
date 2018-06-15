@@ -249,7 +249,7 @@ class SosyncJob(models.Model):
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('write_date', '<=', delete_before),
                   ('job_state', 'in', ['done', 'skipped'])]
-        jobs_to_delete = self.search(domain)
+        jobs_to_delete = self.search(domain, limit=50000)
         if jobs_to_delete:
             logger.warning("Found %s sync jobs for cleanup" % len(jobs_to_delete))
             jobs_to_delete.unlink()
@@ -461,7 +461,7 @@ class SosyncJobQueue(models.Model):
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('job_date', '<=', delete_before),
                   ('submission_state', '=', 'submitted')]
-        jobs_to_delete = self.search(domain)
+        jobs_to_delete = self.search(domain, limit=50000)
         if jobs_to_delete:
             logger.warning("Found %s jobs in job queue for cleanup" % len(jobs_to_delete))
             jobs_to_delete.unlink()
