@@ -249,8 +249,14 @@ class SosyncJob(models.Model):
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('write_date', '<=', delete_before),
                   ('job_state', 'in', ['done', 'skipped'])]
-        jobs_to_delete = self.search(domain, limit=50000)
+        jobs_to_delete = self.search(domain, limit=1)
         if jobs_to_delete:
+            # TODO: Change this to custom SQL code for performace
+            #       1.) Delete (and backup for restore) the indexes
+            #       2.) Disable any triggers on the table
+            #       3.) Delete the rows by sql with the domain (select) from above
+            #       4.) Restore the indexes
+            #       5.) Enable the trigger
             logger.warning("Found %s sync jobs for cleanup" % len(jobs_to_delete))
             jobs_to_delete.unlink()
 
@@ -461,8 +467,14 @@ class SosyncJobQueue(models.Model):
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('job_date', '<=', delete_before),
                   ('submission_state', '=', 'submitted')]
-        jobs_to_delete = self.search(domain, limit=50000)
+        jobs_to_delete = self.search(domain, limit=1)
         if jobs_to_delete:
+            # TODO: Change this to custom SQL code for performance
+            #       1.) Delete (and backup for restore) the indexes
+            #       2.) Disable any triggers on the table
+            #       3.) Delete the rows by sql with the domain (select) from above
+            #       4.) Restore the indexes
+            #       5.) Enable the trigger
             logger.warning("Found %s jobs in job queue for cleanup" % len(jobs_to_delete))
             jobs_to_delete.unlink()
 

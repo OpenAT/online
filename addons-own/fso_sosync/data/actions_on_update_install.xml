@@ -2,7 +2,8 @@
 <openerp><data noupdate="0">
 
     <!-- Run this methods on install / update of the addon -->
-    <function model="sosync.job" name="delete_old_jobs"/>
-    <function model="sosync.job.queue" name="delete_old_jobs"/>
+    <!-- DISABLED BECAUSE PERFORMACE IS TOO SLOW -->
+    <!--<function model="sosync.job" name="delete_old_jobs"/>-->
+    <!--<function model="sosync.job.queue" name="delete_old_jobs"/>-->
 
 </data></openerp>

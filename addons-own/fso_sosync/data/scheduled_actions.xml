@@ -15,10 +15,10 @@
         <field name="args" eval="'()'"/>
     </record>
     
-    <record id="ir_cron_scheduled_job_queue_cleanup" model="ir.cron">
+    <record id="ir_cron_scheduled_job_queue_cleanup_1" model="ir.cron">
         <field name="name">SOSYNC: Clean sosync queue</field>
         <field name="priority" eval="3000" />
-        <field name="active" eval="True"/>
+        <field name="active" eval="False"/>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
@@ -28,10 +28,10 @@
         <field name="args" eval="'()'"/>
     </record>
     
-    <record id="ir_cron_scheduled_job_cleanup" model="ir.cron">
+    <record id="ir_cron_scheduled_job_cleanup_1" model="ir.cron">
         <field name="name">SOSYNC: Clean sosync jobs</field>
         <field name="priority" eval="3000" />
-        <field name="active" eval="True"/>
+        <field name="active" eval="False"/>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
