@@ -75,6 +75,14 @@
                                 (Sie entspricht nicht der UID Nummer.)
                             </p>
                         </div>
+                        
+                        <field name="fa_crt_pem" widget="binary" filename="fa_crt_pem_filename"/>
+                        <field name="fa_crt_pem_filename" invisible="1"/>
+                        <field name="fa_crt_pem_path" readonly="True"/>
+
+                        <field name="fa_prvkey_pem" widget="binary" filename="fa_prvkey_pem_filename"/>
+                        <field name="fa_prvkey_pem_filename" invisible="1"/>
+                        <field name="fa_prvkey_pem_path" readonly="True"/>                        
 
                     </group>
                     <group string="Webservice Login Status">

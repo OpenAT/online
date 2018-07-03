@@ -11,6 +11,9 @@ _logger = logging.getLogger(__name__)
 
 
 # Fundraising Studio Groups
+# ATTENTION: This is the first and now deprecated implemetation of the Fundrasing Studio groups system
+#            TODO: This should be removed as quick as possible
+#            The new implementation is in frst_groups.py
 class FSGroups(models.Model):
     _name = 'fs.group'
     _description = 'Fundraising Studio Groups'

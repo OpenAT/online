@@ -91,6 +91,18 @@ class CompanyAustrianZMRSettings(models.Model):
                                      "(ohne Trennzeichen) (Fastnr_Org)",
                                 size=9, oldname="fa_orgid")
 
+    # FinanzOnline Requests SSL Zertifikate
+    # http://www.ridingbytes.com/2016/01/02/odoo-remember-the-filename-of-binary-files/
+    fa_crt_pem = fields.Binary(string="Certificate (PEM)")
+    fa_crt_pem_filename = fields.Char(string="Certificate Name", help="crt_pem")
+    fa_crt_pem_path = fields.Char(string="Certificate Path",
+                                  compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
+
+    fa_prvkey_pem = fields.Binary(string="Private Key (PEM)")
+    fa_prvkey_pem_filename = fields.Char(string="Private Key Name", help="prvkey_pem without password!")
+    fa_prvkey_pem_path = fields.Char(string="Private Key Path",
+                                     compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
+
     # Austrian Finanz Amt: Finanz Online Webservice Session and Login Information
     fa_login_sessionid = fields.Char(string="FinanzOnline Login SessionID", readonly=True)
 
@@ -132,7 +144,7 @@ class CompanyAustrianZMRSettings(models.Model):
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
     # https://www.odoo.com/de_DE/forum/hilfe-1/question/
     #     is-there-a-way-to-get-the-location-to-your-odoo-and-to-create-new-files-in-your-custom-module-89677
-    @api.depends('pvpToken_crt_pem', 'pvpToken_prvkey_pem')
+    @api.depends('pvpToken_crt_pem', 'pvpToken_prvkey_pem', 'fa_crt_pem', 'fa_prvkey_pem')
     def _certs_to_file(self):
         # http://stackoverflow.com/questions/21458155/get-file-path-from-binary-data
         assert config['data_dir'], "config['data_dir'] missing!"
@@ -147,22 +159,35 @@ class CompanyAustrianZMRSettings(models.Model):
                 if err.errno != errno.EEXIST:
                     raise
         for rec in self:
+            
             if rec.pvpToken_crt_pem:
                 crt_pem_file = pj(crt_dir, rec.pvpToken_crt_pem_filename)
                 with open(crt_pem_file, 'w') as f:
                     f.write(rec.pvpToken_crt_pem.decode('base64'))
-                # Write path to field
                 rec.pvpToken_crt_pem_path = crt_pem_file
+            
             if rec.pvpToken_prvkey_pem:
                 prvkey_pem_file = pj(crt_dir, rec.pvpToken_prvkey_pem_filename)
                 with open(prvkey_pem_file, 'w') as f:
                     f.write(rec.pvpToken_prvkey_pem.decode('base64'))
-                # Write path to field
                 rec.pvpToken_prvkey_pem_path = prvkey_pem_file
+
+            if rec.fa_crt_pem:
+                fa_crt_pem_file = pj(crt_dir, rec.fa_crt_pem_filename)
+                with open(fa_crt_pem_file, 'w') as f:
+                    f.write(rec.fa_crt_pem.decode('base64'))
+                rec.fa_crt_pem_path = fa_crt_pem_file
+
+            if rec.fa_prvkey_pem:
+                fa_prvkey_pem_file = pj(crt_dir, rec.fa_prvkey_pem_filename)
+                with open(fa_prvkey_pem_file, 'w') as f:
+                    f.write(rec.fa_prvkey_pem.decode('base64'))
+                rec.fa_prvkey_pem_path = fa_prvkey_pem_file
 
         # TODO: Delete old cert files on field changes (= new cert upload)
 
-    # TODO: on deletion of a company delete all related res.partner.bpk records
+    # TODO: on deletion of a company delete all related res.partner.bpk records! For this we must change the old trigger
+    #       names or any cascade delete will not work
 
     @api.multi
     def finanz_online_logout(self):
@@ -190,6 +215,8 @@ class CompanyAustrianZMRSettings(models.Model):
                                                          "%s") % fo_logout_template
             # Logout
             response = soap_request(url='https://finanzonline.bmf.gv.at:443/fonws/ws/sessionService',
+                                    crt_pem=c.fa_crt_pem_path,
+                                    prvkey_pem=c.fa_prvkey_pem_path,
                                     template=fo_logout_template,
                                     fo_logout={'tid': c.fa_tid,
                                                'benid': c.fa_benid,
@@ -274,6 +301,8 @@ class CompanyAustrianZMRSettings(models.Model):
 
         # HTTP SOAP REQUEST
         response = soap_request(url='https://finanzonline.bmf.gv.at:443/fonws/ws/sessionService',
+                                crt_pem=c.fa_crt_pem_path,
+                                prvkey_pem=c.fa_prvkey_pem_path,
                                 template=fo_login_template,
                                 fo_login={'tid': c.fa_tid,
                                           'benid': c.fa_benid,

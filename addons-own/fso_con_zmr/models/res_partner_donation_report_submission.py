@@ -600,7 +600,11 @@ class ResPartnerFADonationReport(models.Model):
                     'content-type': 'text/xml; charset=utf-8',
                     'SOAPAction': 'upload'
                 }
-                response = soap_request(url=r.submission_url, http_header=http_header, request_data=request_data,
+                response = soap_request(url=r.submission_url,
+                                        crt_pem=r.bpk_company_id.fa_crt_pem_path,
+                                        prvkey_pem=r.bpk_company_id.fa_prvkey_pem_path,
+                                        http_header=http_header,
+                                        request_data=request_data,
                                         timeout=120)
             except Exception as e:
                 # ATTENTION: Maybe this should be an 'unexpected_response' error instead of 'error'
@@ -979,6 +983,8 @@ class ResPartnerFADonationReport(models.Model):
                     'SOAPAction': 'getDatabox'
                 }
                 response = soap_request(url="https://finanzonline.bmf.gv.at/fon/ws/databox",
+                                        crt_pem=s.bpk_company_id.fa_crt_pem_path,
+                                        prvkey_pem=s.bpk_company_id.fa_prvkey_pem_path,
                                         http_header=http_header, request_data=req_body,
                                         timeout=120)
             except Exception as e:
@@ -1052,6 +1058,8 @@ class ResPartnerFADonationReport(models.Model):
                             'SOAPAction': 'getDataboxEntry'
                         }
                         download = soap_request(url="https://finanzonline.bmf.gv.at/fon/ws/databox",
+                                                crt_pem=s.bpk_company_id.fa_crt_pem_path,
+                                                prvkey_pem=s.bpk_company_id.fa_prvkey_pem_path,
                                                 http_header=http_header, request_data=req_body, timeout=120)
                     except Exception as e:
                         error_msg += "\n%s" % repr(e)
