@@ -123,5 +123,12 @@ TODO (must be done manually right now):
         'views/res_company.xml',
         'views/res_partner.xml',
         'views/fs_groups.xml',
+        #
+        'views/frst_personemail.xml',
+        #
+        'views/frst_zgruppe.xml',
+        'views/frst_zgruppedetail.xml',
+        'views/frst_persongruppe.xml',
+        'views/frst_personemailgruppe.xml',
     ],
 }

@@ -220,6 +220,7 @@
         <field name="arch" type="xml">
             <search string="BPK Requests">
                 <field name="display_name"/>
+                <field name="id"/>
                 <!-- field name="name"/ -->
                 <field name="firstname"/>
                 <field name="lastname"/>

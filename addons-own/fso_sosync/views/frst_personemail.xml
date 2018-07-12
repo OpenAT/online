@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend form to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_frst_personemail_form_fields">
+        <field name="name">sosync_frst_personemail_form_fields</field>
+        <field name="model">frst.personemail</field>
+        <field name="inherit_id" ref="fso_base.frst_personemail_form"/>
+        <field name="arch" type="xml">
+            <field name="last_email_update" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend tree to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_frst_personemail_tree_fields">
+        <field name="name">sosync_frst_personemail_tree_fields</field>
+        <field name="model">frst.personemail</field>
+        <field name="inherit_id" ref="fso_base.frst_personemail_tree"/>
+        <field name="arch" type="xml">
+            <field name="id" position="after">
+                <field name="sosync_fs_id" string="FS ID"/>
+            </field>
+            <field name="state" position="after">
+                <field name="sosync_sync_date" string="Last Sync"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Extend search to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_frst_personemail_search_fields">
+        <field name="name">sosync_frst_personemail_search_fields</field>
+        <field name="model">frst.personemail</field>
+        <field name="inherit_id" ref="fso_base.frst_personemail_search"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+</data></openerp>

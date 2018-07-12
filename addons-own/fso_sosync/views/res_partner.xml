@@ -21,9 +21,25 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
+            <field name="display_name" position="before">
+                <field name="id"/>
+            </field>
             <field name="email" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Extend res.partner search to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_res_partner_tree_fields">
+        <field name="name">sosync_res_partner_search_fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="id"/>
+                <field name="sosync_fs_id"/>
             </field>
         </field>
     </record>
@@ -49,6 +65,19 @@
         <field name="inherit_id" ref="fso_con_zmr.res_partner_bpk_res_partner_tree"/>
         <field name="arch" type="xml">
             <field name="write_date" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Extend fso_con_zmr res.partner search to include fs id -->
+    <record model="ir.ui.view" id="sosync_res_partner_fso_con_zmr_search_fields">
+        <field name="name">sosync_res_partner_fso_con_zmr_search_fields</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="fso_con_zmr.res_partner_bpk_res_partner_search"/>
+        <field name="arch" type="xml">
+            <field name="id" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_sync_date"/>
             </field>

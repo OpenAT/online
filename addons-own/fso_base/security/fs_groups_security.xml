@@ -2,8 +2,9 @@
 <openerp>
 <data noupdate="0">
 
+    <!-- ATTENTION: This group is also used for the new FRST Groups implementation -->
     <record id="group_fs_group_manager" model="res.groups">
-        <field name="name">FS Groups Manager</field>
+        <field name="name">FRST Groups Manager</field>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
