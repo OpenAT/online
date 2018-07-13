@@ -134,18 +134,6 @@ class FRSTPersonEmail(models.Model):
 
     # DISABLED: Active months of current year
     # ATTENTION: After a talk to devs and rufus we decided to not use the month grid for PersonEmail!
-    # january = fields.Boolean(string="January", default=True)
-    # february = fields.Boolean(string="February", default=True)
-    # march = fields.Boolean(string="March", default=True)
-    # april = fields.Boolean(string="April", default=True)
-    # may = fields.Boolean(string="May", default=True)
-    # june = fields.Boolean(string="June", default=True)
-    # july = fields.Boolean(string="July", default=True)
-    # august = fields.Boolean(string="August", default=True)
-    # september = fields.Boolean(string="September", default=True)
-    # october = fields.Boolean(string="October", default=True)
-    # november = fields.Boolean(string="November", default=True)
-    # december = fields.Boolean(string="December", default=True)
 
     # -------
     # METHODS
@@ -168,9 +156,7 @@ class FRSTPersonEmail(models.Model):
                 r.write({'state': state})
 
     # Compute a main_email address and set its field 'main_address' AND update field email of res.partner
-    # ATTENTION: res.partner 'email' will be updated on every main_address change
     # ATTENTION: 'main_address' will only be set if an email seems valid!
-    # ATTENTION: Make sure the 'state' is correct before running compute_main_address()
     @api.multi
     def compute_main_address(self):
         start_time = time.time()
@@ -216,7 +202,7 @@ class FRSTPersonEmail(models.Model):
         # Finally Log the duration and duration per record
         duration = time.time() - start_time
         duration_per_rec = duration / number_of_records if number_of_records else 0
-        logger.info("END compute_main_address() in %.3f ms (%.3f ms per record)" % (duration, duration_per_rec))
+        logger.info("END compute_main_address() in %.3f s (%.3f s per record)" % (duration, duration_per_rec))
 
     # HINT: Make sure the 'main_address' is correct before running compute_partner_email()
     @api.multi
@@ -265,7 +251,7 @@ class FRSTPersonEmail(models.Model):
         # Finally Log the duration and duration per record
         duration = time.time() - start_time
         duration_per_rec = duration / number_of_records if number_of_records else 0
-        logger.info("END compute_partner_email() in %.3f ms (%.3f ms per record)" % (duration, duration_per_rec))
+        logger.info("END compute_partner_email() in %.3f s (%.3f s per record)" % (duration, duration_per_rec))
 
     # ----
     # CRUD
@@ -319,19 +305,14 @@ class FRSTPersonEmail(models.Model):
         # ATTENTION: After super 'self' is changed 'res' is only a boolean !
         res = super(FRSTPersonEmail, self).write(values)
 
-        # Compute the 'state' if any field that may alter it is in values
-        if res and 'state' not in values:
-            if any(f in values for f in ('email', 'gueltig_von', 'gueltig_bis')):
-                self.compute_state()
+        if any(f in values for f in ('email', 'gueltig_von', 'gueltig_bis')):
+            # Compute the 'state'
+            self.compute_state()
 
-        # Compute the 'main_address' if any field that may alter it is in values
-        # HINT: Compute the 'main_address' after the state since it depends on it!
-        if res and 'main_address' not in values:
-            if any(f in values for f in ('email', 'gueltig_von', 'gueltig_bis')):
-                self.compute_main_address()
+            # Compute the 'main_address'
+            self.compute_main_address()
 
-        # If the main address changes compute the res.partner 'email' field
-        if res and 'main_address' in values:
+            # Update the field 'email' of the res.partner
             self.compute_partner_email()
 
         return res
@@ -395,7 +376,7 @@ class ResPartner(models.Model):
 
                     # Make sure this PartnerMail is the main_address
                     if not partnermail_exits.main_address:
-                        partnermail_exits.write({'email: r.email'})
+                        partnermail_exits.write({'email': r.email})
 
                 # Create PartnerEmail
                 else:
