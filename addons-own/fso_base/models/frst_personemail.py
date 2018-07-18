@@ -88,7 +88,7 @@ class FRSTPersonEmail(models.Model):
                                         index=True)
 
     # Partner related to this e-mail address
-    person_id = fields.Many2one(string="Person", required=True, ondelete='cascade',
+    partner_id = fields.Many2one(string="Person", required=True, ondelete='cascade',
                                 comodel_name="res.partner", inverse_name='frst_personemail_ids',
                                 help="This field should normally NEVER change after record creation. The only exception"
                                      "to this rule would be a quick typo fix after manual creation in FRST GUI.",
@@ -169,8 +169,8 @@ class FRSTPersonEmail(models.Model):
         while len(emails):
 
             # Find all PersonEmail addresses for this partner
-            p_id = emails[0].person_id.id
-            p_emails = emails.search([('person_id', '=', p_id)], order='last_email_update desc, create_date desc')
+            p_id = emails[0].partner_id.id
+            p_emails = emails.search([('partner_id', '=', p_id)], order='last_email_update desc, create_date desc')
 
             # Find active_main_email if any
             p_emails_active = p_emails.filtered(lambda m: m.state == 'active')
@@ -216,8 +216,8 @@ class FRSTPersonEmail(models.Model):
 
             # Find main_address
             # HINT: main_address is always an address in state 'active' which means the mail address seems valid!
-            p_id = emails[0].person_id.id
-            p_emails = emails.search([('person_id', '=', p_id)])
+            p_id = emails[0].partner_id.id
+            p_emails = emails.search([('partner_id', '=', p_id)])
             p_active = p_emails.filtered(lambda m: m.state == 'active')
             p_main_address = p_emails.filtered(lambda m: m.main_address)
 
@@ -226,20 +226,20 @@ class FRSTPersonEmail(models.Model):
                 # Try a fix if there is more than one main_address
                 if len(p_main_address) > 1:
                     p_main_address.compute_main_address()
-                    p_main_address = self.search([('person_id', '=', p_id),
+                    p_main_address = self.search([('partner_id', '=', p_id),
                                                   ('main_address', '=', True)])
                 assert len(p_main_address) <= 1, _("Partner with id %s has more than one PartnerEmail main_address!"
                                                    "") % p_id
 
                 # Sync the res.partner 'email' to the main_address
-                if p_main_address.person_id.email != p_main_address.email:
-                    p_main_address.person_id.email = p_main_address.email
+                if p_main_address.partner_id.email != p_main_address.email:
+                    p_main_address.partner_id.email = p_main_address.email
 
             # Unset res.partner 'email' field if no active PartnerEmail is left
             else:
                 assert not p_active, "Active PersonEmails found but no main_address!"
-                if p_emails[0].person_id.email:
-                    p_emails[0].person_id.email = False
+                if p_emails[0].partner_id.email:
+                    p_emails[0].partner_id.email = False
 
             # Remove the partner email addresses form the 'emails' recordset and continue the while loop
             records_count_before = len(emails)
@@ -321,10 +321,10 @@ class FRSTPersonEmail(models.Model):
     def unlink(self):
 
         # Find all partner and partneremails before we delete any of them
-        partner = self.mapped('person_id')
+        partner = self.mapped('partner_id')
         partneremails = partner.mapped('frst_personemail_ids')
         remaining_partneremails = partneremails - self
-        partners_with_partneremails_after_unlink = remaining_partneremails.mapped('person_id')
+        partners_with_partneremails_after_unlink = remaining_partneremails.mapped('partner_id')
         partner_without_personmail_after_unlink = partner - partners_with_partneremails_after_unlink
 
         # ATTENTION: After super 'self' still holds all the records BUT it is marked as deleted! res is just a boolean!
@@ -351,7 +351,7 @@ class FRSTPersonEmail(models.Model):
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='person_id',
+    frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
                                            string="FRST PersonEmail IDS")
 
     @api.multi
@@ -380,7 +380,7 @@ class ResPartner(models.Model):
 
                 # Create PartnerEmail
                 else:
-                    self.env['frst.personemail'].create({'email': r.email, 'person_id': r.id})
+                    self.env['frst.personemail'].create({'email': r.email, 'partner_id': r.id})
 
             # Deactivate PartnerEmail
             else:
@@ -404,7 +404,7 @@ class ResPartner(models.Model):
         # Create a PersonEmail
         email = values.get('email', False)
         if res and email:
-            res.env['frst.personemail'].create({'email': email, 'person_id': res.id})
+            res.env['frst.personemail'].create({'email': email, 'partner_id': res.id})
 
         return res
 

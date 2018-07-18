@@ -65,7 +65,7 @@ class FRSTPersonGruppe(models.Model):
                                        string="zGruppeDetail",
                                        domain=[('zgruppe_id.tabellentyp_id', '=', '100100')],
                                        required=True)
-    person_id = fields.Many2one(comodel_name="res.partner", inverse_name='persongruppe_ids',
+    partner_id = fields.Many2one(comodel_name="res.partner", inverse_name='persongruppe_ids',
                                 string="Person",
                                 required=True)
     steuerung_bit = fields.Boolean(string="Steuerung Bit")
@@ -77,7 +77,7 @@ class FRSTPersonGruppe(models.Model):
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='person_id',
+    persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='partner_id',
                                        string="FRST PersonGruppe IDS")
 
 

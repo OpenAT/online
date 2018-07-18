@@ -11,7 +11,7 @@
                 <group string="PersonEmail">
                     <group>
                         <field name="email"/>
-                        <field name="person_id"/>
+                        <field name="partner_id"/>
                         <!--<field name="forced_main_address"/>-->
                     </group>
                     <group>
@@ -56,7 +56,7 @@
             <tree string="PersonEmail">
                 <field name="id"/>
                 <field name="email"/>
-                <field name="person_id"/>
+                <field name="partner_id"/>
                 <field name="main_address"/>
                 <!--<field name="forced_main_address" string="Forced"/>-->
                 <field name="state"/>
