@@ -54,6 +54,7 @@ class ResPartnerBPK(models.Model):
     bpk_request_lastname = fields.Char(string="BPK Request Lastname", readonly=True, oldname="BPKRequestLastname")
     bpk_request_birthdate = fields.Date(string="BPK Request Birthdate", readonly=True, oldname="BPKRequestBirthdate")
     bpk_request_zip = fields.Char(string="BPK Request ZIP", readonly=True, oldname="BPKRequestZIP")
+    bpk_request_street = fields.Char(string="BPK Request Street", readonly=True)
 
     bpk_response_data = fields.Text(string="BPK Response Data", readonly=True, oldname="BPKResponseData")
     bpk_response_time = fields.Float(string="BPK Response Time", readonly=True, oldname="BPKResponseTime")
@@ -78,6 +79,7 @@ class ResPartnerBPK(models.Model):
     bpk_error_request_birthdate = fields.Date(string="BPK-Error Request Birthdate", readonly=True,
                                               oldname="BPKErrorRequestBirthdate")
     bpk_error_request_zip = fields.Char(string="BPK-Error Request ZIP", readonly=True, oldname="BPKErrorRequestZIP")
+    bpk_error_request_street = fields.Char(string="BPK-Error Request Street", readonly=True)
 
     bpk_error_response_data = fields.Text(string="BPK-Error Response Data", readonly=True,
                                           oldname="BPKErrorResponseData")

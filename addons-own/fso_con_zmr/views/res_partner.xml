@@ -16,6 +16,7 @@
                             <field name="bpk_forced_lastname" attrs="{'required': ['|', '|', ('bpk_forced_firstname', '!=', False), ('bpk_forced_birthdate', '!=', False), ('bpk_forced_zip', '!=', False)]}"/>
                             <field name="bpk_forced_birthdate" attrs="{'required': ['|', '|', ('bpk_forced_firstname', '!=', False), ('bpk_forced_lastname', '!=', False), ('bpk_forced_zip', '!=', False)]}"/>
                             <field name="bpk_forced_zip"/>
+                            <field name="bpk_forced_street"/>
                         </group>
                         <group string="BPK Processing Status">
                             <field name="bpk_state"/>
@@ -106,6 +107,7 @@
                             <field name="lastname"/>
                             <field name="birthdate_web"/>
                             <field name="zip"/>
+                            <field name="street"/>
                         </group>
                         <group>
                             <field name="id" readonly="True"/>
@@ -131,6 +133,7 @@
                             <field name="bpk_forced_lastname" attrs="{'required': ['|', '|', ('bpk_forced_firstname', '!=', False), ('bpk_forced_birthdate', '!=', False), ('bpk_forced_zip', '!=', False)]}"/>
                             <field name="bpk_forced_birthdate" attrs="{'required': ['|', '|', ('bpk_forced_firstname', '!=', False), ('bpk_forced_lastname', '!=', False), ('bpk_forced_zip', '!=', False)]}"/>
                             <field name="bpk_forced_zip"/>
+                            <field name="bpk_forced_street"/>
                         </group>
                         <group name="bpk_request_info">
                             <field name="bpk_request_needed"/>
@@ -200,12 +203,14 @@
                 <field name="lastname"/>
                 <field name="birthdate_web" string="Birth."/>
                 <field name="zip"/>
+                <field name="street"/>
                 <field name="donation_deduction_optout_web" string="OptOut"/>
                 <field name="donation_deduction_disabled" string="Disabled"/>
                 <field name="bpk_forced_firstname"/>
                 <field name="bpk_forced_lastname"/>
                 <field name="bpk_forced_birthdate" string="BPK Birth."/>
                 <field name="bpk_forced_zip"/>
+                <field name="bpk_forced_street"/>
                 <field name="write_date" readonly="True"/>
                 <field name="last_bpk_request"/>
                 <field name="bpk_state"/>
@@ -226,6 +231,7 @@
                 <field name="lastname"/>
                 <field name="birthdate_web"/>
                 <field name="zip"/>
+                <field name="street"/>
                 <field name="bpk_request_needed"/>
                 <field name="last_bpk_request"/>
                 <field name="write_date"/>

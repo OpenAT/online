@@ -8,6 +8,7 @@ from openerp.exceptions import ValidationError, Warning
 from openerp.tools.translate import _
 from openerp.addons.fso_base.tools.soap import soap_request, GenericTimeoutError
 from openerp.addons.fso_base.tools.name import clean_name
+from openerp.addons.fso_base.tools.address import clean_street
 from lxml import etree
 import time
 import datetime
@@ -41,6 +42,7 @@ class ResPartnerZMRGetBPK(models.Model):
     bpk_forced_lastname = fields.Char(string="BPK Forced Lastname", index=True, oldname="BPKForcedLastname")
     bpk_forced_birthdate = fields.Date(string="BPK Forced Birthdate", index=True, oldname="BPKForcedBirthdate")
     bpk_forced_zip = fields.Char(string="BPK Forced ZIP", oldname="BPKForcedZip")
+    bpk_forced_street = fields.Char(string="BPK Forced Street")
 
     # A Cron jobs that starts every minute will process all partners with bpk_request_needed set.
     # HINT: Normally set at res.partner write() (or create()) if any BPK relevant data was set or has changed
@@ -194,13 +196,15 @@ class ResPartnerZMRGetBPK(models.Model):
                                                                                "bpk_request_url!")
         return companies
 
-    def _request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), companies=False):
+    def _request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), street=str(),
+                     companies=False):
         """
         Send BPK Request to the Austrian ZMR for every company with complete ZMR access data
         :param firstname:
         :param lastname:
         :param birthdate:
         :param zipcode:
+        :param street:
         :return: list(), Containing one result-dict for every company found
                          (at least one result is always in the list ELSE it would throw an exception)
         """
@@ -303,6 +307,9 @@ class ResPartnerZMRGetBPK(models.Model):
                                                     "DateOfBirth": birthdate,
                                                 },
                                                 "RegularDomicile": {
+                                                    "DeliveryAddress": {
+                                                        "StreetName": street,
+                                                    },
                                                     "PostalCode": zipcode,
                                                 },
                                             },
@@ -431,7 +438,7 @@ class ResPartnerZMRGetBPK(models.Model):
     # -------------
     # This is a wrapper for _request_bpk() to try multiple requests with different data in case of an request error
     @api.model
-    def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), version=False,
+    def request_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), street=str(), version=False,
                     companies=False):
         """
         Wrapper for _request_bpk() that will additionally clean names and tries the request multiple times
@@ -440,6 +447,7 @@ class ResPartnerZMRGetBPK(models.Model):
         :param lastname:
         :param birthdate:
         :param zipcode:
+        :param street:
         :param version: Version of this decision tree MUST be raised on any change!
         :param companies: Limit or set the companies with zmr access data for the request. If none are set the request
                           will be done for all companies with zmr access data
@@ -456,22 +464,24 @@ class ResPartnerZMRGetBPK(models.Model):
             log = u''
 
         # HELPER: Do the BPK request and add the request log to the result(s)
-        def _request_with_log(first, last, birthd, zipc, ):
+        def _request_with_log(first, last, birthd, zipc, streetn):
             # Prepare data
             first = first or u''
             last = last or u''
             birthd = birthd or u''
             zipc = zipc or u''
+            streetn = streetn or u''
 
             # Do the request
-            resp = self._request_bpk(firstname=first, lastname=last, birthdate=birthd, zipcode=zipc,
+            resp = self._request_bpk(firstname=first, lastname=last, birthdate=birthd, zipcode=zipc, street=streetn,
                                      companies=companies)
 
             # Update and append the request log
             try:
                 LogKeeper.log += u'Request Data: "' + first + u'"; "' + last + u'"; "' + birthd + u'"; "' + \
-                                 zipc + u'";\n'
-            except:
+                                 zipc + u'"; "' + streetn + u'";\n'
+            except Exception as e:
+                logger.error("Updating the BPK request log failed: %s" % repr(e))
                 pass
 
             try:
@@ -515,6 +525,15 @@ class ResPartnerZMRGetBPK(models.Model):
         birthdate = escape(birthdate) if birthdate else ''
         zipcode = escape(zipcode) if zipcode else ''
 
+        # street cleanup
+        if street:
+            street = escape(street)
+            street = clean_street(street)
+            if not street:
+                logger.warning("request_bpk() Street is empty after cleanup!")
+        else:
+            street = ''
+
         responses_first = {}
         responses = {}
 
@@ -522,18 +541,18 @@ class ResPartnerZMRGetBPK(models.Model):
         # HINT: Cleanup will remove just the special chars (or Austrian ZMR will fail with 'non xml valid chars')
         first_basic_clean = clean_name(firstname, full_cleanup=False)
         last_basic_clean = clean_name(lastname, full_cleanup=False)
-        responses_first = _request_with_log(first_basic_clean, last_basic_clean, birthdate, zipcode)
+        responses_first = _request_with_log(first_basic_clean, last_basic_clean, birthdate, zipcode, street)
         if self.response_ok(responses_first):
             return responses_first
 
         # 1.) Try with full birthdate and cleaned names
-        responses = _request_with_log(first_clean, last_clean, birthdate, '')
+        responses = _request_with_log(first_clean, last_clean, birthdate, '', '')
         if self.response_ok(responses):
             return responses
 
         # 2.) Try with zipcode, full birthdate and cleaned names
         if zipcode:
-            responses = _request_with_log(first_clean, last_clean, birthdate, zipcode)
+            responses = _request_with_log(first_clean, last_clean, birthdate, zipcode, '')
             if self.response_ok(responses):
                 return responses
 
@@ -547,20 +566,26 @@ class ResPartnerZMRGetBPK(models.Model):
             except:
                 year = None
         if year:
-            responses = _request_with_log(first_clean, last_clean, year, '')
+            responses = _request_with_log(first_clean, last_clean, year, '', '')
             if self.response_ok(responses):
                 return responses
 
         # 4.) Try with zip code only
         if zipcode:
             # Without birthdate
-            responses = _request_with_log(first_clean, last_clean, '', zipcode)
+            responses = _request_with_log(first_clean, last_clean, '', zipcode, '')
             if self.response_ok(responses):
                 return responses
 
             # 4.1) Try with zip code and year
             if year:
-                responses = _request_with_log(first_clean, last_clean, year, zipcode)
+                responses = _request_with_log(first_clean, last_clean, year, zipcode, '')
+                if self.response_ok(responses):
+                    return responses
+
+            # 4.2) Try with zip code and street
+            if street:
+                responses = _request_with_log(first_clean, last_clean, '', zipcode, street)
                 if self.response_ok(responses):
                     return responses
 
@@ -568,12 +593,17 @@ class ResPartnerZMRGetBPK(models.Model):
         # HINT: lastname is never split
         first_clean_nosplit = clean_name(firstname, split=False)
         if first_clean_nosplit and first_clean_nosplit != first_clean:
-            responses = _request_with_log(first_clean_nosplit, last_clean, birthdate, zipcode)
+            responses = _request_with_log(first_clean_nosplit, last_clean, birthdate, zipcode, '')
             if self.response_ok(responses):
                 return responses
             # 5.1) Try with full firstname and year
             if year:
-                responses = _request_with_log(first_clean_nosplit, last_clean, year, zipcode)
+                responses = _request_with_log(first_clean_nosplit, last_clean, year, zipcode, '')
+                if self.response_ok(responses):
+                    return responses
+            # 5.2) Try with full firstname, zipcode and street
+            if street:
+                responses = _request_with_log(first_clean_nosplit, last_clean, '', zipcode, street)
                 if self.response_ok(responses):
                     return responses
 
@@ -598,7 +628,8 @@ class ResPartnerZMRGetBPK(models.Model):
     #       This is useful e.g.: for a java script widget on auth_partner_form
     # Returns a list in the format: [Boolean, {"state": "", "message": ""}]
     @api.model
-    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), internal_search=True):
+    def check_bpk(self, firstname=str(), lastname=str(), birthdate=str(), zipcode=str(), street=str(),
+                  internal_search=True):
         logger.info("check_bpk(): START")
 
         # Local helper function
@@ -716,7 +747,8 @@ class ResPartnerZMRGetBPK(models.Model):
         # ---------------
         start_time = time.time()
         try:
-            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode)
+            responses = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate, zipcode=zipcode,
+                                         street=street)
             assert len(responses) >= 1, _("No responses from request_bpk()!")
         except Exception as e:
             return _returner("bpk_exception", str(repr(e)))
@@ -770,6 +802,8 @@ class ResPartnerZMRGetBPK(models.Model):
         Will return False if the fields of any BPK request do not match the fields of the partner
         Will return False for a request logic mismatch
         Will return False for unknown or temporal errors (missing error code)
+
+        ATTENTION: street field is ignored for this check!
 
         :param companies: Only compare the bpk requests for given companies
         :return:
@@ -897,6 +931,7 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # 4.3 Check if the current partner data still matches all bpk requests
             # HINT: This will also check for temporary errors, request version and others!
+            # ATTENTION: This ignores the field 'street'
             if r.bpk_request_ids:
                 if not r.all_bpk_requests_matches_partner_data():
                     write(r, {'bpk_state': 'pending', 'bpk_error_code': False, 'bpk_request_needed': now()})
@@ -964,11 +999,13 @@ class ResPartnerZMRGetBPK(models.Model):
                 lastname = p.bpk_forced_lastname
                 birthdate_web = p.bpk_forced_birthdate
                 zipcode = p.bpk_forced_zip
+                street = p.bpk_forced_street
             else:
                 firstname = p.firstname
                 lastname = p.lastname
                 birthdate_web = p.birthdate_web
                 zipcode = p.zip
+                street = p.street
             start_time = time.time()
 
             # Limit the ZMR requests to companies with mismatching bpk requests only
@@ -990,7 +1027,8 @@ class ResPartnerZMRGetBPK(models.Model):
             # --------------------
             try:
                 bpk_respones = self.request_bpk(firstname=firstname, lastname=lastname, birthdate=birthdate_web,
-                                                zipcode=zipcode, companies=companies_with_non_matching_requests)
+                                                zipcode=zipcode, street=street,
+                                                companies=companies_with_non_matching_requests)
                 assert bpk_respones, _("%s (ID %s): No BPK-Request response(s)!") % (p.name, p.id)
             # 1.) TIMEOUT
             except Timeout as e:
@@ -1039,6 +1077,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         'bpk_request_lastname': lastname or False,
                         'bpk_request_birthdate': birthdate_web or False,
                         'bpk_request_zip': zipcode or False,
+                        'bpk_request_street': street or False,
                         'bpk_response_data': resp.get('response_content') or False,
                         'bpk_response_time': response_time,
                         'bpk_request_version': self.request_bpk(version=True),
@@ -1056,6 +1095,7 @@ class ResPartnerZMRGetBPK(models.Model):
                         'bpk_error_request_lastname': lastname or False,
                         'bpk_error_request_birthdate': birthdate_web or False,
                         'bpk_error_request_zip': zipcode or False,
+                        'bpk_error_request_street': street or False,
                         'bpk_error_response_data': resp.get('response_content') or False,
                         'bpk_error_response_time': response_time,
                         'bpk_error_request_version': self.request_bpk(version=True),
