@@ -36,6 +36,8 @@ class ResPartnerSosync(models.Model):
     bpk_request_lastname = fields.Char(sosync="True")
     bpk_request_birthdate = fields.Date(sosync="True")
     bpk_request_zip = fields.Char(sosync="True")
+    bpk_request_street = fields.Char(sosync="True")
+
 
     bpk_response_data = fields.Text(sosync="True")
     bpk_response_time = fields.Float(sosync="True")
@@ -53,6 +55,7 @@ class ResPartnerSosync(models.Model):
     bpk_error_request_lastname = fields.Char(sosync="True")
     bpk_error_request_birthdate = fields.Date(sosync="True")
     bpk_error_request_zip = fields.Char(sosync="True")
+    bpk_error_request_street = fields.Char(sosync="True")
 
     bpk_error_response_data = fields.Text(sosync="True")
     bpk_error_response_time = fields.Float(sosync="True")
