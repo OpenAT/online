@@ -16,6 +16,9 @@
         </urn:Person>
         <urn:RegularDomicile>
           <ns:PostalCode>{{ GetBPK['PersonInfo']['RegularDomicile']['PostalCode']|empty_if_exception_filter }}</ns:PostalCode>
+          <ns:DeliveryAddress>
+            <ns:StreetName>{{ GetBPK['PersonInfo']['RegularDomicile']['DeliveryAddress']['StreetName']|empty_if_exception_filter }}</ns:StreetName>
+          </ns:DeliveryAddress>
         </urn:RegularDomicile>
       </urn:PersonInfo>
       <urn:BereichsKennung>{{ GetBPK['BereichsKennung']|empty_if_exception_filter }}</urn:BereichsKennung>
