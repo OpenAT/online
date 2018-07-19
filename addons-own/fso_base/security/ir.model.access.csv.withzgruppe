@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fs_groups_all,access_fs_groups_all,model_fs_group,,1,0,0,0
+access_fs_groups_manager,access_fs_groups_manager,model_fs_group,fso_base.group_fs_group_manager,1,1,1,1
+#access_frst_personemail_user,access_frst_personemail_user,model_frst_personemail,base.group_user,1,1,1,1
+#access_frst_zgruppe_all,access_frst_zgruppe_all,model_frst_zgruppe,,1,0,0,0
+#access_frst_zgruppe_manager,access_frst_zgruppe_manager,model_frst_zgruppe,fso_base.group_fs_group_manager,1,1,1,1
+#access_frst_zgruppedetail_all,access_frst_zgruppedetail_all,model_frst_zgruppedetail,,1,0,0,0
+#access_frst_zgruppedetail_manager,access_frst_zgruppedetail_manager,model_frst_zgruppedetail,fso_base.group_fs_group_manager,1,1,1,1
+#access_frst_persongruppe_all,access_frst_persongruppe_all,model_frst_persongruppe,,1,0,0,0
+#access_frst_persongruppe_manager,access_frst_persongruppe_manager,model_frst_persongruppe,fso_base.group_fs_group_manager,1,1,1,1
+#access_frst_personemailgruppe_all,access_frst_personemailgruppe_all,model_frst_personemailgruppe,,1,0,0,0
+#access_frst_personemailgruppe_manager,access_frst_personemailgruppe_manager,model_frst_personemailgruppe,fso_base.group_fs_group_manager,1,1,1,1
