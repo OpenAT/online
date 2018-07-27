@@ -352,24 +352,36 @@
                                 <t t-call="fso_website_email.snippet_block">
                                     <t t-set="nockedit" t-value="True"/>
 
-                                    <!-- CONTENT TABLE 33 -->
-                                    <table class="flexibleContainer33" align="center" border="0" cellpadding="0" cellspacing="0">
+                                    <!-- flexibleContainer33 -->
+                                    <table class="flexibleContainer33 flexibleContainer33left" align="left" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-                                                
-                                                <td style="text-align:center;" align="center" valign="top" class="fc33left textContent ckediting_enabled" contenteditable="true">
-                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                <td style="text-align:center;" align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <img style="text-align:center;" src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                     <h3 style="text-align:center;">Left</h3>
                                                 </td>
-                                                <td style="text-align:center;" align="center" valign="top" class="fc33middle textContent ckediting_enabled" contenteditable="true">
-                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- flexibleContainer33 -->
+                                    <table class="flexibleContainer33 flexibleContainer33middle" align="left" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td style="text-align:center;" align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <img style="text-align:center;" src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                     <h3 style="text-align:center;">Middle</h3>
                                                 </td>
-                                                <td style="text-align:center;" align="center" valign="top" class="fc33right textContent ckediting_enabled" contenteditable="true">
-                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- flexibleContainer33 -->
+                                    <table class="flexibleContainer33 flexibleContainer33right" align="left" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td style="text-align:center;" align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
+                                                    <img style="text-align:center;" src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                     <h3 style="text-align:center;">Right</h3>
                                                 </td>
-                                                
                                             </tr>
                                         </tbody>
                                     </table>
