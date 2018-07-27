@@ -338,6 +338,45 @@
                                 </t>
                             </div>
                         </div>
+                        
+                        <!-- TEXT THREE COLUMNS -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/snippet_block_text_threecol.png"/>
+                                <span class="oe_snippet_thumbnail_title">Three Columns</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_threecol" contenteditable="false">
+                                <t t-call="fso_website_email.snippet_block">
+                                    <t t-set="nockedit" t-value="True"/>
+
+                                    <!-- CONTENT TABLE 33 -->
+                                    <table class="flexibleContainer33" align="center" border="0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                
+                                                <td style="text-align:center;" align="center" valign="top" class="fc33left textContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                    <h3 style="text-align:center;">Left</h3>
+                                                </td>
+                                                <td style="text-align:center;" align="center" valign="top" class="fc33middle textContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                    <h3 style="text-align:center;">Middle</h3>
+                                                </td>
+                                                <td style="text-align:center;" align="center" valign="top" class="fc33right textContent ckediting_enabled" contenteditable="true">
+                                                    <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
+                                                    <h3 style="text-align:center;">Right</h3>
+                                                </td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </t>
+                            </div>
+                        </div>                        
                         <span class="snippet_menu_vertical_divider"/>
 
                     </div>

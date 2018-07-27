@@ -71,7 +71,7 @@ html, body, #bodyTable, #bodyCell {
 }
 
 #bodyCell {
-    padding-bottom: 40px;
+    padding-bottom: 1em;
     padding-top: 40px;
 }
 
