@@ -116,7 +116,10 @@
                             <!-- HEADER -->
                             <tr>
                                 <td class="headerCell" align="center">
-                                    <a href="#" target="_blank">View e-mail in browser</a>
+                                    <a id="view-email-in-browser"
+                                       href="http://multimail.datadialog.net/view.php/%xGuid%" target="_blank">
+                                        Wenn diese Nachricht nicht richtig angezeigt wird, verwenden Sie bitte die Online-Version
+                                    </a>
                                 </td>
                             </tr>
 
@@ -145,7 +148,8 @@
                                 <td align="center" class="footerCell">
                                     <a href="https://www.datadialog.net" target="_blank">www.datadialog.net</a>&amp;nbsp;|&amp;nbsp;
                                     <a href="http://www.datadialog.net/page/website.contactus" target="_blank">Kontaktformular</a>&amp;nbsp;|&amp;nbsp;
-                                    <a href="mailto:office@datadialog.net" target="_blank">E-Mail</a>
+                                    <a href="mailto:office@datadialog.net" target="_blank">E-Mail</a>&amp;nbsp;|&amp;nbsp;
+                                    <a href="mailto:contact@datadialog.net" target="_blank">vom Newsletter abmelden?</a>
                                 </td>
                             </tr>
 
