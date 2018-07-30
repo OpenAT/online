@@ -1,3 +1,5 @@
+/* ATTENTION: These are the styles for the default email theme - It is NOT the Datadialog email theme */
+
 /* ----- */
 /* FONTS */
 /* ----- */
@@ -69,7 +71,7 @@ h3 {
 #emailBody a,
 .textContent a,
 .textContentLast a {
-    color: #F79600;
+    color: #000000;
     text-decoration: underline;
 }
 
@@ -88,7 +90,7 @@ h3 {
 
 .headerCell a, .footerCell a {
     font-size: 11px;
-    color: #F79600;
+    color: #000000;
 }
 
 .emailButton {

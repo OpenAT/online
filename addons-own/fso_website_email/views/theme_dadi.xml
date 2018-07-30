@@ -74,6 +74,7 @@
         <t t-call="fso_website_email.theme_default_snippets"/>
     </template>
 
+    <!-- ATTENTION: This should be called theme_default - it is not the Datadialog theme but the default theme for all customers -->
     <template id="theme_dadi"
               name="Default Theme">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
         <html t-att-lang="lang and lang.replace('_', '-')"
@@ -116,9 +117,10 @@
                             <!-- HEADER -->
                             <tr>
                                 <td class="headerCell" align="center">
+                                    Wenn diese Nachricht nicht richtig angezeigt wird, verwenden Sie bitte die
                                     <a id="view-email-in-browser"
-                                       href="http://multimail.datadialog.net/view.php/%xGuid%" target="_blank">
-                                        Wenn diese Nachricht nicht richtig angezeigt wird, verwenden Sie bitte die Online-Version
+                                       href="%open_browser%" target="_blank">
+                                         Online-Version
                                     </a>
                                 </td>
                             </tr>
