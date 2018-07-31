@@ -56,9 +56,14 @@ class EmailTemplate(models.Model):
 
     # Compute final html
     fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', store=True,
-                                 readonly=True, translate=True)
+                                 readonly=True, translate=True,
+                                 help="E-Mail HTML code with final print field code and fixed links for links without "
+                                      "protocol")
     fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', store=True,
-                                        readonly=True, translate=True)
+                                        readonly=True, translate=True,
+                                        help="E-Mail HTML code with final print field code and where all relative links "
+                                             "are converted to absolute links and regular links are converted to "
+                                             "multimailer tracking links")
     screenshot = fields.Binary(string="Screenshot", compute='_compute_html', store=True,
                                readonly=True)
 
@@ -87,25 +92,20 @@ class EmailTemplate(models.Model):
                 # If i want to call the controller method 'email_preview' directly it would need to:
                 # https://www.odoo.com/de_DE/forum/hilfe-1/question/how-to-invoke-a-controller-function-from-inside-a-model-function-87620
 
+                # ----------------------
+                # Compute fso_email_html
+                # ----------------------
                 # Render the ir.ui.view qweb template with r.body_html field
                 # HINT: Will output an UTF-8 encoded str
-                # TODO: Remove try claus again after update of fs_print_field_snippet template
-                try:
-                    content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
-                                                             'email_editor_mode': False,
-                                                             'record': r,
-                                                             'print_fields': print_fields,
-                                                             })
-                except Exception as e:
-                    logger.error("Error in _compute_html() for email.template:\n%s" % e)
-                    continue
-
-                # Get the base url of current request or from ir.config parameters
-                base_url = self.get_base_url()
+                content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
+                                                         'email_editor_mode': False,
+                                                         'record': r,
+                                                         'print_fields': print_fields,
+                                                         })
 
                 # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
-                # HINT: Will auto-detect encoding and concert to unicode
+                # HINT: Will auto-detect encoding and convert to unicode
                 html_soup = BeautifulSoup(content, "lxml")
                 print_fields = html_soup.find_all(class_="drop_in_print_field")
                 for pf in print_fields:
@@ -114,26 +114,15 @@ class EmailTemplate(models.Model):
                     fs_string = pf_span[0].get("data-fs-email-placeholder")
                     pf.replace_with(fs_string)
 
-                # Repair anchors <a> (e.g.: www.google.at > https://www.google.at)
+                # Repair anchors without protocol
+                # E.g.: www.google.at > https://www.google.at
                 anchors = html_soup.find_all('a')
                 for a in anchors:
                     href = a.get('href', '').strip()
-                    href = href if '://' not in href else ''
-                    if href and not (
-                            href.startswith('#') or href.startswith('/') or
-                            href.startswith('http') or href.startswith('mailto')):
-                        a['href'] = 'https://'+href
-
-                # # DISABLED: Repair style <link> tags for premailer for theme assets
-                # stylesheets = html_soup.find_all('link')
-                # base_url_no_slash = base_url.rstrip('/')
-                # for link in stylesheets:
-                #     if 'stylesheet' in link.get('rel', '') and not link.get('type', '').strip():
-                #         link['type'] = 'text/css'
-                #         href = link.get('href', '').strip()
-                #         if 'web/css' in href:
-                #             link['href'] = base_url_no_slash + href
-                #             print link['href']
+                    if '://' in href or any(href.startswith(x) for x in ('http', 'mailto', '/', '#', '%')):
+                        continue
+                    else:
+                        a['href'] = 'https://' + href
 
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
                 content = html_soup.prettify(formatter="minimal")
@@ -141,20 +130,36 @@ class EmailTemplate(models.Model):
                 # Update fso_email_html field
                 r.fso_email_html = content
 
-                # Inline CSS and convert relative to absolute URLs with premailer
+                # -----------------------------
+                # Compute fso_email_html_parsed
+                # -----------------------------
+                # Use premailer to:
+                #  - inline CSS and
+                #  - convert relative to absolute URLs
+                base_url = self.get_base_url()
                 premailer_obj = Premailer(content, base_url=base_url, preserve_internal_links=True,
                                           keep_style_tags=True, strip_important=False, align_floating_images=False,
                                           remove_unset_properties=False, include_star_selectors=False)
                 content = premailer_obj.transform(pretty_print=True)
 
-                # Convert URLS to "ranner multimailer" tracking URLS
-                # Target Example: %redirector%/https//www.global2000.at/ceta-verhindern
+                # Rewrite links to "Mutimailer Tracking URLs"
+                # Example of a mutimailer target: %redirector%/https//www.global2000.at/ceta-verhindern
                 html_soup = BeautifulSoup(content, "lxml")
                 anchors = html_soup.find_all('a')
                 for a in anchors:
                     href = a.get('href', '').strip()
-                    href = href if '://' in href else ''
-                    if href and href.startswith('http') and 'dadi_notrack' not in a.get('class', ''):
+
+                    # Fix multimailer '%open_browser%' links
+                    if '%open_browser%' in href:
+                        a['href'] = '%open_browser%'
+                        continue
+
+                    # Skipp rewrite to tracking link if 'dadi_notrack' class is set
+                    if 'dadi_notrack' in a.get('class', ''):
+                        continue
+
+                    # Convert to multimailer links
+                    if '://' in href and href.startswith('http'):
                         protocol, address = href.split('://', 1)
                         a['href'] = '%redirector%/' + protocol + '//' + address
 
@@ -170,7 +175,9 @@ class EmailTemplate(models.Model):
                 # Update fso_email_html_parsed field
                 r.fso_email_html_parsed = content
 
-                # Try to generate a screenshot
+                # ------------------
+                # Compute screenshot
+                # ------------------
                 tmp = tempfile.NamedTemporaryFile(bufsize=0, suffix=".html", delete=True)
                 try:
                     tmp.write(content.encode(encoding='utf-8'))
