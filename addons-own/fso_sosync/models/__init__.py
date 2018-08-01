@@ -30,8 +30,8 @@ import account_fiscalyear
 import email_template
 
 # FRST Groups
-#import frst_personemail
-#import frst_zgruppe
-#import frst_zgruppedetail
-#import frst_persongruppe
-#import frst_personemailgruppe
+import frst_personemail
+import frst_zgruppe
+import frst_zgruppedetail
+import frst_persongruppe
+import frst_personemailgruppe
