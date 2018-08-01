@@ -7,6 +7,6 @@ import product
 import fs_groups
 import res_user
 #
-#import frst_personemail
+import frst_personemail
 #
-#import frst_groups
+import frst_groups
