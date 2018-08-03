@@ -57,11 +57,13 @@ class EmailTemplate(models.Model):
     # Compute final html
     fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', store=True,
                                  readonly=True, translate=True,
-                                 help="E-Mail HTML code with final print field code and fixed links for links without "
-                                      "protocol")
+                                 help="E-Mail HTML code with final print field code, fixed links for links without "
+                                      "protocol, all absolute urls and inlined css")
+    # HINT: Should be called fso_email_html_tracked but now it's not worth the change :)
     fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', store=True,
                                         readonly=True, translate=True,
-                                        help="E-Mail HTML code with final print field code and where all relative links "
+                                        help="HTML Code for multimailer."
+                                             "E-Mail HTML code with final print field code and where all relative links"
                                              "are converted to absolute links and regular links are converted to "
                                              "multimailer tracking links")
     screenshot = fields.Binary(string="Screenshot", compute='_compute_html', store=True,
@@ -106,6 +108,7 @@ class EmailTemplate(models.Model):
                 # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
                 # HINT: Will auto-detect encoding and convert to unicode
+                # HINT: class_ is used by html_soup because class is a reserved keyword in python
                 html_soup = BeautifulSoup(content, "lxml")
                 print_fields = html_soup.find_all(class_="drop_in_print_field")
                 for pf in print_fields:
@@ -127,12 +130,6 @@ class EmailTemplate(models.Model):
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
                 content = html_soup.prettify(formatter="minimal")
 
-                # Update fso_email_html field
-                r.fso_email_html = content
-
-                # -----------------------------
-                # Compute fso_email_html_parsed
-                # -----------------------------
                 # Use premailer to:
                 #  - inline CSS and
                 #  - convert relative to absolute URLs
@@ -141,6 +138,13 @@ class EmailTemplate(models.Model):
                                           keep_style_tags=True, strip_important=False, align_floating_images=False,
                                           remove_unset_properties=False, include_star_selectors=False)
                 content = premailer_obj.transform(pretty_print=True)
+
+                # Update fso_email_html field
+                r.fso_email_html = content
+
+                # -----------------------------
+                # Compute fso_email_html_parsed
+                # -----------------------------
 
                 # Rewrite links to "Mutimailer Tracking URLs"
                 # Example of a mutimailer target: %redirector%/https//www.global2000.at/ceta-verhindern

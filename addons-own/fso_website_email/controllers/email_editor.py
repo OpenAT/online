@@ -84,7 +84,7 @@ class FSOEmailEditor(http.Controller):
                                    'print_fields': request.env['fso.print_field'].search([]),
                                    })
 
-    # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING TEMPLATE
+    # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING E-MAIL TEMPLATE
     @http.route('/fso/email/create', type='http', auth="user", website=True)
     def email_create(self, template_model,  template_id, **kw):
         if not template_model or not template_id or template_model not in ('email.template', 'ir.ui.view'):
