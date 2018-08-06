@@ -216,6 +216,8 @@ class EmailTemplate(models.Model):
                     logger.error("Immediate sync_job submission failed!\n%s" % repr(e))
                     pass
 
+        return res
+
     @api.multi
     def create_version(self, version_name=''):
         assert self.ensure_one(), _("E-Mail Template Versions can only be created for a single E-Mail Template")

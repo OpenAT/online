@@ -15,20 +15,26 @@ class MailMail(models.Model):
 
     @api.model
     def send_get_mail_body(self, mail, partner=None):
-        """ Add statistics_ids to link_tracker urls """
+        """ This method will be called only when the e-mail gets send (mail.mail .send())
+
+            Add the statistics_id to all link_tracker urls
+            with this statistics_id every send e-mail can be tracked individually
+
+            The corresponding route can be found under controllers/main.py
+        """
 
         body = super(MailMail, self).send_get_mail_body(mail=mail, partner=partner)
 
         # Add statistics_ids to link_tracker urls
-        if self.mailing_id and body and self.statistics_ids:
-            for match in re.findall(URL_REGEX, self.body_html):
+        if mail.mailing_id and body and mail.statistics_ids:
+            for match in re.findall(URL_REGEX, mail.body_html):
                 href = match[0]
                 url = match[1]
 
                 parsed = werkzeug.urls.url_parse(url, scheme='http')
 
                 if parsed.scheme.startswith('http') and parsed.path.startswith('/r/'):
-                    new_href = href.replace(url, url + '/m/' + str(self.statistics_ids[0].id))
+                    new_href = href.replace(url, url + '/m/' + str(mail.statistics_ids[0].id))
                     body = body.replace(href, new_href)
 
         return body

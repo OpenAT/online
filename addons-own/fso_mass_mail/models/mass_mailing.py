@@ -175,66 +175,26 @@ class MassMailing(models.Model):
 
         return res
 
-
-class EmailTemplate(models.Model):
-    _inherit = 'email.template'
-
-    mass_mailing_ids = fields.One2many(string="Mass Mailing",
-                                       comodel_name="mail.mass_mailing", inverse_name="email_template_id",
-                                       readonly=True)
-
-    # Compute email_body html to be used in odoo or mass mailing
-    fso_email_html_odoo = fields.Text(string='E-Mail HTML odoo', compute='_compute_html', store=True,
-                                      readonly=True, translate=True,
-                                      help="E-Mail HTML code ready to send with a mass mailing!\n"
-                                           "URL protocol fixed, Relative URLs converted to static URLs, "
-                                           "regular URLs tracked by link_tracker, CSS inlined "
-                                           "FRST print fields replaced by mako expressions where possible")
-
-    def _compute_html(self):
-        # Do the regular computation first to update fields fso_email_html, fso_email_html_parsed and screenshot
-        super(EmailTemplate, self)._compute_html()
-
-        # ---------------------------
-        # Compute fso_email_html_odoo
-        # ---------------------------
-        for r in self:
-            if r.fso_email_html:
-                content = r.fso_email_html
-
-                # Convert Fundraising Studio print fields to mako expressions
-                # Get all print fields
-                print_fields = self.env['fso.print_field'].sudo().search([('fs_email_placeholder', '!=', False),
-                                                                          ('mako_expression', '!=', False)])
-                for pf in print_fields:
-                    content.replace(pf.fs_email_placeholder, pf.mako_expression)
-
-                r.fso_email_html_odoo = content
-
-        return True
-
-
-class MailComposeMessage(models.Model):
-    _inherit = 'mail.compose.message'
-
+    # ----
+    # CRUD
+    # ----
     @api.model
     def create(self, vals):
 
-        # ATTENTION: Add link tracker urls and change url schema (like in MassMailing.send_mail() in odoo 11.)
-        #            Would be better to change the send_mail() of mail.mass_mailing but this is not possible
-        #            since the values created for the composer are not in an extra method - so the only option would be
-        #            to completely overwrite the send_mail() method which of course is bad for inheritance. Therefore
-        #            we intercept the create() method of mail.compose.message and change the body html there because
-        #            this is directly called in send_mail() with the composer values
-        #            ['mail.compose.message'].create(cr, uid, composer_values, context=comp_ctx)
-        mass_mailing_id = [vals.get('mass_mailing_id')] if vals.get('mass_mailing_id', False) else []
-        mass_mailing = self.env['mail.mass_mailing'].browse(mass_mailing_id)
-        if mass_mailing and mass_mailing.email_template_id:
+        # Copy fso_email_html_odoo from template to body_html field of mass mailing
+        if vals.get('email_template_id'):
+            fso_email_template = self.env['email.template'].browse([vals.get('email_template_id')])
+            vals['body_html'] = fso_email_template.fso_email_html_odoo
 
-            # TODO: Make sure that at this point the body is already the body from the FS-Online email template
-            # ATTENTION: URLs must already be absolute at this point!
-            body = mass_mailing.convert_links()[mass_mailing_id]
-            vals['body'] = body
+        # Update body html by email_template_id.fso_email_html_odoo
+        return super(MassMailing, self).create(vals=vals)
 
-        res = super(MailComposeMessage, self).create(vals=vals)
-        return res
+    @api.multi
+    def write(self, vals):
+
+        # Copy fso_email_html_odoo from template to body_html field of mass mailing
+        if vals.get('email_template_id'):
+            fso_email_template = self.env['email.template'].browse([vals.get('email_template_id')])
+            vals['body_html'] = fso_email_template.fso_email_html_odoo
+
+        return super(MassMailing, self).write(vals=vals)
