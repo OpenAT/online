@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- EDITOR TOOLBAR -->
+    <template id="editor_toolbar" inherit_id="fso_website_email.editor_toolbar" name="FSO email editor toolbar fso_mass_mail">
+        <xpath expr="//a[@href='/fso/email/select']" position="attributes">
+            <attribute name="href"></attribute>
+            <attribute name="t-att-href">'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;view_type=form&amp;action=%s' % (return_action, return_action, return_action) if return_action else '/fso/email/select'</attribute>
+        </xpath>
+    </template>
+
+
+</data>
+</openerp>

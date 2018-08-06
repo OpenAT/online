@@ -2,9 +2,12 @@
 
 from openerp import api, models, fields
 from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
+
+import urllib
 
 
-class MassMailing(models.Model):
+class MassMailingCampaign(models.Model):
     _inherit = "mail.mass_mailing.campaign"
 
     _inherits = {'utm.campaign': 'campaign_id'}
@@ -109,6 +112,70 @@ class MassMailing(models.Model):
                          'E-Mail Template already in use by another mass mailing.\n'
                          'Remove it from the other mass mailing first or make a copy of the email template!')]
 
+    # -------
+    # ACTIONS
+    # -------
+    @api.multi
+    def action_edit_html(self):
+        """ Normally this would edit the body_html field of the mass mailing. If no body_html content exits
+            the original mass mailing addon would send you to an email template select page and then copy the body of
+            the email template to the body field of mass_mailing. From then only the body field of the mass mailing
+            would be changed but no longer the email template.
+
+            This system has the advantage that one could start from an e-mail template but then customize everything
+            for the mass mailing. The disadvantage is that one may expect that a change to the template would
+            also change the mass mailing(s) that are using this template
+        :return:
+        """
+        if not self.ensure_one():
+            raise ValueError('One and only one ID allowed for this action')
+
+        # If this mass mailing is not connected to an fso email template do the "regular" thing
+        if not self.email_template_id:
+            return super(MassMailing, self).action_edit_html()
+
+        # Open the FS-Online E-Mail Editor
+        #
+        # /web#id=13&view_type=form&model=mail.mass_mailing&action=586
+        return_url = '/web#id=%s&view_type=form&model=mail.mass_mailing&action=%s' \
+                     '' % (self.id, self.env.context['params']['action'])
+        return_url_quoted = urllib.quote(return_url, safe='')
+
+        url = "/fso/email/edit?template_id=%s&enable_editor=1&return_url=%s" \
+              "" % (self.email_template_id.id, return_url_quoted)
+        return {
+            'name': _('Open with Visual Editor'),
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'self',
+        }
+
+    # --------------
+    # Record Methods
+    # --------------
+    @api.multi
+    def convert_links(self):
+        res = {}
+        for mass_mailing in self:
+            utm_mixin = mass_mailing.mass_mailing_campaign_id if mass_mailing.mass_mailing_campaign_id else mass_mailing
+            html = mass_mailing.body_html if mass_mailing.body_html else ''
+
+            vals = {'mass_mailing_id': mass_mailing.id}
+
+            if mass_mailing.mass_mailing_campaign_id:
+                vals['mass_mailing_campaign_id'] = mass_mailing.mass_mailing_campaign_id.id
+            if utm_mixin.campaign_id:
+                vals['campaign_id'] = utm_mixin.campaign_id.id
+            if utm_mixin.source_id:
+                vals['source_id'] = utm_mixin.source_id.id
+            if utm_mixin.medium_id:
+                vals['medium_id'] = utm_mixin.medium_id.id
+
+            res[mass_mailing.id] = self.env['link.tracker'].convert_links(html, vals, blacklist=['/unsubscribe_from_list'])
+
+        return res
+
+
 class EmailTemplate(models.Model):
     _inherit = 'email.template'
 
@@ -132,16 +199,17 @@ class EmailTemplate(models.Model):
         # Compute fso_email_html_odoo
         # ---------------------------
         for r in self:
-            content = r.fso_email_html
+            if r.fso_email_html:
+                content = r.fso_email_html
 
-            # Convert Fundraising Studio print fields to mako expressions
-            # Get all print fields
-            print_fields = self.env['fso.print_field'].sudo().search([('fs_email_placeholder', '!=', False),
-                                                                      ('mako_expression', '!=', False)])
-            for pf in print_fields:
-                content.replace(pf.fs_email_placeholder, pf.mako_expression)
+                # Convert Fundraising Studio print fields to mako expressions
+                # Get all print fields
+                print_fields = self.env['fso.print_field'].sudo().search([('fs_email_placeholder', '!=', False),
+                                                                          ('mako_expression', '!=', False)])
+                for pf in print_fields:
+                    content.replace(pf.fs_email_placeholder, pf.mako_expression)
 
-            r.fso_email_html_odoo = content
+                r.fso_email_html_odoo = content
 
         return True
 
@@ -149,18 +217,24 @@ class EmailTemplate(models.Model):
 class MailComposeMessage(models.Model):
     _inherit = 'mail.compose.message'
 
+    @api.model
     def create(self, vals):
+
+        # ATTENTION: Add link tracker urls and change url schema (like in MassMailing.send_mail() in odoo 11.)
+        #            Would be better to change the send_mail() of mail.mass_mailing but this is not possible
+        #            since the values created for the composer are not in an extra method - so the only option would be
+        #            to completely overwrite the send_mail() method which of course is bad for inheritance. Therefore
+        #            we intercept the create() method of mail.compose.message and change the body html there because
+        #            this is directly called in send_mail() with the composer values
+        #            ['mail.compose.message'].create(cr, uid, composer_values, context=comp_ctx)
+        mass_mailing_id = [vals.get('mass_mailing_id')] if vals.get('mass_mailing_id', False) else []
+        mass_mailing = self.env['mail.mass_mailing'].browse(mass_mailing_id)
+        if mass_mailing and mass_mailing.email_template_id:
+
+            # TODO: Make sure that at this point the body is already the body from the FS-Online email template
+            # ATTENTION: URLs must already be absolute at this point!
+            body = mass_mailing.convert_links()[mass_mailing_id]
+            vals['body'] = body
+
         res = super(MailComposeMessage, self).create(vals=vals)
-
-        # Change any possibly tracked links for FSO-E-Mail Templates
-        if res and res.mass_mailing_id and res.mass_mailing_id.email_template_id:
-            print "YES"
-            print res.body
-            # TODO: Add link tracker urls and change url schema - link in MassMailing.send_mail() in odoo 11.
-            #       Would be better to change the send_mail() of mail.mass_mailing but this is not possible
-            #       since the values created for the composer are not in an extra method - so the only option would be
-            #       to completely overwrite the send_mail() method which of course is bad for inheritance. Therefore
-            #       we intercept the create method of mail.compose.message and change the body html here
-            #       ['mail.compose.message'].create(cr, uid, composer_values, context=comp_ctx)
-
         return res

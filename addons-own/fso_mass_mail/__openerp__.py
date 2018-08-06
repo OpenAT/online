@@ -77,6 +77,7 @@ HINT: Body HTML of mass mailing will replace Fundrasing Studio Print Fields with
         'link_tracker',
     ],
     'data': [
-        'views/views.xml'
+        'views/views.xml',
+        #'views/email_editor.xml',
     ],
 }

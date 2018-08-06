@@ -8,16 +8,16 @@ from openerp import api, fields, models, tools
 
 from openerp.addons.link_tracker.models.link_tracker import URL_REGEX
 
+
 class MailMail(models.Model):
     """Integrate mail tracking urls to mass mailing mails"""
     _inherit = ['mail.mail']
 
-    @api.multi
-    def send_get_mail_body(self, partner=None):
+    @api.model
+    def send_get_mail_body(self, mail, partner=None):
         """ Add statistics_ids to link_tracker urls """
-        self.ensure_one()
 
-        body = super(MailMail, self).send_get_mail_body(partner=partner)
+        body = super(MailMail, self).send_get_mail_body(mail=mail, partner=partner)
 
         # Add statistics_ids to link_tracker urls
         if self.mailing_id and body and self.statistics_ids:
