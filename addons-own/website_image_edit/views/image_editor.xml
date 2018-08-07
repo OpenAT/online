@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="website_image_edit.assets_frontend" inherit_id="website.assets_frontend" name="Image edit with darkroom.js">
+            <!--<xpath expr="//div[@id='existing-attachments']/div/i" position="after">-->
+            <xpath expr="//script[last()]" position="after">
+                <!--
+                <link id="darkroom_css" rel='stylesheet' href='/website_image_edit/static/lib/darkroomjs-master/build/darkroom.css' t-ignore="true"/>
+                <script id="darkroom_js" type="text/javascript" src="/website_image_edit/static/src/js/load_templates.js"></script>
+                -->
+                <script id="image_editor" type="text/javascript" src="/website_image_edit/static/src/js/website_image_edit.js"></script>
+                <!--<script id="image_editor" type="text/javascript" src="/website_image_edit/static/src/js/load_templates.js"></script>-->
+            </xpath>
+        </template>
+
+    </data>
+</openerp>
