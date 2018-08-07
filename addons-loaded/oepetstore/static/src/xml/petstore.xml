@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+    <t t-name="HomepageTemplate">
+        <div style="background-color: gold;">Gold is here!</div>
+        <div>Hello <t t-esc="name"/></div>
+        <div>Hello <t t-esc="widget.name"/></div>
+        <div>
+            <div class="oe_color_div"></div>
+        </div>
+    </t>
+
+    <t t-name="ProductTmp">
+        <div>
+            <t t-foreach="widget.products" t-as="product">
+                <span t-attf-style="background-color: {{ widget.color }}; display: inline-block;">
+                    <t t-esc="product"/>
+                </span>
+                <br/>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="ColorInputWidget">
+        <div>
+            Red: <input type="text" class="oe_color_red" value="00"></input><br />
+            Green: <input type="text" class="oe_color_green" value="00"></input><br />
+            Blue: <input type="text" class="oe_color_blue" value="00"></input><br />
+        </div>
+    </t>
+
+    <t t-name="MessageOfTheDay">
+        <div class="oe_petstore_motd">
+            <p class="oe_mywidget_message_of_the_day"></p>
+        </div>
+    </t>
+
+    <t t-name="PetToysList">
+        <div class="oe_petstore_pettoyslist">
+        </div>
+    </t>
+
+    <t t-name="PetToy">
+        <div class="oe_petstore_pettoy">
+            <p><t t-esc="item.name"/></p>
+            <p><img t-att-src="'data:image/jpg;base64,'+item.image"/></p>
+        </div>
+    </t>
+
+    <t t-name="FieldChar2">
+        <div class="oe_field_char2">
+            <t t-if="! widget.get('effective_readonly')">
+                <input type="text"></input>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="FieldColor">
+        <div class="oe_field_color">
+            <t t-if="widget.get('effective_readonly')">
+                <div class="oe_field_color_content" />
+            </t>
+            <t t-if="! widget.get('effective_readonly')">
+                <input type="color"></input>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="WidgetCoordinates">
+        <iframe width="400" height="300"
+            t-attf-src="https://maps.google.com/?ie=UTF8&amp;ll={{latitude}},{{longitude}}&amp;output=embed">
+        </iframe>
+        <button>Get My Current Coordinate</button>
+    </t>
+
+</templates>
