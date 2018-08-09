@@ -60,6 +60,6 @@ Better default robots.txt view
         'views/res_config.xml',
         'views/templates.xml',
         'views/website.xml',
-        'views/fsonline_menu.xml',
+        # 'views/fsonline_menu.xml', # Moved to fsonline addon
     ],
 }

@@ -32,9 +32,9 @@ Features
   - Link (fso) email template to mass mailing
   - Open (fso) email template in edit mode from mass mailing
   - Update mass.mailing fields from email template
-    - Change FRST print fields to mako expressions
+  - Change FRST print fields to odoo mako expressions
   - Convert links in the email to tracked links
-  - Include oca mass mailing queue addon (mass_mailing_sending_queue)
+  - Integrate link tracking statistics to mass mail views
   - Option to stop sending queue
   - Option to restart sending queue
   - New Menu for FS-Online
@@ -43,23 +43,13 @@ Features
         - Campaigns
         - Mass Mails
         - Mailing Lists
-        - ML Contacts
+        - Lists Contacts
         - Sending Queue
       - E-Mail
         - E-Mails
         - Templates (with default fso filter)
         - Statistics
-
-
-
-HINT: A change to the e-mail template will update all corresponding fields of the assigned mail.mass_mailing(s)
-  mail.mass_mailing:
-    - body_html
-    - email_from
-    - reply_to
-    - name (Subject of E-Mail)
-
-HINT: Body HTML of mass mailing will replace Fundrasing Studio Print Fields with odoo mako expressions
+  - 
 
     """,
     'author': "Datadialog - Michael Karrer",

@@ -313,32 +313,27 @@ class website_sale_donate(website_sale):
         # Call Super
         # INFO: Pass kw to _cart_update to transfer all post variables to _cart_update
         #       This is needed to get the Value of the arbitrary price from the input field
-        order_line = request.website.sale_get_order(force_create=1, context=context)._cart_update(product_id=int(product_id),
-                                                                                             add_qty=float(add_qty),
-                                                                                             set_qty=float(set_qty),
-                                                                                             context=context,
-                                                                                             **kw)
-        order = request.website.sale_get_order(context=context)
+        order_line = request.website.sale_get_order(force_create=1)._cart_update(product_id=int(product_id),
+                                                                                 add_qty=float(add_qty),
+                                                                                 set_qty=float(set_qty),
+                                                                                 context=context,
+                                                                                 **kw)
+
+        # Attention: It is very important to call sale_get_order again after the order_line creation above to make
+        #            sure fs_ptoken is updated also for the new sale order line
+        order = request.website.sale_get_order()
         _logger.warning("cart_update(): sale order number %s" % order.name)
 
-        # FSTOKEN: Set sales order partner by fs_ptoken
-        # HINT: Only use or check the token if there is an order and the user is NOT logged in!
-        # TODO: should we log the token to the sale.order.line also if logged in but different partner for valid token?
-        # if order and request.website.user_id.id == uid:
-        #     fs_ptoken = kw.get('fs_ptoken', None)
-        #     partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=fs_ptoken)
-        #     if partner:
-        #         values = {'partner_id': partner.id,
-        #                   'partner_invoice_id': partner.id,
-        #                   'partner_shipping_id': partner.id,
-        #                   }
-        #         order_obj = request.registry['sale.order']
-        #         order_obj.write(cr, SUPERUSER_ID, [order.id], values, context=context)
-        #         # Update the sale.order.line with the fstoken for statistics
-        #         if order_line and order_line.get('line_id'):
-        #             order_line_obj = request.registry['sale.order.line']
-        #             order_line_obj.write(cr, SUPERUSER_ID, [order_line.get('line_id')],
-        #                                  {'fs_ptoken': fs_ptoken}, context=context)
+        # Update fs_ptoken field of the sale.order.line if set in context for statistic evaluation in FRST
+        # ATTENTION: This was moved to sale_get_order() to handle user changes also!
+        # order_line_id = order_line.get('line_id') if order_line else False
+        # fs_ptoken = context.get('fs_ptoken', False)
+        # if order_line_id and fs_ptoken:
+        #     order_line_obj = request.registry['sale.order.line']
+        #     order_line_record = order_line_obj.browse(cr, SUPERUSER_ID, [order_line_id], context=context)
+        #     for r in order_line_record:
+        #         if not r.fs_ptoken:
+        #             order_line_obj.write(cr, SUPERUSER_ID, [order_line_id], {'fs_ptoken': fs_ptoken}, context=context)
 
         # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):

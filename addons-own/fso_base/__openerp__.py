@@ -118,7 +118,7 @@ TODO (must be done manually right now):
         'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
         'data/instance_system_user_group.xml',
-        'views/fsonline_menu.xml',
+        # 'views/fsonline_menu.xml',    # Moved to fsonline addon
         'views/templates_backend_css.xml',
         'views/res_company.xml',
         'views/res_partner.xml',

@@ -125,4 +125,5 @@ class FSTokenWizard(models.TransientModel):
         if fstokens:
             fstokens.write({'expiration_date': self.expiration_date})
 
+        # TODO: I think this sould be return True !
         return {}
