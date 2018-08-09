@@ -76,7 +76,7 @@ Module tasks:
     ],
     'data': [
         'data/user_studio.xml',
-        'views/fsonline_menu.xml',
         'views/product_template.xml',
+        'views/fsonline_menu.xml',
     ],
 }
