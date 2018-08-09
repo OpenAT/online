@@ -148,10 +148,10 @@ class Website(models.Model):
                                       compute="_all_shipping_fields", readonly=True)
 
     @api.multi
-    def sale_get_order(self, force_create=False, code=None, update_pricelist=None):
-        context = self.env.context or {}
+    def sale_get_order(self, force_create=False, code=None, update_pricelist=None, context=None):
+        context = context or self.env.context or {}
         so = super(Website, self).sale_get_order(force_create=force_create, code=code,
-                                                 update_pricelist=update_pricelist)
+                                                 update_pricelist=update_pricelist, context=context)
 
         # Update fs_ptoken for statistics (e.g.: after an user login / change)
         fs_ptoken = context.get('fs_ptoken', False)
