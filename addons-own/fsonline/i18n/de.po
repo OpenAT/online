@@ -1,0 +1,908 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fsonline
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-09 11:51+0000\n"
+"PO-Revision-Date: 2018-08-09 11:51+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid ": adding or deleting attributes\n"
+"                                will delete and recreate existing variants and lead\n"
+"                                to the loss of their possible customizations."
+msgstr ": adding or deleting attributes\n"
+"                                will delete and recreate existing variants and lead\n"
+"                                to the loss of their possible customizations."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Abweichende Betragsüberschrift"
+msgstr "Abweichende Betragsüberschrift"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_access
+msgid "Access"
+msgstr "Zugang"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Acquirers"
+msgstr "Zahlungsanbieter"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_timesheet
+msgid "Alle Stundenzettel"
+msgstr "Alle Stundenzettel"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Angezeigt in den Kategorien"
+msgstr "Angezeigt in den Kategorien"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_user_input
+msgid "Answers"
+msgstr "Antworten"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_archive
+msgid "Archiv"
+msgstr "Archiv"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Artikelvarianten als Auswahlliste darstellen"
+msgstr "Artikelvarianten als Auswahlliste darstellen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Artikelübersichtsseiten"
+msgstr "Artikelübersichtsseiten"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project_task
+msgid "Aufgaben"
+msgstr "Aufgaben"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Auswählbare Zahlungsintervalle"
+msgstr "Auswählbare Zahlungsintervalle"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_partner
+msgid "BPK Partner"
+msgstr "Personen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_bpk
+msgid "BPK Requests"
+msgstr "BPK-Abfragen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm_oppor
+msgid "Bearbeitete Anfragen"
+msgstr "Bearbeitete Anfragen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Beschreibung"
+msgstr "Beschreibung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Beschreibung ausblenden"
+msgstr "Beschreibung ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Betrag"
+msgstr "Betrag"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Betrag frei wählbar"
+msgstr "Betrag frei wählbar"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Betrag nicht anzeigen"
+msgstr "Betrag nicht anzeigen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Betragsvorschläge (Spendenbuttons)"
+msgstr "Betragsvorschläge (Spendenbuttons)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Betragsüberschrift ausblenden"
+msgstr "Betragsüberschrift ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Bild ausblenden"
+msgstr "Bild ausblenden"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog
+msgid "Blog"
+msgstr "Blog"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_blogs
+msgid "Blogs"
+msgstr "Blogs"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Buchhaltung"
+msgstr "Buchhaltung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Button Box Placeholder"
+msgstr "Button Box Placeholder"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Button Text"
+msgstr "Button Text"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm
+msgid "CRM"
+msgstr "CRM"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_calender
+msgid "Calendar"
+msgstr "Kalender"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_companies
+msgid "Companies"
+msgstr "Unternehmen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_fs_group_depricated
+msgid "DEPRICATED FSGroups"
+msgstr "DEPRICATED FSGroups"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_dashboard
+msgid "Dashboards"
+msgstr "Anzeigetafeln"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Design (Extra CSS Klassen)"
+msgstr "Design (Extra CSS Klassen)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll"
+msgstr "Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
+"                                            gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
+msgstr "Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
+"                                            gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!"
+msgstr "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Digitale Inhalte"
+msgstr "Digitale Inhalte"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_domains
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_website_domains
+msgid "Domain Manager"
+msgstr "Domain Manager"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_domain_templates
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_domain_templates
+msgid "Domain Templates"
+msgstr "Domain Templates"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_cart
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_cart
+msgid "Donation Carts"
+msgstr "Spendenkörbe"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction
+msgid "Donation Deduction"
+msgstr "Spendenabsetzbarkeit"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop
+msgid "Donation Shop"
+msgstr "Spendenshop"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Download-Datei"
+msgstr "Download-Datei"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Download-Datei Name"
+msgstr "Download-Datei Name"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Einkauf (Beschaffung)"
+msgstr "Einkauf (Beschaffung)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Ende"
+msgstr "Ende"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Extra Widget-Bereich am Seitenbeginn"
+msgstr "Extra Widget-Bereich am Seitenbeginn"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Extra Widget-Bereich am Seitenende"
+msgstr "Extra Widget-Bereich am Seitenende"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "FS Gruppen"
+msgstr "FS Gruppen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_fstoken_menu
+msgid "FS Login Token"
+msgstr "Temp. Anmeldeschlüssel"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "FS Typ"
+msgstr "FS Typ"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "FS Workflow (veraltet)"
+msgstr "FS Workflow (veraltet)"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline
+msgid "FS-Online"
+msgstr "FS-Online"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum
+msgid "Forum"
+msgstr "Hilfeforum"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum_forums
+msgid "Forums"
+msgstr "Forenverzeichnis"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Freier Betrag"
+msgstr "Freier Betrag"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Fundraising Studio Gruppen"
+msgstr "Fundraising Studio Gruppen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Fundraising Studio Typ"
+msgstr "Fundraising Studio Typ"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_settings
+msgid "Fundrasing Studio"
+msgstr "Fundrasing Studio"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Globalen Footer Ausblenden"
+msgstr "Globalen Footer Ausblenden"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_groups_menu
+msgid "Groups"
+msgstr "Gruppen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende / diesen Artikel überschreiben.\n"
+"                                        Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout Webseitenvorlage funktioniert!"
+msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende / diesen Artikel überschreiben.\n"
+"                                        Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout Webseitenvorlage funktioniert!"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hintergrungdbewegung beim Scrollen"
+msgstr "Hintergrungdbewegung beim Scrollen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_inbox
+msgid "Inbox"
+msgstr "Posteingang"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Information"
+msgstr "Information"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Interne Beschreibung"
+msgstr "Interne Beschreibung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Interner Code"
+msgstr "Interner Code"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer_calender
+msgid "Kalender"
+msgstr "Kalender"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Kategorienavigation ausblenden"
+msgstr "Kategorienavigation ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Keine Verlinkung zur Spendenseite"
+msgstr "Keine Verlinkung zur Spendenseite"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer_partner
+msgid "Kontakte"
+msgstr "Kontakte"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project_analytic
+msgid "Kostenstellen"
+msgstr "Kostenstellen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Kurzbeschreibung ausblenden"
+msgstr "Kurzbeschreibung ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Kurztext (Kurzbeschreibung)"
+msgstr "Kurztext (Kurzbeschreibung)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Kurztext ausblenden"
+msgstr "Kurztext ausblenden"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_label_form
+msgid "Labels"
+msgstr "Überschriften"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Lager"
+msgstr "Lager"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_landing_pages
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_landing_pages_manager
+#: model:ir.ui.menu,name:fsonline.widget_manager_lp_menu
+msgid "LandingPage Manager"
+msgstr "LandingPage Manager"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "List of Variants"
+msgstr "Variantenliste"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_mytimesheet
+msgid "Mein Stundenzettel"
+msgstr "Mein Stundenzettel"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_dashboard_my_dashboard
+msgid "Meine Dashboards"
+msgstr "Meine Dashboards"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_meinedaten
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_meinedaten
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_meinedaten
+msgid "Meine-Daten Formular"
+msgstr "Meine-Daten Formular"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Mengeneinheit"
+msgstr "Mengeneinheit"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Mindestbetrag"
+msgstr "Mindestbetrag"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg
+msgid "Nachrichten"
+msgstr "Nachrichten"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm_leads
+msgid "Neue Anfragen"
+msgstr "Neue Anfragen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_notes
+msgid "Notes"
+msgstr "Notizen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer_notes
+msgid "Notizen"
+msgstr "Notizen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_order
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_order
+msgid "Orders"
+msgstr "Aufträge"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_organizer
+msgid "Organizer"
+msgstr "Termine und Notizen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_page_form
+msgid "Pages"
+msgstr "Seiten"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_partner_partner
+msgid "Partner"
+msgstr "Kontakte"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Payment Intervals"
+msgstr "Zahlungsintervalle"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_payment
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_payment
+msgid "Payments"
+msgstr "Zahlungen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_personemail
+msgid "PersonEmail"
+msgstr "PersonEmail"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_personemailgruppe
+msgid "PersonEmailGruppe"
+msgstr "PersonEmailGruppe"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_persongruppe
+msgid "PersonGruppe"
+msgstr "PersonGruppe"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_posts
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc_posts
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum_posts
+msgid "Posts"
+msgstr "Beiträge"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_settings_print_field_groups
+msgid "Print Field Groups"
+msgstr "Seriendruckfelder Gruppen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_settings_print_fields
+msgid "Print Fields"
+msgstr "Seriendruckfelder"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer
+msgid "Project"
+msgstr "Projekt"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project_project
+msgid "Projekte"
+msgstr "Projekte"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_question_form
+msgid "Questions"
+msgstr "Fragestellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Reihung"
+msgstr "Reihung"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_scheduledactions
+msgid "Scheduled Actions"
+msgstr "Geplante Vorgänge"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Seiteneinstellungen"
+msgstr "Seiteneinstellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Seitenhintergrung"
+msgstr "Seitenhintergrung"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_settings
+msgid "Settings"
+msgstr "Einstellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Sichtb."
+msgstr "Sichtb."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Spenden und Artikel"
+msgstr "Spenden und Artikel"
+
+#. module: fsonline
+#: model:ir.actions.act_window,name:fsonline.fso_product_template_viewaction
+#: model:ir.ui.menu,name:fsonline.fso_product_template_menu
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_product
+msgid "Spenden und Artikel "
+msgstr "Spenden und Artikel "
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spenden, Artikel, Patenschaften, Events, Mitgliedschaften"
+msgstr "Spenden, Artikel, Patenschaften, Events, Mitgliedschaften"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spendenbox auf der Seite"
+msgstr "Spendenbox auf der Seite"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spendenbox ausblenden"
+msgstr "Spendenbox ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spendenkorbeinstellungen (Warenkorb)"
+msgstr "Spendenkorbeinstellungen (Warenkorb)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spendenkorbseite überspringen"
+msgstr "Spendenkorbseite überspringen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_report
+msgid "Spendenmeldungen"
+msgstr "Spendenmeldungen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_submission
+msgid "Spendenmeldungen Uebertragung"
+msgstr "Spendenmeldungs Übertragungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spendenseite (Artikelseite)"
+msgstr "Spendenseite (Artikelseite)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Spendenziel"
+msgstr "Spendenziel"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Standard Betrag"
+msgstr "Standard Betrag"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Standard URL"
+msgstr "Standard URL"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Standard Zahlungsinterval"
+msgstr "Standard Zahlungsinterval"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Start"
+msgstr "Start"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Std. Interv."
+msgstr "Std. Interv."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Stückzahlauswahl ausblenden"
+msgstr "Stückzahlauswahl ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Suchfeld ausblenden"
+msgstr "Suchfeld ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Suggested Donation-Values"
+msgstr "Vorgeschlagene Spendenbeträge"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey
+msgid "Survey"
+msgstr "Umfrage"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_user_input_line
+msgid "Survey User Input lines"
+msgstr "Teilnehmer Eingabezeilen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_surveys
+msgid "Surveys"
+msgstr "Umfragen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_system
+#: view:product.template:fsonline.fso_product_template_form
+msgid "System"
+msgstr "System"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_ir_config_menu
+msgid "System Parameters"
+msgstr "Systemparameter"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc_toc
+msgid "Table of Content"
+msgstr "Inhaltsverzeichnis"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_tags
+msgid "Tags"
+msgstr "Schlagwörter"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Text ausblenden"
+msgstr "Text ausblenden"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_todo
+msgid "ToDo"
+msgstr "ToDo"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_leave
+msgid "Urlaub u. Abwesenheit"
+msgstr "Urlaub u. Abwesenheit"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_leavereq
+msgid "Urlaubsanspruch erfassen"
+msgstr "Urlaubsanspruch erfassen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_users_menu
+msgid "Users"
+msgstr "Benutzer"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Variant Prices"
+msgstr "Preis der Variante"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Varianten"
+msgstr "Varianten"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Variants"
+msgstr "Varianten"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Verlinke Spenden- oder Artikelseiten"
+msgstr "Verlinke Spenden- oder Artikelseiten"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Warning"
+msgstr "Warnung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "WebFreig."
+msgstr "WebFreig."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webanzeige (berechnet)"
+msgstr "Webanzeige (berechnet)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webanzeige Ende"
+msgstr "Webanzeige Ende"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webanzeige Start"
+msgstr "Webanzeige Start"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webfreigabe"
+msgstr "Webfreigabe"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webseite"
+msgstr "Webseite"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webseiteneinstellungen"
+msgstr "Webseiteneinstellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Webseitenvorlage"
+msgstr "Webseitenvorlage"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_settings
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_settings_website
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_website
+msgid "Website"
+msgstr "Webseite"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_settings_categories
+msgid "Website Categories"
+msgstr "Webseitenkategorien"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Webvorlage"
+msgstr "Webvorlage"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_widget_manager
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_widget_manager
+#: model:ir.ui.menu,name:fsonline.widget_manager_menu
+msgid "Widget Manager"
+msgstr "Widget Manager"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_fiscalyear
+msgid "Wirtschaftsjahre"
+msgstr "Wirtschaftsjahre"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Zahlung"
+msgstr "Zahlung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Zahlungsinterval"
+msgstr "Zahlungsinterval"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Zahlungsintervalle als Auswahlliste darstellen"
+msgstr "Zahlungsintervalle als Auswahlliste darstellen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Zahlungsmethoden"
+msgstr "Zahlungsmethoden"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime
+msgid "Zeiterfassung"
+msgstr "Zeiterfassung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Zielbalken ausblenden"
+msgstr "Zielbalken ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Zugehörige Spenden und Artikel"
+msgstr "Zugehörige Spenden und Artikel"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppe
+msgid "zGruppe"
+msgstr "zGruppe"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppedetail
+msgid "zGruppeDetail"
+msgstr "zGruppeDetail"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Übersichtsseiten (Artikellisten)"
+msgstr "Übersichtsseiten (Artikellisten)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "⇒ Request Procurement"
+msgstr "=> Beschaffung vorschlagen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "⇒ Update"
+msgstr "=> Aktualisieren"
+

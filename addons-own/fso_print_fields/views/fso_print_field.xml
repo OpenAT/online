@@ -83,7 +83,7 @@
     </record>
     <!-- MENU -->
     <!-- And we add the Action to a Menu with the shortcut menuitem -->
-    <menuitem id="fso_print_field_menu" action="fso_print_field_action" parent="fso_base.menu_fsonline_settings" sequence="10301"/>
+    <menuitem id="fso_print_field_menu" action="fso_print_field_action" parent="base.menu_config" sequence="10301"/>
         
 
 </data></openerp>

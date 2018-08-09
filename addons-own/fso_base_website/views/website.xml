@@ -126,7 +126,7 @@
             <field name="act_window_id" ref="website_action"/>
         </record>
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
-        <menuitem id="website_menu" action="website_action" parent="fso_base.menu_fsonline_settings" sequence="100"/>
+        <menuitem id="website_menu" action="website_action" parent="base.menu_config" sequence="100"/>
 
     </data>
 </openerp>
