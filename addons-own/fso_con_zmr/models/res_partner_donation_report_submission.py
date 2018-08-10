@@ -735,7 +735,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # FinanzOnline File Upload known ERROR
             # ------------------------------------
-            # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
+            # HINT: In this case we expect that the submission was rejected by FinanzOnline
             # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
             elif returncode != '0':
                 r.update_submission(state='error',
@@ -1144,7 +1144,7 @@ class ResPartnerFADonationReport(models.Model):
         if not self or not self.ensure_one():
             raise ValidationError(_("release_donation_reports() works only for single records!"))
         s = self
-        if s.state == 'response_nok' and 'ERR-F-' in s.response_error_code:
+        if s.state == 'error' or (s.state == 'response_nok' and 'ERR-F-' in s.response_error_code):
             s.donation_report_ids.write({'state': 'error',
                                          'submission_id': False,
                                          'error_type': 'nok_released',

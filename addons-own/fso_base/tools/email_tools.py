@@ -5,11 +5,9 @@ from openerp.addons.fso_base.tools.server_tools import is_production_server
 from datetime import datetime as dt
 from dateutil import tz
 import smtplib
-from email.mime.multipart import MIMEMultipart
+# from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
-
-import urllib
 
 import logging
 logger = logging.getLogger(__name__)

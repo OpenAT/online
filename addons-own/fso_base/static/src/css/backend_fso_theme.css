@@ -51,6 +51,11 @@
     padding: 19px 8px 2px 8px;
     margin: 0;
 }
+#oe_main_menu_navbar #menu_more li a,
+#oe_main_menu_navbar #menu_more li button {
+    min-height: 12px;
+    padding: 4px 8px 2px 8px;
+}
 .openerp.openerp_webclient_container {
     height: calc(100% - 48px);
 }

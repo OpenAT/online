@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-09 11:51+0000\n"
-"PO-Revision-Date: 2018-08-09 11:51+0000\n"
+"POT-Creation-Date: 2018-08-10 15:28+0000\n"
+"PO-Revision-Date: 2018-08-10 15:28+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -80,14 +80,9 @@ msgid "Auswählbare Zahlungsintervalle"
 msgstr "Auswählbare Zahlungsintervalle"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_partner
-msgid "BPK Partner"
-msgstr "Personen"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_bpk
-msgid "BPK Requests"
-msgstr "BPK-Abfragen"
+msgid "BPK Abfragen"
+msgstr "BPK Abfragen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm_oppor
@@ -299,6 +294,11 @@ msgstr "FS Workflow (veraltet)"
 #: model:ir.ui.menu,name:fsonline.menu_fsonline
 msgid "FS-Online"
 msgstr "FS-Online"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_submission
+msgid "FinanzOnline Uebertrag."
+msgstr "FinanzOnline Übertrag."
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum
@@ -530,6 +530,11 @@ msgid "PersonGruppe"
 msgstr "PersonGruppe"
 
 #. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_partner
+msgid "Personen"
+msgstr "Personen"
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_posts
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc_posts
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum_posts
@@ -634,11 +639,6 @@ msgstr "Spendenkorbseite überspringen"
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_report
 msgid "Spendenmeldungen"
 msgstr "Spendenmeldungen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_submission
-msgid "Spendenmeldungen Uebertragung"
-msgstr "Spendenmeldungs Übertragungen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
