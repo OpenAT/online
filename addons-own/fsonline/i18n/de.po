@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-10 15:28+0000\n"
-"PO-Revision-Date: 2018-08-10 15:28+0000\n"
+"POT-Creation-Date: 2018-08-13 08:48+0000\n"
+"PO-Revision-Date: 2018-08-13 08:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -166,6 +166,17 @@ msgid "Calendar"
 msgstr "Kalender"
 
 #. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_campaigns
+#: model:ir.ui.menu,name:fsonline.menu_channels_track_utm_campaign
+msgid "Campaigns"
+msgstr "Kampagnen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels
+msgid "Channels"
+msgstr "Kanäle"
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_companies
 msgid "Companies"
 msgstr "Unternehmen"
@@ -251,6 +262,16 @@ msgid "Download-Datei Name"
 msgstr "Download-Datei Name"
 
 #. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_send
+msgid "E-Mails"
+msgstr "E-Mails"
+
+#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Einkauf (Beschaffung)"
 msgstr "Einkauf (Beschaffung)"
@@ -298,7 +319,7 @@ msgstr "FS-Online"
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_submission
 msgid "FinanzOnline Uebertrag."
-msgstr "FinanzOnline Übertrag."
+msgstr "FinanzOnline Uebertrag."
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum
@@ -430,9 +451,39 @@ msgid "LandingPage Manager"
 msgstr "LandingPage Manager"
 
 #. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_track_linktracker
+msgid "Link Tracker"
+msgstr "Link Tracker"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_contacts
+msgid "List Contacts"
+msgstr "E-Mail Listenkontakte"
+
+#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "List of Variants"
 msgstr "Variantenliste"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_statistics
+msgid "Mail Statistics"
+msgstr "Statistik der E-Mail Nachrichten"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_lists
+msgid "Mailing Lists"
+msgstr "E-Mail Listen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_mailings
+msgid "Mailings"
+msgstr "E-Mail Versendungen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_track_utm_action
+msgid "Medium"
+msgstr "Medium"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_mytimesheet
@@ -588,6 +639,11 @@ msgid "Seitenhintergrung"
 msgstr "Seitenhintergrung"
 
 #. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_queue
+msgid "Sending Queue"
+msgstr "Vorbereitung u. Zustellung"
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_settings
 msgid "Settings"
@@ -597,6 +653,11 @@ msgstr "Einstellungen"
 #: view:product.template:fsonline.fso_product_template_tree
 msgid "Sichtb."
 msgstr "Sichtb."
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_track_utm
+msgid "Sources"
+msgstr "Quelle"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
@@ -735,6 +796,11 @@ msgstr "Text ausblenden"
 #: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_todo
 msgid "ToDo"
 msgstr "ToDo"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_track
+msgid "Tracking"
+msgstr "Tracking"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_leave

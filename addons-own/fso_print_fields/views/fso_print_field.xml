@@ -16,6 +16,7 @@
                     <field name="name"/>
                     <field name="sequence"/>
                     <field name="fs_email_placeholder"/>
+                    <field name="mako_expression"/>
                     <field name="css_class"/>
                     <field name="group_ids"/>
                     <field name="exclude_in_email_theme_ids"/>
@@ -34,6 +35,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="fs_email_placeholder"/>
+                <field name="mako_expression"/>
                 <field name="css_class"/>
                 <field name="group_ids"/>
                 <field name="exclude_in_email_theme_ids"/>
