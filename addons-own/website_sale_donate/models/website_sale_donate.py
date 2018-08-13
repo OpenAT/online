@@ -187,6 +187,7 @@ class sale_order_line(osv.Model):
         'payment_interval_name': fields.text('Payment Interval Name'),
         'payment_interval_xmlid': fields.text('Payment Interval Name'),
         'fs_ptoken': fields.text('FS Partner Token'),
+        'fs_origin': fields.char('FS Partner Token Origin', help="The Fundraising Studio activity ID")
     }
 
 

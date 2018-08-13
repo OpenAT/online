@@ -52,10 +52,10 @@ class ir_http(orm.AbstractModel):
                     res = login_and_redirect(request.db, user.login, token_record.name,
                                              redirect_url=request.httprequest.url)
 
-                    # Update the 'new context after login' with fs_ptoken
-                    # TODO: Would be much better to use the utm and link_tracker addons
+                    # Update the 'new context after login' with fs_ptoken and fs_origin
                     if hasattr(request, 'session') and hasattr(request.session, 'context') and request.session.context:
                         request.session.context['fs_ptoken'] = token_record.name
+                        request.session.context['fs_origin'] = token_record.fs_origin or False
                     return res
 
         return response

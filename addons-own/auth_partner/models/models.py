@@ -64,7 +64,7 @@ class ResPartnerFSToken(models.Model):
     expiration_date = fields.Date(string="Expiration Date", required=True,
                                   default=fields.datetime.now() + timedelta(days=14),
                                   index=True)
-    fs_origin = fields.Char(string="FS Origin")
+    fs_origin = fields.Char(string="FS Origin", help="The Fundraising Studio activity ID")
     last_date_of_use = fields.Date(string="DEPRICATED: Last Date of Use", readonly=True)
     last_datetime_of_use = fields.Datetime(string="Last Date and Time of Use", readonly=True)
     first_datetime_of_use = fields.Datetime(string="First Date and Time of Use", readonly=True)
