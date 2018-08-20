@@ -57,6 +57,8 @@ editor and it's tools like the href edit pop-up window.
         'views/theme_default_snippets.xml',
         #
         'views/theme_dadi.xml',
+        #
+        'data/scheduled_actions.xml',
     ],
     'qweb': [
     ],
