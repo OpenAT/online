@@ -8,11 +8,6 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="zGruppeDetail">
-                <header>
-                    <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
-                    <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
-                    <field name="state" widget="statusbar"/>
-                </header>
                 <sheet>
                     <group>
                         <field name="zgruppe_id"/>
@@ -46,7 +41,6 @@
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
-                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -64,7 +58,6 @@
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
-                <field name="state"/>
             </search>
         </field>
     </record>

@@ -4,19 +4,6 @@
     <!-- ================= -->
     <!-- SCHEDULED ACTIONS -->
     <!-- ================= -->
-
-    <record id="ir_cron_scheduled_zgruppedetail_state" model="ir.cron" forcecreate="1">
-        <field name="name">fso_base compute zGruppeDetail state</field>
-        <field name="priority" eval="30000" />
-        <field name="active" eval="True"/>
-        <field name="interval_number">1</field>
-        <field name="interval_type">hours</field>
-        <field name="numbercall">-1</field>
-        <field name="doall" eval="False"/>
-        <field name="model">frst.zgruppedetail</field>
-        <field name="function">scheduled_compute_all_states</field>
-        <field name="args" eval="'()'"/>
-    </record>
     
     <record id="ir_cron_scheduled_persongruppe_state" model="ir.cron" forcecreate="1">
         <field name="name">fso_base compute PersonGruppe state</field>

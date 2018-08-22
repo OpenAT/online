@@ -77,7 +77,7 @@ class FRSTGruppeState(models.AbstractModel):
               ('gueltig_von', '>', now),
               ('gueltig_bis', '<', now),
         ])
-        expired.write({'state': 'disabled'})
+        expired.write({'state': 'expired'})
         return True
 
     @api.model
@@ -192,7 +192,7 @@ class FRSTPersonGruppe(models.Model):
         # Update res.partner checkboxes
         if res:
             partner = res.mapped('partner_id')
-            for (zgruppedetail_fs_id, partner_boolean_field) in self.FRST_GRUPPE_TO_CHECKBOX:
+            for (zgruppedetail_fs_id, partner_boolean_field) in self.FRST_GRUPPE_TO_CHECKBOX.iteritems():
                 partner.update_checkbox_by_persongruppe(zgruppedetail_fs_id, partner_boolean_field)
 
         return res
@@ -204,7 +204,7 @@ class FRSTPersonGruppe(models.Model):
         # Update res.partner checkboxes
         if res:
             partner = self.mapped('partner_id')
-            for (zgruppedetail_fs_id, partner_boolean_field) in self.FRST_GRUPPE_TO_CHECKBOX:
+            for (zgruppedetail_fs_id, partner_boolean_field) in self.FRST_GRUPPE_TO_CHECKBOX.iteritems():
                 partner.update_checkbox_by_persongruppe(zgruppedetail_fs_id, partner_boolean_field)
 
         return res
@@ -217,7 +217,7 @@ class FRSTPersonGruppe(models.Model):
 
         # Update res.partner checkboxes
         if res and partner:
-            for (zgruppedetail_fs_id, partner_boolean_field) in self.FRST_GRUPPE_TO_CHECKBOX:
+            for (zgruppedetail_fs_id, partner_boolean_field) in self.FRST_GRUPPE_TO_CHECKBOX.iteritems():
                 partner.update_checkbox_by_persongruppe(zgruppedetail_fs_id, partner_boolean_field)
 
         return res
@@ -274,10 +274,10 @@ class ResPartner(models.Model):
                     expired.sorted(key=lambda person: person.write_date, reverse=True)
                     expired = expired[0]
 
-                    gueltig_von = fields.date.strptime(expired.gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
+                    gueltig_von = fields.datetime.strptime(expired.gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
                     if gueltig_von > fields.datetime.now():
-                        gueltig_von = fields.date.now()
-                    gueltig_bis = fields.date.strptime(expired.gueltig_bis, DEFAULT_SERVER_DATE_FORMAT)
+                        gueltig_von = fields.datetime.now()
+                    gueltig_bis = fields.datetime.strptime(expired.gueltig_bis, DEFAULT_SERVER_DATE_FORMAT)
                     if gueltig_bis < fields.datetime.now():
                         gueltig_bis = fields.date(2099, 12, 31)
 
@@ -341,7 +341,8 @@ class ResPartner(models.Model):
 
         # Update PersonGruppe by checkboxes
         if res and not skipp_persongruppe_by_checkbox:
-            for (zgruppedetail_fs_id, partner_boolean_field) in self.env['frst.persongruppe'].FRST_GRUPPE_TO_CHECKBOX:
+            FRST_GRUPPE_TO_CHECKBOX = self.env['frst.persongruppe'].FRST_GRUPPE_TO_CHECKBOX
+            for (zgruppedetail_fs_id, partner_boolean_field) in FRST_GRUPPE_TO_CHECKBOX.iteritems():
                 res.update_persongruppe_by_checkbox(zgruppedetail_fs_id, partner_boolean_field)
 
         return res
@@ -355,7 +356,8 @@ class ResPartner(models.Model):
 
         # Update PersonGruppe by checkboxes
         if res and not skipp_persongruppe_by_checkbox:
-            for (zgruppedetail_fs_id, partner_boolean_field) in self.env['frst.persongruppe'].FRST_GRUPPE_TO_CHECKBOX:
+            FRST_GRUPPE_TO_CHECKBOX = self.env['frst.persongruppe'].FRST_GRUPPE_TO_CHECKBOX
+            for (zgruppedetail_fs_id, partner_boolean_field) in FRST_GRUPPE_TO_CHECKBOX.iteritems():
                 self.update_persongruppe_by_checkbox(zgruppedetail_fs_id, partner_boolean_field)
 
         return res
