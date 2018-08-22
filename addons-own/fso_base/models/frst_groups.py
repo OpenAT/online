@@ -261,7 +261,7 @@ class ResPartner(models.Model):
                     if len(unsubscribed) > 1:
                         logger.error("More than one unsubscribed zGruppeDetail (%s) for partner %s"
                                      "" % (zgruppedetail_fs_id, r.id))
-                    unsubscribed.write({'steuerung_bit': True})
+                    unsubscribed.sudo().write({'steuerung_bit': True})
                     # Continue with next partner
                     continue
 
@@ -281,7 +281,7 @@ class ResPartner(models.Model):
                     if gueltig_bis < fields.datetime.now():
                         gueltig_bis = fields.date(2099, 12, 31)
 
-                    expired.write({'gueltig_von': gueltig_von, 'gueltig_bis': gueltig_bis, 'steuerung_bit': True})
+                    expired.sudo().write({'gueltig_von': gueltig_von, 'gueltig_bis': gueltig_bis, 'steuerung_bit': True})
                     # Continue with next partner
                     continue
 
@@ -301,7 +301,7 @@ class ResPartner(models.Model):
             if not r[partner_boolean_field] and subscribed:
                 # ATTENTION: We can not know if we should unsubscribe or expire a group :(
                 #            TODO: If we add a field to FRST 'steuerung_bit_erlaubt' we could base our decision on this
-                subscribed.write({'gueltig_bis': fields.datetime.now() - timedelta(days=1)})
+                subscribed.sudo().write({'gueltig_bis': fields.datetime.now() - timedelta(days=1)})
 
                 # TODO: If a group exist already and unsubscribe is allowed we unsubscribe instead of expire!
 
