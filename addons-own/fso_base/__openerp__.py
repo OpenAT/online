@@ -130,5 +130,7 @@ TODO (must be done manually right now):
         'views/frst_zgruppedetail.xml',
         'views/frst_persongruppe.xml',
         'views/frst_personemailgruppe.xml',
+        #
+        'data/scheduled_actions.xml',
     ],
 }

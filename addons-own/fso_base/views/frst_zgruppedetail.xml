@@ -8,20 +8,27 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="zGruppeDetail">
-                <group>
-                    <field name="zgruppe_id"/>
-                    <field name="gruppe_kurz"/>
-                    <field name="gruppe_lang"/>
-                    <field name="gui_anzeigen"/>
-                    <field name="gueltig_von"/>
-                    <field name="gueltig_bis"/>
-                </group>
-                <group string="PersonGruppe">
-                    <field name="frst_persongruppe_ids"/>
-                </group>
-                <group string="PersonEmailGruppe">
-                    <field name="frst_personemailgruppe_ids"/>
-                </group>
+                <header>
+                    <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
+                    <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="zgruppe_id"/>
+                        <field name="gruppe_kurz"/>
+                        <field name="gruppe_lang"/>
+                        <field name="gui_anzeigen"/>
+                        <field name="gueltig_von"/>
+                        <field name="gueltig_bis"/>
+                    </group>
+                    <group string="PersonGruppe">
+                        <field name="frst_persongruppe_ids"/>
+                    </group>
+                    <group string="PersonEmailGruppe">
+                        <field name="frst_personemailgruppe_ids"/>
+                    </group>
+                </sheet>
             </form>
         </field>
     </record>
@@ -39,6 +46,7 @@
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -56,6 +64,7 @@
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="state"/>
             </search>
         </field>
     </record>

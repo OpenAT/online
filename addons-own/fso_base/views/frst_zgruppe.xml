@@ -8,15 +8,17 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="zGruppe">
-                <group>
-                    <field name="tabellentyp_id"/>
-                    <field name="gruppe_kurz"/>
-                    <field name="gruppe_lang"/>
-                    <field name="gui_anzeigen"/>
-                </group>
-                <group string="zGruppeDetail">
-                    <field name="zgruppedetail_ids"/>
-                </group>
+                <sheet>
+                    <group>
+                        <field name="tabellentyp_id"/>
+                        <field name="gruppe_kurz"/>
+                        <field name="gruppe_lang"/>
+                        <field name="gui_anzeigen"/>
+                    </group>
+                    <group string="zGruppeDetail">
+                        <field name="zgruppedetail_ids"/>
+                    </group>
+                </sheet>
             </form>
         </field>
     </record>

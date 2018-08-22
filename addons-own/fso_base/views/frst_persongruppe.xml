@@ -8,13 +8,20 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="PersonGruppe">
-                <group>
-                    <field name="zgruppedetail_id"/>
-                    <field name="partner_id"/>
-                    <field name="steuerung_bit"/>
-                    <field name="gueltig_von"/>
-                    <field name="gueltig_bis"/>
-                </group>
+                <header>
+                    <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
+                    <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="zgruppedetail_id"/>
+                        <field name="partner_id"/>
+                        <field name="steuerung_bit"/>
+                        <field name="gueltig_von"/>
+                        <field name="gueltig_bis"/>
+                    </group>
+                </sheet>
             </form>
         </field>
     </record>
@@ -31,6 +38,7 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -47,6 +55,7 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="state"/>
             </search>
         </field>
     </record>
