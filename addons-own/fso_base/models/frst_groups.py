@@ -141,7 +141,7 @@ class FRSTzGruppeDetail(models.Model):
 
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
                                  string="zGruppeID",
-                                 required=True)
+                                 required=True, ondelete="cascade")
 
     gruppe_kurz = fields.Char("GruppeKurz", required=True)
     gruppe_lang = fields.Char("GruppeLang", required=True)
@@ -301,9 +301,8 @@ class ResPartner(models.Model):
             if not r[partner_boolean_field] and subscribed:
                 # ATTENTION: We can not know if we should unsubscribe or expire a group :(
                 #            TODO: If we add a field to FRST 'steuerung_bit_erlaubt' we could base our decision on this
+                #            TODO: If a group exist already and unsubscribe is allowed we unsubscribe instead of expire!
                 subscribed.sudo().write({'gueltig_bis': fields.datetime.now() - timedelta(days=1)})
-
-                # TODO: If a group exist already and unsubscribe is allowed we unsubscribe instead of expire!
 
         return True
 
@@ -329,7 +328,7 @@ class ResPartner(models.Model):
 
             checkbox_value = True if subscribed else False
             if r[partner_boolean_field] != checkbox_value:
-                r.write({partner_boolean_field: checkbox_value, 'skipp_persongruppe_by_checkbox': True})
+                r.sudo().write({partner_boolean_field: checkbox_value, 'skipp_persongruppe_by_checkbox': True})
         return True
 
     @api.model
