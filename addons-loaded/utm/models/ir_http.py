@@ -21,11 +21,16 @@ class IrHttp(models.AbstractModel):
         if not request:
             return response
 
-        domain = self.get_utm_domain_cookies()
-        for var, dummy, cook in request.env['utm.mixin'].tracking_fields():
-            if var in request.params and request.httprequest.cookies.get(var) != request.params[var]:
-                response.set_cookie(cook, request.params[var], domain=domain)
+        try:
+            domain = self.get_utm_domain_cookies()
+            for var, dummy, cook in request.env['utm.mixin'].tracking_fields():
+                if var in request.params and request.httprequest.cookies.get(var) != request.params[var]:
+                    response.set_cookie(cook, request.params[var], domain=domain)
+        except Exception as e:
+            pass
+
         return response
+
 
     #@classmethod
     def _dispatch(self):
