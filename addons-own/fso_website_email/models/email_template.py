@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class PremailerWithTimeout(Premailer):
     def _load_external_url(self, url):
         logger.info("Premailer get url with timeout: %s" % url)
-        res = requests.get(url, timeout=6.0)
+        res = requests.get(url, timeout=14.0)
         return res.text
 
 
@@ -143,13 +143,17 @@ class EmailTemplate(models.Model):
                 #  - inline CSS and
                 #  - convert relative to absolute URLs
                 base_url = self.get_base_url()
-                premailer_obj = PremailerWithTimeout(content, base_url=base_url, preserve_internal_links=True,
-                                                     keep_style_tags=True, strip_important=False,
-                                                     align_floating_images=False,
-                                                     remove_unset_properties=False, include_star_selectors=False)
-                # ATTENTION: This step will try a lot of requests.packages.urllib3.connectionpool connections
-                #            which may lead to long processing times.
-                content = premailer_obj.transform(pretty_print=True)
+                try:
+                    premailer_obj = PremailerWithTimeout(content, base_url=base_url, preserve_internal_links=True,
+                                                         keep_style_tags=True, strip_important=False,
+                                                         align_floating_images=False,
+                                                         remove_unset_properties=False, include_star_selectors=False)
+                    # ATTENTION: This step will try a lot of requests.packages.urllib3.connectionpool connections
+                    #            which may lead to long processing times.
+                    content = premailer_obj.transform(pretty_print=True)
+                except Exception as e:
+                    logger.error("fso_email_html computation: premailer error\n%s" % repr(e))
+                    content = False
 
                 # Update fso_email_html field
                 r.fso_email_html = content
@@ -157,33 +161,36 @@ class EmailTemplate(models.Model):
                 # -----------------------------
                 # Compute fso_email_html_parsed
                 # -----------------------------
+                if not content:
+                    logger.error("fso_email_html_parsed computation error: fso_email_html is empty!")
+                    r.fso_email_html_parsed = False
+                else:
+                    # Rewrite links to "Mutimailer Tracking URLs"
+                    # Example of a mutimailer target: %redirector%/https//www.global2000.at/ceta-verhindern
+                    html_soup = BeautifulSoup(content, "lxml")
+                    anchors = html_soup.find_all('a')
+                    for a in anchors:
+                        href = a.get('href', '').strip()
 
-                # Rewrite links to "Mutimailer Tracking URLs"
-                # Example of a mutimailer target: %redirector%/https//www.global2000.at/ceta-verhindern
-                html_soup = BeautifulSoup(content, "lxml")
-                anchors = html_soup.find_all('a')
-                for a in anchors:
-                    href = a.get('href', '').strip()
+                        # Fix multimailer '%open_browser%' links
+                        if '%open_browser%' in href:
+                            a['href'] = '%open_browser%'
+                            continue
 
-                    # Fix multimailer '%open_browser%' links
-                    if '%open_browser%' in href:
-                        a['href'] = '%open_browser%'
-                        continue
+                        # Skipp rewrite to tracking link if 'dadi_notrack' class is set
+                        if 'dadi_notrack' in a.get('class', ''):
+                            continue
 
-                    # Skipp rewrite to tracking link if 'dadi_notrack' class is set
-                    if 'dadi_notrack' in a.get('class', ''):
-                        continue
+                        # Convert to multimailer links
+                        if '://' in href and href.startswith('http'):
+                            protocol, address = href.split('://', 1)
+                            a['href'] = '%redirector%/' + protocol + '//' + address
 
-                    # Convert to multimailer links
-                    if '://' in href and href.startswith('http'):
-                        protocol, address = href.split('://', 1)
-                        a['href'] = '%redirector%/' + protocol + '//' + address
+                    # Output html in unicode and keep most html entities (done by formatter="minimal")
+                    content = html_soup.prettify(formatter="minimal")
 
-                # Output html in unicode and keep most html entities (done by formatter="minimal")
-                content = html_soup.prettify(formatter="minimal")
-
-                # Update fso_email_html_parsed field
-                r.fso_email_html_parsed = content
+                    # Update fso_email_html_parsed field
+                    r.fso_email_html_parsed = content
 
                 # --------------------------
                 # Compute screenshot_pending
