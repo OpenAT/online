@@ -234,8 +234,9 @@ class ResPartner(models.Model):
     def update_persongruppe_by_checkbox(self, zgruppedetail_fs_id=None, partner_boolean_field=None):
         assert isinstance(zgruppedetail_fs_id, int), "Attribute 'zgruppedetail_fs_id' missing or no integer!"
         assert isinstance(partner_boolean_field, basestring), "Attribute 'partner_boolean_field' missing or no string!"
-        assert hasattr(self, partner_boolean_field), "Partner has no field '%s'!" % partner_boolean_field
-        # TODO: Assert the field is a boolean field
+        if self:
+            assert hasattr(self, partner_boolean_field), "Partner has no field '%s'!" % partner_boolean_field
+            # TODO: Assert the field is a boolean field
 
         for r in self:
 
@@ -311,8 +312,9 @@ class ResPartner(models.Model):
     def update_checkbox_by_persongruppe(self, zgruppedetail_fs_id=None, partner_boolean_field=None):
         assert isinstance(zgruppedetail_fs_id, int), "Attribute 'zgruppedetail_fs_id' missing or no integer!"
         assert isinstance(partner_boolean_field, basestring), "Attribute 'partner_boolean_field' missing or no string!"
-        assert hasattr(self, partner_boolean_field), "Partner has no field '%s'!" % partner_boolean_field
-        # TODO: Assert the field is a boolean field
+        if self:
+            assert hasattr(self, partner_boolean_field), "Partner has no field '%s'!" % partner_boolean_field
+            # TODO: Assert the field is a boolean field
 
         for r in self:
             subscribed = r.persongruppe_ids.filtered(
