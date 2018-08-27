@@ -24,6 +24,13 @@ class IrHttp(models.AbstractModel):
     #@classmethod
     def _dispatch(self):
         response = super(IrHttp, self)._dispatch()
+
+        # In case there is no request yet (unbound object error catch)
+        # https://github.com/OCA/e-commerce/issues/152
+        # https://github.com/OCA/e-commerce/pull/190
+        if not request:
+            return response
+
         return self._set_utm(response)
 
     #@classmethod
