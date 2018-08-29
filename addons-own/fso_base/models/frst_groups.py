@@ -323,6 +323,7 @@ class ResPartner(models.Model):
                 logger.info("partner id %s has no main address, "
                             "skipping update_personemailgruppe_by_checkbox"
                             % r.id)
+                r.write({partner_boolean_field: False, 'skipp_personemailgruppe_by_checkbox': True})
                 continue
 
             # TODO: Instead of three filter do only one for loop
@@ -378,7 +379,7 @@ class ResPartner(models.Model):
                 )
                 self.env['frst.personemailgruppe'].sudo().create({
                     'zgruppedetail_id': zgruppedetail.id,
-                    'personemail_id': main_email.id,
+                    'frst_personemail_id': main_email.id,
                     'steuerung_bit': True,
                     'gueltig_von': fields.datetime.now(),
                     'gueltig_bis': fields.date(2099, 12, 31),
