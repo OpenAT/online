@@ -455,7 +455,7 @@ class ResPartner(models.Model):
 
             checkbox_value = True if subscribed else False
             if r[partner_boolean_field] != checkbox_value:
-                r.sudo().write({partner_boolean_field: checkbox_value, 'skipp_persongruppe_by_checkbox': True})
+                r.sudo().write({partner_boolean_field: checkbox_value, 'skipp_personemailgruppe_by_checkbox': True})
         return True
 
     @api.model
