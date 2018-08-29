@@ -230,6 +230,83 @@ class ResPartner(models.Model):
                                        string="FRST PersonGruppe IDS")
 
     @api.multi
+    def update_persongruppe_by_checkbox(self, zgruppedetail_fs_id=None, partner_boolean_field=None):
+        assert isinstance(zgruppedetail_fs_id, int), "Attribute 'zgruppedetail_fs_id' missing or no integer!"
+        assert isinstance(partner_boolean_field, basestring), "Attribute 'partner_boolean_field' missing or no string!"
+        if self:
+            assert isinstance(self._fields[partner_boolean_field], fields.Boolean), \
+                "Partner has no bolean field '%s'!" % partner_boolean_field
+
+        for r in self:
+
+            # TODO: Instead of three filter do only one for loop
+            subscribed = r.persongruppe_ids.filtered(
+                lambda g: g.zgruppedetail_id.sosync_fs_id == zgruppedetail_fs_id and g.state == 'subscribed'
+            )
+            unsubscribed = r.persongruppe_ids.filtered(
+                lambda g: g.zgruppedetail_id.sosync_fs_id == zgruppedetail_fs_id and g.state == 'unsubscribed'
+            )
+            expired = r.persongruppe_ids.filtered(
+                lambda g: g.zgruppedetail_id.sosync_fs_id == zgruppedetail_fs_id and g.state == 'expired'
+            )
+
+            assert not (subscribed and unsubscribed), "zGruppeDetail (%s) is subscribed and unsubscribed at the " \
+                                                      "same time! (partner id %s)" % (zgruppedetail_fs_id, r.id)
+
+            # CHECKBOX IS SET (True)
+            if r[partner_boolean_field] and not subscribed:
+
+                # Enable unsubscribed
+                if unsubscribed:
+                    if len(unsubscribed) > 1:
+                        logger.error("More than one unsubscribed zGruppeDetail (%s) for partner %s"
+                                     "" % (zgruppedetail_fs_id, r.id))
+                    unsubscribed.sudo().write({'steuerung_bit': True})
+                    # Continue with next partner
+                    continue
+
+                # Enable expired
+                if expired:
+                    if len(expired) > 1:
+                        logger.warning("More than one expired zGruppeDetail (%s) for partner %s"
+                                       "" % (zgruppedetail_fs_id, r.id))
+
+                    expired.sorted(key=lambda person: person.write_date, reverse=True)
+                    expired = expired[0]
+
+                    gueltig_von = fields.datetime.strptime(expired.gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
+                    if gueltig_von > fields.datetime.now():
+                        gueltig_von = fields.datetime.now()
+                    gueltig_bis = fields.datetime.strptime(expired.gueltig_bis, DEFAULT_SERVER_DATE_FORMAT)
+                    if gueltig_bis < fields.datetime.now():
+                        gueltig_bis = fields.date(2099, 12, 31)
+
+                    expired.sudo().write({'gueltig_von': gueltig_von, 'gueltig_bis': gueltig_bis, 'steuerung_bit': True})
+                    # Continue with next partner
+                    continue
+
+                # Create PersonGruppe
+                zgruppedetail = self.env['frst.zgruppedetail'].sudo().search(
+                    [('sosync_fs_id', '=', zgruppedetail_fs_id)], limit=1,
+                )
+                self.env['frst.persongruppe'].sudo().create({
+                    'zgruppedetail_id': zgruppedetail.id,
+                    'partner_id': r.id,
+                    'steuerung_bit': True,
+                    'gueltig_von': fields.datetime.now(),
+                    'gueltig_bis': fields.date(2099, 12, 31),
+                })
+
+            # CHECKBOX IS NOT SET (True)
+            if not r[partner_boolean_field] and subscribed:
+                # ATTENTION: We can not know if we should unsubscribe or expire a group :(
+                #            TODO: If we add a field to FRST 'steuerung_bit_erlaubt' we could base our decision on this
+                #            TODO: If a group exist already and unsubscribe is allowed we unsubscribe instead of expire!
+                subscribed.sudo().write({'gueltig_bis': fields.datetime.now() - timedelta(days=1)})
+
+        return True
+
+    @api.multi
     def update_personemailgruppe_by_checkbox(self, zgruppedetail_fs_id=None, partner_boolean_field=None):
         assert isinstance(zgruppedetail_fs_id, int), "Attribute 'zgruppedetail_fs_id' missing or no integer!"
         assert isinstance(partner_boolean_field, basestring), "Attribute 'partner_boolean_field' missing or no string!"
@@ -302,83 +379,6 @@ class ResPartner(models.Model):
                 self.env['frst.personemailgruppe'].sudo().create({
                     'zgruppedetail_id': zgruppedetail.id,
                     'personemail_id': main_email.id,
-                    'steuerung_bit': True,
-                    'gueltig_von': fields.datetime.now(),
-                    'gueltig_bis': fields.date(2099, 12, 31),
-                })
-
-            # CHECKBOX IS NOT SET (True)
-            if not r[partner_boolean_field] and subscribed:
-                # ATTENTION: We can not know if we should unsubscribe or expire a group :(
-                #            TODO: If we add a field to FRST 'steuerung_bit_erlaubt' we could base our decision on this
-                #            TODO: If a group exist already and unsubscribe is allowed we unsubscribe instead of expire!
-                subscribed.sudo().write({'gueltig_bis': fields.datetime.now() - timedelta(days=1)})
-
-        return True
-
-    @api.multi
-    def update_persongruppe_by_checkbox(self, zgruppedetail_fs_id=None, partner_boolean_field=None):
-        assert isinstance(zgruppedetail_fs_id, int), "Attribute 'zgruppedetail_fs_id' missing or no integer!"
-        assert isinstance(partner_boolean_field, basestring), "Attribute 'partner_boolean_field' missing or no string!"
-        if self:
-            assert isinstance(self._fields[partner_boolean_field], fields.Boolean), \
-                "Partner has no bolean field '%s'!" % partner_boolean_field
-
-        for r in self:
-
-            # TODO: Instead of three filter do only one for loop
-            subscribed = r.persongruppe_ids.filtered(
-                lambda g: g.zgruppedetail_id.sosync_fs_id == zgruppedetail_fs_id and g.state == 'subscribed'
-            )
-            unsubscribed = r.persongruppe_ids.filtered(
-                lambda g: g.zgruppedetail_id.sosync_fs_id == zgruppedetail_fs_id and g.state == 'unsubscribed'
-            )
-            expired = r.persongruppe_ids.filtered(
-                lambda g: g.zgruppedetail_id.sosync_fs_id == zgruppedetail_fs_id and g.state == 'expired'
-            )
-
-            assert not (subscribed and unsubscribed), "zGruppeDetail (%s) is subscribed and unsubscribed at the " \
-                                                      "same time! (partner id %s)" % (zgruppedetail_fs_id, r.id)
-
-            # CHECKBOX IS SET (True)
-            if r[partner_boolean_field] and not subscribed:
-
-                # Enable unsubscribed
-                if unsubscribed:
-                    if len(unsubscribed) > 1:
-                        logger.error("More than one unsubscribed zGruppeDetail (%s) for partner %s"
-                                     "" % (zgruppedetail_fs_id, r.id))
-                    unsubscribed.sudo().write({'steuerung_bit': True})
-                    # Continue with next partner
-                    continue
-
-                # Enable expired
-                if expired:
-                    if len(expired) > 1:
-                        logger.warning("More than one expired zGruppeDetail (%s) for partner %s"
-                                       "" % (zgruppedetail_fs_id, r.id))
-
-                    expired.sorted(key=lambda person: person.write_date, reverse=True)
-                    expired = expired[0]
-
-                    gueltig_von = fields.datetime.strptime(expired.gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
-                    if gueltig_von > fields.datetime.now():
-                        gueltig_von = fields.datetime.now()
-                    gueltig_bis = fields.datetime.strptime(expired.gueltig_bis, DEFAULT_SERVER_DATE_FORMAT)
-                    if gueltig_bis < fields.datetime.now():
-                        gueltig_bis = fields.date(2099, 12, 31)
-
-                    expired.sudo().write({'gueltig_von': gueltig_von, 'gueltig_bis': gueltig_bis, 'steuerung_bit': True})
-                    # Continue with next partner
-                    continue
-
-                # Create PersonGruppe
-                zgruppedetail = self.env['frst.zgruppedetail'].sudo().search(
-                    [('sosync_fs_id', '=', zgruppedetail_fs_id)], limit=1,
-                )
-                self.env['frst.persongruppe'].sudo().create({
-                    'zgruppedetail_id': zgruppedetail.id,
-                    'partner_id': r.id,
                     'steuerung_bit': True,
                     'gueltig_von': fields.datetime.now(),
                     'gueltig_bis': fields.date(2099, 12, 31),
