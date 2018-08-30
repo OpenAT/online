@@ -569,11 +569,3 @@ class FRSTPersonEmailGruppe(models.Model):
                 partner.update_checkbox_by_personemailgruppe(zgruppedetail_fs_id, partner_boolean_field)
 
         return res
-
-
-# Inverse Field for PersonEmailGruppe
-class FRSTPersonEmail(models.Model):
-    _inherit = "frst.personemail"
-
-    personemailgruppe_ids = fields.One2many(comodel_name="frst.personemailgruppe", inverse_name='frst_personemail_id',
-                                            string="FRST PersonEmailGruppe IDS")

@@ -135,6 +135,9 @@ class FRSTPersonEmail(models.Model):
     # DISABLED: Active months of current year
     # ATTENTION: After a talk to devs and rufus we decided to not use the month grid for PersonEmail!
 
+    personemailgruppe_ids = fields.One2many(comodel_name="frst.personemailgruppe", inverse_name='frst_personemail_id',
+                                            string="FRST PersonEmailGruppe IDS")
+
     # -------
     # METHODS
     # -------
@@ -343,80 +346,5 @@ class FRSTPersonEmail(models.Model):
             # Empty field 'email' of res.partner where no PersonEmail is left after the unlink
             if partner_without_personmail_after_unlink:
                 partner_without_personmail_after_unlink.write({'email': False})
-
-        return res
-
-
-# Inverse 'res.partner' fields and methods for 'frst.personemail'
-class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
-    frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
-                                           string="FRST PersonEmail IDS")
-
-    @api.multi
-    def update_personemail(self):
-        """ Creates, activates or deactivates frst.personemail based on field 'email' of the res.partner
-
-        :return: boolean
-        """
-        for r in self:
-            if r.email:
-                partnermail_exits = r.frst_personemail_ids.filtered(lambda m: m.email == r.email)
-
-                # Activate PartnerEmail
-                if partnermail_exits:
-                    # Do nothing if more than one email was found which is considered as an error
-                    # HINT: This should be fixed automatically by Fundraising Studio in a night run
-                    #       (FRST merges same mail addresses per partner)
-                    if len(partnermail_exits) > 1:
-                        logger.error("More than one PartnerEmail %s found for partner with id %s"
-                                     "" % (r.id, partnermail_exits[0].email))
-                        continue
-
-                    # Make sure this PartnerMail is the main_address
-                    if not partnermail_exits.main_address:
-                        partnermail_exits.write({'email': r.email})
-
-                # Create PartnerEmail
-                else:
-                    self.env['frst.personemail'].create({'email': r.email, 'partner_id': r.id})
-
-            # Deactivate PartnerEmail
-            else:
-                # Deactivate only the main_address for this partner
-                # HINT: This was discussed with Martin and Rufus and is considered as the best 'solution' for now
-                main_address = r.frst_personemail_ids.filtered(lambda m: m.main_address)
-                if main_address:
-                    yesterday = fields.datetime.now() - timedelta(days=1)
-                    main_address.write({'gueltig_bis': yesterday})
-
-    # ----
-    # CRUD
-    # ----
-    @api.model
-    def create(self, values):
-
-        # Create record in the current environment (memory only right now i guess)
-        # ATTENTION: self is still empty but the new record exits in the 'res' recordset already
-        res = super(ResPartner, self).create(values)
-
-        # Create a PersonEmail
-        email = values.get('email', False)
-        if res and email:
-            res.env['frst.personemail'].create({'email': email, 'partner_id': res.id})
-
-        return res
-
-    @api.multi
-    def write(self, values):
-
-        # Update (write to) the recordset 'self'
-        # ATTENTION: After super 'self' is changed 'res' is only a boolean !
-        res = super(ResPartner, self).write(values)
-
-        # Update or create a PersonEmail
-        if res and 'email' in values:
-            self.update_personemail()
 
         return res
