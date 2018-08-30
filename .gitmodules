@@ -98,3 +98,7 @@
 	path = addons-thirdparty/smile
 	url = https://github.com/Smile-SA/odoo_addons.git
 	branch = 8.0
+[submodule "addons-thirdparty/oca/connector"]
+	path = addons-thirdparty/oca/connector
+	url = https://github.com/OCA/connector.git
+	branch = 8.0
