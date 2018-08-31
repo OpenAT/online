@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import frst_gruppestate_abstract
+import frst_gruppecheckbox_abstract
 import frst_zgruppe
 import frst_zgruppedetail
 import frst_persongruppe

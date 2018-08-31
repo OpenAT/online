@@ -5,7 +5,7 @@
     <record model="ir.ui.view" id="sosync_frst_zgruppedetail_form_fields">
         <field name="name">sosync_frst_zgruppedetail_form_fields</field>
         <field name="model">frst.zgruppedetail</field>
-        <field name="inherit_id" ref="fso_base.frst_zgruppedetail_form"/>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
         <field name="arch" type="xml">
             <field name="gueltig_bis" position="after">
                 <field name="sosync_fs_id"/>
@@ -19,7 +19,7 @@
     <record model="ir.ui.view" id="sosync_frst_zgruppedetail_tree_fields">
         <field name="name">sosync_frst_zgruppedetail_tree_fields</field>
         <field name="model">frst.zgruppedetail</field>
-        <field name="inherit_id" ref="fso_base.frst_zgruppedetail_tree"/>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_tree"/>
         <field name="arch" type="xml">
             <field name="gueltig_bis" position="after">
                 <field name="sosync_fs_id"/>
@@ -32,7 +32,7 @@
     <record model="ir.ui.view" id="sosync_frst_zgruppedetail_search_fields">
         <field name="name">sosync_frst_zgruppedetail_search_fields</field>
         <field name="model">frst.zgruppedetail</field>
-        <field name="inherit_id" ref="fso_base.frst_zgruppedetail_search"/>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_search"/>
         <field name="arch" type="xml">
             <field name="id" position="after">
                 <field name="sosync_fs_id"/>

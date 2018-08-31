@@ -7,136 +7,80 @@ logger = logging.getLogger(__name__)
 
 
 class FRSTGruppeCheckbox(models.AbstractModel):
-    """ Compute zgruppedetail based on checkboxes and vice versa
-        USAGE:
-            - the group model must inherit from 'frst_gruppestate' abstract class first and then this class
-            - the checkbox model must only inherit this class
-            - must implement the method gruppecheckbox_config so that it returns the correct config
-    """
     _name = "frst.gruppecheckbox"
 
-    @api.model
-    def compute_gruppecheckbox_config(self):
-        """ Return a dict with class configuration """
-        return {}
-    # Add a class attribute for the computed config
-    gruppecheckbox_config = compute_gruppecheckbox_config()
+    _frst_gruppecheckbox_config = {
+        'frst.persongruppe': {
+            'bridge_model': 'frst.persongruppe',
+            'bridge_model_checkbox_model_field': 'partner_id',
+            'bridge_model_group_field': 'zgruppedetail_id',
+            'bridge_model_group_model': 'frst.zgruppedetail',
+            'checkbox_model_bridge_model_field': 'persongruppe_ids',
+            'checkbox_fields': {
+                'donation_deduction_optout_web': 110493,
+                'donation_deduction_disabled': 128782,
+                'donation_receipt_web': 20168,
+            }
+        },
+        'frst.personemailgruppe': {
+            'bridge_model': 'frst.personemailgruppe',
+            'bridge_model_checkbox_model_field': 'partner_id',
+            'bridge_model_group_field': 'zgruppedetail_id',
+            'bridge_model_group_model': 'frst.zgruppedetail',
+            'checkbox_model_bridge_model_field': 'main_personemail_id.personemailgruppe_ids',
+            'checkbox_fields': {
+                'donation_deduction_optout_web': 110493,
+                'donation_deduction_disabled': 128782,
+                'donation_receipt_web': 20168,
+            }
+        }
 
+    }
 
-
+    # ------------
+    # BRIDGE MODEL
+    # ------------
     @api.multi
     def get_checkbox_model_records(self):
         # TODO
         # Must return a record set
         return
 
-    # TODO: only implement some methods in the checkbox model!
-    if True:
-        @api.multi
-        def set_group(self, group):
-            """
-            HINT: 'group' is a recordset with one or no record
-            HINT: This will only be executed in the checkbox model
-            """
-            if not self.gruppecheckbox_config:
-                return
-
-            for r in self:
-                # TODO
-                pass
-
-            return True
-
-        @api.multi
-        def rem_group(self, group):
-            # TODO
-            return
-
-        @api.multi
-        def checkbox_to_group(self, values):
-            values = values or {}
-            context = self.env.context or {}
-
-            # Avoid recursive calls
-            if 'skipp_checkbox_to_group' in context:
-                self.env.context.pop('skipp_checkbox_to_group')
-                return
-            else:
-                self.with_context(skipp_checkbox_to_group=True)
-
-            # Get the gruppecheckbox configuration
-            config = self.gruppecheckbox_config
-            if not config:
-                logger.error('self.gruppecheckbox_config not implemented!')
-                return
-
-            # TODO: Only execute if this model is the checkbox model
-            #       Maybe this check should be in the crud methods (also) to better understand what is
-            #       executed in what model
-            # if self.model != config.checkbox_model:
-            #     return
-
-            # Only execute if checkbox_fields in values
-            checkbox_fields = config['checkbox_fields']
-            changed_fields = [f for f in config['checkbox_fields'] if f in values]
-            if not changed_fields:
-                return
-
-            # Update the groups
-            checkbox_model_obj = self.env[config['checkbox_model']]
-            for f in changed_fields:
-                # HINT: group is a recordset containing a singleton
-                group = checkbox_fields[f]
-                # Set/Create or Expire/Unsubscribe the group
-
-                checkbox_model_obj.set_group(group) if values[f] else checkbox_model_obj.rem_group(group)
-
-            # Remove recursive run lock in context TODO: check if this makes sense...
-            self.env.context.pop('skipp_checkbox_to_group', False)
-
-            return True
+    @api.model
+    def get_group(self, group_identifier):
+        # HINT: By default the group_identifier is the 'sosync_fs_id'
+        group = self.env['frst.zgruppedetail'].search([('sosync_fs_id', '=', group_identifier)])
+        assert len(group) < 2, "More than one Group found for sosync_fs_id %s" % group_identifier
+        return group
 
     @api.multi
     def group_to_checkbox(self, values):
         values = values or {}
         context = self.env.context or {}
 
-        # TODO
+        # Recursion switch
+        if 'skipp_group_to_checkbox' in context:
+            return
+
         return
 
-    # ----
     # CRUD
-    # ----
     @api.model
     def create(self, values, **kwargs):
         values = values or {}
         res = super(FRSTGruppeCheckbox, self).create(values, **kwargs)
-
+        # Groups to checkboxes
         if res:
-            # Checkboxes to groups
-            # HINT: Will only run in the checkbox model
-            res.checkbox_to_group(values)
-
-            # Groups to checkboxes
-            # HINT: Will only run in the group model
             res.group_to_checkbox(values)
-
         return res
 
     @api.model
     def write(self, values, **kwargs):
         values = values or {}
         res = super(FRSTGruppeCheckbox, self).create(values, **kwargs)
-
+        # Groups to checkboxes
         if res:
-            # Checkboxes to groups
-            # HINT: Will only run in the checkbox model
-            self.checkbox_to_group(values)
-
-            # Groups to checkboxes
-            # HINT: Will only run in the group model
             self.group_to_checkbox(values)
-
         return res
 
     @api.multi
@@ -147,9 +91,8 @@ class FRSTGruppeCheckbox(models.AbstractModel):
         # Unlink the records
         res = super(FRSTGruppeCheckbox, self).unlink()
 
+        # Update checkbox fields of checkbox_model_records based on the remaining groups after the unlink
         if res:
-            # Update checkbox fields of checkbox_model_records based on groups after the unlink
-            # HINT: Will only run in the group model
             checkbox_model_records.group_to_checkbox()
 
         return res

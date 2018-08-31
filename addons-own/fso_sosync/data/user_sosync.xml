@@ -5,7 +5,9 @@
 
         <!-- sosync PARTNER -->
         <record model="res.partner" id="base.partner_sosync">
-            <field name="name">sosync sosync</field>
+            <!--<field name="name">sosync sosync</field>-->
+            <field name="firstname">studio</field>
+            <field name="lastname">studio</field>
             <!-- field name="company_id" ref="base.main_company"/ -->
             <field name="customer" eval="False"/>
             <field name="email">sosync@datadialog.net</field>
@@ -13,7 +15,9 @@
 
         <!-- sosync USER -->
         <record model="res.users" id="base.user_sosync">
-            <field name="name">sosync sosync</field>
+            <!--<field name="name">sosync sosync</field>-->
+            <field name="firstname">studio</field>
+            <field name="lastname">studio</field>
             <field name="login">sosync</field>
             <field name="partner_id" ref="base.partner_sosync"/>
             <field name="company_id" ref="base.main_company"/>
