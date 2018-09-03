@@ -21,13 +21,12 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_frst_groups",
+    'name': "FS-Online fso_frst_personemail",
     'summary': """FS-Online Fundrasing Studio Group System implementation""",
     'description': """
-FS-Online Fundrasing Studio Group System implementation
-
+FS-Online Fundraising Studio PersonEmail implementation
     """,
-    'author': "Datadialog - Michael Karrer, Martin Kaip",
+    'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
@@ -35,18 +34,11 @@ FS-Online Fundrasing Studio Group System implementation
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_frst_personemail',
+        'mail',
     ],
     'data': [
-        'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
         #
-        'views/frst_zgruppe.xml',
-        'views/frst_zgruppedetail.xml',
-        #
-        'views/frst_persongruppe.xml',
-        'views/frst_personemailgruppe.xml',
-        #
-        'data/scheduled_actions.xml',
+        'views/frst_personemail.xml',
     ],
 }

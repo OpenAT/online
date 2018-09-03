@@ -8,13 +8,15 @@ logger = logging.getLogger(__name__)
 # PersonGruppe: FRST groups for res.partner
 class FRSTPersonGruppe(models.Model):
     _name = "frst.persongruppe"
-    _inherit = ["frst.gruppestate", "frst.gruppecheckbox"]
+    _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel"]
 
-    _checkbox_fields = {
-                'donation_deduction_optout_web': 110493,
-                'donation_deduction_disabled': 128782,
-                'donation_receipt_web': 20168,
-            }
+    _group_model_field = 'zgruppedetail_id'
+    _checkbox_model_field = 'partner_id'
+    _checkbox_fields_group_identifier = {
+            'donation_deduction_optout_web': 110493,
+            'donation_deduction_disabled': 128782,
+            'donation_receipt_web': 20168,
+        }
 
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_persongruppe_ids',
                                        string="zGruppeDetail",

@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+from openerp import models, fields, api
+from datetime import timedelta
+import logging
+logger = logging.getLogger(__name__)
+
+
+class ResPartner(models.Model):
+    _name = "res.partner"
+    _inherit = ["res.partner", "frst.checkboxgruppe"]
+
+    frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
+                                           string="FRST PersonEmail IDS")
+
+    main_personemail_id = fields.Many2one(comodel_name="frst.personemail",
+                                          string="Main Email", compute="_compute_main_personemail_id")
+
+    @api.depends('frst_personemail_ids.main_address')
+    def _compute_main_personemail_id(self):
+        for r in self:
+            main_address = r.frst_personemail_ids.filtered(lambda m: m.main_address)
+            if main_address:
+                assert len(main_address) == 1, "More than one main e-mail address for partner %s" % r.id
+            r.main_personemail = main_address.id if main_address else False
+
+    # -----------
+    # PersonEmail
+    # -----------
+    @api.multi
+    def update_personemail(self):
+        """ Creates, activates or deactivates frst.personemail based on field 'email' of the res.partner
+
+        :return: boolean
+        """
+        for r in self:
+            if r.email:
+                partnermail_exits = r.frst_personemail_ids.filtered(lambda m: m.email == r.email)
+
+                # Activate PartnerEmail
+                if partnermail_exits:
+                    # Do nothing if more than one email was found which is considered as an error
+                    # HINT: This should be fixed automatically by Fundraising Studio in a night run
+                    #       (FRST merges same mail addresses per partner)
+                    if len(partnermail_exits) > 1:
+                        logger.error("More than one PartnerEmail %s found for partner with id %s"
+                                     "" % (r.id, partnermail_exits[0].email))
+                        continue
+
+                    # Make sure this PartnerMail is the main_address
+                    if not partnermail_exits.main_address:
+                        partnermail_exits.write({'email': r.email})
+
+                # Create PartnerEmail
+                else:
+                    self.env['frst.personemail'].create({'email': r.email, 'partner_id': r.id})
+
+            # Deactivate PartnerEmail
+            else:
+                # Deactivate only the main_address for this partner
+                # HINT: This was discussed with Martin and Rufus and is considered as the best 'solution' for now
+                main_address = r.frst_personemail_ids.filtered(lambda m: m.main_address)
+                if main_address:
+                    yesterday = fields.datetime.now() - timedelta(days=1)
+                    main_address.write({'gueltig_bis': yesterday})
+
+    # ----
+    # CRUD
+    # ----
+    @api.model
+    def create(self, values, **kwargs):
+        values = values or {}
+
+        res = super(ResPartner, self).create(values, **kwargs)
+
+        # Create a PersonEmail
+        email = values.get('email', False)
+        if res and email:
+            res.env['frst.personemail'].create({'email': email, 'partner_id': res.id})
+
+        return res
+
+    @api.multi
+    def write(self, values, **kwargs):
+        values = values or {}
+
+        res = super(ResPartner, self).write(values, **kwargs)
+
+        # Update or create a PersonEmail
+        if res and 'email' in values:
+            self.update_personemail()
+
+        return res

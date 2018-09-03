@@ -19,7 +19,7 @@ class FRSTGruppeState(models.AbstractModel):
                              string="State", readonly=True)
 
     steuerung_bit = fields.Boolean(string="Steuerung Bit", default=True,
-                                   help="If not set: Person is explicitly excluded/unsubscribed from group!")
+                                   help="If not set: Person is explicitly excluded/unsubscribed from this group!")
     gueltig_von = fields.Date("GueltigVon", required=True, default=lambda s: fields.datetime.now())
     gueltig_bis = fields.Date("GueltigBis", required=True, default=lambda s: fields.date(2099, 12, 31))
 

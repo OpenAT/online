@@ -156,7 +156,7 @@
                 <menuitem id="menu_frst_settings_print_fields" action="fso_print_fields.fso_print_field_action" parent="menu_frst_settings" sequence="2100"/>
                 <menuitem id="menu_frst_settings_print_field_groups" action="fso_print_fields.fso_print_field_group_action" parent="menu_frst_settings" sequence="2110"/>
                 <!-- e-mail -->
-                <menuitem id="menu_frst_setting_personemail" action="fso_frst_groups.frst_personemail_action" parent="menu_frst_settings" sequence="2200"/>
+                <menuitem id="menu_frst_setting_personemail" action="fso_frst_personemail.frst_personemail_action" parent="menu_frst_settings" sequence="2200"/>
                 <!-- Gruppen -->
                 <menuitem id="menu_frst_setting_zgruppe" action="fso_frst_groups.frst_zgruppe_action" parent="menu_frst_settings" sequence="2300"/>
                 <menuitem id="menu_frst_setting_zgruppedetail" action="fso_frst_groups.frst_zgruppedetail_action" parent="menu_frst_settings" sequence="2310"/>
