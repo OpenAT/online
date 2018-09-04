@@ -56,20 +56,21 @@ class FRSTCheckboxModel(models.AbstractModel):
         # Loop through checkbox model records
         for r in self:
 
-            # Get all bridge model records for this group for the current checkbox model record
-            group_bm_records = r[bm_field].filtered(
-                lambda bm: bm[bm_group_model_field].id == group_id)
+            # Get all bridge model records for this group (for the current checkbox model record)
+            group_bm_records = r[bm_field].filtered(lambda bm: bm[bm_group_model_field].id == group_id)
 
             # Get bridge model records by bridge model state
             subscribed = group_bm_records.filtered(lambda g: g.state == 'subscribed')
             unsubscribed = group_bm_records.filtered(lambda g: g.state == 'unsubscribed')
+            expired = group_bm_records.filtered(lambda g: g.state == 'expired')
 
-            expired = group_bm_records.filtered(lambda g: g.state == 'expired' and g.steuerung_bit == True)
-
+            # Disable all unsubscribed bridge model records (and subscribe latest record if no subscribed records)
+            # ---
+            # HINT: A checkbox field is considered as True if there are no unsubscribed groups (see group_to_checkbox())
             if unsubscribed:
 
+                # Subscribe newest unsubscribed bridge model record first if only unsubscribed records are found
                 if not subscribed:
-                    # Subscribe newest unsubscribed bridge model record
                     unsubscribed = unsubscribed.sorted(key=lambda k: k.write_date, reverse=True)
                     unsubscribed[0].sudo().with_context(skipp_group_to_checkbox=True).write(
                         {'steuerung_bit': False})
@@ -79,7 +80,9 @@ class FRSTCheckboxModel(models.AbstractModel):
                 unsubscribed.sudo().with_context(skipp_group_to_checkbox=True).write(
                     {'gueltig_bis': fields.datetime.now() - timedelta(days=1)})
 
-            elif expired and not subscribed:
+            # Enable newest expired bridge model record
+            # ---
+            elif not subscribed and expired:
 
                 # Get newest expired bridge model record
                 expired = expired.sorted(key=lambda k: k.write_date, reverse=True)
@@ -97,6 +100,8 @@ class FRSTCheckboxModel(models.AbstractModel):
                 expired.sudo().with_context(skipp_group_to_checkbox=True).write(
                     {'gueltig_von': gueltig_von, 'gueltig_bis': gueltig_bis, })
 
+            # Create a new bridge model record
+            # ---
             elif not subscribed:
                 # Create a new subscribed bridge model record for this group
                 vals = {bm_checkbox_model_field: r.id,
@@ -239,17 +244,25 @@ class FRSTCheckboxModel(models.AbstractModel):
     @api.model
     def create(self, values):
         values = values or {}
+        context = self.env.context or {}
+
         res = super(FRSTCheckboxModel, self).create(values)
+
         # Checkboxes to groups
-        if res:
+        if 'skipp_checkbox_to_group' not in context:
             res.checkbox_to_group(values)
+
         return res
 
     @api.multi
     def write(self, values):
         values = values or {}
+        context = self.env.context or {}
+
         res = super(FRSTCheckboxModel, self).write(values)
+
         # Checkboxes to groups
-        if res:
+        if 'skipp_checkbox_to_group' not in context:
             self.checkbox_to_group(values)
+
         return res

@@ -81,40 +81,52 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
     @api.multi
     def get_checkbox_model_records(self):
         config = self.get_checkboxgroup_config()
-        checkbox_model_records = self.mapped(config['checkbox_model_field'].name) # TODO
+        checkbox_model_records = self.mapped(config['checkbox_model_field'].name)
         return checkbox_model_records
 
     # CRUD
     @api.model
     def create(self, values):
         values = values or {}
+        context = self.env.context or {}
+
         res = super(FRSTCheckboxBridgeModel, self).create(values)
+
         # Run group_to_checkbox() in the checkbox model
-        if res:
+        if 'skipp_group_to_checkbox' not in context:
             checkbox_model_records = res.get_checkbox_model_records()
             checkbox_model_records.group_to_checkbox()
+
         return res
 
     @api.multi
     def write(self, values):
         values = values or {}
+        context = self.env.context or {}
+
         res = super(FRSTCheckboxBridgeModel, self).write(values)
+
         # Run group_to_checkbox() in the checkbox model
-        if res:
+        if 'skipp_group_to_checkbox' not in context:
             checkbox_model_records = self.get_checkbox_model_records()
             checkbox_model_records.group_to_checkbox()
+
         return res
 
     @api.multi
     def unlink(self):
-        # Get related records from checkboxmodel to update after the unlink
-        checkbox_model_records = self.get_checkbox_model_records()
+        context = self.env.context or {}
+
+        # Get checkbox model records before unlink
+        if 'skipp_group_to_checkbox' not in context:
+            # Get related records from checkboxmodel to update after the unlink
+            checkbox_model_records = self.get_checkbox_model_records()
 
         # Unlink the records
         res = super(FRSTCheckboxBridgeModel, self).unlink()
 
         # Run group_to_checkbox() in the checkbox model based on the remaining groups after the unlink
-        if res:
+        if 'skipp_group_to_checkbox' not in context:
             checkbox_model_records.group_to_checkbox()
 
         return res
