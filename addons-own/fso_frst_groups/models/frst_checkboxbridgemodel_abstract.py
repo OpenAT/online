@@ -1,12 +1,27 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import timedelta
 import logging
 logger = logging.getLogger(__name__)
 
 
 class FRSTCheckboxBridgeModel(models.AbstractModel):
+    """
+    USAGE:
+        checkbox model:
+            must inherit 'frst.checkboxmodel'
+            '_bridge_model_fields' must be set
+
+        bridge model:
+            must inherit 'frst.gruppestate' FIRST and then 'frst.checkboxbridgemodel'
+           _group_model_field, _checkbox_model_field and _checkbox_fields_group_identifier must be set
+
+           Optional: alter get_group() if you use a different group_identifier than 'sosync_fs_id'
+
+    ATTENTION: A Checkbox is 'Set/True' if there are subscribed bridge model records AND NO unsubscribed bm records!
+    """
     _name = "frst.checkboxbridgemodel"
 
     # Bridge model configuration
@@ -15,8 +30,11 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
     _checkbox_model_field = ''
     _checkbox_fields_group_identifier = {}
 
-    # Computed configuration
+    # Computed configuration storage to avoid unneded recomputation
+    # ATTENTION: Do not directly use self._checkboxgroup_config except in get_checkboxgroup_config()
+    #            ALWAYS use 'self.get_checkboxgroup_config()' instead!
     _checkboxgroup_config = {}
+    _checkboxgroup_config_date = False
 
     # ------------
     # BRIDGE MODEL
@@ -48,40 +66,58 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
 
     @api.model
     def get_checkboxgroup_config(self):
-        # Compute self._checkboxgroup_config
-        if not self._checkboxgroup_config:
-            bridge_model_name = self.__class__.__name__
+        bridge_model_name = self.__class__.__name__
+        group_model_field = self._group_model_field
+        checkbox_model_field = self._checkbox_model_field
+
+        # Check if a recomputation of the configuration is needed
+        recompute_needed = True if not self._checkboxgroup_config_date else False
+        if self._checkboxgroup_config_date:
+            group_model_name = self._fields.get(self._group_model_field).comodel_name
+            group_model_obj = self.env[group_model_name]
+            last_changed_group = group_model_obj.search([], order='write_date DESC', limit=1)
+            if last_changed_group:
+                last_changed_group_datetime = fields.datetime.strptime(last_changed_group.write_date,
+                                                                       DEFAULT_SERVER_DATETIME_FORMAT)
+                if last_changed_group_datetime >= self._checkboxgroup_config_date:
+                    recompute_needed = True
+
+        # Compute '_checkboxgroup_config'
+        if recompute_needed or not self._checkboxgroup_config:
             logger.info("Compute '_checkboxgroup_config' for bridge model %s" % bridge_model_name)
 
-            # TODO: Check that all field exists and that they are boolean fields
-            # assert isinstance(self._fields[cf], fields.Boolean), "Field missing or no boolean field %s.%s" \
-            #                                                      "" % (self._name, cf)
+            # TODO: Check that all chechbox model checkbox fields are existing and of type Bool
+            # assert isinstance(self._fields[cf], fields.Boolean), ("Field missing or no boolean field %s.%s"
+            #     "" % (self._name, cf))
+            # TODO: Check that group_model_field and checkbox_model_field are of type Many2one
 
             # Get related groups for the checkbox fields
             # ATTENTION: Fields are only added if a group could be found
-            ftg = {}
+            fields_to_groups = {}
             for checkbox_field, group_identifier in self._checkbox_fields_group_identifier.iteritems():
                 group = self.get_group(group_identifier)
                 if group:
-                    ftg[checkbox_field] = group
+                    fields_to_groups[checkbox_field] = group
                 else:
                     logger.error("Group not found for checkbox field '%s'! (%s)" % (checkbox_field, bridge_model_name))
             
-            config = {'group_model_field': self._fields.get(self._group_model_field),
-                      'checkbox_model_field': self._fields.get(self._checkbox_model_field),
-                      'fields_to_groups': ftg
+            config = {'group_model_field': group_model_field,
+                      'checkbox_model_field': checkbox_model_field,
+                      'fields_to_groups': fields_to_groups
                       }
 
-            # Store the config as a class attribute to avoid recomputation
+            # Store the config as a class attribute to avoid unneeded recomputation
             cls = self.__class__
             cls._checkboxgroup_config = config
+            cls._checkboxgroup_config_date = fields.datetime.now()
             
         return self._checkboxgroup_config
 
     @api.multi
     def get_checkbox_model_records(self):
         config = self.get_checkboxgroup_config()
-        checkbox_model_records = self.mapped(config['checkbox_model_field'].name)
+        # TODO: Check resolve of . notation of checkbox_model_field (e.g.: frst_personemail_id.partner_id)
+        checkbox_model_records = self.mapped(config['checkbox_model_field'])
         return checkbox_model_records
 
     # CRUD

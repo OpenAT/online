@@ -47,6 +47,8 @@ FS-Online Fundrasing Studio Group System implementation
         'views/frst_persongruppe.xml',
         'views/frst_personemailgruppe.xml',
         #
+        'views/res_partner.xml',
+        #
         'data/scheduled_actions.xml',
     ],
 }

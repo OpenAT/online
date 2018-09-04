@@ -9,7 +9,13 @@ logger = logging.getLogger(__name__)
 # PersonEmailGruppe: FRST groups for email addresses
 class FRSTPersonEmailGruppe(models.Model):
     _name = "frst.personemailgruppe"
-    _inherit = ["frst.gruppestate"]
+    _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel"]
+
+    _group_model_field = 'zgruppedetail_id'
+    _checkbox_model_field = 'frst_personemail_id.partner_id'
+    _checkbox_fields_group_identifier = {
+            'newsletter_web': 30104,
+        }
 
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_personemailgruppe_ids',
                                        string="zGruppeDetail",

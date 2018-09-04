@@ -11,8 +11,8 @@ class ResPartner(models.Model):
     frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
                                            string="FRST PersonEmail IDS")
 
-    main_personemail_id = fields.Many2one(comodel_name="frst.personemail",
-                                          string="Main Email", compute="_compute_main_personemail_id")
+    main_personemail_id = fields.Many2one(comodel_name="frst.personemail", string="Main Email", readonly=True,
+                                          compute="_compute_main_personemail_id")
 
     @api.depends('frst_personemail_ids.main_address')
     def _compute_main_personemail_id(self):
@@ -20,7 +20,7 @@ class ResPartner(models.Model):
             main_address = r.frst_personemail_ids.filtered(lambda m: m.main_address)
             if main_address:
                 assert len(main_address) == 1, "More than one main e-mail address for partner %s" % r.id
-            r.main_personemail = main_address.id if main_address else False
+            r.main_personemail_id = main_address if main_address else False
 
     # -----------
     # PersonEmail

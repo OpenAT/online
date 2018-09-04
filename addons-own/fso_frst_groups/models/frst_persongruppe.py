@@ -16,6 +16,7 @@ class FRSTPersonGruppe(models.Model):
             'donation_deduction_optout_web': 110493,
             'donation_deduction_disabled': 128782,
             'donation_receipt_web': 20168,
+            # TODO: Email Sperrgruppe (11102)
         }
 
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_persongruppe_ids',

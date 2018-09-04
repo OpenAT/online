@@ -8,7 +8,16 @@ logger = logging.getLogger(__name__)
 
 class FRSTCheckboxModel(models.AbstractModel):
     """
-    ATTENTION: A Checkbox is only True if there are subscribed bridge model records and NO unsubscribed bm records!
+    USAGE:
+        checkbox model:
+            must inherit 'frst.checkboxmodel'
+            '_bridge_model_fields' must be set
+
+        bridge model:
+            must inherit 'frst.gruppestate' FIRST and then 'frst.checkboxbridgemodel'
+           _group_model_field, _checkbox_model_field and _checkbox_fields_group_identifier must be set
+
+    ATTENTION: A Checkbox is 'Set/True' if there are subscribed bridge model records AND NO unsubscribed bm records!
     """
     _name = "frst.checkboxmodel"
 
@@ -16,38 +25,30 @@ class FRSTCheckboxModel(models.AbstractModel):
     # HINT: MUST BE DEFINED IN THE CHECKBOX MODEL!
     _bridge_model_fields = ()
 
-    # Computed value containing all bridge models configurations
-    _bridge_models_config = {}
-
     # --------------
     # CHECKBOX MODEL
     # --------------
+    # Compute combined bridge models configurations
     @api.model
     def get_bridge_models_config(self):
-        # Compute self._bridge_models_config
-        if not self._bridge_models_config:
-            logger.info("Compute '_bridge_models_config' for checkbox model %s" % self.__class__.__name__)
-            config = {}
+        logger.debug("Compute '_bridge_models_config' for checkbox model %s" % self.__class__.__name__)
+        config = {}
 
-            # Loop through bridge model fields
-            for field in self._bridge_model_fields:
-                bridge_model_field = self._fields.get(field)
-                bridge_model_name = bridge_model_field.comodel_name
+        # Loop through bridge model fields
+        for field in self._bridge_model_fields:
+            bridge_model_field = self._fields.get(field)
+            bridge_model_name = bridge_model_field.comodel_name
 
-                # Get the config from the bridge model
-                bridge_model_config = self.env[bridge_model_name].sudo().get_checkboxgroup_config()
+            # Get the config from the bridge model
+            bridge_model_config = self.env[bridge_model_name].sudo().get_checkboxgroup_config()
 
-                # Update '_bridge_models_config' with the config from the bridge model
-                config[bridge_model_name] = {
-                    'bridge_model_field': bridge_model_field,
-                    'bridge_model_config': bridge_model_config,
-                }
+            # Update '_bridge_models_config' with the config from the bridge model
+            config[bridge_model_name] = {
+                'bridge_model_field': bridge_model_field,
+                'bridge_model_config': bridge_model_config,
+            }
 
-            # Store the config as a class attribute to avoid recomputation
-            cls = self.__class__
-            cls._bridge_models_config = config
-
-        return self._bridge_models_config
+        return config
 
     @api.multi
     def set_bm_group(self, group_id=None, bm_field='', bm_group_model_field='', bm_checkbox_model_field=''):
@@ -104,6 +105,7 @@ class FRSTCheckboxModel(models.AbstractModel):
             # ---
             elif not subscribed:
                 # Create a new subscribed bridge model record for this group
+                # TODO: resolve . notation in bm_checkbox_model_field (e.g.: frst_personemail_id.partner_id)
                 vals = {bm_checkbox_model_field: r.id,
                         bm_group_model_field: group_id,
                         'steuerung_bit': True,
