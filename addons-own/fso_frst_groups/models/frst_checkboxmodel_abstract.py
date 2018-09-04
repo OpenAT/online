@@ -36,15 +36,15 @@ class FRSTCheckboxModel(models.AbstractModel):
 
         # Loop through bridge model fields
         for field in self._bridge_model_fields:
-            bridge_model_field = self._fields.get(field)
-            bridge_model_name = bridge_model_field.comodel_name
+            bridge_model_field_obj = self._fields.get(field)
+            bridge_model_name = bridge_model_field_obj.comodel_name
 
             # Get the config from the bridge model
             bridge_model_config = self.env[bridge_model_name].sudo().get_checkboxgroup_config()
 
             # Update '_bridge_models_config' with the config from the bridge model
             config[bridge_model_name] = {
-                'bridge_model_field': bridge_model_field,
+                'bridge_model_field': bridge_model_field_obj.name,
                 'bridge_model_config': bridge_model_config,
             }
 
@@ -105,8 +105,17 @@ class FRSTCheckboxModel(models.AbstractModel):
             # ---
             elif not subscribed:
                 # Create a new subscribed bridge model record for this group
-                # TODO: resolve . notation in bm_checkbox_model_field (e.g.: frst_personemail_id.partner_id)
-                vals = {bm_checkbox_model_field: r.id,
+
+                # Split . notation in bm_checkbox_model_field
+                # e.g.: 'frst_personemail_id.partner_id'.rsplit('.')[0] = 'frst_personemail_id'
+                bm_target_model_field = bm_checkbox_model_field.rsplit('.')[0]
+
+                # Get bm_target_model_field_id
+                bridge_model_name = self._fields.get(bm_field).comodel_name
+                bmo = self.env[bridge_model_name].sudo()
+                bm_target_model_field_id = bmo.get_target_model_id_from_checkbox_record(checkbox_record=r)
+
+                vals = {bm_target_model_field: bm_target_model_field_id,
                         bm_group_model_field: group_id,
                         'steuerung_bit': True,
                         'gueltig_von': fields.datetime.now(),
@@ -179,13 +188,13 @@ class FRSTCheckboxModel(models.AbstractModel):
                 for cf_name, group in checkbox_fields.iteritems():
                     if r[cf_name]:
                         r.set_bm_group(group_id=group.id,
-                                       bm_field=bm_field.name,
-                                       bm_group_model_field=bm_group_model_field.name,
-                                       bm_checkbox_model_field=bm_checkbox_model_field.name)
+                                       bm_field=bm_field,
+                                       bm_group_model_field=bm_group_model_field,
+                                       bm_checkbox_model_field=bm_checkbox_model_field)
                     else:
                         r.rem_bm_group(group_id=group.id,
-                                       bm_field=bm_field.name,
-                                       bm_group_model_field=bm_group_model_field.name)
+                                       bm_field=bm_field,
+                                       bm_group_model_field=bm_group_model_field)
 
         return True
 
@@ -216,8 +225,8 @@ class FRSTCheckboxModel(models.AbstractModel):
                 for checkbox_field_name, group in bm_config['fields_to_groups'].iteritems():
                     
                     # Get all bridge model records for this group for the current checkbox model record
-                    group_bm_records = r[bm_field.name].filtered(
-                        lambda bm: bm[bm_group_model_field.name].id == group.id)
+                    group_bm_records = r[bm_field].filtered(
+                        lambda bm: bm[bm_group_model_field].id == group.id)
 
                     # Get all subscribed bridge model records for this group for the current checkbox model record
                     subscribed = group_bm_records.filtered(lambda bm: bm.state == 'subscribed')

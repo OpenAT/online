@@ -24,3 +24,12 @@ class FRSTPersonEmailGruppe(models.Model):
     frst_personemail_id = fields.Many2one(comodel_name="frst.personemail", inverse_name='personemailgruppe_ids',
                                           string="FRST PersonEmail",
                                           required=True, ondelete='cascade')
+
+    # Override method from abstract model 'frst.checkboxbridgemodel' to use the main_personemail_id field
+    @api.model
+    def get_target_model_id_from_checkbox_record(self, checkbox_record=False):
+        """ Use the id from the main email address """
+        if checkbox_record and checkbox_record.main_personemail_id:
+            return checkbox_record.main_personemail_id.id
+        else:
+            return checkbox_record

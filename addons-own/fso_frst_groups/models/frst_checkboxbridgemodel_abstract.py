@@ -27,6 +27,9 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
     # Bridge model configuration
     # ATTENTION: MUST BE DEFINED IN THE BRIDGE MODEL
     _group_model_field = ''
+    # Not needed because we get it from _checkbox_model_field with rsplit('.')[0] for now (check set_bm_group())
+    # _target_model_field = ''
+
     _checkbox_model_field = ''
     _checkbox_fields_group_identifier = {}
 
@@ -39,6 +42,14 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
     # ------------
     # BRIDGE MODEL
     # ------------
+    @api.model
+    def get_target_model_id_from_checkbox_record(self, checkbox_record=False):
+        """ Override this in bridge models where the group_target_model is not the checkbox_model"""
+        if checkbox_record:
+            return checkbox_record.id
+        else:
+            return checkbox_record
+
     @api.model
     def get_group(self, group_identifier):
         """Helper method to be used (or overloaded) in bridge models.
