@@ -41,9 +41,6 @@
                         <!--<field name="december"/>-->
                     <!--</group>-->
                 </group>
-                <group string="PersonEmailGruppe">
-                    <field name="personemailgruppe_ids"/>
-                </group>
             </form>
         </field>
     </record>

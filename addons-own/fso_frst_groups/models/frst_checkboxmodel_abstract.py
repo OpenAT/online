@@ -26,11 +26,12 @@ class FRSTCheckboxModel(models.AbstractModel):
     def get_bridge_models_config(self):
         # Compute self._bridge_models_config
         if not self._bridge_models_config:
+            logger.info("Compute '_bridge_models_config' for checkbox model %s" % self.__class__.__name__)
             config = {}
 
             # Loop through bridge model fields
             for field in self._bridge_model_fields:
-                bridge_model_field = getattr(self, field)
+                bridge_model_field = self._fields.get(field)
                 bridge_model_name = bridge_model_field.comodel_name
 
                 # Get the config from the bridge model
@@ -42,8 +43,9 @@ class FRSTCheckboxModel(models.AbstractModel):
                     'bridge_model_config': bridge_model_config,
                 }
 
-            # Store the config into an instance attribute to avoid recomputation
-            self._bridge_models_config = config
+            # Store the config as a class attribute to avoid recomputation
+            cls = self.__class__
+            cls._bridge_models_config = config
 
         return self._bridge_models_config
 
@@ -68,7 +70,7 @@ class FRSTCheckboxModel(models.AbstractModel):
 
                 if not subscribed:
                     # Subscribe newest unsubscribed bridge model record
-                    unsubscribed = unsubscribed.sorted(key='write_date', reverse=True)
+                    unsubscribed = unsubscribed.sorted(key=lambda k: k.write_date, reverse=True)
                     unsubscribed[0].sudo().with_context(skipp_group_to_checkbox=True).write(
                         {'steuerung_bit': False})
                     unsubscribed = unsubscribed - unsubscribed[0]
@@ -80,7 +82,7 @@ class FRSTCheckboxModel(models.AbstractModel):
             elif expired and not subscribed:
 
                 # Get newest expired bridge model record
-                expired = expired.sorted(key='write_date', reverse=True)
+                expired = expired.sorted(key=lambda k: k.write_date, reverse=True)
                 expired = expired[0]
 
                 # Compute gueltig_von and gueltig_bis
@@ -135,6 +137,7 @@ class FRSTCheckboxModel(models.AbstractModel):
             If 'values' is not given it will update the groups for all checkbox fields
         """
         context = self.env.context or {}
+        values = values or {}
 
         # Recursion switch
         if 'skipp_checkbox_to_group' in context:
@@ -149,12 +152,14 @@ class FRSTCheckboxModel(models.AbstractModel):
             bm_group_model_field = bm_config['group_model_field']
             bm_checkbox_model_field = bm_config['checkbox_model_field']
 
-            # Get fields to process
+            # Process all checkbox fields if values is not given
             if values is None:
-                checkbox_fields = {f: g for f, g in bm_config['fields_to_groups'].iteritems() if f in values}
+                checkbox_fields = {f: g for f, g in bm_config['fields_to_groups'].iteritems()}
+
+            # Process only checkbox fields in values
             else:
                 values = values or {}
-                checkbox_fields = {f: g for f, g in bm_config['fields_to_groups'].iteritems()}
+                checkbox_fields = {f: g for f, g in bm_config['fields_to_groups'].iteritems() if f in values}
 
             # Continue to next bridge model if no fields are configured or in values
             if not checkbox_fields:
@@ -232,18 +237,18 @@ class FRSTCheckboxModel(models.AbstractModel):
     # CRUD
     # ----
     @api.model
-    def create(self, values, **kwargs):
+    def create(self, values):
         values = values or {}
-        res = super(FRSTCheckboxModel, self).create(values, **kwargs)
+        res = super(FRSTCheckboxModel, self).create(values)
         # Checkboxes to groups
         if res:
             res.checkbox_to_group(values)
         return res
 
-    @api.model
-    def write(self, values, **kwargs):
+    @api.multi
+    def write(self, values):
         values = values or {}
-        res = super(FRSTCheckboxModel, self).create(values, **kwargs)
+        res = super(FRSTCheckboxModel, self).write(values)
         # Checkboxes to groups
         if res:
             self.checkbox_to_group(values)

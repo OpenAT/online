@@ -6,8 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
-    _name = "res.partner"
-    _inherit = ["res.partner", "frst.checkboxgruppe"]
+    _inherit = "res.partner"
 
     frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
                                            string="FRST PersonEmail IDS")
@@ -67,10 +66,10 @@ class ResPartner(models.Model):
     # CRUD
     # ----
     @api.model
-    def create(self, values, **kwargs):
+    def create(self, values):
         values = values or {}
 
-        res = super(ResPartner, self).create(values, **kwargs)
+        res = super(ResPartner, self).create(values)
 
         # Create a PersonEmail
         email = values.get('email', False)
@@ -80,10 +79,10 @@ class ResPartner(models.Model):
         return res
 
     @api.multi
-    def write(self, values, **kwargs):
+    def write(self, values):
         values = values or {}
 
-        res = super(ResPartner, self).write(values, **kwargs)
+        res = super(ResPartner, self).write(values)
 
         # Update or create a PersonEmail
         if res and 'email' in values:
