@@ -220,12 +220,15 @@ class FRSTCheckboxModel(models.AbstractModel):
                 bm_field = config['bridge_model_field']
                 bm_config = config['bridge_model_config']
                 bm_group_model_field = bm_config['group_model_field']
+                bm_checkbox_model_field = bm_config['checkbox_model_field']
 
                 # Loop through all groups mapped to a checkbox
                 for checkbox_field_name, group in bm_config['fields_to_groups'].iteritems():
                     
                     # Get all bridge model records for this group for the current checkbox model record
-                    group_bm_records = r[bm_field].filtered(
+                    # ---
+                    checkbox_record_bm_records = r[bm_field]
+                    group_bm_records = checkbox_record_bm_records.filtered(
                         lambda bm: bm[bm_group_model_field].id == group.id)
 
                     # Get all subscribed bridge model records for this group for the current checkbox model record
@@ -252,28 +255,35 @@ class FRSTCheckboxModel(models.AbstractModel):
     # ----
     # CRUD
     # ----
-    @api.model
-    def create(self, values):
-        values = values or {}
-        context = self.env.context or {}
 
-        res = super(FRSTCheckboxModel, self).create(values)
+    # --------------------------------------------------------------------------------------------------
+    # ATTENTION: !!! Methods in Abstract model my ignore the inheritance created by addon dependency !!!
+    #            Therefore we need to create the crud methods directly in the checkbox model!
+    #            !!! This may be an odoo framework bug and should be noted on github !!!
+    # --------------------------------------------------------------------------------------------------
 
-        # Checkboxes to groups
-        if 'skipp_checkbox_to_group' not in context:
-            res.checkbox_to_group(values)
-
-        return res
-
-    @api.multi
-    def write(self, values):
-        values = values or {}
-        context = self.env.context or {}
-
-        res = super(FRSTCheckboxModel, self).write(values)
-
-        # Checkboxes to groups
-        if 'skipp_checkbox_to_group' not in context:
-            self.checkbox_to_group(values)
-
-        return res
+    # @api.model
+    # def create(self, values):
+    #     values = values or {}
+    #     context = self.env.context or {}
+    #
+    #     res = super(FRSTCheckboxModel, self).create(values)
+    #
+    #     # Checkboxes to groups
+    #     if 'skipp_checkbox_to_group' not in context:
+    #         res.checkbox_to_group(values)
+    #
+    #     return res
+    #
+    # @api.multi
+    # def write(self, values):
+    #     values = values or {}
+    #     context = self.env.context or {}
+    #
+    #     res = super(FRSTCheckboxModel, self).write(values)
+    #
+    #     # Checkboxes to groups
+    #     if 'skipp_checkbox_to_group' not in context:
+    #         self.checkbox_to_group(values)
+    #
+    #     return res

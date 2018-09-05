@@ -11,6 +11,8 @@ class FRSTPersonGruppe(models.Model):
     _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel"]
 
     _group_model_field = 'zgruppedetail_id'
+    #_target_model_field = 'partner_id'
+
     _checkbox_model_field = 'partner_id'
     _checkbox_fields_group_identifier = {
             'donation_deduction_optout_web': 110493,

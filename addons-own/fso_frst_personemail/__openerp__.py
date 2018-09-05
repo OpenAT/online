@@ -40,6 +40,5 @@ FS-Online Fundraising Studio PersonEmail implementation
         'security/ir.model.access.csv',
         #
         'views/frst_personemail.xml',
-        'views/res_partner.xml',
     ],
 }

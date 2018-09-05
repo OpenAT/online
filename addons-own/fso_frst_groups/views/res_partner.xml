@@ -8,6 +8,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <field name="email" position="after">
+                <field name="main_personemail_id"/>
                 <field name="main_email_personemailgruppe_ids" widget="many2many_tags"/>
             </field>
         </field>

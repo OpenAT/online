@@ -48,7 +48,7 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
         if checkbox_record:
             return checkbox_record.id
         else:
-            return checkbox_record
+            return False
 
     @api.model
     def get_group(self, group_identifier):

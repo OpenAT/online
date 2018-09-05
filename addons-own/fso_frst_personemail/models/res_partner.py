@@ -6,21 +6,15 @@ logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
+    _name = "res.partner"
     _inherit = "res.partner"
 
+    # Link all PersonEmails
     frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
                                            string="FRST PersonEmail IDS")
 
-    main_personemail_id = fields.Many2one(comodel_name="frst.personemail", string="Main Email", readonly=True,
-                                          compute="_compute_main_personemail_id")
-
-    @api.depends('frst_personemail_ids.main_address')
-    def _compute_main_personemail_id(self):
-        for r in self:
-            main_address = r.frst_personemail_ids.filtered(lambda m: m.main_address)
-            if main_address:
-                assert len(main_address) == 1, "More than one main e-mail address for partner %s" % r.id
-            r.main_personemail_id = main_address if main_address else False
+    # Link the main PersonEmail
+    main_personemail_id = fields.Many2one(comodel_name="frst.personemail", string="Main Email", readonly=True)
 
     # -----------
     # PersonEmail
@@ -45,7 +39,7 @@ class ResPartner(models.Model):
                                      "" % (r.id, partnermail_exits[0].email))
                         continue
 
-                    # Make sure this PartnerMail is the main_address
+                    # Make sure this PartnerMail is the main_address by changing the write_date
                     if not partnermail_exits.main_address:
                         partnermail_exits.write({'email': r.email})
 
@@ -71,7 +65,7 @@ class ResPartner(models.Model):
 
         res = super(ResPartner, self).create(values)
 
-        # Create a PersonEmail
+        # Create a PersonEmail if an email address is set in values
         email = values.get('email', False)
         if res and email:
             res.env['frst.personemail'].create({'email': email, 'partner_id': res.id})

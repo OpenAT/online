@@ -215,15 +215,24 @@ class FRSTPersonEmail(models.Model):
                 assert len(p_main_address) <= 1, _("Partner with id %s has more than one PartnerEmail main_address!"
                                                    "") % p_id
 
-                # Sync the res.partner 'email' to the main_address
+                # UPDATE
+                # ---
+                # Update res.partner.'email' from the main_address
                 if p_main_address.partner_id.email != p_main_address.email:
                     p_main_address.partner_id.email = p_main_address.email
+                # Update res.partner.'main_personemail_id' from the main_address
+                if p_main_address.partner_id.main_personemail_id != p_main_address:
+                    p_main_address.partner_id.main_personemail_id = p_main_address
 
-            # Unset res.partner 'email' field if no active PartnerEmail is left
+            # Clear res.partner.'email' field and 'main_personemail_id' if no active PartnerEmail is left
             else:
                 assert not p_active, "Active PersonEmails found but no main_address!"
+                # CLEAR
+                # ---
                 if p_emails[0].partner_id.email:
                     p_emails[0].partner_id.email = False
+                if p_emails[0].partner_id.main_personemail_id:
+                    p_emails[0].partner_id.main_personemail_id = False
 
             # Remove the partner email addresses form the 'emails' recordset and continue the while loop
             records_count_before = len(emails)
@@ -308,7 +317,9 @@ class FRSTPersonEmail(models.Model):
         partner = self.mapped('partner_id')
         partneremails = partner.mapped('frst_personemail_ids')
         remaining_partneremails = partneremails - self
+
         partners_with_partneremails_after_unlink = remaining_partneremails.mapped('partner_id')
+
         partner_without_personmail_after_unlink = partner - partners_with_partneremails_after_unlink
 
         # ATTENTION: After super 'self' still holds all the records BUT it is marked as deleted! res is just a boolean!

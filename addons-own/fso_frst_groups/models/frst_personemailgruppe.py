@@ -12,6 +12,8 @@ class FRSTPersonEmailGruppe(models.Model):
     _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel"]
 
     _group_model_field = 'zgruppedetail_id'
+    _target_model_field = 'frst_personemail_id'
+
     _checkbox_model_field = 'frst_personemail_id.partner_id'
     _checkbox_fields_group_identifier = {
             'newsletter_web': 30104,
@@ -25,11 +27,11 @@ class FRSTPersonEmailGruppe(models.Model):
                                           string="FRST PersonEmail",
                                           required=True, ondelete='cascade')
 
-    # Override method from abstract model 'frst.checkboxbridgemodel' to use the main_personemail_id field
+    # Override method from abstract model 'frst.checkboxbridgemodel' to use the 'main_personemail_id' field
     @api.model
     def get_target_model_id_from_checkbox_record(self, checkbox_record=False):
         """ Use the id from the main email address """
         if checkbox_record and checkbox_record.main_personemail_id:
             return checkbox_record.main_personemail_id.id
         else:
-            return checkbox_record
+            return False
