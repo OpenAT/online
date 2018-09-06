@@ -51,7 +51,8 @@ class FRSTCheckboxModel(models.AbstractModel):
         return config
 
     @api.multi
-    def set_bm_group(self, group_id=None, bm_field='', bm_group_model_field='', bm_checkbox_model_field=''):
+    def set_bm_group(self, group_id=None, bm_field='', bm_group_model_field='', bm_checkbox_model_field='',
+                     checkbox_field=''):
         group_id = int(group_id)
 
         # Loop through checkbox model records
@@ -114,6 +115,18 @@ class FRSTCheckboxModel(models.AbstractModel):
                 bridge_model_name = self._fields.get(bm_field).comodel_name
                 bmo = self.env[bridge_model_name].sudo()
                 bm_target_model_field_id = bmo.get_target_model_id_from_checkbox_record(checkbox_record=r)
+
+                if not bm_target_model_field_id:
+                    logger.warning("Could not get target_model_id for bridge model %s for checkbox field %s! (Checkbox "
+                                   "model: %s, record ID: %s)." % (bridge_model_name, checkbox_field,
+                                                                   self.__class__.__name__, r.id))
+                    # Do nothing but continue
+                    # HINT: We could also unset the checkbox_field here but it seems better to just leave it alone
+                    #       Example: Someone enabled 'newsletter_web' with no email (= no 'main_personemail_id')
+                    #                This seems ok because if someone was logged in he/she would see that
+                    #                "newsletter_web" is already set und can 'mindfully' unset it. If not logged in
+                    #                merge contacts should leave "newsletter_web" alone.
+                    continue
 
                 vals = {bm_target_model_field: bm_target_model_field_id,
                         bm_group_model_field: group_id,
@@ -186,11 +199,18 @@ class FRSTCheckboxModel(models.AbstractModel):
 
                 # Loop through the checkbox fields
                 for cf_name, group in checkbox_fields.iteritems():
+
+                    # Safety switch e.g. after main email creation where group_to_checkbox() would unset checkboxes
+                    if values:
+                        if r[cf_name] != values[cf_name]:
+                            r.write({cf_name: values[cf_name]})
+
                     if r[cf_name]:
                         r.set_bm_group(group_id=group.id,
                                        bm_field=bm_field,
                                        bm_group_model_field=bm_group_model_field,
-                                       bm_checkbox_model_field=bm_checkbox_model_field)
+                                       bm_checkbox_model_field=bm_checkbox_model_field,
+                                       checkbox_field=cf_name)
                     else:
                         r.rem_bm_group(group_id=group.id,
                                        bm_field=bm_field,
@@ -199,7 +219,7 @@ class FRSTCheckboxModel(models.AbstractModel):
         return True
 
     @api.multi
-    def group_to_checkbox(self):
+    def group_to_checkbox(self, values=None):
         """ This method will set or unset all checkboxes based on the current groups.
             It can be used to restore all checkbox values based on the groups
             It is fired by the CRUD methods of the bridge model

@@ -145,7 +145,7 @@ class FRSTPersonEmail(models.Model):
     def compute_main_address(self):
         start_time = time.time()
         number_of_records = len(self)
-        logger.info("START compute_main_address() for %s records" % number_of_records)
+        logger.debug("START compute_main_address() for %s records" % number_of_records)
 
         # Create a new recordset containing all records from self
         # ATTENTION: Maybe the creation of a new recordset is slow and we should only work with ids ?!? To be tested!
@@ -186,14 +186,14 @@ class FRSTPersonEmail(models.Model):
         # Finally Log the duration and duration per record
         duration = time.time() - start_time
         duration_per_rec = duration / number_of_records if number_of_records else 0
-        logger.info("END compute_main_address() in %.3f s (%.3f s per record)" % (duration, duration_per_rec))
+        logger.debug("END compute_main_address() in %.3f s (%.3f s per record)" % (duration, duration_per_rec))
 
     # HINT: Make sure the 'main_address' is correct before running compute_partner_email()
     @api.multi
     def compute_partner_email(self):
         start_time = time.time()
         number_of_records = len(self)
-        logger.info("START compute_partner_email() for %s records" % number_of_records)
+        logger.debug("START compute_partner_email() for %s records" % number_of_records)
 
         emails = self.env['frst.personemail'] + self
         while len(emails):
@@ -244,7 +244,7 @@ class FRSTPersonEmail(models.Model):
         # Finally Log the duration and duration per record
         duration = time.time() - start_time
         duration_per_rec = duration / number_of_records if number_of_records else 0
-        logger.info("END compute_partner_email() in %.3f s (%.3f s per record)" % (duration, duration_per_rec))
+        logger.debug("END compute_partner_email() in %.3f s (%.3f s per record)" % (duration, duration_per_rec))
 
     # ----
     # CRUD
