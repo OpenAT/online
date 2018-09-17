@@ -406,6 +406,102 @@ class SosyncJobQueue(models.Model):
                                  'submission_response_code': response.status_code,
                                  'submission_response_body': response.content})
 
+    @api.multi
+    def bulk_submit_sync_job(self, instance="", url="", http_header={},
+                             crt_pem="", prvkey_pem="", user="", pwd="", timeout=4):
+
+        # Get the 'Instance ID' (e.g.: care) from the main instance company for the default service sosync url
+        instance = instance or self.env['res.company'].sudo().search([("instance_company", "=", True)],
+                                                                     limit=1).instance_id
+        assert instance, "'Instance ID' for the main instance company is missing!"
+
+        # Sync job bulk submission url (in internal network)
+        url_overwrite = self.env['res.company'].sudo().search([("instance_company", "=", True)], limit=1)
+        if url_overwrite:
+            url_overwrite = url_overwrite.sosync_job_submission_url
+        url = url or url_overwrite or "http://sosync."+instance+".datadialog.net/job/bulk-create"
+        is_valid_url(url=url, dns_check=False)
+
+        # Create a Session Object (just like a regular UA e.g. Firefox or Chrome)
+        session = Session()
+        session.verify = True
+        if crt_pem and prvkey_pem:
+            session.cert = (crt_pem, prvkey_pem)
+        if user and pwd:
+            session.auth(user, pwd)
+
+        # PREPARE DATA
+        # ---
+        all_jobs = []
+        logger.info("Prepare %s sync jobs for submission" % len(self))
+        for record in self:
+            logger.debug("Preparing sosync sync-job %s from queue!" % record.id)
+            job_data = {'job_date': record.job_date,
+                        'job_source_system': record.job_source_system,
+                        'job_source_model': record.job_source_model,
+                        'job_source_record_id': record.job_source_record_id,
+                        'job_source_target_record_id': record.job_source_target_record_id,
+                        'job_source_sosync_write_date': record.job_source_sosync_write_date,
+                        'job_source_fields': record.job_source_fields,
+                        'job_source_type': record.job_source_type,
+                        'job_source_merge_into_record_id': record.job_source_merge_into_record_id,
+                        'job_source_target_merge_into_record_id': record.job_source_target_merge_into_record_id,
+                        }
+            # Append sync job to the 'all_jobs' list
+            all_jobs.append(job_data)
+
+        # SUBMIT THE SYNC JOBS AS JSON STRING
+        # ---
+        logger.info("Bulk submit %s sync jobs to %s" % (len(self), url))
+        submission = fields.Datetime.now()
+        try:
+            response = requests.post(url,
+                                     headers=http_header or {'content-type': 'application/json; charset=utf-8'},
+                                     timeout=timeout,
+                                     data=json.dumps(all_jobs, ensure_ascii=True))
+
+        # Timeout Exception
+        except Timeout as e:
+            logger.error("Submitting %s sync-jobs failed! Timeout exception!" % len(self))
+            self.sudo().write({'submission_state': 'submission_error',
+                               'submission': submission,
+                               'submission_url': url,
+                               'submission_error': 'timeout',
+                               'submission_response_code': '',
+                               'submission_response_body': "Request Timeout:\n%s" % e})
+            return False
+
+        # Generic Exception
+        except Exception as e:
+            logger.error("Submitting %s sync-jobs failed! Exception: %s" % (len(self), repr(e)))
+            self.sudo().write({'submission_state': 'submission_error',
+                               'submission_url': url,
+                               'submission': submission,
+                               'submission_error': 'error',
+                               'submission_response_code': '',
+                               'submission_response_body': "Request Exception:\n%s" % e})
+            return False
+
+        # HTTP Error Code returned
+        if response.status_code != requests.codes.ok:
+            logger.error("Submitting %s sync-jobs failed! Error: %s" % (len(self), response.content or ''))
+            self.sudo().write({'submission_state': 'submission_error',
+                               'submission_url': url,
+                               'submission': submission,
+                               'submission_error': 'error',
+                               'submission_response_code': response.status_code,
+                               'submission_response_body': response.content})
+            return False
+
+        # Submission was successful
+        self.sudo().write({'submission_state': 'submitted',
+                           'submission_url': url,
+                           'submission': submission,
+                           'submission_error': '',
+                           'submission_response_code': response.status_code,
+                           'submission_response_body': response.content})
+        return True
+
     # --------------------------------------------------
     # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE SUBMISSION
     # --------------------------------------------------
@@ -448,12 +544,28 @@ class SosyncJobQueue(models.Model):
         # Submit jobs to sosync service
         runtime_start = datetime.datetime.now()
         runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_sec)
-        processed_jobs_counter = 0
-        for job in jobs_in_queue:
-            if datetime.datetime.now() >= runtime_end:
-                break
-            job.submit_sync_job()
-            processed_jobs_counter += 1
+
+        # SUBMIT SYNC JOBS IN QUEUE
+        # ---
+        # Try bulk submit first
+        res = None
+        processed_jobs_counter = len(self)
+        try:
+            res = jobs_in_queue.bulk_submit_sync_job()
+
+        # HINT: An Exception is only raised by bulk_submit_sync_job() in case of an unexpected error!
+        #       Any Expected error will return False (and will not raise an exception)
+        except Exception as e:
+            logger.info("Bulk submission of sync jobs failed! %s" % repr(e))
+
+            # Job by job submit
+            logger.info("Try job by job submission instead!")
+            processed_jobs_counter = 0
+            for job in jobs_in_queue:
+                if datetime.datetime.now() >= runtime_end:
+                    break
+                job.submit_sync_job()
+                processed_jobs_counter += 1
 
         # Log processing info
         logger.info("Processed %s Sync Jobs" % processed_jobs_counter)
