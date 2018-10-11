@@ -73,12 +73,6 @@ Module tasks:
         'auth_partner_form',
         'fso_con_zmr',
         'fso_website_email',
-        #'link_tracker',
-        #'utm',
-        'mass_mailing_sending_queue',
-        #'mail_tracking',
-        #'mail_tracking_mass_mailing',
-        #'mass_mailing_statistic_extra',
         'fso_mass_mail',
     ],
     'data': [

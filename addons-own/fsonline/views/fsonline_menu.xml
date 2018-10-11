@@ -98,7 +98,7 @@
                 <menuitem id="menu_channels_mm_contacts" parent="menu_channels_mm" name="List Contacts" sequence="1020" groups="base.group_user" action="mass_mailing.action_view_mass_mailing_contacts"/>
                 <menuitem id="menu_channels_mm_campaigns" parent="menu_channels_mm" name="Campaigns" sequence="1030" groups="mass_mailing.group_mass_mailing_campaign" action="mass_mailing.action_view_mass_mailing_campaigns"/>
                 <menuitem id="menu_channels_mm_mailings" parent="menu_channels_mm" name="Mailings" sequence="1040" groups="base.group_user" action="mass_mailing.action_view_mass_mailings"/>
-                <menuitem id="menu_channels_mm_queue" parent="menu_channels_mm" name="Sending Queue" sequence="1050" groups="base.group_user" action="mass_mailing_sending_queue.action_view_mail_mass_mailing_sending"/>
+                <!--<menuitem id="menu_channels_mm_queue" parent="menu_channels_mm" name="Sending Queue" sequence="1050" groups="base.group_user" action="mass_mailing_sending_queue.action_view_mail_mass_mailing_sending"/>-->
                 <menuitem id="menu_channels_mm_send" parent="menu_channels_mm" name="E-Mails" sequence="1060" groups="base.group_user" action="mail.action_view_mail_mail"/>
                 <menuitem id="menu_channels_mm_statistics" parent="menu_channels_mm" sequence="1070" groups="base.group_user" action="mass_mailing.action_view_mail_mail_statistics"/>
     

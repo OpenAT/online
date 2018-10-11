@@ -120,7 +120,6 @@ TODO (must be done manually right now):
         'data/instance_system_user_group.xml',
         'security/ir.model.access.csv',
         #
-        # 'views/fsonline_menu.xml',    # Moved to fsonline addon
         'views/templates_backend_css.xml',
         'views/res_company.xml',
         'views/res_partner.xml',

@@ -14,7 +14,8 @@ class MassMailingCampaign(models.Model):
     _rec_name = "campaign_id"
 
     campaign_id = fields.Many2one('utm.campaign', 'campaign_id',
-                                  required=True, ondelete='cascade',
+                                  required=True,
+                                  ondelete='cascade',
                                   help="This name helps you tracking your different campaign efforts, "
                                        "e.g. Fall_Drive, Christmas_Special")
     source_id = fields.Many2one('utm.source', string='Source',
