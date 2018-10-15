@@ -73,7 +73,7 @@ Module tasks:
         'auth_partner_form',
         'fso_con_zmr',
         'fso_website_email',
-        'fso_mass_mail',
+        #'fso_mass_mail',
     ],
     'data': [
         'data/user_studio.xml',
