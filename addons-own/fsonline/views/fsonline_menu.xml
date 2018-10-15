@@ -130,8 +130,9 @@
             <menuitem id="menu_fso_organizer_hrtime" parent="menu_fso_organizer" name="Zeiterfassung" sequence="3000" groups="base.group_user"/>
                 <menuitem id="menu_fso_organizer_hrtime_mytimesheet" action="hr_timesheet_sheet.ir_actions_server_timsheet_sheet" name="Mein Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3010"/>
                 <menuitem id="menu_fso_organizer_hrtime_timesheet" action="hr_timesheet_sheet.act_hr_timesheet_sheet_form" name="Alle Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3015"/>
-                <menuitem id="menu_fso_organizer_hrtime_leave" action="cam_hr.hr_alle_urlaubsantraege_action" name="Urlaub u. Abwesenheit" parent="menu_fso_organizer_hrtime" sequence="3020"/>
-                <menuitem id="menu_fso_organizer_hrtime_leavereq" action="cam_hr.hr_urlaubsanspruch_action" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+                <menuitem id="menu_fso_organizer_hrtime_leave" action="cam_hr.hr_alle_urlaubsantraege_action" name="Urlaubseinträge" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+                <menuitem id="menu_fso_organizer_hrtime_sick" action="cam_hr.hr_krankenstaende_action" name="Krankenstände" parent="menu_fso_organizer_hrtime" sequence="3025"/>
+                <menuitem id="menu_fso_organizer_hrtime_leavereq" action="cam_hr.hr_urlaubsanspruch_action" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3030"/>
     
             <!-- NACHRICHTEN -->
             <menuitem id="menu_fso_organizer_msg" parent="menu_fso_organizer" name="Nachrichten" sequence="4100" groups="base.group_user"/>

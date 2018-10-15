@@ -803,11 +803,6 @@ msgid "Tracking"
 msgstr "Tracking"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_leave
-msgid "Urlaub u. Abwesenheit"
-msgstr "Urlaub u. Abwesenheit"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_leavereq
 msgid "Urlaubsanspruch erfassen"
 msgstr "Urlaubsanspruch erfassen"
