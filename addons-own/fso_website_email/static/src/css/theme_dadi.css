@@ -1,3 +1,5 @@
+/* ATTENTION: These are the styles for the default email theme - It is NOT the Datadialog email theme */
+
 /* ----- */
 /* FONTS */
 /* ----- */
@@ -66,8 +68,10 @@ h3 {
     text-align: left;
 }
 
-.textContent a, .textContentLast a {
-    color: #007593;
+#emailBody a,
+.textContent a,
+.textContentLast a {
+    color: #000000;
     text-decoration: underline;
 }
 

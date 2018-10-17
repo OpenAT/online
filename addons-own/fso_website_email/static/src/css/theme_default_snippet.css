@@ -220,6 +220,23 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
 }
 
 /*
+    snippet_block_text_threecol
+*/
+.snippet_block_text_threecol .flexibleContainerCell {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.snippet_block_text_threecol .flexibleContainer33,
+.snippet_block_text_threecol .flexibleContainer33 .flexibleImage {
+    width: 172px;
+}
+.snippet_block_text_threecol .flexibleContainer33middle {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+
+/*
     drop_in_button
 */
 .drop_in_button {

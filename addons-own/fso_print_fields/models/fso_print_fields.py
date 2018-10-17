@@ -16,6 +16,9 @@ class FsoPrintField(models.Model):
     fs_email_placeholder = fields.Char(string="Fundraising Studio E-Mail Placeholder", required=True,
                                        help="e.g.: %Name%", readonly=True)
 
+    mako_expression = fields.Char(string="Odoo Mako Expression",
+                                  help="e.g.: ${object.name}", readonly=True)
+
     css_class = fields.Char(string="CSS Class", readonly=True, compute="_compute_css_class", store=True)
 
     # Available in Print Field Snippet(s)

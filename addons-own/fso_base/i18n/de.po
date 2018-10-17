@@ -373,7 +373,7 @@ msgid "FS Groups (Variant)"
 msgstr "FS Gruppen (Varianten)"
 
 #. module: fso_base
-#: model:res.groups,name:fso_base.group_fs_group_manager
+#: model:res.groups,name:fso_frst_groups.group_fs_group_manager
 msgid "FS Groups Manager"
 msgstr "FS Gruppenmanager"
 

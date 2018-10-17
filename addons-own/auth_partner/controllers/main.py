@@ -28,19 +28,34 @@ class ir_http(orm.AbstractModel):
         if hasattr(request, 'website') and request.website:
             fs_ptoken = request.httprequest.args.get('fs_ptoken')
             if fs_ptoken:
+
                 # Check token and login if valid
                 # HINT: If the token is wrong or the login fails there is no message or hint at all
                 #       which is the intended behaviour
                 token_record, user, errors = fstoken_check(fs_ptoken)
+
+                # Log every successful token request
                 if token_record:
                     _logger.info('Valid FS-Token (%s) found for res.partner %s (%s)'
                                  % (token_record.id, token_record.partner_id.name, token_record.partner_id.id))
+
+                    if hasattr(request, 'session') and hasattr(request.session, 'context') and request.session.context:
+                        request.session.context['fs_ptoken'] = token_record.name
+                else:
+                    if hasattr(request, 'session') and hasattr(request.session, 'context') and request.session.context:
+                        request.session.context.pop('fs_ptoken', False)
+
+                # Login and redirect if needed
                 if token_record and user and user.id != request.uid:
-                    # Todo: Check if logout is needed first if already logged in?
                     _logger.info('Login by FS-Token (%s) for res.user with login %s (%s) and redirect to %s'
                                  % (token_record.id, user.login, user.id, request.httprequest.url))
-                    return login_and_redirect(request.db, user.login, token_record.name,
-                                              redirect_url=request.httprequest.url)
+                    res = login_and_redirect(request.db, user.login, token_record.name,
+                                             redirect_url=request.httprequest.url)
+
+                    # Update the 'new context after login' with fs_ptoken and fs_origin
+                    if hasattr(request, 'session') and hasattr(request.session, 'context') and request.session.context:
+                        request.session.context['fs_ptoken'] = token_record.name
+                        request.session.context['fs_origin'] = token_record.fs_origin or False
+                    return res
 
         return response
-

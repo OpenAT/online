@@ -116,6 +116,8 @@ class ResPartnerFADonationReport(models.Model):
                                            track_visibility='onchange',)
 
     # <data><SonderausgabenUebermittlung><MessageSpec>
+    # FORMAT: S21-123456789-20180729023009
+    #         S{id}-{submission_fa_fastnr_org}-{datetime}
     submission_message_ref_id = fields.Char(string="Paket ID (MessageRefId)", readonly=True, size=36,
                                             track_visibility='onchange',
                                             index=True)
@@ -328,7 +330,11 @@ class ResPartnerFADonationReport(models.Model):
             'submission_fa_fastnr_fon_tn': r.bpk_company_id.fa_fastnr_fon_tn,
             'submission_fa_fastnr_org': r.bpk_company_id.fa_fastnr_org,
             # <data><SonderausgabenUebermittlung><MessageSpec>
-            'submission_message_ref_id': "S%s-%s" % (r.id, r.create_date.replace(' ', '-').replace(':', '-')),
+            # S{id}-{submission_fa_fastnr_org}-{datetime}
+            'submission_message_ref_id': "S%s-%s-%s" % (r.id,
+                                                        r.bpk_company_id.fa_fastnr_org,
+                                                        ''.join(re.findall(ur"(?u)[0-9]+", r.create_date))
+                                                        ),
             'submission_timestamp': fields.datetime.utcnow().replace(microsecond=0).isoformat(),
             'submission_fa_dr_type': u'MÖ' if r.bpk_company_id.fa_dr_type == 'MO' else r.bpk_company_id.fa_dr_type,
             # <data><SonderausgabenUebermittlung><Sonderausgaben> (for loop)
@@ -729,7 +735,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # FinanzOnline File Upload known ERROR
             # ------------------------------------
-            # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
+            # HINT: In this case we expect that the submission was rejected by FinanzOnline
             # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
             elif returncode != '0':
                 r.update_submission(state='error',
@@ -1138,7 +1144,7 @@ class ResPartnerFADonationReport(models.Model):
         if not self or not self.ensure_one():
             raise ValidationError(_("release_donation_reports() works only for single records!"))
         s = self
-        if s.state == 'response_nok' and 'ERR-F-' in s.response_error_code:
+        if s.state == 'error' or (s.state == 'response_nok' and 'ERR-F-' in s.response_error_code):
             s.donation_report_ids.write({'state': 'error',
                                          'submission_id': False,
                                          'error_type': 'nok_released',
@@ -1191,8 +1197,8 @@ class ResPartnerFADonationReport(models.Model):
             return True
 
         def submit(subm):
-            rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
-            subm_info = "ID='%s', NAME='%s', REPS='%s'" % (subm.id, subm.name, rep_count)
+            report_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
+            subm_info = "ID='%s', NAME='%s', REPS='%s'" % (subm.id, subm.name, report_count)
             logger.info("scheduled_submission() Submit donation-report-submission %s to FinanzOnline" % subm_info)
 
             # ATTENTION: Do NOT send the submission if we are on a dev server!
@@ -1220,7 +1226,7 @@ class ResPartnerFADonationReport(models.Model):
                 send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=body)
                 return False
 
-            send_internal_email(odoo_env_obj=subm.env, subject=msg_success, body=msg_success)
+            send_internal_email(odoo_env_obj=subm.env, subject=msg_success)
             logger.info(msg_success)
             return True
 
@@ -1235,28 +1241,99 @@ class ResPartnerFADonationReport(models.Model):
             ('ze_datum_von', '>=', spak_start.strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
             ('ze_datum_bis', '!=', False),
         ])
+
+        # SKIPP AUTOMATIC SUBMISSION IF NO FISCAL YEAR WAS FOUND
+        # ------------------------------------------------------
         if not fiscal_years:
             logger.warning("scheduled_submission() No fiscal year found to auto-generate submission for!")
+
+            # Send internal e-mail if donation reports reports to submit exists but no fiscal year was found
+            report_exists = self.env['res.partner.donation_report'].sudo().search([
+                ('state', '=', 'new'),
+                ('submission_env', '=', 'P'),
+            ], limit=1)
+            if report_exists:
+                msg_error = "scheduled_submission() ERROR: No fiscal year found to auto-generate submission for but " \
+                            "donation reports to submit exits!"
+                send_internal_email(odoo_env_obj=self.env, subject=msg_error)
             return
 
-        # Process every fiscal year
+        # WARN IF DONATION REPORTS EXISTS THAT DO NOT MATCH ANY FISCAL YEAR WITH MELDEZEITRAUM
+        # ------------------------------------------------------------------------------------
+        meldungs_jahre = [y.meldungs_jahr for y in fiscal_years if y.meldungs_jahr]
+        if meldungs_jahre:
+            report_exists = self.env['res.partner.donation_report'].sudo().search([
+                ('state', '=', 'new'),
+                ('submission_env', '=', 'P'),
+                ('meldungs_jahr', 'not in', meldungs_jahre),
+            ], limit=1)
+            if report_exists:
+                msg_error = "scheduled_submission() WARNING: Submittable donation reports exist for non existing or " \
+                            "non configured fiscal years!"
+                send_internal_email(odoo_env_obj=self.env, subject=msg_error)
+
+        # Process the fiscal years with meldezeitraum
         for y in fiscal_years:
 
-            # Check if Meldejahr exists
+            # SKIPP AUTOMATIC SUBMISSION IF MELDUNGS_JAHR IS NOT SET
+            # ------------------------------------------------------
             if not y.meldungs_jahr:
-                logger.warning("scheduled_submission() meldungs_jahr missing for fiscal year (ID %s)" % y.id)
+                msg_error = "scheduled_submission() ERROR: meldungs_jahr missing for fiscal year (ID %s)" % y.id
+                logger.warning(msg_error)
+
+                # Send a warning e-mail if this fiscal year may be ready to submit
+                date_stop = datetime.datetime.strptime(y.date_stop, DEFAULT_SERVER_DATETIME_FORMAT)
+                if now < date_stop:
+                    send_internal_email(odoo_env_obj=self.env, subject=msg_error)
+
                 continue
 
-            # Check if this fiscal year is inside Meldezeitraum
+            # Check if at least one submittable donation report exists for this fiscal year
+            report_exists = self.env['res.partner.donation_report'].sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
+                ('submission_id', '=', False),
+                ('state', '=', 'new'),
+                ('submission_env', '=', 'P'),
+            ], limit=1)
+
+            # SKIPP AUTOMATIC SUBMISSION IF NOW IS OUTSIDE OF THE MELDEZEITRAUM
+            # -----------------------------------------------------------------
+            # HINT: Only fiscal years with meldezeitraum_start and meldezeitraum_end where searched for
             start = datetime.datetime.strptime(y.meldezeitraum_start, DEFAULT_SERVER_DATETIME_FORMAT)
             end = datetime.datetime.strptime(y.meldezeitraum_end, DEFAULT_SERVER_DATETIME_FORMAT)
-            if not bool(start < now < end):
+            if not bool(start <= now <= end):
                 logger.info("scheduled_submission() fiscal year %s (ID %s) outside Meldezeitraum"
                             "" % (y.meldungs_jahr, y.id))
+
+                # Send warning if donation reports exists but now is outside of the meldezeitraum
+                if report_exists:
+                    msg_error = "scheduled_submission() WARNING: fiscal year %s (ID %s) outside Meldezeitraum but " \
+                                "donation reports to be submitted exist!" % (y.meldungs_jahr, y.id)
+                    send_internal_email(odoo_env_obj=self.env, subject=msg_error)
+
                 continue
 
-            # Check 'auto submission needed' based on drg_last and drg_last_count
-            # -------------------------------------------------------------------
+            # WARN IF NEXT PLANNED RUN IN FRST IS MORE THAN 24 HOURS IN THE PAST
+            # ------------------------------------------------------------------
+            # HINT: IF we came this far we know we are inside the meldezeitraum for this fiscal year
+            if y.drg_next_run:
+                drg_next_run = datetime.datetime.strptime(y.drg_next_run, DEFAULT_SERVER_DATETIME_FORMAT)
+                if now > (drg_next_run + datetime.timedelta(hours=24)):
+                    msg_error = "scheduled_submission() WARNING: Next planned run in FRST is more than 24 hours in " \
+                                "the past for fiscal year %s (ID %s)!" % (y.meldungs_jahr, y.id)
+                    logger.warning(msg_error)
+                    if report_exists:
+                        send_internal_email(odoo_env_obj=self.env, subject=msg_error)
+            else:
+                msg_error = "scheduled_submission() WARNING: No next planned run in FRST for fiscal year %s (ID %s)!" \
+                            "" % (y.meldungs_jahr, y.id)
+                logger.warning(msg_error)
+                if report_exists:
+                    send_internal_email(odoo_env_obj=self.env, subject=msg_error)
+
+            # CHECK LAST REPORT GENERATION IN FRST IF SET
+            # -------------------------------------------
             if y.drg_last and y.drg_last_count:
                 drg_last = datetime.datetime.strptime(y.drg_last, DEFAULT_SERVER_DATETIME_FORMAT)
                 newer_than_drg_last = self.sudo().search([
@@ -1269,18 +1346,15 @@ class ResPartnerFADonationReport(models.Model):
                     ('create_date', '>', y.drg_last),
                 ])
 
-                # Newer submission found!
-                # SKIPP automatic donation report submission for this meldejahr
+                # SKIPP AUTOMATIC SUBMISSION IF NEWER SUBMISSIONS EXISTS
                 if newer_than_drg_last:
                     logger.info("scheduled_submission() Submissions newer than last donation report generation in FRST "
                                 "found for meldejahr %s (ID %s). Submission ids: %s. Skipping automatic submission!"
                                 "" % (y.meldungs_jahr, y.id, newer_than_drg_last.ids))
                     continue
 
-                # No submission found later than drg_last (Donation report generation in FRST)
+                # No newer submissions found
                 else:
-
-                    # Check if the number of new donation reports matches drg_last_count
                     new_reports = self.env['res.partner.donation_report'].sudo().search([
                         ('meldungs_jahr', '=', y.meldungs_jahr),
                         ('bpk_company_id', '=', y.company_id.id),
@@ -1288,16 +1362,18 @@ class ResPartnerFADonationReport(models.Model):
                         ('create_date', '>', y.drg_last),
                     ])
 
-                    # SKIPP automatic donation report submission if less than 24 hours and not enough donation reports!
-                    # HINT: This works because the auto submission is run every day - so after 24h it will
-                    #       submit the reports even if less than drg_last_count are found.
+                    # Check if new submissions in FS-Online match the count from Fundraising Studio
+                    # HINT: Auto submission scheduled task must be run once a day!
                     if not new_reports or len(new_reports) < y.drg_last_count:
+
+                        # WAIT FOR 24 HOURS IF NEW DONATION REPORTS ARE LESS THAN DRG_LAST_COUNT!
                         if now < (drg_last + datetime.timedelta(hours=24)):
                             logger.info("scheduled_submission() WARNING! There may be unsynced donation reports! "
                                         "Waiting for 24 hours since drg_last for sync to finish! Skipping this "
                                         "meldejahr for next run %s (ID %s)" % (y.meldungs_jahr, y.id))
                             continue
-                        # Not enough donation reports synced AFTER 24 hours:
+
+                        # CONTINUE WITH AUTOMATIC SUBMISSION IF STILL TO FEW DONATION REPORTS EXISTS AFTER 24 HOURS
                         # Send a warning and go on with the auto submission
                         else:
                             manual_msg = ("scheduled_submission() WARNING! There may be unsynced donation reports! "
@@ -1305,12 +1381,11 @@ class ResPartnerFADonationReport(models.Model):
                                           "Existing donation reports will be submitted!"
                                           "" % (len(new_reports), y.drg_last_count))
                             logger.warning(manual_msg)
-                            send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
+                            send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
 
-            # Check 'auto submission needed' based on cron_task interval
-            # -----------------------------------------------------------
+            # CHECK INTERVAL RANGE IF INFORMATION OF LAST DONATION REPORT GENERATION IS MISSING
+            # ---------------------------------------------------------------------------------
             else:
-                # Find last submitted donation report for this fiscal year
                 last_submitted = self.sudo().search([
                     ('meldungs_jahr', '=', y.meldungs_jahr),
                     ('bpk_company_id', '=', y.company_id.id),
@@ -1320,10 +1395,13 @@ class ResPartnerFADonationReport(models.Model):
                     ('submission_datetime', '!=', False),
                 ], limit=1, order='submission_datetime DESC')
 
-                # Skipping auto submission because last submission still in interval range set at fiscal year
+                # SKIPP AUTOMATIC SUBMISSION IF SUBMISSION(S) EXISTS ALREADY FOR THIS INTERVAL
                 if last_submitted:
                     if not y.drg_interval_type or y.drg_interval_type != 'days':
-                        logger.error("Interval type must be set to 'days' for field 'drg_interval_type'!")
+                        msg_error = "scheduled_submission() ERROR: Interval type must be set to 'days' for field " \
+                                    "'drg_interval_type'!"
+                        logger.error(msg_error)
+                        send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
 
                     ls_sd = datetime.datetime.strptime(last_submitted.submission_datetime,
                                                        DEFAULT_SERVER_DATETIME_FORMAT)
@@ -1332,7 +1410,7 @@ class ResPartnerFADonationReport(models.Model):
                                     "in interval range set at fiscal year!")
                         continue
 
-            # Check and warn for unsubmitted manual donation report submissions
+            # CHECK AND WARN FOR UNSUBMITTED MANUAL DONATION REPORT SUBMISSIONS
             # -----------------------------------------------------------------
             manual_not_send = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1367,7 +1445,7 @@ class ResPartnerFADonationReport(models.Model):
             while reports and max_subm > 0:
                 max_subm -= 1
                 if max_subm <= 0:
-                    max_subm_msg = "scheduled_submission() ERROR! More than 9 submission-creation tries!"
+                    max_subm_msg = "scheduled_submission() ERROR! Max 'submission per run' limit of 9 exceeded!"
                     logger.error(max_subm_msg)
                     send_internal_email(odoo_env_obj=self.env, subject=max_subm_msg)
 

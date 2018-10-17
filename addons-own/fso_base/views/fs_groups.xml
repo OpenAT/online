@@ -31,7 +31,7 @@
     </record>
 
     
-    <!-- fs_group : Create form, tree and list view for the widget manager -->
+    <!-- fs_group : Create form, tree and list view -->
     <record model="ir.ui.view" id="fs_group_form">
         <field name="name">fs_group_form</field>
         <field name="model">fs.group</field>

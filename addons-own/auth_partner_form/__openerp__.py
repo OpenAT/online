@@ -57,7 +57,7 @@ ATTENTION: The token must be at least 6 chars long, is alphanumeric and case sen
         'views/views.xml',
         'views/templates.xml',
         'views/snippets.xml',
-        'views/fsonline_menu.xml',
+        #'views/fsonline_menu.xml', # Moved to fsonline addon
         'data/data.xml',
     ],
 }

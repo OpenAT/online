@@ -6,6 +6,7 @@ from openerp.http import request
 import datetime
 
 from openerp.tools.mail import html_sanitize
+import urllib
 from urllib import urlencode
 
 
@@ -47,6 +48,7 @@ class FSOEmailEditor(http.Controller):
                                'template_views': template_views,
                                'templates': templates,
                                'print_fields': request.env['fso.print_field'].search([]),
+                               'return_url': urllib.unquote(kw.get('return_url', '')),
                                })
 
     # EMAIL-EDITOR
@@ -62,6 +64,7 @@ class FSOEmailEditor(http.Controller):
                                  'email_editor_mode': True,
                                  'record': template,
                                  'print_fields': request.env['fso.print_field'].search([]),
+                                 'return_url': urllib.unquote(kw.get('return_url', '')),
                                  })
 
         return result
@@ -84,7 +87,7 @@ class FSOEmailEditor(http.Controller):
                                    'print_fields': request.env['fso.print_field'].search([]),
                                    })
 
-    # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING TEMPLATE
+    # NEW E-MAIL TEMPLATE FROM THEME OR EXISTING E-MAIL TEMPLATE
     @http.route('/fso/email/create', type='http', auth="user", website=True)
     def email_create(self, template_model,  template_id, **kw):
         if not template_model or not template_id or template_model not in ('email.template', 'ir.ui.view'):
@@ -108,13 +111,13 @@ class FSOEmailEditor(http.Controller):
                 'fso_email_template': True,
                 'fso_template_view_id': theme_view.id,
             })
-            return request.redirect('/fso/email/select')
+            return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw) or '')
 
         # Copy existing e-mail template
         if template_model == 'email.template':
             template_to_copy = request.env[template_model].browse([template_id])
             if not template_to_copy:
-                request.redirect('/fso/email/select')
+                return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
             request.env['email.template'].sudo().create({
                 'name': new_name,
                 'model_id': template_to_copy.model_id.id,
@@ -122,16 +125,16 @@ class FSOEmailEditor(http.Controller):
                 'fso_template_view_id': template_to_copy.fso_template_view_id.id,
                 'body_html': template_to_copy.body_html,
             })
-            return request.redirect('/fso/email/select')
+            return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
 
         # Return to the e-mail theme/template selection page
-        return request.redirect('/fso/email/select')
+        return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
 
     # NEW E-MAIL Version
     @http.route('/fso/email/version/create', type='http', auth="user", website=True)
     def email_version_create(self, template_id, **kw):
         if not template_id:
-            return request.redirect('/fso/email/select')
+            return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
 
         # Get e-mail template
         template = request.env['email.template'].sudo().browse([int(template_id)])
@@ -140,13 +143,13 @@ class FSOEmailEditor(http.Controller):
         template.create_version()
 
         # Return to the e-mail theme/template selection page
-        return request.redirect('/fso/email/edit?template_id='+template_id)
+        return request.redirect('/fso/email/edit?template_id='+template_id+'&'+urllib.urlencode(kw))
 
     # NEW E-MAIL Version
     @http.route('/fso/email/version/restore', type='http', auth="user", website=True)
     def email_version_restore(self, template_id, version_id, **kw):
         if not template_id or not version_id:
-            return request.redirect('/fso/email/select')
+            return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
 
         # Get e-mail template
         template = request.env['email.template'].sudo().browse([int(template_id)])
@@ -155,16 +158,16 @@ class FSOEmailEditor(http.Controller):
         template.restore_version(version_id=version_id)
 
         # Return to the e-mail theme/template selection page
-        return request.redirect('/fso/email/edit?template_id=' + template_id)
+        return request.redirect('/fso/email/edit?template_id='+template_id+'&'+urllib.urlencode(kw))
 
     # DELETE E-MAIL TEMPLATE
     @http.route('/fso/email/delete', type='http', auth="user", website=True)
     def email_delete(self,  template_id, **kw):
         if not template_id:
-            return request.redirect('/fso/email/select')
+            return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
         template_id = int(template_id)
 
         template_to_delete = request.env['email.template'].browse([template_id])
         template_to_delete.unlink()
 
-        return request.redirect('/fso/email/select')
+        return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))

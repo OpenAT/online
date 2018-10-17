@@ -7,6 +7,7 @@ from openerp.osv import osv, orm, fields
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp
 from openerp.addons.fso_base.tools.image import resize_to_thumbnail
+from openerp.addons.web.http import request
 
 _logger = logging.getLogger(__name__)
 
@@ -186,6 +187,7 @@ class sale_order_line(osv.Model):
         'payment_interval_name': fields.text('Payment Interval Name'),
         'payment_interval_xmlid': fields.text('Payment Interval Name'),
         'fs_ptoken': fields.text('FS Partner Token'),
+        'fs_origin': fields.char('FS Partner Token Origin', help="The Fundraising Studio activity ID")
     }
 
 
@@ -281,7 +283,6 @@ class sale_order(osv.Model):
             # TODO: Hack: for no obvious reason functional fields do net get updated on sale.order.line writes ?!? so we do it manually!
             # Sadly not working
             # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_subtotal': sol_obj._amount_line(cr, SUPERUSER_ID, [line_id], None, None, context=context), 'price_reduce': sol_obj._get_price_reduce(cr, SUPERUSER_ID, [line_id], None, None, context=context), }, context=context)
-
 
             # If Payment Interval is found in kwargs write it to the so line
             # Todo: SECURITY Check if payment_intervall_id: is an int and if it is available in product.payment_interval

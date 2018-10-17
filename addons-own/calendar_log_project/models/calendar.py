@@ -187,7 +187,8 @@ class calendar_event(osv.osv):
                     self.task_work_id.unlink()
 
             # Unlink project worklog
-            if project_id != self.project_id.id or not is_worklog:
+            # ATTENTION: Unlink any existing project worklog also if a task is available
+            if project_id != self.project_id.id or task_id or not is_worklog:
                 if self.analytic_time_id:
                     self.analytic_time_id.unlink()
 
@@ -195,7 +196,8 @@ class calendar_event(osv.osv):
             if is_worklog:
                 assert project_id, _('You have to choose a project if Is Worklog is checked!')
 
-                # Task worklog entry
+                # TASK WORKLOG
+                # ------------
                 # HINT: You can add bool in but it's not necessary, because bool is a subclass of int.
                 if task_id:
                     task_worklog_values = {
@@ -218,7 +220,8 @@ class calendar_event(osv.osv):
                         # HINT: task.work_ids will create a related hr_analytic_timesheet entry on creation
                         task_work_id.hr_analytic_timesheet_id.event_category_id = category_id
                         values['task_work_id'] = task_work_id.id
-                # Project worklog entry
+                # PROJECT WORKLOG
+                # ---------------
                 else:
                     # Prepare values
                     ts_obj = self.env['hr.analytic.timesheet']

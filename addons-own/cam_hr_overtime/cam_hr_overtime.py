@@ -679,7 +679,7 @@ class hr_holidays(osv.osv):
         return True
         
     _columns = {
-        'leave_code':fields.related('holiday_status_id', 'code', string='Leave Code', type='char', readonly=True,store=True),
+        'leave_code':fields.related('holiday_status_id', 'code', string='Leave Code', type='char', readonly=True, store=True),
         'user_id':fields.related('employee_id', 'user_id', type='many2one', relation='res.users', string='User', store=True),
         'effective_date': fields.date('Effective date', readonly=True, states={'draft':[('readonly',False)]}, help='This is the date when this allocation becomes effective.'),
         'half_day': fields.boolean('Halber Tag', readonly=True, states={'draft':[('readonly',False)], 'confirm':[('readonly',False)]}, track_visibility='onchange'),

@@ -72,9 +72,12 @@ Module tasks:
         'payment_postfinance',
         'auth_partner_form',
         'fso_con_zmr',
+        'fso_website_email',
+        #'fso_mass_mail',
     ],
     'data': [
         'data/user_studio.xml',
         'views/product_template.xml',
+        'views/fsonline_menu.xml',
     ],
 }
