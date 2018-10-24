@@ -166,10 +166,15 @@ html, body, #bodyTable, #bodyCell {
     }
 
     table.flexibleContainerRight,
-    table.flexibleContainerLeft {
+    table.flexibleContainerLeft,
+    table.flexibleContainer33 {
         width: 100% !important;
         text-align: center !important;
         margin-bottom: 1em;
+    }
+    .snippet_block_text_threecol table.flexibleContainer33middle {
+        margin-left: initial !important;
+        margin-right: initial !important;
     }
 
     /*

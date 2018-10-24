@@ -33,7 +33,7 @@ Fundraising Studio Print Fields for E-Mail Templates or Document Templates
     'category': 'Uncategorized',
     'version': '0.1',
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
     'depends': [
         'fso_base',

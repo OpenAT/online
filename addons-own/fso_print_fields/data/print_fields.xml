@@ -6,6 +6,7 @@
             <field name="sequence" eval="1"/>
             <field name="name">Maximilian</field>
             <field name="fs_email_placeholder">%Vorname%</field>
+            <field name="mako_expression">${object.firstname|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
@@ -14,6 +15,7 @@
             <field name="sequence" eval="2"/>
             <field name="name">Mustermann</field>
             <field name="fs_email_placeholder">%Name%</field>
+            <field name="mako_expression">${object.lastname|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
@@ -62,6 +64,7 @@
             <field name="sequence" eval="8"/>
             <field name="name">maximilian.mustermann@meinedomain.com</field>
             <field name="fs_email_placeholder">%Email%</field>
+            <field name="mako_expression">${object.email|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
@@ -70,6 +73,7 @@
             <field name="sequence" eval="9"/>
             <field name="name">01.01.1980</field>
             <field name="fs_email_placeholder">%Geburtsdatum%</field>
+            <field name="mako_expression">${object.birthdate_web|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
@@ -176,6 +180,7 @@
             <field name="sequence" eval="200"/>
             <field name="name">BPKVorname</field>
             <field name="fs_email_placeholder">%BPKVorname%</field>
+            <field name="mako_expression">${object.bpk_forced_firstname|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
@@ -184,6 +189,7 @@
             <field name="sequence" eval="201"/>
             <field name="name">BPKNachName</field>
             <field name="fs_email_placeholder">%BPKNachName%</field>
+            <field name="mako_expression">${object.bpk_forced_lastname|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
@@ -192,6 +198,7 @@
             <field name="sequence" eval="202"/>
             <field name="name">BPKGeburtsdatum</field>
             <field name="fs_email_placeholder">%BPKGeburtsdatum%</field>
+            <field name="mako_expression">${object.bpk_forced_birthdate|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
@@ -200,6 +207,7 @@
             <field name="sequence" eval="203"/>
             <field name="name">BPKPLZ</field>
             <field name="fs_email_placeholder">%BPKPLZ%</field>
+            <field name="mako_expression">${object.bpk_forced_zip|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
@@ -209,6 +217,7 @@
             <field name="sequence" eval="300"/>
             <field name="name">PersonID</field>
             <field name="fs_email_placeholder">%PersonID%</field>
+            <field name="mako_expression">${object.sosync_fs_id|safe}</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>

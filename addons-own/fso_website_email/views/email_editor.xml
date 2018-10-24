@@ -70,7 +70,7 @@
                             
                             <li class="divider"></li>
                             <li>
-                                <a href="/fso/email/select">Back to E-Mail Selection</a>
+                                <a t-att-href="return_url or '/fso/email/select'">Back to E-Mail Selection</a>
                             </li>
                             <li class="divider"></li>
                             <li>
@@ -94,7 +94,7 @@
 
                     <!-- Back to Selection -->
                     <li>
-                        <a href="/fso/email/select" class="btn btn-default btn-xs">Back to Selection</a>
+                        <a t-att-href="return_url or '/fso/email/select'" class="btn btn-default btn-xs">Back to Selection</a>
                     </li>
 
                 </ul>

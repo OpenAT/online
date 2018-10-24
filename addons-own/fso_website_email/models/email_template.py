@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields, api, tools, registry
 from openerp.tools.translate import _
 from openerp.tools.mail import html_sanitize
 from openerp.exceptions import ValidationError
 from openerp.http import request, controllers_per_module
 from openerp.addons.fso_base.tools.validate import is_valid_email
 from openerp.addons.fso_base.tools.image import screenshot
+from time import sleep
 
 import datetime
 import os
@@ -17,15 +18,22 @@ except:
     pass
 try:
     from premailer import Premailer
+    import requests
 except:
     pass
-# try:
-#     from html5print import HTMLBeautifier
-# except:
-#     pass
+
+import threading
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+# Override premailer method to set timeout for requests
+class PremailerWithTimeout(Premailer):
+    def _load_external_url(self, url):
+        logger.info("Premailer get url with timeout: %s" % url)
+        res = requests.get(url, timeout=14.0)
+        return res.text
 
 
 class EmailTemplate(models.Model):
@@ -56,11 +64,19 @@ class EmailTemplate(models.Model):
 
     # Compute final html
     fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', store=True,
-                                 readonly=True, translate=True)
+                                 readonly=True, translate=True,
+                                 help="E-Mail HTML code with final print field code, fixed links for links without "
+                                      "protocol, all absolute urls and inlined css")
+    # HINT: Should be called fso_email_html_tracked but now it's not worth the change :)
     fso_email_html_parsed = fields.Text(string='E-Mail HTML parsed', compute='_compute_html', store=True,
-                                        readonly=True, translate=True)
-    screenshot = fields.Binary(string="Screenshot", compute='_compute_html', store=True,
-                               readonly=True)
+                                        readonly=True, translate=True,
+                                        help="HTML Code for multimailer."
+                                             "E-Mail HTML code with final print field code and where all relative links"
+                                             "are converted to absolute links and regular links are converted to "
+                                             "multimailer tracking links")
+    screenshot = fields.Binary(string="Screenshot", readonly=True)
+    screenshot_pending = fields.Boolean(string="Screenshot pending", compute='_compute_html', store=True, readonly=True,
+                                        help="Indicates that a screenshot must be rendered in the background")
 
     # Store Versions (copies of email.template)
     # HINT: version_ids will be empty because One2Many will not show inactive records but it is still here for
@@ -87,25 +103,21 @@ class EmailTemplate(models.Model):
                 # If i want to call the controller method 'email_preview' directly it would need to:
                 # https://www.odoo.com/de_DE/forum/hilfe-1/question/how-to-invoke-a-controller-function-from-inside-a-model-function-87620
 
+                # ----------------------
+                # Compute fso_email_html
+                # ----------------------
                 # Render the ir.ui.view qweb template with r.body_html field
                 # HINT: Will output an UTF-8 encoded str
-                # TODO: Remove try claus again after update of fs_print_field_snippet template
-                try:
-                    content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
-                                                             'email_editor_mode': False,
-                                                             'record': r,
-                                                             'print_fields': print_fields,
-                                                             })
-                except Exception as e:
-                    logger.error("Error in _compute_html() for email.template:\n%s" % e)
-                    continue
-
-                # Get the base url of current request or from ir.config parameters
-                base_url = self.get_base_url()
+                content = r.fso_template_view_id.render({'html_sanitize': html_sanitize,
+                                                         'email_editor_mode': False,
+                                                         'record': r,
+                                                         'print_fields': print_fields,
+                                                         })
 
                 # Parse Print Fields (Seriendruckfelder)
                 # http://beautiful-soup-4.readthedocs.io/en/latest/#output
-                # HINT: Will auto-detect encoding and concert to unicode
+                # HINT: Will auto-detect encoding and convert to unicode
+                # HINT: class_ is used by html_soup because class is a reserved keyword in python
                 html_soup = BeautifulSoup(content, "lxml")
                 print_fields = html_soup.find_all(class_="drop_in_print_field")
                 for pf in print_fields:
@@ -114,75 +126,109 @@ class EmailTemplate(models.Model):
                     fs_string = pf_span[0].get("data-fs-email-placeholder")
                     pf.replace_with(fs_string)
 
-                # Repair anchors <a> (e.g.: www.google.at > https://www.google.at)
+                # Repair anchors without protocol
+                # E.g.: www.google.at > https://www.google.at
                 anchors = html_soup.find_all('a')
                 for a in anchors:
                     href = a.get('href', '').strip()
-                    href = href if '://' not in href else ''
-                    if href and not (
-                            href.startswith('#') or href.startswith('/') or
-                            href.startswith('http') or href.startswith('mailto')):
-                        a['href'] = 'https://'+href
-
-                # # DISABLED: Repair style <link> tags for premailer for theme assets
-                # stylesheets = html_soup.find_all('link')
-                # base_url_no_slash = base_url.rstrip('/')
-                # for link in stylesheets:
-                #     if 'stylesheet' in link.get('rel', '') and not link.get('type', '').strip():
-                #         link['type'] = 'text/css'
-                #         href = link.get('href', '').strip()
-                #         if 'web/css' in href:
-                #             link['href'] = base_url_no_slash + href
-                #             print link['href']
+                    if '://' in href or any(href.startswith(x) for x in ('http', 'mailto', '/', '#', '%')):
+                        continue
+                    else:
+                        a['href'] = 'https://' + href
 
                 # Output html in unicode and keep most html entities (done by formatter="minimal")
                 content = html_soup.prettify(formatter="minimal")
+
+                # Use premailer to:
+                #  - inline CSS and
+                #  - convert relative to absolute URLs
+                base_url = self.get_base_url()
+                try:
+                    premailer_obj = PremailerWithTimeout(content, base_url=base_url, preserve_internal_links=True,
+                                                         keep_style_tags=True, strip_important=False,
+                                                         align_floating_images=False,
+                                                         remove_unset_properties=False, include_star_selectors=False)
+                    # ATTENTION: This step will try a lot of requests.packages.urllib3.connectionpool connections
+                    #            which may lead to long processing times.
+                    content = premailer_obj.transform(pretty_print=True)
+                except Exception as e:
+                    logger.error("fso_email_html computation: premailer error\n%s" % repr(e))
+                    content = False
 
                 # Update fso_email_html field
                 r.fso_email_html = content
 
-                # Inline CSS and convert relative to absolute URLs with premailer
-                premailer_obj = Premailer(content, base_url=base_url, preserve_internal_links=True,
-                                          keep_style_tags=True, strip_important=False, align_floating_images=False,
-                                          remove_unset_properties=False, include_star_selectors=False)
-                content = premailer_obj.transform(pretty_print=True)
+                # -----------------------------
+                # Compute fso_email_html_parsed
+                # -----------------------------
+                if not content:
+                    logger.error("fso_email_html_parsed computation error: fso_email_html is empty!")
+                    r.fso_email_html_parsed = False
+                else:
+                    # Rewrite links to "Mutimailer Tracking URLs"
+                    # Example of a mutimailer target: %redirector%/https//www.global2000.at/ceta-verhindern
+                    html_soup = BeautifulSoup(content, "lxml")
+                    anchors = html_soup.find_all('a')
+                    for a in anchors:
+                        href = a.get('href', '').strip()
 
-                # Convert URLS to "ranner multimailer" tracking URLS
-                # Target Example: %redirector%/https//www.global2000.at/ceta-verhindern
-                html_soup = BeautifulSoup(content, "lxml")
-                anchors = html_soup.find_all('a')
-                for a in anchors:
-                    href = a.get('href', '').strip()
-                    href = href if '://' in href else ''
-                    if href and href.startswith('http') and 'dadi_notrack' not in a.get('class', ''):
-                        protocol, address = href.split('://', 1)
-                        a['href'] = '%redirector%/' + protocol + '//' + address
+                        # Fix multimailer '%open_browser%' links
+                        if '%open_browser%' in href:
+                            a['href'] = '%open_browser%'
+                            continue
 
-                # Output html in unicode and keep most html entities (done by formatter="minimal")
-                content = html_soup.prettify(formatter="minimal")
+                        # Skipp rewrite to tracking link if 'dadi_notrack' class is set
+                        if 'dadi_notrack' in a.get('class', ''):
+                            continue
 
-                # DISABLED: Pretty print html, css and js
-                # try:
-                #     content = HTMLBeautifier.beautify(content, indent=4)
-                # except:
-                #     pass
+                        # Convert to multimailer links
+                        if '://' in href and href.startswith('http'):
+                            protocol, address = href.split('://', 1)
+                            a['href'] = '%redirector%/' + protocol + '//' + address
 
-                # Update fso_email_html_parsed field
-                r.fso_email_html_parsed = content
+                    # Output html in unicode and keep most html entities (done by formatter="minimal")
+                    content = html_soup.prettify(formatter="minimal")
 
-                # Try to generate a screenshot
-                tmp = tempfile.NamedTemporaryFile(bufsize=0, suffix=".html", delete=True)
-                try:
-                    tmp.write(content.encode(encoding='utf-8'))
-                    screenshot_url = 'file://'+tmp.name
-                    screenshot_img = screenshot(screenshot_url,
-                                                src_width=1024, src_height=1181, tgt_width=260, tgt_height=300)
-                    r.screenshot = screenshot_img or False
-                except Exception as e:
-                    logger.error("Could not create screenshot for e-mail template:\n%s" % repr(e))
-                    r.screenshot = False
-                finally:
-                    tmp.close()
+                    # Update fso_email_html_parsed field
+                    r.fso_email_html_parsed = content
+
+                # --------------------------
+                # Compute screenshot_pending
+                # --------------------------
+                if content:
+                    r.screenshot_pending = True
+                else:
+                    r.screenshot_pending = False
+
+    @api.multi
+    def screenshot_update(self, use_new_cr=False):
+
+        pending = self
+        if not pending:
+            pending = self.search([('screenshot_pending', '=', True)])
+
+        for r in pending:
+            if not r.fso_email_html_parsed:
+                logger.error("E-Mail template (ID %s) field fso_email_html_parsed is empty! "
+                             "Can not generate a screenshot!" % r.id)
+                r.write({'screenshot': False, 'screenshot_pending': False})
+                continue
+
+            tmp = tempfile.NamedTemporaryFile(bufsize=0, suffix=".html", delete=True)
+            try:
+                tmp.write(r.fso_email_html_parsed.encode(encoding='utf-8'))
+                screenshot_url = 'file://'+tmp.name
+                screenshot_img = screenshot(screenshot_url,
+                                            src_width=1024, src_height=1181, tgt_width=260, tgt_height=300)
+                r.write({'screenshot': screenshot_img or False, 'screenshot_pending': False})
+                logger.info("Screenshot for e-mail template (ID %s) successfully created" % r.id)
+            except Exception as e:
+                logger.error("Could not create screenshot for e-mail template (ID %s):\n%s" % (r.id, repr(e)))
+                r.write({'screenshot': False, 'screenshot_pending': False})
+            finally:
+                tmp.close()
+
+        return True
 
     @api.multi
     def write(self, values):
@@ -204,6 +250,8 @@ class EmailTemplate(models.Model):
                 except Exception as e:
                     logger.error("Immediate sync_job submission failed!\n%s" % repr(e))
                     pass
+
+        return res
 
     @api.multi
     def create_version(self, version_name=''):
@@ -251,4 +299,9 @@ class EmailTemplate(models.Model):
         # Update email template
         r.sudo().write(data_to_restore)
 
+        return True
+
+    @api.model
+    def scheduled_screenshot_update(self):
+        self.screenshot_update()
         return True

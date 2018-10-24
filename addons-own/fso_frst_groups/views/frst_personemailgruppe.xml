@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_personemailgruppe_form">
+        <field name="name">frst_personemailgruppe_form</field>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="PersonEmailGruppe">
+                <header>
+                    <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
+                    <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="zgruppedetail_id"/>
+                        <field name="frst_personemail_id"/>
+                        <field name="steuerung_bit"/>
+                        <field name="gueltig_von"/>
+                        <field name="gueltig_bis"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="frst_personemailgruppe_tree">
+        <field name="name">frst_personemailgruppe_tree</field>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="PersonEmailGruppe">
+                <field name="id"/>
+                <field name="zgruppedetail_id"/>
+                <field name="frst_personemail_id"/>
+                <field name="steuerung_bit"/>
+                <field name="gueltig_von"/>
+                <field name="gueltig_bis"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="frst_personemailgruppe_search">
+        <field name="name">frst_personemailgruppe_search</field>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="PersonEmailGruppe">
+                <field name="id"/>
+                <field name="zgruppedetail_id"/>
+                <field name="frst_personemail_id"/>
+                <field name="steuerung_bit"/>
+                <field name="gueltig_von"/>
+                <field name="gueltig_bis"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="frst_personemailgruppe_action" model="ir.actions.act_window" >
+        <field name="name">PersonEmailGruppe</field>
+        <field name="res_model">frst.personemailgruppe</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="frst_personemailgruppe_search"/>
+    </record>
+    <record id="frst_personemailgruppe_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="frst_personemailgruppe_tree"/>
+        <field name="act_window_id" ref="frst_personemailgruppe_action"/>
+    </record>
+    <record id="frst_personemailgruppe_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="frst_personemailgruppe_form"/>
+        <field name="act_window_id" ref="frst_personemailgruppe_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="frst_personemailgruppe_menu" action="frst_personemailgruppe_action" parent="base.menu_config" sequence="1262"/>
+    
+</data></openerp>

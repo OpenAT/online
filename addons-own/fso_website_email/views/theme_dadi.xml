@@ -74,6 +74,7 @@
         <t t-call="fso_website_email.theme_default_snippets"/>
     </template>
 
+    <!-- ATTENTION: This should be called theme_default - it is not the Datadialog theme but the default theme for all customers -->
     <template id="theme_dadi"
               name="Default Theme">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
         <html t-att-lang="lang and lang.replace('_', '-')"
@@ -116,7 +117,13 @@
                             <!-- HEADER -->
                             <tr>
                                 <td class="headerCell" align="center">
-                                    <a href="#" target="_blank">View e-mail in browser</a>
+                                    Wenn diese Nachricht nicht richtig angezeigt wird, verwenden Sie bitte die
+                                    <![CDATA[
+                                    <a id="view-email-in-browser"
+                                       href="%open_browser%" target="_blank">
+                                         Online-Version
+                                    </a>
+                                    ]]>
                                 </td>
                             </tr>
 
@@ -145,7 +152,8 @@
                                 <td align="center" class="footerCell">
                                     <a href="https://www.datadialog.net" target="_blank">www.datadialog.net</a>&amp;nbsp;|&amp;nbsp;
                                     <a href="http://www.datadialog.net/page/website.contactus" target="_blank">Kontaktformular</a>&amp;nbsp;|&amp;nbsp;
-                                    <a href="mailto:office@datadialog.net" target="_blank">E-Mail</a>
+                                    <a href="mailto:office@datadialog.net" target="_blank">E-Mail</a>&amp;nbsp;|&amp;nbsp;
+                                    <a href="mailto:contact@datadialog.net" target="_blank">vom Newsletter abmelden?</a>
                                 </td>
                             </tr>
 

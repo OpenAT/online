@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <!-- EXTEND the email.template FORM -->
+    <record id="email_template_theme" model="ir.ui.view">
+        <field name="name">Theme Fields</field>
+        <field name="model">email.template</field>
+        <field name="inherit_id" ref="fso_website_email.email_template_theme"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fso_email_html_parsed']" position="after">
+                <field name="mass_mailing_ids"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="email_template_theme_minimal" model="ir.ui.view">
+        <field name="name">Theme Fields</field>
+        <field name="model">email.template</field>
+        <field name="inherit_id" ref="fso_website_email.email_template_theme_minimal"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fso_email_html_parsed']" position="after">
+                <field name="mass_mailing_ids"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- EXTEND mail.mass_mailing FORM -->
+    <record id="view_mail_mass_mailing_form" model="ir.ui.view">
+        <field name="name">mail.mass_mailing.form</field>
+        <field name="model">mail.mass_mailing</field>
+        <field name="inherit_id" ref="mass_mailing.view_mail_mass_mailing_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="email_template_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</data>
+</openerp>

@@ -7,3 +7,7 @@ class FRSTPersonEmailSosync(models.Model):
     _inherit = ["frst.personemail", "base.sosync"]
 
     email = fields.Char(sosync="True")
+    gueltig_von = fields.Date(sosync="True")
+    gueltig_bis=fields.Date(sosync="True")
+    state = fields.Selection(sosync="True")
+    main_address = fields.Boolean(sosync="True")

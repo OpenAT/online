@@ -110,25 +110,19 @@ TODO (must be done manually right now):
         'website_blog_layouts',
         'cam_hr_overtime_calendar_log',
         'web_menu_xmlid',
+        'fso_frst_groups',
     ],
     'data': [
         'data/setup.xml',
         'data/project_task_stages.xml',
         'data/email_templates.xml',
-        'security/fs_groups_security.xml',
-        'security/ir.model.access.csv',
+        #
         'data/instance_system_user_group.xml',
-        'views/fsonline_menu.xml',
+        'security/ir.model.access.csv',
+        #
         'views/templates_backend_css.xml',
         'views/res_company.xml',
         'views/res_partner.xml',
-        'views/fs_groups.xml',
-        #
-        #'views/frst_personemail.xml',
-        #
-        #'views/frst_zgruppe.xml',
-        #'views/frst_zgruppedetail.xml',
-        #'views/frst_persongruppe.xml',
-        #'views/frst_personemailgruppe.xml',
+        'views/fs_groups.xml',          # Deprecated replaced by addon fso_frst_groups, should be removed soon
     ],
 }

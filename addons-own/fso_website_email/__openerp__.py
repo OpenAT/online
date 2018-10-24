@@ -39,7 +39,7 @@ editor and it's tools like the href edit pop-up window.
     'category': 'Uncategorized',
     'version': '0.1',
     'installable': True,
-    'application': True,
+    'application': False,
     'auto_install': False,
     'depends': [
         'website_mail',
@@ -57,6 +57,8 @@ editor and it's tools like the href edit pop-up window.
         'views/theme_default_snippets.xml',
         #
         'views/theme_dadi.xml',
+        #
+        'data/scheduled_actions.xml',
     ],
     'qweb': [
     ],

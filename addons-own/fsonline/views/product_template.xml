@@ -385,7 +385,7 @@
         <field name="act_window_id" ref="fso_product_template_viewaction"/>
     </record>
 
-    <menuitem action="fso_product_template_viewaction" id="fso_product_template_menu"
-              parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" />
+    <!--<menuitem action="fso_product_template_viewaction" id="fso_product_template_menu"-->
+              <!--parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" />-->
 
 </data></openerp>

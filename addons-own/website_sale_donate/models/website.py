@@ -146,3 +146,20 @@ class Website(models.Model):
     ShippingFields = fields.Many2many(comodel_name='website.checkout_shipping_fields',
                                       string="Shipping Fields",
                                       compute="_all_shipping_fields", readonly=True)
+
+    @api.multi
+    def sale_get_order(self, force_create=False, code=None, update_pricelist=None, context=None):
+        context = context or self.env.context or {}
+        so = super(Website, self).sale_get_order(force_create=force_create, code=code,
+                                                 update_pricelist=update_pricelist, context=context)
+
+        # Update fs_ptoken and fs_origin for statistics (e.g.: after an user login / change)
+        # HINT: The second or False would capture and empty string '' and replace it with False
+        fs_ptoken = context.get('fs_ptoken', False) or False
+        fs_origin = context.get('fs_origin', False) or False
+        if fs_ptoken and so and so.order_line:
+            lines_to_update = so.order_line.filtered(lambda r: r.exists() and r.fs_ptoken != fs_ptoken)
+            if lines_to_update:
+                lines_to_update.sudo().write({'fs_ptoken': fs_ptoken, 'fs_origin': fs_origin})
+
+        return so

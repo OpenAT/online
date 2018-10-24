@@ -1185,6 +1185,53 @@
 
             </t>
         </template>
+        
+        <!-- INHERIT confirmation_static: Display download list and buttons -->
+        <template id="confirmation_static_downloadfile" inherit_id="confirmation_static" name="Show Downloads" customize_show="True" active="False">
+            <xpath expr="//div[@class='payment_information']" position="after">
+                
+                <!-- Search for product_downloads -->
+                <t t-set="product_downloads" t-value="[line for line in order.order_line if line.product_id and (line.product_id.webshop_download_file or line.product_id.product_tmpl_id.webshop_download_file)]"/>
+                
+                <!-- Create download list -->
+                <t t-if="product_downloads">
+                    <div class="product_downloads">
+                        <h3>Your Downloads</h3>
+                        <p>
+                            <ul>
+                                <t t-foreach="product_downloads" t-as="line">
+                                    
+                                    <!-- Set download link from product.template -->
+                                    <t t-if="line.product_id.product_tmpl_id.webshop_download_file">
+                                        <t t-set="product_download_link" t-value="'/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % line.product_id.product_tmpl_id.id"/>
+                                        <t t-set="product_download_name" t-value="'%s' % line.product_id.product_tmpl_id.webshop_download_file_name"/>
+                                    </t>
+                                    <!-- Overwrite download link from product.product -->
+                                    <t t-if="line.product_id.webshop_download_file">
+                                        <t t-set="product_download_link" t-value="'/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=%s' % line.product_id.id"/>
+                                        <t t-set="product_download_name" t-value="'%s' % line.product_id.webshop_download_file_name"/>
+                                    </t>
+                                    
+                                    <!-- Create list entry -->
+                                    <li>
+                                        <span class="product_download_line_name">
+                                            <t t-esc="line.name"/>:&amp;nbsp;
+                                        </span>
+                                        <a class="product_download_line_button btn btn-xs btn-default"
+                                           t-att-href="product_download_link">
+                                            <span class="product_download_line_button_icon glyphicon glyphicon-download"/>
+                                            <span class="product_download_line_button_name" t-esc="product_download_name"/>
+                                        </a>
+                                    </li>
+                                    
+                                </t>
+                            </ul>
+                        </p>
+                    </div>
+                </t>
+                
+            </xpath>
+        </template>
 
     </data>
 </openerp>

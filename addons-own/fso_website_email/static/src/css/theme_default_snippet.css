@@ -226,16 +226,15 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     padding-top: 20px;
     padding-bottom: 20px;
 }
-.snippet_block_text_threecol .flexibleContainer33 .fc33middle {
-    padding-left: 20px;
-    padding-right:20px;
-}
-.snippet_block_text_threecol .flexibleContainer33 .textContent {
-    width: 173px;
-}
+.snippet_block_text_threecol .flexibleContainer33,
 .snippet_block_text_threecol .flexibleContainer33 .flexibleImage {
-    width: 173px;
+    width: 172px;
 }
+.snippet_block_text_threecol .flexibleContainer33middle {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
 
 /*
     drop_in_button

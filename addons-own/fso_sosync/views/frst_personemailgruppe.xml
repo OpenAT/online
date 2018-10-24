@@ -5,7 +5,7 @@
     <record model="ir.ui.view" id="sosync_frst_personemailgruppe_form_fields">
         <field name="name">sosync_frst_personemailgruppe_form_fields</field>
         <field name="model">frst.personemailgruppe</field>
-        <field name="inherit_id" ref="fso_base.frst_personemailgruppe_form"/>
+        <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
         <field name="arch" type="xml">
             <field name="gueltig_bis" position="after">
                 <field name="sosync_fs_id"/>
@@ -19,7 +19,7 @@
     <record model="ir.ui.view" id="sosync_frst_personemailgruppe_tree_fields">
         <field name="name">sosync_frst_personemailgruppe_tree_fields</field>
         <field name="model">frst.personemailgruppe</field>
-        <field name="inherit_id" ref="fso_base.frst_personemailgruppe_tree"/>
+        <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_tree"/>
         <field name="arch" type="xml">
             <field name="gueltig_bis" position="after">
                 <field name="sosync_fs_id"/>
@@ -32,7 +32,7 @@
     <record model="ir.ui.view" id="sosync_frst_personemailgruppe_search_fields">
         <field name="name">sosync_frst_personemailgruppe_search_fields</field>
         <field name="model">frst.personemailgruppe</field>
-        <field name="inherit_id" ref="fso_base.frst_personemailgruppe_search"/>
+        <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_search"/>
         <field name="arch" type="xml">
             <field name="id" position="after">
                 <field name="sosync_fs_id"/>
