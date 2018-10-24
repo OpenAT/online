@@ -1,0 +1,263 @@
+/* Edit Button */
+.tryEdit {
+    background-color: #507e4e;
+    position: absolute;
+    top: 0;
+    right: 15px;
+    cursor: pointer;
+    background: white;
+    padding: 2px;
+    border: 1px solid #848490;
+    border-top: none;
+    border-right: none;
+    -moz-border-radius-bottomleft: 8px;
+    -webkit-border-bottom-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+/*
+.tryEditNoImgDialog {
+    background-color: #507e4e;
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+    background: white;
+    padding: 2px;
+    border: 1px solid #848490;
+    border-top: none;
+    border-left: none;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+}
+*/
+
+/* Image Modal */
+.imgModal {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 30px;
+    left: 0;
+    top: 0;
+    overflow: auto;
+    background-color: rgb(137,122,119);
+    background-color: rgba(137,122,119);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    border-radius: 6px;
+}
+
+@media only screen and (min-width: 700px) and (max-width: 1300px) {
+    /*
+    .darkroom-image-container {
+        left: 12%;
+    }*/
+
+    .canvas-container, .lower-canvas, .upper-canvas {
+        max-width: 450px;
+        max-height: 450px;
+    }
+
+    /*.imgTxt {
+        left: 12%;
+        max-width: 300px;
+    }*/
+}
+
+@media only screen and (min-width: 1300px) {
+   /*
+    .darkroom-image-container {
+        left: 8%;
+    }*/
+
+    .canvas-container, .lower-canvas, .upper-canvas {
+        max-width: 900px;
+        height: auto;
+        max-height: 800px;
+    }
+
+    /*.imgTxt {
+        left: 8%;
+    }*/
+}
+
+/* Close Button */
+.closeEdit {
+    position: absolute;
+    top: 5px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 28px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.closeEdit:hover,
+.closeEdit:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Save Button*/
+.saveEdit {
+    right: 35px;
+    bottom: 5px;
+    color: #f1f1f1;
+    font-size: 28px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.saveEdit:hover,
+.saveEdit:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.figure-wrapper {
+    text-align: center;
+}
+
+.image-container.target {
+    margin-top: 25px;
+}
+
+.image-container {
+    display: inline-block;
+    max-width: 100%;
+    background: white;
+/*
+    padding: 10px;
+*/
+    margin: 5px 0;
+        margin-top: 5px;
+    border: 1px solid #e2e2e2;
+        border-right-color: rgb(226, 226, 226);
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-bottom-color: rgb(226, 226, 226);
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.darkroom-container {
+    position: relative;
+}
+
+.darkroom-toolbar {
+    display: block;
+    position: absolute;
+    top: -45px;
+    left: 0;
+    background: #444;
+    height: 40px;
+    min-width: 40px;
+    z-index: 99;
+    border-radius: 2px;
+    white-space: nowrap;
+    padding: 0 5px;
+}
+
+.darkroom-toolbar:before {
+    content:"";
+    position:absolute;
+    bottom:-7px;
+    left:20px;
+    width:0;
+    height:0;
+    border-left:7px solid transparent;
+    border-right:7px solid transparent;
+    border-top:7px solid #444;
+}
+
+.darkroom-button-group {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.darkroom-button-group:last-child {
+ border-right:none;
+}
+
+.darkroom-button {
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 2px 0 0 0;
+    width: 40px;
+    height: 40px;
+}
+
+.darkroom-button:hover {
+    cursor: pointer;
+    background: #555;
+}
+
+.darkroom-button:active {
+    cursor:pointer;
+    background:#333;
+}
+
+.darkroom-button:disabled .darkroom-icon {
+    fill:#666;
+}
+
+.darkroom-button:disabled:hover {
+    cursor: default;
+    background: transparent;
+}
+
+.darkroom-button.darkroom-button-active .darkroom-icon {
+    fill:#33b5e5;
+}
+
+.darkroom-button.darkroom-button-hidden {
+    display:none;
+}
+
+.darkroom-button.darkroom-button-success .darkroom-icon {
+    fill:#99cc00;
+}
+
+.darkroom-button.darkroom-button-warning .darkroom-icon {
+    fill:#FFBB33;
+}
+
+.darkroom-button.darkroom-button-danger .darkroom-icon {
+    fill:#FF4444;
+}
+
+.darkroom-icon {
+    fill: #fff;
+    width: 24px;
+    height: 24px;
+}
+
+.darkroom-image-container {
+    top: 0;
+    left: 0;
+}
+
+.image-container .image-meta {
+    margin-top: 10px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.imgTxt {
+    width: 80%;
+}
+
+.form-darkroom {
+    position: absolute;
+    right: 35px;
+    bottom: 5px;
+}

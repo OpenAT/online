@@ -1,88 +1,229 @@
+/// <reference path='/../lib/darkroomjs/lib/core/darkroom.js'/>
+
 (function () {
     'use strict';
+
     console.log("website_image_editor")
     var website = openerp.website;
+    var _t = openerp._t;
     var webEditor = website.editor;
-    console.log(webEditor);
-    console.log(website);
 
-//    website.Test = website.Widget.extend({
-//        console.log("test");
+//    website.EditorBar.include({
+//        events: {
+//                'click button[data-action=save]': 'save',
+//                'click a[data-action=cancel]': 'cancel',
+//                'click i[data-action=try_edit_no_imgDialog]': 'try_edit_no_imgDialog',
+//        },
+//
+//        edit: function () {
+//            console.log('wie editorbar edit');
+//            console.log(this);
+//            $('<i class="tryEditNoImgDialog">Edit</i>').insertBefore('.img-responsive');
+//            this.$buttons.edit.prop('disabled', true);
+//            this.$('#website-top-view').hide();
+//            this.$el.show();
+//            this.$('#website-top-edit').show();
+//            $('.css_non_editable_mode_hidden').removeClass("css_non_editable_mode_hidden");
+//
+//            this.rte.start_edition();
+//            this.trigger('rte:called');
+//        },
+//
+//        try_edit_no_imgDialog: function() {
+//            console.log('try_edit_no_imgDialog');
+//        },
 //    });
 
-//
-////    website.website_image_edit = website.EditorBar.extend({
-////        edit: function () {
-////            /**
-////             * website/static/src(js/website.editor.js@339
-////             *
-////             * This is called when the Edit button in the editor toolbar is clicked
-////             *
-////             * Allows to disable and enable ckeditor editing by classes for snipped dom elements.
-////             * Since classes will survive "saving" this will be reapplied on every edit start whereas
-////             * the "contenteditable" attribute would be removed on save!
-////             */
-////            $( "body .ckediting_disabled" ).attr( "contenteditable", "false" );
-////            $( "body .ckediting_enabled" ).attr( "contenteditable", "true" );
-////
-////            // Show E-Mail settings in edit mode by default
-////            $( "#email_template_settings" ).collapse('show');
-////            $( "#email_template_settings" ).addClass('in');
-////
-////            return this._super.apply(this, arguments);
-////        }
-////    });
-//
-//    // another try
-//    website.editor.RTELinkDialog = website.editor.RTELinkDialog.extend({
-//
-//        bind_data: function () {
-//             console.log('bind_data() image edit');
-//
-//            var classes = null;
-//            classes = this.element && this.element.getAttribute("class") || '';
-//            // console.log('bind_data() this.element.class: ' + classes);
-//
-//            // search for class in classes
-//            var donottrack = classes.indexOf('link-donottrack') !== -1;
-//            var withtoken  = classes.indexOf('link-withtoken') !== -1;
-//
-//            // set input fields in link dialog
-//            this.$("input[class='link-donottrack']").prop('checked', donottrack);
-//            this.$("input[class='link-withtoken']").prop('checked', withtoken);
-//
-//            var result = null;
-//            result = this._super();
-//
-//            return result;
-//        },
-//
-//        make_link: function (url, new_window, label, classes) {
-//            // console.log('make_link(): ' + classes);
-//            classes = classes.replace(/undefined/g, '') || '';
-//            classes = classes.replace(/\s{2,}/g, ' ').trim();
-//
-//            // do not track
-//            if (this.$("input[class='link-donottrack']").prop("checked")) {
-//                classes += ' link-donottrack';
-//            }
-//            else {
-//                classes = classes.replace(/link-donottrack/g, '')
-//            }
-//
-//            // with token
-//            if (this.$("input[class='link-withtoken']").prop("checked")) {
-//                classes += ' link-withtoken';
-//            }
-//            else {
-//                classes = classes.replace(/link-withtoken/g, '')
-//            }
-//
-//            classes = classes.replace(/\s{2,}/g, ' ').trim();
-//            // console.log('make_link() after: ' + classes);
-//            return this._super(url, new_window, label, classes);
-//        },
-//
-//    })
+    var IMAGES_PER_ROW = 6;
+    var IMAGES_ROWS = 2;
+    webEditor.ImageDialog.include({
+        events: {
+            //--------------------------------------
+            // all ImageDialog events
+            'change .url-source': function (e) {
+                this.changed($(e.target));
+            },
+            'click button.filepicker': function () {
+                var filepicker = this.$('input[type=file]');
+                console.log(this.$('input[type=file]'));
+                if (!_.isEmpty(filepicker)){
+                    filepicker[0].click();
+                }
+            },
+            'click .js_disable_optimization': function () {
+                this.$('input[name="disable_optimization"]').val('1');
+                var filepicker = this.$('button.filepicker');
+                if (!_.isEmpty(filepicker)){
+                    filepicker[0].click();
+                }
+            },
+            'change input[type=file]': 'file_selection',
+            'submit form': 'form_submit',
+            'change input.url': "change_input",
+            'keyup input.url': "change_input",
+            //'change select.image-style': 'preview_image',
+            'click .existing-attachments img': 'select_existing',
+            'click .existing-attachment-remove': 'try_remove',
+            //--------------------------------------
+            'click .tryEdit': 'try_edit',
+            'click .closeEdit': 'close_edit',
+            'click .saveEdit': 'save_edit',
 
+        },
+        //----------------------------------------------------
+        // Solution for foreach problem in xml file
+        init: function (field_manager, node) {
+            this._super(field_manager, node);
+            //change rows to other name accordingly to foreach varname
+            this.rows = [];
+            this.darkroom = {};
+            this.testImg = {};
+
+        },
+        //----------------------------------------------------
+
+        display_attachments: function() {
+            // necessary for foreach problem
+            this._super();
+
+            //----------------------------------------------------
+            this.$('.help-block').empty();
+            var per_screen = IMAGES_PER_ROW * IMAGES_ROWS;
+
+            var from = this.page * per_screen;
+            var records = this.records;
+
+            // Create rows of 3 records
+            var rows = _(records).chain()
+                .slice(from, from + per_screen)
+                .groupBy(function (_, index) { return Math.floor(index / IMAGES_PER_ROW); })
+                .values()
+                .value();
+
+            //----------------------------------------------------
+            //set foreach variable
+            this.rows = rows;
+            //----------------------------------------------------
+
+            this.$('.existing-attachments').replaceWith(
+                openerp.qweb.render(
+                    'wie_image_editor', {rows: rows}));
+            this.parent.$('.pager')
+                .find('li.previous').toggleClass('disabled', (from === 0)).end()
+                .find('li.next').toggleClass('disabled', (from + per_screen >= records.length));
+            //----------------------------------------------------
+
+        },
+
+        try_edit: function(e) {
+            var $a = $(e.target);
+            var id = parseInt($a.data('id'), 10);
+            var image = _.findWhere(this.records, {id: id});
+
+            this.$('.existing-attachments').after(
+                openerp.qweb.render(
+                    'wie_image_modal', {image: image}
+                    ));
+
+            var toEdit = document.getElementById('imageModal');
+            toEdit.style.display = 'block';
+            var imgToEdit = document.getElementById(image.id);
+            this.darkroom = new Darkroom(imgToEdit, {
+                backgroundColor: 'transparent',
+            });
+
+        },
+
+        close_edit: function() {
+            console.log('close_edit');
+            var toClose = document.getElementById('imageModal');
+            toClose.style.display = "none";
+            $('#imageModal').remove();
+            this.display_attachments();
+        },
+
+        save_edit: function(e) {
+            e.preventDefault();
+
+            var $a = $(e.target);
+            var imgId = parseInt($a.data('id'), 10);
+
+            var self = this;
+
+            var imgText =  document.getElementById('imageText').value;
+
+            if (imgText.search('.png') === -1)
+            {
+                imgText = imgText + '.png';
+            }
+
+            var newImg = new Image();
+            var canvas = self.darkroom.canvas;
+            var lowerCanvas = canvas.lowerCanvasEl;
+            var darkroomImg = self.darkroom.image;
+            var tmpImg = new Image();
+            tmpImg.src = lowerCanvas.toDataURL();
+
+
+            tmpImg.onload = function() {
+                lowerCanvas.width = darkroomImg.width;
+                lowerCanvas.height = darkroomImg.height;
+                var lowerCanvasCtx = lowerCanvas.getContext('2d')
+                lowerCanvasCtx.drawImage(tmpImg, 0, 0, darkroomImg.width, darkroomImg.height);
+
+                var uri = lowerCanvas.toDataURL();
+                var blob = self.dataURItoBlob(uri);
+                var blobToFile = new File([blob], imgText, {type: blob.type, lastModified: Date.now()});
+                self.make_request(blobToFile);
+
+                self.file_selected(uri, null);
+
+            }
+
+        },
+
+        dataURItoBlob: function(dataURI) {
+            var byteString = atob(dataURI.split(',')[1]);
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: 'image/png' });
+        },
+
+        make_request: function(image) {
+//            console.log('make request(upload image)');
+
+            var formData = new FormData();
+            formData.append('upload', image, image.name);
+            var uid = _.uniqueId('func_');
+            formData.append('func', uid);
+
+            //Request
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/website/attach", true);
+//            xhr.upload.onprogress = function(ev) {
+//                var percent = 0;
+//                if (ev.lengthComputable) {
+//                   percent = 100 * ev.loaded / ev.total;
+////                   $("#yourprogress").width(percent + "%");
+//                   //or something like progress tip
+//                }
+//            }
+//            xhr.onloadend = function(e) {
+//                if (!/^2\d*$/.test(this.status)) {
+////                     alert('Error');
+//                    console.error('Error' + this.responseText);
+//                }
+//            }
+//            xhr.onload = function(oEvent) {
+//                if (xhr.status == 200) {
+//                    //go on
+//                }
+//            }
+            xhr.send(formData);
+        },
+
+    });
 })();
