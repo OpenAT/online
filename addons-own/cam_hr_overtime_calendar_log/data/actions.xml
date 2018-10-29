@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Server Action to reset timesheets to draft -->
+    <record id="reset_time_sheets_to_draft" model="ir.actions.server">
+        <field name="name">Reset to draft</field>
+        <field name="model_id" ref="model_hr_timesheet_sheet_sheet"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_model') == 'hr_timesheet_sheet.sheet':
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+
+                # Set all timesheets to draft
+                self.action_set_to_draft(cr, uid, ids, context=context)
+        </field>
+    </record>
+
+    <!-- Add Server Action reset_time_sheets_to_draft to the More menu of the model -->
+    <record id="ir_reset_time_sheets_to_draft" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'hr_timesheet_sheet.sheet'"/>
+        <field name="name">Set to Draft</field>
+        <field name="value" eval="'ir.actions.server,%d'%reset_time_sheets_to_draft"/>
+    </record>
+
+</data></openerp>

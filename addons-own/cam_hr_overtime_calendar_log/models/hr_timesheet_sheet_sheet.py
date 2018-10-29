@@ -27,3 +27,22 @@ class HRTimesheetSheetSheet(models.Model):
             _logger.info("_total_sums() all calendar event related work-log and attendance records updated")
 
         return super(HRTimesheetSheetSheet, self)._total_sums(field_name=field_name, arg=arg)
+
+    @api.multi
+    def button_compute_all(self):
+        """ Recompute values for all open timesheets
+        :return: bool
+        """
+
+        # Find all timesheets for the users of selected timesheets in state draft and order them by date_from ascending
+        users = self.mapped('user_id')
+        timesheets = self.search([('user_id', 'in', users.ids), ('state', '=', 'draft')],
+                                 order="user_id, date_from")
+
+        # Recalculate
+        for sheet in timesheets:
+            sheet.button_compute()
+
+        return True
+
+
