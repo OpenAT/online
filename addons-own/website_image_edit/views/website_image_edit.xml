@@ -8,7 +8,6 @@
                 <!--Darkroom Library files-->
                 <script src="/website_image_edit/static/lib/js/fabric.js"/>
 
-                <!--<link id="wie_darkroom_css" rel="stylesheet" href="/website_image_edit/static/lib/darkroomjs/lib/css/darkroom.scss" t-ignore="true"/>-->
                 <script src="/website_image_edit/static/lib/darkroomjs/lib/core/bootstrap.js"/>
                 <script src="/website_image_edit/static/lib/darkroomjs/lib/core/darkroom.js"/>
                 <script src="/website_image_edit/static/lib/darkroomjs/lib/core/plugin.js"/>

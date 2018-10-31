@@ -3,36 +3,9 @@
 (function () {
     'use strict';
 
-    console.log("website_image_editor")
     var website = openerp.website;
     var _t = openerp._t;
     var webEditor = website.editor;
-
-//    website.EditorBar.include({
-//        events: {
-//                'click button[data-action=save]': 'save',
-//                'click a[data-action=cancel]': 'cancel',
-//                'click i[data-action=try_edit_no_imgDialog]': 'try_edit_no_imgDialog',
-//        },
-//
-//        edit: function () {
-//            console.log('wie editorbar edit');
-//            console.log(this);
-//            $('<i class="tryEditNoImgDialog">Edit</i>').insertBefore('.img-responsive');
-//            this.$buttons.edit.prop('disabled', true);
-//            this.$('#website-top-view').hide();
-//            this.$el.show();
-//            this.$('#website-top-edit').show();
-//            $('.css_non_editable_mode_hidden').removeClass("css_non_editable_mode_hidden");
-//
-//            this.rte.start_edition();
-//            this.trigger('rte:called');
-//        },
-//
-//        try_edit_no_imgDialog: function() {
-//            console.log('try_edit_no_imgDialog');
-//        },
-//    });
 
     var IMAGES_PER_ROW = 6;
     var IMAGES_ROWS = 2;
@@ -45,7 +18,6 @@
             },
             'click button.filepicker': function () {
                 var filepicker = this.$('input[type=file]');
-                console.log(this.$('input[type=file]'));
                 if (!_.isEmpty(filepicker)){
                     filepicker[0].click();
                 }
@@ -135,7 +107,6 @@
         },
 
         close_edit: function() {
-            console.log('close_edit');
             var toClose = document.getElementById('imageModal');
             toClose.style.display = "none";
             $('#imageModal').remove();
@@ -193,7 +164,6 @@
         },
 
         make_request: function(image) {
-//            console.log('make request(upload image)');
 
             var formData = new FormData();
             formData.append('upload', image, image.name);
@@ -203,25 +173,7 @@
             //Request
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "/website/attach", true);
-//            xhr.upload.onprogress = function(ev) {
-//                var percent = 0;
-//                if (ev.lengthComputable) {
-//                   percent = 100 * ev.loaded / ev.total;
-////                   $("#yourprogress").width(percent + "%");
-//                   //or something like progress tip
-//                }
-//            }
-//            xhr.onloadend = function(e) {
-//                if (!/^2\d*$/.test(this.status)) {
-////                     alert('Error');
-//                    console.error('Error' + this.responseText);
-//                }
-//            }
-//            xhr.onload = function(oEvent) {
-//                if (xhr.status == 200) {
-//                    //go on
-//                }
-//            }
+
             xhr.send(formData);
         },
 

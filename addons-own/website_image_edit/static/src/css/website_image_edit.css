@@ -15,23 +15,6 @@
     border-bottom-left-radius: 8px;
 }
 
-/*
-.tryEditNoImgDialog {
-    background-color: #507e4e;
-    position: absolute;
-    top: 0;
-    cursor: pointer;
-    background: white;
-    padding: 2px;
-    border: 1px solid #848490;
-    border-top: none;
-    border-left: none;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
-}
-*/
-
 /* Image Modal */
 .imgModal {
     width: 100%;
@@ -50,37 +33,20 @@
 }
 
 @media only screen and (min-width: 700px) and (max-width: 1300px) {
-    /*
-    .darkroom-image-container {
-        left: 12%;
-    }*/
 
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 450px;
         max-height: 450px;
     }
-
-    /*.imgTxt {
-        left: 12%;
-        max-width: 300px;
-    }*/
 }
 
 @media only screen and (min-width: 1300px) {
-   /*
-    .darkroom-image-container {
-        left: 8%;
-    }*/
 
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 900px;
         height: auto;
         max-height: 800px;
     }
-
-    /*.imgTxt {
-        left: 8%;
-    }*/
 }
 
 /* Close Button */
@@ -130,9 +96,6 @@
     display: inline-block;
     max-width: 100%;
     background: white;
-/*
-    padding: 10px;
-*/
     margin: 5px 0;
         margin-top: 5px;
     border: 1px solid #e2e2e2;
