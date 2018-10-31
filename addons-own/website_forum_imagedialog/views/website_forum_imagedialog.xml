@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--wfi = website_forum_imagedialog-->
+<openerp>
+    <data>
+        <template id="website_forum_imagedialog.assets_editor" inherit_id="website.assets_editor" name="Odoo ImageDialog for forum" groups="base.group_website_publisher">
+            <xpath expr='//script[@src="/website/static/src/js/website.translator.js"]' position="after">
+
+                <link id="wfi_css" rel='stylesheet' href='/website_forum_imagedialog/static/src/css/website_forum_imagedialog.css' t-ignore="true"/>
+                <script id="wfi_script" type="text/javascript" src="/website_forum_imagedialog/static/src/js/website_forum_imagedialog.js"/>
+                <!--<script id="wfi_load_templates" type="text/javascript" src="/website_forum_imagedialog/static/src/js/load_templates.js"></script>-->
+            </xpath>
+        </template>
+    </data>
+</openerp>
