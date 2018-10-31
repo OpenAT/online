@@ -38,6 +38,7 @@ Upload images with odoo imagedialog
     'version': '0.1',
     'depends': [
         'website',
+        'website_forum',
     ],
     'installable': True,
     'data': [
