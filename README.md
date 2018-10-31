@@ -1,3 +1,5 @@
+# TODO: branch will be switched from o8 to master like all other branches for master repo fundraising_studio
+
 # FS-Online odoo code base
 This repository is used as a codebase for FS-Online instances and the related setup tools. 
 The *o[0-9]+* branches of this repo are always deploy-able production ready branches.
