@@ -41,6 +41,7 @@ Therefore the calculation should be always correct
         'calendar_log_project',
     ],
     'data': [
-
+        'views/timesheet_sheet_view.xml',
+        'data/actions.xml',
     ],
 }
