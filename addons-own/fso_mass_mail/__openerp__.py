@@ -62,8 +62,8 @@ Features
     'depends': [
         'mass_mailing',
         'fso_website_email',                # New E-Mail editor and custom routes
-        'mass_mailing_sending_queue',       # Prepare massmailing e-mails in background by cron Job
-        'mail_connector_queue',             # Send E-Mails async by connector queue
+        #'mass_mailing_sending_queue',       # Prepare massmailing e-mails in background by cron Job
+        #'mail_connector_queue',             # Send E-Mails async by connector queue
         #'mail_tracking_mass_mailing',       # Status, Score, AVOID RESEND for mass mailings after e.g. domain change!
         #'mass_mailing_statistic_extra',     # from, to and subject is available in the statistics table
         'utm',

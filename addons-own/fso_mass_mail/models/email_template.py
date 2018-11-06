@@ -2,6 +2,9 @@
 
 from openerp import api, models, fields
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class EmailTemplate(models.Model):
     _inherit = 'email.template'
@@ -19,7 +22,8 @@ class EmailTemplate(models.Model):
                                            "FRST print fields replaced by mako expressions where possible")
 
     def _compute_html(self):
-        # Do the regular computation first to update fields fso_email_html, fso_email_html_parsed and screenshot
+        # Do the regular computation first to update fields 'fso_email_html', 'fso_email_html_parsed' and 'screenshot'
+        # from addon fso_website_email
         super(EmailTemplate, self)._compute_html()
 
         # ---------------------------
@@ -29,14 +33,14 @@ class EmailTemplate(models.Model):
             if r.fso_email_html:
                 content = r.fso_email_html
 
-                # Convert Fundraising Studio print fields to mako expressions
-                # Get all print fields
-                print_fields = self.env['fso.print_field'].sudo().search([('fs_email_placeholder', '!=', False),
-                                                                          ('mako_expression', '!=', False)])
+                # Computed field 'fso_email_html_odoo'
+                # Convert all Fundraising Studio print fields with a mako expression set to the mako expressions
+                # e.g.: %Name% -> ${object.lastname|safe}
+                print_fields = self.env['fso.print_field'].sudo().search(
+                    [('fs_email_placeholder', '!=', False),
+                     ('mako_expression', '!=', False)])
                 for pf in print_fields:
                     content.replace(pf.fs_email_placeholder, pf.mako_expression)
-
-                # Update computed field fso_email_html_odoo
                 r.fso_email_html_odoo = content
 
         return True
@@ -49,8 +53,12 @@ class EmailTemplate(models.Model):
 
         res = super(EmailTemplate, self).create(values)
 
+        # Replace 'body_html' used by the send mail with content of 'fso_email_html_odoo' for mass mailing e-mails
         if res and res.mass_mailing_ids:
-            res.mass_mailing_ids.write({'body_html': res.fso_email_html_odoo})
+            if res.fso_email_html_odoo:
+                res.mass_mailing_ids.write({'body_html': res.fso_email_html_odoo})
+            else:
+                logger.error('Field "fso_email_html_odoo" is empty for email template with id %s' % res.id)
 
         # Update body html by email_template_id.fso_email_html_odoo
         return res
@@ -63,6 +71,9 @@ class EmailTemplate(models.Model):
         if res:
             for r in self:
                 if r and r.mass_mailing_ids:
-                    r.mass_mailing_ids.write({'body_html': r.fso_email_html_odoo})
+                    if r.fso_email_html_odoo:
+                        r.mass_mailing_ids.write({'body_html': r.fso_email_html_odoo})
+                    else:
+                        logger.error('Field "fso_email_html_odoo" is empty for email template with id %s' % r.id)
 
         return res
