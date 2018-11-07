@@ -34,13 +34,13 @@ class EmailTemplate(models.Model):
                 content = r.fso_email_html
 
                 # Computed field 'fso_email_html_odoo'
-                # Convert all Fundraising Studio print fields with a mako expression set to the mako expressions
-                # e.g.: %Name% -> ${object.lastname|safe}
-                print_fields = self.env['fso.print_field'].sudo().search(
-                    [('fs_email_placeholder', '!=', False),
-                     ('mako_expression', '!=', False)])
-                for pf in print_fields:
-                    content.replace(pf.fs_email_placeholder, pf.mako_expression)
+                # ---
+                # Convert all Fundraising Studio print fields to a mako expression or ''
+                fso_print_fields = self.env['fso.print_field'].sudo().search([('fs_email_placeholder', '!=', False)])
+                for pf in fso_print_fields:
+                    content = content.replace(pf.fs_email_placeholder, pf.mako_expression or '')
+
+                # Set 'fso_email_html_odoo'
                 r.fso_email_html_odoo = content
 
         return True
