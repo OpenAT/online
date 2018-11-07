@@ -4,7 +4,16 @@ from openerp import api, models, fields
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
+import logging
+logger = logging.getLogger(__name__)
+
 import urllib
+
+try:
+    from bs4 import BeautifulSoup
+except:
+    logger.error("Could not import BeautifulSoup! Link rewrites in fso_mass_mail may not work!")
+    pass
 
 
 class MassMailingCampaign(models.Model):
@@ -177,7 +186,21 @@ class MassMailing(models.Model):
             if utm_mixin.medium_id:
                 vals['medium_id'] = utm_mixin.medium_id.id
 
-            res[mass_mailing.id] = self.env['link.tracker'].convert_links(html, vals, blacklist=['/unsubscribe_from_list'])
+            # Make sure the unsubscribe link is not tracked
+            blacklist = ['/unsubscribe_from_list']
+
+            # TODO: Make links unique (so we can get different tracking links even if links have same href)
+
+            # Blacklist all links with class "link-donottrack"
+            html_soup = BeautifulSoup(html, "lxml")
+            anchors = html_soup.find_all('a')
+            for a in anchors:
+                # Skipp rewrite to tracking link if 'dadi_notrack' class is set
+                if 'link-donottrack' in a.get('class', ''):
+                    blacklist.append(a.get('href', '').strip())
+
+            # Create tracking links and replace hrefs
+            res[mass_mailing.id] = self.env['link.tracker'].convert_links(html, vals, blacklist=blacklist)
 
         return res
 

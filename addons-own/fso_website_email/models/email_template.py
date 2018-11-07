@@ -177,8 +177,8 @@ class EmailTemplate(models.Model):
                             a['href'] = '%open_browser%'
                             continue
 
-                        # Skipp rewrite to tracking link if 'dadi_notrack' class is set
-                        if 'dadi_notrack' in a.get('class', ''):
+                        # Skipp rewrite to tracking link if 'link-donottrack' class is set
+                        if 'link-donottrack' in a.get('class', ''):
                             continue
 
                         # Convert to multimailer links
