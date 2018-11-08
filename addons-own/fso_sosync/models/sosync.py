@@ -321,7 +321,7 @@ class SosyncJobQueue(models.Model):
     # METHODS
     @api.multi
     def submit_sync_job(self, instance="", url="", http_header={},
-                        crt_pem="", prvkey_pem="", user="", pwd="", timeout=4):
+                        crt_pem="", prvkey_pem="", user="", pwd="", timeout=60*1.5):
 
         # Get the 'Instance ID' (e.g.: care) from the main instance company for the default service sosync url
         instance = instance or self.env['res.company'].sudo().search([("instance_company", "=", True)],
@@ -408,7 +408,7 @@ class SosyncJobQueue(models.Model):
 
     @api.multi
     def bulk_submit_sync_job(self, instance="", url="", http_header={},
-                             crt_pem="", prvkey_pem="", user="", pwd="", timeout=4):
+                             crt_pem="", prvkey_pem="", user="", pwd="", timeout=60*5):
 
         # Get the 'Instance ID' (e.g.: care) from the main instance company for the default service sosync url
         instance = instance or self.env['res.company'].sudo().search([("instance_company", "=", True)],
@@ -522,10 +522,8 @@ class SosyncJobQueue(models.Model):
         runtime_in_sec = 60
         if scheduled_action and scheduled_action.interval_type in interval_to_seconds:
             runtime_in_sec = int(scheduled_action.interval_number * interval_to_seconds[scheduled_action.interval_type])
-            # Raise job limit to 200 jobs per second
-            # Now the limit would be one job per second which is way to low therefore we multiply it by 200
-            # so we estimate that one job could be received by the sosyncer every 50 ms
-            limit = runtime_in_sec * 200
+            # Raise job limit to 40 jobs per second (1000/40 = 25ms for one job to submit)
+            limit = runtime_in_sec * 40
 
         # Make sure there is at least one job loaded for submission
         limit = 1 if limit <= 0 else limit
@@ -545,30 +543,16 @@ class SosyncJobQueue(models.Model):
         runtime_start = datetime.datetime.now()
         runtime_end = runtime_start + datetime.timedelta(0, max_runtime_in_sec)
 
-        # SUBMIT SYNC JOBS IN QUEUE
+        # BULK SUBMIT SYNC JOBS IN QUEUE
         # ---
-        # Try bulk submit first
-        res = None
-        processed_jobs_counter = len(self)
         try:
-            res = jobs_in_queue.bulk_submit_sync_job()
-
-        # HINT: An Exception is only raised by bulk_submit_sync_job() in case of an unexpected error!
-        #       Any Expected error will return False (and will not raise an exception)
+            jobs_in_queue.bulk_submit_sync_job()
         except Exception as e:
             logger.info("Bulk submission of sync jobs failed! %s" % repr(e))
+            return False
 
-            # Job by job submit
-            logger.info("Try job by job submission instead!")
-            processed_jobs_counter = 0
-            for job in jobs_in_queue:
-                if datetime.datetime.now() >= runtime_end:
-                    break
-                job.submit_sync_job()
-                processed_jobs_counter += 1
-
-        # Log processing info
-        logger.info("Processed %s Sync Jobs" % processed_jobs_counter)
+        logger.info("Processed %s Sync Jobs" % len(jobs_in_queue))
+        return True
 
     # -----------------------------------------------
     # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE CLEANUP

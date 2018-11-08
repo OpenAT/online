@@ -1,0 +1,5 @@
+<svg id="mirrorX" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <polygon points="2,22 2,2 10,12" fill="none" stroke="black" stroke-width="0.5"/>
+    <polygon points="22,2 22,22 14,12"/>
+    <line x1 = "12" y1 = "0" x2 = "12" y2 = "24" stroke = "black" stroke-width = "1" stroke-dasharray="5,5"/>
+</svg>
