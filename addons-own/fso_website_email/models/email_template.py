@@ -60,7 +60,9 @@ class EmailTemplate(models.Model):
     fso_email_template = fields.Boolean(string='FSON Template')
     fso_template_view_id = fields.Many2one(string='Based on',
                                            comodel_name="ir.ui.view", inverse_name="fso_email_template_ids",
-                                           domain="[('fso_email_template','=',True)]")
+                                           domain="[('fso_email_template','=',True)]",
+                                           default=lambda self: self.env.ref('fso_website_email.theme_dadi'),
+                                           )
 
     # Compute final html
     fso_email_html = fields.Text(string='E-Mail HTML', compute='_compute_html', store=True,

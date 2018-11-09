@@ -73,6 +73,7 @@ Module tasks:
         'auth_partner_form',
         'fso_con_zmr',
         'fso_website_email',
+        'fso_website_email_screenshot_async',
         'fso_mass_mail',
     ],
     'data': [
