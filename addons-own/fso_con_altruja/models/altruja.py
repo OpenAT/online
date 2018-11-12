@@ -40,20 +40,20 @@ class Altruja(models.Model):
     # Altruja Fields
     # --------------
     altruja_status = fields.Char('Altruja Status')
-    datum = fields.Char('Datum')
+    datum = fields.Char('Datum')                                # ACHTUNG BUCHUNGSDATUM IST PP DATUM?!?
 
-    anonym = fields.Char('Anonym')
-    rechnungsnummer = fields.Char('Rechnungsnummer')
-    wirecard_zeitraum = fields.Char('Wirecard-Zeitraum')
-    quittungavailableat = fields.Char('Quittungavailableat')
-    selbst_buchen = fields.Char('Selbst buchen')
+    anonym = fields.Char('Anonym')                              # Derzeit nicht verarbeitet
+    rechnungsnummer = fields.Char('Rechnungsnummer')            # Derzeit nicht verarbeitet
+    wirecard_zeitraum = fields.Char('Wirecard-Zeitraum')        # Derzeit nicht verarbeitet
+    quittungavailableat = fields.Char('Quittungavailableat')    # Derzeit nicht verarbeitet
+    selbst_buchen = fields.Char('Selbst buchen')                # Derzeit nicht verarbeitet
 
-    sonderwert_1 = fields.Char('sonderwert_1')
-    sonderwert_2 = fields.Char('sonderwert_2')
-    sonderwert_3 = fields.Char('sonderwert_3')
+    sonderwert_1 = fields.Char('sonderwert_1')                  # Derzeit nicht verarbeitet
+    sonderwert_2 = fields.Char('sonderwert_2')                  # Derzeit nicht verarbeitet
+    sonderwert_3 = fields.Char('sonderwert_3')                  # Derzeit nicht verarbeitet
 
     # res.partner
-    firma = fields.Char('Firma')
+    firma = fields.Char('Firma')                                # Extra res.partern fuer Firma aufbauen
     vorname = fields.Char('Vorname')
     nachname = fields.Char('Nachname')
     email = fields.Char('Email')
@@ -67,7 +67,7 @@ class Altruja(models.Model):
     geburtsdatum = fields.Char('Geburtsdatum')
 
     kontakt_erlaubt = fields.Char('Kontakt erlaubt')
-    spendenquittung = fields.Char('Spendenquittung')
+    spendenquittung = fields.Char('Spendenquittung')         # Nicht mehr benoetig
 
     # res.partner.bank
     iban = fields.Char('IBAN')
@@ -78,16 +78,17 @@ class Altruja(models.Model):
     spenden_id = fields.Integer('Spenden-ID', index=True)
     erstsspenden_id = fields.Char('Erstsspenden-ID',
                                   help="Entspricht dem Ersten Auftrag bei wiederkehrenden Spenden (Vertrag)")
-    waehrung = fields.Char('Währung', required=True)
+    waehrung = fields.Char('Währung', required=True)        # GEHT NUR EUR
 
     # sale.order.line
-    Spenden_Typ = fields.Char('Spenden-Typ')
+    Spenden_Typ = fields.Char('Spenden-Typ')                # Aendern auf Selection field
     spendenbetrag = fields.Float('Spendenbetrag', required=True)
-    intervall = fields.Char('Intervall')
+    intervall = fields.Char('Intervall')                    # Aebhaengig von Spenden_Typ
 
-    seiten_id = fields.Char('Seiten-ID')
-    Seitenname = fields.Char('Seitenname')
+    seiten_id = fields.Char('Seiten-ID')                    # Derzeit nicht verarbeitet
+    Seitenname = fields.Char('Seitenname')                  # FRST Verarbeitung ZVerz.
 
     # payment.transaction
-    quelle = fields.Char('Datum',
-                         help="z.B.: Online (Wirecard/Lastschrift)")
+    quelle = fields.Char('Quelle',
+                         help="z.B.: Online (Wirecard/Lastschrift)")    # Payment Methode (Werte?!?)
+
