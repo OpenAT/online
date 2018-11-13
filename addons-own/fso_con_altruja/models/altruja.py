@@ -40,7 +40,7 @@ class Altruja(models.Model):
     # Altruja Fields
     # --------------
     altruja_status = fields.Char('Altruja Status')
-    datum = fields.Char('Datum')                                # ACHTUNG BUCHUNGSDATUM IST PP DATUM?!?
+    datum = fields.Char('Datum')                                # ACHTUNG: = Buchungsdatum = Payment Transaction Datum!
 
     anonym = fields.Char('Anonym')                              # Derzeit nicht verarbeitet
     rechnungsnummer = fields.Char('Rechnungsnummer')            # Derzeit nicht verarbeitet

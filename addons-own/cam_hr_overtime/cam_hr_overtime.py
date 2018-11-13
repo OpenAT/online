@@ -563,6 +563,7 @@ class hr_timesheet_sheet_sheet_project_hours(osv.osv):
                              
 hr_timesheet_sheet_sheet_project_hours()
 
+
 class resource_calendar(osv.osv):
     _inherit="resource.calendar"
     
@@ -581,7 +582,7 @@ class resource_calendar(osv.osv):
         return True 
     
 
-# Add 2 contraints:
+# Add 2 constraints:
 #  - it is only allowed to start a contract on the first of a month
 #  - 2 contracts of the same employee should not overlap
 class hr_contract(osv.osv):
@@ -639,6 +640,7 @@ class hr_contract(osv.osv):
     
 hr_contract()
 
+
 class hr_holidays_status(osv.osv):
     _inherit = "hr.holidays.status"
     
@@ -647,6 +649,7 @@ class hr_holidays_status(osv.osv):
     }
 
 hr_holidays_status()
+
 
 # Update the calculation of the 'number_of_days'-field
 # Therefore consider weekends and the working schedule of the employee
@@ -751,6 +754,7 @@ class hr_holidays(osv.osv):
         
 hr_holidays()
 
+
 class res_company(osv.osv):
     _inherit = "res.company"
 
@@ -787,6 +791,7 @@ class res_company(osv.osv):
     }
 res_company()
 
+
 class hr_attendance(osv.osv):
     _inherit = 'hr.attendance'
     
@@ -814,6 +819,7 @@ class hr_attendance(osv.osv):
         'name': _get_default_date,
     }
 hr_attendance()
+
 
 class hr_employee_timesheet_report(osv.osv):
     _name = "hr_employee.timesheet.report"

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-20 09:43+0000\n"
-"PO-Revision-Date: 2016-02-20 09:43+0000\n"
+"POT-Creation-Date: 2018-11-13 10:57+0000\n"
+"PO-Revision-Date: 2018-11-13 10:57+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -34,6 +34,16 @@ msgid "Abroad Expense"
 msgstr "Ausland Diätenberechtigt"
 
 #. module: calendar_log_project
+#: model:ir.model,name:calendar_log_project.model_hr_attendance
+msgid "Attendance"
+msgstr "Arbeitszeit"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+msgid "Attendances"
+msgstr "Arbeitszeiten"
+
+#. module: calendar_log_project
 #: field:hr_timesheet_sheet.sheet.day_cat_detail,cm:0
 msgid "CM"
 msgstr "M"
@@ -54,9 +64,26 @@ msgid "CM Expense"
 msgstr "M Diätenberechtigt"
 
 #. module: calendar_log_project
-#: model:ir.model,name:calendar_log_project.model_calendar_event
+#: field:hr.attendance,calendar_timelog_event:0
 msgid "Calendar Event"
-msgstr "Kalenderereignis"
+msgstr "Kalender Event"
+
+#. module: calendar_log_project
+#: field:hr.attendance,calendar_event_sign_in_ids:0
+msgid "Calendar SignIn"
+msgstr "Kalender SignIn"
+
+#. module: calendar_log_project
+#: field:hr.attendance,calendar_event_sign_out_ids:0
+msgid "Calendar SignOut"
+msgstr "Kalender SignOut"
+
+#. module: calendar_log_project
+#: field:project.project,calendar_event_project_id_ids:0
+#: field:project.task,calendar_event_task_id_ids:0
+#: field:project.task.work,calendar_event_task_work_id_ids:0
+msgid "Calendar Time-Log"
+msgstr "Kalender-Zeiterfassung"
 
 #. module: calendar_log_project
 #: model:ir.model,name:calendar_log_project.model_hr_timesheet_sheet_sheet_day_cat_detail
@@ -64,9 +91,14 @@ msgid "Category by Days in Period"
 msgstr "Kategorie nach Tagen pro Periode"
 
 #. module: calendar_log_project
+#: help:calendar.event,is_attendance:0
+msgid "Create Attendance Entry (Sing In/Out)"
+msgstr "Erstelle Arbeitszeitaufzeichungseinträge (Sing In/Out)"
+
+#. module: calendar_log_project
 #: help:calendar.event,is_worklog:0
 msgid "Create a Work-Log Entry"
-msgstr "Arbeitsaufzeichnung erstellen"
+msgstr "Projektzeitaufzeichnung erstellen"
 
 #. module: calendar_log_project
 #: field:hr_timesheet_sheet.sheet.day_cat_detail,name:0
@@ -81,12 +113,27 @@ msgstr "Kat./Tag Details"
 #. module: calendar_log_project
 #: help:calendar.event.category,is_worklog:0
 msgid "Default Is Worklog setting for meetings with this category"
-msgstr "Standard \"Ist Arbeitsaufzeichung\" Einstellung für diese Kategorie"
+msgstr "Legt fest ob 'Ist Projektzeit' standardmäßig für diese Kategorie gesetzt ist."
+
+#. module: calendar_log_project
+#: help:calendar.event.category,is_attendance:0
+msgid "Default Is-Attendance setting for meetings with this category"
+msgstr "Legt fest ob 'Ist Arbeitszeit' standardmäßig für diese Kategorie gesetzt ist."
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
 
 #. module: calendar_log_project
 #: field:hr_timesheet_sheet.sheet.day_cat_detail,employee_id:0
 msgid "Employee"
 msgstr "Mitarbeiter"
+
+#. module: calendar_log_project
+#: model:ir.model,name:calendar_log_project.model_calendar_event
+msgid "Event"
+msgstr "Ereignis"
 
 #. module: calendar_log_project
 #: view:hr.analytic.timesheet:calendar_log_project.calendar_log_project_hr_timesheet_line_search
@@ -149,35 +196,44 @@ msgid "ID"
 msgstr "ID"
 
 #. module: calendar_log_project
-#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
-msgid "If \"Is Worklog\" is ticked this text will be used for the work log entry.\n"
-"                            If left empty the meeting title will be used for the worklog entry!"
-msgstr "Wenn \"Ist Arbeitsaufzeichung\" angehakt ist wird dieser Text für die Zeiterfassung verwendet.\n"
-"                            Ist dieses Feld leer so wird der Meeting-Betreff verwendet!"
+#: view:calendar.event:calendar_log_project.view_calendar_log_project_search
+#: field:calendar.event,is_attendance:0
+#: field:calendar.event.category,is_attendance:0
+msgid "Is Attendance"
+msgstr "Ist Arbeitszeit"
 
 #. module: calendar_log_project
-#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
-msgid "If ticked a worklog entry is automatically created for this meeting!\n"
-"                        Always change the meeting to change the worklog entry!"
-msgstr "Wenn angehakt wird automatisch ein Eintrag in der Zeiterfassung für dieses Metting erstellt.\n"
-"                        Bei Änderungen bitte immer das Meeting ändern und nicht direkt den Eintrag in der Zeiterfassung!"
+#: view:calendar.event:calendar_log_project.view_calendar_log_project_search
+msgid "Is Not Attendance"
+msgstr "Ist keine Arbeitszeit"
 
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_log_project_search
 msgid "Is Not Worklog"
-msgstr "Ist keine Arbeitsauzeichnung"
+msgstr "Ist keine Projektzeit"
 
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_log_project_search
 #: field:calendar.event,is_worklog:0
 #: field:calendar.event.category,is_worklog:0
 msgid "Is Worklog"
-msgstr "Ist Arbeitsaufzeichnung"
+msgstr "Ist Projektzeit"
+
+#. module: calendar_log_project
+#: field:hr_timesheet_sheet.sheet.day_cat_detail,__last_update:0
+msgid "Last Modified on"
+msgstr "Letzte Änderung"
 
 #. module: calendar_log_project
 #: model:ir.model,name:calendar_log_project.model_calendar_event_category
 msgid "Meeting Category"
 msgstr "Meeting Kategorie"
+
+#. module: calendar_log_project
+#: code:addons/calendar_log_project/models/calendar.py:278
+#, python-format
+msgid "No employee found for current user!"
+msgstr "No employee found for current user!"
 
 #. module: calendar_log_project
 #: field:hr_timesheet_sheet.sheet.day_cat_detail,os:0
@@ -202,8 +258,36 @@ msgstr "ÜN Diätenberechtigt"
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_log_project_search
 #: field:calendar.event,project_id:0
+#: model:ir.model,name:calendar_log_project.model_project_project
 msgid "Project"
 msgstr "Projekt"
+
+#. module: calendar_log_project
+#: model:ir.model,name:calendar_log_project.model_project_task_work
+msgid "Project Task Work"
+msgstr "Erledigte Aufgaben"
+
+#. module: calendar_log_project
+#: code:addons/calendar_log_project/models/calendar.py:153
+#, python-format
+msgid "Remove any Default for calendar.event.is_attendance field! Settings > Technical > Actions > User Defaults"
+msgstr "Entfernen Sie bitte den Standardwert für das calendar.event.is_attendance Feld unter Settings > Technical > Actions > User Defaults"
+
+#. module: calendar_log_project
+#: code:addons/calendar_log_project/models/calendar.py:150
+#, python-format
+msgid "Remove any Default for calendar.event.is_worklog field! Settings > Technical > Actions > User Defaults"
+msgstr "Entfernen Sie bitte den Standardwert für das calendar.event.is_worklog Feld unter Settings > Technical > Actions > User Defaults"
+
+#. module: calendar_log_project
+#: field:calendar.event,sign_in_id:0
+msgid "Sign In"
+msgstr "Einloggen"
+
+#. module: calendar_log_project
+#: field:calendar.event,sign_out_id:0
+msgid "Sign Out"
+msgstr "Ausloggen"
 
 #. module: calendar_log_project
 #: field:hr_timesheet_sheet.sheet.day_cat_detail,t_a:0
@@ -223,6 +307,7 @@ msgstr "R Diätenberechtigt"
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_log_project_search
 #: field:calendar.event,task_id:0
+#: model:ir.model,name:calendar_log_project.model_project_task
 msgid "Task"
 msgstr "Aufgabe"
 
@@ -230,13 +315,6 @@ msgstr "Aufgabe"
 #: field:calendar.event,task_work_id:0
 msgid "Task Worklog ID"
 msgstr "Task Worklog ID"
-
-#. module: calendar_log_project
-#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
-msgid "The tasks depends on the project!\n"
-"                        Clear the project if you want to search for all tasks!"
-msgstr "Die verfügbaren Aufgaben hängen vom Projekt ab!\n"
-"                        Bitte leeren sie das Projektfeld wenn sie aus allen Aufgaben wählen möchten!"
 
 #. module: calendar_log_project
 #: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
@@ -259,6 +337,42 @@ msgstr "Zeiterfassungsposition"
 #: field:calendar.event,worklog_text:0
 msgid "Work-Log"
 msgstr "Arbeitsaufzeichnung"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
+msgid "Worklog"
+msgstr "Arbeitsaufzeichnung"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_form_calendar_log_project
+msgid "Worklog Overwrite"
+msgstr "Tätigkeitsbeschreibung (Statt dem Meeting Betreff)"
+
+#. module: calendar_log_project
+#: code:addons/calendar_log_project/models/calendar.py:197
+#, python-format
+msgid "You have to choose a project if Is Worklog is checked!"
+msgstr "Es muss ein Projekt ausgewählt werden wenn 'Ist Arbeitszeit' angehakt ist."
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_calendar_calendar_log
+msgid "[project_id]: [name]"
+msgstr "[project_id]: [name]"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_calendar_calendar_log
+msgid "false"
+msgstr "false"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+msgid "name DESC, action"
+msgstr "name DESC, action"
+
+#. module: calendar_log_project
+#: view:hr_timesheet_sheet.sheet:calendar_log_project.calendar_log_project_hr_timesheet_sheet_form
+msgid "red:not calendar_timelog_event;green:action == 'sign_in';blue:action == 'sign_out'"
+msgstr "red:not calendar_timelog_event;green:action == 'sign_in';blue:action == 'sign_out'"
 
 #. module: calendar_log_project
 #: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
@@ -338,4 +452,9 @@ msgstr "st_ae"
 #: view:hr_timesheet_sheet.sheet.day_cat_detail:calendar_log_project.calendar_log_project_hr_timesheet_sheet_day_cat_detail_tree
 msgid "st_e"
 msgstr "st_e"
+
+#. module: calendar_log_project
+#: view:calendar.event:calendar_log_project.view_calendar_event_calendar_calendar_log
+msgid "week"
+msgstr "week"
 
