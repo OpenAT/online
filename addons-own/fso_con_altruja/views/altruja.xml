@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!--
+        altruja
+    -->
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="altruja_form">
+        <field name="name">altruja_form</field>
+        <field name="model">altruja</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Altruja Connector">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group string="FS-Online Processing" name="fsonline">
+                        <group>
+                            <field name="skipped"/>
+                            <field name="skipped_by"/>
+                            <field name="error_type"/>
+                            <field name="error_details"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="partner_matching_details"/>
+                            <field name="sale_order_id"/>
+                            <field name="sale_order_line_id"/>
+                            <field name="payment_transaction_id"/>
+                            <field name="bank_id"/>
+                        </group>
+                    </group>
+                    <group string="Altruja Data" name="altruja_data1">
+                        <group name="altruja_only">
+                            <field name="altruja_status"/>
+                            <field name="datum"/>
+                            <field name="anonym"/>
+                            <field name="rechnungsnummer"/>
+                            <field name="wirecard_zeitraum"/>
+                            <field name="quittungavailableat"/>
+                            <field name="selbst_buchen"/>
+                            <field name="sonderwert_1"/>
+                            <field name="sonderwert_2"/>
+                            <field name="sonderwert_3"/>
+                        </group>
+                        <group name="res_partner">
+                            <field name="firma"/>
+                            <field name="vorname"/>
+                            <field name="nachname"/>
+                            <field name="email"/>
+                            <field name="strasse"/>
+                            <field name="adresszusatz"/>
+                            <field name="postleitzahl"/>
+                            <field name="land"/>
+                            <field name="geburtsdatum"/>
+                            <field name="kontakt_erlaubt"/>
+                            <field name="spendenquittung"/>
+                            <!-- res_partner_bank -->
+                            <field name="iban"/>
+                            <field name="bic"/>
+                            <field name="kontoinhaber"/>
+                        </group>
+                    </group>
+                    <group name="altruja_data2">
+                        <group name="sale_order">
+                            <field name="spenden_id"/>
+                            <field name="erstsspenden_id"/>
+                            <field name="waehrung"/>
+                            <!-- sale_order_line -->
+                            <field name="spenden_typ"/>
+                            <field name="spendenbetrag"/>
+                            <field name="intervall"/>
+                            <field name="seiten_id"/>
+                            <field name="Seitenname"/>
+                        </group>
+                        <group name="payment_transaction">
+                            <field name="quelle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="altruja_tree">
+        <field name="name">altruja_tree</field>
+        <field name="model">altruja</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Altruja Connector">
+                <field name="id"/>
+                <field name="state"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <field name="payment_transaction_id"/>
+                <field name="spenden_id"/>
+                <field name="erstsspenden_id"/>
+                <field name="altruja_status"/>
+                <field name="datum"/>
+                <field name="wirecard_zeitraum"/>
+                <field name="vorname"/>
+                <field name="nachname"/>
+                <field name="spenden_typ"/>
+                <field name="intervall"/>
+                <field name="spendenbetrag"/>
+                <field name="quelle"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="altruja_search">
+        <field name="name">altruja_search</field>
+        <field name="model">altruja</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Altruja Connector">
+                <field name="id"/>
+                <field name="state"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <field name="payment_transaction_id"/>
+                <field name="spenden_id"/>
+                <field name="erstsspenden_id"/>
+                <field name="altruja_status"/>
+                <field name="datum"/>
+                <field name="wirecard_zeitraum"/>
+                <field name="vorname"/>
+                <field name="nachname"/>
+                <field name="spenden_typ"/>
+                <field name="intervall"/>
+                <field name="spendenbetrag"/>
+                <field name="quelle"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- ACTIONS -->
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="altruja_action" model="ir.actions.act_window" >
+        <field name="name">Altruja Connector</field>
+        <field name="res_model">altruja</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="altruja_search"/>
+    </record>
+    <record id="altruja_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="altruja_tree"/>
+        <field name="act_window_id" ref="altruja_action"/>
+    </record>
+    <record id="altruja_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="altruja_form"/>
+        <field name="act_window_id" ref="altruja_action"/>
+    </record>
+    <!-- MENU -->
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="altruja_menu" action="altruja_action" parent="base.menu_config" sequence="10301"/>
+        
+
+</data></openerp>

@@ -1,0 +1,34 @@
+# https://www.vojtechruzicka.com/intellij-idea-tips-tricks-testing-restful-web-services/
+POST http://demo.local.com/web/session/authenticate
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+      "db": "demo",
+      "login": "admin",
+      "password": "admin"
+    }
+}
+
+> {% client.global.set("session_id", response.body["result"].session_id); %}
+
+
+### Use session id in next request for authorization
+POST http://demo.local.com/altruja/create/1
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+Cookie: session_id={{session_id}}
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+      "vorname": "Michael",
+      "nachname": "Karrer"
+    }
+}
+
+###
