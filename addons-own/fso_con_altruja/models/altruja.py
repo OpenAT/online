@@ -12,36 +12,36 @@ class Altruja(models.Model):
     # FIELDS
     # ------
     state = fields.Selection(selection=[('new', 'New'),
-                                         ('error', 'Error'),
-                                         ('done', 'Done'),
-                                         ('skipped', 'Skipped'),
-                                         ('synced', 'Synced')],
-                              string="State",
-                              readonly=True)
+                                        ('error', 'Error'),
+                                        ('done', 'Done'),
+                                        ('skipped', 'Skipped'),
+                                        ('synced', 'Synced')],
+                             string="State",
+                             readonly=True)
 
     # Check if the same job exits already
     skipped = fields.One2many(comodel_name='altruja', inverse_name='skipped_by', readonly=True)
     skipped_by = fields.Many2one(comodel_name='altruaj', inverse_name='skipped', readonly=True)
 
     # Errors and exceptions
-    error_type = fields.Selection([('exception', 'Exception'),
-                                   ('unknown_fields', 'Unknown Fields')],
+    error_type = fields.Selection([('processing', 'Processing'),
+                                   ('unknown', 'Unknown')],
                                   string="Error Type",
                                   readonly=True)
     error_details = fields.Text(string='Error Details',
                                 readonly=True)
 
-    # Linking and info
-    partner_id = fields.Many2one(comodel_name='res.partner',
-                                 readonly=True)                        # TODO: Inverse Field
-    partner_matching_details = fields.Text('Partner Matching Details',
-                                           help="Details about the partner matching process",
-                                           readonly=True)
-
-    sale_order_id = fields.Many2one(comodel_name='sale.order', readonly=True)                      # TODO: Inverse Field
-    sale_order_line_id = fields.Many2one(comodel_name='sale.order.line', readonly=True)            # TODO: Inverse Field
-    payment_transaction_id = fields.Many2one(comodel_name='payment.transaction', readonly=True)    # TODO: Inverse Field
-    bank_id = fields.Many2one(comodel_name='res.partner.bank', readonly=True)                      # TODO: Inverse Field
+    # Linking
+    partner_id = fields.Many2one(comodel_name='res.partner', inverse_name="altruja_ids",
+                                 readonly=True)
+    sale_order_id = fields.Many2one(comodel_name='sale.order', inverse_name="altruja_ids",
+                                    readonly=True)
+    sale_order_line_id = fields.Many2one(comodel_name='sale.order.line', inverse_name="altruja_ids",
+                                         readonly=True)
+    payment_transaction_id = fields.Many2one(comodel_name='payment.transaction', inverse_name="altruja_ids",
+                                             readonly=True)
+    bank_id = fields.Many2one(comodel_name='res.partner.bank', inverse_name="altruja_ids",
+                              readonly=True)
 
     # Altruja Fields
     # --------------

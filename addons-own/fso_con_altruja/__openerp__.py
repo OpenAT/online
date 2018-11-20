@@ -38,7 +38,7 @@ Controller to allow alruja to push data to FS-Online and get status afterwards.
     'application': False,
     'auto_install': False,
     'depends': [
-        # 'website_sale_donate',
+        'website_sale_donate',
     ],
     'data': [
         'security/altruja_groups.xml',

@@ -14,11 +14,14 @@ class FSOEmailEditor(http.Controller):
     def altruja_create(self, spenden_id, update_existing_record=False, **post):
         """
         Create a new record from the received data.
-        Raises an exception if a record with this "spenden_id" exists already if "update_existing_record" is False!
-        :param spenden_id:
-        :param post:
-        :return: True or Exception
+        HINT: Raises an exception if a record with this "spenden_id" exists already if "update_existing_record" is False!
+
+        :param spenden_id: Int, This is used as the "external ID" of the record
+        :param post: Dict, Dictionary from json data
+        :return: Bool
         """
+        assert spenden_id, "'spenden_id' not set on rest url! e.g.: /altruja/create/37652"
+
         altruja = http.request.env['altruja']
 
         # Check for non existing fields in **post!
@@ -30,6 +33,7 @@ class FSOEmailEditor(http.Controller):
         # Update record
         if update_existing_record:
             result = self.altruja_update(spenden_id=spenden_id, **post)
+            return result
 
         # Create record
         else:
@@ -41,11 +45,12 @@ class FSOEmailEditor(http.Controller):
     def altruja_update(self, spenden_id, **post):
         """
         Update an existing record from the received data.
-        Raises an exception if a record with this "spenden_id" exists already!
-        :param spenden_id:
-        :param post:
+
+        :param spenden_id: Int, This is used as the "external ID" of the record
+        :param post: Dict, Dictionary from json data
         :return: True or Exception
         """
+        assert spenden_id, "'spenden_id' not set on rest url! e.g.: /altruja/create/37652"
         altruja = http.request.env['altruja']
 
         # Find record
@@ -61,25 +66,37 @@ class FSOEmailEditor(http.Controller):
     def altruja_read(self, spenden_id, **post):
         """
         Return a dict with all fields of the record found by "spenden_id" !
-        Raises an exception if the record is not found!
+
         :param spenden_id:
         :param post:
         :return: dict, Returns all fields of the model 'altruja'
         """
-        record = http.request.env['altruja'].search([('spenden_id', '=', spenden_id)], limit=2)
+        assert spenden_id, "'spenden_id' not set on rest url! e.g.: /altruja/create/37652"
 
-        return True
+        # Find record
+        record = http.request.env['altruja'].search([('spenden_id', '=', spenden_id)], limit=1)
+        assert record, "Record not found!"
 
-    @http.route('/altruja/read/bulk', type='json', auth="user", website=True)
-    def altruja_read_bulk(self, list_of_spenden_ids=(), **post):
-        """
-        Return a dict with all fields of the record found by "spenden_id" !
-        Raises an exception if the record is not found!
-        :param spenden_ids: tuple with id's
-        :param post:
-        :return: dict, Returns all fields of the model 'altruja'
-        """
-        list_of_spenden_ids = tuple(list_of_spenden_ids)
-        assert list_of_spenden_ids, "Parameter 'list_of_spenden_ids' is empty!"
+        # Convert selected data to json
+        # HINT: For security reasons we do not send information about the person.
+        record_data = {
+            # FSON
+            'id': record.id,
+            'create_date': record.create_date,
+            'write_date': record.write_date,
+            'state': record.state,
+            'error_type': record.error_type,
+            'error_details': record.error_details,
+            # Altruja
+            'datum': record.datum,
+            'spenden_id': record.spenden_id,
+            'erstsspenden_id': record.erstsspenden_id,
+            'spenden_typ': record.spenden_typ,
+            'spendenbetrag': record.spendenbetrag,
+            'intervall': record.intervall,
+            'waehrung': record.waehrung,
+            'quelle': record.quelle,
+        }
+        record_data_json = json.dumps(record_data)
 
-        return True
+        return record_data_json
