@@ -1404,7 +1404,7 @@ class ResPartnerFADonationReport(models.Model):
                     # Check if the interval values are correctly set at the fiscal year
                     if not y.drg_interval_number or not y.drg_interval_type or y.drg_interval_type != 'days':
                         manual_msg = "scheduled_submission() ERROR: Interval-Number not set or Interval-Type not" \
-                                     "set or not 'days' at the fiscal year! Skipping auto submission!"
+                                     " set or not 'days' at the fiscal year! Skipping auto submission!"
                         logger.error(manual_msg)
                         send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
                         continue
