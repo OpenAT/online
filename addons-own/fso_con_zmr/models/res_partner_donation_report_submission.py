@@ -1297,8 +1297,8 @@ class ResPartnerFADonationReport(models.Model):
                 ('submission_env', '=', 'P'),
             ], limit=1)
 
-            # SKIPP AUTOMATIC SUBMISSION IF NOW IS OUTSIDE OF THE MELDEZEITRAUM
-            # -----------------------------------------------------------------
+            # SKIPP AUTOMATIC SUBMISSION IF "NOW" IS OUTSIDE OF THE MELDEZEITRAUM
+            # -------------------------------------------------------------------
             # HINT: Only fiscal years with meldezeitraum_start and meldezeitraum_end where searched for
             start = datetime.datetime.strptime(y.meldezeitraum_start, DEFAULT_SERVER_DATETIME_FORMAT)
             end = datetime.datetime.strptime(y.meldezeitraum_end, DEFAULT_SERVER_DATETIME_FORMAT)
@@ -1316,7 +1316,7 @@ class ResPartnerFADonationReport(models.Model):
 
             # WARN IF NEXT PLANNED RUN IN FRST IS MORE THAN 24 HOURS IN THE PAST
             # ------------------------------------------------------------------
-            # HINT: IF we came this far we know we are inside the meldezeitraum for this fiscal year
+            # HINT: If we came this far we know we are inside the meldezeitraum for this fiscal year
             if y.drg_next_run:
                 drg_next_run = datetime.datetime.strptime(y.drg_next_run, DEFAULT_SERVER_DATETIME_FORMAT)
                 if now > (drg_next_run + datetime.timedelta(hours=24)):
@@ -1332,8 +1332,10 @@ class ResPartnerFADonationReport(models.Model):
                 if report_exists:
                     send_internal_email(odoo_env_obj=self.env, subject=msg_error)
 
-            # CHECK LAST REPORT GENERATION IN FRST IF SET
-            # -------------------------------------------
+            # A) CHECK FOR EXISTING SUBMISSIONS NEWER THAN drg_last (Last donation report generation in FRST)
+            # -----------------------------------------------------------------------------------------------
+            # HINT: Will also jump to B) if drg_last_count = 0 which means that no reports where generated in the last
+            #       FRST run. But since there may be new reports because of found BPKs it is B) is the perfect fallback!
             if y.drg_last and y.drg_last_count:
                 drg_last = datetime.datetime.strptime(y.drg_last, DEFAULT_SERVER_DATETIME_FORMAT)
                 newer_than_drg_last = self.sudo().search([
@@ -1353,7 +1355,8 @@ class ResPartnerFADonationReport(models.Model):
                                 "" % (y.meldungs_jahr, y.id, newer_than_drg_last.ids))
                     continue
 
-                # No newer submissions found
+                # NO EXISTING SUBMISSION FOUND SINCE LAST DONATION REPORT GENERATION IN FRST:
+                # CHECK REPORT COUNT TO MAKE SURE ALL REPORTS ARE SYNCED
                 else:
                     new_reports = self.env['res.partner.donation_report'].sudo().search([
                         ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1383,8 +1386,9 @@ class ResPartnerFADonationReport(models.Model):
                             logger.warning(manual_msg)
                             send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
 
-            # CHECK INTERVAL RANGE IF INFORMATION OF LAST DONATION REPORT GENERATION IS MISSING
-            # ---------------------------------------------------------------------------------
+            # B) CHECK INTERVAL RANGE IF INFORMATION OF LAST DONATION REPORT GENERATION IS MISSING OR NO REPS GENERATED
+            # ---------------------------------------------------------------------------------------------------------
+            # HINT: This will also run if no donation reports where generated in the last FRST run. See above.
             else:
                 last_submitted = self.sudo().search([
                     ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1397,17 +1401,20 @@ class ResPartnerFADonationReport(models.Model):
 
                 # SKIPP AUTOMATIC SUBMISSION IF SUBMISSION(S) EXISTS ALREADY FOR THIS INTERVAL
                 if last_submitted:
-                    if not y.drg_interval_type or y.drg_interval_type != 'days':
-                        msg_error = "scheduled_submission() ERROR: Interval type must be set to 'days' for field " \
-                                    "'drg_interval_type'!"
-                        logger.error(msg_error)
+                    # Check if the interval values are correctly set at the fiscal year
+                    if not y.drg_interval_number or not y.drg_interval_type or y.drg_interval_type != 'days':
+                        manual_msg = "scheduled_submission() ERROR: Interval-Number not set or Interval-Type not" \
+                                     "set or not 'days' at the fiscal year! Skipping auto submission!"
+                        logger.error(manual_msg)
                         send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
+                        continue
 
+                    # Check if the last submission is older than the interval
                     ls_sd = datetime.datetime.strptime(last_submitted.submission_datetime,
                                                        DEFAULT_SERVER_DATETIME_FORMAT)
                     if now < (ls_sd + datetime.timedelta(days=y.drg_interval_number or 7)):
                         logger.info("scheduled_submission() Skipping auto submission because last submission still"
-                                    "in interval range set at fiscal year!")
+                                    "in interval range set at the fiscal year!")
                         continue
 
             # CHECK AND WARN FOR UNSUBMITTED MANUAL DONATION REPORT SUBMISSIONS
@@ -1425,7 +1432,7 @@ class ResPartnerFADonationReport(models.Model):
                 logger.warning(manual_msg)
                 send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
 
-            # Submit non-manual existing submissions
+            # SUBMIT NON-MANUAL EXISTING SUBMISSIONS
             # --------------------------------------
             existing = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1438,7 +1445,7 @@ class ResPartnerFADonationReport(models.Model):
                 if prepare(s):
                     submit(s)
 
-            # Auto-Submit non linked donation reports
+            # AUTO-SUBMIT NON LINKED DONATION REPORTS
             # ---------------------------------------
             reports = True
             max_subm = 10
