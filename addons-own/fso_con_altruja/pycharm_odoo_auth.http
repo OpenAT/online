@@ -8,8 +8,8 @@ Content-Type: application/json
   "jsonrpc": "2.0",
     "params": {
       "db": "demo",
-      "login": "admin",
-      "password": "admin"
+      "login": "altrua@test.com",
+      "password": "12345"
     }
 }
 
@@ -17,34 +17,32 @@ Content-Type: application/json
 
 ### RESULT:
 #
-#POST http://demo.local.com/web/session/authenticate
-#
 #HTTP/1.1 200 OK
 #Server: nginx/1.15.6
-#Date: Wed, 21 Nov 2018 12:32:48 GMT
+#Date: Wed, 21 Nov 2018 12:51:19 GMT
 #Content-Type: application/json
 #Transfer-Encoding: chunked
 #Connection: keep-alive
-#Set-Cookie: session_id=9355752d271e566af092a5046d2f5341e89e8662; Expires=Tue, 19-Feb-2019 12:32:48 GMT; Max-Age=7776000; Path=/
+#Set-Cookie: session_id=38da0581b1a38e6abdf226e034082820725a8614; Expires=Tue, 19-Feb-2019 12:51:19 GMT; Max-Age=7776000; Path=/
 #
 #{
 #  "jsonrpc": "2.0",
 #  "id": null,
 #  "result": {
-#    "username": "admin",
+#    "username": "altrua@test.com",
 #    "user_context": {
 #      "lang": "en_US",
 #      "tz": false,
-#      "uid": 1
+#      "uid": 6
 #    },
-#    "uid": 1,
+#    "uid": 6,
 #    "db": "demo",
 #    "company_id": 1,
-#    "session_id": "9355752d271e566af092a5046d2f5341e89e8662"
+#    "session_id": "38da0581b1a38e6abdf226e034082820725a8614"
 #  }
 #}
 #
-#Response code: 200 (OK); Time: 341ms; Content length: 220 bytes
+#Response code: 200 (OK); Time: 351ms; Content length: 230 bytes
 
 
 ###############################################################################
