@@ -30,6 +30,10 @@ class Altruja(models.Model):
                                   readonly=True)
     error_details = fields.Text(string='Error Details',
                                 readonly=True)
+    # Receiving
+    controller_update_date = fields.Datetime(string="Last Update from Controller",
+                                             help="Last updated from json controllers. E.g.: /altruja/*",
+                                             readonly=True)
 
     # Linking
     partner_id = fields.Many2one(comodel_name='res.partner', inverse_name="altruja_ids",
@@ -45,23 +49,23 @@ class Altruja(models.Model):
 
     # Altruja Fields
     # --------------
-    altruja_status = fields.Char('Altruja Status', readonly=True)
-    datum = fields.Char('Datum', readonly=True)                                # ACHTUNG: = Buchungsdatum = Payment Transaction Datum!
+    altruja_status = fields.Char('Altruja Status', readonly=True)               # Derzeit nicht verarbeitet
+    datum = fields.Datetime('Datum', readonly=True, required=True)              # ACHTUNG: = Buchungsdatum = Payment Transaction Datum!
 
-    anonym = fields.Char('Anonym', readonly=True)                              # Derzeit nicht verarbeitet
-    rechnungsnummer = fields.Char('Rechnungsnummer', readonly=True)            # Derzeit nicht verarbeitet
-    wirecard_zeitraum = fields.Char('Wirecard-Zeitraum', readonly=True)        # Derzeit nicht verarbeitet
-    quittungavailableat = fields.Char('Quittungavailableat', readonly=True)    # Derzeit nicht verarbeitet
-    selbst_buchen = fields.Char('Selbst buchen', readonly=True)                # Derzeit nicht verarbeitet
+    anonym = fields.Char('Anonym', readonly=True)                               # Derzeit nicht verarbeitet
+    rechnungsnummer = fields.Char('Rechnungsnummer', readonly=True)             # Derzeit nicht verarbeitet
+    wirecard_zeitraum = fields.Char('Wirecard-Zeitraum', readonly=True)         # Derzeit nicht verarbeitet
+    quittungavailableat = fields.Char('Quittungavailableat', readonly=True)     # Derzeit nicht verarbeitet
+    selbst_buchen = fields.Char('Selbst buchen', readonly=True)                 # Derzeit nicht verarbeitet
 
-    sonderwert_1 = fields.Char('sonderwert_1', readonly=True)                  # Derzeit nicht verarbeitet
-    sonderwert_2 = fields.Char('sonderwert_2', readonly=True)                  # Derzeit nicht verarbeitet
-    sonderwert_3 = fields.Char('sonderwert_3', readonly=True)                  # Derzeit nicht verarbeitet
+    sonderwert_1 = fields.Char('sonderwert_1', readonly=True)                   # Derzeit nicht verarbeitet
+    sonderwert_2 = fields.Char('sonderwert_2', readonly=True)                   # Derzeit nicht verarbeitet
+    sonderwert_3 = fields.Char('sonderwert_3', readonly=True)                   # Derzeit nicht verarbeitet
 
     # res.partner
-    firma = fields.Char('Firma', readonly=True)                                # Extra res.partern fuer Firma aufbauen
-    vorname = fields.Char('Vorname', readonly=True)
-    nachname = fields.Char('Nachname', readonly=True)
+    firma = fields.Char('Firma', readonly=True)                                 # TODO: Check if we need an extra partner for company?
+    vorname = fields.Char('Vorname', readonly=True, required=True)              # TODO: Ceck if firstname and lastname is required!
+    nachname = fields.Char('Nachname', readonly=True, required=True)
     email = fields.Char('Email', readonly=True)
 
     strasse = fields.Char('Strasse', readonly=True)
@@ -73,7 +77,7 @@ class Altruja(models.Model):
     geburtsdatum = fields.Char('Geburtsdatum', readonly=True)
 
     kontakt_erlaubt = fields.Char('Kontakt erlaubt', readonly=True)
-    spendenquittung = fields.Char('Spendenquittung', readonly=True)         # Nicht mehr benoetig
+    spendenquittung = fields.Char('Spendenquittung', readonly=True)             # Nicht mehr benoetig
 
     # res.partner.bank
     iban = fields.Char('IBAN', readonly=True)

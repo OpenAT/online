@@ -1,5 +1,5 @@
 # -*- coding: utf-'8' "-*-"
-from openerp import http
+from openerp import http, fields
 from openerp.http import request
 
 import logging
@@ -17,10 +17,11 @@ class FSOEmailEditor(http.Controller):
         HINT: Raises an exception if a record with this "spenden_id" exists already if "update_existing_record" is False!
 
         :param spenden_id: Int, This is used as the "external ID" of the record
-        :param post: Dict, Dictionary from json data
+        :param post: Dict, Dictionary from json data (fields of the altruja model)
         :return: Bool
         """
-        assert spenden_id, "'spenden_id' not set on rest url! e.g.: /altruja/create/37652"
+        assert spenden_id, "'spenden_id' not set on rest url! E.g.: /altruja/create/37652"
+        assert post, "Payload of request is empty (post)!"
 
         altruja = http.request.env['altruja']
 
@@ -30,15 +31,22 @@ class FSOEmailEditor(http.Controller):
         fields_not_in_model = tuple(f for f in post if f not in altruja_fields)
         assert not fields_not_in_model, "Unknown fields found: %s" % fields_not_in_model
 
-        # Update record
+        # Add date to post dict to log last change by controller
+        post["controller_update_date"] = fields.datetime.now()
+
+        # UPDATE RECORD
         if update_existing_record:
-            result = self.altruja_update(spenden_id=spenden_id, **post)
+
+            # Find record
+            record = altruja.search([('spenden_id', '=', spenden_id)], limit=1)
+            assert len(record) == 1, "Record not found with spenden_id %s" % spenden_id
+
+            # Update record
+            result = record.write(post)
             return result
 
-        # Create record
-        else:
-            result = altruja.create(post)
-
+        # CREATE RECORD
+        result = altruja.create(post)
         return result
 
     @http.route('/altruja/update/<int:spenden_id>', type='json', auth="user", website=True)
@@ -47,19 +55,10 @@ class FSOEmailEditor(http.Controller):
         Update an existing record from the received data.
 
         :param spenden_id: Int, This is used as the "external ID" of the record
-        :param post: Dict, Dictionary from json data
+        :param post: Dict, Dictionary from json data (fields of the altruja model)
         :return: True or Exception
         """
-        assert spenden_id, "'spenden_id' not set on rest url! e.g.: /altruja/create/37652"
-        altruja = http.request.env['altruja']
-
-        # Find record
-        record = altruja.search([('spenden_id', '=', spenden_id)], limit=1)
-        assert len(record) == 1, "Record not found with spenden_id %s" % spenden_id
-
-        # Update record
-        result = altruja.write(post)
-
+        result = self.altruja_create(spenden_id=spenden_id, update_existing_record=True, **post)
         return result
 
     @http.route('/altruja/read/<int:spenden_id>', type='json', auth="user", website=True)

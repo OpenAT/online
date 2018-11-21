@@ -156,6 +156,13 @@ class ResPartnerFADonationReport(models.Model):
     # Optional field for extra information from FRST
     info = fields.Text(string="Info", readonly=True)
 
+    # Force submission (only set in FRST NOT in FSON!)
+    # HINT: Used for manual resubmission of a donation report or
+    #       for donation report submissions if outside of the meldezeitraum of the fiscal year
+    force_submission = fields.Boolean(string="Force Submission", readonly=True,
+                                      help="Will be submitted to FinazOnline by scheduler even if outside of automatic "
+                                           " submission range! (Meldezeitraum)")
+
     # Fields computed (or recomputed) just before submission to FinanzOnline
     # ----------------------------------------------------------------------
     submission_type = fields.Selection(string="Type", readonly=True,

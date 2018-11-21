@@ -1230,6 +1230,8 @@ class ResPartnerFADonationReport(models.Model):
             logger.info(msg_success)
             return True
 
+        # TODO: First submit all donation reports where force_submission = True in an submission where manual = True!
+
         # Search for fiscal years
         # HINT: This will get all configured fiscal years for all companies
         spak_start = fields.datetime.strptime('2016-12-01 00:00:00', DEFAULT_SERVER_DATETIME_FORMAT)

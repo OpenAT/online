@@ -18,6 +18,10 @@
                 <sheet>
                     <group string="FS-Online Processing" name="fsonline">
                         <group>
+                            <field name="id"/>
+                            <field name="create_date"/>
+                            <field name="write_date"/>
+                            <field name="controller_update_date"/>
                             <field name="skipped"/>
                             <field name="skipped_by"/>
                             <field name="error_type"/>
@@ -25,7 +29,6 @@
                         </group>
                         <group>
                             <field name="partner_id"/>
-                            <field name="partner_matching_details"/>
                             <field name="sale_order_id"/>
                             <field name="sale_order_line_id"/>
                             <field name="payment_transaction_id"/>

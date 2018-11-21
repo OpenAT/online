@@ -97,7 +97,7 @@ TODO (must be done manually right now):
         'cron_run_manually',
         'smile_web_export',
         #'smile_web_search_range', # DISABLED because of JS View errors in Backend
-        'smile_web_search_timedelta',
+        #'smile_web_search_timedelta', # DIASBLED BECAUSE OF INSTALL ERRORS
         # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',

@@ -16,6 +16,7 @@ Content-Type: application/json
 > {% client.global.set("session_id", response.body["result"].session_id); %}
 
 
+### Create altrua record with spenden_id = 1
 ### Use session id in next request for authorization
 POST http://demo.local.com/altruja/create/1
 Accept: */*
@@ -26,7 +27,7 @@ Cookie: session_id={{session_id}}
 {
   "jsonrpc": "2.0",
     "params": {
-      "vorname": "Michael",
+      "datum": "2018.01.01",
       "nachname": "Karrer"
     }
 }
