@@ -102,6 +102,6 @@ class FSOEmailEditor(http.Controller):
             'waehrung': record.waehrung,
             'quelle': record.quelle,
         }
-        record_data_json = json.dumps(record_data)
+        #record_data_json = json.dumps(record_data)
 
-        return record_data_json
+        return record_data

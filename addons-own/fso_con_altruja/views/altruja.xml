@@ -97,12 +97,11 @@
         <field name="arch" type="xml">
             <tree string="Altruja Connector">
                 <field name="id"/>
-                <field name="state"/>
+                <field name="spenden_id"/>
+                <field name="erstsspenden_id"/>
                 <field name="partner_id"/>
                 <field name="sale_order_id"/>
                 <field name="payment_transaction_id"/>
-                <field name="spenden_id"/>
-                <field name="erstsspenden_id"/>
                 <!--<field name="altruja_status"/>-->
                 <!--<field name="wirecard_zeitraum"/>-->
                 <field name="datum"/>
@@ -112,6 +111,7 @@
                 <field name="intervall"/>
                 <field name="spendenbetrag"/>
                 <field name="quelle"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>

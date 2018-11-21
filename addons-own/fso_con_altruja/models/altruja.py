@@ -101,7 +101,7 @@ class Altruja(models.Model):
     Seitenname = fields.Char('Seitenname', readonly=True)                                           # FRST Verarbeitung ZVerz.
 
     # payment.transaction
-    quelle = fields.Char('Quelle',
+    quelle = fields.Char('Quelle', required=True,
                          help="z.B.: Online (Wirecard/Lastschrift)", readonly=True)                 # Possible values = ("Online (Wirecard/Kreditkarte)", "Online (Wirecard/Lastschrift)", "direkt / PayPal")
 
     # --------------------------
