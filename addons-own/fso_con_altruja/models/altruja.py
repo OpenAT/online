@@ -1,5 +1,6 @@
 # -*- coding: utf-'8' "-*-"
 from openerp import api, models, fields
+from openerp.exceptions import ValidationError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ class Altruja(models.Model):
 
     # Check if the same job exits already
     skipped = fields.One2many(comodel_name='altruja', inverse_name='skipped_by', readonly=True)
-    skipped_by = fields.Many2one(comodel_name='altruaj', inverse_name='skipped', readonly=True)
+    skipped_by = fields.Many2one(comodel_name='altruja', inverse_name='skipped', readonly=True)
 
     # Errors and exceptions
     error_type = fields.Selection([('processing', 'Processing'),
@@ -64,7 +65,7 @@ class Altruja(models.Model):
 
     # res.partner
     firma = fields.Char('Firma', readonly=True)                                 # TODO: Check if we need an extra partner for company?
-    vorname = fields.Char('Vorname', readonly=True, required=True)              # TODO: Ceck if firstname and lastname is required!
+    vorname = fields.Char('Vorname', readonly=True,)                            # TODO: Ceck if firstname and lastname is required!
     nachname = fields.Char('Nachname', readonly=True, required=True)
     email = fields.Char('Email', readonly=True)
 
@@ -77,31 +78,31 @@ class Altruja(models.Model):
     geburtsdatum = fields.Char('Geburtsdatum', readonly=True)
 
     kontakt_erlaubt = fields.Char('Kontakt erlaubt', readonly=True)
-    spendenquittung = fields.Char('Spendenquittung', readonly=True)             # Nicht mehr benoetig
+    spendenquittung = fields.Char('Spendenquittung', readonly=True)                                 # Nicht mehr benoetig
 
     # res.partner.bank
     iban = fields.Char('IBAN', readonly=True)
     bic = fields.Char('BIC', readonly=True)
-    kontoinhaber = fields.Char('Kontoinhaber', readonly=True)                              # TODO: Add field to payment_frst ?!?
+    kontoinhaber = fields.Char('Kontoinhaber', readonly=True)                                       # TODO: Add field to payment_frst ?!?
 
     # sale.order
-    spenden_id = fields.Integer('Spenden-ID', index=True, readonly=True)                   # EXTERNAL ID OF THE RECORD
+    spenden_id = fields.Integer('Spenden-ID', index=True, readonly=True, required=True)             # EXTERNAL ID OF THE RECORD
     erstsspenden_id = fields.Char('Erstsspenden-ID', readonly=True,
                                   help="Entspricht dem ersten Auftrag bei wiederkehrenden Spenden (Vertrag)")
     waehrung = fields.Selection(string='Waehrung',
-                                selection=[('EUR', 'EUR')], required=True, readonly=True)        # Only 'EUR' is allowed
+                                selection=[('EUR', 'EUR')], required=True, readonly=True)           # Only 'EUR' is allowed
 
     # sale.order.line
-    spenden_typ = fields.Char('Spenden-Typ', readonly=True)                # Aendern auf Selection field
-    spendenbetrag = fields.Float('Spendenbetrag', required=True, readonly=True)
-    intervall = fields.Char('Intervall', readonly=True)                    # Aebhaengig von Spenden_Typ
+    spenden_typ = fields.Char('Spenden-Typ', readonly=True, required=True)                          # Possible values = (Einzelspende, Dauerfolgespende)
+    spendenbetrag = fields.Float('Spendenbetrag', readonly=True, required=True)                     # float ?
+    intervall = fields.Char('Intervall', readonly=True, required=True)                              # Possible values = (einmalig, jährlich, halbjährlich, vierteljährlich, monatlich)
 
-    seiten_id = fields.Char('Seiten-ID', readonly=True)                    # Derzeit nicht verarbeitet
-    Seitenname = fields.Char('Seitenname', readonly=True)                  # FRST Verarbeitung ZVerz.
+    seiten_id = fields.Char('Seiten-ID', readonly=True)                                             # Derzeit nicht verarbeitet
+    Seitenname = fields.Char('Seitenname', readonly=True)                                           # FRST Verarbeitung ZVerz.
 
     # payment.transaction
     quelle = fields.Char('Quelle',
-                         help="z.B.: Online (Wirecard/Lastschrift)", readonly=True)    # Payment Methode (Werte?!?)
+                         help="z.B.: Online (Wirecard/Lastschrift)", readonly=True)                 # Possible values = ("Online (Wirecard/Kreditkarte)", "Online (Wirecard/Lastschrift)", "direkt / PayPal")
 
     # --------------------------
     # CONSTRAINTS AND VALIDATION
@@ -111,3 +112,23 @@ class Altruja(models.Model):
         ('spenden_id_unique', 'UNIQUE(spenden_id)', "'spenden_id' must be unique!"),
     ]
 
+    @api.constrains('spenden_typ')
+    def constrain_spenden_typ(self):
+        for r in self:
+            allowed_values = ('Einzelspende', 'Dauerfolgespende')
+            if r.spenden_typ not in allowed_values:
+                raise ValidationError("'spenden_typ' must be one of: %s" % str(allowed_values))
+
+    @api.constrains('intervall')
+    def constrain_intervall(self):
+        for r in self:
+            allowed_values = ('einmalig', 'jährlich', 'halbjährlich', 'vierteljährlich', 'monatlich')
+            if r.intervall not in allowed_values:
+                raise ValidationError("'intervall' must be one of: %s" % str(allowed_values))
+
+    @api.constrains('quelle')
+    def constrain_quelle(self):
+        for r in self:
+            allowed_values = ('Online (Wirecard/Kreditkarte)', 'Online (Wirecard/Lastschrift)', 'direkt / PayPal')
+            if r.quelle not in allowed_values:
+                raise ValidationError("'quelle' must be one of: %s" % str(allowed_values))

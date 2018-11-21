@@ -1,4 +1,4 @@
-# https://www.vojtechruzicka.com/intellij-idea-tips-tricks-testing-restful-web-services/
+# Authenticate (Login) to FS-Online to geht the session_id cookie
 POST http://demo.local.com/web/session/authenticate
 Accept: */*
 Cache-Control: no-cache
@@ -17,7 +17,8 @@ Content-Type: application/json
 
 
 ### Create altrua record with spenden_id = 1
-### Use session id in next request for authorization
+### ATTENTION: spenden_id is set by the URL!
+### ATTENTION: Use session_id cookie for authorization!
 POST http://demo.local.com/altruja/create/1
 Accept: */*
 Cache-Control: no-cache
@@ -28,7 +29,69 @@ Cookie: session_id={{session_id}}
   "jsonrpc": "2.0",
     "params": {
       "datum": "2018.01.01",
-      "nachname": "Karrer"
+      "nachname": "Karrer",
+      "waehrung": "EUR",
+      "spenden_typ": "Einzelspende",
+      "spendenbetrag": "23.05",
+      "intervall": "einmalig",
+      "quelle": "direkt / PayPal"
+    }
+}
+
+### Update altrua record with spenden_id = 1
+### ATTENTION: Use session_id cookie for authorization!
+### ATTENTION: spenden_id is set by the URL !
+### ATTENTION: Fields missing in the payload are not changed!
+POST http://demo.local.com/altruja/update/1
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+Cookie: session_id={{session_id}}
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+      "vorname": "Michael"
+    }
+}
+
+
+### Read altrua record with spenden_id = 1
+### ATTENTION: Use session_id cookie for authorization!
+### ATTENTION: spenden_id is set by the URL !
+POST http://demo.local.com/altruja/read/1
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+Cookie: session_id={{session_id}}
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+    }
+}
+
+
+### Create altrua record with spenden_id = 2 to shwo field validation
+### HINT: 'quelle' will fail because of unsupported value
+### ATTENTION: spenden_id is set by the URL!
+### ATTENTION: Use session_id cookie for authorization!
+POST http://demo.local.com/altruja/create/2
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+Cookie: session_id={{session_id}}
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+      "datum": "2018.01.01",
+      "nachname": "Karrer",
+      "waehrung": "EUR",
+      "spenden_typ": "Einzelspende",
+      "spendenbetrag": "23.05",
+      "intervall": "einmalig",
+      "quelle": "FEHLER"
     }
 }
 

@@ -22,10 +22,8 @@
                             <field name="create_date"/>
                             <field name="write_date"/>
                             <field name="controller_update_date"/>
-                            <field name="skipped"/>
                             <field name="skipped_by"/>
-                            <field name="error_type"/>
-                            <field name="error_details"/>
+                            <field name="skipped" widget="many2many_tags"/>
                         </group>
                         <group>
                             <field name="partner_id"/>
@@ -34,6 +32,10 @@
                             <field name="payment_transaction_id"/>
                             <field name="bank_id"/>
                         </group>
+                    </group>
+                    <group name="error">
+                        <field name="error_type"/>
+                        <field name="error_details"/>
                     </group>
                     <group string="Altruja Data" name="altruja_data1">
                         <group name="altruja_only">
@@ -101,9 +103,9 @@
                 <field name="payment_transaction_id"/>
                 <field name="spenden_id"/>
                 <field name="erstsspenden_id"/>
-                <field name="altruja_status"/>
+                <!--<field name="altruja_status"/>-->
+                <!--<field name="wirecard_zeitraum"/>-->
                 <field name="datum"/>
-                <field name="wirecard_zeitraum"/>
                 <field name="vorname"/>
                 <field name="nachname"/>
                 <field name="spenden_typ"/>
