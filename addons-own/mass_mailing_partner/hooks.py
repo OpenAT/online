@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 def post_init_hook(cr, registry):
     with api.Environment.manage():
         env = api.Environment(cr, SUPERUSER_ID, {})
+
         # ACTION 1: Match existing contacts
         contact_model = env['mail.mass_mailing.contact']
         partner_model = env['res.partner']
@@ -25,7 +26,12 @@ def post_init_hook(cr, registry):
                 ('email', '=ilike', contact.email)
             ], limit=1)
             if partners:
-                contact.write({'partner_id': partners.id})
+                try:
+                    contact.write({'partner_id': partners.id})
+                except Exception as e:
+                    _logger.error("Could not update contact!\n%s" % repr(e))
+                    pass
+
         # ACTION 2: Match existing statistics
         stat_model = env['mail.mail.statistics']
         stats = stat_model.search([
