@@ -23,14 +23,21 @@ class MassMailingStats(models.Model):
                                         ('bounced', 'Bounced')],
                              store=True)
     state_update = fields.Datetime(compute="_compute_state", string='State Update',
-                                    help='Last state update of the mail',
-                                    store=True)
+                                   help='Last state update of the mail',
+                                   store=True)
     recipient = fields.Char(compute="_compute_recipient")
 
     @api.depends('sent', 'opened', 'clicked', 'replied', 'bounced', 'exception')
     def _compute_state(self):
-        self.update({'state_update': fields.Datetime.now()})
+        # HINT: .update works different in odoo 8 than in odoo 11 !
+        #self.update({'state_update': fields.Datetime.now()})
+        now = fields.Datetime.now()
         for stat in self:
+
+            # compute 'state_update'
+            stat.state_update = now
+
+            # compute 'state'
             if stat.exception:
                 stat.state = 'exception'
             elif stat.sent:

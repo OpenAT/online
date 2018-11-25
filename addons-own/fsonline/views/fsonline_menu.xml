@@ -94,20 +94,21 @@
 
             <!-- MASS MAILING -->
             <menuitem id="menu_channels_mm" parent="menu_channels" name="E-Mail" sequence="1000" groups="base.group_user"/>
+                <menuitem id="menu_channels_mm_templates" parent="menu_channels_mm"  name="E-Mail Templates" sequence="900" groups="base.group_user" action="fso_mass_mail.action_fso_email_select_iframe"/>
                 <menuitem id="menu_channels_mm_lists" parent="menu_channels_mm" name="Mailing Lists" sequence="1010" groups="base.group_user" action="mass_mailing.action_view_mass_mailing_lists"/>
                 <menuitem id="menu_channels_mm_contacts" parent="menu_channels_mm" name="List Contacts" sequence="1020" groups="base.group_user" action="mass_mailing.action_view_mass_mailing_contacts"/>
                 <menuitem id="menu_channels_mm_mailings" parent="menu_channels_mm" name="Mailings" sequence="1040" groups="base.group_user" action="mass_mailing.action_view_mass_mailings"/>
-                <menuitem id="menu_channels_mm_send" parent="menu_channels_mm" name="E-Mails" sequence="1060" groups="base.group_user" action="mail.action_view_mail_mail"/>
-                <menuitem id="menu_channels_mm_statistics" parent="menu_channels_mm" sequence="1070" groups="base.group_user" action="mass_mailing.action_view_mail_mail_statistics"/>
-                <!--<menuitem id="menu_channels_mm_campaigns" parent="menu_channels_mm" name="Campaigns" sequence="1030" groups="mass_mailing.group_mass_mailing_campaign" action="mass_mailing.action_view_mass_mailing_campaigns"/>-->
                 <!--<menuitem id="menu_channels_mm_queue" parent="menu_channels_mm" name="Sending Queue" sequence="1050" groups="base.group_user" action="mass_mailing_sending_queue.action_view_mail_mass_mailing_sending"/>-->
-        
+                <menuitem id="menu_channels_mm_send" parent="menu_channels_mm" name="E-Mails" sequence="1060" groups="base.group_user" action="mail.action_view_mail_mail"/>
+                <menuitem id="menu_channels_mm_statistics" parent="menu_channels_mm"  name="E-Mail Statistic" sequence="1070" groups="base.group_user" action="mass_mailing.action_view_mail_mail_statistics"/>
+                
             <!-- TRACKING -->
-            <!--<menuitem id="menu_channels_track" parent="menu_channels" name="Tracking" sequence="9000" groups="base.group_user"/>-->
-                <!--<menuitem id="menu_channels_track_utm_campaign" parent="menu_channels_track" sequence="9110" groups="base.group_user" action="utm.utm_campaign_act"/>-->
-                <!--<menuitem id="menu_channels_track_utm_action" parent="menu_channels_track" sequence="9120" groups="base.group_user" action="utm.utm_medium_action"/>-->
-                <!--<menuitem id="menu_channels_track_utm" parent="menu_channels_track" sequence="9130" groups="base.group_user" action="utm.utm_source_action"/>-->
-                <!--<menuitem id="menu_channels_track_linktracker" parent="menu_channels_track" sequence="9200" groups="base.group_user" action="link_tracker.action_link_tracker"/>-->
+            <menuitem id="menu_channels_track" parent="menu_channels" name="Tracking" sequence="9000" groups="base.group_user"/>
+                <menuitem id="menu_channels_track_mm_campaigns" parent="menu_channels_track" name="Mailing Campaigns" sequence="9100" groups="mass_mailing.group_mass_mailing_campaign" action="mass_mailing.action_view_mass_mailing_campaigns"/>
+                <menuitem id="menu_channels_track_utm_campaign" parent="menu_channels_track" sequence="9110" groups="base.group_user" action="utm.utm_campaign_act"/>
+                <menuitem id="menu_channels_track_utm_action" parent="menu_channels_track" sequence="9120" groups="base.group_user" action="utm.utm_medium_action"/>
+                <menuitem id="menu_channels_track_utm" parent="menu_channels_track" sequence="9130" groups="base.group_user" action="utm.utm_source_action"/>
+                <menuitem id="menu_channels_track_linktracker" parent="menu_channels_track" sequence="9200" groups="base.group_user" action="link_tracker.action_link_tracker"/>
         
         <!-- =========== -->
         <!-- FSO PROJECT -->

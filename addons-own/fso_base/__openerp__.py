@@ -97,7 +97,7 @@ TODO (must be done manually right now):
         'cron_run_manually',
         'smile_web_export',
         #'smile_web_search_range', # DISABLED because of JS View errors in Backend
-        #'smile_web_search_timedelta', # DIASBLED BECAUSE OF INSTALL ERRORS
+        #'smile_web_search_timedelta', Disabled because of ParseError: "External ID not found in the system: web.assets_backend" while parsing None:5, near <data inherit_id="web.assets_backend">
         # Default addons-own (not FS-Online specific)
         'mail_follower_control',
         'mail_global_bcc',
