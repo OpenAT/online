@@ -61,7 +61,7 @@ class EmailTemplate(models.Model):
     fso_template_view_id = fields.Many2one(string='Based on',
                                            comodel_name="ir.ui.view", inverse_name="fso_email_template_ids",
                                            domain="[('fso_email_template','=',True)]",
-                                           default=lambda self: self.env.ref('fso_website_email.theme_dadi'),
+                                           #default=lambda self: self.env.ref('fso_website_email.theme_dadi'), # will not work on install :(
                                            )
 
     # Compute final html
