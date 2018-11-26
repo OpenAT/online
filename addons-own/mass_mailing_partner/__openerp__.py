@@ -17,7 +17,8 @@
     "depends": [
         'mass_mailing',
     ],
-    "post_init_hook": "post_init_hook",
+    # DISABLED BY MIKE:
+    #"post_init_hook": "post_init_hook",
     'data': [
         'views/mail_mail_statistics_view.xml',
         'views/mail_mass_mailing_contact_view.xml',

@@ -5,17 +5,19 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from . import base
-from ..hooks import post_init_hook
+# DISABLED BY MIKE:
+#from ..hooks import post_init_hook
 from psycopg2 import IntegrityError
 
 
 class MailMassMailingContactCase(base.BaseCase):
 
-    def test_match_existing_contacts(self):
-        contact = self.create_mailing_contact(
-            {'email': 'partner@test.com', 'list_id': self.mailing_list.id})
-        post_init_hook(self.cr, self.registry)
-        self.assertEqual(contact.partner_id.id, self.partner.id)
+    # DISABLED BY MIKE:
+    # def test_match_existing_contacts(self):
+    #     contact = self.create_mailing_contact(
+    #         {'email': 'partner@test.com', 'list_id': self.mailing_list.id})
+    #     post_init_hook(self.cr, self.registry)
+    #     self.assertEqual(contact.partner_id.id, self.partner.id)
 
     def test_create_mass_mailing_contact(self):
         contact = self.create_mailing_contact(
