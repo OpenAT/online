@@ -50,6 +50,15 @@ def is_valid_email(email):
     :param email: (str) email address in the format "Mike Test <mike@test.com>" or just "mike@test.com"
     :return: (boolean) True or False
     """
+    # If a mako expression is in the e-mail skipp validation
+    if "${" in email:
+        return True
+
+    # If a FRST print field expression is in the e-mail skipp validation
+    frst_print_field_matcher = re.compile("\%.+\%")
+    if bool(frst_print_field_matcher.match(email)):
+        return True
+
     assert isinstance(email, (str, unicode)), _("E-Mail must be a string!")
 
     # TODO: Add MX and DNS Test option (could be done by library "flanker")
