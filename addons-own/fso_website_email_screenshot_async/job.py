@@ -5,7 +5,7 @@ from openerp.addons.connector.event import on_record_create, on_record_write
 from openerp.addons.connector.queue.job import job
 
 
-@job
+@job(retry_pattern={1: 5, 3: 10})
 def render_screenshot(session, template_id):
     # Make sure two jobs don't render the same e-mail template screenshot
     session.cr.execute(
@@ -28,17 +28,13 @@ def queue_job(session, record_id, vals):
     render_screenshot.delay(session, record_id, **kwargs)
 
 
-@on_record_create(model_names='email.template')
-def template_creation(session, model_name, record_id, vals):
-    if any(field in vals for field in
-           ('body_html', 'fso_template_view_id', 'screenshot_pending')):
-        if 'screenshot_pending' not in vals or vals.get('screenshot_pending', False):
-            queue_job(session, record_id, vals)
+# @on_record_create(model_names='email.template')
+# def template_creation(session, model_name, record_id, vals):
+#     if vals.get('screenshot_pending', False):
+#             queue_job(session, record_id, vals)
 
 
 @on_record_write(model_names='email.template')
 def template_write(session, model_name, record_id, vals):
-    if any(field in vals for field in
-           ('body_html', 'fso_template_view_id', 'screenshot_pending')):
-        if 'screenshot_pending' not in vals or vals.get('screenshot_pending', False):
+    if vals.get('screenshot_pending', False):
             queue_job(session, record_id, vals)
