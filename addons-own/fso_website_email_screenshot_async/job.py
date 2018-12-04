@@ -4,12 +4,24 @@
 from openerp.addons.connector.event import on_record_create, on_record_write
 from openerp.addons.connector.queue.job import job
 
+import logging
+logger = logging.getLogger(__name__)
 
 @job(retry_pattern={1: 5, 3: 10})
 def render_screenshot(session, template_id):
+
     # Make sure two jobs don't render the same e-mail template screenshot
-    session.cr.execute(
-        "SELECT id FROM email_template WHERE id = %s FOR UPDATE", (template_id,))
+    try:
+        session.cr.execute(
+            "SELECT id FROM email_template WHERE id = %s FOR UPDATE", (template_id,))
+    except Exception as e:
+        msg = "Could not lock email.template (ID %s) for update! " \
+              "Will rollback and close cursor!" % template_id
+        logger.warning(msg)
+        if session.cr is not None:
+            session.cr.rollback()
+            session.cr.close()
+        raise
 
     # Make sure template still exists
     template = session.env['email.template'].browse(template_id)

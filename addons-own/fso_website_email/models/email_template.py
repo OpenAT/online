@@ -124,9 +124,11 @@ class EmailTemplate(models.Model):
     @api.multi
     def _update_fson_html_fields_and_screenshot_pending(self):
 
-        assert self.ensure_one(), "_update_fson_html_fields_and_screenshot_pending() works only for single records!"
-
         for rec in self:
+
+            # Skipp this for email_template versions
+            if rec.version_of_email_id:
+                continue
 
             # Update fields 'fso_email_html', 'fso_email_html_parsed' and 'screenshot_pending'
             logger.info("Update fields 'fso_email_html', 'fso_email_html_parsed' and 'screenshot_pending' "
@@ -215,7 +217,7 @@ class EmailTemplate(models.Model):
                                   'screenshot': False,
                                   'screenshot_pending': True})
 
-            # Make sure all fields are unset
+            # Make sure all fields are unset if any of the mandatory fields are missing
             else:
                 if any(rec[f] for f in ['fso_email_html', 'fso_email_html_parsed', 'screenshot']):
                     return rec.write({'fso_email_html': False,
@@ -323,6 +325,7 @@ class EmailTemplate(models.Model):
         assert self.ensure_one(), _("E-Mail Template Versions can only be created for a single E-Mail Template")
         r = self
         version_name = version_name or datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        logger.info("Create version of email.template with id %s" % r.id)
         version = r.copy(default={
             'active': False,
             'name': version_name,
@@ -338,8 +341,8 @@ class EmailTemplate(models.Model):
         assert self.ensure_one(), _("E-Mail Template Versions can only be restored for a single E-Mail Template")
         assert not self.version_of_email_id, _("You can not restore a version of a version!")
 
-        # ATTENTION: Non active records are not shown in version_ids therefore it appears empty
-        #assert version_id in self.version_ids.ids, _("Version is not a Version of this E-Mail Template")
+        # ATTENTION: DISABLED because non active records are not shown in version_ids therefore it appears empty
+        # assert version_id in self.version_ids.ids, _("Version is not a Version of this E-Mail Template")
 
         r = self
 
@@ -352,16 +355,20 @@ class EmailTemplate(models.Model):
         data_to_restore = version.copy_data()[0]
 
         # Exclude fields that should not be restored
-        # TODO: ADD the sosync field to the MAGIC_COLUMNS in models.py in fso_sosync so they will not be
-        #       copied by default for all modells !!! :)
+        # HINT: Sosync fields are added to the MAGIC_COLUMNS in fso_sosync so they will not be copied by default.
+        #       Just as a safety measure they are excluded here also.
         data_to_restore = {key: value for (key, value) in data_to_restore.items() if key not in (
             'active', 'name', 'version_of_email_id', 'version_ids',
             'sosync_write_date', 'sosync_sync_date', 'sosync_fs_id')}
 
         # Create a new version from current data first
+        logger.info("Create new version for email.template (ID %s) before restoring data from version with id %s"
+                    "" % (r.id, version_id))
         assert r.create_version(), _("Could not create a version of the email template before restore!")
 
-        # Update email template
+        # Update email template with data from version
+        logger.info("Restore data from email.template version (ID %s) to email.template with id %s"
+                    "" % (version_id, r.id))
         r.sudo().write(data_to_restore)
 
         return True

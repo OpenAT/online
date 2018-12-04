@@ -11,8 +11,17 @@ logger = logging.getLogger(__name__)
 @job(retry_pattern={1: 2, 3: 6, 5: 10})
 def connector_submit_sync_job(session, record_id):
     # Make sure two jobs don't submit the same sync_job
-    session.cr.execute(
-        "SELECT id FROM sosync_job_queue WHERE id = %s FOR UPDATE", (record_id,))
+    try:
+        session.cr.execute(
+            "SELECT id FROM sosync_job_queue WHERE id = %s FOR UPDATE", (record_id,))
+    except Exception as e:
+        msg = "Could not lock sosync.job.queue (ID %s) for submission! " \
+              "Will rollback and close cursor!" % record_id
+        logger.warning(msg)
+        if session.cr is not None:
+            session.cr.rollback()
+            session.cr.close()
+        raise
 
     # Make sure the sync_job still exists
     sync_job = session.env['sosync.job.queue'].browse(record_id)
