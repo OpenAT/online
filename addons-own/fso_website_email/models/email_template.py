@@ -308,42 +308,15 @@ class EmailTemplate(models.Model):
     @api.model
     def create(self, vals):
         res = super(EmailTemplate, self).create(vals)
-
         res._update_fson_html_fields_and_screenshot_pending()
         return res
 
     @api.multi
     def write(self, vals):
         res = super(EmailTemplate, self).write(vals)
-
         if any(f in vals for f in ['fso_email_template', 'fso_template_view_id', 'body_html']):
             self._update_fson_html_fields_and_screenshot_pending()
-
         return res
-
-    # TODO: add immediate sync job generation to fso_sosync (here is the wrong place!)
-    # @api.multi
-    # def write(self, values):
-    #     # ATTENTION: After this 'self' is changed (in memory i guess) 'res' is only a boolean
-    #     res = super(EmailTemplate, self).write(values)
-    #
-    #     # Immediately submit the related sync job for FRST e-mail templates
-    #     for r in self:
-    #         if r.fso_email_template and r.fso_template_view_id and r.body_html:
-    #             try:
-    #                 sync_job = self.env['sosync.job.queue'].sudo().search([
-    #                     ('job_source_system', '=', 'fso'),
-    #                     ('job_source_model', '=', 'email.template'),
-    #                     ('job_source_record_id', '=', r.id),
-    #                     ('submission_state', '=', 'new'),
-    #                 ], limit=1)
-    #                 if sync_job:
-    #                         sync_job.submit_sync_job()
-    #             except Exception as e:
-    #                 logger.error("Immediate sync_job submission failed!\n%s" % repr(e))
-    #                 pass
-    #
-    #     return res
 
     @api.multi
     def create_version(self, version_name=''):
@@ -380,7 +353,7 @@ class EmailTemplate(models.Model):
 
         # Exclude fields that should not be restored
         # TODO: ADD the sosync field to the MAGIC_COLUMNS in models.py in fso_sosync so they will not be
-        #       copied by default :)
+        #       copied by default for all modells !!! :)
         data_to_restore = {key: value for (key, value) in data_to_restore.items() if key not in (
             'active', 'name', 'version_of_email_id', 'version_ids',
             'sosync_write_date', 'sosync_sync_date', 'sosync_fs_id')}

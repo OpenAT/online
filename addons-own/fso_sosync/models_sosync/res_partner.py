@@ -13,7 +13,7 @@ class ResPartnerSosync(models.Model):
     #active = fields.Boolean(sosync="True")         # Record is hidden (will not show up by default in any search)
 
     # RELATED FIELDS
-    #parent_id = fields.Many2one(sosync="True")     # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell für res.partner in FSO
+    #parent_id = fields.Many2one(sosync="True")     # Funktioniert jetzt nicht - eventuel auslassen  SPAETER neues relationsmodell fuer res.partner in FSO
     #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kann es ausgelassen werden.
 
     # NEW:

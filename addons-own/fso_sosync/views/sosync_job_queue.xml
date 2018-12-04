@@ -14,6 +14,7 @@
                 <group string="Job Basics">
                     <field name="id" readonly="True"/>
                     <field name="job_date"/>
+                    <field name="job_priority"/>
                 </group>
                 <group>
                     <group string="Job Source">
@@ -56,6 +57,7 @@
                       green:submission_state in ('submitted',)">
                 <field name="id"/>
                 <field name="job_date"/>
+                <field name="job_priority"/>
                 <field name="submission"/>
                 <field name="submission_error"/>
                 <field name="job_source_system"/>
@@ -74,12 +76,30 @@
         <field name="arch" type="xml">
             <search string="Sosync Job Queue">
                 <field name="job_date"/>
+                <field name="job_priority"/>
+                <field name="submission_state"/>
                 <field name="submission"/>
+                <field name="submission_url"/>
                 <field name="submission_error"/>
                 <field name="job_source_system"/>
                 <field name="job_source_model"/>
                 <field name="job_source_record_id"/>
                 <field name="job_source_type"/>
+                <group string="Group by JobInfo">
+                    <filter string="Job_Date:Day" context="{'group_by':'job_date:day'}"/>
+                    <filter string="Job_Priority" context="{'group_by':'job_priority'}"/>
+                </group>
+                <group string="Group by JobSource">
+                    <filter string="JobSource_Type" context="{'group_by':'job_source_type'}"/>
+                    <filter string="JobSource_Model" context="{'group_by':'job_source_model'}"/>
+                    <filter string="JobSource_sosync_write_date:Day" context="{'group_by':'job_source_sosync_write_date:day'}"/>
+                </group>
+                <group string="Group by Submission">
+                    <filter string="Submission_State" context="{'group_by':'submission_state'}"/>
+                    <filter string="Submission_Date:Day" context="{'group_by':'submission:day'}"/>
+                    <filter string="Submission_Error" context="{'group_by':'submission_error'}"/>
+                    <filter string="Submission_URL" context="{'group_by':'submission_url'}"/>
+                </group>
             </search>
         </field>
     </record>

@@ -21,36 +21,31 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_frst_groups",
-    'summary': """FS-Online Fundrasing Studio Group System implementation""",
+    'name': "FS-Online fso_sosync_async",
+    'summary': """Immediate async sosync_job submission for high priority jobs""",
     'description': """
-FS-Online Fundrasing Studio Group System implementation
 
-TODO: There is some unicode error in addon fso_frst_groups on init - find and fix it!
+FS-Online fso_sosync_async
+==========================
+Submits VERY high priority (>= 1.000.000) sync jobs by connector async queue instead of the cron job.
+
+The cron job is still there and activated for normal priority jobs and as a fallback! 
 
     """,
-    'author': "Datadialog - Michael Karrer, Martin Kaip",
+    'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
     'installable': True,
-    'application': False,
+    'application': True,
     'auto_install': False,
     'depends': [
-        'fso_frst_personemail',
+        'connector',
+        'fso_sosync',
     ],
     'data': [
-        'security/fs_groups_security.xml',
-        'security/ir.model.access.csv',
-        #
-        'views/frst_zgruppe.xml',
-        'views/frst_zgruppedetail.xml',
-        #
-        'views/frst_persongruppe.xml',
-        'views/frst_personemailgruppe.xml',
-        #
-        'views/res_partner.xml',
-        #
-        'data/scheduled_actions.xml',
+
     ],
+    #'post_init_hook': 'post_init_hook',
+    #'uninstall_hook': 'uninstall_hook',
 }

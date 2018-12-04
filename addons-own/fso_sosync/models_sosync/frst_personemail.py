@@ -8,6 +8,6 @@ class FRSTPersonEmailSosync(models.Model):
 
     email = fields.Char(sosync="True")
     gueltig_von = fields.Date(sosync="True")
-    gueltig_bis=fields.Date(sosync="True")
+    gueltig_bis = fields.Date(sosync="True")
     state = fields.Selection(sosync="True")
     main_address = fields.Boolean(sosync="True")

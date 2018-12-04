@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record model="ir.ui.view" id="sosync_res_partner_donation_report_form">
+        <field name="name">sosync_res_partner_donation_report_form</field>
+        <field name="model">res.partner.donation_report</field>
+        <field name="inherit_id" ref="fso_con_zmr.res_partner_donation_report_form"/>
+        <field name="arch" type="xml">
+            <field name="write_uid" position="after">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_write_date"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sosync_res_partner_donation_report_tree">
+        <field name="name">sosync_res_partner_donation_report_tree</field>
+        <field name="model">res.partner.donation_report</field>
+        <field name="inherit_id" ref="fso_con_zmr.res_partner_donation_report_tree"/>
+        <field name="arch" type="xml">
+            <field name="id" position="before">
+                <field name="sosync_fs_id"/>
+                <field name="sosync_sync_date"/>
+            </field>
+        </field>
+    </record>
+    
+    <record model="ir.ui.view" id="sosync_res_partner_donation_report_search">
+        <field name="name">sosync_res_partner_donation_report_search</field>
+        <field name="model">res.partner.donation_report</field>
+        <field name="inherit_id" ref="fso_con_zmr.res_partner_donation_report_search"/>
+        <field name="arch" type="xml">
+            <field name="submission_env" position="before">
+                <field name="id"/>
+                <field name="sosync_fs_id"/>
+            </field>
+        </field>
+    </record>
+    
+</data></openerp>

@@ -21,8 +21,8 @@ class FRSTzGruppeDetail(models.Model):
                                   help="If set this group is available for this instance")
 
     # ATTENTION: gueltig_von und gueltig_bis is NOT IN USE for zGruppeDetail and can be removed in the future
-    gueltig_von = fields.Date("GültigVon", required=True)   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
-    gueltig_bis = fields.Date("GültigBis", required=True)   # Not used
+    gueltig_von = fields.Date("GueltigVon", required=True)   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
+    gueltig_bis = fields.Date("GueltigBis", required=True)   # Not used
 
     # PersonGruppe
     frst_persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='zgruppedetail_id',
