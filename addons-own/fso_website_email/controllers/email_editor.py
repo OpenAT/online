@@ -9,9 +9,6 @@ from openerp.tools.mail import html_sanitize
 import urllib
 from urllib import urlencode
 
-# TODO: Suppress Screenshot generation if only the name changed (since template is always send also!)
-# TODO: Pager to the right
-
 
 class FSOEmailEditor(http.Controller):
 

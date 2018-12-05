@@ -6,15 +6,22 @@
     margin-bottom: 12px;
 }
 
-#email_template .email_template_delete {
+#email_template #email_themes .email_preview_border {
+    height: 260px;
+    box-shadow: 2px 2px 8px rgba(2,2,2,0.3);
+}
+
+/* DELETE BUTTON */
+#email_template .email_preview_border .email_template_delete {
     position: absolute;
     right: 15px;
     z-index: 1900;
+    font-size: 1px;
 }
-
-#email_template .email_template_delete > a {
+#email_template .email_preview_border .email_template_delete > a {
     padding: 2px 3px;
 }
+
 
 /* FORM CONTROLLS */
 #email_template .make_relative {
@@ -68,6 +75,7 @@
     color: #2e6da4;
     color: transparent;
 }
+
 #email_template form:active .submit-button,
 #email_template form:focus-within .submit-button,
 #email_template form:focus .submit-button,
@@ -78,6 +86,7 @@
 #email_template form:hover .submit-button button[type="submit"].btn {
     color: #337ab7;
     background-color: #e6e6e6;
+    border-radius: 30px;
 }
 #email_template form:active .submit-button,
 #email_template form:focus-within .submit-button,
@@ -86,7 +95,8 @@
     box-shadow: #c6c6c6 1px 1px 4px;
 }
 
-/* theme selection input */
+
+/* E-Mail Template Form-Inputs */
 #email_template form.email_template_inputs {
     margin-bottom: 0.2em;
 }
@@ -114,7 +124,8 @@
     margin-bottom: 3em;
 }
 
-#email_template .email_template_screenshot {
+#email_template .email_template_screenshot,
+#email_template .email_template_view_screenshot {
     width: 100%;
 }
 
@@ -134,3 +145,77 @@
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
+
+/* ANIMATIONS */
+
+#email_template #email_themes .email_preview_border,
+#email_template .email_preview_border {
+    -webkit-transition: box-shadow 300ms;/* Safari */
+    transition: box-shadow 300ms;
+}
+#email_template #email_themes .email_preview_border:hover,
+#email_template .email_preview_border:hover {
+    box-shadow: 2px 2px 10px rgba(2,2,2,0.32);
+}
+
+#email_template .email_template_screenshot,
+#email_template .email_template_view_screenshot {
+    min-width: 100%;
+    -webkit-transition: min-width 300ms;/* Safari */
+    transition: min-width 300ms;
+}
+#email_template .email_template_screenshot:hover,
+#email_template .email_template_view_screenshot:hover {
+    min-width: 101%;
+}
+
+#email_template .email_preview_border .email_template_delete {
+    -webkit-transition: font-size 160ms;/* Safari */
+    transition: font-size 160ms;
+    /*transition-delay: 140ms;*/
+}
+#email_template .email_preview_border:hover .email_template_delete {
+    font-size: 14px;
+}
+
+
+/* GLYPHICON FUNCTION ICONS */
+#email_template .email_template_box {
+    margin-bottom: 1.5em;
+}
+#email_template .email_template_functions {
+    display: none;
+}
+#email_template .email_preview_border .email_template_functions_icons {
+    position: absolute;
+    margin: auto;
+    right: 0;
+    left: 0;
+    top: 88px;
+    z-index: -1900;
+    font-size: 14px;
+}
+#email_template .email_preview_border:hover .email_template_functions_icons {
+    z-index: 1900;
+}
+#email_template .email_preview_border .email_template_functions_icons .btn-sm {
+    padding: 0;
+    font-size: 0;
+    box-shadow: 1px 1px 3px rgba(2,2,2,0.2);
+    -webkit-transition: padding 160ms, font-size 160ms;/* Safari */
+    transition: padding 160ms, font-size 160ms;
+}
+#email_template .email_preview_border:hover .email_template_functions_icons .btn-sm {
+    padding: 5px 10px;
+    font-size: 22px;
+    line-height: 1.5;
+    border-radius: 3px;
+    border-radius: 30px;
+    box-shadow: 1px 1px 3px rgba(2,2,2,0.2);
+}
+
+
+/* Submit Button v2 */
+
+

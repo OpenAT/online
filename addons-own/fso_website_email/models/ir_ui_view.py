@@ -10,3 +10,5 @@ class ViewEmailTemplate(models.Model):
                                         help="Mark this view as a theme for a FS-Online e-mail template")
     fso_email_template_ids = fields.One2many(string='Used in E-Mail Templates',
                                              comodel_name="email.template", inverse_name="fso_template_view_id",)
+
+    fso_email_screenshot = fields.Binary(string="FSON E-Mail-Theme Screenshot", translate=False)
