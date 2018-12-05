@@ -42,9 +42,9 @@
     background: none;
     box-shadow: none;
     -moz-box-shadow: none;
-    font-size: 13px;
+    font-size: 11px;
     height: 2em;
-    font-weight: bold;
+    /*font-weight: bold;*/
     text-align: center;
 }
 
@@ -57,14 +57,14 @@
     background: none;
     box-shadow: none;
     -moz-box-shadow: none;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
     text-align: center;
 }
 #email_template .submit-button {
     position: absolute;
-    bottom: 6px;
-    right: -20px;
+    bottom: 56px;
+    right: -24px;
     z-index: 50;
     background-color: #e8e8e8;
     background-color: transparent;
@@ -84,8 +84,10 @@
 #email_template form:focus-within .submit-button button[type="submit"].btn,
 #email_template form:focus .submit-button button[type="submit"].btn,
 #email_template form:hover .submit-button button[type="submit"].btn {
-    color: #337ab7;
-    background-color: #e6e6e6;
+    /*color: #337ab7;*/
+    /*background-color: #e6e6e6;*/
+    color: #ffffff;
+    background-color: #418bca;
     border-radius: 30px;
 }
 #email_template form:active .submit-button,
@@ -182,7 +184,7 @@
 
 /* GLYPHICON FUNCTION ICONS */
 #email_template .email_template_box {
-    margin-bottom: 1.5em;
+    margin-bottom: 1.25em;
 }
 #email_template .email_template_functions {
     display: none;
@@ -215,6 +217,12 @@
     box-shadow: 1px 1px 3px rgba(2,2,2,0.2);
 }
 
+#email_template .email_template_name textarea.form-control  {
+    overflow: hidden;
+    resize: none;
+    min-height: 4em;
+    margin-top: 0.75em;
+    padding: 0 12px;
+}
 
 /* TODO: Submit Button v2 */
-

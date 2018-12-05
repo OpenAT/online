@@ -114,16 +114,19 @@
                                     </a>
                                 </div>
                                 
-                                <t t-if="template.screenshot">
-                                    <a class="email_preview_border_link" t-att-href="'/fso/email/edit?template_id='+str(template.id)">
+                                <a class="email_preview_border_link" t-att-href="'/fso/email/edit?template_id='+str(template.id)">
+                                    <t t-if="template.screenshot">
                                         <span t-field="template.screenshot"
                                               t-field-options='{"widget": "image", "class": "media-object email_template_screenshot"}'/>
-                                    </a>
-                                </t>
-                                <t t-if="not template.screenshot">
-                                    <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
-                                </t>
-                                
+                                    </t>
+                                    <t t-if="not template.screenshot">
+                                        <!--<div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>-->
+                                        <span>
+                                            <img class="img img-responsive media-object email_template_screenshot"
+                                                 src="/fso_website_email/static/src/images/screenshot_in_progress.png"/>
+                                        </span>
+                                    </t>
+                                </a>
                                 
                                 <div class="email_template_functions_icons">
                                     <a class="btn btn-sm btn-primary"
@@ -136,7 +139,7 @@
                                     </a>
                                     <a class="btn btn-sm btn-warning"
                                        t-att-href="'/fso/email/preview?template_id='+str(template.id)" target="_blank">
-                                        <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"/>
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"/>
                                     </a>
                                 </div>
                                 
@@ -168,12 +171,16 @@
                                 <!-- Set Name -->
                                 <div class="form-group email_template_name">
                                     <div class="input-group">
-                                        <input type="text" class="form-control"
-                                               name="name"
-                                               required="true"
-                                               placeholder="E-Mail-Template Name"
-                                               t-att-value="template.name"/>
-
+                                        <!--<input type="text" class="form-control"-->
+                                               <!--name="name"-->
+                                               <!--required="true"-->
+                                               <!--placeholder="E-Mail-Template Name"-->
+                                               <!--t-att-value="template.name"/>-->
+                                        <textarea rows="2"
+                                                  class="form-control "
+                                                  name="name"
+                                                  required="true"
+                                                  placeholder="E-Mail-Template Name"><t t-esc="template.name"/></textarea>
                                     </div>
                                 </div>
                                 <!-- Submit Button -->
@@ -219,7 +226,10 @@
                                           t-field-options='{"widget": "image", "class": "media-object email_template_view_screenshot"}'/>
                                 </t>
                                 <t t-if="not template_view.fso_email_screenshot">
-                                    <div t-esc="template_view.arch" class="email_preview js_content"/>
+                                    <span>
+                                        <img class="img img-responsive media-object email_template_view_screenshot"
+                                             src="/fso_website_email/static/src/images/screenshot_missing.png"/>
+                                    </span>
                                 </t>
                             </div>
                             
