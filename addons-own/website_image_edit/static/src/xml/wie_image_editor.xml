@@ -9,8 +9,15 @@
     <t t-name="wie_image_modal">
         <div id="imageModal" class="figure-wrapper imgModal">
             <figure class="image-container target">
-                <span class="closeEdit">Exit</span>
+                <span id="close_Edit" class="closeEdit">Exit</span>
                 <img t-att-src="image.website_url" t-att-id="image.id" class="imgToEdit"/>
+
+                 <div id="crop_Input" class="cropInput hidden">
+                     x: <input type="number" id="cropX" min="0"></input><br/>
+                     y: <input type="number" id="cropY" min="0"></input><br/>
+                     Breite: <input type="number" id="cropWidth" min="0"></input><br/>
+                     Höhe: <input type="number" id="cropHeight" min="0"></input><br/>
+                 </div>
 
                 <div class="form-darkroom ">
                     <button type="button" id="save_Edit" class="btn btn-primary saveEdit" t-att-data-id="image.id">Save</button>

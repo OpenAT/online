@@ -45,5 +45,6 @@ Upload images with odoo imagedialog
         'views/website_forum_imagedialog.xml',
     ],
     'qweb': [
+        'static/src/xml/wfi_imagedialog.xml',
     ],
 }

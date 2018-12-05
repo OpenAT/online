@@ -348,6 +348,31 @@ Darkroom.prototype = {
       this.plugins[name] = new plugin(this, options);
     }
   },
+
+  //-------------------------------------------------------------------------------------
+  // Deactivate other Buttons while crop is active
+  cropActive: function(status) {
+    if (status)
+    {
+      $(".darkroom-button-group").first().addClass("disabled");
+      $(".darkroom-button-group:nth-Child(3)").addClass("disabled");
+      $(".darkroom-button-group:nth-Child(4)").addClass("disabled");
+      $(".darkroom-button-group:nth-Child(5)").addClass("disabled");
+      $(".darkroom-button-group:nth-Child(6)").addClass("disabled");
+      $(".saveEdit").addClass("disabled");
+      $(".cropInput").removeClass("hidden");
+    }
+    else
+    {
+      $(".darkroom-button-group").first().removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(3)").removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(4)").removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(5)").removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(6)").removeClass("disabled");
+      $(".saveEdit").removeClass("disabled");
+      $(".cropInput").addClass("hidden");
+    }
+  }
 }
 
 })();
