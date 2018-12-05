@@ -49,6 +49,7 @@
             <xpath expr="//field[@name='priority']" position="after">
                 <field name="fso_email_template"/>
                 <field name="fso_email_template_ids"  widget="many2many_tags"/>
+                <field name="fso_email_screenshot" widget="image"/>
             </xpath>
         </field>
     </record>

@@ -102,3 +102,7 @@
 	path = addons-thirdparty/oca/connector
 	url = https://github.com/OCA/connector.git
 	branch = 8.0
+[submodule "addons-thirdparty/oca/crm"]
+	path = addons-thirdparty/oca/crm
+	url = https://github.com/OCA/crm.git
+	branch = 8.0

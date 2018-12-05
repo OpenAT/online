@@ -17,8 +17,8 @@
                                 <field name="task_id"/>
                             </group>
                             <group>
-                                <field name="is_worklog"/>
-                                <field name="is_attendance"/>
+                                <field name="is_worklog" string="Is Worklog"/>
+                                <field name="is_attendance" string="Is Attendance"/>
                             </group>
                         </group>
                     </div>

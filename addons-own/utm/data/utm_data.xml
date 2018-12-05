@@ -15,6 +15,9 @@
         <record model="utm.campaign" id="utm_campaign_email_campaign_products">
             <field name="name">Email Campaign - Products</field>
         </record>
+        <record model="utm.campaign" id="utm_campaign_default">
+            <field name="name">Email Campaign - Default</field>
+        </record>
 
         <!-- UTM Source -->
         <record model="utm.source" id="utm_source_search_engine">

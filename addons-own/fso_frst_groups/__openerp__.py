@@ -26,6 +26,8 @@
     'description': """
 FS-Online Fundrasing Studio Group System implementation
 
+TODO: There is some unicode error in addon fso_frst_groups on init - find and fix it!
+
     """,
     'author': "Datadialog - Michael Karrer, Martin Kaip",
     'website': "http://www.datadialog.net/",

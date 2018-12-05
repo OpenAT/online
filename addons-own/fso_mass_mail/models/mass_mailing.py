@@ -4,7 +4,16 @@ from openerp import api, models, fields
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
+import logging
+logger = logging.getLogger(__name__)
+
 import urllib
+
+try:
+    from bs4 import BeautifulSoup
+except:
+    logger.error("Could not import BeautifulSoup! Link rewrites in fso_mass_mail may not work!")
+    pass
 
 
 class MassMailingCampaign(models.Model):
@@ -13,11 +22,13 @@ class MassMailingCampaign(models.Model):
     _inherits = {'utm.campaign': 'campaign_id'}
     _rec_name = "campaign_id"
 
+    # Link an utm campaign to this mass_mailing.campaign
     campaign_id = fields.Many2one('utm.campaign', 'campaign_id',
                                   required=True,
                                   ondelete='cascade',
                                   help="This name helps you tracking your different campaign efforts, "
-                                       "e.g. Fall_Drive, Christmas_Special")
+                                       "e.g. Fall_Drive, Christmas_Special",
+                                  default=lambda self: self.env.ref('utm.utm_campaign_default'))
     source_id = fields.Many2one('utm.source', string='Source',
                                 help="This is the link source, e.g. Search Engine, another domain,or name of email list",
                                 default=lambda self: self.env.ref('utm.utm_source_newsletter'))
@@ -61,7 +72,10 @@ class MassMailing(models.Model):
     # utm and link_tracker integration
     campaign_id = fields.Many2one('utm.campaign', string='Campaign',
                                   help="This name helps you tracking your different campaign efforts, e.g. Fall_Drive, Christmas_Special")
-    source_id = fields.Many2one('utm.source', string='Subject', required=True, ondelete='cascade',
+    source_id = fields.Many2one('utm.source', string='Subject',
+                                required=True,
+                                ondelete='cascade',
+                                default=lambda self: self.env.ref('utm.utm_source_newsletter'),
                                 help="This is the link source, e.g. Search Engine, another domain, or name of email list")
     medium_id = fields.Many2one('utm.medium', string='Medium',
                                 help="This is the delivery method, e.g. Postcard, Email, or Banner Ad", default=lambda self: self.env.ref('utm.utm_medium_email'))
@@ -172,7 +186,21 @@ class MassMailing(models.Model):
             if utm_mixin.medium_id:
                 vals['medium_id'] = utm_mixin.medium_id.id
 
-            res[mass_mailing.id] = self.env['link.tracker'].convert_links(html, vals, blacklist=['/unsubscribe_from_list'])
+            # Make sure the unsubscribe link is not tracked
+            blacklist = ['/unsubscribe_from_list']
+
+            # TODO: Make links unique (so we can get different tracking links even if links have same href)
+
+            # Blacklist all links with class "link-donottrack"
+            html_soup = BeautifulSoup(html, "lxml")
+            anchors = html_soup.find_all('a')
+            for a in anchors:
+                # Skipp rewrite to tracking link if 'dadi_notrack' class is set
+                if 'link-donottrack' in a.get('class', ''):
+                    blacklist.append(a.get('href', '').strip())
+
+            # Create tracking links and replace hrefs
+            res[mass_mailing.id] = self.env['link.tracker'].convert_links(html, vals, blacklist=blacklist)
 
         return res
 

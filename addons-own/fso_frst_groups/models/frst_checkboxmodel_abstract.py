@@ -23,7 +23,7 @@ class FRSTCheckboxModel(models.AbstractModel):
 
     # List of all One2many fields pointing to bridge models
     # HINT: MUST BE DEFINED IN THE CHECKBOX MODEL!
-    _bridge_model_fields = ()
+    _bridge_model_fields = tuple()
 
     # --------------
     # CHECKBOX MODEL

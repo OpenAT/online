@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-20 09:26+0000\n"
-"PO-Revision-Date: 2016-02-20 09:26+0000\n"
+"POT-Creation-Date: 2018-11-13 12:48+0000\n"
+"PO-Revision-Date: 2018-11-13 12:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -41,8 +41,14 @@ msgstr "<p class=\"oe_view_nocontent_create\">\n"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Abw."
 msgstr "Abw."
+
+#. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Abwesenheit/Feiertage:"
+msgstr "Abwesenheit/Feiertage:"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
@@ -50,20 +56,21 @@ msgid "Abwesenheit:"
 msgstr "Abwesenheit:"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:663
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:668
 #, python-format
 msgid "Abwesenheitstyp: '%s' ist nicht konfiguriert!"
 msgstr "Abwesenheitstyp: '%s' ist nicht konfiguriert!"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:52
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:60
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:54
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:62
 #, python-format
 msgid "Achtung!"
 msgstr "Achtung!"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Aktueller Monat:"
 msgstr "Aktueller Monat:"
 
@@ -74,46 +81,54 @@ msgstr "Aktuelles Jahr"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Anw."
-msgstr "Anw."
+msgstr "Arbz."
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Anwesenheit pro Tag"
-msgstr "Anwesenheit pro Tag"
+msgstr "Arbeitszeit pro Tag"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
 msgid "Anwesenheit:"
-msgstr "Anwesenheit:"
+msgstr "Arbeitszeit:"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:577
+#: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
+msgid "Approved vacation days:"
+msgstr "Summe genehmigter Urlaubszuschreibungen:"
+
+#. module: cam_hr_overtime
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:580
 #, python-format
 msgid "Arbeitszeiten ändern"
-msgstr "Arbeitszeiten ändern"
+msgstr "Arbeitszeit ändern"
 
 #. module: cam_hr_overtime
 #: field:hr_timesheet_sheet.sheet,total_attendance2:0
 #: field:hr_timesheet_sheet.sheet.day_detail,attendance:0
 #: model:ir.model,name:cam_hr_overtime.model_hr_attendance
 msgid "Attendance"
-msgstr "Anwesenheitszeit"
+msgstr "Arbeitszeit"
 
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
 msgid "Attendance Summary"
-msgstr "Kommt/Geht Zusammenfassung"
+msgstr "Arbeitszeit"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Berechnete Anwesenheit:"
-msgstr "Berechnete Anwesenheit:"
+msgstr "Berechnete Arbeitszeit:"
 
 #. module: cam_hr_overtime
 #: help:overtime.correction,timesheet_id:0
 msgid "Bitte beachten Sie, dass das Timesheet im status 'Entwurf' sein muss!"
-msgstr "Bitte beachten Sie, dass das Timesheet im status 'Entwurf' sein muss!"
+msgstr "Bitte beachten Sie, dass der Stundenzettel im status 'Entwurf' sein muss!"
 
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet.day:cam_hr_overtime.cam_hr_overtime_timesheet_difference
@@ -129,26 +144,26 @@ msgstr "Button"
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
 msgid "Calculated Attendance"
-msgstr "Berechnete Anwesenheit"
+msgstr "Berechnete Arbeitszeit"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:712
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:729
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:717
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:734
 #, python-format
 msgid "Cannot approve leave if the related timesheet(s) are not in state 'draft'"
-msgstr "Das zugehörige Timesheet muss sich im Status 'Entwurf' befinden."
+msgstr "Der zugehörige Stundenzettel muss sich im Status 'Entwurf' befinden."
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:365
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:367
 #, python-format
 msgid "Cannot confirm Timesheet!"
-msgstr "Kann Timesheet nicht bestätigen!"
+msgstr "Kann Stundenzettel nicht bestätigen!"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:746
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:751
 #, python-format
 msgid "Cannot refuse leave if the related timesheet(s) are not in state 'draft'"
-msgstr "Eintrag kann nicht abgelehnt werden, da sich das entsprechende Timesheet nicht im Status 'Entwurf' befindet"
+msgstr "Eintrag kann nicht abgelehnt werden, da sich der entsprechende Stundenzettel nicht im Status 'Entwurf' befindet"
 
 #. module: cam_hr_overtime
 #: field:hr.holidays.status,code:0
@@ -183,7 +198,7 @@ msgstr "Angelegt am"
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
 msgid "Current Month:"
-msgstr "Aktueller Monat:"
+msgstr "Nur aktueller Monat:"
 
 #. module: cam_hr_overtime
 #: field:hr_timesheet_sheet.sheet.day_detail,name:0
@@ -206,7 +221,7 @@ msgid "Default Overtime"
 msgstr "Standard Mehrstunden"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:382
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:384
 #, python-format
 msgid "Default Overtime from Employee Contract"
 msgstr "Standard Mehrstunden vom Mitarbeiter Vertrag"
@@ -220,7 +235,7 @@ msgstr "Beschreibung"
 #. module: cam_hr_overtime
 #: help:overtime.correction,name:0
 msgid "Diese Beschreibung wird auf dem Timesheet angedruckt!"
-msgstr "Diese Beschreibung wird auf dem Timesheet angedruckt!"
+msgstr "Diese Beschreibung wird auf dem Stundenzettel angedruckt!"
 
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
@@ -229,8 +244,18 @@ msgstr "Differenzen"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Differenz:"
 msgstr "Differenz:"
+
+#. module: cam_hr_overtime
+#: field:hr_employee.timesheet.report,display_name:0
+#: field:hr_timesheet_sheet.sheet.day_detail,display_name:0
+#: field:hr_timesheet_sheet.sheet.project_hours,display_name:0
+#: field:overtime.correction,display_name:0
+#: field:res.company,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
 
 #. module: cam_hr_overtime
 #: field:hr.holidays,effective_date:0
@@ -250,7 +275,7 @@ msgid "Employee Timesheet Report"
 msgstr "Mitarbeiter Mehrstunden und Urlaub Auswertung"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:323
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:325
 #, python-format
 msgid "Error"
 msgstr "Fehler"
@@ -272,6 +297,7 @@ msgstr "Markierung"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Gepl."
 msgstr "Gepl."
 
@@ -327,9 +353,9 @@ msgid "Illness"
 msgstr "Krankenstand"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:712
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:729
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:746
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:717
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:734
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:751
 #, python-format
 msgid "Invalid action !"
 msgstr "Ungültige Aktion!"
@@ -343,22 +369,25 @@ msgstr "Jahr"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "K/G"
 msgstr "K/G"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Kommt/Geht:"
-msgstr "Kommt/Geht:"
+msgstr "Arbeitszeit:"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:663
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:668
 #, python-format
 msgid "Konfigurationsfehler"
 msgstr "Konfigurationsfehler"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Krank."
 msgstr "Krank."
 
@@ -369,18 +398,28 @@ msgstr "Krankenstand"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Krankenstand:"
 msgstr "Krankenstand:"
 
 #. module: cam_hr_overtime
+#: field:hr_employee.timesheet.report,__last_update:0
+#: field:hr_timesheet_sheet.sheet.day_detail,__last_update:0
+#: field:hr_timesheet_sheet.sheet.project_hours,__last_update:0
+#: field:overtime.correction,__last_update:0
+#: field:res.company,__last_update:0
+msgid "Last Modified on"
+msgstr "Geändert am"
+
+#. module: cam_hr_overtime
 #: field:overtime.correction,write_uid:0
 msgid "Last Updated by"
-msgstr "Zuletzt aktualisiert von"
+msgstr "Geändert von"
 
 #. module: cam_hr_overtime
 #: field:overtime.correction,write_date:0
 msgid "Last Updated on"
-msgstr "Zuletzt aktualisiert am"
+msgstr "Geändert am"
 
 #. module: cam_hr_overtime
 #: model:ir.model,name:cam_hr_overtime.model_hr_holidays
@@ -390,7 +429,7 @@ msgstr "Urlaub"
 #. module: cam_hr_overtime
 #: field:hr.holidays,leave_code:0
 msgid "Leave Code"
-msgstr "Leave Code"
+msgstr "Abwesenheits-Code"
 
 #. module: cam_hr_overtime
 #: model:ir.model,name:cam_hr_overtime.model_hr_holidays_status
@@ -490,7 +529,12 @@ msgstr "Urlaub"
 #. module: cam_hr_overtime
 #: field:hr_timesheet_sheet.sheet.day_detail,real_planned:0
 msgid "Planned"
-msgstr "Planned"
+msgstr "Geplant"
+
+#. module: cam_hr_overtime
+#: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
+msgid "Planned Attendance this Month"
+msgstr "Geplante Arbeitszeit ges. Monat"
 
 #. module: cam_hr_overtime
 #: field:hr_timesheet_sheet.sheet,total_planned:0
@@ -499,16 +543,16 @@ msgid "Planned Hours"
 msgstr "Geplante Stunden"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:148
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:150
 #, python-format
 msgid "Please compute/print your Timesheet again!"
 msgstr "Bitte berechnen/drucken Sie das Timesheet erneut aus!"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:323
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:325
 #, python-format
 msgid "Please specify a 'Lunch Duration' in the company configuration!"
-msgstr "Bitte Länge der  'Mittagspause' konfigurieren."
+msgstr "Bitte Länge der 'Mittagspause' konfigurieren."
 
 #. module: cam_hr_overtime
 #: field:hr_timesheet_sheet.sheet.project_hours,account_id:0
@@ -532,6 +576,7 @@ msgstr "Projektstundenn pro Periode"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Projekterfassung:"
 msgstr "Projekterfassung:"
 
@@ -539,6 +584,11 @@ msgstr "Projekterfassung:"
 #: model:ir.model,name:cam_hr_overtime.model_resource_calendar
 msgid "Resource Calendar"
 msgstr "Ressourcen Kalender"
+
+#. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Resturlaub abz. gen. Urlaub:"
+msgstr "Resturlaub abz. gen. Urlaub:"
 
 #. module: cam_hr_overtime
 #: view:overtime.correction:cam_hr_overtime.cam_hr_overtime_correction_search
@@ -549,23 +599,23 @@ msgstr "Suche Mehrstundenkorrekturen"
 #: field:hr_timesheet_sheet.sheet.day_detail,sheet_id:0
 #: field:hr_timesheet_sheet.sheet.project_hours,sheet_id:0
 msgid "Sheet"
-msgstr "Sheet"
+msgstr "Blatt"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:601
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:604
 #, python-format
 msgid "Sie können den Vertrag nicht ändern. Legen Sie einen neuen Vertrag für diesen Mitarbeiter an oder setzen Sie die Zeiterfassung auf 'Entwurf' zurück."
 msgstr "Sie können den Vertrag nicht ändern. Legen Sie einen neuen Vertrag für diesen Mitarbeiter an oder setzen Sie die Zeiterfassung auf 'Entwurf' zurück."
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:577
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:580
 #, python-format
 msgid "Sie können die Arbeitszeiten nicht ändern, da es schon eine Zeiterfassung gibt, die sich im Status 'bestätigt' oder 'erledigt' befindet."
 msgstr "Sie können die Arbeitszeiten nicht ändern, da es schon eine Zeiterfassung gibt, die sich im Status 'bestätigt' oder 'erledigt' befindet."
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:52
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:60
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:54
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:62
 #, python-format
 msgid "Sie können keine Überstundenkorrektur auf ein bereits genehmigtes timesheet durchführen. Setzen Sie das Timesheet auf \"Entwurf\" und versuchen Sie es nochmal."
 msgstr "Sie können keine Mehrstundenkorrektur auf ein bereits genehmigtes timesheet durchführen. Setzen Sie das Timesheet auf \"Entwurf\" und versuchen Sie es nochmal."
@@ -591,7 +641,13 @@ msgid "State changed"
 msgstr "Status geändert"
 
 #. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Status.:"
+msgstr "Status.:"
+
+#. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Stundenkorrektur:"
 msgstr "Stundenkorrektur:"
 
@@ -599,7 +655,7 @@ msgstr "Stundenkorrektur:"
 #: field:hr_timesheet_sheet.sheet,sum_attendance:0
 #: view:hr_timesheet_sheet.sheet.day:cam_hr_overtime.cam_hr_overtime_timesheet_difference
 msgid "Sum Attendance"
-msgstr "Gesamte Anwesenheitszeit"
+msgstr "Gesamte Arbeitszeit"
 
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet.day:cam_hr_overtime.cam_hr_overtime_timesheet_difference
@@ -651,20 +707,32 @@ msgstr "Zusammenfassung"
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
 msgid "Summary Approved Timesheets:"
-msgstr "Summe bestätigter Zeiterfassungen:"
+msgstr "Summen der bisherigen bestätigten Stundenzettel:"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
 msgid "Summe Anwesenheit:"
-msgstr "Summe Anwesenheit:"
+msgstr "Summe Arbeitszeit:"
+
+#. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Summe Mehrstunden:"
+msgstr "Summe Mehrstunden:"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Summe bisheriger Zeiterfassungen:"
-msgstr "Summe bisheriger Zeiterfassungen:"
+msgstr "Summe bisheriger Stundenzettel:"
+
+#. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Summe Überstunden:"
+msgstr "Summe Überstunden:"
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Tag"
 msgstr "Tag"
 
@@ -674,14 +742,24 @@ msgid "Terminal"
 msgstr "Terminal"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:365
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:367
 #, python-format
 msgid "The difference per day exceeds the maximum of %s minutes for the timesheet: \"%s\".\n"
 "Please correct the following days:: \n"
 " %s"
-msgstr "Die Buchungsdifferenz (maximal: %s) pro Tag für das Timesheet \"%s\" ist zu hoch.\n"
+msgstr "Die Buchungsdifferenz (maximal: %s) pro Tag für den Stundenzettel \"%s\" ist zu hoch.\n"
 "Bitte folgende Tage korrigieren:: \n"
 "%s"
+
+#. module: cam_hr_overtime
+#: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
+msgid "These totals do NOT include the current month!"
+msgstr "Achtung: Enthällt nicht die Summen des aktuellen Monats!"
+
+#. module: cam_hr_overtime
+#: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
+msgid "These totals only include the current month!"
+msgstr "Achtung: Enthällt nur die Summen des aktuellen Monats!"
 
 #. module: cam_hr_overtime
 #: help:overtime.correction,value_hours:0
@@ -709,15 +787,20 @@ msgstr "Gewährter Bonus in Minuten beim SignIn/SignOut"
 #: model:ir.model,name:cam_hr_overtime.model_hr_timesheet_sheet_sheet
 #: field:overtime.correction,timesheet_id:0
 msgid "Timesheet"
-msgstr "Zeiterfassung"
+msgstr "Stundenzettel"
 
 #. module: cam_hr_overtime
 #: model:ir.actions.report.xml,name:cam_hr_overtime.hr_timesheet_report
 msgid "Timesheet Report"
-msgstr "Zeiterfassungs Report"
+msgstr "Zeiterfassungs-Report"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:148
+#: model:ir.actions.report.xml,name:cam_hr_overtime.report_overtime_qweb_neu
+msgid "Timesheet Report PDF"
+msgstr "Zeiterfassungs-Report-PDF"
+
+#. module: cam_hr_overtime
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:150
 #, python-format
 msgid "Timesheet not up to date"
 msgstr "Zeiterfassung ist nicht aktuell"
@@ -731,7 +814,7 @@ msgstr "Zeiterfassungsauswertung pro Mitarbeiter"
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
 #: view:hr_timesheet_sheet.sheet.day_detail:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_summary
 msgid "Total Attendance"
-msgstr "Gesamte Anwesenheitszeit"
+msgstr "Gesamte Arbeitszeit"
 
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
@@ -750,7 +833,7 @@ msgstr "Gesamt Andere"
 #: field:hr_timesheet_sheet.sheet,total_overtime_and_correction:0
 #: view:hr_timesheet_sheet.sheet.day_detail:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_summary
 msgid "Total Overtime"
-msgstr "Gesamte Mehrstunden"
+msgstr "Gesamte Arbeitszeit"
 
 #. module: cam_hr_overtime
 #: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
@@ -770,30 +853,42 @@ msgstr "Offener Urlaub"
 #: help:hr_timesheet_sheet.sheet,sum_others:0
 #: help:hr_timesheet_sheet.sheet,sum_planned:0
 msgid "Total illness in hours of all previous timesheets in state 'done'"
-msgstr "Gesamtstunden Krankenstand aller vorhergehenden genehmigten Timesheets."
+msgstr "Gesamtstunden Krankenstand aller vorhergehenden genehmigten Stundenzettel."
 
 #. module: cam_hr_overtime
 #: help:hr_timesheet_sheet.sheet,sum_overtime:0
 msgid "Total overtime in hours of all previous timesheets in state 'done'"
-msgstr "Offene Mehrstunden in Stunden aller vorhergehenden genehmigten Timesheets"
+msgstr "Offene Mehrstunden in Stunden aller vorhergehenden genehmigten Stundenzettel"
 
 #. module: cam_hr_overtime
 #: help:hr_timesheet_sheet.sheet,sum_vacation_days:0
 msgid "Total vacation in days of all previous timesheets in state 'done'"
-msgstr "Gesamter Urlaub (in Tagen) aller vorhergehenden genehmigten Timesheets."
+msgstr "Gesamter Urlaub (in Tagen) aller vorhergehenden genehmigten Stundenzettel."
 
 #. module: cam_hr_overtime
 #: help:hr_timesheet_sheet.sheet,sum_vacation:0
 msgid "Total vacation in hours of all previous timesheets in state 'done'"
-msgstr "Gesamter Urlaub aller vorhergehenden genehmigten Timesheets."
+msgstr "Gesamter Urlaub aller vorhergehenden genehmigten Stundenzettel."
 
 #. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Urlaub"
 msgstr "Urlaub"
 
 #. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Urlaub (h):"
+msgstr "Urlaub (h):"
+
+#. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Urlaub aktuell:"
+msgstr "Urlaub aktuell:"
+
+#. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "Urlaub in Tagen:"
 msgstr "Urlaub in Tagen:"
 
@@ -825,10 +920,20 @@ msgid "Vacation in days"
 msgstr "Urlaub in Tagen"
 
 #. module: cam_hr_overtime
-#: code:addons/cam_hr_overtime/cam_hr_overtime.py:601
+#: code:addons/cam_hr_overtime/cam_hr_overtime.py:604
 #, python-format
 msgid "Vertrag ändern"
 msgstr "Vertrag ändern"
+
+#. module: cam_hr_overtime
+#: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
+msgid "Worklog"
+msgstr "Projektzeit"
+
+#. module: cam_hr_overtime
+#: view:hr_timesheet_sheet.sheet:cam_hr_overtime.cam_hr_overtime_timesheet_sheet_form
+msgid "Worklog Entries"
+msgstr "Projektzeiteinträge"
 
 #. module: cam_hr_overtime
 #: constraint:hr.contract:0
@@ -841,7 +946,13 @@ msgid "Zeiterfassung,"
 msgstr "Zeiterfassung,"
 
 #. module: cam_hr_overtime
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
+msgid "Zeiterfassung.:"
+msgstr "Zeiterfassung.:"
+
+#. module: cam_hr_overtime
 #: view:website:cam_hr_overtime.hr_timesheet_qweb_report
+#: view:website:cam_hr_overtime.report_overtime_qweb_document
 msgid "bis"
 msgstr "bis"
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <!-- Open E-Mail template selection in iframe -->
+    <record id="action_fso_email_select_iframe" model="ir.actions.client">
+        <field name="name">Open E-Mail template selection in iframe</field>
+        
+        <!-- TODO: Check why this field is unknown! see log for info -->
+        <field name="model_id" ref="model_mail_mass_mailing"/>
+        
+        <field name="tag">web_iframe.iframe</field>
+        <field name="params" eval="{'link': '/fso/email/select'}"/>
+    </record>
+
+</data>
+</openerp>

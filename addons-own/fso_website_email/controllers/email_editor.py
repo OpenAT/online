@@ -23,29 +23,57 @@ class FSOEmailEditor(http.Controller):
         return request.website._render(snippets_template)
 
     # SELECTION PAGE FOR THEMES AND TEMPLATES
-    @http.route('/fso/email/select', type='http', auth="user", website=True)
-    def email_select(self, **kw):
+    @http.route(['/fso/email/select',
+                 '/fso/email/select/page/<int:page>'],
+                type='http', auth="user", website=True)
+    def email_select(self, page=0, **kw):
         """ Overview of email templates to create, edit or copy email templates"""
 
-        # Get E-Mail QWEB Template Views
-        template_views = request.env['ir.ui.view'].sudo().search(
-            [('fso_email_template', '=', True)], order="write_date DESC")
-
-        # Get E-Mail Templates
-        templates = request.env['email.template'].sudo().search([
-            ('fso_email_template', '=', True),
-            ('fso_template_view_id', '!=', False)], order="write_date DESC")
-
+        # Update the e-mail template (email.template) or the theme (ir.ui.view)
+        # HINT: This is used for name or theme changes right now
         odoo_model = kw.pop('odoo_model', '')
         odoo_record_id = kw.pop('odoo_record_id', '')
         if odoo_model and odoo_record_id and kw:
             rec = request.env[odoo_model].browse(int(odoo_record_id))
-            rec.write(kw)
+            changed_fields = {k: v for k, v in kw.iteritems() if v != unicode(getattr(rec[k], 'id', rec[k]))}
+            if changed_fields:
+                rec.write(changed_fields)
+
+        # Get E-Mail Themes (ir.ui.view QWEB Template Views)
+        template_views = request.env['ir.ui.view'].sudo().search(
+            [('fso_email_template', '=', True)], order="write_date DESC")
+
+        # Get E-Mail Template object
+        template_obj = request.env['email.template'].sudo()
+
+        # E-Mail template domain
+        template_domain = [('fso_email_template', '=', True),
+                           ('fso_template_view_id', '!=', False)]
+
+        # Order by
+        # template_order = "write_date DESC"
+        template_order = "create_date DESC"
+
+        # Pager for email templates
+        templates_per_page = 12
+        url = '/fso/email/select'
+        template_count = template_obj.search_count(template_domain)
+        pager = request.website.pager(url=url,
+                                      total=template_count,
+                                      page=page,
+                                      step=templates_per_page,
+                                      scope=8,
+                                      url_args=kw)
+        templates = template_obj.search(template_domain,
+                                        limit=templates_per_page,
+                                        offset=pager['offset'],
+                                        order=template_order)
 
         # Render the templates overview page
         return request.render('fso_website_email.fso_email_selection',
                               {'html_sanitize': html_sanitize,
                                'template_views': template_views,
+                               'pager': pager,
                                'templates': templates,
                                'print_fields': request.env['fso.print_field'].search([]),
                                'return_url': urllib.unquote(kw.get('return_url', '')),

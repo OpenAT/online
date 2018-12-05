@@ -78,17 +78,149 @@
         
         <t t-call="fso_website_email.layout">
             <div id="wrap" class="container" t-ignore="True">
+                <div class="oe_structure"/>
+                
+                
 
-                <div id="email_template" class="mb32">
+                <div id="email_template" class="container mb32">
+                    
+                    <!-- ====================================================== -->
+                    <!-- E-Mail TEMPLATES: email.template FSON E-Mail Templates -->
+                    <!-- ====================================================== -->
+                    <div id="email-templates-header" class="row">
+                        <h1 class="page-header col-md-12" style="margin-top: 1em;">
+                            Templates
+                        </h1>
+                    </div>
+                    
+                    <!-- pager for email templates (from website_sale template with id="products") -->
+                    <div class="email_templates_pager">
+                        <div class="row" style="width: 100%;">
+                            <t t-call="website.pager"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row" id="email_templates">
+                        <!-- email templates -->
+                        <!-- HINT: col-lg-2 = 12/2 = 6 per page -->
+                        <div t-foreach="templates" t-as="template" class="email_template_box col-lg-2 col-md-3 col-sm-6 text-center">
 
-                    <!-- THEMES: FSON E-Mail QWEB VIEWS -->
-                    <h1 class="page-header mt32">
-                        Themes
-                    </h1>
-                    <div class="row" name="email_template_views">
-                        <div t-foreach="template_views" t-as="template_view" class="col-md-3 col-sm-4 text-center">
                             <div class="email_preview_border">
-                                <div t-esc="template_view.arch" class="email_preview js_content"/>
+                                
+                                <div class="email_template_delete">
+                                    <a class="btn-danger"
+                                       t-att-href="'/fso/email/delete?template_id='+str(template.id)">
+                                        Delete
+                                    </a>
+                                </div>
+                                
+                                <t t-if="template.screenshot">
+                                    <a class="email_preview_border_link" t-att-href="'/fso/email/edit?template_id='+str(template.id)">
+                                        <span t-field="template.screenshot"
+                                              t-field-options='{"widget": "image", "class": "media-object email_template_screenshot"}'/>
+                                    </a>
+                                </t>
+                                <t t-if="not template.screenshot">
+                                    <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
+                                </t>
+                                
+                                
+                                <div class="email_template_functions_icons">
+                                    <a class="btn btn-sm btn-primary"
+                                       t-att-href="'/fso/email/edit?template_id='+str(template.id)">
+                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"/>
+                                    </a>
+                                    <a class="btn btn-sm btn-info"
+                                       t-att-href="'/fso/email/create?template_id='+str(template.id)+'&amp;template_model=email.template'">
+                                        <span class="glyphicon glyphicon-transfer" aria-hidden="true"/>
+                                    </a>
+                                    <a class="btn btn-sm btn-warning"
+                                       t-att-href="'/fso/email/preview?template_id='+str(template.id)" target="_blank">
+                                        <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"/>
+                                    </a>
+                                </div>
+                                
+                            </div>
+                            
+                            <form href="/fso/email/select" class="email_template_inputs make_relative">
+                                <!-- odoo model and record id -->
+                                <input type="hidden" class="form-control"
+                                       name="odoo_model"
+                                       t-att-value="template._model or 'email.template'"/>
+                                <input type="hidden" class="form-control"
+                                       name="odoo_record_id"
+                                       t-att-value="template.id"/>
+                                <!-- Select Theme -->
+                                <div class="form-group theme_selector">
+                                    <div class="input-group">
+                                        <select class="form-control"
+                                               name="fso_template_view_id"
+                                               required="true"
+                                               placeholder="Select Theme">
+                                            <t t-foreach="template_views" t-as="theme">
+                                                <option t-att-value="theme.id"
+                                                        t-esc="theme.name"
+                                                        t-att-selected="'selected' if theme.id == template.fso_template_view_id.id else ''"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Set Name -->
+                                <div class="form-group email_template_name">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control"
+                                               name="name"
+                                               required="true"
+                                               placeholder="E-Mail-Template Name"
+                                               t-att-value="template.name"/>
+
+                                    </div>
+                                </div>
+                                <!-- Submit Button -->
+                                <div class="submit-button">
+                                    <button type="submit" class="btn btn-link" value="Save"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"/></button>
+                                </div>
+                            </form>
+                            
+                            
+                            <!-- Functions -->
+                            <div class="email_template_functions">
+                                <a class="btn btn-xs btn-primary"
+                                   t-att-href="'/fso/email/edit?template_id='+str(template.id)">
+                                    Edit
+                                </a>
+                                <a class="btn btn-xs btn-info"
+                                   t-att-href="'/fso/email/create?template_id='+str(template.id)+'&amp;template_model=email.template'">
+                                    Copy
+                                </a>
+                                <a class="btn btn-xs btn-warning"
+                                   t-att-href="'/fso/email/preview?template_id='+str(template.id)" target="_blank">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ================================================ -->
+                    <!-- E-Mail THEMES: ir.ui.view FSON E-Mail QWEB VIEWS -->
+                    <!-- ================================================ -->
+                    <div id="email-themes-header" class="row">
+                        <h1 class="page-header col-md-12 mt32">
+                            Themes
+                        </h1>
+                    </div>
+                    
+                    <div class="row" id="email_themes">
+                        
+                        <div t-foreach="template_views" t-as="template_view" class="col-md-4 col-sm-4 text-center">
+                            <div class="email_preview_border">
+                                <t t-if="template_view.fso_email_screenshot">
+                                    <span t-field="template_view.fso_email_screenshot"
+                                          t-field-options='{"widget": "image", "class": "media-object email_template_view_screenshot"}'/>
+                                </t>
+                                <t t-if="not template_view.fso_email_screenshot">
+                                    <div t-esc="template_view.arch" class="email_preview js_content"/>
+                                </t>
                             </div>
                             
                             <!-- Change Theme Name -->
@@ -119,92 +251,8 @@
                                t-att-href="'/fso/email/create?template_id='+str(template_view.id)+'&amp;template_model=ir.ui.view'">
                                 New Template
                             </a>
-
                         </div>
-                    </div>
-
-                    <!-- TEMPLATES: FSON E-Mail Templates -->
-                    <h1 class="page-header" style="margin-top: 1em;">
-                        Templates
-                    </h1>
-                    <div class="row" name="email_templates">
-                        <div t-foreach="templates" t-as="template" class="col-md-3 col-sm-4 text-center" style="margin-bottom: 2em;">
-                            <div class="email_template_delete">
-                                <a class="btn-danger"
-                                   t-att-href="'/fso/email/delete?template_id='+str(template.id)">
-                                    Delete
-                                </a>
-                            </div>
-                            
-                            <div class="email_preview_border">
-                                <t t-if="template.screenshot">
-                                    <span t-field="template.screenshot"
-                                          t-field-options='{"widget": "image", "class": "media-object"}'/>
-                                </t>
-                                <t t-if="not template.screenshot">
-                                    <div t-raw="html_sanitize(template.body_html)" class="email_preview js_content"/>
-                                </t>
-                            </div>
-                            
-                            <!-- Template Name and Theme -->
-                            <!--<h4 t-field="template.name"/>-->
-                            <!--<p>(<span t-field="template.fso_template_view_id"/>)</p>-->
-                            
-                            <form href="/fso/email/select" class="make_relative">
-                                <!-- odoo model and record id -->
-                                <input type="hidden" class="form-control"
-                                       name="odoo_model"
-                                       t-att-value="template._model or 'email.template'"/>
-                                <input type="hidden" class="form-control"
-                                       name="odoo_record_id"
-                                       t-att-value="template.id"/>
-                                <!-- Select Theme -->
-                                <div class="form-group theme_selector">
-                                    <div class="input-group">
-                                        <select class="form-control"
-                                               name="fso_template_view_id"
-                                               required="true"
-                                               placeholder="Select Theme">
-                                            <t t-foreach="template_views" t-as="theme">
-                                                <option t-att-value="theme.id"
-                                                        t-esc="theme.name"
-                                                        t-att-selected="'selected' if theme.id == template.fso_template_view_id.id else ''"/>
-                                            </t>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- Set Name -->
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control"
-                                               name="name"
-                                               required="true"
-                                               placeholder="E-Mail-Template Name"
-                                               t-att-value="template.name"/>
-
-                                    </div>
-                                </div>
-                                <!-- Submit Button -->
-                                <div class="submit-button">
-                                    <button type="submit" class="btn btn-link" value="Save"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"/></button>
-                                </div>
-                            </form>
-                            
-                            
-                            <!-- Functions -->
-                            <a class="btn btn-primary"
-                               t-att-href="'/fso/email/edit?template_id='+str(template.id)">
-                                Edit
-                            </a>
-                            <a class="btn btn-info"
-                               t-att-href="'/fso/email/create?template_id='+str(template.id)+'&amp;template_model=email.template'">
-                                Copy
-                            </a>
-                            <a class="btn btn-warning"
-                               t-att-href="'/fso/email/preview?template_id='+str(template.id)" target="_blank">
-                                View
-                            </a>
-                        </div>
+                        
                     </div>
 
                 </div>

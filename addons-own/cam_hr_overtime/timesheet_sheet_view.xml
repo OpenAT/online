@@ -96,40 +96,40 @@
 				</button>
 
                 <field name="company_id" position="after">
-                    <h3 colspan="2" style="padding: 1em 0 0.5em 0">Summary Approved Timesheets:</h3>
+                    <field name="user_id"/>
+                    
+                    <h3 colspan="2" style="padding: 1em 0 0.5em 0">Approved vacation days:</h3>
                     <field name="sum_vacation_days"/>
+                    
+                    <h3 colspan="2" style="padding: 1em 0 0.5em 0">Summary Approved Timesheets:</h3>
+                    <p colspan="2" style="padding: 0">These totals do NOT include the current month!</p>
                     <field name="sum_vacation"/>
                     <field name="sum_illness"/>
                     <field name="sum_others"/>
                     <field name="sum_attendance"/>
                     <field name="sum_overtime"/>
-                    <field name="user_id"/>
-
                 </field>
 
                 <field name="total_attendance" position="before">
-                    <h3 colspan="2" style="padding: 0 0 0.5em 0">Current Month:</h3>
+                    <h2 colspan="2" style="padding: 0 0 0.5em 0">Current Month:</h2>
+                    <p colspan="2" style="padding: 0">These totals only include the current month!</p>
+                    <hr colspan="2"/>
                     <field name="total_vacation_days"/>
-                    <field name="total_attendance2"/>
                     <field name="total_vacation"/>
                     <field name="total_illness"/>
                     <field name="total_others"/>
-                    <!--<field name="total_planned" string="Planned Attendance this Month"/>-->
-                    <field name="total_overtime" string="Calculated Attendance"/>
+                    <hr colspan="2"/>
+                    <field name="total_attendance2"/>
+                    <field name="total_planned" string="Planned Attendance this Month"/>
+                    <field name="total_overtime" string="Calculated Attendance" style="font-weight:bold;"/>
+                    <hr colspan="2"/>
                     <field name="total_overtime_correction"/>
-                    <field name="total_overtime_and_correction"/>
-                    <h3 colspan="2" style="padding: 1em 0 0.5em 0">Project Summary:</h3>
+                    <field name="total_overtime_and_correction" style="font-weight:bold; font-size:18px;"/>
+                    
+                    <h4 colspan="2" style="padding: 1em 0 0.5em 0">Project Summary:</h4>
                 </field>
-
-	            <notebook position="inside">
-	                 <page string="Overtime Corrections">
-	                    <field colspan="4" name="correction_ids" nolabel="1">
-	                        <tree string="Overtime Corrections">
-	                            <field name="name" />
-	                            <field name="value_hours"/>
-	                        </tree>
-	                    </field>
-	                </page>
+                
+                <xpath expr="//page[1]" position="before">
                     <page string="Attendance Summary">
                         <field colspan="4" name="day_details" nolabel="1">
                             <tree string="Summary" colors="blue:vacation&gt;0 or illness&gt;0 or others&gt;0;grey:planned==0;">
@@ -144,6 +144,29 @@
                             </tree>
                         </field>
                     </page>
+                </xpath>
+                
+                <xpath expr="//page[@string='Summary']" position="attributes">
+                    <attribute name="string">Worklog</attribute>
+                </xpath>
+                
+                <xpath expr="//page[@string='Details']" position="attributes">
+                    <attribute name="string">Worklog Entries</attribute>
+                </xpath>
+                
+                <!--<xpath expr="//page[@string='Attendances']" position="attributes">-->
+                    <!--<attribute name="string">Attendance Entries</attribute>-->
+                <!--</xpath>-->
+
+	            <notebook position="inside">
+	                 <page string="Overtime Corrections">
+	                    <field colspan="4" name="correction_ids" nolabel="1">
+	                        <tree string="Overtime Corrections">
+	                            <field name="name" />
+	                            <field name="value_hours"/>
+	                        </tree>
+	                    </field>
+	                </page>
 	            </notebook>
             </field>
             <!--<field name="sequence">20</field>-->

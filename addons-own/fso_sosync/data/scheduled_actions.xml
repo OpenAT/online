@@ -15,6 +15,7 @@
         <field name="args" eval="'()'"/>
     </record>
     
+    <!-- TODO: Can not be activated right now because called method ist too slow ! -->
     <record id="ir_cron_scheduled_job_queue_cleanup_1" model="ir.cron">
         <field name="name">SOSYNC: Clean sosync queue</field>
         <field name="priority" eval="3000" />
@@ -28,6 +29,7 @@
         <field name="args" eval="'()'"/>
     </record>
     
+    <!-- TODO: Can not be activated right now because called method ist too slow ! -->
     <record id="ir_cron_scheduled_job_cleanup_1" model="ir.cron">
         <field name="name">SOSYNC: Clean sosync jobs</field>
         <field name="priority" eval="3000" />

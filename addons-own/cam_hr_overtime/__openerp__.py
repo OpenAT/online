@@ -22,7 +22,7 @@
 
 
 {
-    'name': 'Manage Overtime',
+    'name': 'cam_hr_overtime Manage Overtime',
     'version': '1.0',
     'category': 'Custom',
     'description': """

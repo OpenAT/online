@@ -64,13 +64,18 @@ Features
         'fso_website_email',                # New E-Mail editor and custom routes
         'mass_mailing_sending_queue',       # Prepare massmailing e-mails in background by cron Job
         'mail_connector_queue',             # Send E-Mails async by connector queue
-        #'mail_tracking_mass_mailing',       # Status, Score, AVOID RESEND for mass mailings after e.g. domain change!
-        #'mass_mailing_statistic_extra',     # from, to and subject is available in the statistics table
+        'mail_tracking_mass_mailing',       # Status, Score, AVOID RESEND for mass mailings after e.g. domain change!
+        'mass_mailing_statistic_extra',     # from, to and subject is available in the statistics table
+        'mass_mailing_keep_archives',       # Option to keep send emails
+        'mass_mailing_partner',             # Link mass_mailing list contacts to res.partner
+        # 'website_mass_mailing_name',       # Asking for the contact name directly in the subscription snippet
         'utm',
         'link_tracker',
+        'web_iframe',                       # Open links in iframes (see fsonline addon fro menu entry)
     ],
     'data': [
         'views/views.xml',
+        'data/actions.xml',
         #'views/email_editor.xml',
     ],
 }
