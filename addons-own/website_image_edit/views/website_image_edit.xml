@@ -22,6 +22,7 @@
                 <script src="/website_image_edit/static/src/js/plugins/darkroom.mirror.js"/>
                 <script src="/website_image_edit/static/src/js/plugins/darkroom.circle.js"/>
                 <script src="/website_image_edit/static/src/js/plugins/darkroom.rounded.js"/>
+                <!--<script src="/website_image_edit/static/src/js/plugins/darkroom.text.js"/>-->
 
                 <!--Extension of Imagedialog-->
                 <link id="wie_css" rel='stylesheet' href='/website_image_edit/static/src/css/website_image_edit.css' t-ignore="true"/>

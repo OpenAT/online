@@ -49,7 +49,6 @@
             //change rows to other name accordingly to foreach varname
             this.rows = [];
             this.darkroom = {};
-            this.testImg = {};
 
         },
         //----------------------------------------------------
@@ -177,5 +176,16 @@
             xhr.send(formData);
         },
 
+    });
+
+    website.editor.RTEImageDialog.include({
+        init: function (parent, editor, media) {
+            this._super(parent, editor, media);
+            // this.media -> necessary for openening imagedialog with customize->change button
+            this.media = media;
+
+            this.on('start', this, this.proxy('started'));
+            this.on('save', this, this.proxy('saved'));
+        },
     });
 })();

@@ -215,6 +215,17 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
       hide: true
     });
 
+    //--------------------------------------------------------------------
+    this.cWidth = document.getElementById('cropWidth');
+    this.cHeight = document.getElementById('cropHeight');
+    this.cX = document.getElementById('cropX');
+    this.cY = document.getElementById('cropY');
+    this.cWidth.addEventListener('change', this.selectZoneWithInput.bind(this));
+    this.cHeight.addEventListener('change', this.selectZoneWithInput.bind(this));
+    this.cX.addEventListener('change', this.selectZoneWithInput.bind(this));
+    this.cY.addEventListener('change', this.selectZoneWithInput.bind(this));
+    //--------------------------------------------------------------------
+
     // Buttons click
     this.cropButton.addEventListener('click', this.toggleCrop.bind(this));
     this.okButton.addEventListener('click', this.cropCurrentZone.bind(this));
@@ -532,6 +543,8 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
     this.cropButton.active(true);
     this.okButton.hide(false);
     this.cancelButton.hide(false);
+    this.setStartCropValues();
+    this.darkroom.cropActive(true);
   },
 
   // Remove the crop zone
@@ -545,6 +558,8 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
     this.cropButton.active(false);
     this.okButton.hide(true);
     this.cancelButton.hide(true);
+    this.darkroom.cropActive(false);
+
 
     this.darkroom.canvas.defaultCursor = 'default';
 
@@ -553,6 +568,8 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
 
   _renderCropZone: function(fromX, fromY, toX, toY) {
     var canvas = this.darkroom.canvas;
+
+    this.setCropValues(fromX, fromY, toX, toY);
 
     var isRight = (toX > fromX);
     var isLeft = !isRight;
@@ -671,7 +688,48 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
     this.darkroom.canvas.bringToFront(this.cropZone);
 
     this.darkroom.dispatchEvent('crop:update');
-  }
-});
+  },
 
+  //---------------------------------------------------------------------------
+  setStartCropValues: function() {
+    var image = this.darkroom.image;
+    this.cWidth.value = image.width;
+    $('#cropWidth').attr('max', image.width);
+    this.cHeight.value = image.height;
+    $('#cropHeight').attr('max', image.height);
+    this.cX.value = image.getLeft();
+    this.cY.value = image.getTop();
+  },
+
+  setCropValues: function(x, y, width, height) {
+    this.cWidth.value = width;
+    this.cHeight.value = height;
+    this.cX.value = x;
+    this.cY.value = y;
+  },
+
+  selectZoneWithInput: function() {
+    var cWidth = $('#cropWidth').val();
+    var cHeight = $('#cropHeight').val();
+    var cX = $('#cropX').val();
+    var cY = $('#cropY').val();
+
+    var image = this.darkroom.image;
+
+    if ((cWidth > image.width) || (cHeight > image.height) || (cWidth <= 0) || (cHeight <= 0) || (cX < image.getLeft()) || (cY < image.getTop()) || (cX > image.width) || (cY > image.width))
+    {
+      return;
+    }
+    else
+    {
+      this._renderCropZone(cX, cY, cWidth, cHeight);
+    }
+  },
+});
+    $(document).keypress(
+      function(event){
+        if (event.which == '13') {
+          event.preventDefault();
+        }
+    });
 })();

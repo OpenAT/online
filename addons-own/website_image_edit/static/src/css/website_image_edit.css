@@ -5,7 +5,7 @@
     top: 0;
     right: 15px;
     cursor: pointer;
-    background: white;
+    color: white;
     padding: 2px;
     border: 1px solid #848490;
     border-top: none;
@@ -13,6 +13,7 @@
     -moz-border-radius-bottomleft: 8px;
     -webkit-border-bottom-left-radius: 8px;
     border-bottom-left-radius: 8px;
+    mix-blend-mode: difference;
 }
 
 /* Image Modal */
@@ -21,7 +22,7 @@
     height: 100%;
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     padding-top: 30px;
     left: 0;
     top: 0;
@@ -215,12 +216,48 @@
     text-align: center;
 }
 
-.imgTxt {
+#imageText {
     width: 80%;
+    color: black;
+    mix-blend-mode: difference;
 }
 
 .form-darkroom {
     position: absolute;
     right: 35px;
     bottom: 5px;
+}
+
+.disabled {
+  opacity: 0.65;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+#crop_Input {
+    text-align: right;
+    position: absolute;
+    top: 60px;
+    right: 35px;
+    width: 90px;
+}
+
+.cropInput.hidden {
+    display: none;
+}
+
+#cropX {
+    width: 45px;
+}
+
+#cropY {
+    width: 45px;
+}
+
+#cropWidth {
+    width: 45px;
+}
+
+#cropHeight {
+    width: 45px;
 }
