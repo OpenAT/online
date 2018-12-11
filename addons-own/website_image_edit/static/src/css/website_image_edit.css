@@ -45,7 +45,7 @@
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 900px;
         height: auto;
-        max-height: 800px;
+        max-height: 700px;
     }
 }
 
@@ -95,7 +95,7 @@
 .image-container {
     display: inline-block;
     max-width: 100%;
-    background: white;
+    /*background: white;*/
     margin: 5px 0;
         margin-top: 5px;
     border: 1px solid #e2e2e2;
@@ -109,15 +109,15 @@
     border-right: 1px solid #ccc;
 }
 
-.darkroom-container {
+/*.darkroom-container {
     position: relative;
-}
+}*/
 
 .darkroom-toolbar {
     display: block;
     position: absolute;
-    top: -45px;
-    left: 0;
+    top: 5px;
+    left: 25%;
     background: #444;
     height: 40px;
     min-width: 40px;
@@ -205,14 +205,18 @@
 }
 
 .darkroom-image-container {
-    top: 0;
-    left: 0;
+    top: 55px;
+    left: 19%;
+    position: absolute;
 }
 
 .image-container .image-meta {
-    margin-top: 10px;
     font-size: 12px;
     text-align: center;
+    position: absolute;
+    width: 450px;
+    left: 19%;
+    bottom: 25px;
 }
 
 #imageText {
