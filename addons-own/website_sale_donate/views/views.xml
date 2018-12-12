@@ -236,9 +236,18 @@
             <field name="model">product.payment_interval</field>
             <field name="arch" type="xml">
                 <form string="Payment Intervals">
+                    <header>
+                        <button name="compute_xml_id"
+                                type="object"
+                                string="Compute xml_id"/>
+                        <button name="compute_all_xml_id"
+                                type="object"
+                                string="Compute xml_id for all intervals"/>
+                    </header>
                     <group>
                         <field name="sequence"/>
                         <field name="name"/>
+                        <field name="xml_id"/>
                     </group>
                 </form>
             </field>
@@ -250,6 +259,7 @@
                 <tree string="Payment Intervals" default_order="sequence" editable="bottom">
                     <field name="sequence" widget="handle"/>
                     <field name="name"/>
+                    <field name="xml_id"/>
                 </tree>
             </field>
         </record>

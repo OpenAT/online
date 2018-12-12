@@ -14,6 +14,23 @@ class payment_interval(models.Model):
     payment_interval_lines_ids = fields.One2many(comodel_name='product.payment_interval_lines',
                                                  inverse_name='payment_interval_id', string='Payment Interval Lines')
 
+    # Computed field to store xml_id to match intervals by unique string in FRST!
+    xml_id = fields.Char(string="XML_ID", readonly=True,
+                         compute="compute_xml_id", store=True,
+                         help="To match correct payment interval in FRST we need an unique string")
+
+    @api.multi
+    def compute_xml_id(self):
+        records = self or self.search([])
+        res = self.get_external_id()
+        for record in records:
+            record.xml_id = res.get(record.id)
+
+    @api.model
+    def compute_all_xml_id(self):
+        records = self.search([])
+        records.compute_xml_id()
+
 
 # new api port
 class payment_interval_lines(models.Model):
