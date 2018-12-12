@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="perserve">
     <t t-name="wfi_imageDialog">
-        <div id="wfi_imageDialog" class="wfi_imgD">
+        <a id="wfi_imageDialog" class="wfi_imgD cke_dialog_ui_button">
             <!--<div class="well">-->
                 <!--<div class="form-group pull-left">-->
                     <!--<input type="file" name="upload" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px;"/>-->
@@ -27,9 +27,10 @@
                     <!--</div>-->
                 <!--</div>-->
             <!--</div>-->
-            <button type="button" class="btn btn-primary wfi-button">Upload</button>
-            <p>Test</p>
-        </div>
+            <!--<input type=""/>-->
+                <input type="file" id="wfi_input" name="upload" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px;"/>
+                <span>Upload</span>
+        </a>
     </t>
     <t t-name="wfi_footer">
 
