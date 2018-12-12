@@ -21,33 +21,103 @@ openerp.website.if_dom_contains('.website_forum', function () {
 //
 //			}
 //		}
+//        dialogDefinition.onLoad = function () {
+//            console.log('afterInit');
+//            $('td.cke_dialog_ui_hbox_last').first().replaceWith(
+//                openerp.qweb.render(
+//                'wfi_imageDialog'
+//            ));
+//
+//            $('#wfi_input').on('click', function(e) {
+//                console.log('on click test');
+//                console.log($(this).val(''));
+//            });
+//
+//            $('#wfi_input').change(function(e) {
+//                console.log('on change test');
+//                console.log(e);
+//                var wfi_upload = e.currentTarget;
+//                console.log(wfi_upload);
+//                console.log(wfi_upload.value);
+//
+//                var tmppath = URL.createObjectURL(e.target.files[0]);
+////                $("img").fadeIn("fast").attr('src',URL.createObjectURL(e.target.files[0]));
+////                $("#disp_tmp_path").html("Temporary Path(Copy it and try pasting it in browser address bar) --> <strong>["+tmppath+"]</strong>");
+//                console.log(tmppath);
+//            });
+//        };
+//        dialogDefinition.onShow = function () {
+//            console.log('dialogDefinition test');
+//            $('td.cke_dialog_ui_hbox_last').first().replaceWith(
+//                openerp.qweb.render(
+//                'wfi_imageDialog'
+//            ));
+//
+//            $('#wfi_input').on('click', function(e) {
+//                console.log('on click test');
+//                console.log($(this).val(''));
+//            });
+//
+//            $('#wfi_input').change(function(e) {
+//                console.log('on change test');
+//                console.log(e);
+//                var wfi_upload = e.currentTarget;
+//                console.log(wfi_upload);
+//                console.log(wfi_upload.value);
+//
+//                var tmppath = URL.createObjectURL(e.target.files[0]);
+////                $("img").fadeIn("fast").attr('src',URL.createObjectURL(e.target.files[0]));
+////                $("#disp_tmp_path").html("Temporary Path(Copy it and try pasting it in browser address bar) --> <strong>["+tmppath+"]</strong>");
+//                console.log(tmppath);
+//            });
+//        };
 
         if (dialogName == 'image') {
 //            dialogDefinition.onShow = function() {
-                console.log('image dialog test');
-                var infoTab = dialogDefinition.getContents('info');
-//                console.log(infoTab);
-                // Remove unnecessary widgets
-                infoTab.remove( 'ratioLock' );
-//                infoTab.remove( 'txtHeight' );
-//                infoTab.remove( 'txtWidth' );
-                infoTab.remove( 'txtBorder');
-                infoTab.remove( 'txtHSpace');
-                infoTab.remove( 'txtVSpace');
-                infoTab.remove( 'cmbAlign' );
+            console.log('image dialog test');
+            var infoTab = dialogDefinition.getContents('info');
+//            console.log(infoTab);
+            // Remove unnecessary widgets
+            infoTab.remove( 'ratioLock' );
+//            infoTab.remove( 'txtHeight' );
+//            infoTab.remove( 'txtWidth' );
+            infoTab.remove( 'txtBorder');
+            infoTab.remove( 'txtHSpace');
+            infoTab.remove( 'txtVSpace');
+            infoTab.remove( 'cmbAlign' );
+
+            dialogDefinition.removeContents( 'Link' );
+            dialogDefinition.removeContents( 'advanced' );
 
 
+            var uploadTab = dialogDefinition.getContents( 'Upload' );
+            var uploadButton = uploadTab.get( 'uploadButton' );
+            uploadButton[ 'label' ] = 'Upload to your Media Gallery';
 
 
+             // Get a reference to the 'Image Info' tab.
+             var infoTab = dialogDefinition.getContents( 'info' );
 
-//                };
+            // ADD OUR CUSTOM TEXT
+            infoTab.add(
+              {
+                type : 'html',
+                html : 'Click the button to select your image from your gallery,<br> or use the UPLOAD tab to upload a new image.'
+              },
+              'htmlPreview'
+            );
 
-//                tes.setValue('asdfasbgfb');
+            var imageButton = infoTab.get( 'browse' );
+            imageButton[ 'label' ] = 'Select Image';
+            console.log(imageButton);
+//
+//            //I HAVE DONE THIS TO HIDE BUT I WOULD LIKE TO REALLY HIDE!
+//            var urlField = infoTab.get( 'txtUrl' );
+//            urlField[ 'style' ] = 'display:none; width:0;';
+//            };
+
 //                infoTab.remove( 'htmlPreview' );
 
-
-//                var btnTest = '<button onclick="returnFileUrl()">Select File</button>';
-//                $('td.cke_dialog_ui_hbox_last').replaceWith('<button onclick="returnFileUrl()">Select File</button>');
 //                var dialog = CKEDITOR.dialog.getCurrent();
 
 //                var elem = dialog.getContentElement('info','htmlPreview');
