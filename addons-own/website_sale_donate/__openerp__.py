@@ -100,6 +100,7 @@ To solve this we did:
         'website_event',
         'website_blog',
         'auth_partner',
+        #'fso_frst_groups', is included in fso_base
     ],
     'installable': True,
     'data': [
