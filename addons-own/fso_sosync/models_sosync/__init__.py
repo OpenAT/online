@@ -8,12 +8,16 @@ import res_groups
 
 # Product related
 import payment_acquierer
+import payment_transaction
 import product_uom
 import product_acquierer_lines
 import product_payment_interval
 import product_payment_interval_lines
 import product_website_price_buttons
 import product_template
+import product_product
+import sale_order
+import sale_order_line
 
 # bpk and donation reports
 import res_partner_bpk
