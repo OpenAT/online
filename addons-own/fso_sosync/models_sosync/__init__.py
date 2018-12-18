@@ -5,6 +5,7 @@ import res_partner
 import res_company
 import res_users
 import res_groups
+import res_partner_fstoken
 
 # Product related
 import payment_acquierer
