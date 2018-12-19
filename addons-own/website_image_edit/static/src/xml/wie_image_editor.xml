@@ -13,10 +13,10 @@
                 <img t-att-src="image.website_url" t-att-id="image.id" class="imgToEdit"/>
 
                  <div id="crop_Input" class="cropInput hidden">
-                     x: <input type="number" id="cropX" min="0"></input><br/>
-                     y: <input type="number" id="cropY" min="0"></input><br/>
-                     Breite: <input type="number" id="cropWidth" min="0"></input><br/>
-                     Höhe: <input type="number" id="cropHeight" min="0"></input><br/>
+                     x: <input type="number" id="cropX" min="0" class="noEnter"></input><br/>
+                     y: <input type="number" id="cropY" min="0" class="noEnter"></input><br/>
+                     Breite: <input type="number" id="cropWidth" min="0" class="noEnter"></input><br/>
+                     Höhe: <input type="number" id="cropHeight" min="0" class="noEnter"></input><br/>
                  </div>
 
                 <div class="form-darkroom ">
@@ -24,7 +24,7 @@
                 </div>
 
                 <figcaption class="image-meta">
-                    <input type="text" id="imageText" class="imgTxt" t-att-value="image.name"/>
+                    <input type="text" id="imageText" class="imgTxt noEnter" t-att-value="image.name"/>
                 </figcaption>
             </figure>
         </div>
