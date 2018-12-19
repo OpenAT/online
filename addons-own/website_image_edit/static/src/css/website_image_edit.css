@@ -1,6 +1,5 @@
 /* Edit Button */
 .tryEdit {
-    background-color: #507e4e;
     position: absolute;
     top: 0;
     right: 15px;
@@ -13,6 +12,8 @@
     -moz-border-radius-bottomleft: 8px;
     -webkit-border-bottom-left-radius: 8px;
     border-bottom-left-radius: 8px;
+    background: white;
+    color: #555555;
 }
 
 /* Image Modal */
@@ -75,6 +76,8 @@
     font-size: 28px;
     font-weight: bold;
     transition: 0.3s;
+    background: #444;
+    border: none;
 }
 
 .saveEdit:hover,

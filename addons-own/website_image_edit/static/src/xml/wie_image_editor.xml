@@ -2,7 +2,7 @@
 <templates xml:space="perserve">
     <t t-name="wie_image_editor" t-extend="website.editor.dialog.image.existing.content">
         <t t-jquery="i" t-operation="after">
-            <i class="tryEdit" t-att-data-id="attachment.id">edit</i>
+            <span class="glyphicon glyphicon-pencil tryEdit" aria-hidden="true" t-att-data-id="attachment.id"></span>
         </t>
     </t>
 
