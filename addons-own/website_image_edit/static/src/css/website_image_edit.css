@@ -33,7 +33,31 @@
     border-radius: 6px;
 }
 
-@media only screen and (min-width: 700px) and (max-width: 1300px) {
+@media only screen and (max-width: 900px) {
+
+    .darkroom-toolbar {
+        left: 15%;
+    }
+
+    .darkroom-image-container {
+        left: 10%;
+    }
+
+    .canvas-container, .lower-canvas, .upper-canvas {
+        max-width: 400px;
+        max-height: 400px;
+    }
+}
+
+@media only screen and (min-width: 900px) and (max-width: 1300px) {
+
+    .darkroom-toolbar {
+        left: 25%;
+    }
+
+    .darkroom-image-container {
+        left: 19%;
+    }
 
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 450px;
@@ -43,10 +67,18 @@
 
 @media only screen and (min-width: 1300px) {
 
+    .darkroom-toolbar {
+        left: 25%;
+    }
+
+    .darkroom-image-container {
+        left: 10%;
+    }
+
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 900px;
         height: auto;
-        max-height: 700px;
+        max-height: 500px;
     }
 }
 
@@ -98,7 +130,6 @@
 .image-container {
     display: inline-block;
     max-width: 100%;
-    /*background: white;*/
     margin: 5px 0;
         margin-top: 5px;
     border: 1px solid #e2e2e2;
@@ -112,15 +143,10 @@
     border-right: 1px solid #ccc;
 }
 
-/*.darkroom-container {
-    position: relative;
-}*/
-
 .darkroom-toolbar {
     display: block;
     position: absolute;
     top: 5px;
-    left: 25%;
     background: #444;
     height: 40px;
     min-width: 40px;
@@ -209,7 +235,6 @@
 
 .darkroom-image-container {
     top: 55px;
-    left: 19%;
     position: absolute;
 }
 
@@ -218,8 +243,8 @@
     text-align: center;
     position: absolute;
     width: 450px;
-    left: 19%;
     bottom: 25px;
+    left: 20px;
 }
 
 #imageText {
