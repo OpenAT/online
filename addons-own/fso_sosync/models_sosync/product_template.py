@@ -65,3 +65,4 @@ class ProductTemplateSosync(models.Model):
 
     # Berechnetes Feld auf der Basis von website_published, website_published_start und website_published_end
     website_visible = fields.Boolean(sosync="True")
+

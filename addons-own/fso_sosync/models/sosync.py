@@ -35,11 +35,13 @@ class BaseSosync(models.AbstractModel):
     sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
                                    help="Exact datetime of source-data-readout for the sync job!")
 
+    # ATTENTION: DO NOT ALTER THE MAGIC FIELD OR IT WILL LEAD TO UNDESIRED SIDE EFFECTS
+    #            ALTER copy_data instead as done below in this file !!!
     # Extend MAGIC_COLUMNS to make sure these fields are NOT copied if a record is copied!
     # ATTENTION: It is unclear if there are any unwanted side effects!
-    logger.warning("base.sosync MAGIC_COLUMNS before: %s" % MAGIC_COLUMNS)
-    MAGIC_COLUMNS += ['sosync_fs_id', 'sosync_write_date', 'sosync_sync_date']
-    logger.warning("base.sosync MAGIC_COLUMNS after: %s" % MAGIC_COLUMNS)
+    # logger.warning("base.sosync MAGIC_COLUMNS before: %s" % MAGIC_COLUMNS)
+    # MAGIC_COLUMNS += ['sosync_fs_id', 'sosync_write_date', 'sosync_sync_date']
+    # logger.warning("base.sosync MAGIC_COLUMNS after: %s" % MAGIC_COLUMNS)
 
     # Extend the fields.get of openerp.Basemodel to include the sosync attribute for the java script
     # field manager for website forms to make it possible highlight sosynced watched fields in the backend
@@ -276,3 +278,14 @@ class BaseSosync(models.AbstractModel):
 
         # Continue with the unlink method
         return super(BaseSosync, self).unlink()
+
+    # Remove sosync fields from data when a record is duplicated (copied) see copy_data() in models.py
+    def copy_data(self, cr, uid, id, default=None, context=None):
+
+        data_to_copy = super(BaseSosync, self).copy_data(cr, uid, id, default, context=context)
+
+        # Remove sosync fields from data_to_copy
+        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'sosync_sync_date'):
+            data_to_copy.pop(sosync_field, None)
+
+        return data_to_copy
