@@ -187,6 +187,11 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <span>Tägliche ArbeitsZeiten</span>
+                                            <!--
+                                                <t t-foreach="ts.day_cat_details" t-as="project_entry">
+                                                    <span t-esc="project_entry.os"/>
+                                                </t>
+                                            -->
                                     </div>
                                 </div>
                             </div>
@@ -203,6 +208,7 @@
                                                 <th style="width: 5%; text-align: right">Abw.</th>
                                                 <th style="width: 5%; text-align: right">K/G</th>
                                                 <th style="width: 5%; text-align: right">Anw.</th>
+                                                <th style="width: 5%; text-align: right">Pause</th>
                                                 <!-- <th style="width: 10%;">Anworg-t-field.</th>
                                                 <th style="width: 10%;">Anworg-t-esc.</th> -->
 
@@ -215,39 +221,50 @@
                                             <t t-set="oth" t-value="0"/>
                                             <t t-set="att" t-value="0"/>
                                             <t t-set="ove" t-value="0"/>
+                                            <t t-set="paus" t-value="0"/>
+                                            <t t-set="position" t-value="0"/>
+
                                             <t t-foreach="ts.day_details" t-as="day">
-                                                <tr>
-                                                    <t t-set="plan" t-value="plan + day.planned"/>
-                                                    <t t-set="vac" t-value="vac + day.vacation"/>
-                                                    <t t-set="ill" t-value="ill + day.illness"/>
-                                                    <t t-set="oth" t-value="oth + day.others"/>
-                                                    <t t-set="att" t-value="att + day.attendance"/>
-                                                    <t t-set="ove" t-value="ove + day.overtime"/>
+                                                <!-- <t t-foreach="ts.day_cat_details" t-as="osentry">-->
+                                                <!-- aternative zum ausummieren, noch nicht getestet https://github.com/odoo/odoo/issues/4461 -->
+                                                    <tr>
+                                                        <t t-set="plan" t-value="plan + day.planned"/>
+                                                        <t t-set="vac" t-value="vac + day.vacation"/>
+                                                        <t t-set="ill" t-value="ill + day.illness"/>
+                                                        <t t-set="oth" t-value="oth + day.others"/>
+                                                        <t t-set="att" t-value="att + day.attendance"/>
+                                                        <t t-set="ove" t-value="ove + day.overtime"/>
+                                                        <t t-set="paus" t-value="paus + ts.day_cat_details[position][0].os"/>
+                                                        <!-- <t t-set="ove" t-value="paus + ts.day_cat_details.search_read([('ts.day_cat_details.date', '=', day.name)]).os"/>-->
+                                                        <!-- <t t-set="ove" t-value="paus + ts.day_cat_details[day.name].os"/>-->
 
-                                                    <td style="padding:1px; text-align: left"><span t-field="day.name" t-field-options='{"format": "dd"}' style="width: 5%;"/></td>
-                                                    <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.planned).split('.')[0]), int(float(str('%.2f' % day.planned).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
-                                                    <!-- <span t-field="track.duration" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}"/>-->
-                                                    <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.vacation).split('.')[0]), int(float(str('%.2f' % day.vacation).split('.')[1])/100*60))" style="width: 10%; padding:1px;"/></td>
-                                                    <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.illness).split('.')[0]), int(float(str('%.2f' % day.illness).split('.')[1])/100*60))" style="width: 8%; padding:1px;"/></td>
-                                                    <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.others).split('.')[0]), int(float(str('%.2f' % day.others).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
-                                                    <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.attendance).split('.')[0]), int(float(str('%.2f' % day.attendance).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
-                                                    <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), int(float(str('%.2f' % day.overtime).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                        <td style="padding:1px; text-align: left"><span t-field="day.name" t-field-options='{"format": "dd"}' style="width: 5%;"/></td>
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.planned).split('.')[0]), int(float(str('%.2f' % day.planned).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                        <!-- <span t-field="track.duration" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}"/>-->
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.vacation).split('.')[0]), int(float(str('%.2f' % day.vacation).split('.')[1])/100*60))" style="width: 10%; padding:1px;"/></td>
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.illness).split('.')[0]), int(float(str('%.2f' % day.illness).split('.')[1])/100*60))" style="width: 8%; padding:1px;"/></td>
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.others).split('.')[0]), int(float(str('%.2f' % day.others).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.attendance).split('.')[0]), int(float(str('%.2f' % day.attendance).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), int(float(str('%.2f' % day.overtime).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                        <td style="padding:1px; text-align: right"><span t-esc="'%02d:%02d' % (int(str(ts.day_cat_details[position][0].os).split('.')[0]), int(float(str('%.2f' % ts.day_cat_details[position][0].os).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
 
-                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" style="width: 10%; padding:1px;"/></td>
-                                                    <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-esc="(Math.round((day.overtime %1) * 60))" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), math.round(day.overtime.split('.')[1]) %1) *60))" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-esc="'%.5f'%day.overtime" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-raw="day.overtime" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-esc="formatLang('day.overtime', digits=2)" style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" t-field-options='{"widget": "float_time"}' style="width: 10%; padding:1px;"/></td> -->
-                                                    <!-- <td style="padding:1px;"><span t-field="day.overtime" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}" style="width: 5%; padding:1px;"/></td> -->
-                                                    <!-- <span t-field="track.duration" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}"/> -->
-                                                    <!-- TESTS console -->
-                                                    <!-- print "%02d:%02d" % (int(22.256), int(round(22.256 % 1  100 / 100  60,0)))-->
-                                                    <!-- <td><t t-esc="sum(day.planned)" /></td>-->
-                                                </tr>
+                                                        <!-- <td style="padding:1px;"><span t-field="day.overtime" style="width: 10%; padding:1px;"/></td>
+                                                        <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-esc="(Math.round((day.overtime %1) * 60))" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-esc="'%02d:%02d' % (int(str(day.overtime).split('.')[0]), math.round(day.overtime.split('.')[1]) %1) *60))" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-esc="'%.5f'% day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-esc="'%.5f'%day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-raw="day.overtime" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-esc="formatLang('day.overtime', digits=2)" style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-field="day.overtime" t-field-options='{"widget": "float_time"}' style="width: 10%; padding:1px;"/></td> -->
+                                                        <!-- <td style="padding:1px;"><span t-field="day.overtime" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}" style="width: 5%; padding:1px;"/></td> -->
+                                                        <!-- <span t-field="track.duration" t-field-options="{&quot;widget&quot;: &quot;duration&quot;, &quot;unit&quot;: &quot;hour&quot;}"/> -->
+                                                        <!-- TESTS console -->
+                                                        <!-- print "%02d:%02d" % (int(22.256), int(round(22.256 % 1  100 / 100  60,0)))-->
+                                                        <!-- <td><t t-esc="sum(day.planned)" /></td>-->
+                                                    </tr>
+                                                    <t t-set="position" t-value="position+1"/>
+                                                <!--</t>-->
                                             </t>
                                                 <tr>
                                                     <td>Summen: <span style="width: 5%; text-decoration: underline; font-weight:bold;"/></td>
@@ -257,6 +274,7 @@
                                                     <td style="text-align: right; text-decoration: underline; font-weight:bold;"><span t-esc="'%02d:%02d' % (int(str(oth).split('.')[0]), int(float(str('%.2f' % oth).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
                                                     <td style="text-align: right; text-decoration: underline; font-weight:bold;"><span t-esc="'%02d:%02d' % (int(str(att).split('.')[0]), int(float(str('%.2f' % att).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
                                                     <td style="text-align: right; text-decoration: underline; font-weight:bold;"><span t-esc="'%02d:%02d' % (int(str(ove).split('.')[0]), int(float(str('%.2f' % ove).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
+                                                    <td style="text-align: right; text-decoration: underline; font-weight:bold;"><span t-esc="'%02d:%02d' % (int(str(paus).split('.')[0]), int(float(str('%.2f' % paus).split('.')[1])/100*60))" style="width: 5%; padding:1px;"/></td>
                                                 </tr>
                                         </tbody>
                                     </table>
