@@ -1,6 +1,5 @@
 openerp.website.if_dom_contains('.website_forum', function () {
     console.log('website forum imagedialog dom contains long');
-    this.wfi_img = {};
 
 //    console.log(CKEDITOR.getUrl(CKEDITOR.plugins.get("image").path));
 //    CKEDITOR.plugins.addExternal( 'timestamp', '/website_forum_imagedialog/static/src/js/myplugins/timestamp/', 'plugin.js' );
@@ -11,10 +10,9 @@ openerp.website.if_dom_contains('.website_forum', function () {
 
     CKEDITOR.config.toolbar = [
         { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic'] },
-        { name: 'insert', items: [ 'Image', 'Timestamp', 'ImageUpload' ] },
+        { name: 'special', items: [ 'ImageUpload' ] },
     ];
-    console.log(CKEDITOR);
-
+    console.log(openerp.website);
 //    CKEDITOR.config.removePlugins = 'image';
 //    CKEDITOR.on('dialogDefinition', function(ev) {
 //    // Take the dialog window name and its definition from the event data.
