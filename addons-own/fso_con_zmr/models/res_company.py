@@ -17,7 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 class CompanyAustrianZMRSettings(models.Model):
-    _inherit = 'res.company'
+    _name = 'res.company'
+    _inherit = ['res.company', 'mail.thread']
+
+    # Add track_visibility='onchange' to 'name' field
+    name = fields.Char(track_visibility='onchange')
 
     # ------
     # FIELDS
@@ -35,33 +39,36 @@ class CompanyAustrianZMRSettings(models.Model):
                                                      string="Donation Report Submissions", readonly=True)
 
     # Basic Settings
-    stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789')
+    stammzahl = fields.Char(string="Firmenbuch-/ Vereinsregisternummer", help='Stammzahl e.g.: XZVR-123456789',
+                            track_visibility='onchange')
 
     # PVPToken userPrincipal
-    pvpToken_userId = fields.Char(string="User ID (userId)")
-    pvpToken_cn = fields.Char(string="Common Name (cn)")
-    pvpToken_gvOuId = fields.Char(string="Request Organisation (gvOuId)")
-    pvpToken_ou = fields.Char(string="Request Person (ou)")
+    pvpToken_userId = fields.Char(string="User ID (userId)", track_visibility='onchange')
+    pvpToken_cn = fields.Char(string="Common Name (cn)", track_visibility='onchange')
+    pvpToken_gvOuId = fields.Char(string="Request Organisation (gvOuId)", track_visibility='onchange')
+    pvpToken_ou = fields.Char(string="Request Person (ou)", track_visibility='onchange')
 
     # ZMR Requests SSL Zertifikate
     # http://www.ridingbytes.com/2016/01/02/odoo-remember-the-filename-of-binary-files/
-    pvpToken_crt_pem = fields.Binary(string="Certificate (PEM)")
-    pvpToken_crt_pem_filename = fields.Char(string="Certificate Name", help="crt_pem")
+    pvpToken_crt_pem = fields.Binary(string="Certificate (PEM)", track_visibility='onchange')
+    pvpToken_crt_pem_filename = fields.Char(string="Certificate Name", help="crt_pem", track_visibility='onchange')
     pvpToken_crt_pem_path = fields.Char(string="Certificate Path",
                                         compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
 
-    pvpToken_prvkey_pem = fields.Binary(string="Private Key (PEM)")
-    pvpToken_prvkey_pem_filename = fields.Char(string="Private Key Name", help="prvkey_pem without password!")
+    pvpToken_prvkey_pem = fields.Binary(string="Private Key (PEM)", track_visibility='onchange')
+    pvpToken_prvkey_pem_filename = fields.Char(string="Private Key Name", help="prvkey_pem without password!",
+                                               track_visibility='onchange')
     pvpToken_prvkey_pem_path = fields.Char(string="Private Key Path",
                                            compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
     # Get BPK request URLS
     bpk_request_url = fields.Selection(selection=[('https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR',
-                                                 'Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
-                                                ('https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR',
-                                                 'Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR'),
-                                                ],
-                                     string="GetBPK Request URL",
-                                     default="https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR")
+                                                   'Test: https://pvawp.bmi.gv.at/at.gv.bmi.szrsrv-b/services/SZR'),
+                                                  ('https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR',
+                                                   'Live: https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR'),
+                                                  ],
+                                       string="GetBPK Request URL",
+                                       default="https://pvawp.bmi.gv.at/bmi.gv.at/soap/SZ2Services/services/SZR",
+                                       track_visibility='onchange')
     # BPK-Request Status messages
     bpk_found = fields.Text(string="BPK Person-Found Message", translate=True)
     bpk_not_found = fields.Text(string="BPK No-Person-Matched Message", translate=True)
@@ -70,12 +77,12 @@ class CompanyAustrianZMRSettings(models.Model):
 
     # Austrian Finanzamt: FinanzOnline Webservice Session-Login Data
     # https://www.bmf.gv.at/egovernment/fon/fuer-softwarehersteller/softwarehersteller-funktionen.html#Webservices
-    fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)")
-    fa_benid = fields.Char(string="Webservicebenutzer ID (benid)")
-    fa_pin = fields.Char(string="Webservicebenutzer Pin (pin)")
+    fa_tid = fields.Char(string="Teilnehmer Identifikation (tid)", track_visibility='onchange')
+    fa_benid = fields.Char(string="Webservicebenutzer ID (benid)", track_visibility='onchange')
+    fa_pin = fields.Char(string="Webservicebenutzer Pin (pin)", track_visibility='onchange')
     fa_herstellerid = fields.Char(string="UID-Nummer des Softwareherstellers (herstellerid)",
                                   help="Umsatzsteuer-Identifikations-Nummer (UID-Nummer) des Softwareherstellers.",
-                                  default="ATU44865400", size=24)
+                                  default="ATU44865400", size=24, track_visibility='onchange')
 
     # Austrian Finanz Amt: Finanz Online donation report submission (Spendenmeldung Meldung):
     # Fastnr_Fon_Tn
@@ -83,22 +90,22 @@ class CompanyAustrianZMRSettings(models.Model):
                                    help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
                                         "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
                                         "(ohne Trennzeichen) (Fastnr_Fon_Tn)",
-                                   default="685032617", size=9)
+                                   default="685032617", size=9, track_visibility='onchange')
     # Fastnr_Org
     fa_fastnr_org = fields.Char(string="Finanzamt-Steuernummer der Organisation (Fastnr_Org)",
                                 help="Die Finanzamt/Steuernummer besteht aus 9 Ziffern und setzt sich aus dem "
                                      "Finanzamt (03-98) und aus der Steuernummer (7-stellig) zusammen. "
                                      "(ohne Trennzeichen) (Fastnr_Org)",
-                                size=9, oldname="fa_orgid")
+                                size=9, oldname="fa_orgid", track_visibility='onchange')
 
     # FinanzOnline Requests SSL Zertifikate
     # http://www.ridingbytes.com/2016/01/02/odoo-remember-the-filename-of-binary-files/
-    fa_crt_pem = fields.Binary(string="Certificate (PEM)")
+    fa_crt_pem = fields.Binary(string="Certificate (PEM)", track_visibility='onchange')
     fa_crt_pem_filename = fields.Char(string="Certificate Name", help="crt_pem")
     fa_crt_pem_path = fields.Char(string="Certificate Path",
                                   compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
 
-    fa_prvkey_pem = fields.Binary(string="Private Key (PEM)")
+    fa_prvkey_pem = fields.Binary(string="Private Key (PEM)", track_visibility='onchange')
     fa_prvkey_pem_filename = fields.Char(string="Private Key Name", help="prvkey_pem without password!")
     fa_prvkey_pem_path = fields.Char(string="Private Key Path",
                                      compute='_certs_to_file', compute_sudo=True, store=True, readonly=True)
@@ -118,7 +125,7 @@ class CompanyAustrianZMRSettings(models.Model):
     # ATTENTION: fa_dr_mode is DEPRICATED and not used anymore - should already be removed everywhere!
     fa_dr_mode = fields.Selection(selection=[('T', 'T: Testumgebung'),
                                              ('P', 'P: Echtbetrieb')],
-                                  string="Spendenmeldung Modus (Veraltet)", readonly=True)
+                                  string="Spendenmeldung Modus (Veraltet)", readonly=True, track_visibility='onchange')
 
     # ATTENTION: MO MUST BE MÖ but Ö is not allowed in selection fields :( - This is replaced in the
     #            donation_report.submission field submission_fa_dr_type! Check compute_submission_values() for the fix.
@@ -140,9 +147,10 @@ class CompanyAustrianZMRSettings(models.Model):
                                              ('SE', 'SE Behindertensportdachverbände, Internationale Anti-Korruptions-Akademie, Diplomatische Akademie (§ 4a Abs 4 EStG)'),
                                              ('ZG', 'ZG gemeinnützige Stiftungen (§ 4b EStG, hinsichtlich Zuwendungen zur Vermögensausstattung)'),
                                              # New 2018/2019
-                                             ('SV', 'Spendensammeleinrichtungen karitativ (gem § 4a Abs 2 Z 3 lit a bis c EStG)'),
-                                             ('ZI', 'Zuwendungen an die Innovationsstiftung für Bildung (§ 4c EStG 1988)'),
+                                             ('SV', 'SV Spendensammeleinrichtungen karitativ (gem § 4a Abs 2 Z 3 lit a bis c EStG)'),
+                                             ('ZI', 'ZI Zuwendungen an die Innovationsstiftung für Bildung (§ 4c EStG 1988)'),
                                              ],
+                                  track_visibility='onchange'
                                   )
 
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
