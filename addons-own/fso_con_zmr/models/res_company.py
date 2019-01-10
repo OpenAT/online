@@ -138,7 +138,11 @@ class CompanyAustrianZMRSettings(models.Model):
                                              ('KR', 'KR Kirchen und Religionsgesellschaften mit verpflichtenden Beiträgen (§ 18 Abs 1 Z 5 EStG)'),
                                              ('PA', 'PA Pensionsversicherungsanstalten und Versorgungseinrichtungen (§ 18 Abs 1 Z 1a EStG)'),
                                              ('SE', 'SE Behindertensportdachverbände, Internationale Anti-Korruptions-Akademie, Diplomatische Akademie (§ 4a Abs 4 EStG)'),
-                                             ('ZG', 'ZG gemeinnützige Stiftungen (§ 4b EStG, hinsichtlich Zuwendungen zur Vermögensausstattung)')],
+                                             ('ZG', 'ZG gemeinnützige Stiftungen (§ 4b EStG, hinsichtlich Zuwendungen zur Vermögensausstattung)'),
+                                             # New 2018/2019
+                                             ('SV', 'Spendensammeleinrichtungen karitativ (gem § 4a Abs 2 Z 3 lit a bis c EStG)'),
+                                             ('ZI', 'Zuwendungen an die Innovationsstiftung für Bildung (§ 4c EStG 1988)'),
+                                             ],
                                   )
 
     # Action to store certificate files to data dir because request.Session(cert=()) needs file paths
