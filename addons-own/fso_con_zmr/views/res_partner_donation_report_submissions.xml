@@ -79,6 +79,7 @@
                         </page>
 
                         <page string="Donation Reports">
+                            <!--<field name="donation_report_ids" attrs="{'readonly': [('manual','=', False)]}"/>-->
                             <field name="donation_report_ids" readonly="True"/>
                         </page>
 
