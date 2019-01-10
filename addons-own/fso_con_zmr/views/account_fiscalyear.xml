@@ -12,11 +12,32 @@
                     <group>
                         <field name="ze_datum_von"/>
                         <field name="ze_datum_bis"/>
+                        <div colspan="2" class="backend-help">
+                            <p>
+                                Nur Buchungen (Spenden) innerhalb des Betrachtungszeitraumes werden für die Berechnung
+                                der Spendenmeldung in FRST herangezogen. ACTHUNG: BITTE UNBEDINGT DIE UHRZEIT BEACHTEN!
+                            </p>
+                        </div>
                         <field name="meldungs_jahr"/>
                         <field name="meldezeitraum_start"/>
                         <field name="meldezeitraum_end"/>
+                        <div colspan="2" class="backend-help">
+                            <p>
+                                Innerhalb des Meldezeitraumes werden die Spendenmeldungen AUTOMATISCH! generiert und an
+                                das Finanzamt gesendet! Normalerweise startet dieser ende Februar des Folgejahres!
+                                Ist das Meldungsjahr z.B.: 2018 so startet der Meldezeitraum meist am 22.02.2019.
+                            </p>
+                        </div>
                         <field name="drg_interval_number"/>
                         <field name="drg_interval_type"/>
+                        <div colspan="2" class="backend-help">
+                            <p>
+                                Diese Felder geben an wie häufig FRST Spendenmeldungen generiert. Spendenmeldungen
+                                werden innerhalb von sieben Jahren auch dann in diesem Intervall generiert wenn wir uns
+                                bereits außerhalb des Meldezeitraumes des Wirtschaftsjahres befinden um eine
+                                manuelle Nachmeldung zu ermöglichen!
+                            </p>
+                        </div>
                     </group>
                     <group>
                         <field name="drg_next_run"/>
@@ -24,6 +45,14 @@
                         <field name="drg_last"/>
                     </group>
                 </group>
+            </xpath>
+            
+            <!-- Add chatter -->
+             <xpath expr="//field[@name='period_ids']" position="after">
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </xpath>
         </field>
     </record>

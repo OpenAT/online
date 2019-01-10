@@ -11,28 +11,29 @@ logger = logging.getLogger(__name__)
 
 # addon account (already in fso_base)
 class AccountFiscalYear(models.Model):
-    _inherit = 'account.fiscalyear'
+    _name = 'account.fiscalyear'
+    _inherit = ['account.fiscalyear', 'mail.thread']
 
     # ------
     # FIELDS
     # ------
 
     # Betrachtungszeitraum
-    ze_datum_von = fields.Datetime(string="Betrachtungszeitraum Start",
+    ze_datum_von = fields.Datetime(string="Betrachtungszeitraum Start", track_visibility='onchange',
                                    help="Include donations starting with this date and time")
-    ze_datum_bis = fields.Datetime(string="Betrachtungszeitraum Ende",
+    ze_datum_bis = fields.Datetime(string="Betrachtungszeitraum Ende", track_visibility='onchange',
                                    help="Include donations starting up to and including this date and time")
 
     # Set by the FRST account manager e.g.: Marcus
-    meldezeitraum_start = fields.Datetime(string="Meldezeitraum Start",
+    meldezeitraum_start = fields.Datetime(string="Meldezeitraum Start", track_visibility='onchange',
                                           help="Scheduled Donation Report Submission Start")
-    meldezeitraum_end = fields.Datetime(string="Meldezeitraum Ende",
+    meldezeitraum_end = fields.Datetime(string="Meldezeitraum Ende", track_visibility='onchange',
                                         help="Scheduled Donation Report Submission End")
 
     # HINT: drg = Donation Report Generation
-    drg_interval_number = fields.Integer(string="Donation Report Generation Interval",
+    drg_interval_number = fields.Integer(string="Donation Report Generation Interval", track_visibility='onchange',
                                          help="Repeat every X.")
-    drg_interval_type = fields.Selection(string="Donation Report Generation Interval Type",
+    drg_interval_type = fields.Selection(string="Donation Report Generation Interval Type", track_visibility='onchange',
                                          selection=[#('minutes', 'Minutes'),
                                                     #('hours', 'Hours'),
                                                     #('work_days', 'Work Days'),
@@ -49,9 +50,9 @@ class AccountFiscalYear(models.Model):
     drg_last_count = fields.Integer(string="Number of Rep. for last DRG", readonly=True,
                                     help="Number of Donation Report(s) generated at the last scheduled run in FRST")
 
-    # # TODO: WORK IN PROGRESS compute meldejahr
     meldungs_jahr = fields.Char(string="Meldejahr", readonly=True, compute="compute_meldungs_jahr", store=True,
-                                help="computed by ze_datum_von and ze_datum_bis")
+                                help="computed by ze_datum_von and ze_datum_bis",
+                                track_visibility='onchange')
 
     # ---------------
     # API CONSTRAINTS
