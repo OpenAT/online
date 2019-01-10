@@ -251,6 +251,68 @@ class BaseSosync(models.AbstractModel):
         # Continue with write method
         return res
 
+    # TODO: This is a NON WORKING Prototype - must solve recursion and delete jobs for the correct model :(
+    @api.multi
+    def _create_comodel_delete_sync_jobs(self, sosync_write_date=False):
+        """
+        Cascade deletes are not handled by the orm therefore no unlink method is called for them and no delete-sync-job
+        would be generated. To overcome this limitation we search for all related fields with ondelete="cascade" and
+        create delete sync jobs for the comodel records linked through the field.
+
+        This is done recursively and should therefore catch all models/records of all related fields!
+
+        :param sosync_write_date:
+        :return: bool
+        """
+        sosync_write_date = sosync_write_date or self._sosync_write_date_now()
+
+        if not hasattr(self, '_fields'):
+            logger.warning("comodel_delete_sync_jobs() self has no attribute '_fields'!\n%s" % repr(self))
+            return False
+
+        # Check all fields of this model for related fields with ondelete="cascade"
+        for f_name in self._fields:
+
+            # Get the field object
+            f = self._fields[f_name]
+
+            # Only create delete-sync-jobs if the comodel is also a sosync model
+            if hasattr(f, 'comodel_name') and f.comodel_name and hasattr(self.env[f.comodel_name], 'create_sync_job'):
+
+                # Check if the inverse field of an one2many field has ondelete='cascade' set
+                if (hasattr(f, 'inverse_fields')
+                        and f.inverse_fields and hasattr(f.inverse_fields[0], 'ondelete')
+                        and f.inverse_fields[0].ondelete == 'cascade'):
+
+                    for r in self:
+                        # Get the recordset of the comodel records
+                        field_comodel_records = r[f.name]
+
+                        # Recursively _create_comodel_delete_sync_jobs for the records of the comodel
+                        field_comodel_records._create_comodel_delete_sync_jobs(sosync_write_date=sosync_write_date)
+
+                # Check if ondelete==cascade is set for the field
+                # ATTENTION: I really don't know why inverse_fields is a list and not just one field ?!?
+                # TODO: Maybe we should check also if this is a relational field?
+                if hasattr(f, 'ondelete') and f.ondelete == 'cascade':
+
+                    # Cycle through the records and create a delete-sync-job for all comodel records of the
+                    # current related field!
+                    for r in self:
+                        # Get the recordset of the comodel records
+                        field_comodel_records = r[f.name]
+
+                        if field_comodel_records:
+
+                            # Create delete sync jobs for all records of the comodel
+                            field_comodel_records.create_sync_job(sosync_write_date=sosync_write_date,
+                                                                  job_source_type="delete")
+
+                            # Recursively _create_comodel_delete_sync_jobs for the records of the comodel
+                            # field_comodel_records._create_comodel_delete_sync_jobs(sosync_write_date=sosync_write_date)
+
+        return True
+
     @api.multi
     def unlink(self):
         # Get create_sync_job from context or set it to True
@@ -271,9 +333,16 @@ class BaseSosync(models.AbstractModel):
         if not create_sync_job:
             self = self.with_context(create_sync_job=True)
 
-        # Create the sync Job
+        # Create the delete-sync-job(s)
         if create_sync_job:
             sosync_write_date = self._sosync_write_date_now()
+
+            # TODO: This is a NON WORKING Prototype - must solve recursion and delete jobs for the correct model :(
+            #       Therefore it is DISABLED by now :(
+            # Recursively get all records from related fields with cascade=True and create delete_sync_jobs for them!
+            # self._create_comodel_delete_sync_jobs(sosync_write_date=sosync_write_date)
+
+            # Create a delete sync job for all records
             self.create_sync_job(sosync_write_date=sosync_write_date, job_source_type="delete")
 
         # Continue with the unlink method
