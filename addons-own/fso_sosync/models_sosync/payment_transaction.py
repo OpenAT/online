@@ -12,3 +12,4 @@ class PaymentTransactionSosync(models.Model):
     acquirer_reference = fields.Char(sosync="True")
     esr_reference_number = fields.Char(sosync="True")
     reference = fields.Char(sosync="True")
+    amount = fields.Float(sosync="True")
