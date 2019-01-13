@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend sale.order form to include sosync fields -->
+    <record model="ir.ui.view" id="sosync_sale_order_form_fields">
+        <field name="name">sosync_sale_order_form_fields</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@string='Other Information']" position="after">
+                <page string="System">
+                    <group>
+                        <field name="id"/>
+                        <field name="create_date"/>
+                        <field name="write_date"/>
+                        <field name="sosync_fs_id"/>
+                        <field name="sosync_write_date"/>
+                        <field name="sosync_sync_date"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>
