@@ -195,7 +195,8 @@ class BaseSosync(models.AbstractModel):
 
         return rec
 
-    # COMPUTED FIELDS
+    # TODO: COMPUTED FIELDS
+    #       WARNING: This is disabled because in some situations it may lead to a recursion :(
     # ---------------
     # Make sure computed fields will also create sync jobs and und update the sosync_write_date
     # There are two different computation methods!
@@ -203,24 +204,24 @@ class BaseSosync(models.AbstractModel):
     # For news style computed fields: models.py > write() > record._cache.update(record._convert_to_cache(...
 
     # Old style computed fields
-    @api.multi
-    def _store_set_values(self, fields):
-
-        if hasattr(self, 'create_sync_job'):
-
-            # Get all watched fields for this model based on the fields in values
-            pseudo_values_dict = {f: 'COMPUTED VALUE' for f in fields}
-            watched_fields = self._sosync_watched_fields(pseudo_values_dict)
-            watched_fields_json = self._sosync_watched_fields_json(watched_fields)
-
-            # TODO: Test this well because it may throw exceptions or go into endless recursion ?
-            if watched_fields:
-                sosync_write_date = self._sosync_write_date_now()
-                self.write({'sosync_write_date': sosync_write_date})
-                self.create_sync_job(sosync_write_date=sosync_write_date,
-                                     job_source_fields=watched_fields_json)
-
-        return super(BaseSosync, self)._store_set_values(fields=fields)
+    # @api.multi
+    # def _store_set_values(self, fields):
+    #
+    #     if hasattr(self, 'create_sync_job'):
+    #
+    #         # Get all watched fields for this model based on the fields in values
+    #         pseudo_values_dict = {f: 'COMPUTED VALUE' for f in fields}
+    #         watched_fields = self._sosync_watched_fields(pseudo_values_dict)
+    #         watched_fields_json = self._sosync_watched_fields_json(watched_fields)
+    #
+    #         # TODO: Test this well because it may throw exceptions or go into endless recursion ?
+    #         if watched_fields:
+    #             sosync_write_date = self._sosync_write_date_now()
+    #             self.write({'sosync_write_date': sosync_write_date})
+    #             self.create_sync_job(sosync_write_date=sosync_write_date,
+    #                                  job_source_fields=watched_fields_json)
+    #
+    #     return super(BaseSosync, self)._store_set_values(fields=fields)
 
     # TODO: New style computed fields
     #       models.py > write() > record._cache.update(record._convert_to_cache(...
