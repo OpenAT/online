@@ -256,7 +256,9 @@
     console.log(website);
     console.log(webEditor);
 
+//    Check if website_forum is selected
     if(!$('.website_forum').length) {
+        console.log('not in forum');
         return $.Deferred().reject("DOM doesn't contain '.website_forum'");
     }
 
@@ -270,8 +272,10 @@
         init: function (EditorBar) {
             console.log('wfi init RTE');
             console.log(EditorBar);
+            console.log(this);
             this.EditorBar = EditorBar;
             this._super.apply(this, arguments);
+            this.EditorBar.edit();
         },
     });
 })();
