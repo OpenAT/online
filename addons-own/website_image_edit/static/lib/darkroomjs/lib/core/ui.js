@@ -42,9 +42,31 @@ ButtonGroup.prototype = {
     var buttonElement = document.createElement('button');
     buttonElement.type = 'button';
     buttonElement.className = 'darkroom-button darkroom-button-' + options.type;
-    buttonElement.innerHTML = '<svg class="darkroom-icon"><use xlink:href="website_image_edit/static/lib/darkroomjs/lib/icons/' + options.image + '.svg#' + options.image + '" /></svg>';
-//    buttonElement.innerHTML = '<svg class="darkroom-icon"><use xlink:href="website_image_edit/static/lib/darkroomjs/lib/icons/#' + options.image + '" /></svg>';
-//    buttonElement.innerHTML = '<img class="darkroom-icon" src="website_image_edit/static/lib/darkroomjs/lib/icons/' + options.image + '.svg" />';
+
+    if (options.image === 'undo') {
+      buttonElement.innerHTML = '<i class="fa fa-step-backward"/>';
+    } else if (options.image === 'redo') {
+      buttonElement.innerHTML = '<i class="fa fa-step-forward"/>';
+    } else if (options.image === 'crop') {
+      buttonElement.innerHTML = '<i class="fa fa-crop"/>';
+    } else if (options.image === 'done') {
+      buttonElement.innerHTML = '<i class="fa fa-check"/>';
+    } else if (options.image === 'close') {
+      buttonElement.innerHTML = '<i class="fa fa-times"/>';
+    } else if (options.image === 'rotate-left') {
+      buttonElement.innerHTML = '<i class="fa fa-undo"/>';
+    } else if (options.image === 'rotate-right') {
+      buttonElement.innerHTML = '<i class="fa fa-repeat"/>';
+    } else if (options.image === 'mirrorX') {
+      buttonElement.innerHTML = '<i class="fa fa-arrows-h"/>';
+    } else if (options.image === 'mirrorY') {
+      buttonElement.innerHTML = '<i class="fa fa-arrows-v"/>';
+    } else if (options.image === 'circle') {
+      buttonElement.innerHTML = '<i class="fa fa-circle-o"/>';
+    } else if (options.image === 'rounded') {
+      buttonElement.innerHTML = '<i class="fa fa-square-o"/>';
+    }
+
     this.element.appendChild(buttonElement);
 
     var button = new Button(buttonElement);

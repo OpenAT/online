@@ -39,11 +39,11 @@ Darkroom.plugins['rotate'] = Darkroom.Plugin.extend({
   },
 
   rotateLeft: function rotateLeft() {
-    this.rotate(-15);
+    this.rotate(-30);
   },
 
   rotateRight: function rotateRight() {
-    this.rotate(15);
+    this.rotate(30);
   },
 
   rotate: function rotate(angle) {
