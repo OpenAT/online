@@ -28,6 +28,29 @@
                 <!--</div>-->
             <!--</div>-->
             <!--<input type=""/>-->
+            <script type="text/javascript">
+                //<![CDATA[
+                    (function () {
+                        'use strict';
+                        // Overwrite class method of website/static/src/js/website.editor.js@839
+                        // to append/set/override CKEDITOR.config for wrapwrap editor
+                        openerp.website.RTE = openerp.website.RTE.extend({
+                            _config: function () {
+                                // Run the original method to modify it's result
+                                var config =  this._super();
+
+                                console.log("template");
+
+                                // Custom text and text-background colors
+                                config.colorButton_colors = 'fafafa,aaaaaa,cccccc';
+
+                                // return the config
+                                return config;
+                            }
+                        });
+                    })();
+                //]]>
+            </script>
                 <input type="file" id="wfi_input" name="upload" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px;"/>
                 <span>Upload</span>
         </a>
