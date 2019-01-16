@@ -40,6 +40,7 @@
             'click .tryEdit': 'try_edit',
             'click .closeEdit': 'close_edit',
             'click .saveEdit': 'save_edit',
+            'keypress .noEnter': 'no_enter',
 
         },
         //----------------------------------------------------
@@ -176,6 +177,12 @@
             xhr.send(formData);
         },
 
+        no_enter: function (e) {
+		    e = e || window.event;
+		    var key = e.keyCode || e.charCode;
+		    return key !== 13;
+		},
+
     });
 
     website.editor.RTEImageDialog.include({
@@ -188,4 +195,6 @@
             this.on('save', this, this.proxy('saved'));
         },
     });
+
 })();
+

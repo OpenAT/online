@@ -1,6 +1,5 @@
 /* Edit Button */
 .tryEdit {
-    background-color: #507e4e;
     position: absolute;
     top: 0;
     right: 15px;
@@ -13,7 +12,8 @@
     -moz-border-radius-bottomleft: 8px;
     -webkit-border-bottom-left-radius: 8px;
     border-bottom-left-radius: 8px;
-    mix-blend-mode: difference;
+    background: white;
+    color: #555555;
 }
 
 /* Image Modal */
@@ -33,7 +33,31 @@
     border-radius: 6px;
 }
 
-@media only screen and (min-width: 700px) and (max-width: 1300px) {
+@media only screen and (max-width: 900px) {
+
+    .darkroom-toolbar {
+        left: 15%;
+    }
+
+    .darkroom-image-container {
+        left: 10%;
+    }
+
+    .canvas-container, .lower-canvas, .upper-canvas {
+        max-width: 400px;
+        max-height: 400px;
+    }
+}
+
+@media only screen and (min-width: 900px) and (max-width: 1300px) {
+
+    .darkroom-toolbar {
+        left: 25%;
+    }
+
+    .darkroom-image-container {
+        left: 19%;
+    }
 
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 450px;
@@ -43,10 +67,18 @@
 
 @media only screen and (min-width: 1300px) {
 
+    .darkroom-toolbar {
+        left: 25%;
+    }
+
+    .darkroom-image-container {
+        left: 10%;
+    }
+
     .canvas-container, .lower-canvas, .upper-canvas {
         max-width: 900px;
         height: auto;
-        max-height: 800px;
+        max-height: 500px;
     }
 }
 
@@ -76,6 +108,8 @@
     font-size: 28px;
     font-weight: bold;
     transition: 0.3s;
+    background: #444;
+    border: none;
 }
 
 .saveEdit:hover,
@@ -96,7 +130,6 @@
 .image-container {
     display: inline-block;
     max-width: 100%;
-    background: white;
     margin: 5px 0;
         margin-top: 5px;
     border: 1px solid #e2e2e2;
@@ -110,15 +143,10 @@
     border-right: 1px solid #ccc;
 }
 
-.darkroom-container {
-    position: relative;
-}
-
 .darkroom-toolbar {
     display: block;
     position: absolute;
-    top: -45px;
-    left: 0;
+    top: 5px;
     background: #444;
     height: 40px;
     min-width: 40px;
@@ -156,8 +184,9 @@
     border: none;
     outline: none;
     padding: 2px 0 0 0;
-    width: 40px;
-    height: 40px;
+    margin: 0 6px;
+    color: #fff;
+    font-size: 22px;
 }
 
 .darkroom-button:hover {
@@ -170,8 +199,8 @@
     background:#333;
 }
 
-.darkroom-button:disabled .darkroom-icon {
-    fill:#666;
+.darkroom-button:disabled {
+    color:#666;
 }
 
 .darkroom-button:disabled:hover {
@@ -179,47 +208,43 @@
     background: transparent;
 }
 
-.darkroom-button.darkroom-button-active .darkroom-icon {
-    fill:#33b5e5;
+.darkroom-button.darkroom-button-active {
+    color:#33b5e5;
 }
 
 .darkroom-button.darkroom-button-hidden {
     display:none;
 }
 
-.darkroom-button.darkroom-button-success .darkroom-icon {
-    fill:#99cc00;
+.darkroom-button.darkroom-button-success {
+    color:#99cc00;
 }
 
-.darkroom-button.darkroom-button-warning .darkroom-icon {
-    fill:#FFBB33;
+.darkroom-button.darkroom-button-warning {
+    color:#FFBB33;
 }
 
-.darkroom-button.darkroom-button-danger .darkroom-icon {
-    fill:#FF4444;
-}
-
-.darkroom-icon {
-    fill: #fff;
-    width: 24px;
-    height: 24px;
+.darkroom-button.darkroom-button-danger {
+    color:#FF4444;
 }
 
 .darkroom-image-container {
-    top: 0;
-    left: 0;
+    top: 55px;
+    position: absolute;
 }
 
 .image-container .image-meta {
-    margin-top: 10px;
     font-size: 12px;
     text-align: center;
+    position: absolute;
+    width: 450px;
+    bottom: 25px;
+    left: 20px;
 }
 
 #imageText {
     width: 80%;
     color: black;
-    mix-blend-mode: difference;
 }
 
 .form-darkroom {
