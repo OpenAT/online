@@ -34,7 +34,11 @@ class OgonedadiController(http.Controller):
 
         # Finally redirect to /shop/payment/validate
         # HINT: /shop/payment/validate is the default url hard coded in a lot of places
-        return werkzeug.utils.redirect(post.pop('return_url', '/'))
+        return_url = post.pop('return_url', '/')
+        _logger.info('Ogonedadi: Exiting form_feedback to return_url "%s"! (HINT: Normally this would be '
+                     '/shop/payment/validate to calculate the redirect_url_after_form_feedback and to clear the session'
+                     'data for an empty cart!)' % return_url)
+        return werkzeug.utils.redirect(return_url)
 
     # TODO: This is experimental but would be nice to use a odoo page as a template for ogone
     # Add a route for the ogone template

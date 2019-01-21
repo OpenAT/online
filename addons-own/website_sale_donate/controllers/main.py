@@ -996,6 +996,7 @@ class website_sale_donate(website_sale):
 
         # EXIT if no sale order can be found
         if not order:
+            _logger.warning('/shop/payment/validate: No sale order found!')
             return request.redirect(redirect_url_after_form_feedback)
 
         # Confirm free sale orders or cancel sale_orders
@@ -1010,11 +1011,17 @@ class website_sale_donate(website_sale):
             sale_order_obj.action_cancel(cr, SUPERUSER_ID, [order.id], context=request.context)
 
         # CLEAN CURRENT SESSION
+        _logger.info('/shop/payment/validate: Clean session data to start with an empty cart.')
         request.website.sale_reset(context=context)
 
-        # Redirect
+        # Add sale.order order_id to the redirect_url_after_form_feedback for external thank-you-pages
         divider = '?' if '?' not in redirect_url_after_form_feedback else '&'
-        return request.redirect(redirect_url_after_form_feedback+divider+'order_id='+str(order.id))
+        redirect_url_after_form_feedback = redirect_url_after_form_feedback+divider+'order_id='+str(order.id)
+
+        # Redirect
+        _logger.info('/shop/payment/validate: exiting to redirect_url_after_form_feedback: %s'
+                     % redirect_url_after_form_feedback)
+        return request.redirect(redirect_url_after_form_feedback)
 
     # Alternative confirmation page for Dadi Payment-Providers (Acquirers ogonedadi and frst for now)
     # HINT this rout is called by the payment_provider routes e.g.: ogonedadi_form_feedback or frst_form_feedback
