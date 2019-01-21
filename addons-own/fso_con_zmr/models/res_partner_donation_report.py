@@ -61,6 +61,11 @@ class ResPartnerFADonationReport(models.Model):
                                         ('unexpected_response', 'Unexpected Response')],
                              index=True)
 
+    # NEW field e.g.: for initial data acquisition
+    imported = fields.Boolean(string='Imported', readonly=True,
+                              help='Imported Donation Report! If "True" most contrains will be IGNORED and '
+                                   'some fields like "submission_type" will NOT be computed!')
+
     # Error before submission
     # -----------------------
     # HINT: These fields can only be filled prior to submission because only donation reports without an error
@@ -247,9 +252,11 @@ class ResPartnerFADonationReport(models.Model):
         max_year = int(now.year)+1
 
         for r in self:
-            # Make sure none of this fields are changed if it is already submitted
-            if r.state and r.state not in list(r._changes_allowed_states()) + ['skipped']:
-                raise ValidationError(_("Changes to report (ID %s) not allowed in state: %s") % (r.id, r.state))
+
+            # Make sure none of this fields are changed if it is already submitted for non imported reports
+            if not r.imported:
+                if r.state and r.state not in list(r._changes_allowed_states()) + ['skipped']:
+                    raise ValidationError(_("Changes to report (ID %s) not allowed in state: %s") % (r.id, r.state))
 
             # Make sure it is impossible to change the submission_id to an already submitted submission
             if r.submission_id and r.submission_id.state not in ('new', 'prepared', 'error'):
@@ -686,6 +693,11 @@ class ResPartnerFADonationReport(models.Model):
         logger.info("update_state_and_submission_information() "
                     "Compute state and submission information for %s donation reports!" % len(self))
         for r in self:
+            # Skip imported donation reports!
+            # -------------------------------
+            if r.imported:
+                continue
+
             # Skip older unsubmitted reports
             # ------------------------------
             # Search for unsubmitted donation reports that are created before this report
@@ -991,20 +1003,24 @@ class ResPartnerFADonationReport(models.Model):
     @api.multi
     def write(self, vals):
         for r in self:
-            # Prevent an FinanzOnline environment change after the donation report got created.
-            if vals and 'submission_env' in vals and vals['submission_env'] != r.submission_env:
-                raise ValidationError(_("You can not change the environment once the donation report got created!"))
 
-            # Prevent any changes to the basic fields after submission
-            # HINT: Changes must be also allowed in the response_nok state for report release button
-            changes_allowed_states = list(self._changes_allowed_states())
-            changes_allowed_states.append('response_nok')
-            if r.state and r.state not in changes_allowed_states:
-                changes_allowed_fields = self._changes_allowed_fields_after_submission()
-                if any((vals[field] or False) != (r[field] or False) for field in vals
-                       if field not in changes_allowed_fields):
-                    raise ValidationError(_("Changes to some of the fields in %s are only allowed in the states %s!")
-                                          % (vals, str(self._changes_allowed_states())))
+            # Only run these checks for non imported donation reports
+            if not r.imported:
+
+                # Prevent an FinanzOnline environment change after the donation report got created.
+                if vals and 'submission_env' in vals and vals['submission_env'] != r.submission_env:
+                    raise ValidationError(_("You can not change the environment once the donation report got created!"))
+
+                # Prevent any changes to the basic fields after submission
+                # HINT: Changes must be also allowed in the response_nok state for report release button
+                changes_allowed_states = list(self._changes_allowed_states())
+                changes_allowed_states.append('response_nok')
+                if r.state and r.state not in changes_allowed_states:
+                    changes_allowed_fields = self._changes_allowed_fields_after_submission()
+                    if any((vals[field] or False) != (r[field] or False) for field in vals
+                           if field not in changes_allowed_fields):
+                        raise ValidationError(_("Changes to some of the fields in %s are only allowed in the states "
+                                                "%s!") % (vals, str(self._changes_allowed_states())))
 
         # ATTENTION: After this 'self' is changed in memory and 'res' is only a boolean !
         res = super(ResPartnerFADonationReport, self).write(vals)

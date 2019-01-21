@@ -7,6 +7,7 @@ class ResPartnerDonationReportSosync(models.Model):
     _inherit = ["res.partner.donation_report", "base.sosync"]
 
     info = fields.Text(sosync="True")
+    imported = fields.Boolean(sosync="True")                        # Mark "imported" e.g.: for initial data acquisition
 
     # Fields set by FRST at donation report creation
     # ----------------------------------------------
