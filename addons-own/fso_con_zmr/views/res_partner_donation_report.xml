@@ -29,6 +29,7 @@
                             <field name="meldungs_jahr"/>
                             <field name="betrag"/>
                             <field name="cancellation_for_bpk_private"/>
+                            <field name="imported"/>
                         </group>
                         <group>
                             <field name="anlage_am_um" class="oe_bold"/>
@@ -141,6 +142,7 @@
                 <field name="meldungs_jahr"/>
                 <field name="submission_env"/>
                 <field name="bpk_company_id"/>
+                <field name="imported"/>
                 <field name="id"/>
             </tree>
         </field>
@@ -169,7 +171,14 @@
                 <field name="response_error_code"/>
                 <field name="response_error_detail"/>
                 <field name="response_error_orig_refnr"/>
+                <field name="imported"/>
 
+                <group string="Filter by">
+                    <filter string="Imported"
+                            domain="[('imported','!=',False)]"/>
+                    <filter string="Not-Imported"
+                            domain="[('imported','=',False)]"/>
+                </group>
                 <group string="Filter by">
                     <filter string="New-to-submit"
                             domain="[('state','=','new')]"/>
@@ -221,6 +230,8 @@
                             context="{'group_by':'bpk_company_id'}"/>
                     <filter name="Partner"
                             context="{'group_by':'partner_id'}"/>
+                    <filter string="Imported"
+                            context="{'group_by':'imported'}"/>
                 </group>
                 <group string="Group by">
                     <filter string="Meldungs-Typ"
