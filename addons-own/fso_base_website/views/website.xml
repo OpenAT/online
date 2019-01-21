@@ -49,18 +49,31 @@
                                 <field name="google_analytics_script"/>
                             </group>
                             <group string="robots.txt">
-                                <label for="RobotsViewId"/>
-                                <div name="RobotsViewId">
+                                <!--<label for="robots_view_id"/>-->
+                                <!--<div name="robots_view_id">-->
+                                    <!--<div class="oe_inline">-->
+                                        <!--<field name="robots_view_id"/>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<label for="robots_view_arch_field"/>-->
+                                <!--<div name="robots_view_arch_field">-->
+                                    <!--<div class="oe_inline">-->
+                                        <!--<field name="robots_view_arch_field"/>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <label for="robots_txt"/>
+                                <div style="color:grey;">
+                                    <small>
+                                        This text will be added to the top of the robots.txt file!
+                                    </small>
+                                </div>
+                                <label string=""/>
+                                <div name="robots_txt">
                                     <div class="oe_inline">
-                                        <field name="RobotsViewId"/>
+                                        <field name="robots_txt"/>
                                     </div>
                                 </div>
-                                <label for="RobotsArch"/>
-                                <div name="RobotsArch">
-                                    <div class="oe_inline">
-                                        <field name="RobotsArch"/>
-                                    </div>
-                                </div>
+                                
                             </group>
                         </page>
                         <page string="Social Media Accounts">
