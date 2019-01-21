@@ -1002,10 +1002,12 @@ class ResPartnerFADonationReport(models.Model):
 
     @api.multi
     def write(self, vals):
+
         for r in self:
 
             # Only run these checks for non imported donation reports
-            if not r.imported:
+            imported = vals.get('imported') if 'imported' in vals else r.imported
+            if not imported:
 
                 # Prevent an FinanzOnline environment change after the donation report got created.
                 if vals and 'submission_env' in vals and vals['submission_env'] != r.submission_env:
