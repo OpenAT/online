@@ -54,9 +54,9 @@ class AccountFiscalYear(models.Model):
                                 help="computed by ze_datum_von and ze_datum_bis",
                                 track_visibility='onchange')
 
-    # ---------------
-    # API CONSTRAINTS
-    # ---------------
+    # --------------
+    # API CONSTRAINS
+    # --------------
     @api.constrains('date_start', 'date_stop', 'ze_datum_von', 'ze_datum_bis',
                     'meldezeitraum_start', 'meldezeitraum_end')
     def _constrain_donation_report_dates(self):
@@ -81,7 +81,7 @@ class AccountFiscalYear(models.Model):
             meldezeitraum_start = str_to_datetime(r.meldezeitraum_start)
             meldezeitraum_end = str_to_datetime(r.meldezeitraum_end)
 
-            # Check "Betrachtungszeitraum"
+            # Check "Betrachtungszeitraum" (donations in this time range are included in the donation report)
             if ze_datum_von or ze_datum_bis:
                 # Check both fields are set
                 if not (ze_datum_von and ze_datum_bis):
@@ -108,7 +108,43 @@ class AccountFiscalYear(models.Model):
                     if abs(ze_end_range.days) > 30:
                         raise ValidationError(_("Fiscal year date_stop and ze_datum_bis differ more than 30 days!"))
 
-            # Check Meldezeitraum
+                # Check the 'Betrachtungszeitraum' gap between the closest adjacent years
+                years_to_check = self.search([('id', '!=', r.id),
+                                              ('company_id', '=', r.company_id.id),
+                                              ('ze_datum_von', '!=', False),
+                                              ('ze_datum_bis', '!=', False)])
+
+                closest_past_year = False
+                closest_past_year_gap = datetime.timedelta(days=386)
+
+                closest_future_year = False
+                closest_future_year_gap = datetime.timedelta(days=386)
+
+                for ytc in years_to_check:
+
+                    # Find closest past year
+                    past_year_gap = ze_datum_von - str_to_datetime(ytc.ze_datum_bis)
+                    if abs(past_year_gap.total_seconds()) < closest_past_year_gap.total_seconds():
+                        closest_past_year = ytc
+                        closest_past_year_gap = past_year_gap
+
+                    # Find closest future year
+                    future_year_gap = str_to_datetime(ytc.ze_datum_von) - ze_datum_bis
+                    if abs(future_year_gap.total_seconds()) < closest_future_year_gap.total_seconds():
+                        closest_future_year = ytc
+                        closest_future_year_gap = future_year_gap
+
+                if closest_past_year and abs(closest_past_year_gap.total_seconds()) > 61:
+                    raise ValidationError(_("Fiscal year ze_datum_von differs more than 1 minute from last "
+                                            "fiscal years ze_datum_bis! There should be no gap or some "
+                                            "donations may not be included in the donation reports!"))
+
+                if closest_future_year and abs(closest_future_year_gap.total_seconds()) > 61:
+                    raise ValidationError(_("Fiscal year ze_datum_bis differs more than 1 minute from "
+                                            "subsequent fiscal years ze_datum_von! There should be no gap or "
+                                            "some donations may not be included in the donation reports!"))
+
+            # Check "Meldezeitraum" (time range for automatic submission)
             if meldezeitraum_start or meldezeitraum_end:
                 # Check both fields are set
                 if not (meldezeitraum_start and meldezeitraum_end):
@@ -130,7 +166,6 @@ class AccountFiscalYear(models.Model):
     # ---------------
     # COMPUTED FIELDS
     # ---------------
-
     @api.depends('ze_datum_von', 'ze_datum_bis',)
     def compute_meldungs_jahr(self):
 
