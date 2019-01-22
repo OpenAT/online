@@ -31,7 +31,25 @@ class Website(models.Model):
 
     # New Solution
     robots_txt = fields.Text(string="robots.txt Extras",
-                             help="Add custom instructions to the top of the robots.txt file!")
+                             help="Add custom instructions to the top of the robots.txt file!",
+                             default="""
+User-agent: *
+Disallow: /uber-uns
+Disallow: /event
+Disallow: /privacy
+Disallow: /datenschutz
+Disallow: /survey
+Disallow: /forum
+
+# Multilang
+Disallow: /*/uber-uns
+Disallow: /*/event
+Disallow: /*/privacy
+Disallow: /*/datenschutz
+Disallow: /*/survey
+Disallow: /*/forum
+
+                             """)
 
     # TODO: !!! USE LOWERCASE FIELD NAMES !!!
     PublicPartnerNoSubscribe = fields.Boolean(related="partner_id.no_subscribe",
