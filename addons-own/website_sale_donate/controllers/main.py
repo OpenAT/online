@@ -958,6 +958,7 @@ class website_sale_donate(website_sale):
     # HINT: Overwrite was necessary because of unwanted redirects e.g.: to /shop in orig. controller
     @http.route()
     def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
+        _logger.info('/shop/payment/validate: START for sale_order_id: %s' % sale_order_id)
         cr, uid, context = request.cr, request.uid, request.context
         sale_order_obj = request.registry['sale.order']
 
@@ -996,7 +997,7 @@ class website_sale_donate(website_sale):
 
         # EXIT if no sale order can be found
         if not order:
-            _logger.warning('/shop/payment/validate: No sale order found!')
+            _logger.error('/shop/payment/validate: No sale order found!')
             return request.redirect(redirect_url_after_form_feedback)
 
         # Confirm free sale orders or cancel sale_orders
@@ -1019,7 +1020,7 @@ class website_sale_donate(website_sale):
         redirect_url_after_form_feedback = redirect_url_after_form_feedback+divider+'order_id='+str(order.id)
 
         # Redirect
-        _logger.info('/shop/payment/validate: exiting to redirect_url_after_form_feedback: %s'
+        _logger.info('/shop/payment/validate: redirect to redirect_url_after_form_feedback: %s'
                      % redirect_url_after_form_feedback)
         return request.redirect(redirect_url_after_form_feedback)
 
