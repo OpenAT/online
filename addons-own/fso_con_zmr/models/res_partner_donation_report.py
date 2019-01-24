@@ -396,8 +396,8 @@ class ResPartnerFADonationReport(models.Model):
                   ('meldungs_jahr', '=', self.meldungs_jahr),
                   ('state', '!=', False),
                   ('state', 'not in', ['new', 'skipped', 'disabled', 'error']),
-                  ('submission_id', '!=', False),
-                  ('submission_id_datetime', '!=', False),
+                  #('submission_id', '!=', False),
+                  #('submission_id_datetime', '!=', False),
                   ('id', '!=', self.id)]
 
         # ATTENTION: If submission_bpk_private is set the lsr FOR THIS BPK will be returned!
@@ -412,6 +412,12 @@ class ResPartnerFADonationReport(models.Model):
         # Return the empty record set if no lsr was found
         if not lsr:
             return lsr
+
+        # Check that submission_id and submission_id_datetime are set for non imported donation reports
+        if not lsr.imported:
+            if not lsr.submission_id or not lsr.submission_id_datetime:
+                raise ValidationError(_("Non imported and submitted donation report (ID %s) is not linked to a valid"
+                                        "donation report submission!") % lsr.id)
 
         # Return the lsr also on an ERR-U-008
         # ATTENTION: ERR-U-008 error means that there was already an 'Erstmeldung' for this donation report
