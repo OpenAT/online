@@ -227,6 +227,7 @@ class EmailTemplate(models.Model):
 
     @api.multi
     def screenshot_update(self, src_width=1024, src_height=1181, tgt_width=260, tgt_height=300):
+        logger.info("START to generate screenshots for email.templates with ids %s !" % self.ids)
 
         # CHECK LANGUAGE SETTINGS OF CONTEXT AND USER!
         context = self.env.context
@@ -256,8 +257,8 @@ class EmailTemplate(models.Model):
         else:
             self_with_lang = self
 
-        logger.info("Generating FSON email.template screenshots for lang %s"
-                    "" % self_with_lang.env.context.get('lang', False))
+        logger.info("Generating FSON email.template screenshots for lang %s and e-mail templates with ids: %s"
+                    "" % (self_with_lang.env.context.get('lang', False), self_with_lang.ids))
 
         # GENERATE THE SCREENSHOT
         for r in self_with_lang:
@@ -375,5 +376,5 @@ class EmailTemplate(models.Model):
 
     @api.model
     def scheduled_screenshot_update(self):
-        self.screenshot_update()
+        self.search([('screenshot_pending', '=', True)]).screenshot_update()
         return True
