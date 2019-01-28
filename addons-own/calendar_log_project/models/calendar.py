@@ -153,157 +153,169 @@ class calendar_event(osv.osv):
             ['&', ('name', '=', 'is_attendance'), ('model', '=', 'calendar.event')]), _(
             'Remove any Default for calendar.event.is_attendance field! Settings > Technical > Actions > User Defaults')
 
-        # HINT: A event creation will also call the write method because of the "message_last_post" field
-        #       Therefore we do not have to extend the create method also.
-        # WARNING: Do nothing if record gets unlinked (there is {'active': False} included in vals on unlink)
-        if self.ensure_one() and values.get('active', 'Not Included') is not False:
-            # Prepare variables
-            # HINT: self.task_id.id will return FALSE if self.task_id is empty (no assertion will be thrown!)
-            name = values.get('name') if 'name' in values else self.name
-            start = values.get('start') if 'start' in values else \
-                values.get('start_datetime') if 'start_datetime' in values \
-                else self.start
-            stop = values.get('stop') if 'stop' in values else \
-                values.get('stop_datetime') if 'stop_datetime' in values \
-                else self.stop
-            duration = values.get('duration') if 'duration' in values else self.duration
-            is_worklog = values.get('is_worklog') if 'is_worklog' in values else self.is_worklog
-            worklog_text = values.get('worklog_text') if 'worklog_text' in values else self.worklog_text
-            is_attendance = values.get('is_attendance') if 'is_attendance' in values else self.is_attendance
-            user_id = values.get('user_id') if 'user_id' in values else self.user_id.id
-            category_id = values.get('category_id') if 'category_id' in values else self.category_id.id
-            project_id = values.get('project_id') if 'project_id' in values else self.project_id.id
-            task_id = values.get('task_id') if 'task_id' in values else self.task_id.id
+        if values.get('active', 'Not Included') is not False and 'skipp_calendar_log_project' not in values:
+            for r in self:
+                rec_values = dict()
 
-            # =======
-            # WORKLOG
-            # =======
-            # Unlink task worklog
-            if task_id != self.task_id.id or not is_worklog:
-                # Unlink task worklog and related analytic timesheet worklog
-                if self.task_work_id:
-                    if self.task_work_id.hr_analytic_timesheet_id:
-                        self.task_work_id.hr_analytic_timesheet_id.unlink()
-                    self.task_work_id.unlink()
+                # HINT: A event creation will also call the write method because of the "message_last_post" field
+                #       Therefore we do not have to extend the create method also.
+                # WARNING: Do nothing if record gets unlinked (there is {'active': False} included in vals on unlink)
+                # Prepare variables
+                # HINT: r.task_id.id will return FALSE if r.task_id is empty (no assertion will be thrown!)
+                name = values.get('name') if 'name' in values else r.name
+                start = values.get('start') if 'start' in values else \
+                    values.get('start_datetime') if 'start_datetime' in values \
+                    else r.start
+                stop = values.get('stop') if 'stop' in values else \
+                    values.get('stop_datetime') if 'stop_datetime' in values \
+                    else r.stop
+                duration = values.get('duration') if 'duration' in values else r.duration
+                is_worklog = values.get('is_worklog') if 'is_worklog' in values else r.is_worklog
+                worklog_text = values.get('worklog_text') if 'worklog_text' in values else r.worklog_text
+                is_attendance = values.get('is_attendance') if 'is_attendance' in values else r.is_attendance
+                user_id = values.get('user_id') if 'user_id' in values else r.user_id.id
+                category_id = values.get('category_id') if 'category_id' in values else r.category_id.id
+                project_id = values.get('project_id') if 'project_id' in values else r.project_id.id
+                task_id = values.get('task_id') if 'task_id' in values else r.task_id.id
 
-            # Unlink project worklog
-            # ATTENTION: Unlink any existing project worklog also if a task is available
-            if project_id != self.project_id.id or task_id or not is_worklog:
-                if self.analytic_time_id:
-                    self.analytic_time_id.unlink()
+                # =======
+                # WORKLOG
+                # =======
+                # Unlink task worklog
+                if task_id != r.task_id.id or not is_worklog:
+                    # Unlink task worklog and related analytic timesheet worklog
+                    if r.task_work_id:
+                        if r.task_work_id.hr_analytic_timesheet_id:
+                            r.task_work_id.hr_analytic_timesheet_id.unlink()
+                        r.task_work_id.unlink()
 
-            # Create or update worklog
-            if is_worklog:
-                assert project_id, _('You have to choose a project if Is Worklog is checked!')
+                # Unlink project worklog
+                # ATTENTION: Unlink any existing project worklog also if a task is available
+                if project_id != r.project_id.id or task_id or not is_worklog:
+                    if r.analytic_time_id:
+                        r.analytic_time_id.unlink()
 
-                # TASK WORKLOG
-                # ------------
-                # HINT: You can add bool in but it's not necessary, because bool is a subclass of int.
-                if task_id:
-                    task_worklog_values = {
-                        'name': worklog_text or name,
-                        'user_id': user_id,
-                        'date': start,
-                        'hours': duration,
-                        'task_id': task_id,
-                    }
-                    # Update an existing task worklog
-                    # HINT: If the task changed the task worklog would already be deleted before we reach this point.
-                    if self.task_work_id:
-                        self.task_work_id.write(task_worklog_values)
-                    # Create a new task worklog
-                    # HINT: We did not write the event so need to create the worklog without self.task_work_id
+                # Create or update worklog
+                if is_worklog:
+                    assert project_id, _('You have to choose a project if Is Worklog is checked!')
+
+                    # TASK WORKLOG
+                    # ------------
+                    # HINT: You can add bool in but it's not necessary, because bool is a subclass of int.
+                    if task_id:
+                        task_worklog_values = {
+                            'name': worklog_text or name,
+                            'user_id': user_id,
+                            'date': start,
+                            'hours': duration,
+                            'task_id': task_id,
+                        }
+                        # Update an existing task worklog
+                        # HINT: If the task changed the task worklog would already be deleted before we reach this point.
+                        if r.task_work_id:
+                            r.task_work_id.write(task_worklog_values)
+                        # Create a new task worklog
+                        # HINT: We did not write the event so need to create the worklog without r.task_work_id
+                        else:
+                            task_obj = r.env['project.task']
+                            task = task_obj.browse([task_id])
+                            task_work_id = task.work_ids.create(task_worklog_values)
+                            # HINT: task.work_ids will create a related hr_analytic_timesheet entry on creation
+                            task_work_id.hr_analytic_timesheet_id.event_category_id = category_id
+                            rec_values['task_work_id'] = task_work_id.id
+                    # PROJECT WORKLOG
+                    # ---------------
                     else:
-                        task_obj = self.env['project.task']
-                        task = task_obj.browse([task_id])
-                        task_work_id = task.work_ids.create(task_worklog_values)
-                        # HINT: task.work_ids will create a related hr_analytic_timesheet entry on creation
-                        task_work_id.hr_analytic_timesheet_id.event_category_id = category_id
-                        values['task_work_id'] = task_work_id.id
-                # PROJECT WORKLOG
-                # ---------------
-                else:
-                    # Prepare values
-                    ts_obj = self.env['hr.analytic.timesheet']
-                    prj_obj = self.env['project.project']
-                    project = prj_obj.browse([project_id])
-                    account_id = project.analytic_account_id.id
-                    unit_amount = duration
-                    company_time_unit_id = self.env['res.users'].browse([user_id]).company_id.project_time_mode_id.id
-                    employee_time_unit_id = ts_obj._getEmployeeUnit(context={'user_id': user_id})
-                    # If the company has a different time unit than the employee we need to recalculate unit_amount
-                    if company_time_unit_id != employee_time_unit_id:
-                        unit_amount = self.env['product.uom']._compute_qty(company_time_unit_id,
-                                                                           unit_amount,
-                                                                           employee_time_unit_id)
-                    ts_values = {
-                        'name': worklog_text or name,
-                        'user_id': user_id,
-                        'date': start,
-                        'unit_amount': unit_amount,
-                        'account_id': account_id,
-                        'journal_id': ts_obj._getAnalyticJournal(context={'user_id': user_id}),
-                        'product_id': ts_obj._getEmployeeProduct(context={'user_id': user_id}),
-                        'product_uom_id': employee_time_unit_id,
-                        'general_account_id': ts_obj._getGeneralAccount(context={'user_id': user_id}),
-                        'event_category_id': category_id,
+                        # Prepare values
+                        ts_obj = r.env['hr.analytic.timesheet']
+                        prj_obj = r.env['project.project']
+                        project = prj_obj.browse([project_id])
+                        account_id = project.analytic_account_id.id
+                        unit_amount = duration
+                        company_time_unit_id = r.env['res.users'].browse([user_id]).company_id.project_time_mode_id.id
+                        employee_time_unit_id = ts_obj._getEmployeeUnit(context={'user_id': user_id})
+                        # If the company has a different time unit than the employee we need to recalculate unit_amount
+                        if company_time_unit_id != employee_time_unit_id:
+                            unit_amount = r.env['product.uom']._compute_qty(company_time_unit_id,
+                                                                               unit_amount,
+                                                                               employee_time_unit_id)
+                        ts_values = {
+                            'name': worklog_text or name,
+                            'user_id': user_id,
+                            'date': start,
+                            'unit_amount': unit_amount,
+                            'account_id': account_id,
+                            'journal_id': ts_obj._getAnalyticJournal(context={'user_id': user_id}),
+                            'product_id': ts_obj._getEmployeeProduct(context={'user_id': user_id}),
+                            'product_uom_id': employee_time_unit_id,
+                            'general_account_id': ts_obj._getGeneralAccount(context={'user_id': user_id}),
+                            'event_category_id': category_id,
+                        }
+                        # Update an existing project worklog
+                        # HINT: If the project changed the project worklog would already be deleted
+                        #       So an update id only possible if the project exists and stayed the same.
+                        if r.analytic_time_id:
+                            r.analytic_time_id.write(ts_values)
+                        # Create a project worklog
+                        # HINT: We did not write the event so need to create the worklog without r.analytic_time_id
+                        else:
+                            project_worklog = ts_obj.create(ts_values)
+                            rec_values['analytic_time_id'] = project_worklog.id
+
+                # ==========
+                # ATTENDANCE
+                # ==========
+                # Unlink attendance
+                if not is_attendance:
+                    if r.sign_in_id:
+                        r.sign_in_id.unlink()
+                    if r.sign_out_id:
+                        r.sign_out_id.unlink()
+
+                # Create or Update Attendance
+                if is_attendance:
+                    attendance_obj = r.env['hr.attendance']
+                    # Get the employee id
+                    employee_obj = r.env['hr.employee']
+                    employee_id = employee_obj.search([('user_id', '=', r.user_id.id)], limit=1).id
+                    assert employee_id, _('No employee found for current user!')
+
+                    # SIGN_IN attendance
+                    sign_in_values = {
+                        'employee_id': employee_id,
+                        'name': start,
+                        'action': 'sign_in',
                     }
-                    # Update an existing project worklog
-                    # HINT: If the project changed the project worklog would already be deleted
-                    #       So an update id only possible if the project exists and stayed the same.
-                    if self.analytic_time_id:
-                        self.analytic_time_id.write(ts_values)
-                    # Create a project worklog
-                    # HINT: We did not write the event so need to create the worklog without self.analytic_time_id
+                    # Update existing sign-in attendance
+                    if r.sign_in_id:
+                        r.sign_in_id.write(sign_in_values)
+                    # Create new sign-in attendance
                     else:
-                        project_worklog = ts_obj.create(ts_values)
-                        values['analytic_time_id'] = project_worklog.id
+                        sign_in = attendance_obj.create(sign_in_values)
+                        rec_values['sign_in_id'] = sign_in.id
 
-            # ==========
-            # ATTENDANCE
-            # ==========
-            # Unlink attendance
-            if not is_attendance:
-                if self.sign_in_id:
-                    self.sign_in_id.unlink()
-                if self.sign_out_id:
-                    self.sign_out_id.unlink()
+                    # SIGN_OUT attendance
+                    sign_out_values = {
+                        'employee_id': employee_id,
+                        'name': stop,
+                        'action': 'sign_out',
+                    }
+                    # Update existing sign-out attendance
+                    if r.sign_out_id:
+                        r.sign_out_id.write(sign_out_values)
+                    # Create new sign-out attendance
+                    else:
+                        sign_out = attendance_obj.create(sign_out_values)
+                        rec_values['sign_out_id'] = sign_out.id
 
-            # Create or Update Attendance
-            if is_attendance:
-                attendance_obj = self.env['hr.attendance']
-                # Get the employee id
-                employee_obj = self.env['hr.employee']
-                employee_id = employee_obj.search([('user_id', '=', self.user_id.id)], limit=1).id
-                assert employee_id, _('No employee found for current user!')
+                # UPDATE REC VALUES WITHOUT RECURSION :)
+                if rec_values:
+                    rec_values['skipp_calendar_log_project'] = True
+                    r.write(rec_values)
 
-                # SIGN_IN attendance
-                sign_in_values = {
-                    'employee_id': employee_id,
-                    'name': start,
-                    'action': 'sign_in',
-                }
-                # Update existing sign-in attendance
-                if self.sign_in_id:
-                    self.sign_in_id.write(sign_in_values)
-                # Create new sign-in attendance
-                else:
-                    sign_in = attendance_obj.create(sign_in_values)
-                    values['sign_in_id'] = sign_in.id
-
-                # SIGN_OUT attendance
-                sign_out_values = {
-                    'employee_id': employee_id,
-                    'name': stop,
-                    'action': 'sign_out',
-                }
-                # Update existing sign-out attendance
-                if self.sign_out_id:
-                    self.sign_out_id.write(sign_out_values)
-                # Create new sign-out attendance
-                else:
-                    sign_out = attendance_obj.create(sign_out_values)
-                    values['sign_out_id'] = sign_out.id
+            # Remove 'skipp_calendar_log_project' for the rec_values write
+            if 'skipp_calendar_log_project' in values:
+                values.pop('skipp_calendar_log_project')
 
         return super(calendar_event, self).write(values)
 
