@@ -3,6 +3,7 @@ from openerp import api, models, fields
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
 from openerp.tools.translate import _
 from openerp.exceptions import ValidationError
+from openerp.addons.fso_base.tools.email_tools import send_internal_email
 
 import datetime
 import logging
@@ -135,14 +136,22 @@ class AccountFiscalYear(models.Model):
                         closest_future_year_gap = future_year_gap
 
                 if closest_past_year and abs(closest_past_year_gap.total_seconds()) > 61:
-                    raise ValidationError(_("Fiscal year ze_datum_von differs more than 1 minute from last "
-                                            "fiscal years ze_datum_bis! There should be no gap or some "
-                                            "donations may not be included in the donation reports!"))
+                    msg = _("Fiscal year ze_datum_von differs more than 1 minute from last "
+                            "fiscal years ze_datum_bis! There should be no gap or some "
+                            "donations may not be included in the donation reports!")
+                    logger.error(msg)
+                    send_internal_email(odoo_env_obj=self.env, subject="FISCAL YEAR GAP-ERROR", body=msg)
+                    # DISABLED: BECAUSE WE ALREADY HAVE BAD DATA IN OUR INSTANCES :(
+                    # raise ValidationError(msg)
 
                 if closest_future_year and abs(closest_future_year_gap.total_seconds()) > 61:
-                    raise ValidationError(_("Fiscal year ze_datum_bis differs more than 1 minute from "
-                                            "subsequent fiscal years ze_datum_von! There should be no gap or "
-                                            "some donations may not be included in the donation reports!"))
+                    msg = _("Fiscal year ze_datum_bis differs more than 1 minute from "
+                            "subsequent fiscal years ze_datum_von! There should be no gap or "
+                            "some donations may not be included in the donation reports!")
+                    logger.error(msg)
+                    send_internal_email(odoo_env_obj=self.env, subject="FISCAL YEAR GAP-ERROR", body=msg)
+                    # DISABLED: BECAUSE WE ALREADY HAVE BAD DATA IN OUR INSTANCES :(
+                    # raise ValidationError(msg)
 
             # Check "Meldezeitraum" (time range for automatic submission)
             if meldezeitraum_start or meldezeitraum_end:
