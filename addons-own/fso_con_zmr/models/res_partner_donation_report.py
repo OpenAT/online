@@ -636,9 +636,11 @@ class ResPartnerFADonationReport(models.Model):
                 logger.warning(ref_mismatch_msg)
 
                 # Check if Meldejahr, CompanyType and Private BPK are still the same
-                if (r.meldungs_jahr != lsr.meldungs_jahr or
-                        r.bpk_company_id.fa_dr_type != lsr.submission_id.submission_fa_dr_type or
-                        submission_bpk_private != lsr.submission_bpk_private):
+                if (
+                        (r.meldungs_jahr != lsr.meldungs_jahr) or
+                        (not lsr.imported and r.bpk_company_id.fa_dr_type != lsr.submission_id.submission_fa_dr_type) or
+                        (submission_bpk_private != lsr.submission_bpk_private)
+                ):
                     raise ValidationError(ref_mismatch_msg)
 
             # ATTENTION: We use the submission_refnr from the last submitted report in case the partner id
