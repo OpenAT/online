@@ -93,6 +93,13 @@ class calendar_event(osv.osv):
     #         # We trigger the write method at install or update time for all events to update the event_category_id
     #         event.write({"name": event.name or None})
 
+    @api.constrains('is_worklog', 'is_attendance')
+    def _constraint_user_partner_id_in_event_partner_ids(self):
+        for r in self:
+            if (r.is_worklog or r.is_attendance) and r.user_id.partner_id:
+                assert r.user_id.partner_id in r.partner_ids, _(
+                    "You must be a participant if is_worklog or is_attendance is set!")
+
     @api.onchange('category_id')
     def _oc_category_id(self):
         # Only update if a category was set
@@ -132,11 +139,22 @@ class calendar_event(osv.osv):
                 elif self.project_id.partner_id:
                     self.mainpartner_id = self.project_id.partner_id
 
+            # Make sure we are still a participant
+            if self.is_worklog or self.is_attendance:
+                if self.user_id and self.user_id.partner_id not in self.partner_ids:
+                    self.partner_ids = [(4, self.user_id.partner_id.id, '')]
+
             # Set a domain for the task list to only show tasks that belong to this project
             return {'domain': {'task_id': [('project_id', '=', self.project_id.id)]}}
         else:
             # Clear the Domain for Tasks if no Project is selected
             return {'domain': {'task_id': []}}
+        
+    @api.onchange('is_worklog', 'is_attendance')
+    def _onchange_set_user_id_partner_id_as_participant(self):
+        if self.is_worklog or self.is_attendance:
+            if self.user_id and self.user_id.partner_id not in self.partner_ids:
+                self.partner_ids = [(4, self.user_id.partner_id.id, '')]
 
     # @api.multi
     # def create(self, values, context=None):

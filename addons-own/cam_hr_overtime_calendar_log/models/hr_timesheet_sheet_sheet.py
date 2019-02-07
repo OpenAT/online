@@ -21,11 +21,24 @@ class HRTimesheetSheetSheet(models.Model):
                                                ('stop', '<=', sheet.date_to + ' 23:59:59'),
                                                ])
             _logger.info("_total_sums() found %s calendar events in this timesheet range" % len(events_to_update))
+
             for event in events_to_update:
                 vals = {}
+
+                # CLEANUP: Remove worklog if not linked to a project
                 if event.is_worklog and not event.project_id:
                     vals['is_worklog'] = False
+
+                # CLEANUP: Make sure the partner of the user is also a participant
+                if event.is_worklog or event.is_attendance:
+                    if event.user_id and event.user_id.partner_id not in event.partner_ids:
+                        _logger.warning("Calender event %s found with worklog and/or attendance set but "
+                                        "without user_id.partner_id in participants!" % event.id)
+                        vals['partner_ids'] = [(4, event.user_id.partner_id.id, '')]
+
+                # UPDATE: write event to recalculate attendance and worklog records and set CLEANUP values if any
                 event.write(vals)
+
             _logger.info("_total_sums() all calendar event related work-log and attendance records updated")
 
         return super(HRTimesheetSheetSheet, self)._total_sums(field_name=field_name, arg=arg)
