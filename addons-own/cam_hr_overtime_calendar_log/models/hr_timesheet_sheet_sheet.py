@@ -15,8 +15,10 @@ class HRTimesheetSheetSheet(models.Model):
         for sheet in self:
             # HINT: used start_date twice instead of end_date to catch overday events
             events_to_update = cal_obj.search([('user_id', '=', sheet.user_id.id),
-                                               ('start_datetime', '>=', sheet.date_from + ' 00:00:00'),
-                                               ('start_datetime', '<=', sheet.date_to + ' 23:59:59'),
+                                               ('start', '!=', False),
+                                               ('stop', '!=', False),
+                                               ('start', '>=', sheet.date_from + ' 00:00:00'),
+                                               ('stop', '<=', sheet.date_to + ' 23:59:59'),
                                                ])
             _logger.info("_total_sums() found %s calendar events in this timesheet range" % len(events_to_update))
             for event in events_to_update:
