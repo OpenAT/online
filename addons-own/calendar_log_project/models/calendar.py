@@ -153,7 +153,11 @@ class calendar_event(osv.osv):
             ['&', ('name', '=', 'is_attendance'), ('model', '=', 'calendar.event')]), _(
             'Remove any Default for calendar.event.is_attendance field! Settings > Technical > Actions > User Defaults')
 
-        if values.get('active', 'Not Included') is not False and 'skipp_calendar_log_project' not in values:
+        # Create or update hr.timesheet worklog and attendance records
+        # ------------------------------------------------------------
+        if values.get('active', '') is not False and 'skipp_calendar_log_project' not in values:
+
+            # Loop through the records
             for r in self:
                 rec_values = dict()
 
@@ -177,6 +181,9 @@ class calendar_event(osv.osv):
                 category_id = values.get('category_id') if 'category_id' in values else r.category_id.id
                 project_id = values.get('project_id') if 'project_id' in values else r.project_id.id
                 task_id = values.get('task_id') if 'task_id' in values else r.task_id.id
+
+                _logger.info("Create or update worklog and attendance records for calendar.event %s with user %s"
+                             % (r.id, user_id))
 
                 # =======
                 # WORKLOG
@@ -308,14 +315,20 @@ class calendar_event(osv.osv):
                         sign_out = attendance_obj.create(sign_out_values)
                         rec_values['sign_out_id'] = sign_out.id
 
-                # UPDATE REC VALUES WITHOUT RECURSION :)
+                # UPDATE RECORD VALUES
                 if rec_values:
+                    # Make sure "Create or update hr.timesheet worklog and attendance records" is only run once!
                     rec_values['skipp_calendar_log_project'] = True
+
+                    # Call write again with updated values and 'skipp_calendar_log_project' only for this single record
                     r.write(rec_values)
 
-            # Remove 'skipp_calendar_log_project' for the rec_values write
-            if 'skipp_calendar_log_project' in values:
-                values.pop('skipp_calendar_log_project')
+        # END Create or update hr.timesheet worklog and attendance records
+        # ----------------------------------------------------------------
+
+        # Remove 'skipp_calendar_log_project' for the rec_values write
+        if 'skipp_calendar_log_project' in values:
+            values.pop('skipp_calendar_log_project')
 
         return super(calendar_event, self).write(values)
 
