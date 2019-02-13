@@ -220,10 +220,12 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
     this.cHeight = document.getElementById('cropHeight');
     this.cX = document.getElementById('cropX');
     this.cY = document.getElementById('cropY');
+    this.selectRatio = document.getElementById('selectRatio');
     this.cWidth.addEventListener('change', this.selectZoneWithInput.bind(this));
     this.cHeight.addEventListener('change', this.selectZoneWithInput.bind(this));
     this.cX.addEventListener('change', this.selectZoneWithInput.bind(this));
     this.cY.addEventListener('change', this.selectZoneWithInput.bind(this));
+    this.selectRatio.addEventListener('change', this.selectZoneWithRatio.bind(this));
     //--------------------------------------------------------------------
 
     // Buttons click
@@ -691,7 +693,7 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
   },
 
   //---------------------------------------------------------------------------
-  setStartCropValues: function() {
+  setStartCropValues: function () {
     var image = this.darkroom.image;
     this.cWidth.value = image.width;
     $('#cropWidth').attr('max', image.width);
@@ -701,14 +703,14 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
     this.cY.value = image.getTop();
   },
 
-  setCropValues: function(x, y, width, height) {
+  setCropValues: function (x, y, width, height) {
     this.cWidth.value = width;
     this.cHeight.value = height;
     this.cX.value = x;
     this.cY.value = y;
   },
 
-  selectZoneWithInput: function() {
+  selectZoneWithInput: function () {
     var cWidth = $('#cropWidth').val();
     var cHeight = $('#cropHeight').val();
     var cX = $('#cropX').val();
@@ -723,6 +725,28 @@ Darkroom.plugins['crop'] = Darkroom.Plugin.extend({
     else
     {
       this._renderCropZone(cX, cY, cWidth, cHeight);
+    }
+  },
+
+  selectZoneWithRatio: function () {
+    var ratio = $('#selectRatio').val();
+    var image = this.darkroom.image;
+
+    if (ratio === '11')
+    {
+      return;
+    } else if (ratio === '43')
+    {
+      var ratioHeight = image.width / 4 * 3;
+      this.selectZone(0, 0, image.width, ratioHeight);
+    } else if (ratio === '169')
+    {
+      var ratioHeight = image.width / 16 * 9;
+      this.selectZone(0, 0, image.width, ratioHeight);
+    } else if (ratio === '219')
+    {
+      var ratioHeight = image.width / 21 * 9;
+      this.selectZone(0, 0, image.width, ratioHeight);
     }
   },
 });

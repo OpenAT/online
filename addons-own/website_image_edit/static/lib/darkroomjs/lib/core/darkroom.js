@@ -359,6 +359,9 @@ Darkroom.prototype = {
       $(".darkroom-button-group:nth-Child(4)").addClass("disabled");
       $(".darkroom-button-group:nth-Child(5)").addClass("disabled");
       $(".darkroom-button-group:nth-Child(6)").addClass("disabled");
+      $(".darkroom-button-group:nth-Child(7)").addClass("disabled");
+      $(".darkroom-button-group:nth-Child(8)").addClass("disabled");
+      $(".darkroom-button-group:nth-Child(9)").addClass("disabled");
       $(".saveEdit").addClass("disabled");
       $(".cropInput").removeClass("hidden");
     }
@@ -369,10 +372,13 @@ Darkroom.prototype = {
       $(".darkroom-button-group:nth-Child(4)").removeClass("disabled");
       $(".darkroom-button-group:nth-Child(5)").removeClass("disabled");
       $(".darkroom-button-group:nth-Child(6)").removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(7)").removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(8)").removeClass("disabled");
+      $(".darkroom-button-group:nth-Child(9)").removeClass("disabled");
       $(".saveEdit").removeClass("disabled");
       $(".cropInput").addClass("hidden");
     }
-  }
+  },
 }
 
 })();

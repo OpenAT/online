@@ -17,6 +17,12 @@
                      y: <input type="number" id="cropY" min="0" class="noEnter"></input><br/>
                      Breite: <input type="number" id="cropWidth" min="0" class="noEnter"></input><br/>
                      Höhe: <input type="number" id="cropHeight" min="0" class="noEnter"></input><br/>
+                     <select id="selectRatio" class="noEnter">
+                         <option value="11">1:1</option>
+                         <option value="43">4:3</option>
+                         <option value="169">16:9</option>
+                         <option value="219">21:9</option>
+                    </select>
                  </div>
 
                 <div class="form-darkroom ">
