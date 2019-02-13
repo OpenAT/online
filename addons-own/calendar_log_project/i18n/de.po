@@ -458,3 +458,7 @@ msgstr "st_e"
 msgid "week"
 msgstr "week"
 
+#. module: calendar_log_project
+#: field:calendar.event,to_invoice:0
+msgid "Invoiceable"
+msgstr "In Rechnung stellen"

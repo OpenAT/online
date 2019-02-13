@@ -81,9 +81,14 @@ class calendar_event(osv.osv):
     task_id = Many2one('project.task', string='Task')
     worklog_text = Char('Work-Log', size=128)
     task_work_id = Many2one('project.task.work', string='Task Worklog ID')
+    # These are the worklog lines NOT the timesheet itself
     analytic_time_id = Many2one('hr.analytic.timesheet', string='HR Analytic Timesheet ID')
     sign_in_id = Many2one('hr.attendance', string='Sign In')
     sign_out_id = Many2one('hr.attendance', string='Sign Out')
+
+    to_invoice = Many2one('hr_timesheet_invoice.factor', 'Invoiceable',
+                          help="It allows to set the discount while making invoice, "
+                               "keep empty if the activities should not be invoiced.")
 
     # DISABLED FOR NOW Update the field event_category_id at installation or update
     # def init(self, cr, context=None):
@@ -155,6 +160,9 @@ class calendar_event(osv.osv):
         if self.is_worklog or self.is_attendance:
             if self.user_id and self.user_id.partner_id not in self.partner_ids:
                 self.partner_ids = [(4, self.user_id.partner_id.id, '')]
+        # Clear to_invoice of not worklog
+        if self.to_invoice and not self.is_worklog:
+            self.to_invoice = False
 
     # @api.multi
     # def create(self, values, context=None):
@@ -199,6 +207,8 @@ class calendar_event(osv.osv):
                 category_id = values.get('category_id') if 'category_id' in values else r.category_id.id
                 project_id = values.get('project_id') if 'project_id' in values else r.project_id.id
                 task_id = values.get('task_id') if 'task_id' in values else r.task_id.id
+
+                to_invoice = values.get('to_invoice', r.to_invoice.id if r.to_invoice else False)
 
                 _logger.info("Create or update worklog and attendance records for calendar.event %s with user %s"
                              % (r.id, user_id))
@@ -275,6 +285,7 @@ class calendar_event(osv.osv):
                             'product_uom_id': employee_time_unit_id,
                             'general_account_id': ts_obj._getGeneralAccount(context={'user_id': user_id}),
                             'event_category_id': category_id,
+                            'to_invoice': to_invoice,
                         }
                         # Update an existing project worklog
                         # HINT: If the project changed the project worklog would already be deleted
