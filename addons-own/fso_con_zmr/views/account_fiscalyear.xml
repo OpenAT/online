@@ -10,6 +10,13 @@
             <xpath expr="//field[@name='period_ids']" position="before">
                 <group string="Scheduled Donation Report Submission Settings">
                     <group>
+                        <field name="no_checks" string="Überprüfungen deaktivieren"/>
+                        <div colspan="2" class="backend-help">
+                            <p>
+                                Deaktiviert alle Überprüfungen der Spendenabsetzbarkeitseinstellungen dieses Wirtschaftsjahres!
+                                Sinnvoll nur für Startjahre bei denen der Absetzzeitraum mitten im Jahr startet.
+                            </p>
+                        </div>
                         <field name="ze_datum_von"/>
                         <field name="ze_datum_bis"/>
                         <div colspan="2" class="backend-help">

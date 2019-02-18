@@ -54,6 +54,10 @@ class AccountFiscalYear(models.Model):
     meldungs_jahr = fields.Char(string="Meldejahr", readonly=True, compute="compute_meldungs_jahr", store=True,
                                 help="computed by ze_datum_von and ze_datum_bis",
                                 track_visibility='onchange')
+    # Disable all (SPAK) constrains
+    no_checks = fields.Boolean(string="Ignore all checks",
+                               help="Ignore API contrains! E.g.: If the year has at least 345 days or is adjancent to "
+                                    "the last and next year. Useful for in the middle of the year starts.")
 
     # --------------
     # API CONSTRAINS
@@ -74,6 +78,9 @@ class AccountFiscalYear(models.Model):
                     return False
 
         for r in self:
+            if r.no_checks:
+                continue
+
             # Convert strings to datetimes
             date_start = str_to_datetime(r.date_start)
             date_stop = str_to_datetime(r.date_stop)
