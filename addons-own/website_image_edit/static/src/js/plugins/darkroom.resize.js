@@ -24,12 +24,11 @@
 
             if (this.options.triggerNext) {
                 // apply the resizing of the image
-                var resizeFilter = new fabric.Image.filters.Resize(image, {
-                    scaleX: this.options.scaleX,
-                    scaleY: this.options.scaleY
-                });
-                image.filters.push(resizeFilter);
-                image.applyFilters();
+                var width = image.width * this.options.scaleX;
+                var height = image.height * this.options.scaleY;
+
+                image.setHeight(height);
+                image.setWidth(width);
 
                 next();
             }
@@ -67,6 +66,8 @@
 
             this.resizeSliderHeight = document.getElementById('sliderbar_Height');
             this.resizeSliderHeight.addEventListener('input', this.resizeImageH.bind(this));
+
+            this.darkroom.addEventListener('core:transformation', this.setInactive.bind(this));
         },
 
         toggleActivity: function () {
@@ -94,6 +95,8 @@
             this.okButton.hide(true);
             this.cancelButton.hide(true);
             this.darkroom.resizeActive(false);
+
+            this.darkroom.dispatchEvent('resize:update');
         },
 
         resizeImage: function () {
