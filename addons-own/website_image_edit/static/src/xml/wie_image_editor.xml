@@ -24,6 +24,21 @@
                          <option value="219">21:9</option>
                     </select>
                  </div>
+                <div id="resize_Image" class="resizeImage hidden">
+                    <i class="fa fa-lock" aria-hidden="true"/>
+                        <label id="resize_Switch" class="switch">
+                            <input type="checkbox" id="resize_Switch_checkbox"/>
+                            <span class="slider round"></span>
+                        </label>
+                    <i class="fa fa-unlock" aria-hidden="true"/>
+                </div>
+                <div id="slider_Width" class="sliderWidth hidden">
+                    <input type="range" min="1" max="200" value="100" class="sliderW" id="sliderbar_Width"/>
+                </div>
+                <div id="slider_Height" class="sliderHeight hidden">
+                    <input type="range" min="1" max="200" value="100" class="sliderH" id="sliderbar_Height"/>
+                </div>
+
 
                 <div class="form-darkroom ">
                     <button type="button" id="save_Edit" class="btn btn-primary saveEdit" t-att-data-id="image.id">Save</button>

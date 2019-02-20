@@ -13,12 +13,12 @@
         },
         roundedCorners: function(ctx) {
             var rect = new fabric.Rect({
-            left: 0,
-            top: 0,
-            rx: 20 / this.scaleX,
-            ry: 20 / this.scaleY,
-            width: this.width,
-            height: this.height,
+                left: 0,
+                top: 0,
+                rx: 20 / this.scaleX,
+                ry: 20 / this.scaleY,
+                width: this.width,
+                height: this.height,
           });
           ctx.fillStyle = 'transparent';
           rect._render(ctx, false);

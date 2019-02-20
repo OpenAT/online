@@ -67,10 +67,6 @@ ButtonGroup.prototype = {
       buttonElement.innerHTML = '<i class="fa fa-square-o"/>';
     } else if (options.image === 'resize') {
       buttonElement.innerHTML = '<i class="fa fa-arrows-alt"/>';
-    } else if (options.image === 'compress') {
-      buttonElement.innerHTML = '<i class="fa fa-compress"/>';
-    } else if (options.image === 'expand') {
-      buttonElement.innerHTML = '<i class="fa fa-expand"/>';
     }
 
     this.element.appendChild(buttonElement);
