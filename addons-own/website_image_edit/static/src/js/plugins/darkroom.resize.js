@@ -7,6 +7,8 @@
             image.lockScalingX = false;
             image.lockScalingY = false;
 
+            // Different scaling options (scaling locked: width and height scale the same factor,
+            // scaling unlocked: width and height scale with different factor)
             if (this.options.scale) {
                 image.scale(this.options.scale);
             } else if (this.options.scaleY) {
@@ -15,11 +17,13 @@
                 image.scaleX = this.options.scaleX;
             }
 
+            // Refresh of the canvas to show the changes
             if (this.options.triggerNext === undefined) {
                 this.options.darkroom.refresh();
             }
 
             if (this.options.triggerNext) {
+                // apply the resizing of the image
                 var resizeFilter = new fabric.Image.filters.Resize(image, {
                     scaleX: this.options.scaleX,
                     scaleY: this.options.scaleY
@@ -63,8 +67,6 @@
 
             this.resizeSliderHeight = document.getElementById('sliderbar_Height');
             this.resizeSliderHeight.addEventListener('input', this.resizeImageH.bind(this));
-
-            this.darkroom.addEventListener('core:transformation', this.setInactive.bind(this));
         },
 
         toggleActivity: function () {
@@ -92,12 +94,9 @@
             this.okButton.hide(true);
             this.cancelButton.hide(true);
             this.darkroom.resizeActive(false);
-
-            this.darkroom.dispatchEvent('resize:update');
         },
 
         resizeImage: function () {
-            console.log('end');
             if (this.resizeSwitch.checked === true) {
                 this.darkroom.applyTransformation(
                     new Resize({scaleX: this.resizeSliderWidth.value / 100,
@@ -154,6 +153,5 @@
         unlockResizeBar: function () {
             $('.sliderHeight').removeClass('disabled');
         },
-
     });
 })();
