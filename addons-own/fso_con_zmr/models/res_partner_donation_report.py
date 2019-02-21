@@ -390,6 +390,7 @@ class ResPartnerFADonationReport(models.Model):
         """
         assert self.ensure_one(), _("last_submitted_report() works only for one record at a time!")
 
+        # HINT: Since imported donation reports have no submission_id we can not use it in the domain!
         domain = [('submission_env', '=', self.submission_env),
                   ('bpk_company_id', '=', self.bpk_company_id.id),
                   ('partner_id', '=', self.partner_id.id),
@@ -405,8 +406,12 @@ class ResPartnerFADonationReport(models.Model):
             domain += [('submission_bpk_private', '=', submission_bpk_private)]
 
         # ATTENTION: Make sure the inverse order is used for the XML record generation in the submission!
+        # HINT: Since imported donation reports have no submission_id_datetime we can not use it for the sort order!
+        # lsr = self.sudo().search(domain,
+        #                          order="submission_id_datetime DESC, anlage_am_um DESC, create_date DESC",
+        #                          limit=1)
         lsr = self.sudo().search(domain,
-                                 order="submission_id_datetime DESC, anlage_am_um DESC, create_date DESC",
+                                 order="anlage_am_um DESC, create_date DESC",
                                  limit=1)
 
         # Return the empty record set if no lsr was found
