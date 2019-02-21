@@ -123,7 +123,7 @@ class Altruja(models.Model):
     def constrain_intervall(self):
         for r in self:
             allowed_values = ('einmalig', 'jährlich', 'halbjährlich', 'vierteljährlich', 'monatlich')
-            if r.intervall not in allowed_values:
+            if r.intervall and r.intervall not in allowed_values:
                 raise ValidationError("'intervall' must be one of: %s" % str(allowed_values))
 
     @api.constrains('quelle')
