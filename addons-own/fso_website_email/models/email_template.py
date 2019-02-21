@@ -10,20 +10,22 @@ from openerp.addons.fso_base.tools.image import screenshot
 
 import datetime
 import tempfile
-import requests
 import os
+
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
+import ssl
+import requests
 
 import logging
 logger = logging.getLogger(__name__)
 
-# Import BeautifulSoup
 try:
     from bs4 import BeautifulSoup
 except Exception as e:
     logger.error("Import bs4 (BeautifulSoup) error!\n%s" % repr(e))
     pass
 
-# Import premailer
 try:
     from premailer import Premailer
     # Premailer logging
@@ -35,11 +37,31 @@ except Exception as e:
     pass
 
 
-# Override premailer method to set timeout for requests
+# Create an adapter for requests that will use TLSv1 (and not sslv2 which is insecure and disabled in most webservers)
+# TODO: Make sure request uses TLSv1 and not SSL v2.x
+#       https://lukasa.co.uk/2017/02/Configuring_TLS_With_Requests/
+#       https://lukasa.co.uk/2013/01/Choosing_SSL_Version_In_Requests/
+#       https://stackoverflow.com/questions/14102416/python-requests-requests-exceptions-sslerror-errno-8-ssl-c504-eof-occurred
+class RequestsTLSv1Adapter(HTTPAdapter):
+    def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+        self.poolmanager = PoolManager(num_pools=connections,
+                                       maxsize=maxsize,
+                                       block=block,
+                                       ssl_version=ssl.PROTOCOL_TLSv1,
+                                       **pool_kwargs)
+
+
+# Override premailer method to set timeout for requests and TLS v1 as SSL protocol
 class PremailerWithTimeout(Premailer):
     def _load_external_url(self, url):
         logger.info("Premailer get url with timeout: %s" % url)
-        res = requests.get(url, timeout=14.0)
+
+        # Start a new session and mount the TLSv1 Adapter
+        s = requests.Session()
+        s.mount(url, RequestsTLSv1Adapter())
+
+        # Get the url with timeout
+        res = s.get(url, timeout=14.0)
         return res.text
 
 
