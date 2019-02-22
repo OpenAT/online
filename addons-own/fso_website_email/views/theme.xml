@@ -27,6 +27,9 @@
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="common_assets">
         <link rel='stylesheet' href='/fso_website_email/static/src/css/common.css' t-ignore="true"/>
+        
+        <!-- Mobile Modal Box Preview Fix -->
+        <script type="text/javascript" src="/fso_website_email/static/src/js/website.mobile.js"/>
     </template>
     
     
