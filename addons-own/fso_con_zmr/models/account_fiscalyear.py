@@ -226,7 +226,7 @@ class AccountFiscalYear(models.Model):
                     max_year = {'year': year, 'days': days_in_year}
 
             # Update meldungs_jahr
-            if check_range(max_year['days']):
+            if y.no_checks or check_range(max_year['days']):
                 y.meldungs_jahr = str(max_year['year'])
             else:
                 logger.warning("compute_meldungs_jahr(): Suspicious number of days for Meldejahr: %s"
