@@ -182,7 +182,7 @@ class AccountFiscalYear(models.Model):
     # ---------------
     # COMPUTED FIELDS
     # ---------------
-    @api.depends('ze_datum_von', 'ze_datum_bis',)
+    @api.depends('ze_datum_von', 'ze_datum_bis', 'no_checks')
     def compute_meldungs_jahr(self):
 
         def check_range(days):
@@ -198,13 +198,14 @@ class AccountFiscalYear(models.Model):
             date_start = datetime.datetime.strptime(y.ze_datum_von, DEFAULT_SERVER_DATETIME_FORMAT)
             date_stop = datetime.datetime.strptime(y.ze_datum_bis, DEFAULT_SERVER_DATETIME_FORMAT)
 
-            # Check time range
-            time_range = date_stop - date_start
-            if not check_range(time_range.days):
-                logger.warning("compute_meldungs_jahr(): Suspicious number of days for Betrachtungszeitraum: %s"
-                               "" % time_range.days)
-                y.meldungs_jahr = False
-                continue
+            # Check number of days between start and end date
+            if not y.no_checks:
+                time_range = date_stop - date_start
+                if not check_range(time_range.days):
+                    logger.warning("compute_meldungs_jahr(): Suspicious number of days for Betrachtungszeitraum: %s"
+                                   "" % time_range.days)
+                    y.meldungs_jahr = False
+                    continue
 
             # Compute meldungs_jahr based on Betrachtungszeitraum
             # ---
@@ -225,10 +226,14 @@ class AccountFiscalYear(models.Model):
                 if int(max_year['days']) < int(days_in_year):
                     max_year = {'year': year, 'days': days_in_year}
 
+            # Check the max_year number of days
+            if not y.no_checks:
+                if not check_range(max_year['days']):
+                    logger.warning("compute_meldungs_jahr(): Suspicious number of days for Meldejahr: %s"
+                                   "" % max_year['days'])
+                    y.meldungs_jahr = False
+                    continue
+
             # Update meldungs_jahr
-            if y.no_checks or check_range(max_year['days']):
-                y.meldungs_jahr = str(max_year['year'])
-            else:
-                logger.warning("compute_meldungs_jahr(): Suspicious number of days for Meldejahr: %s"
-                               "" % max_year['days'])
-                y.meldungs_jahr = False
+            y.meldungs_jahr = str(max_year['year'])
+
