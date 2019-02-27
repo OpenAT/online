@@ -512,7 +512,8 @@ class ResPartnerFADonationReport(models.Model):
             if not lsr.submission_refnr:
                 raise ValidationError(_("Last submitted report (ID %s) has no RefNr!") % lsr.id)
 
-            if lsr.submission_type != 'E' and lsr.submission_refnr != lsr.report_erstmeldung_id.submission_refnr:
+            if lsr.submission_type != 'E' and lsr.response_error_code not in ('ERR-U-008', 'ERR-U-006') and (
+                    lsr.submission_refnr != lsr.report_erstmeldung_id.submission_refnr):
                 raise ValidationError(_("Last submitted report (ID %s) has a different RefNr %s than it's linked"
                                         "'Erstmelung' (ID %s) Refnr %s"
                                         "!") % (lsr.id,
