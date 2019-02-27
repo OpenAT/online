@@ -534,6 +534,19 @@ class ResPartnerFADonationReport(models.Model):
                     'cancelled_lsr_id': lsr.id
                 }
 
+            # Cancellation donation report for ERR-U-006
+            if lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
+                if not lsr.report_erstmeldung_id or not lsr.report_erstmeldung_id.submission_refnr:
+                    raise ValidationError(_("Last submitted report (ID %s) is an ERR-U-006 but has no linked "
+                                            "Erstmeldung or the Erstmeldung has no RefNr! (donation report id %s)"
+                                            "") % (lsr.id, r.id))
+                return {
+                    'submission_type': 'S',
+                    'submission_refnr': lsr.report_erstmeldung_id.submission_refnr,
+                    'report_erstmeldung_id': lsr.report_erstmeldung_id.id if lsr.submission_type != 'E' else lsr.id,
+                    'cancelled_lsr_id': lsr.id
+                }
+
             # Normal cancellation donation report
             return {
                 'submission_type': 'S',
