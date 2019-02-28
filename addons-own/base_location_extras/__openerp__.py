@@ -1,44 +1,36 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Odoo, Open Source Management Solution
-#    Copyright (C) 2004-2009 Tiny SPRL (<http://tiny.be>).
-#    Copyright (C) 2010-2012 OpenERP s.a. (<http://openerp.com>).
-#
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
 #    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
+#    License, or (at your option) any later version
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
+#    GNU Affero General Public License for more details
 #
 #    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 ##############################################################################
 
 {
-    'name': "GL2K Gardenvisu",
-    'summary': """gl2k_gardenvis: Global 2000 Gartenvisualisierung (GL2K)""",
+    'name': 'base_location_extras',
+    'summary': """base_location_extras extend base location with region information""",
     'description': """
 
-New addon to store garden square meeters and person data for Global 2000
 
     """,
-    'author': "Datadialog - Michael Karrer",
-    'website': "http://www.datadialog.net/",
-    'category': 'Uncategorized',
-    'version': '0.2',
+    'author': 'Michael Karrer (michael.karrer@datadialog.net), DataDialog',
+    'version': '1.0',
+    'website': 'https://www.datadialog.net',
     'installable': True,
-    'application': True,
-    'auto_install': False,
     'depends': [
-        'fsonline',
+        'base_location_geonames_import',
     ],
     'data': [
-        'views/gardenvis.xml',
+        'views/better_zip_view.xml'
     ],
 }
