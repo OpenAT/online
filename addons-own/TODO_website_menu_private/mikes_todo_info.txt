@@ -1,0 +1,2 @@
+- Add group fields and access rules like in website_forum_private
+- research in controller like in website_forum_doc_private
