@@ -12,7 +12,7 @@ class WebsiteForumPrivate(WebsiteForum):
     def questions(self, forum, tag=None, page=1, filters='all', sorting='date', search='', **post):
         cr, uid, context, = request.cr, request.uid, request.context
 
-        # Search again to honor user rights and access rules
+        # Search to check the user rights / access rules
         if forum:
             forum_obj = request.registry['forum.forum']
             forum_id_list = forum_obj.search(cr, uid, [('id', 'in', forum.ids)], context=context)
@@ -27,4 +27,16 @@ class WebsiteForumPrivate(WebsiteForum):
                                                           sorting=sorting,
                                                           search=search, **post)
 
+    @http.route()
+    def question(self, forum, question, **post):
+        cr, uid, context, = request.cr, request.uid, request.context
 
+        # Search to check the user rights / access rules
+        if forum:
+            forum_obj = request.registry['forum.forum']
+            forum_id_list = forum_obj.search(cr, uid, [('id', 'in', forum.ids)], context=context)
+            forum = forum_obj.browse(cr, uid, forum_id_list, context=context)
+            if not forum:
+                return request.redirect("/")
+
+        return super(WebsiteForumPrivate, self).question(forum, question, **post)
