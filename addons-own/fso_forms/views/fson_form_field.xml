@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <!-- FSON Forms Fields: Create form, tree and list view for the checkout fields -->
+        <record model="ir.ui.view" id="fson_form_field_form">
+            <field name="name">fso_forms.fson_form_field form</field>
+            <field name="model">fson.form_field</field>
+            <field name="arch" type="xml">
+                <form string="FSON Forms Fields">
+                    <group>
+                        <field name="sequence"/>
+                        <field name="show"/>
+                        <field name="form_id"/>
+                        <field name="field_id"/>
+                        <field name="mandatory"/>
+                        <field name="label"/>
+                        <field name="placeholder"/>
+                        <field name="validation_rule"/>
+                        <field name="css_classes"/>
+                        <field name="clearfix"/>
+                        <field name="nodata"/>
+                        <field name="style"/>
+                        <field name="information"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="fson_form_field_tree">
+            <field name="name">fso_forms.fson_form_field tree</field>
+            <field name="model">fson.form_field</field>
+            <field name="arch" type="xml">
+                <tree string="FSON Forms Fields" default_order="sequence">
+                    <field name="sequence" widget="handle"/>
+                    <field name="show"/>
+                    <field name="form_id"/>
+                    <field name="field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                    <field name="nodata"/>
+                    <field name="style"/>
+                    <field name="information"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="fson_form_field_search">
+            <field name="name">fso_forms.fson_form_field search</field>
+            <field name="model">fson.form_field</field>
+            <field name="arch" type="xml">
+                <search string="FSON Forms Fields">
+                    <field name="show"/>
+                    <field name="form_id"/>
+                    <field name="field_id"/>
+                    <field name="mandatory"/>
+                    <field name="label"/>
+                    <field name="placeholder"/>
+                    <field name="validation_rule"/>
+                    <field name="css_classes"/>
+                    <field name="clearfix"/>
+                    <field name="nodata"/>
+                    <field name="style"/>
+                    <field name="information"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="fson_form_field_action">
+            <field name="name">FSON Forms Fields</field>
+            <field name="res_model">fson.form_field</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="fson_form_field_tree"/>
+            <field name="search_view_id" ref="fson_form_field_search"/>
+        </record>
+        <!-- And we add the Action to a Menu with the shortcut menuitem -->
+        <menuitem action="fson_form_field_action" id="fson_form_field_menu" parent="base.menu_config" sequence="3401"/>
+
+    </data>
+</openerp>
