@@ -66,6 +66,44 @@ class ResPartnerFADonationReport(models.Model):
                               help='Imported Donation Report! If "True" most contrains will be IGNORED and '
                                    'some fields like "submission_type" will NOT be computed!')
 
+    # TODO: Make sure BPK will take donation reports of type donor_instruction into account !!!
+    # TODO: Make sure donation reports can not be submitted if last DR with donnor_instruction=submission_forbidden !!!
+    # NEW field to mark "pseudo" donation reports which only show/store the command of the donor for a specific
+    # fiscal year. E.g. These explicit command of the donor is more important than the OptOut group except for the
+    # system group where we mark persons that can never submit donations.
+    donor_instruction = fields.Selection(string="Donor Instruction",
+                                         selection=[('submission_forced', 'Submission forced'),
+                                                    ('submission_forbidden', 'Submission forbidden')],
+                                         help="Explicit command from the donor to submit or forbid donation report "
+                                              "submission for this fiscal year and organization. This has a higher "
+                                              "importance than the OptOut group.")
+    donor_instruction_info = fields.Char(string="Donor Instruction Info",
+                                         help="Information how and when the donor gave an explicit instruction for a "
+                                              "fiscal year")
+
+    # Reason why a donation report was created.This may help organisations to decide whether or not to manually submit
+    # a donation report for the years after the automatic submission.
+    create_reason = fields.Selection(string="Create Reason", readonly=True, track_visibility='onchange',
+                                     selection=[('regular', 'Regular Report'),
+                                                ('amount_changed', 'Donation Amount Changed'),
+                                                ('bpk_changed', 'BPK Number Changed'),
+                                                ('bpk_manual_cancellation', 'BPK after manual cancellation'),
+                                                ('access_data', 'Changed ZMR/FinanzOnline access data'),
+                                                ('grp_bpkoptout_removed', 'SPAK OptOut Group removed'),
+                                                ('grp_systemdenied_removed', 'System-Denied Group removed'),
+                                                ('err_u_008', 'Report after Error ERR-U-008'),
+                                                ('err_u_006', 'Report after Error ERR-U-006'),
+                                                ('err_fo', 'Report after internal FinanzOnline error'),
+                                                ('submission_forced', 'Donor explicitly forced submission'),
+                                                # Cancellation
+                                                ('c_grp_bpkoptout', 'SPAK OptOut Group added'),
+                                                ('c_bpk_changed', 'BPK Changed'),
+                                                ('c_err_u_008', 'Cancellation to fix error ERR-U-008'),
+                                                ('c_err_u_006', 'Cancellation to fix error ERR-U-006'),
+                                                ('c_err_fo', 'Cancellation to fix internal FinanzOnline error'),
+                                                ('c_submission_forbidden', 'Donor explicitly forbid submission'),
+                                                ])
+
     # Error before submission
     # -----------------------
     # HINT: These fields can only be filled prior to submission because only donation reports without an error
@@ -198,6 +236,10 @@ class ResPartnerFADonationReport(models.Model):
     submission_dd_disabled = fields.Char(string="Donation Deduction Disabled", readonly=True)
     submission_dd_optout = fields.Char(string="Donation Deduction OptOut", readonly=True)
 
+    # TODO: NEW: Add the request date to make it easy to compare "donation report create_date", "bpk_request_date" and
+    #      "donation report submission date". Handy if a report is send long after it's creation.
+    submission_bpk_request_date = fields.Char(string="BPK Request Date", readonly=True)
+
     # Donation report submission link and information
     # -----------------------------------------------
     submission_id = fields.Many2one(string="Submission",
@@ -242,7 +284,6 @@ class ResPartnerFADonationReport(models.Model):
     # ----------
     # CONSTRAINS
     # ----------
-    # TODO: check if api.constrains also fires on xmlrpc calls
     @api.constrains('meldungs_jahr', 'betrag', 'ze_datum_von', 'ze_datum_bis',
                     'anlage_am_um', 'submission_env', 'bpk_company_id', 'cancellation_for_bpk_private',
                     'submission_id')
@@ -292,6 +333,17 @@ class ResPartnerFADonationReport(models.Model):
                     raise ValidationError(_("Report range seems to be outside of the report year %s! "
                                             "Please check ze_datum_von and ze_datum_bis."
                                             "") % (r.ze_datum_von, r.ze_datum_bis, r.meldungs_jahr))
+
+    @api.constrains('donor_instruction', 'donor_instruction_info', 'state')
+    def _constrain_donor_instruction(self):
+        for r in self:
+            if r.donor_instruction:
+                if not r.donor_instruction_info or r.state != 'skipped':
+                    raise ValidationError(_("Reports with 'donor_instruction' set must be in state 'skipped' and the"
+                                            "field donor_instruction_info must be filled!"))
+            else:
+                if r.donor_instruction_info:
+                    raise ValidationError(_("'donor_instruction_info' must be empty if 'donor_instruction' is not set"))
 
     # --------
     # ONCHANGE (WEB GUI ONLY)
