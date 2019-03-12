@@ -30,6 +30,8 @@
                             <field name="betrag"/>
                             <field name="cancellation_for_bpk_private"/>
                             <field name="imported"/>
+                            <field name="donor_instruction"/>
+                            <field name="donor_instruction_info" attrs="{'invisible':[('donor_instruction','=',False)]}"/>
                         </group>
                         <group>
                             <field name="anlage_am_um" class="oe_bold"/>
@@ -38,6 +40,7 @@
                             <field name="report_erstmeldung_id"/>
                             <field name="skipped_by_id"/>
                             <field name="cancelled_lsr_id"/>
+                            <field name="create_reason"/>
                         </group>
                     </group>
 
@@ -77,6 +80,7 @@
                                     <field name="submission_lastname"/>
                                     <field name="submission_birthdate_web"/>
                                     <field name="submission_zip"/>
+                                    <field name="submission_bpk_request_date"/>
                                 </group>
                             </group>
                             <group string="Donation Report Submission">
@@ -129,20 +133,24 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Donation Reports"
-                  colors="red: state in ['error', 'response_nok', 'unexpected_response'];
+                  colors="blue: donor_instruction != False
+                          red: state in ['error', 'response_nok', 'unexpected_response'];
                           orange: state =='submitted';
                           grey: state in ['skipped', 'disabled'];
                           green: state == 'response_ok';">
                 <field name="partner_id"/>
                 <field name="betrag"/>
                 <field name="anlage_am_um"/>
+                <field name="submission_bpk_request_date"/>
                 <field name="submission_type"/>
                 <field name="state"/>
                 <field name="submission_id" string="Sub."/>
                 <field name="meldungs_jahr"/>
                 <field name="submission_env"/>
                 <field name="bpk_company_id"/>
+                <field name="create_reason"/>
                 <field name="imported"/>
+                <field name="donor_instruction"/>
                 <field name="id"/>
             </tree>
         </field>
@@ -172,12 +180,20 @@
                 <field name="response_error_detail"/>
                 <field name="response_error_orig_refnr"/>
                 <field name="imported"/>
+                <field name="donor_instruction"/>
+                <field name="create_reason"/>
 
                 <group string="Filter by">
                     <filter string="Imported"
                             domain="[('imported','!=',False)]"/>
                     <filter string="Not-Imported"
                             domain="[('imported','=',False)]"/>
+                </group>
+                <group string="Filter by">
+                    <filter string="Donor-Instruction"
+                            domain="[('donor_instruction','!=',False)]"/>
+                    <filter string="Exclude-Donor-Instructions"
+                            domain="[('donor_instruction','=',False)]"/>
                 </group>
                 <group string="Filter by">
                     <filter string="New-to-submit"
@@ -232,6 +248,10 @@
                             context="{'group_by':'partner_id'}"/>
                     <filter string="Imported"
                             context="{'group_by':'imported'}"/>
+                    <filter string="Create Reason"
+                            context="{'group_by':'create_reason'}"/>
+                    <filter string="Donor Instruction"
+                            context="{'group_by':'donor_instruction'}"/>
                 </group>
                 <group string="Group by">
                     <filter string="Meldungs-Typ"

@@ -71,7 +71,7 @@ class ResPartnerFADonationReport(models.Model):
     # NEW field to mark "pseudo" donation reports which only show/store the command of the donor for a specific
     # fiscal year. E.g. These explicit command of the donor is more important than the OptOut group except for the
     # system group where we mark persons that can never submit donations.
-    donor_instruction = fields.Selection(string="Donor Instruction",
+    donor_instruction = fields.Selection(string="Donor Instruction", index=True,
                                          selection=[('submission_forced', 'Submission forced'),
                                                     ('submission_forbidden', 'Submission forbidden')],
                                          help="Explicit command from the donor to submit or forbid donation report "
@@ -237,7 +237,7 @@ class ResPartnerFADonationReport(models.Model):
     submission_dd_disabled = fields.Char(string="Donation Deduction Disabled", readonly=True)
     submission_dd_optout = fields.Char(string="Donation Deduction OptOut", readonly=True)
 
-    # TODO: NEW: Add the request date to make it easy to compare "donation report create_date", "bpk_request_date" and
+    # NEW: Add the request date to make it easy to compare "donation report create_date", "bpk_request_date" and
     #      "donation report submission date". Handy if a report is send long after it's creation.
     submission_bpk_request_date = fields.Char(string="BPK Request Date", readonly=True)
 
@@ -339,9 +339,12 @@ class ResPartnerFADonationReport(models.Model):
     def _constrain_donor_instruction(self):
         for r in self:
             if r.donor_instruction:
-                if not r.donor_instruction_info or r.state != 'skipped':
+                if not r.donor_instruction_info or r.state != 'skipped' or not r.anlage_am_um or any(
+                        r[f] for f in ('imported', 'force_submission',
+                                       'cancelled_lsr_id', 'cancellation_for_bpk_private', 'submission_bpk_private',
+                                       'submission_type', 'submission_refnr', 'submission_id')):
                     raise ValidationError(_("Reports with 'donor_instruction' set must be in state 'skipped' and the"
-                                            "field donor_instruction_info must be filled!"))
+                                            "field 'donor_instruction_info' must be filled!"))
             else:
                 if r.donor_instruction_info:
                     raise ValidationError(_("'donor_instruction_info' must be empty if 'donor_instruction' is not set"))
@@ -752,6 +755,8 @@ class ResPartnerFADonationReport(models.Model):
                           'submission_bpk_state': False,
                           'submission_dd_disabled': False,
                           'submission_dd_optout': False,
+                          #
+                          'submission_bpk_request_date': False,
                           })
             # Clear error fields
             if f['state'] != 'error':
@@ -773,6 +778,11 @@ class ResPartnerFADonationReport(models.Model):
         logger.info("update_state_and_submission_information() "
                     "Compute state and submission information for %s donation reports!" % len(self))
         for r in self:
+            # Skip donor instruction donation reports!
+            # ----------------------------------------
+            if r.donor_instruction:
+                continue
+
             # Skip imported donation reports!
             # -------------------------------
             if r.imported:
@@ -782,7 +792,8 @@ class ResPartnerFADonationReport(models.Model):
             # ------------------------------
             # Search for unsubmitted donation reports that are created before this report
             # HINT: Cancellation report will only skipp cancellation reports and regular reports only reg. reports
-            reports_to_skip = r.sudo().search([('submission_env', '=', r.submission_env),
+            reports_to_skip = r.sudo().search([('donor_instruction', '=', False),
+                                               ('submission_env', '=', r.submission_env),
                                                ('partner_id', '=', r.partner_id.id),
                                                ('bpk_company_id', '=', r.bpk_company_id.id),
                                                ('meldungs_jahr', '=', r.meldungs_jahr),
@@ -798,7 +809,8 @@ class ResPartnerFADonationReport(models.Model):
             # Search for other reports with the same anlage_am_um date
             # --------------------------------------------------------
             # HINT: This may only happen after a merge of two partners because anlage_am_um is checked in create()
-            reports_same_date = r.sudo().search([('submission_env', '=', r.submission_env),
+            reports_same_date = r.sudo().search([('donor_instruction', '=', False),
+                                                 ('submission_env', '=', r.submission_env),
                                                  ('partner_id', '=', r.partner_id.id),
                                                  ('bpk_company_id', '=', r.bpk_company_id.id),
                                                  ('meldungs_jahr', '=', r.meldungs_jahr),
@@ -835,7 +847,8 @@ class ResPartnerFADonationReport(models.Model):
             # HINT: It was already checked above that this report is in a state where changes are allowed.
             # HINT: Only newer cancellation reports (with matching PrivateBPK) can skipp a cancellation report and
             #       only newer regular reports can skip a regular report
-            newer = r.sudo().search([('submission_env', '=', r.submission_env),
+            newer = r.sudo().search([('donor_instruction', '=', False),
+                                     ('submission_env', '=', r.submission_env),
                                      ('partner_id', '=', r.partner_id.id),
                                      ('bpk_company_id', '=', r.bpk_company_id.id),
                                      ('meldungs_jahr', '=', r.meldungs_jahr),
@@ -876,13 +889,32 @@ class ResPartnerFADonationReport(models.Model):
 
             # Check Donation Deduction Disabled for this partner
             # --------------------------------------------------
-            # HINT: Exclude cancellation donation reports
-            # Donation deduction is disabled for this partner
-            if not r.cancellation_for_bpk_private and (r.partner_id.bpk_state == 'disabled'
-                                                       or r.partner_id.donation_deduction_optout_web
-                                                       or r.partner_id.donation_deduction_disabled):
-                update_report(r, state='disabled')
-                continue
+            # HINT: Exclude cancellation donation reports because they always needs to be send!
+            # ATTENTION: Honor individual donor instructions
+            if not r.cancellation_for_bpk_private:
+
+                # Check for any last donor instruction
+                last_instruction = r.sudo().search([('donor_instruction', '!=', False),
+                                                    ('submission_env', '=', r.submission_env),
+                                                    ('partner_id', '=', r.partner_id.id),
+                                                    ('bpk_company_id', '=', r.bpk_company_id.id),
+                                                    ('meldungs_jahr', '=', r.meldungs_jahr),
+                                                    ('id', '!=', r.id)],
+                                                   order="anlage_am_um DESC", limit=1)
+
+                # Last donor instruction is to forbid any submission for this year and org
+                if last_instruction and last_instruction.donor_instruction == 'submission_forbidden':
+                    update_report(r, state='disabled')
+                    continue
+
+                # There is no specific donor instruction or it is at least not 'submission_forced'
+                # In this case we check the global settings of the partner (donation deduction groups settings)
+                if not last_instruction or last_instruction.donor_instruction != 'submission_forced':
+                    if (r.partner_id.bpk_state == 'disabled'
+                            or r.partner_id.donation_deduction_optout_web
+                            or r.partner_id.donation_deduction_disabled):
+                        update_report(r, state='disabled')
+                        continue
 
             # Check BPK request pending for this partner
             # ------------------------------------------
@@ -977,6 +1009,8 @@ class ResPartnerFADonationReport(models.Model):
                 'submission_bpk_state': False if r.cancellation_for_bpk_private else r.partner_id.bpk_state,
                 'submission_dd_disabled': False if r.cancellation_for_bpk_private else r.partner_id.donation_deduction_disabled,
                 'submission_dd_optout': False if r.cancellation_for_bpk_private else r.partner_id.donation_deduction_optout_web,
+                #
+                'submission_bpk_request_date': False if r.cancellation_for_bpk_private else bpk.bpk_request_date,
             }
             try:
                 # Compute: 'submission_type', 'submission_refnr', 'report_erstmeldung_id' and 'cancelled_lsr_id'
@@ -1054,6 +1088,8 @@ class ResPartnerFADonationReport(models.Model):
                 'submission_bpk_request_id': False,
                 'submission_bpk_public': False,
                 'submission_bpk_private': False,
+                #
+                'submission_bpk_request_date': False,
                 #
                 'error_type': False,
                 'error_code': False,

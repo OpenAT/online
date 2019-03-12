@@ -64,6 +64,10 @@ class ResPartnerZMRGetBPK(models.Model):
     bpk_request_error = fields.Text(string="BPK Request Exception", readonly=True, oldname="BPKRequestError")
 
     # BPK fields for processing and filtering
+    # ---------------------------------------
+    # ATTENTION: This fields computes the "global" BPK setting of the partner. This may be overridden by
+    #            more specific donor_instruction(s)! Therefore the bpk_state must not always be disabled if this
+    #            field is disabled!
     bpk_disabled = fields.Boolean(string="BPK Disabled", compute="_compute_bpk_disabled", readonly=True)
 
     # HINT: Donation Reports will be colored: found and linked: black, found and linked: blue, found and send: green)
@@ -898,9 +902,33 @@ class ResPartnerZMRGetBPK(models.Model):
         #            !!! therefore ALWAYS use write() instead of '=' to prevent recurring write loops !!!
         for r in self:
             # 1.) Check if BPK processing (donation deduction) is disabled
+            # ATTENTION: Also check for last donation report for any fiscal year where 'donor_instruction' field is set
+            #            to 'submission_forced'. If any is found we must check the bpk because this local setting
+            #            overrides the global setting of the res.partner
             if r.bpk_disabled:
-                write(r, {'bpk_state': 'disabled', 'bpk_error_code': False, 'bpk_request_needed': False})
-                continue
+
+                # Check for an individual donor instruction that may overrule the global partner setting for a year
+                # ---
+                # Get all donor_instructions for this partner
+                # HINT: We do not care about the company here i guess? TODO: check if this i ok!
+                donor_instructions = self.env['res.partner.donation_report'].search([
+                    ('partner_id', '=', r.id),
+                    ('submission_env', '=', 'P'),
+                    ('donor_instruction', '!=', False),
+                ])
+                # Check if any last donor_instruction for a meldungs_jahr is a 'submission_forced'
+                submission_forced = False
+                for y in donor_instructions.mapped('meldungs_jahr'):
+                    reps_year = donor_instructions.filtered(lambda rec: rec.meldungs_jahr == y)
+                    reps_year_descending = reps_year.sorted(key=lambda rec: rec.anlage_am_um, reverse=True)
+                    if reps_year_descending and reps_year_descending[0].donor_instruction == 'submission_forced':
+                        submission_forced = True
+                        break
+
+                # Update partner if no 'submission_forced' donor instruction was found and bpk_disabled is set
+                if not submission_forced:
+                    write(r, {'bpk_state': 'disabled', 'bpk_error_code': False, 'bpk_request_needed': False})
+                    continue
 
             # 2.) Check if all mandatory fields for a BPK request are set
             if not r.all_mandatory_bpk_fields_are_set():
