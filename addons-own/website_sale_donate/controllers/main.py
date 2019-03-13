@@ -106,7 +106,14 @@ class website_sale_donate(website_sale):
             if not kwargs.get('product_id'):
                 kwargs['product_id'] = product.id
             _logger.warning("product(): self.cart_update(**kwargs)")
-            self.cart_update(**kwargs)
+
+            cu_res = self.cart_update(**kwargs)
+            # ATTENTION: Cart Update will always return an redirect no matter if there was an error or not!
+            #            but in case of an error we would need to stop here and return the redirect!
+            #            This is an ugly hack to fix this - it would be much better to add a new attrib to
+            #            cart_update(raise_on_errors=False) and catch the exception!
+            if cu_res and hasattr(cu_res, 'location') and 'warnings' in cu_res.location:
+                return cu_res
 
         # Remove all other products from the so if there is an individual payment acquirer config for this product
         if product.product_page_template == u'website_sale_donate.ppt_opc' and product.product_acquirer_lines_ids:
@@ -121,7 +128,14 @@ class website_sale_donate(website_sale):
                             if line.product_id.id != product.id:
                                 _logger.error("Remove sale order line %s because of individual product acquirer config"
                                               % line.id)
-                                self.cart_update(product_id=line.product_id.id, add_qty=-1, set_qty=0)
+                                cu_res = self.cart_update(product_id=line.product_id.id, add_qty=-1, set_qty=0)
+                                # ATTENTION: Cart Update will always return an redirect no matter if there was an error
+                                #            or not! but in case of an error we would need to stop here and return the
+                                #            redirect! This is an ugly hack to fix this - it would be much better to
+                                #            add a new attrib to  cart_update(raise_on_errors=False) and catch the
+                                #            exception!
+                                if cu_res and hasattr(cu_res, 'location') and 'warnings' in cu_res.location:
+                                    return cu_res
 
         # -----------------
         # ONE PAGE CHECKOUT End
@@ -291,9 +305,9 @@ class website_sale_donate(website_sale):
         #       Therefore the try statement is not really needed (but kept for safety).
         try:
             if product.price_donate_min and float(product.price_donate_min) > float(price):
-                warnings = _('Value (%s) must be higher or equal to %s.' % float(product.price_donate_min))
+                warnings = _('Der Betrag muss %s oder hoeher sein.' % float(product.price_donate_min))
         except ValueError:
-            warnings = _('Value must be a valid Number.')
+            warnings = _('Der Betrag muss eine Zahl sein!')
             pass
         if warnings:
             # ATTENTION! Remove kwargs to avoid calling OPC product pages with all kwargs again!
@@ -301,7 +315,7 @@ class website_sale_donate(website_sale):
                 referrer = '/shop/product/%s?' % product.product_tmpl_id.id
             # Add the warning to the referer page
             referrer = referrer + '&warnings=' + warnings
-            _logger.error("cart_update(): END, arbitrary price (%s) ERROR!\nWarnings: %s!\nRedirecting to referrer: %s"
+            _logger.error("cart_update(): END, arbitrary price (%s) ERROR! Warnings: %s! Redirecting to referrer: %s"
                           "" % (price or "", str(warnings), str(referrer)))
             return request.redirect(referrer)
 
