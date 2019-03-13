@@ -291,13 +291,18 @@ class website_sale_donate(website_sale):
         #       Therefore the try statement is not really needed (but kept for safety).
         try:
             if product.price_donate_min and float(product.price_donate_min) > float(price):
-                warnings = _('Value must be higher or equal to %s.' % float(product.price_donate_min))
+                warnings = _('Value (%s) must be higher or equal to %s.' % float(product.price_donate_min))
         except ValueError:
             warnings = _('Value must be a valid Number.')
             pass
         if warnings:
+            # ATTENTION! Remove kwargs to avoid calling OPC product pages with all kwargs again!
+            if "/product" in referrer:
+                referrer = '/shop/product/%s?' % product.product_tmpl_id.id
+            # Add the warning to the referer page
             referrer = referrer + '&warnings=' + warnings
-            _logger.warning("cart_update(): END, arbitrary price error")
+            _logger.error("cart_update(): END, arbitrary price (%s) ERROR!\nWarnings: %s!\nRedirecting to referrer: %s"
+                          "" % (price or "", str(warnings), str(referrer)))
             return request.redirect(referrer)
 
         # PAYMENT INTERVAL
