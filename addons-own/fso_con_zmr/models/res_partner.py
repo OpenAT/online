@@ -67,7 +67,7 @@ class ResPartnerZMRGetBPK(models.Model):
     # ---------------------------------------
     # ATTENTION: This fields computes the "global" BPK setting of the partner. This may be overridden by
     #            more specific donor_instruction(s)! Therefore the bpk_state must not always be disabled if this
-    #            field is disabled!
+    #            field is checked!
     bpk_disabled = fields.Boolean(string="BPK Disabled", compute="_compute_bpk_disabled", readonly=True)
 
     # HINT: Donation Reports will be colored: found and linked: black, found and linked: blue, found and send: green)
