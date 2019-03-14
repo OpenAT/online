@@ -11,6 +11,8 @@ class FRSTzGruppeDetail(models.Model):
     _name = "frst.zgruppedetail"
     _rec_name = "gruppe_lang"
 
+    # TODO: Display name method (gruppe_kurz + gruppe_lang)
+
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
                                  string="zGruppeID",
                                  required=True, ondelete="cascade")

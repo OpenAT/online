@@ -77,9 +77,9 @@ class FSONFormField(models.Model):
         if self.style == 'radio_selectnone':
             self.mandatory = False
 
+    # TODO: Maybe not needed!
     @api.onchange('form_id')
     def oc_form_id(self):
-        logger.info("YEEEEESSSSS")
         if self.form_id:
             return {'domain': {
                 'form_id': [('model_id', '=', self.form_id.model_id)]

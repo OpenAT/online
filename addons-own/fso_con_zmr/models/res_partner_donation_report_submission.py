@@ -1230,7 +1230,7 @@ class ResPartnerFADonationReport(models.Model):
             logger.info(msg_success)
             return True
 
-        # TODO: First submit all donation reports where force_submission = True in an submission where manual = True!
+        # TODO: First submit all donation reports where force_submission = True
 
         # Search for fiscal years
         # HINT: This will get all configured fiscal years for all companies

@@ -11,6 +11,7 @@ from openerp import fields
 from openerp.addons.website.models.website import slug
 
 import locale
+import re
 
 # import copy
 # import requests
@@ -300,6 +301,19 @@ class website_sale_donate(website_sale):
 
         # Validate (donation) Arbitrary Price
         warnings = None
+
+        # Check price_donate
+        if 'price_donate' in kw:
+            price_donate = kw.get('price_donate')
+            _logger.info('cart_update(): price_donate in kwargs: %s' % str(price_donate))
+
+            # TODO: Try to convert price_donate string to a valid number (amount)
+            # TODO: rethink if the fallback to list_price of price is good - This is not done here but in
+            #       _cart_update() if price_donate seems invalid
+            # TODO: Find a way to prevent loosing the form data if price_donate is not ok
+            # TODO: use jqueryvalidate to validate the price_donate field also! (Just numbers!)
+            #       This may be a bit tricky because some browser add an ,00 to the number and we dont want 4,00 > 400!
+
         price = kw.get('price_donate') or product.list_price or product.price
         # HINT: If price_donate is not a valid number it will be empty and so the product.list_price is used!
         #       Therefore the try statement is not really needed (but kept for safety).
@@ -1048,7 +1062,8 @@ class website_sale_donate(website_sale):
     @http.route(['/shop/confirmation_static'], type='http', auth="public", website=True)
     def payment_confirmation_static(self, order_id=None, **post):
         _logger.warning("payment_confirmation_static(): START")
-
+        if not order_id:
+            _logger.error('payment_confirmation_static(): order_id missing!')
         cr, uid, context = request.cr, request.uid, request.context
         try:
             order_id = int(order_id)
@@ -1056,8 +1071,10 @@ class website_sale_donate(website_sale):
             if order and order.name and order.payment_tx_id:
                 return request.website.render("website_sale_donate.confirmation_static", {'order': order})
             else:
+                _logger.error('payment_confirmation_static(): Sale Order or corresponding Payment Transaction missing!')
                 raise ValueError
-        except:
+        except Exception as e:
+            _logger.error('payment_confirmation_static(): EXCEPTION: %s' % repr(e))
             return request.website.render("website_sale_donate.confirmation_static", {'order': None})
 
     # For (small) cart JSON updates use arbitrary price (price_donate) if set sale.order.line

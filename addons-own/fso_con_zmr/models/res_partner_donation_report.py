@@ -85,24 +85,24 @@ class ResPartnerFADonationReport(models.Model):
     # a donation report for the years after the automatic submission.
     create_reason = fields.Selection(string="Create Reason", readonly=True, track_visibility='onchange',
                                      selection=[('regular', 'Regular Report'),
-                                                ('amount_changed', 'Donation Amount Changed'),
-                                                ('bpk_changed', 'BPK Number Changed'),
+                                                ('amount_changed', 'Donation-Amount changed'),
+                                                ('bpk_changed', 'BPK-Number changed'),
                                                 ('bpk_manual_cancellation', 'BPK after manual cancellation'),
                                                 ('access_data', 'Changed ZMR/FinanzOnline access data'),
                                                 ('grp_bpkoptout_removed', 'OptOut Group removed'),
                                                 ('grp_systemdenied_removed', 'System-Denied Group removed'),
                                                 ('err_u_008', 'Report after Error ERR-U-008'),
                                                 ('err_u_006', 'Report after Error ERR-U-006'),
-                                                ('err_fo', 'Report after internal FinanzOnline error'),
-                                                ('submission_forced', 'Donor explicitly forced submission'),
+                                                ('user_resubmission', 'Resubmission by user request'),
+                                                ('submission_forced', 'Donor instructed to force submission'),
                                                 # Cancellation
-                                                ('c_grp_bpkoptout_added', 'OptOut Group added'),
-                                                ('c_grp_systemdenied_added', 'System-Denied Group added'),
-                                                ('c_bpk_changed', 'BPK Changed'),
+                                                ('c_grp_bpkoptout_added', 'OptOut-Group added'),
+                                                ('c_grp_systemdenied_added', 'System-Denied-Group added'),
+                                                ('c_bpk_changed', 'BPK changed'),
                                                 ('c_err_u_008', 'Cancellation to fix error ERR-U-008'),
                                                 ('c_err_u_006', 'Cancellation to fix error ERR-U-006'),
-                                                ('c_err_fo', 'Cancellation to fix internal FinanzOnline error'),
-                                                ('c_submission_forbidden', 'Donor explicitly forbid submission'),
+                                                ('c_user_resubmission', 'Prepare for resubmission by user request'),
+                                                ('c_submission_forbidden', 'Donor instructed to forbid submission'),
                                                 ])
 
     # Error before submission
@@ -201,8 +201,8 @@ class ResPartnerFADonationReport(models.Model):
     info = fields.Text(string="Info", readonly=True)
 
     # Force submission (only set in FRST NOT in FSON!)
-    # HINT: Used for manual resubmission of a donation report or
-    #       for donation report submissions if outside of the meldezeitraum of the fiscal year
+    # HINT: Used for user requested manual resubmission of a donation report!
+    #       TODO: Must be submitted by scheduled_submission() even if outside of Meldezeitraum!
     force_submission = fields.Boolean(string="Force Submission", readonly=True,
                                       help="Will be submitted to FinazOnline by scheduler even if outside of automatic "
                                            " submission range! (Meldezeitraum)")

@@ -38,7 +38,11 @@
                     <group name="Basic Settings">
                         <group>
                             <field name="fs_product_type" string="Fundraising Studio Typ"/>
-                            <field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>
+                            <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
+                            <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
+                            <field name="zgruppedetail_ids" string="Fundraising Studio Gruppen"
+                                   widget="many2many_tags"
+                                   options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                             <field name="product_page_template" string="Webseitenvorlage"/>
                         </group>
                         <group>
@@ -186,8 +190,8 @@
                             </group>
                         </page>
 
-                        <page string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'godparenthood', 'sponsorship'])]}">
-                            <group string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'godparenthood', 'sponsorship'])]}">
+                        <page string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
+                            <group string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
                                 <group>
                                     <field name="funding_goal"/>
                                     <field name="funding_user"/>
@@ -255,7 +259,8 @@
                                     <field name="create_uid" readonly="True"/>
                                     <field name="write_date" readonly="True"/>
                                     <field name="write_uid" readonly="True"/>
-                                    <field name="fs_workflow" string="FS Workflow (veraltet)"/>
+                                    <!-- WARNING: fs_workflow is deprecated use fs_product_type instead !-->
+                                    <!--<field name="fs_workflow" string="FS Workflow (veraltet)"/>-->
                                 </group>
                             </group>
 
@@ -356,7 +361,9 @@
                 <field name="price_donate" string="Freier Betrag"/>
                 <field name="list_price" string="Betrag"/>
                 <field name="payment_interval_default" string="Std. Interv."/>
-                <field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>
+                <!-- WARNING: fs_group_ids is deprecated !"-->
+                <!--<field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>-->
+                <field name="zgruppedetail_ids" string="FS Gruppen" widget="many2many_tags"/>
                 <field name="product_page_template" string="Webvorlage"/>
                 <field name="website_published" string="WebFreig."/>
                 <field name="website_published_start" string="Start"/>

@@ -104,6 +104,7 @@ class product_template(osv.Model):
                                                string='Suggested Donation-Values'),
         # DEPRECATED payment_interval_ids only left here for downward compatibility
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
+        # PAYMENT INTERVAL
         'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
         'payment_interval_as_selection': fields.boolean(string='Payment Interval as Selection List'),
         'payment_interval_lines_ids': fields.one2many('product.payment_interval_lines', 'product_id',
@@ -140,6 +141,13 @@ class product_template(osv.Model):
             help="Small-sized image of the product. It is automatically "\
                  "resized as a 64x64px image, with aspect ratio preserved. "\
                  "Use this field anywhere a small image is required."),
+        # FRST Groups frst.zgruppedetail
+        # ATTENTION: TODO: Check if the domain works because 'sosync_fs_id' is only known after fso_sosnync which
+        #                  can not be a dependency of website_sale_donate!
+        # HINT: 40200 = Vertragsart, 40300 = Patenart, 40700 = Mitgliedsbeitrag
+        'zgruppedetail_ids': fields.many2many('frst.zgruppedetail', string='Fundraising Studio Groups',
+                                              domain="[('gui_anzeigen', '=', True),"
+                                                     " ('zgruppe_id.sosync_fs_id','in', [40200, 40300, 40700])]"),
 
     }
     _defaults = {
@@ -182,12 +190,17 @@ class account_invoice(osv.Model):
 class sale_order_line(osv.Model):
     _inherit = "sale.order.line"
     _columns = {
+        # Transferred from context or kwargs and copied to 'price_unit' field by _cart_update()
         'price_donate': fields.float('Donate Price', digits_compute=dp.get_precision('Product Price'), ),
+        # Transferred from product by _cart_update()
         'payment_interval_id': fields.many2one('product.payment_interval', string='Payment Interval ID'),
         'payment_interval_name': fields.text('Payment Interval Name'),
         'payment_interval_xmlid': fields.text('Payment Interval Name'),
-        'fs_ptoken': fields.text('FS Partner Token'),
-        'fs_origin': fields.char('FS Partner Token Origin', help="The Fundraising Studio activity ID")
+        # Transferred from context or kwargs by _cart_update()
+        'fs_ptoken': fields.text('FS Partner Token', readonly=True),
+        'fs_origin': fields.char('FS Partner Token Origin', help="The Fundraising Studio activity ID", readonly=True),
+        # FRST Groups frst.zgruppedetail, transferred from product by _cart_update()
+        'zgruppedetail_ids': fields.many2many('frst.zgruppedetail', string='Fundraising Studio Groups', readonly=True),
     }
 
 
@@ -277,21 +290,34 @@ class sale_order(osv.Model):
             # no matter where we come from if so line already exists and has filled price_donate field we have to
             # update the price_unit again to not loose our custom price price_donate
             if sol.price_donate:
+                _logger.info('_cart_update(): sale_order_line: copy price_donate %s to price_unit %s'
+                             '' % (str(sol.price_donate), str(sol.price_unit)))
                 sol.price_unit = sol.price_donate
                 # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_unit': sol.price_donate, }, context=context)
 
-            # TODO: Hack: for no obvious reason functional fields do net get updated on sale.order.line writes ?!? so we do it manually!
-            # Sadly not working
-            # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_subtotal': sol_obj._amount_line(cr, SUPERUSER_ID, [line_id], None, None, context=context), 'price_reduce': sol_obj._get_price_reduce(cr, SUPERUSER_ID, [line_id], None, None, context=context), }, context=context)
+            # TODO: Hack: For no obvious reason functional fields do net get updated on sale.order.line writes ?!?
+            #             so we do it manually!
+            #       ANNTENTION: Hack sadly also not working therfore deactivated
+            # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_subtotal': sol_obj._amount_line(
+            # cr, SUPERUSER_ID, [line_id], None, None, context=context), 'price_reduce': sol_obj._get_price_reduce(
+            # cr, SUPERUSER_ID, [line_id], None, None, context=context), }, context=context)
 
             # If Payment Interval is found in kwargs write it to the so line
-            # Todo: SECURITY Check if payment_intervall_id: is an int and if it is available in product.payment_interval
+            # Todo: SECURITY Check if payment_interval_id: is an int and if it is available in product.payment_interval
             if payment_interval_id:
                 # Todo: CATCH if int conversion fails (like float above)
                 sol.payment_interval_id = int(payment_interval_id)
                 if sol.payment_interval_id.exists():
                     sol.payment_interval_name = sol.payment_interval_id.name
                     sol.payment_interval_xmlid = sol.payment_interval_id.get_metadata()[0]['xmlid']
+
+            # Add frst.zgruppedetail (fso_frst_groups) from the product to the sale_order_line if any
+            if sol.product_id and sol.product_id.zgruppedetail_ids:
+                _logger.info('_cart_update(): copy zgruppedetail_ids from sol.product_id.zgruppedetail_ids '
+                             'to sol.zgruppedetail_ids')
+                sol.zgruppedetail_ids = sol.product_id.zgruppedetail_ids
+            else:
+                sol.zgruppedetail_ids = False
 
         return cu
 
@@ -348,7 +374,7 @@ class sale_order(osv.Model):
 
 # CROWD FUNDING EXTENSIONS
 # ========================
-class product_product(osv.Model):
+class product_product_crowd_funding(osv.Model):
     _inherit = 'product.product'
 
     def _sold_total(self, cr, uid, ids, field_name, arg, context=None):
@@ -384,7 +410,7 @@ class product_product(osv.Model):
     }
 
 
-class product_template(osv.Model):
+class product_template_crowd_funding(osv.Model):
     _inherit = 'product.template'
 
     def _sold_total(self, cr, uid, ids, field_name, arg, context=None):

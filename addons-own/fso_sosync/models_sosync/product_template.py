@@ -16,8 +16,11 @@ class ProductTemplateSosync(models.Model):
     fs_product_type = fields.Selection(sosync="True")
 
     # Fundraising Studio Gruppe (zGruppeDetail) (TO: fs.group)
-    # TODO: FS-Groups may be redesigned!
+    # DEPRECATED use zgruppedetail_ids fso_frst_groups
     #fs_group_ids = fields.Many2many(sosync="True")
+
+    # New Group System (frst.zgruppedetail)
+    zgruppedetail_ids = fields.Many2many(sosync="True")
 
     # Webseiten Template z.B.: OPC oder Spendenlayout
     product_page_template = fields.Selection(sosync="True")
