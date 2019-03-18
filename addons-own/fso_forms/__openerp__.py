@@ -40,15 +40,16 @@ New Controller:
     'application': False,
     'auto_install': False,
     'depends': [
-        'website',
+        #'website',
         #'fso_base',
-        #'fso_base_website',
+        # To use the jquery validation and other tools
+        'fso_base_website',
     ],
     'data': [
         #'security/ir.model.access.csv',
         'views/fson_form.xml',
         'views/fson_form_field.xml',
-        #'views/snippets.xml',
+        'views/templates.xml',
         #'data/data.xml',
     ],
 }
