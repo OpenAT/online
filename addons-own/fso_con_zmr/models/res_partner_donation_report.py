@@ -96,6 +96,7 @@ class ResPartnerFADonationReport(models.Model):
                                                 ('user_resubmission', 'Resubmission by user request'),
                                                 ('submission_forced', 'Donor instructed to force submission'),
                                                 # Cancellation
+                                                ('c_amount_zero', 'Amount dropped to zero'),
                                                 ('c_grp_bpkoptout_added', 'OptOut-Group added'),
                                                 ('c_grp_systemdenied_added', 'System-Denied-Group added'),
                                                 ('c_bpk_changed', 'BPK changed'),
