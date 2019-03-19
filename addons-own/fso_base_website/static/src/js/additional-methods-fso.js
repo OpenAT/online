@@ -17,3 +17,8 @@ $.validator.addMethod("dateDEBirthdate", function (value, element) {
     // HINT: .optional() is there to return true as long as the input is empty
     return this.optional(element) || test;
 }, $.validator.messages.date);
+
+$.validator.addMethod("floatDE", function (value, element) {
+    // HINT: .optional() is there to return true as long as the input is empty
+    return this.optional( element ) || /^[0-9]+[,]*[0-9]*$/.test( value );
+}, $.validator.messages.number);
