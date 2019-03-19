@@ -14,7 +14,7 @@
 
 
         <!-- Website Template: form -->
-        <!-- TODO: change all apf_ classes to fsoforms_ and update fso_forms.css -->
+        <!-- TODO: Change all 'apf_' classes to 'fsoforms_' and update fso_forms.css -->
         <template id="form" name="FSON Forms Website Template" page="True">
             <t t-call="website.layout">
                 <t t-set="title"><t t-esc="form.name"/></t>
@@ -67,7 +67,7 @@
                                                 
                                                 <!-- !!! LIMIT FIELD TYPES !!! -->
                                                 <!-- TODO: Add an api constrain in the model that restrict other field types -->
-                                                <t t-if="f_type in ('boolean', 'char', 'selection', 'date', 'integer', 'binary')">
+                                                <t t-if="f_type in ('boolean', 'char', 'selection', 'date', 'integer', 'float', 'binary')">
                                                     
                                                     <!-- form group -->
                                                     <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
@@ -156,6 +156,7 @@
                                                         </t>
                                                         
                                                         <!-- INTEGER FIELDS -->
+                                                        <!-- HINT: type=number is html5 but will work in most browser for html 4.01 -->
                                                         <t t-if="f_type in ['integer',]">
                                                             <input type="number"
                                                                    t-att-id="f_name"
@@ -169,7 +170,24 @@
                                                             />
                                                         </t>
                                                         
+                                                        <!-- FLOAT FIELDS -->
+                                                        <!-- HINT: type=number is html5 but will work in most browser for html 4.01 -->
+                                                        <!-- TODO: Localization (right now forced to DE) check how it is done in website_sale -->
+                                                        <t t-if="f_type in ['float',]">
+                                                            <input type="text"
+                                                                   t-att-id="f_name"
+                                                                   t-att-name="f_name"
+                                                                   class="form-control"
+                                                                   t-att-value="kwargs.get(f_name) if field.nodata else str(record[f_name]).replace('.', ',')"
+                                                                   t-att-placeholder="field.placeholder"
+                                                                   t-att-required="field.mandatory"
+                                                                   t-att="validation_rule"
+                                                            />
+                                                        </t>
+                                                        
                                                         <!-- BINARY (FILE) FIELDS -->
+                                                        <!-- TODO: Handle image previews -->
+                                                        <!-- TODO: Handle mime and file types -->
                                                         <t t-if="f_type in ['binary',]">
                                                             <input type="file"
                                                                    t-att-id="f_name"
@@ -181,7 +199,8 @@
                                                             />
                                                         </t>
 
-                                                        <!-- TODO: SELECTION FIELDS (NOT Many2One!) -->
+                                                        <!-- SELECTION FIELDS -->
+                                                        <!-- ATTENTION: This is not for relational fields like Many2* -->
                                                         <t t-if="f_type == 'selection'">
 
                                                             <!-- Selection List Style -->

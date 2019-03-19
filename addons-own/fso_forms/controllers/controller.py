@@ -88,15 +88,16 @@ class FsoForms(http.Controller):
         # Return the record
         return request.env[form.model_id.model].browse([form_session_data['form_record_id']])
 
-    # TODO: Maybe we need to move this to the model?!? right now an exception kills the rendering ?!?
+    # TODO: Maybe we need to move this to the model?!? right now an exception on write kills the rendering ?!?
     def update_record(self, form, field_data):
         # Prepare values
         values = {}
         for f in form.field_ids:
             if f.field_id and f.show:
                 f_name = f.field_id.name
-                f_value = field_data[f_name]
                 f_type = f.field_id.ttype
+                # HINT: Boolean fields would not be in 'field_data' if not checked in the form
+                f_value = field_data.get(f_name, False) if f_type == 'boolean' else field_data[f_name]
 
                 # NODATA
                 # Fields with no pre-filled data (nodata) can only be included if there is a value in field_data to not
@@ -116,14 +117,21 @@ class FsoForms(http.Controller):
                     values[f_name] = f_value or False
 
                 # BINARY TYPE
-                # TODO: check for an other field to store filename to - must extend fson.form_field model
                 elif f_type == 'binary':
-                    file_data = False
-                    file_name = False
                     if f_value:
-                        file_data = base64.encodestring(f_value.read())
-                        file_name = f_value.filename
-                    values[f_name] = file_data or False
+                        values[f_name] = base64.encodestring(f_value.read()) or False
+                        if f.binary_name_field_id:
+                            values[f.binary_name_field_id.name] = f_value.filename if values[f_name] else False
+                    else:
+                        values[f_name] = False
+                        if f.binary_name_field_id:
+                            values[f.binary_name_field_id.name] = False
+
+                # FLOAT TYPE
+                # TODO: Localization - !!! Right now we expect DE values from the forms !!!
+                elif f_type == 'float':
+                    if f_value:
+                        values[f_name] = f_value.replace(',', ':').replace('.', '').replace(':', '.')
 
                 # ALL OTHER FIELD TYPES
                 else:
@@ -157,7 +165,9 @@ class FsoForms(http.Controller):
 
             if f.field_id and f.show:
                 f_name = f.field_id.name
-                f_value = field_data[f_name]
+                f_type = f.field_id.ttype
+                # HINT: Boolean fields would not be in 'field_data' if not checked in the form
+                f_value = field_data.get(f_name, False) if f_type == 'boolean' else field_data[f_name]
                 f_display_name = f.label if f.label else f_name
 
                 # Check mandatory setting
@@ -166,9 +176,9 @@ class FsoForms(http.Controller):
                     continue
 
                 # Check date format
+                # TODO: Localization
                 if f.field_id.ttype == 'date' and f_value:
                     try:
-                        # TODO: Localization
                         datetime.datetime.strptime(f_value.strip(), '%d.%m.%Y')
                     except Exception as e:
                         _logger.warning('Date conversion failed for string %s' % f_value)
@@ -183,6 +193,19 @@ class FsoForms(http.Controller):
                         _logger.warning('Integer conversion failed for string %s' % f_value)
                         field_errors[f_name] = _("Please enter a valid number for field %s" % f_display_name)
                         continue
+
+                # Floats
+                # TODO: Localization - !!! Right now we alwys expect DE values from the forms e.g.: 22.000,12 !!!
+                if f.field_id.ttype == 'float' and f_value:
+                    try:
+                        assert len(f_value.rsplit(',')[-1]) <= len(f_value.rsplit('.')[-1]), 'Wrong float format?!?'
+                        float(f_value.replace(',', ':').replace('.', '').replace(':', '.'))
+                    except Exception as e:
+                        _logger.warning('Float conversion failed for string %s' % f_value)
+                        field_errors[f_name] = _("Please enter a valid float for field %s" % f_display_name)
+                        continue
+
+                # TODO: validate binary
 
         return field_errors
 
@@ -208,6 +231,7 @@ class FsoForms(http.Controller):
 
         # FORM SUBMIT
         if kwargs and request.httprequest.method == 'POST':
+            logging.info("FORM SUBMIT: %s" % kwargs)
 
             # Validate Fields
             form_field_errors = self.validate_fields(form, field_data=kwargs)
@@ -224,7 +248,12 @@ class FsoForms(http.Controller):
 
             # Create or update the record and the session data
             try:
-                record = self.update_record(form, field_data=kwargs)
+                new_record = self.update_record(form, field_data=kwargs)
+                if new_record == record:
+                    messages.append(_('Data was successfully updated!'))
+                else:
+                    messages.append(_('Data was successfully submitted!'))
+                record = new_record
             except Exception as e:
                 warnings.append(_('Update of Record failed!\n%s' % repr(e)))
 
