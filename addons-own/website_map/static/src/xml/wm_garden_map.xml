@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="perserve">
+    <t t-name="wm_gallery">
+        <div id="imageModal" class="figure-wrapper imgModal">
+                <!--<span id="close_Edit" class="closeEdit">Exit</span>-->
+                <!--<img t-att-src="image.website_url" t-att-id="image.id" class=""/>-->
+
+                 <!--<div id="crop_Input" class="cropInput hidden">-->
+                     <!--x: <input type="number" id="cropX" min="0" class="noEnter"></input><br/>-->
+                     <!--y: <input type="number" id="cropY" min="0" class="noEnter"></input><br/>-->
+                     <!--Breite: <input type="number" id="cropWidth" min="0" class="noEnter"></input><br/>-->
+                     <!--Höhe: <input type="number" id="cropHeight" min="0" class="noEnter"></input><br/>-->
+                 <!--</div>-->
+
+                <!--<div class="form-darkroom ">-->
+                    <!--<button type="button" id="save_Edit" class="btn btn-primary saveEdit" t-att-data-id="image.id">Save</button>-->
+                <!--</div>-->
+
+                <!--<figcaption class="image-meta">-->
+                    <!--<input type="text" id="imageText" class="imgTxt noEnter" t-att-value="image.name"/>-->
+                <!--</figcaption>-->
+                <div id="myModal" class="modal">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+
+                <div class="modal-content">
+
+                    <div id="container">
+                        <img id="front_Image" t-att-src="image.website_url" style="width:100%">
+                    </div>
+
+                    <!-- Next/previous controls -->
+                    <i class="fa fa-angle-left" aria-hidden="true" onclick="moveImg(-1)"></i>
+                    <i class="fa fa-angle-right" aria-hidden="true"onclick="moveImg(1)"></i>
+
+                    <div class="column">
+                        <img class="slideshow" t-att-src="image.website_url" t-att-data-id="image.id" onclick="selectImg(this)"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

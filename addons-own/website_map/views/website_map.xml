@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--wie = website_image_edit-->
+<openerp>
+    <data>
+        <template id="website_map.assets_editor" inherit_id="website.assets_editor" name="Garden map of Austria" groups="base.group_website_publisher">
+            <xpath expr='//script[@src="/website/static/src/js/website.translator.js"]' position="after">
+
+                <!--Leaflet files-->
+                <link rel="stylesheet" href="/website_map/static/lib/leaflet/leaflet.css" t-ignore="true"/>
+                <script src="/website_map/static/lib/leaflet/leaflet-src.js"/>
+
+                <!--Map of Austria-->
+                <script id="wm_austria_region" type="text/javascript" src="/website_map/static/src/js/austria_data/bundeslaender_und_gemeinden.js"/>
+                <link id="wm_css" rel='stylesheet' href='/website_map/static/src/css/website_map.css' t-ignore="true"/>
+                <script id="wm_script" type="text/javascript" src="/website_map/static/src/js/website_map.js"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>
