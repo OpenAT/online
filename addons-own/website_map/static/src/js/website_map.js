@@ -7,14 +7,12 @@ $(document).ready(function () {
 'use strict'
 
     $('#wrap').after('<div id="gardenMap"/>');
-    $('#gardenMap').after('<div id="myModal"/>');
+    $('#gardenMap').after('<div id="gardenMapModal"/>');
 
     var jsonDomain = 'https://demo.datadialog.net';
     var dirBase = 'http://demo.local.com/gl2k_gardenvis/static/src/alextest';
     var iconCamera = '/img/camera_small.png';
 
-    var statesKml = '/data/austria_states.kml';         // will be cached for some minutes by google on first calling
-    var communityKml = '/data/austria_communities.kml';    // will be cached for some minutes by google on first calling
     /* CONFIG END */
 
     var gardenMap;
@@ -23,16 +21,6 @@ $(document).ready(function () {
 
     /* ToDo: Image URL */
     /* ToDo: Check State Centers */
-
-
-//    $.loadScript = function (url, callback) {
-//        $.ajax({
-//            url: url,
-//            dataType: 'script',
-//            success: callback,
-//            async: true
-//        });
-//    };
 
     try {
 
@@ -95,12 +83,12 @@ $(document).ready(function () {
 
         gardenMap.on('zoomend', function () {
             var zoomLevel = gardenMap.getZoom();
-            if (zoomLevel < 8) {
+            if (zoomLevel < 10) {
                 gardenMap.removeLayer(geoAustriaCommunities);
                 removeMarkerCommunity();
                 addMarkerState();
                 gardenMap.addLayer(geoAustriaState);
-            } else if ((zoomLevel >= 8) && (zoomLevel < 11)) {
+            } else if ((zoomLevel >= 10) && (zoomLevel < 11)) {
                 gardenMap.removeLayer(geoAustriaState);
                 removeMarkerState();
                 gardenMap.addLayer(geoAustriaCommunities);
@@ -135,18 +123,37 @@ $(document).ready(function () {
 //-----------------------------------------------------------------------------------
 // GeoJson
 
-    function getColor(d) {
-        return d > 1000
-            ? "#006d2c"
-            : d > 500
-                ? "#31a354"
-                : d > 200
-                    ? "#74c476"
-                    : d > 100
-                        ? "#bae4b3"
-                        : d > 50
-                            ? "#edf8e9"
-                            : d > 20 ? "#FEB24C" : d > 10 ? "#FED976" : "#FFEDA0";
+//    function getColor(d) {
+//        return d > 1000
+//            ? "#006d2c"
+//            : d > 500
+//                ? "#31a354"
+//                : d > 200
+//                    ? "#74c476"
+//                    : d > 100
+//                        ? "#bae4b3"
+//                        : d > 50
+//                            ? "#edf8e9"
+//                            : d > 20 ? "#FEB24C" : d > 10 ? "#FED976" : "#FFEDA0";
+//    }
+
+    function fillMap(size) {
+        if (size > 0) {
+            return '#006d2c';
+        } else {
+            return 'transparent';
+        }
+    }
+
+    function styleCommunity(feature) {
+        return {
+            weight: 1,
+            opacity: 1,
+            color: "grey",
+            dashArray: "1",
+            fillOpacity: feature.properties.opacityValue,
+            fillColor: fillMap(feature.properties.opacityValue),
+        };
     }
 
     function style(feature) {
@@ -155,8 +162,8 @@ $(document).ready(function () {
             opacity: 1,
             color: "black",
             dashArray: "3",
-            fillOpacity: 0.7,
-            fillColor: getColor(feature.properties.aream2)
+            fillOpacity: feature.properties.opacityValue,
+            fillColor: fillMap(feature.properties.opacityValue),
         };
     }
 
@@ -191,7 +198,8 @@ $(document).ready(function () {
                 nameData = filterName(state_data[0][i].cmp_state);
                 nameGeo = filterName(feature.properties.name);
                 if (nameGeo == nameData) {
-                    gardenSize = state_data[0][i].garden_size;
+                    gardenSize = state_data[0][i].garden_size_peg;
+//                    gardenSize = state_data[0][i].garden_size;
                 }
             }
         } else if (feature.properties.rtype === 'gemeinde') {
@@ -199,11 +207,13 @@ $(document).ready(function () {
                 nameData = filterName(community_data[0][i].cmp_community);
                 nameGeo = filterName(feature.properties.name);
                 if (nameGeo === nameData) {
-                    gardenSize = community_data[0][i].garden_size;
+                    gardenSize = community_data[0][i].garden_size_peg;
+//                    gardenSize = community_data[0][i].garden_size;
                 }
             }
         }
-        feature.properties.aream2 = gardenSize;
+        feature.properties.opacityValue = gardenSize;
+//        feature.properties.aream2 = gardenSize;
     }
 
     function resetArea(feature) {
@@ -216,7 +226,6 @@ $(document).ready(function () {
             weight: 5,
             color: "#666",
             dashArray: "",
-            fillOpacity: 0.7
         });
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
@@ -278,7 +287,7 @@ $(document).ready(function () {
     function addGeoJsonCommunity() {
         geoAustriaCommunities = L.geoJson(austriaBG, {
             filter: communityFilter,
-            style: style,
+            style: styleCommunity,
             onEachFeature: onEachFeatureCommunity
         });
     }
@@ -320,28 +329,22 @@ $(document).ready(function () {
                            ['salzburg',47.4166667, 13.2500000],  //sal
                            ['tirol',47.2231930, 11.5261028],  //tir
                            ['vorarlberg',47.2500000, 9.9166667]];  //vor
-        console.log(state_data);
-        console.log(stateCenter[0][1]);
 
-//                nameData = filterName(state_data[0][i].cmp_state);
-//                nameGeo = filterName(feature.properties.name);
-//                if (nameGeo == nameData) {
-//                    gardenSize = state_data[0][i].garden_size;
-//                }
-//            }
-        for (var i = 0; i < stateCenter.length; i++) {
-            for (var j = 0; j < state_data[0].length; j++) {
-                if (stateCenter[j][0] === filterName(state_data[0][j].cmp_state)) {
-                    var marker = L.marker([stateCenter[i][1],stateCenter[i][2]], {
-//                        icon: L.divIcon({
-//                            html: '<i id="' + state_data[0][j].cmp_state_id + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
-//                        })
+        for (var j = 0; j < state_data[0].length; j++) {
+            for (var i = 0; i < stateCenter.length; i++) {
+                if (stateCenter[i][0] === filterName(state_data[0][j].cmp_state)) {
+                    var marker = L.marker([stateCenter[i][1], stateCenter[i][2]], {
                         icon: L.divIcon({
-                            iconUrl: './img/camera.png',
+//                            html: '<i id="' + state_data[0][j].cmp_state_id + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
+                            html: '<img id="' + state_data[0][j].cmp_state_id + '" class="gardenMapIcon" src="/website_map/static/src/img/camera.png" onclick="showGallery(this)"></i>',
                         })
+//                        icon: L.icon({
+//                            iconUrl: '/website_map/static/src/img/camera.png',
+//                            iconSize: [40, 40],
+//                        })
                     });
                     stateMarker.push(marker);
-                    gardenMap.addLayer(stateMarker[i]);
+                    gardenMap.addLayer(stateMarker[j]);
                 }
             }
         }
@@ -360,7 +363,8 @@ $(document).ready(function () {
             communityCenter = [parseFloat(community_data[0][i].latitude), parseFloat(community_data[0][i].longitude)];
             var marker = L.marker(communityCenter, {
                 icon: L.divIcon({
-                    html: '<i class="fa fa-picture-o" onclick="showGallery()"></i>',
+//                    html: '<i id="' + community_data[0][i].cmp_community_code + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
+                    html: '<img id="' + community_data[0][i].cmp_community_code + '" class="gardenMapIcon" src="/website_map/static/src/img/camera.png" onclick="showGallery(this)"></i>',
                 })
             });
             communityMarker.push(marker);
@@ -375,45 +379,51 @@ $(document).ready(function () {
     }
 });
 
-function showGallery() {
-    console.log(this);
+function showGallery(e) {
+    console.log(e);
     console.log(state_data_glo);
     console.log(community_data_glo);
-//    this.$('#myModal').replaceWith(
-//                openerp.qweb.render(
-//                    'wm_gallery', {image: rows}));
+
+    console.log(document.getElementById('gardenMapModal'));
+    var image;
+
+    this.$('#gardenMapModal').wrapInner(
+                openerp.qweb.render(
+                    'wm_gallery', {image: image}));
+    var toEdit = document.getElementById('gardenMapModal');
+    toEdit.style.display = 'block';
 //    document.getElementById('myModal').style.display = "block";
 }
 function closeGallery() {
     document.getElementById('myModal').style.display = "none";
 }
 
-window.addEventListener('load', function () {
-    this.thumbmail = document.getElementsByClassName("slideshow");
-    console.log(thumbmail);
-    console.log(thumbmail[0]);
-    console.log(thumbmail.length);
-    selectImg(thumbmail[0]);
-});
-var slideIndex = 1;
-
-function moveImg(n) {
-    (slideIndex += n);
-    console.log(slideIndex);
-    if ((slideIndex < thumbmail.length) && (slideIndex > 0)) {
-
-    } else if (slideIndex < 0) {
-        slideIndex = thumbmail.length - 1;
-    } else {
-        slideIndex = 0
-    }
-    console.log(slideIndex);
-    selectImg(thumbmail[slideIndex]);
-}
-
-function selectImg(img) {
-    console.log(img)
-    var frontImage = document.getElementById('front_Image');
-    frontImage.src = img.src;
-    frontImage.parentElement.style.display = 'block';
-}
+//window.addEventListener('load', function () {
+//    this.thumbmail = document.getElementsByClassName("slideshow");
+//    console.log(thumbmail);
+//    console.log(thumbmail[0]);
+//    console.log(thumbmail.length);
+//    selectImg(thumbmail[0]);
+//});
+//var slideIndex = 1;
+//
+//function moveImg(n) {
+//    (slideIndex += n);
+//    console.log(slideIndex);
+//    if ((slideIndex < thumbmail.length) && (slideIndex > 0)) {
+//
+//    } else if (slideIndex < 0) {
+//        slideIndex = thumbmail.length - 1;
+//    } else {
+//        slideIndex = 0
+//    }
+//    console.log(slideIndex);
+//    selectImg(thumbmail[slideIndex]);
+//}
+//
+//function selectImg(img) {
+//    console.log(img)
+//    var frontImage = document.getElementById('front_Image');
+//    frontImage.src = img.src;
+//    frontImage.parentElement.style.display = 'block';
+//}
