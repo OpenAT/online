@@ -22,23 +22,40 @@ class FSONForm(models.Model):
     field_ids = fields.One2many(string="Fields", comodel_name="fson.form_field", inverse_name="form_id")
 
     submission_url = fields.Char(string="Submission URL", default=False,
-                                 help="Subission URL for form data! Do not set unless you really need to!")
+                                 help="Subission URL for form data! Do not set unless you really need to!"
+                                      "If set no record will be")
     redirect_url = fields.Char(string="Redirect URL", default=False,
-                               help="Redirect URL after form feedback! Do not set unless you really need to!")
-    submit_button_text = fields.Char(string="Submit Button Text", default=_('Submit'), required=True)
+                               help="Redirect URL after form feedback! Do not set unless you really need to!"
+                                    "If set the Thank You Page will not be called!")
+    submit_button_text = fields.Char(string="Submit Button Text", default=_('Submit'), required=True, translate=True)
 
     frontend_validation = fields.Boolean(string="Frontend Validation", default=True,
                                          help="Enable JavaScript-Frontend-Form-Validation by jquery-validate!")
 
-    snippet_area_top = fields.Html(string="Top Snippet Area")
-    snippet_area_bottom = fields.Html(string="Bottom Snippet Area")
+    snippet_area_top = fields.Html(string="Top Snippet Area", translate=True)
+    snippet_area_bottom = fields.Html(string="Bottom Snippet Area", translate=True)
 
     # TODO: Add this to the <head> section of website.layout somehow :)
-    custom_css = fields.Text(string="Custom CSS")
+    custom_css = fields.Text(string="Custom CSS", help="TODO! This is not working yet!!!")
 
     # TODO: Add a user_group_ids and user_ids field to set what Users and or groups are allowed to view a form
     #       Make sure the controller then checks these fields
     #       Default should be the public user of the website so all are allowed to view/use the form by default
+
+    clear_session_data_after_submit = fields.Boolean(string="Clear Session Data after Submit",
+                                                     help="If set the form will be empty after a successful submit!")
+
+    # Thank you page after submit
+    thank_you_page_after_submit = fields.Boolean(string="Thank you page after submit!", default=True,
+                                                 help="If set the form will be empty if called after a successful "
+                                                      "submit without pressing the edit button on the thank you page!"
+                                                      "Clear Session Data after submitt has no effect then")
+    # Technically this will pop the "clear_session_data" key from the form session data if set
+    # so on the next hit the session data is still there and will not be removed!
+    thank_you_page_edit_data_button = fields.Char(string="Edit Data Button", default=_('Edit'), translate=True,
+                                                  help="If set a button will appear on the Thank You page to go "
+                                                       "back to form to edit the data again!")
+    thank_you_page_snippets = fields.Html(string="Thank you page", translate=True)
 
     @api.constrains('model_id')
     def constrain_model_id(self):

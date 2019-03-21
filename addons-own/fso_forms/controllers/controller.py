@@ -30,63 +30,85 @@ _logger = logging.getLogger(__name__)
 
 class FsoForms(http.Controller):
 
-    # TODO: Set and get only data for one form not forms! and add a rem_fso_form_session_data(form_id) method !!!
-    def get_fso_forms_session_data(self):
-        # Cleanup in case something went wrong and fso_forms is still in session but no dict
-        if not isinstance(request.session.get('fso_forms', dict()), dict):
-            request.session.pop('fso_forms')
+    _valid_form_sdata_keys = ('form_uid', 'form_record_id', 'form_model_id', 'clear_session_data')
 
-        fso_forms_session_data = dict()
-        if hasattr(request, 'session'):
-            fso_forms_session_data = request.session.get('fso_forms', dict())
+    # ATTENTION: request.session information will be copied but not DEEP copied so only use flat dicts!
 
-        # Cleanup if data is missing! e.g.: On structural change of the dict!
-        if fso_forms_session_data:
-            for form_id, form_vals_dict in fso_forms_session_data.iteritems():
-                if not all(keys in list(form_vals_dict.keys())
-                           for keys in ('form_uid', 'form_record_id','form_model_id')):
-                    _logger.error('Key missing in form_vals_dict')
-                    request.session.pop('fso_forms')
-                    fso_forms_session_data = dict()
-                    break
+    def get_fso_form_session_data(self, form_id, check_clear_session_data=True):
+        if form_id:
+            form_id = str(form_id)
 
-        return fso_forms_session_data
+        form_key = 'fso_form_' + form_id
 
-    def set_fso_forms_session_data(self, form_id, form_user_id, form_record_id, form_model_id):
-        assert hasattr(request, 'session'), 'Current request has no session attribute!'
-        fso_forms_session_data = self.get_fso_forms_session_data()
-        fso_forms_session_data.update({form_id: {'form_uid': form_user_id,
-                                                 'form_record_id': form_record_id,
-                                                 'form_model_id': form_model_id}
-                                       })
-        request.session['fso_forms'] = fso_forms_session_data
-        return True
+        # Get form session data
+        form_sdata = request.session.get(form_key, False)
+        if not form_sdata:
+            form_sdata = dict()
+            return form_sdata
+
+        # Check keys
+        form_sdata_keys = form_sdata.keys()
+        if not isinstance(form_sdata, dict) or set(form_sdata_keys) != set(self._valid_form_sdata_keys):
+            _logger.error('Remove fso_form %s session data because of unexpected or missing keys in %s!'
+                          '' % (form_id, str(form_sdata_keys)))
+            request.session.pop(form_key)
+            form_sdata = dict()
+            return form_sdata
+
+        # Check clear_session_data
+        if check_clear_session_data:
+            if form_sdata['clear_session_data']:
+                request.session.pop(form_key)
+                form_sdata = dict()
+                return form_sdata
+
+        # Return the form session data
+        return form_sdata
+
+    def set_fso_form_session_data(self, form_id, form_uid, form_record_id, form_model_id, clear_session_data=False):
+        if form_id:
+            form_id = str(form_id)
+
+        form_key = 'fso_form_' + form_id
+
+        # Overwrite or create the form session data
+        request.session[form_key] = {
+            'form_uid': form_uid,
+            'form_record_id': form_record_id,
+            'form_model_id': form_model_id,
+            'clear_session_data': clear_session_data
+        }
+
+    def pop_fso_form_session_data(self, form_id):
+        if form_id:
+            form_id = str(form_id)
+
+        form_key = 'fso_form_' + form_id
+
+        request.session.pop(form_key, False)
 
     def get_record(self, form):
-        # Get fso_form session data
-        fso_forms_session_data = self.get_fso_forms_session_data()
-        form_session_data = fso_forms_session_data.get(form.id, False) if fso_forms_session_data else False
+        form_sdata = self.get_fso_form_session_data(form.id)
 
         # No session data for this form
-        if not fso_forms_session_data or not form_session_data:
+        if not form_sdata:
             return request.env[form.model_id.model]
 
         # User changed
-        if form_session_data['form_uid'] != request.uid:
-            # TODO: Check if this removes it in request.session too
-            fso_forms_session_data.pop(form.id)
+        if form_sdata['form_uid'] != request.uid:
+            self.pop_fso_form_session_data(form.id)
             _logger.warning('Form user changed!')
             return request.env[form.model_id.model]
 
         # Form model changed
-        if form_session_data['form_model_id'] != form.model_id.id:
-            # TODO: Check if this removes it in request.session too
-            fso_forms_session_data.pop(form.id)
+        if form_sdata['form_model_id'] != form.model_id.id:
+            self.pop_fso_form_session_data(form.id)
             _logger.warning('Form model changed!')
             return request.env[form.model_id.model]
 
         # Return the record
-        return request.env[form.model_id.model].browse([form_session_data['form_record_id']])
+        record = request.env[form.model_id.model].browse([form_sdata['form_record_id']])
+        return record
 
     # TODO: Maybe we need to move this to the model?!? right now an exception on write kills the rendering ?!?
     def update_record(self, form, field_data):
@@ -152,9 +174,11 @@ class FsoForms(http.Controller):
         else:
             record = request.env[form.model_id.model].create(values)
 
-        # Update the session data
-        self.set_fso_forms_session_data(form_id=form.id, form_user_id=request.uid, form_record_id=record.id,
-                                        form_model_id=form.model_id.id)
+        # Update the session data and set clear_session_data
+        # ATTENTION: !!! If clear_session_data is True the data will be removed by get_fso_form_session_data() !!!
+        self.set_fso_form_session_data(form_id=form.id, form_uid=request.uid, form_record_id=record.id,
+                                       form_model_id=form.model_id.id,
+                                       clear_session_data=form.clear_session_data_after_submit)
 
         # Return the created or updated record
         return record
@@ -195,7 +219,7 @@ class FsoForms(http.Controller):
                         continue
 
                 # Floats
-                # TODO: Localization - !!! Right now we alwys expect DE values from the forms e.g.: 22.000,12 !!!
+                # TODO: Localization - !!! Right now we always expect DE values e.g.: 22.000,12 !!!
                 if f.field_id.ttype == 'float' and f_value:
                     try:
                         assert len(f_value.rsplit(',')[-1]) <= len(f_value.rsplit('.')[-1]), 'Wrong float format?!?'
@@ -211,6 +235,7 @@ class FsoForms(http.Controller):
 
     @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
     def fso_form(self, form_id=False, **kwargs):
+        ses = request.session
         form_id = int(form_id) if form_id else form_id
 
         errors = list()
@@ -226,7 +251,7 @@ class FsoForms(http.Controller):
             _logger.error('Form with id %s not found! Redirecting to startpage!' % str(form_id))
             return request.redirect("/")
 
-        # Get Record from session data if one exits already and the user has not changed!
+        # Get Record FROM FORM SESSION_DATA
         record = self.get_record(form)
 
         # FORM SUBMIT
@@ -246,7 +271,7 @@ class FsoForms(http.Controller):
                                             'messages': messages,
                                             })
 
-            # Create or update the record and the session data
+            # Create or update the record AND THE FORM_SESSION_DATA
             try:
                 new_record = self.update_record(form, field_data=kwargs)
                 if new_record == record:
@@ -256,6 +281,15 @@ class FsoForms(http.Controller):
                 record = new_record
             except Exception as e:
                 warnings.append(_('Update of Record failed!\n%s' % repr(e)))
+
+            # Redirect to Thank you Page
+            if form.thank_you_page_after_submit and not form_field_errors and not warnings and not errors:
+                request.session['mikes_test'] = {'a': 1, 'b': {'c': 'form'}}
+                return request.redirect("/fso/form/thanks/"+str(form.id))
+                # return http.request.render('fso_forms.thanks',
+                #                            {'kwargs': kwargs,
+                #                             # form
+                #                             'form': form})
 
         # Remove binary fields from kwargs before rendering the form
         if kwargs:
@@ -278,3 +312,32 @@ class FsoForms(http.Controller):
                                     'messages': messages,
                                     })
 
+    @http.route(['/fso/form/thanks/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
+    def fso_form_thanks(self, form_id=False, **kwargs):
+        ses = request.session
+        form_id = int(form_id) if form_id else form_id
+
+        # Get Form
+        # ATTENTION: Always use a list for browse()
+        form = request.env['fson.form'].browse([form_id])
+        if not form:
+            _logger.error('Form with id %s not found! Redirecting to startpage!' % str(form_id))
+            return request.redirect("/")
+
+        # FORM SUBMIT FOR EDIT BUTTON
+        if kwargs.get('edit_form_data', False):
+            # Set 'clear_session_data' to False before we redirect to the form again
+            form_sdata = self.get_fso_form_session_data(form.id, check_clear_session_data=False)
+            if form_sdata:
+                self.set_fso_form_session_data(form.id,
+                                               form_sdata['form_uid'],
+                                               form_sdata['form_record_id'],
+                                               form_sdata['form_model_id'],
+                                               clear_session_data=False)
+            return request.redirect("/fso/form/"+str(form.id))
+
+        # Render the thanks template
+        return http.request.render('fso_forms.thanks',
+                                   {'kwargs': kwargs,
+                                    # form
+                                    'form': form})

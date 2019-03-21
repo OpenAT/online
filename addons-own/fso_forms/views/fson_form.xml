@@ -14,7 +14,6 @@
                                 <field name="name"/>
                                 <field name="model_id"/>
                                 <field name="submit_button_text"/>
-                                <field name="frontend_validation"/>
                             </group>
                             <group name="system_data">
                                 <field name="id"/>
@@ -50,16 +49,25 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Snippets" name="form_snippets">
+                            <page string="Form-Snippet-Areas" name="form_snippets">
                                 <group>
                                     <field name="snippet_area_top"/>
                                     <field name="snippet_area_bottom"/>
                                 </group>
                             </page>
+                            <page string="Thank You Page">
+                                <group>
+                                    <field name="thank_you_page_after_submit"/>
+                                    <field name="thank_you_page_edit_data_button"/>
+                                    <field name="thank_you_page_snippets"/>
+                                </group>
+                            </page>
                             <page string="Danger Zone">
                                 <group>
+                                    <field name="frontend_validation"/>
                                     <field name="submission_url"/>
                                     <field name="redirect_url"/>
+                                    <field name="clear_session_data_after_submit"/>
                                     <field name="custom_css"/>
                                 </group>
                             </page>

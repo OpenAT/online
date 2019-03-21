@@ -11,6 +11,35 @@
                 <script type="text/javascript" src="/fso_forms/static/src/js/fso_forms.js"/>
             </xpath>
         </template>
+        
+        <!-- Website Template: thanks -->
+        <template id="thanks" name="FSON Forms Website Thank You Template" page="True">
+            <t t-call="website.layout">
+                <t t-set="title"><t t-esc="form.name"/></t>
+                <div id="wrap" t-att-class="'fso_form_wrap fso_form_thank_you_wrap fso_form_wrap_'+str(form.id)">
+                    <div class="container fso_form_container">
+                        
+                        <!-- THANK YOU SNIPPETS -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div t-field="form.thank_you_page_snippets" class="oe_structure fsoforms_top_snippets"/>
+                            </div>
+                        </div>
+                        
+                        <!-- EDIT FORM DATA BUTTON -->
+                        <div class="row fso_form_submit">
+                            <div class="col-lg-12">
+                                <a id="fso_form_edit_button" class="btn btn-primary btn-lg"
+                                    t-att-href="'/fso/form/thanks/'+str(form.id)+'?edit_form_data=True'">
+                                    <span t-field="form.thank_you_page_edit_data_button"/>
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </t>
+        </template>
 
 
         <!-- Website Template: form -->
@@ -33,7 +62,7 @@
                             <div class="col-lg-12 fso_form_column">
                                 <form id="fso_form"
                                       t-att-class="'fso_form_validate' if form.frontend_validation else ''"
-                                      t-att-action="'/fso/form/'+str(form.id)"
+                                      t-att-action="form.submission_url or ('/fso/form/'+str(form.id))"
                                       method="post"
                                       enctype="multipart/form-data"
                                       autocomplete="off">
@@ -178,8 +207,8 @@
                                                                    t-att-id="f_name"
                                                                    t-att-name="f_name"
                                                                    class="form-control"
-                                                                   t-att-value="kwargs.get(f_name) if field.nodata else str(record[f_name]).replace('.', ',')"
-                                                                   t-att-placeholder="field.placeholder"
+                                                                   t-att-value="kwargs.get(f_name, '0,00') if field.nodata else str(record[f_name]).replace('.', ',') if record else '0,00'"
+                                                                   t-att-placeholder="field.placeholder if field.placeholder else '0,00'"
                                                                    t-att-required="field.mandatory"
                                                                    t-att="validation_rule"
                                                             />
