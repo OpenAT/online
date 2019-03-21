@@ -6,21 +6,17 @@ var community_data_glo = [];
 $(document).ready(function () {
 'use strict'
 
-    $('#wrap').after('<div id="gardenMap"/>');
-    $('#gardenMap').after('<div id="gardenMapModal"/>');
+    $('#wrap').after('<div id="gardenMapInfoBox"/>');
+    $('#gardenMapInfoBox').after('<div id="gardenMap">');
+    $('#gardenMap').after('<div id="gardenMapGallery"/>');
 
     var jsonDomain = 'https://demo.datadialog.net';
-    var dirBase = 'http://demo.local.com/gl2k_gardenvis/static/src/alextest';
-    var iconCamera = '/img/camera_small.png';
 
     /* CONFIG END */
 
     var gardenMap;
     var state_data = null, community_data = null;
-    var dataSuccess = false, imageSuccess = false;
-
-    /* ToDo: Image URL */
-    /* ToDo: Check State Centers */
+    var galleryData;
 
     try {
 
@@ -43,7 +39,6 @@ $(document).ready(function () {
                 community_data = data.result.community_data;
                 state_data_glo = data.result.state_data[0];
                 community_data_glo = data.result.community_data[0];
-                dataSuccess = true;
                 console.log('SUCCESS');
                 console.log(data);
                 initMap();
@@ -80,6 +75,7 @@ $(document).ready(function () {
         addGeoJsonCommunity();
 //        addGeoJsonBorder();
         addMarkerState();
+        showInfoBox();
 
         gardenMap.on('zoomend', function () {
             var zoomLevel = gardenMap.getZoom();
@@ -97,27 +93,6 @@ $(document).ready(function () {
             }
         });
     }
-
-
-    // // control that shows state info on hover
-    // var info = L.control();
-    // info.onAdd = function(mymap) {
-    //   this._div = L.DomUtil.create("div", "info");
-    //   this.update();
-    //   return this._div;
-    // };
-    // info.update = function(props) {
-    //   this._div.innerHTML =
-    //     "<h4>US Population Density</h4>" +
-    //     (props
-    //       ? "<b>" +
-    //       props.name +
-    //       "</b><br />" +
-    //       props.density +
-    //       " people / mi<sup>2</sup>"
-    //       : "Hover over a state");
-    // };
-    // info.addTo(mymap);
 
 
 //-----------------------------------------------------------------------------------
@@ -230,7 +205,6 @@ $(document).ready(function () {
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
         }
-        // info.update(layer.feature.properties);
     }
 
     var geoAustriaState, geoAustriaBorder, geoAustriaCommunities;
@@ -330,21 +304,26 @@ $(document).ready(function () {
                            ['tirol',47.2231930, 11.5261028],  //tir
                            ['vorarlberg',47.2500000, 9.9166667]];  //vor
 
+        console.log(state_data)
+        var cnt = 0;
         for (var j = 0; j < state_data[0].length; j++) {
-            for (var i = 0; i < stateCenter.length; i++) {
-                if (stateCenter[i][0] === filterName(state_data[0][j].cmp_state)) {
-                    var marker = L.marker([stateCenter[i][1], stateCenter[i][2]], {
-                        icon: L.divIcon({
-//                            html: '<i id="' + state_data[0][j].cmp_state_id + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
-                            html: '<img id="' + state_data[0][j].cmp_state_id + '" class="gardenMapIcon" src="/website_map/static/src/img/camera.png" onclick="showGallery(this)"></i>',
-                        })
-//                        icon: L.icon({
-//                            iconUrl: '/website_map/static/src/img/camera.png',
-//                            iconSize: [40, 40],
-//                        })
-                    });
-                    stateMarker.push(marker);
-                    gardenMap.addLayer(stateMarker[j]);
+            if(state_data[0][j].thumbnail_record_ids) {
+                for (var i = 0; i < stateCenter.length; i++) {
+                    if (stateCenter[i][0] === filterName(state_data[0][j].cmp_state)) {
+                        var marker = L.marker([stateCenter[i][1], stateCenter[i][2]], {
+                            icon: L.divIcon({
+    //                            html: '<i id="' + state_data[0][j].cmp_state_id + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
+                                html: '<img id="' + state_data[0][j].cmp_state_id + " bundesland" + '" class="gardenMapIcon" src="/website_map/static/src/img/camera.png" onclick="showGallery(this)">',
+                            })
+    //                        icon: L.icon({
+    //                            iconUrl: '/website_map/static/src/img/camera.png',
+    //                            iconSize: [40, 40],
+    //                        })
+                        });
+                        stateMarker.push(marker);
+                        gardenMap.addLayer(stateMarker[cnt]);
+                        cnt++;
+                    }
                 }
             }
         }
@@ -359,17 +338,22 @@ $(document).ready(function () {
     function addMarkerCommunity() {
         var communityCenter = [];
 
+        var cnt = 0;
         for (var i = 0; i < community_data[0].length; i++) {
-            communityCenter = [parseFloat(community_data[0][i].latitude), parseFloat(community_data[0][i].longitude)];
-            var marker = L.marker(communityCenter, {
-                icon: L.divIcon({
-//                    html: '<i id="' + community_data[0][i].cmp_community_code + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
-                    html: '<img id="' + community_data[0][i].cmp_community_code + '" class="gardenMapIcon" src="/website_map/static/src/img/camera.png" onclick="showGallery(this)"></i>',
-                })
-            });
-            communityMarker.push(marker);
-            gardenMap.addLayer(communityMarker[i]);
+            if(community_data[0][i].thumbnail_record_ids) {
+                communityCenter = [parseFloat(community_data[0][i].latitude), parseFloat(community_data[0][i].longitude)];
+                var marker = L.marker(communityCenter, {
+                    icon: L.divIcon({
+    //                    html: '<i id="' + community_data[0][i].cmp_community_code + '" class="fa fa-picture-o iconState" onclick="showGallery()"></i>',
+                        html: '<p class="gardenMapCommunityM2">' + community_data[0][i].garden_size + '</p><img id="' + community_data[0][i].cmp_community_code + " gemeinde" + '" class="gardenMapIcon" src="/website_map/static/src/img/camera.png" onclick="showGallery(this)">',
+                    })
+                });
+                communityMarker.push(marker);
+                gardenMap.addLayer(communityMarker[cnt]);
+                cnt++;
+            }
         }
+
     }
 
     function removeMarkerCommunity() {
@@ -377,53 +361,120 @@ $(document).ready(function () {
             gardenMap.removeLayer(communityMarker[i]);
         }
     }
+
+//-----------------------------------------------------------------------------------
+// GardenMap Infobox
+    function showInfoBox() {
+        var maxGardenSize = 0;
+        for (var i = 0; i < state_data[0].length; i++) {
+            maxGardenSize = maxGardenSize + state_data[0][i].garden_size;
+        }
+        $("#gardenMapInfoBox").wrapInner("<p>" + maxGardenSize + " m²</p>" +
+                                  "<p>Nationalpark in</p>" +
+                                  "<p>Österreichs Gärten</p>");
+    }
 });
 
+//-----------------------------------------------------------------------------------
+// GardenMap Gallery
 function showGallery(e) {
-    console.log(e);
-    console.log(state_data_glo);
-    console.log(community_data_glo);
+    var callerID = parseInt(e.id.replace(/[a-z]/g, "").replace(/\ /g, ''));
+    var callerIDName = e.id.replace(/[0-9]/g, "").replace(/\ /g, '');
 
-    console.log(document.getElementById('gardenMapModal'));
-    var image;
+    if (callerIDName === 'bundesland') {
+        for (var i = 0; i < state_data_glo.length; i++) {
+            if (callerID === state_data_glo[i].cmp_state_id) {
+                galleryData = state_data_glo[i];
+            }
+        }
+    } else if (callerIDName === 'gemeinde') {
+        for (var i = 0; i < community_data_glo.length; i++) {
+            if (String(callerID) === community_data_glo[i].cmp_community_code) {
+                galleryData = community_data_glo[i];
+            }
+        }
+    }
 
-    this.$('#gardenMapModal').wrapInner(
-                openerp.qweb.render(
-                    'wm_gallery', {image: image}));
-    var toEdit = document.getElementById('gardenMapModal');
-    toEdit.style.display = 'block';
-//    document.getElementById('myModal').style.display = "block";
+    var gallery = $('#gardenMapGallery');
+
+    gallery.wrapInner('<div id="gardenMapModal" class="gardenModal">' +
+                      '<img class="closeBtnGardenMap" src="/website_map/static/src/img/close.png" onclick="closeGallery()"/>' +
+                      '<img class="moveBtnGardenMapPrev" src="/website_map/static/src/img/arrow-left.png" onclick="moveImg(-1)"/>' +
+                      '<img class="moveBtnGardenMapNext" src="/website_map/static/src/img/arrow-right.png" onclick="moveImg(1)"/>' +
+                      '<div class="gardenMapModalContent">' +
+                      '<div class="gardenMapFrontImageContainer">' +
+                      '<img id="gardenMapFrontImage" src="/website/image/gl2k.garden/' + galleryData.record_ids[0] + '/cmp_image_file">' +
+                      '</div>' +
+                      '</div>');
+
+    insertThumbnail(galleryData);
+
+    document.getElementById('gardenMapGallery').style.display = "block";
 }
+
 function closeGallery() {
-    document.getElementById('myModal').style.display = "none";
+    document.getElementById('gardenMapGallery').style.display = "none";
 }
 
-//window.addEventListener('load', function () {
-//    this.thumbmail = document.getElementsByClassName("slideshow");
-//    console.log(thumbmail);
-//    console.log(thumbmail[0]);
-//    console.log(thumbmail.length);
-//    selectImg(thumbmail[0]);
-//});
-//var slideIndex = 1;
+function insertThumbnail(galleryData) {
+    var galleryModal = $('#gardenMapModal');
+
+    for (var i = 0; i < galleryData.thumbnail_record_ids.length; i++) {
+        galleryModal.append('<div class="gardenMapColumn">' +
+                            '<img class="gardenMapThumbnail" src="/website/image/gl2k.garden/' + String(galleryData.thumbnail_record_ids[i]) + '/cmp_thumbnail_file " onclick="selectImg(' + galleryData.thumbnail_record_ids[i] + ')"/>' +
+                            '</div>');
+    }
+}
+
+//function querryImage(id, thumb) {
+//        var jsonDomain = 'https://demo.datadialog.net';
 //
-//function moveImg(n) {
-//    (slideIndex += n);
-//    console.log(slideIndex);
-//    if ((slideIndex < thumbmail.length) && (slideIndex > 0)) {
+//        try {
 //
-//    } else if (slideIndex < 0) {
-//        slideIndex = thumbmail.length - 1;
-//    } else {
-//        slideIndex = 0
-//    }
-//    console.log(slideIndex);
-//    selectImg(thumbmail[slideIndex]);
+//            var jsonParams = {"params": {
+//                                  "thumbnail_record_ids": thumb,
+//                                  "image_record_id": id
+//                              }};
+//
+//            $.ajax({
+//                url: jsonDomain + "/gl2k/garden/image",
+//                type: 'POST',
+//                contentType: 'application/json; charset=utf-8',
+//                dataType: 'json',
+//                data: JSON.stringify(jsonParams),
+//                error: function (data) {
+//                    console.log('ERROR');
+//                    console.log(data);
+//
+//                    return;
+//                },
+//                success: function (data) {
+//                    console.log('SUCCESS');
+//                    console.log(data);
+//                }
+//            });
+//        } catch (error) {
+//            console.log('Error', error);
+//            return;
+//        }
 //}
-//
-//function selectImg(img) {
-//    console.log(img)
-//    var frontImage = document.getElementById('front_Image');
-//    frontImage.src = img.src;
-//    frontImage.parentElement.style.display = 'block';
-//}
+
+var slideIndex = 1;
+
+function moveImg(n) {
+    (slideIndex += n);
+    if ((slideIndex < galleryData.thumbnail_record_ids.length) && (slideIndex > 0)) {
+
+    } else if (slideIndex < 0) {
+        slideIndex = galleryData.thumbnail_record_ids.length - 1;
+    } else {
+        slideIndex = 0
+    }
+    selectImg(galleryData.record_ids[slideIndex]);
+}
+
+function selectImg(id) {
+    var frontImage = document.getElementById('gardenMapFrontImage');
+    frontImage.src = '/website/image/gl2k.garden/' + id + '/cmp_image_file';
+    frontImage.parentElement.style.display = 'block';
+}

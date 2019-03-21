@@ -1,9 +1,11 @@
+/*---------------------------------------------------------------------------------*/
+/*gardenMap*/
+
 #gardenMap {
      height: 500px;
      width: 800px;
      margin: auto;
 }
-
 
 svg.leaflet-zoom-animated {
     width: 960px;
@@ -15,38 +17,68 @@ svg.leaflet-zoom-animated {
     background-color: transparent;
 }
 
-.row > .column {
-    padding: 0 8px;
+.gardenMapIcon {
+    width: 40px;
+    height: 40px;
 }
 
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
+.gardenMapCommunityM2 {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+
 }
 
-/* Create four equal columns that floats next to eachother */
-.column {
-    float: left;
-    width: 25%;
+#gardenMapInfoBox {
+    background: white;
+    z-index: 500;
+    /*transform: translateX(-50%) translateY(-50%);*/
+    padding: 15px;
+    border-bottom-right-radius: 45px;
+    border-top-left-radius: 45px;
+    border: 2px solid rgba(201,214,186, .25);
+    width: 175px;
+    top: 150px;
+    position: relative;
 }
+
+@media only screen and (max-width: 768px) {
+	#gardenMapInfoBox {
+	    display: none;
+	}
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+	#gardenMapInfoBox {
+        left: 20%;
+	}
+}
+
+@media only screen and (min-width: 1200px) {
+	#gardenMapInfoBox {
+        margin-left: 30%;
+	}
+}
+
+/*---------------------------------------------------------------------------------*/
+/*Gallery*/
 
 /* The Modal (background) */
-.modal {
+#gardenMapGallery {
     display: none;
     position: fixed;
-    z-index: 9999999;
+    z-index: 1000;
     padding-top: 100px;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: black;
+    background-color: grey;
 }
 
 /* Modal Content */
-.modal-content {
+.gardenMapModalContent {
     position: relative;
     background-color: transparent;
     margin: auto;
@@ -56,30 +88,28 @@ svg.leaflet-zoom-animated {
 }
 
 /* The Close Button */
-.close {
-    color: white;
+.closeBtnGardenMap {
     position: absolute;
     top: 10px;
     right: 25px;
-    font-size: 35px;
-    font-weight: bold;
+    width: 60px;
 }
 
-.close:hover,
-.close:focus {
+.closeBtnGardenMap:hover,
+.closeBtnGardenMap:focus {
     color: #999;
     text-decoration: none;
     cursor: pointer;
 }
 
-/* Hide the slides by default */
-/*.mySlides {*/
-    /*display: none;*/
-/*}*/
+/*FrontImage*/
+#gardenMapFrontImage {
+    width: 100%;
+}
 
 /* Next & previous buttons */
-.prev,
-.next {
+.moveBtnGardenMapPrev,
+.moveBtnGardenMapNext {
     cursor: pointer;
     position: absolute;
     top: 50%;
@@ -96,33 +126,28 @@ svg.leaflet-zoom-animated {
 }
 
 /* Position the "next button" to the right */
-.next {
+.moveBtnGardenMapNext {
     right: 0;
     border-radius: 3px 0 0 3px;
 }
 
 /* On hover, add a black background color with a little bit see-through */
-.prev:hover,
-.next:hover {
+.moveBtnGardenMapPrev:hover,
+.moveBtnGardenMapNext:hover {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Caption text */
-.caption-container {
-    text-align: center;
-    background-color: transparent;
-    padding: 2px 16px;
-    color: white;
+.gardenMapColumn {
+    padding: 8px;
+    float: left;
 }
 
-img.slideshow {
+img.gardenMapThumbnail {
     opacity: 0.6;
-    width: 40px;
-    height: 40px;
 }
 
 .active,
-.slideshow:hover {
+.gardenMapThumbnail:hover {
     opacity: 1;
 }
 
@@ -132,9 +157,4 @@ img.hover-shadow {
 
 .hover-shadow:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-.gardenMapIcon {
-    width: 40px;
-    height: 40px;
 }

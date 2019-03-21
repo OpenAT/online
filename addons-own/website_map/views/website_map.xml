@@ -12,7 +12,6 @@
                 <!--Map of Austria-->
                 <!--<script type="text/javascript" src="/website_map/static/src/js/austria_data/bundeslaender_und_gemeinden.js"/>-->
                 <script type="text/javascript" src="/website_map/static/src/js/austria_data/bundeslaender_und_gemeinden2.js"/>
-                <script type="text/javascript" src="/website_map/static/src/js/load_templates.js"></script>
                 <link id="wm_css" rel='stylesheet' href='/website_map/static/src/css/website_map.css' t-ignore="true"/>
                 <script id="wm_script" type="text/javascript" src="/website_map/static/src/js/website_map.js"/>
             </xpath>
