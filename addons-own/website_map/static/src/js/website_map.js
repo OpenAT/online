@@ -403,17 +403,20 @@ function showGallery(e) {
                       '<img class="moveBtnGardenMapNext" src="/website_map/static/src/img/arrow-right.png" onclick="moveImg(1)"/>' +
                       '<div class="gardenMapModalContent">' +
                       '<div class="gardenMapFrontImageContainer">' +
-                      '<img id="gardenMapFrontImage" src="/website/image/gl2k.garden/' + galleryData.record_ids[0] + '/cmp_image_file">' +
+                      '<img id="gardenMapFrontImage" src="/website/image/gl2k.garden/' + galleryData.thumbnail_record_ids[0] + '/cmp_image_file">' +
                       '</div>' +
                       '</div>');
 
     insertThumbnail(galleryData);
+    console.log(document.getElementById('gardenMapFrontImage'));
 
+    document.getElementById('gardenMap').style.display = "none";
     document.getElementById('gardenMapGallery').style.display = "block";
 }
 
 function closeGallery() {
     document.getElementById('gardenMapGallery').style.display = "none";
+    document.getElementById('gardenMap').style.display = "block";
 }
 
 function insertThumbnail(galleryData) {
@@ -421,7 +424,7 @@ function insertThumbnail(galleryData) {
 
     for (var i = 0; i < galleryData.thumbnail_record_ids.length; i++) {
         galleryModal.append('<div class="gardenMapColumn">' +
-                            '<img class="gardenMapThumbnail" src="/website/image/gl2k.garden/' + String(galleryData.thumbnail_record_ids[i]) + '/cmp_thumbnail_file " onclick="selectImg(' + galleryData.thumbnail_record_ids[i] + ')"/>' +
+                            '<img class="gardenMapThumbnail" src="/website/image/gl2k.garden/' + galleryData.thumbnail_record_ids[i] + '/cmp_thumbnail_file " onclick="selectImg(' + galleryData.thumbnail_record_ids[i] + ')"/>' +
                             '</div>');
     }
 }
@@ -470,11 +473,12 @@ function moveImg(n) {
     } else {
         slideIndex = 0
     }
-    selectImg(galleryData.record_ids[slideIndex]);
+    selectImg(galleryData.thumbnail_record_ids[slideIndex]);
 }
 
 function selectImg(id) {
     var frontImage = document.getElementById('gardenMapFrontImage');
     frontImage.src = '/website/image/gl2k.garden/' + id + '/cmp_image_file';
     frontImage.parentElement.style.display = 'block';
+    console.log(frontImage);
 }
