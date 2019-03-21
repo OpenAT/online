@@ -20,8 +20,8 @@ from openerp import http
 from openerp.http import request
 from openerp.tools.translate import _
 
-import locale
-import urllib2
+#import locale
+#import urllib2
 import base64
 import datetime
 import logging
@@ -170,9 +170,11 @@ class FsoForms(http.Controller):
 
         # Update or create the record
         if record:
-            record.write(values)
+            # TODO: Remove sudo() for record creation and add special fields in form to set access for record creation
+            record.sudo().write(values)
         else:
-            record = request.env[form.model_id.model].create(values)
+            # TODO: Remove sudo() for record creation and add special fields in form to set access for record creation
+            record = request.env[form.model_id.model].sudo().create(values)
 
         # Update the session data and set clear_session_data
         # ATTENTION: !!! If clear_session_data is True the data will be removed by get_fso_form_session_data() !!!
@@ -280,7 +282,7 @@ class FsoForms(http.Controller):
                     messages.append(_('Data was successfully submitted!'))
                 record = new_record
             except Exception as e:
-                warnings.append(_('Update of Record failed!\n%s' % repr(e)))
+                warnings.append(_('Update of Record failed!\n\n%s' % repr(e)))
 
             # Redirect to Thank you Page
             if form.thank_you_page_after_submit and not form_field_errors and not warnings and not errors:

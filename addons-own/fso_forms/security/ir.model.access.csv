@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fso_forms,access_fso_forms,model_fson_form,,1,0,0,0
+access_fso_forms_manager,access_fso_forms_manager,model_fson_form,fso_forms.group_fso_forms_manager,1,1,1,1
+access_fso_forms_field,access_fso_forms,model_fson_form_field,,1,0,0,0
+access_fso_forms_field_manager,access_fso_forms_manager,model_fson_form_field,fso_forms.group_fso_forms_manager,1,1,1,1

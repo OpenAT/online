@@ -29,7 +29,8 @@ Create forms for any model
 ==========================
 
 New Controller:
-"/form/<id>"
+"/fso/form/<id>"
+"/fso/form/thanks/<id>"
 
     """,
     'author': "Datadialog - Michael Karrer",
@@ -46,10 +47,10 @@ New Controller:
         'fso_base_website',
     ],
     'data': [
-        #'security/ir.model.access.csv',
+        'security/fso_forms_usergroup.xml',
+        'security/ir.model.access.csv',
         'views/fson_form.xml',
         'views/fson_form_field.xml',
         'views/templates.xml',
-        #'data/data.xml',
     ],
 }
