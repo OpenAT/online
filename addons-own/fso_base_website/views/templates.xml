@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data noupdate="0">
+    
+    <!-- !!! ATTENTION: OVERTAKE DEFAULT THEME STYLES OF ADDON WEBSITE !!! -->
+    <!-- This was needed in order for leaflet to work -->
+    <template id="fso_base_website.website_css" inherit_id="website.theme" name="fso_base_website_website_css">
+        <xpath expr="//link[@href='/website/static/src/css/website.css']" position="replace">
+            <link rel="stylesheet" href='/fso_base_website/static/src/css/website.css' t-ignore="true"/>
+        </xpath>
+    </template>
 
     <!-- Load default java script libraries and css -->
     <template id="fso_base_website.assets_frontend" inherit_id="website.assets_frontend" name="fso_base_website_assets_frontend">
