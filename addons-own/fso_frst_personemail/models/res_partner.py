@@ -30,7 +30,7 @@ class ResPartner(models.Model):
                 # Requested by Sebi - compare case insensitive!
                 record_email_lower = r.email.lower()
                 partnermail_exits = r.frst_personemail_ids.filtered(
-                    lambda m: m.email.lower() if m.email else '' == record_email_lower)
+                    lambda m: (m.email.lower() if m.email else '') == record_email_lower)
 
                 # Activate PartnerEmail
                 if partnermail_exits:
