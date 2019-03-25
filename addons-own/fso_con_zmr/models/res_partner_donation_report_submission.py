@@ -20,7 +20,7 @@ pp = pprint.PrettyPrinter(indent=2)
 logger = logging.getLogger(__name__)
 
 
-class ResPartnerFADonationReport(models.Model):
+class DonationReportSubmission(models.Model):
     _name = 'res.partner.donation_report.submission'
     _inherit = ['mail.thread']
     #_rec_name = 'name'

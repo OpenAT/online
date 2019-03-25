@@ -46,7 +46,7 @@ class Altruja(models.Model):
     payment_transaction_id = fields.Many2one(comodel_name='payment.transaction', inverse_name="altruja_ids",
                                              readonly=True)
     bank_id = fields.Many2one(comodel_name='res.partner.bank', inverse_name="altruja_ids",
-                              readonly=True)
+                              readonly=True, help="Bankkonto")
 
     # Altruja Fields
     # --------------

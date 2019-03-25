@@ -428,7 +428,7 @@ class ResPartnerFADonationReport(models.Model):
     def last_submitted_report(self, submission_bpk_private='ignore'):
         """
         Returns the last successfully submitted donation report
-        OR the last submitted donation report with an 'ERR-U-008' error wich means that there was already an
+        OR the last submitted donation report with an 'ERR-U-008' error which means that there was already an
         'Erstmeldung' for this donation report (e.g.: if the customer did a manual 'Spendenmeldung' in FinanzOnline)
 
         Throws an exception if the submission state of the last submitted report is not response_ok!
@@ -484,16 +484,18 @@ class ResPartnerFADonationReport(models.Model):
         # Return the lsr also on an ERR-U-008
         # ATTENTION: ERR-U-008 error means that there was already an 'Erstmeldung' for this donation report
         #            e.g.: if the customer did a manual 'Spendenmeldung' in the FinanzOnline Website
-        if lsr.state == 'response_nok' and 'ERR-U-008' in lsr.response_error_code or '':
+        if lsr.state == 'response_nok' and 'ERR-U-008' in (lsr.response_error_code or ''):
             return lsr
 
-        # Return the lsr also on an ERR-U-006
-        # ATTENTION: ERR-U-006 error means that the lsr was an "Aenderungsmeldung" but that there was no previous
+        # Return the lsr also on an ERR-U-006 AND ERR-007
+        # ATTENTION: ERR-U-006/7 error means that the lsr was an "Aenderungsmeldung" but that there was no previous
         #            donation report with for the RefNr (submission_refnr) of the Aenderungsmeldung
         #            (or the ZR or Env changed). This may only happen if donation reports where submitted by other
         #            systems or we have a bug so that we calculated RefNr of the Aenderungsmeldung instead of taking
         #            it from the former lsr.
-        if lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
+        # HINT: This may also happen on cancellation reports if a donation report is missing in FinanzOnline
+        if lsr.state == 'response_nok' and any(
+                ecode in (lsr.response_error_code or '') for ecode in ('ERR-U-006', 'ERR-U-007')):
             return lsr
 
         # ATTENTION: If the state is 'submitted' or 'unexpected_response' we do not know if the lsr donation report
@@ -647,11 +649,17 @@ class ResPartnerFADonationReport(models.Model):
                 'cancelled_lsr_id': False
             }
 
-        # Erstmeldung E: if lsr for this BPK was error ERR-U-006
-        # ------------------------------------------------------
-        # Catch special case last submitted report was rejected with 'ERR-U-006' - Refnr. unknown
+        # Erstmeldung E: if lsr for this BPK was error ERR-U-006 OR ERR-U-007
+        # --------------------------------------------------------------------
+        # Catch special case last submitted report was rejected with 'ERR-U-006' or 'ERR-U-007'
+        # This error means that no Donation Report with this RefNr was found in FinanzOnline either because
+        # FinanzOnline messed it up or we had a Problem:
+        # HINT: It makes no sence to create a cancellation report after an error 006 or 007 because we still do not
+        #       know the refnr. of any possible existing donation report in FinanzOnline. This is only given after
+        #       an Erstmeldung when we get an ERR-U-008 as an response in the error text of FinanzOnline.
         # ATTENTION: This may happen if the FinanzOnline 'Steuernummer' of the org. is changed.
-        if lsr and lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
+        if lsr and lsr.state == 'response_nok' and any(
+                ecode in (lsr.response_error_code or '') for ecode in ('ERR-U-006', 'ERR-U-007')):
             # ATTENTION: Create an Erstmeldung instead of an Aenderungsmeldung! Either to get the original RefNr. by
             #            the response of ERR-U-008 or because an Erstmeldung is allowed after a 'Stornierungsmeldung'!
             return {
