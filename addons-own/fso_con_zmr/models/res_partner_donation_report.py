@@ -93,6 +93,7 @@ class ResPartnerFADonationReport(models.Model):
                                                 ('grp_systemdenied_removed', 'System-Denied Group removed'),
                                                 ('err_u_008', 'Report after Error ERR-U-008'),
                                                 ('err_u_006', 'Report after Error ERR-U-006'),
+                                                ('err_u_007', 'Report after Error ERR-U-007'),
                                                 ('user_resubmission', 'Resubmission by user request'),
                                                 ('submission_forced', 'Donor instructed to force submission'),
                                                 # Cancellation
@@ -102,6 +103,7 @@ class ResPartnerFADonationReport(models.Model):
                                                 ('c_bpk_changed', 'BPK changed'),
                                                 ('c_err_u_008', 'Cancellation to fix error ERR-U-008'),
                                                 ('c_err_u_006', 'Cancellation to fix error ERR-U-006'),
+                                                ('c_err_u_007', 'Cancellation to fix error ERR-U-007'),
                                                 ('c_user_resubmission', 'Prepare for resubmission by user request'),
                                                 ('c_submission_forbidden', 'Donor instructed to forbid submission'),
                                                 ])
@@ -571,8 +573,8 @@ class ResPartnerFADonationReport(models.Model):
             if not lsr.submission_refnr:
                 raise ValidationError(_("Last submitted report (ID %s) has no RefNr!") % lsr.id)
 
-            if lsr.submission_type != 'E' and lsr.response_error_code not in ('ERR-U-008', 'ERR-U-006') and (
-                    lsr.submission_refnr != lsr.report_erstmeldung_id.submission_refnr):
+            if lsr.submission_type != 'E' and lsr.response_error_code not in ('ERR-U-008', 'ERR-U-006', 'ERR-U-007') \
+                    and (lsr.submission_refnr != lsr.report_erstmeldung_id.submission_refnr):
                 raise ValidationError(_("Last submitted report (ID %s) has a different RefNr %s than it's linked"
                                         "'Erstmelung' (ID %s) Refnr %s"
                                         "!") % (lsr.id,
@@ -593,12 +595,13 @@ class ResPartnerFADonationReport(models.Model):
                     'cancelled_lsr_id': lsr.id
                 }
 
-            # Cancellation donation report for ERR-U-006
-            if lsr.state == 'response_nok' and 'ERR-U-006' in lsr.response_error_code or '':
+            # Cancellation donation report for ERR-U-006 and ERR-U-007
+            if lsr.state == 'response_nok' and any(ecode in (lsr.response_error_code or '')
+                                                   for ecode in ('ERR-U-006', 'ERR-U-007')):
                 if not lsr.report_erstmeldung_id or not lsr.report_erstmeldung_id.submission_refnr:
-                    raise ValidationError(_("Last submitted report (ID %s) is an ERR-U-006 but has no linked "
-                                            "Erstmeldung or the Erstmeldung has no RefNr! (donation report id %s)"
-                                            "") % (lsr.id, r.id))
+                    raise ValidationError(_("Last submitted report (ID %s) is an ERR-U-006 or ERR-U-007 but has no "
+                                            "linked Erstmeldung or the Erstmeldung has no RefNr! "
+                                            "(donation report id %s)") % (lsr.id, r.id))
                 return {
                     'submission_type': 'S',
                     'submission_refnr': lsr.report_erstmeldung_id.submission_refnr,
@@ -956,6 +959,7 @@ class ResPartnerFADonationReport(models.Model):
                      ('bpk_company_id', '=', r.bpk_company_id.id),
                      ('submission_bpk_private', '=', bpk_private)])
 
+                # TODO: This bit of code seems to have an error check with CLIC data
                 # If the last donation report of the "other" person is a successfully submitted
                 # "Stornierungsmeldung" and the private BPK of the 'other' person is no longer the private BPK of 'this'
                 #  person the reports of the other person do not belong into r_same_bpk and will be removed from the set
