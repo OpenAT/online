@@ -950,22 +950,25 @@ class ResPartnerFADonationReport(models.Model):
             # ATTENTION: Such partners must be merged before the donation report can be submitted
             # HINT: It is ok if there are donation reports for the same partner with different bpk numbers
             # HINT: If is ok if there are other partners with the same BPK but no donation reports
-            bpk_private = r.cancellation_for_bpk_private or bpk.bpk_private
-            if bpk_private:
+            # ATTENTION: This test can !!!NOT!!! be applied to cancellation donation reports!
+            bpk_private = bpk.bpk_private
+            if bpk_private and (not r.cancellation_for_bpk_private and r.betrag > 0):
 
-                # Search for donation reports with a different partner but the same private BPK number
+                # Search for non-cancellation donation reports with a different partner but the same private BPK number
                 r_same_bpk = r.sudo().search(
                     [('partner_id', '!=', r.partner_id.id),
                      ('bpk_company_id', '=', r.bpk_company_id.id),
+                     ('betrag', '>', 0),
                      ('submission_bpk_private', '=', bpk_private)])
 
-                # TODO: This bit of code seems to have an error check with CLIC data
                 # If the last donation report of the "other" person is a successfully submitted
                 # "Stornierungsmeldung" and the private BPK of the 'other' person is no longer the private BPK of 'this'
                 #  person the reports of the other person do not belong into r_same_bpk and will be removed from the set
                 if r_same_bpk:
                     partners_with_same_bpk_reports = r_same_bpk.mapped('partner_id')
                     assert partners_with_same_bpk_reports, "Programming Error! partners_with_same_bpk_reports is empty!"
+
+                    # Loop through the partners and check if the donation reports are still to consider
                     for p in partners_with_same_bpk_reports:
 
                         # Get the donation reports in r_same_bpk for this partner
@@ -973,18 +976,27 @@ class ResPartnerFADonationReport(models.Model):
                         assert p_dr, "Programming Error! There must be donation reports in r_same_bpk for this partner!"
 
                         # Only check if we can remove records from r_same_bpk if this partner has already a different
-                        # private BPK
-                        p_bpk_record = p_dr[0]._get_bpk()
-                        p_bpk_private = p_bpk_record.bpk_private
-                        if p_bpk_private == bpk_private:
-                            continue
+                        # private BPK or no valid BPK at all
+                        if p.bpk_state in ('new', 'found', 'pending'):
+                            # HINT: _get_bpk() will update the BPK for the partner if 'new' or 'pending'
+                            p_bpk_record = p_dr[0]._get_bpk()
+                            p_bpk_private = p_bpk_record.bpk_private
+                            if p_bpk_private == bpk_private:
+                                # Since the BPK was neither disabled nor changed we can not remove the p_dr and
+                                # continue with the next partner
+                                continue
 
                         # Remove the donation reports from r_same_bpk if the last donation report is a successfully
                         # submitted cancellation report
                         # HINT: sorted() will always return the lowest first (except reverse=True is given)
-                        p_dr = p_dr.sorted(key=lambda rep: rep.anlage_am_um, reverse=True)
-                        p_last_dr = p_dr[0]
-                        if p_last_dr.state == 'response_ok' and p_last_dr.submission_type == 'S':
+                        #p_dr = p_dr.sorted(key=lambda rep: rep.anlage_am_um, reverse=True)
+                        #p_last_dr = p_dr[0]
+                        try:
+                            p_last_dr = r.last_submitted_report(submission_bpk_private=bpk_private)
+                        except Exception as e:
+                            logger.warning('update_state_and_submission_information() p_last_dr: %s' % repr(e))
+                            p_last_dr = False
+                        if p_last_dr and p_last_dr.state == 'response_ok' and p_last_dr.submission_type == 'S':
                             r_same_bpk = r_same_bpk - p_dr
 
                 # If there are still reports set this and the other donation reports to state 'error'
