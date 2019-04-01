@@ -23,3 +23,7 @@ class SaleOrderLineSosync(models.Model):
     # Copied from the product to the sale.order.line to avoid changes after sale order confirmation
     # WARNING: We assume here that zgruppedetail are NEVER deleted!
     zgruppedetail_ids = fields.Many2many(sosync="True")
+
+    # fs_product_type is now also copied by _cart_update() to the so line
+    # ATTENTION: in product.template fs_product_type is a selection field but in so line for convenience only a char
+    fs_product_type = fields.Char(sosync="True")
