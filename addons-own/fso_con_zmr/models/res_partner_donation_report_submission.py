@@ -1230,8 +1230,6 @@ class DonationReportSubmission(models.Model):
             logger.info(msg_success)
             return True
 
-        # TODO: First submit all donation reports where force_submission = True
-
         # Search for fiscal years
         # HINT: This will get all configured fiscal years for all companies
         spak_start = fields.datetime.strptime('2016-12-01 00:00:00', DEFAULT_SERVER_DATETIME_FORMAT)
@@ -1290,7 +1288,37 @@ class DonationReportSubmission(models.Model):
 
                 continue
 
+            # SEND FORCE_SUBMISSION REPORTS FIRST
+            # -----------------------------------
+            force_submission_reports = self.env['res.partner.donation_report'].sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
+                ('submission_id', '=', False),
+                ('state', '=', 'new'),
+                ('submission_env', '=', 'P'),
+                ('force_submission', '=', True),
+            ])
+            if force_submission_reports:
+                logger.info('scheduled_submission(): %s donation reports with force_submission found!'
+                            % len(force_submission_reports))
+                # Create a new empty MANUAL submission
+                # HINT: Since it is a manual submission it is no problem for the checks below!
+                # ATTENTION: Amount of reports is not checked here
+                new_manual_subm = self.sudo().create(
+                    {'submission_env': 'P',
+                     'bpk_company_id': y.company_id.id,
+                     'meldungs_jahr': y.meldungs_jahr,
+                     'manual': True,
+                     'donation_report_ids': [(6, 0, force_submission_reports.ids)],
+                     })
+                # Prepare newly created submission and submit it to FinanzOnline if prepare was successful
+                logger.info('scheduled_submission(): Prepare and submit force_submission-donation-reports with manual'
+                            'submission %s' % str(new_manual_subm.name))
+                if prepare(new_manual_subm):
+                    submit(new_manual_subm)
+
             # Check if at least one submittable donation report exists for this fiscal year
+            # -----------------------------------------------------------------------------
             report_exists = self.env['res.partner.donation_report'].sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
                 ('bpk_company_id', '=', y.company_id.id),
