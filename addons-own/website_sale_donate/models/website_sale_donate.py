@@ -201,6 +201,8 @@ class sale_order_line(osv.Model):
         'fs_origin': fields.char('FS Partner Token Origin', help="The Fundraising Studio activity ID", readonly=True),
         # FRST Groups frst.zgruppedetail, transferred from product by _cart_update()
         'zgruppedetail_ids': fields.many2many('frst.zgruppedetail', string='Fundraising Studio Groups', readonly=True),
+        # Copy fs_product_type to sale order line by _cart_update()
+        'fs_product_type': fields.char('FRST product type', readonly=True)
     }
 
 
@@ -311,13 +313,21 @@ class sale_order(osv.Model):
                     sol.payment_interval_name = sol.payment_interval_id.name
                     sol.payment_interval_xmlid = sol.payment_interval_id.get_metadata()[0]['xmlid']
 
-            # Add frst.zgruppedetail (fso_frst_groups) from the product to the sale_order_line if any
+            # Copy zgruppedetail_ids (frst.zgruppedetail, fso_frst_groups) from the product to the sale_order_line
             if sol.product_id and sol.product_id.zgruppedetail_ids:
                 _logger.info('_cart_update(): copy zgruppedetail_ids from sol.product_id.zgruppedetail_ids '
                              'to sol.zgruppedetail_ids')
                 sol.zgruppedetail_ids = sol.product_id.zgruppedetail_ids
             else:
                 sol.zgruppedetail_ids = False
+
+            # Copy fs_product_type to sale_order_line
+            if sol.product_id and sol.product_id.fs_product_type:
+                _logger.info('_cart_update(): copy fs_product_type from sol.product_id.fs_product_type '
+                             'to sol.fs_product_type')
+                sol.fs_product_type = sol.product_id.fs_product_type
+            else:
+                sol.fs_product_type = False
 
         return cu
 
