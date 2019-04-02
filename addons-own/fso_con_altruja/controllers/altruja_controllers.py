@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 import json
 
 
-class FSOEmailEditor(http.Controller):
+class FSOConAltruja(http.Controller):
 
     @http.route('/altruja/create/<int:spenden_id>', type='json', auth="user", website=True)
     def altruja_create(self, spenden_id, update_existing_record=False, **post):
