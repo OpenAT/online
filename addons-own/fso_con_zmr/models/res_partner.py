@@ -158,13 +158,17 @@ class ResPartnerZMRGetBPK(models.Model):
         "F490"	"Dies ist ein Portalfehler: Zertifikatsueberpruefung fehlgeschlagen (z.B. ungueltige Root-CA, Zertifikat am Portal abgelaufen oder nicht registriert"
         "F501, F502 und F504"	"Technische Fehler. Nach einiger Zeit erneut versuchen. Sollte die Meldung weiter bestehen, SZR-Support kontaktieren."
 
+
+        REQUEST EXCEPTIONS:
+        'BPK Request Exception' "We got no answer at all from the ZMR but instead got an exception! This may happen on timeouts or if the ZMR certificate is outdated!"
+
         :param include_temporal:
         :return:
         """
 
         if temporary_only:
             # Temporary errors
-            temporary_errors = ('F490', 'F501', 'F502', 'F504')
+            temporary_errors = ('F490', 'F501', 'F502', 'F504', 'BPK Request Exception')
             return temporary_errors
         else:
             # Expected (regular) errors
@@ -375,6 +379,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 responses.append(result)
 
             except Exception as e:
+                # ATTENTION: Do not change the faultcode text!!! It is used in _zmr_error_codes()
                 result['faultcode'] = "BPK Request Exception"
                 result['faulttext'] = _("BPK Request Exception:\n\n%s\n") % e
                 responses.append(result)
@@ -853,10 +858,12 @@ class ResPartnerZMRGetBPK(models.Model):
 
             # Last BPK request returned an error: Prepare BPK data from BPKErrorRequest
             if bpk.bpk_error_request_date > bpk.bpk_request_date:
+
                 # Check for unknown errors (without faultcode, may happen for file imports) or temporary errors
                 temporal_zmr_error_codes = self._zmr_error_codes(temporary_only=True)
                 if not bpk.bpk_error_code or any(code in bpk.bpk_error_code for code in temporal_zmr_error_codes):
                     return False
+
                 # Check the request logic version
                 if bpk.bpk_error_request_version != self.request_bpk(version=True):
                     return False
@@ -958,7 +965,7 @@ class ResPartnerZMRGetBPK(models.Model):
                     continue
 
             # 4.3 Check if the current partner data still matches all bpk requests
-            # HINT: This will also check for temporary errors, request version and others!
+            # ATTENTION: THIS WILL ALSO CHECK FOR TEMPORARY ERRORS, REQUEST VERSION AND OTHERS!
             # ATTENTION: This ignores the field 'street'
             if r.bpk_request_ids:
                 if not r.all_bpk_requests_matches_partner_data():
@@ -1076,7 +1083,7 @@ class ResPartnerZMRGetBPK(models.Model):
                 # NEXT PARTNER:
                 # HINT: last_bpk_request is set. Increase error counter for this unknown error
                 logger.info(errors[p.id])
-                p.write({'last_bpk_request': p.last_bpk_request or now(),
+                p.write({'last_bpk_request': now(),
                          'bpk_request_error': errors[p.id] or False,
                          'bpk_request_error_tries': p.bpk_request_error_tries + 1})
                 continue
