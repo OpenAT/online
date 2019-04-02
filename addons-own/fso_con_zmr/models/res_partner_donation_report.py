@@ -992,10 +992,11 @@ class ResPartnerFADonationReport(models.Model):
                         #p_dr = p_dr.sorted(key=lambda rep: rep.anlage_am_um, reverse=True)
                         #p_last_dr = p_dr[0]
                         try:
-                            p_last_dr = r.last_submitted_report(submission_bpk_private=bpk_private)
+                            p_last_dr = p_dr[0].last_submitted_report(submission_bpk_private=bpk_private)
                         except Exception as e:
                             logger.warning('update_state_and_submission_information() p_last_dr: %s' % repr(e))
                             p_last_dr = False
+                            pass
                         if p_last_dr and p_last_dr.state == 'response_ok' and p_last_dr.submission_type == 'S':
                             r_same_bpk = r_same_bpk - p_dr
 
