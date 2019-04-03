@@ -251,7 +251,7 @@ class DonationReportSubmission(models.Model):
                 raise ValidationError(_("Donation report submissions can not be deleted in state %s !") % r.state)
 
         # Delete
-        return super(ResPartnerFADonationReport, self).unlink()
+        return super(DonationReportSubmission, self).unlink()
 
     # --------------
     # HELPER METHODS
