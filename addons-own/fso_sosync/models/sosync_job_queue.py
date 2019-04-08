@@ -1,7 +1,8 @@
 # -*- coding: utf-'8' "-*-"
 from openerp import api, models, fields
-from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, SUPERUSER_ID
 from openerp.addons.fso_base.tools.validate import is_valid_url
+from openerp.models import MAGIC_COLUMNS
 
 import requests
 from requests import Session, Timeout
@@ -42,7 +43,7 @@ class SosyncJobQueue(models.Model):
                                   help="A greater number means a higher priority!")
 
     # Job Info
-    job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True)
+    job_date = fields.Datetime(string="Job Date", default=fields.Datetime.now(), readonly=True, index=True)
     job_source_system = fields.Selection(selection=_systems, string="Job Source System", readonly=True)
     job_source_model = fields.Char(string="Job Source Model", readonly=True)
     job_source_record_id = fields.Integer(string="Job Source Record ID", readonly=True)
@@ -80,6 +81,15 @@ class SosyncJobQueue(models.Model):
                                                    ("not_available", "Service not available"),
                                                    ("error", "Request error")],
                                         string="Submission Error", readonly=True)
+
+    def init(self, cr, context=None):
+        # Remove scheduled cron job to make sure it will be recreated with values from xml file
+        model_data_obj = self.pool.get('ir.model.data')
+        rec = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'fso_sosync.ir_cron_scheduled_job_queue_cleanup_1')
+        if rec:
+            logger.info("Unlink fso_sosync.ir_cron_scheduled_job_queue_cleanup_1 on install/update for recreation!")
+            rec.unlink()
+
 
     # METHODS
     @api.multi
@@ -329,25 +339,45 @@ class SosyncJobQueue(models.Model):
         logger.info("Processed %s Sync Jobs" % len(jobs_in_queue))
         return True
 
-    # -----------------------------------------------
-    # (MODEL) ACTIONS FOR AUTOMATED JOB QUEUE CLEANUP
-    # -----------------------------------------------
-    # TODO: Still a todo! Check open Todo points below!
     @api.model
-    def delete_old_jobs(self):
+    def scheduled_delete_old_jobs(self):
+        self.delete_old_jobs()
+
+    # -------------------
+    # METHODS FOR CLEANUP
+    # -------------------
+    @api.model
+    def delete_old_jobs(self, limit=100000):
         delete_before = datetime.datetime.now() - datetime.timedelta(days=30)
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('job_date', '<=', delete_before),
                   ('submission_state', '=', 'submitted')]
-        jobs_to_delete = self.search(domain, limit=1)
+        jobs_to_delete = self.search(domain, limit=limit)
         if jobs_to_delete:
-            # TODO: Change this to custom SQL code for performance
-            #       1.) Delete (and backup for restore) the indexes
-            #       2.) Disable any triggers on the table
-            #       3.) Delete the rows by sql with the domain (select) from above
-            #       4.) Restore the indexes
-            #       5.) Enable the trigger
-            logger.warning("Found %s jobs in job queue for cleanup" % len(jobs_to_delete))
+            logger.warning("Found %s jobs in job queue for cleanup." % len(jobs_to_delete))
             jobs_to_delete.unlink()
 
+    @api.model
+    def cleanup_sosync_job_model_and_table(self):
+        sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
+        if sosync_job_model:
 
+            # Convert this model to a 'custom model' (state='manual') first to allow the unlink
+            # HINT: Check ir_model.py>unlink()@175 to see why this is needed
+            sosync_job_model.state = 'manual'
+
+            # Remove the model constraints
+            sosync_job_model_contraints = self.env['ir.model.constraint'].search([('model', '=', 'sosync.job')])
+            if sosync_job_model_contraints:
+                try:
+                    sosync_job_model_contraints.unlink()
+                except Exception as e:
+                    logger.error("Unlink of model constraint failed: %s" % repr(e))
+                    raise e
+
+            logger.info("Unlink ir.model sosync.job")
+            try:
+                sosync_job_model.unlink()
+            except Exception as e:
+                logger.error("Could not unlink ir.model sosync.job: %s" % repr(e))
+                raise e

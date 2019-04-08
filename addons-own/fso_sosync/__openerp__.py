@@ -27,7 +27,6 @@
 
 FS-Online fso_sosync
 ====================
-- sosync.job
 - sosync.job.queue
 
 Additional Information
@@ -63,17 +62,21 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         # Security
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+        #
         # Views and CSS
         'views/templates_backend_css.xml',
         'views/sosync_job_queue.xml',
         'views/sosync_job_queue_wizard.xml',
         # Deprecated Views
-        'views/sosync_job.xml',
-        'views/sosync_job_wizard.xml',
+        #'views/sosync_job.xml',
+        #'views/sosync_job_wizard.xml',
+        #
         # Data: User and Actions
         'data/actions.xml',
         'data/scheduled_actions.xml',
+        'data/scheduled_actions_noupdate.xml',
         'data/user_sosync.xml',
+        #
         # Extended Sosync-Model Views
         'views/res_partner.xml',
         'views/res_company.xml',
@@ -86,8 +89,12 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         'views/res_partner_donation_report.xml',
         'views/product_template.xml',
         'views/sale_order.xml',
+        #
         # Menu
         'views/fsonline_menu.xml',
+        #
+        # RUN ACTIONS ON INIT OR UPDATE AFTER INITIALIZATION
+        'data/actions_on_update_install.xml',
     ],
     'qweb': [
         "static/src/xml/base.xml",

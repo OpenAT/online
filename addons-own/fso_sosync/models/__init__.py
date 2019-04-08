@@ -8,4 +8,4 @@ import wizard
 import partner_merge
 
 # Deprecated (replaced by sosync_gui)
-import sosync_job
+# import sosync_job
