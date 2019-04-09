@@ -2,7 +2,9 @@
 from openerp import api, models, fields
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT, SUPERUSER_ID
 from openerp.addons.fso_base.tools.validate import is_valid_url
-from openerp.models import MAGIC_COLUMNS
+#from openerp.models import MAGIC_COLUMNS
+#from openerp.modules.registry import RegistryManager
+#from openerp.tools import config
 
 import requests
 from requests import Session, Timeout
@@ -89,7 +91,6 @@ class SosyncJobQueue(models.Model):
         if rec:
             logger.info("Unlink fso_sosync.ir_cron_scheduled_job_queue_cleanup_1 on install/update for recreation!")
             rec.unlink()
-
 
     # METHODS
     @api.multi
@@ -348,6 +349,12 @@ class SosyncJobQueue(models.Model):
     # -------------------
     @api.model
     def delete_old_jobs(self, limit=100000):
+        # TODO: remove this ugly hack here after all instances are cleared from sosync.job
+        #       check cleanup_sosync_job_model_and_table() for more info
+        # HINT: This does not really belong here but since it can not be done on init or update of fso_sosync we need
+        #       to retry it multiple times ... therefore this is a 'quick' fix for now
+        self.cleanup_sosync_job_model_and_table()
+
         delete_before = datetime.datetime.now() - datetime.timedelta(days=30)
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('job_date', '<=', delete_before),
@@ -357,27 +364,44 @@ class SosyncJobQueue(models.Model):
             logger.warning("Found %s jobs in job queue for cleanup." % len(jobs_to_delete))
             jobs_to_delete.unlink()
 
+    # TODO: Remove this method and the call in delete_old_jobs after all instances are cleared from sosync.job
     @api.model
     def cleanup_sosync_job_model_and_table(self):
         sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
         if sosync_job_model:
+            logger.info("sosync.job model (ID %s) found" % sosync_job_model.id)
 
             # Convert this model to a 'custom model' (state='manual') first to allow the unlink
             # HINT: Check ir_model.py>unlink()@175 to see why this is needed
-            sosync_job_model.state = 'manual'
+            logger.info("Checking sosync.job model state ('%s')" % sosync_job_model.state)
+            if sosync_job_model.state != 'manual':
+                logger.info("Setting sosync.job model state (%s) to 'manual'" % sosync_job_model.state)
+                sosync_job_model.state = 'manual'
 
-            # Remove the model constraints
+            # Remove any leftover model constraints
             sosync_job_model_contraints = self.env['ir.model.constraint'].search([('model', '=', 'sosync.job')])
             if sosync_job_model_contraints:
                 try:
+                    logger.info("Removing %s ir.model.constraint for sosync.job model"
+                                "" % len(sosync_job_model_contraints))
                     sosync_job_model_contraints.unlink()
                 except Exception as e:
                     logger.error("Unlink of model constraint failed: %s" % repr(e))
-                    raise e
+                    raise
 
-            logger.info("Unlink ir.model sosync.job")
-            try:
-                sosync_job_model.unlink()
-            except Exception as e:
-                logger.error("Could not unlink ir.model sosync.job: %s" % repr(e))
-                raise e
+            # ATTENTION: Because the model was already removed it will not be in self.pool.models on init or update of
+            #            the fso_sosync addon. Without -u or -i of fso_sosync it will be there because it still exits
+            #            in the database in ir.model. A bit like a chicken and egg problem ... Therfore it can not be
+            #            unlinked on init or update of fso_sosync or any addon that depends on it. Because of this
+            #            i added it to delete_old_jobs() as an UGLY workaround.
+            # ATTENTION: It needs a restart after cleanup_sosync_job_model_and_table did run the first time
+            #            The reason is unknown to me. But therfore i added it to actions_on_update_install.xml
+            if hasattr(self, 'pool'):
+                logger.info('Check if sosync.job is in self.pool.models')
+                if 'sosync.job' in self.pool.models:
+                    try:
+                        logger.info("Unlink ir.model sosync.job")
+                        sosync_job_model.unlink()
+                    except Exception as e:
+                        logger.error("Could not unlink ir.model sosync.job: %s" % repr(e))
+                        raise

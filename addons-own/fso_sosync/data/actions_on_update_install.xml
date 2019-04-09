@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data noupdate="0">
     
+    <!--  TODO: Remove this after all instances are cleared from sosync.job -->
     <!--  Cleanup method to remove sosync.job model,constraints,fields and table! -->
     <function model="sosync.job.queue" name="cleanup_sosync_job_model_and_table"/>
 
