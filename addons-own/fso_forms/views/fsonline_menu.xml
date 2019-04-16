@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- =========== -->
+        <!-- FSO WEBSITE -->
+        <!-- =========== -->
+            <!-- Forms -->
+            <menuitem id="fso_forms_mainmenu" name="Forms" groups="base.group_user" parent="fso_base.menu_fsonline_web" sequence="700"/>
+                <menuitem id="fso_forms_menu" action="fson_form_action" parent="fso_forms_mainmenu" sequence="705"/>
+  
+    </data>
+</openerp>

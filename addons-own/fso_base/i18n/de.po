@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-06 12:58+0000\n"
-"PO-Revision-Date: 2018-02-06 12:58+0000\n"
+"POT-Creation-Date: 2019-04-16 13:51+0000\n"
+"PO-Revision-Date: 2019-04-16 13:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -89,117 +89,63 @@ msgid "\n"
 "            "
 msgstr "\n"
 "\n"
+"\n"
 "<div style=\"font-family: Arial, Verdana, sans-serif; font-size: 14px;\">\n"
 "\n"
 "    <h2>\n"
-"        Hallo ${object.partner_id.name},<br/>\n"
-"        vielen Dank für ihr Vertrauen!\n"
+"        Hallo ${object.partner_id.name}!<br>\n"
 "    </h2>\n"
-"    <h3><br/>Ihre persönlichen Daten</h3>\n"
-"    <p>\n"
-"        % if object.partner_id.name:\n"
-"            ${object.partner_id.name}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.street:\n"
-"            ${object.partner_id.street}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.street2:\n"
-"            ${object.partner_id.street2}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.city or object.partner_id.zip:\n"
-"            ${object.partner_id.zip} ${object.partner_id.city}<br/>\n"
-"        % endif\n"
-"        % if object.partner_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.partner_id.email}\">${object.partner_id.email}</a><br/>\n"
-"        % endif\n"
-"\n"
-"     </p>\n"
-"    <h3><br/>Vorgangsübersicht:</h3>\n"
+"    <p>Vielen Dank für Ihre Unterstützung für unsere Umwelt!<br>\n"
+"    </p>\n"
+"    <h3><br>Vorgangsübersicht.:</h3>\n"
 "    <p style=\"padding-left: 14px;\">\n"
-"        Vorgangsnummer: <strong>${object.name}</strong><br/>\n"
-"        Vorgangssumme: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br/>\n"
-"        Vorgangsdatum: ${object.date_order}<br/>\n"
-"        Zahlungsstatus: <strong style=\"text-transform:uppercase;\">${object.payment_tx_id.state or '?'}</strong>\n"
+"        Nummer: <strong>${object.name}</strong><br>\n"
+"        Summe: ${object.amount_total}&nbsp;${object.pricelist_id.currency_id.name}<br>\n"
+"        Datum: ${object.date_order}<br>\n"
+"        Fortschritt: <strong style=\"text-transform:uppercase;\">\n"
+"% if object.payment_tx_id.state == 'cancel':\n"
+"      abgebrochen\n"
+"% elif object.payment_tx_id.state == 'draft' or '' or 'pending':\n"
+"      in Bearbeitung\n"
+"% endif\n"
+"</strong>\n"
 "    </p>\n"
 "\n"
-"        <p>Bei Fragen kontaktieren Sie bitte:</p>\n"
-"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email or '') | safe}</a><br/>\n"
-"    <div style=\"display:table;\">\n"
-"        <div style=\"display:table-header-group;\">\n"
-"            <div style=\"display:table-row;\">\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Name</div>\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Anzahl</div>\n"
-"                <div style=\"display:table-cell; border:1px solid black;\">Download</div>\n"
-"            </div>\n"
-"        </div>\n"
-"        <div style=\"display:table-row-group;\">\n"
-"            % for line in object.order_line:\n"
-"                <div style=\"display:table-row;\">\n"
-"                    <div style=\"display:table-cell;\">${line.product_id.name}</div>\n"
-"                    <div style=\"display:table-cell;\">${line.product_uom_qty}</div>\n"
-"                    % if line.product_id.webshop_download_file:\n"
-"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.product&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_id.id}\">Download</a></div>\n"
-"                    % endif\n"
-"                    % if line.product_tmpl_id.webshop_download_file:\n"
-"                        <div style=\"display:table-cell;\"><a href=\"/web/binary/saveas?model=product.template&amp;field=webshop_download_file&amp;filename_field=webshop_download_file_name&amp;id=${line.product_tmpl_id.id}\">Download</a></div>\n"
-"                    % endif\n"
-"                </div>\n"
-"            % endfor\n"
-"        </div>\n"
-"    </div>\n"
-"        % if object.cat_root_id.id == False or object.cat_root_id.id == 55:\n"
+"    <p>Wenn Sie Fragen haben, stehen wir Ihnen gerne unter<br>\n"
+"        <a href=\"mailto:${object.company_id.email or object.user_id.email or ''}?subject=Question%20regarding%20${object.name}\" style=\"display:block; padding-left: 14px;\">\n"
+"            •&nbsp;&lt;${object.company_id.name or object.user_id.name or ''}&gt; ${object.company_id.email or object.user_id.email or ''}\n"
+"        </a> gerne zur Verfügung. Oder euch gerne telefonisch unter +43 810 977 200 !\n"
+"    </p>\n"
+"    <p>&nbsp;</p>\n"
 "    <h3>\n"
 "        <strong>${object.company_id.name}</strong>\n"
 "    </h3>\n"
 "    <p>\n"
 "        % if object.company_id.street:\n"
-"            ${object.company_id.street}<br/>\n"
-"        % endif\n"
-"        % if object.company_id.street2:\n"
-"            ${object.company_id.street2}<br/>\n"
+"            ${object.company_id.street}<br>\n"
 "        % endif\n"
 "        % if object.company_id.city or object.company_id.zip:\n"
-"            ${object.company_id.zip} ${object.company_id.city}<br/>\n"
+"            ${object.company_id.zip} ${object.company_id.city}<br>\n"
 "        % endif\n"
 "        % if object.company_id.country_id:\n"
-"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br/>\n"
+"            ${object.company_id.state_id and ('%s, ' % object.company_id.state_id.name) or ''} ${object.company_id.country_id.name or ''}<br>\n"
 "        % endif\n"
 "        % if object.company_id.phone:\n"
-"            Tel.:&nbsp;${object.company_id.phone}<br/>\n"
+"            Tel.:&nbsp;${object.company_id.phone}<br>\n"
 "        % endif\n"
 "        % if object.company_id.email:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br/>\n"
+"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email}</a><br>\n"
 "        % endif\n"
 "        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br/>\n"
+"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website}</a><br>\n"
 "        % endif\n"
 "        % if object.company_id.logo:\n"
-"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
+"            </p><div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo}\" style=\"width: 120px;\"></div>\n"
 "        % endif\n"
-"    </p>\n"
-"        % endif\n"
-"        % if object.cat_root_id.id == 80:\n"
-"            <a href=\"mailto:webshop@aids.ch\" style=\"display:block; padding-left: 14px;\">${(object.company_id.email_report_dd or '') | safe}</a>\n"
-"    <h3>\n"
-"        <strong>${Sante-Sexuelle}</strong>\n"
-"    </h3>\n"
-"    <p>\n"
-"        % if object.company_id.email_report_dd:\n"
-"            E-Mail.:&nbsp;<a href=\"mailto:${object.company_id.email}\">${object.company_id.email_report_dd}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.website:\n"
-"            Web.:&nbsp;<a href=\"${object.company_id.website}\">${object.company_id.website_report_dd}</a><br/>\n"
-"        % endif\n"
-"        % if object.company_id.logo_report_dd:\n"
-"            <div style=\"padding:0; margin:0;\"><img src=\"data:image/png;base64,${object.company_id.logo_report_dd}\" style=\"width: 120px;\"></div>\n"
-"        % endif\n"
-"    </p>\n"
-"        % endif\n"
-"    <p>&nbsp;</p>\n"
+"    <p></p>\n"
 "\n"
 "</div>\n"
-"\n"
-"            "
+""
 
 #. module: fso_base
 #: model:res.groups,comment:fso_base.instance_system_user
@@ -215,18 +161,18 @@ msgstr "\n"
 #. module: fso_base
 #: model:email.template,subject:fso_base.email_template_webshop
 msgid "${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}"
-msgstr "${object.company_id.name|safe} - Transaction Summary for ${object.name or 'n/a'}"
+msgstr "${object.company_id.name|safe} - Vorgangsübersicht für ${object.name or 'n/a'}"
 
 #. module: fso_base
-#: code:addons/fso_base/models/res_company.py:19
+#: code:addons/fso_base/models/res_company.py:38
 #, python-format
 msgid "'Instance Base Port' and 'Instance ID' must be set for the 'Instance Main Company'!"
-msgstr "'Instanz Basis Port' und 'Instanz ID' müssen für die 'Instanz Haupt-Firma' gesetzt sein!"
+msgstr "Der 'Instance Base Port' und die 'Instance ID' müssen für die Hauptfirma gesetzt sein!"
 
 #. module: fso_base
-#: field:res.partner,legal_terms_web:0
-msgid "Accept Legal Terms Web"
-msgstr "Ich akzeptiere die AGB"
+#: help:frst.personemail,state:0
+msgid "A PersonEmail has a state of active if the e-mail format seems valid and now is inside gueltig_von and gueltig_bis"
+msgstr "Eine 'PersonEmail' E-Mail Adresse hat den Status 'Akitv' wenn die E-Mail Adresse gültig erscheint und das aktuelle datum sich zwischen 'gueltig_von' und 'gueltig_bis' befindet"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_access
@@ -234,14 +180,44 @@ msgid "Access"
 msgstr "Zugang"
 
 #. module: fso_base
+#: selection:frst.personemail,state:0
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: fso_base
+#: field:res.users,active_directory_name:0
+msgid "Active Directory Name"
+msgstr "Active Directory Name"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Adresse"
+msgstr "Adresse"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Aktion"
+msgstr "Aktion"
+
+#. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_timesheet
 msgid "Alle Stundenzettel"
 msgstr "Alle Stundenzettel"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey_user_input
+msgid "Answers"
+msgstr "Antworten"
+
+#. module: fso_base
 #: field:fs.group,GUIAnzeigen:0
 msgid "Anzeige der Gruppe auf der Oberflaeche"
 msgstr "Anzeige der Gruppe auf der Oberflaeche"
+
+#. module: fso_base
+#: help:frst.zgruppe,gruppe_lang:0
+msgid "Anzeige fuer den Kunden und im GUI"
+msgstr "Anzeige fuer den Kunden und im GUI"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_archive
@@ -254,9 +230,24 @@ msgid "Aufgaben"
 msgstr "Aufgaben"
 
 #. module: fso_base
-#: field:res.partner,birthdate_web:0
-msgid "Birthdate Web"
-msgstr "Geburtsdatum"
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_crm_oppor
+msgid "Bearbeitete Anfragen"
+msgstr "Bearbeitete Anfragen"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_blog
+msgid "Blog"
+msgstr "Blog"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_blog_blogs
+msgid "Blogs"
+msgstr "Blogs"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_crm
+msgid "CRM"
+msgstr "CRM"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_calender
@@ -264,47 +255,83 @@ msgid "Calendar"
 msgstr "Kalender"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:71
+#: code:addons/fso_base/tools/soap.py:88
 #, python-format
 msgid "Certificate file not found at %s"
 msgstr "Zertifikatsdatei nicht gefunden unter %s"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:69
+#: code:addons/fso_base/tools/soap.py:86
 #, python-format
 msgid "Certificate- and Private-Key-File needed if one of them is given!"
-msgstr "Zertifikats- und Private-Key-Datei sind erforderlich wenn eine der Beiden angegeben wird!"
+msgstr "Certificate- and Private-Key-File needed if one of them is given!"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_channels
+msgid "Channels"
+msgstr "Kanäle"
 
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_res_company
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_companies
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_settings_companies
 msgid "Companies"
 msgstr "Unternehmen"
 
 #. module: fso_base
-#: field:res.partner,company_name_web:0
-msgid "Company Name Web"
-msgstr "Firmen Name Web"
+#: code:addons/fso_base/tools/image.py:64
+#, python-format
+msgid "Could not import selenium for screen-shot generation of %s!"
+msgstr "Could not import selenium for screen-shot generation of %s!"
 
 #. module: fso_base
-#: field:fs.group,create_uid:0
+#: code:addons/fso_base/tools/image.py:71
+#, python-format
+msgid "Could not load PhantomJS() for screen-shot generation of %s!\n"
+"\n"
+"%s\n"
+""
+msgstr "Could not load PhantomJS() for screen-shot generation of %s!\n"
+"\n"
+"%s\n"
+""
+
+#. module: fso_base
+#: field:frst.personemail,create_uid:0
+#: field:frst.personemailgruppe,create_uid:0
+#: field:frst.persongruppe,create_uid:0
+#: field:frst.zgruppe,create_uid:0
+#: field:frst.zgruppedetail,create_uid:0
 msgid "Created by"
 msgstr "Erstellt von"
 
 #. module: fso_base
-#: field:fs.group,create_date:0
+#: field:frst.personemail,create_date:0
+#: field:frst.personemailgruppe,create_date:0
+#: field:frst.persongruppe,create_date:0
+#: field:frst.zgruppe,create_date:0
+#: field:frst.zgruppedetail,create_date:0
 msgid "Created on"
 msgstr "Erstellt am"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_dashboard
 msgid "Dashboards"
-msgstr "Dashboards"
+msgstr "Anzeigetafeln"
 
 #. module: fso_base
+#: field:frst.personemail,display_name:0
+#: field:frst.personemailgruppe,display_name:0
+#: field:frst.persongruppe,display_name:0
+#: field:frst.zgruppe,display_name:0
+#: field:frst.zgruppedetail,display_name:0
 #: field:fs.group,display_name:0
 msgid "Display Name"
 msgstr "Anzeigename"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_doc
+msgid "Documentation"
+msgstr "Dokumentation"
 
 #. module: fso_base
 #: selection:product.template,fs_product_type:0
@@ -313,33 +340,41 @@ msgstr "Spende"
 
 #. module: fso_base
 #: field:res.partner,donation_deduction_disabled:0
+#: field:res.users,donation_deduction_disabled:0
 msgid "Donation Deduction Disabled"
 msgstr "Spendenabsetzbarkeit Deaktiviert"
 
 #. module: fso_base
-#: field:res.partner,donation_deduction_optout_web:0
-msgid "Donation Deduction OptOut Web"
-msgstr "Meine Spenden nicht autom. absetzen"
-
-#. module: fso_base
-#: help:res.partner,donation_deduction_optout_web:0
-msgid "Donation Deduction OptOut set by Donor"
-msgstr "Spendenabsetzbarkeit vom Spender deaktiviert (OptOut)."
-
-#. module: fso_base
 #: help:res.partner,donation_deduction_disabled:0
+#: help:res.users,donation_deduction_disabled:0
 msgid "Donation Deduction processing disabled by System"
 msgstr "Spendenabsetzbarkeit vom System deaktiviert."
 
 #. module: fso_base
-#: field:res.partner,donation_receipt_web:0
-msgid "Donation Receipt Web"
-msgstr "Spendenbestätigung Web"
+#: field:frst.personemail,email:0
+msgid "E-Mail"
+msgstr "E-Mail"
 
 #. module: fso_base
-#: help:res.partner,anrede_individuell:0
-msgid "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
-msgstr "Eine individuelle Anrede die für den Schriftverkehr verwendet wird."
+#: code:addons/fso_base/tools/validate.py:62
+#, python-format
+msgid "E-Mail must be a string!"
+msgstr "E-Mail muss ein 'string' sein!"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Email"
+msgstr "Email"
+
+#. module: fso_base
+#: field:res.users,email_bounced:0
+msgid "Email bounced"
+msgstr "Email bounced"
+
+#. module: fso_base
+#: field:res.users,email_score:0
+msgid "Email score"
+msgstr "Email score"
 
 #. module: fso_base
 #: field:fs.group,GUIGruppenBearbeitenMoeglich:0
@@ -347,15 +382,32 @@ msgid "Erlaube Benutzeraenderung der Gruppenzugehoerigkeit"
 msgstr "Erlaube Benutzeränderung der Gruppenzugehörigkeit"
 
 #. module: fso_base
-#: code:addons/fso_base/models/fs_groups.py:67
+#: code:addons/fso_base/models/fs_groups.py:70
 #, python-format
 msgid "Error!"
 msgstr "Fehler!"
 
 #. module: fso_base
-#: selection:product.template,fs_product_type:0
-msgid "Event Ticket"
-msgstr "Event Ticket"
+#: field:frst.personemailgruppe,frst_personemail_id:0
+msgid "FRST PersonEmail"
+msgstr "FRST PersonEmail"
+
+#. module: fso_base
+#: field:res.partner,frst_personemail_ids:0
+#: field:res.users,frst_personemail_ids:0
+msgid "FRST PersonEmail IDS"
+msgstr "FRST PersonEmail IDS"
+
+#. module: fso_base
+#: field:frst.personemail,personemailgruppe_ids:0
+msgid "FRST PersonEmailGruppe IDS"
+msgstr "FRST PersonEmailGruppe IDS"
+
+#. module: fso_base
+#: field:res.partner,persongruppe_ids:0
+#: field:res.users,persongruppe_ids:0
+msgid "FRST PersonGruppe IDS"
+msgstr "FRST PersonGruppe IDS"
 
 #. module: fso_base
 #: field:product.product,product_variant_fs_group_ids:0
@@ -371,11 +423,6 @@ msgstr "FS Gruppen (Vorlage)"
 #: field:product.product,fs_group_ids:0
 msgid "FS Groups (Variant)"
 msgstr "FS Gruppen (Varianten)"
-
-#. module: fso_base
-#: model:res.groups,name:fso_frst_groups.group_fs_group_manager
-msgid "FS Groups Manager"
-msgstr "FS Gruppenmanager"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_fstoken_menu
@@ -398,29 +445,46 @@ msgid "FS-Online Settings"
 msgstr "FS-Online Einstellungen"
 
 #. module: fso_base
-#: field:res.partner,fore_name_web:0
-msgid "Fore Name Web DEPRICATED use partner_firstname addon"
-msgstr "Fore Name Web DEPRICATED use partner_firstname addon"
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_forum
+msgid "Forum"
+msgstr "Hilfeforum"
 
 #. module: fso_base
-#: view:fs.group:fso_base.fs_group_form
-#: view:fs.group:fso_base.fs_group_search
-#: view:fs.group:fso_base.fs_group_tree
-#: model:ir.actions.act_window,name:fso_base.fs_group_action
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_forum_forums
+msgid "Forums"
+msgstr "Forenverzeichnis"
+
+#. module: fso_base
+#: help:res.users,active_directory_name:0
+msgid "Fundraising Studio Active Directory Name"
+msgstr "Fundraising Studio Active Directory Name"
+
+#. module: fso_base
 #: model:ir.model,name:fso_base.model_fs_group
-#: model:ir.ui.menu,name:fso_base.fs_group_menu
 msgid "Fundraising Studio Groups"
 msgstr "Fundraising Studio Gruppen"
 
 #. module: fso_base
-#: selection:product.template,fs_product_type:0
-msgid "Godparenthood"
-msgstr "Patenschaften"
+#: model:ir.ui.menu,name:fso_base.menu_frst_settings
+msgid "Fundrasing Studio"
+msgstr "Fundrasing Studio"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_groups_menu
 msgid "Groups"
 msgstr "Gruppen"
+
+#. module: fso_base
+#: field:frst.zgruppe,gruppe_kurz:0
+#: field:frst.zgruppedetail,gruppe_kurz:0
+msgid "GruppeKurz"
+msgstr "GruppeKurz"
+
+#. module: fso_base
+#: field:frst.zgruppe,gruppe_lang:0
+#: field:frst.zgruppedetail,gruppe_lang:0
+msgid "GruppeLang"
+msgstr "GruppeLang"
 
 #. module: fso_base
 #: field:fs.group,name:0
@@ -433,14 +497,64 @@ msgid "Gruppenname Lang"
 msgstr "Gruppenname Lang"
 
 #. module: fso_base
+#: field:frst.personemailgruppe,gueltig_bis:0
+#: field:frst.persongruppe,gueltig_bis:0
+#: field:frst.zgruppedetail,gueltig_bis:0
+msgid "GueltigBis"
+msgstr "GueltigBis"
+
+#. module: fso_base
+#: field:frst.personemailgruppe,gueltig_von:0
+#: field:frst.persongruppe,gueltig_von:0
+#: field:frst.zgruppedetail,gueltig_von:0
+msgid "GueltigVon"
+msgstr "GueltigVon"
+
+#. module: fso_base
+#: field:frst.zgruppe,gui_anzeigen:0
+#: field:frst.zgruppedetail,gui_anzeigen:0
+msgid "GuiAnzeigen"
+msgstr "GuiAnzeigen"
+
+#. module: fso_base
+#: field:frst.personemail,gueltig_bis:0
+msgid "GültigBis"
+msgstr "GültigBis"
+
+#. module: fso_base
+#: field:frst.personemail,gueltig_von:0
+msgid "GültigVon"
+msgstr "GültigVon"
+
+#. module: fso_base
 #: field:fs.group,NegativGruppe:0
 msgid "Handelt es sich um eine Negativgruppe"
 msgstr "Handelt es sich um eine Negativgruppe"
 
 #. module: fso_base
-#: field:fs.group,id:0
+#: help:frst.personemail,last_email_update:0
+msgid "Holds the last datetime the email field changed either by theGUI a website form or an import from an external data source"
+msgstr "Holds the last datetime the email field changed either by theGUI a website form or an import from an external data source"
+
+#. module: fso_base
+#: field:frst.personemail,id:0
+#: field:frst.personemailgruppe,id:0
+#: field:frst.persongruppe,id:0
+#: field:frst.zgruppe,id:0
+#: field:frst.zgruppedetail,id:0
 msgid "ID"
 msgstr "ID"
+
+#. module: fso_base
+#: help:frst.personemailgruppe,steuerung_bit:0
+#: help:frst.persongruppe,steuerung_bit:0
+msgid "If not set: Person is explicitly excluded/unsubscribed from this group!"
+msgstr "If not set: Person is explicitly excluded/unsubscribed from this group!"
+
+#. module: fso_base
+#: help:frst.zgruppedetail,gui_anzeigen:0
+msgid "If set this group is available for this instance"
+msgstr "If set this group is available for this instance"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_inprogress
@@ -448,14 +562,14 @@ msgid "In Progress"
 msgstr "In Bearbeitung"
 
 #. module: fso_base
+#: selection:frst.personemail,state:0
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_inbox
 msgid "Inbox"
 msgstr "Posteingang"
-
-#. module: fso_base
-#: field:res.partner,anrede_individuell:0
-msgid "Individuelle Anrede"
-msgstr "Individuelle Anrede"
 
 #. module: fso_base
 #: field:res.company,instance_base_port:0
@@ -465,7 +579,12 @@ msgstr "Instanz Base-Port"
 #. module: fso_base
 #: view:res.company:fso_base.company_instance_settings
 msgid "Instance Basics"
-msgstr "Instanz Grundeinstellungen"
+msgstr "Instanz Basics"
+
+#. module: fso_base
+#: view:res.company:fso_base.company_instance_settings
+msgid "Instance Config Info"
+msgstr "Instanz Einstellungs-Info"
 
 #. module: fso_base
 #: field:res.company,instance_id:0
@@ -478,6 +597,16 @@ msgid "Instance Main Company"
 msgstr "Instanz Haupt-Firma"
 
 #. module: fso_base
+#: field:res.company,instance_ini:0
+msgid "Instance.ini"
+msgstr "Instance.ini"
+
+#. module: fso_base
+#: help:frst.zgruppe,gruppe_kurz:0
+msgid "Interne Bezeichnung"
+msgstr "Interne Bezeichnung"
+
+#. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_organizer_calender
 msgid "Kalender"
 msgstr "Kalender"
@@ -486,6 +615,11 @@ msgstr "Kalender"
 #: field:fs.group,GUINurEineGleichzeitigGueltig:0
 msgid "Keine Zeitraumueberschneidungen von mehreren Gruppeneintraegen"
 msgstr "Keine Zeitraumüberschneidungen von mehreren Gruppeneinträgen"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Kommunikation"
+msgstr "Kommunikation"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_organizer_partner
@@ -498,19 +632,77 @@ msgid "Kostenstellen"
 msgstr "Kostenstellen"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_sick
+msgid "Krankenstände"
+msgstr "Krankenstände"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey_label_form
+msgid "Labels"
+msgstr "Überschriften"
+
+#. module: fso_base
+#: field:frst.personemail,last_email_update:0
+msgid "Last Email Update"
+msgstr "Last Email Update"
+
+#. module: fso_base
+#: field:frst.personemail,__last_update:0
+#: field:frst.personemailgruppe,__last_update:0
+#: field:frst.persongruppe,__last_update:0
+#: field:frst.zgruppe,__last_update:0
+#: field:frst.zgruppedetail,__last_update:0
 #: field:fs.group,__last_update:0
 msgid "Last Modified on"
-msgstr "Zuletzt geändert am"
+msgstr "Geändert am"
 
 #. module: fso_base
-#: field:fs.group,write_uid:0
+#: field:frst.personemail,write_uid:0
+#: field:frst.personemailgruppe,write_uid:0
+#: field:frst.persongruppe,write_uid:0
+#: field:frst.zgruppe,write_uid:0
+#: field:frst.zgruppedetail,write_uid:0
 msgid "Last Updated by"
-msgstr "Zuletzt geändert von"
+msgstr "Aktualisiert von"
 
 #. module: fso_base
-#: field:fs.group,write_date:0
+#: field:frst.personemail,write_date:0
+#: field:frst.personemailgruppe,write_date:0
+#: field:frst.persongruppe,write_date:0
+#: field:frst.zgruppe,write_date:0
+#: field:frst.zgruppedetail,write_date:0
 msgid "Last Updated on"
-msgstr "Zuletzt aktualisiert vom"
+msgstr "Aktualisiert am"
+
+#. module: fso_base
+#: field:res.users,mass_mailing_contact_ids:0
+msgid "Mailing lists"
+msgstr "Mailing Listen"
+
+#. module: fso_base
+#: field:frst.personemail,main_address:0
+msgid "Main Address"
+msgstr "Hauptadresse"
+
+#. module: fso_base
+#: field:res.users,main_personemail_id:0
+msgid "Main Email"
+msgstr "Haupt E-Mail"
+
+#. module: fso_base
+#: field:res.users,main_email_personemailgruppe_ids:0
+msgid "Main Email Groups"
+msgstr "Haupt E-Mail Gruppen"
+
+#. module: fso_base
+#: field:res.users,mass_mailing_stats:0
+msgid "Mass mailing stats"
+msgstr "Mass mailing Statistik"
+
+#. module: fso_base
+#: selection:product.template,fs_product_type:0
+msgid "Mediation"
+msgstr "(Tier) Vermittlung"
 
 #. module: fso_base
 #: field:fs.group,MehrEintraegeInGruppeMoeglich:0
@@ -518,19 +710,14 @@ msgid "Mehr als ein Eintrag in Gruppe moeglich"
 msgstr "Mehr als ein Eintrag in Gruppe möglich"
 
 #. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_dashboard_my_dashboard
-msgid "Mein Dashboard"
-msgstr "Mein Dashboard"
-
-#. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_mytimesheet
 msgid "Mein Stundenzettel"
 msgstr "Mein Stundenzettel"
 
 #. module: fso_base
-#: selection:product.template,fs_product_type:0
-msgid "Membership"
-msgstr "Patenschaft"
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_dashboard_my_dashboard
+msgid "Meine Dashboards"
+msgstr "Meine Dashboards"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg
@@ -538,24 +725,14 @@ msgid "Nachrichten"
 msgstr "Nachrichten"
 
 #. module: fso_base
-#: field:res.partner,name_zwei:0
-msgid "Name Zwei"
-msgstr "Name Zwei"
-
-#. module: fso_base
-#: help:res.partner,name_zwei:0
-msgid "Name zweite Zeile für Fundraising Studio"
-msgstr "Name zweite Zeile für Fundraising Studio"
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_crm_leads
+msgid "Neue Anfragen"
+msgstr "Neue Anfragen"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_new
 msgid "New"
 msgstr "Neu"
-
-#. module: fso_base
-#: field:res.partner,newsletter_web:0
-msgid "Newsletter Web"
-msgstr "Newsletter Web"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_nicetohave
@@ -579,7 +756,12 @@ msgid "Organizer"
 msgstr "Termine und Notizen"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:64
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey_page_form
+msgid "Pages"
+msgstr "Seiten"
+
+#. module: fso_base
+#: code:addons/fso_base/tools/soap.py:81
 #, python-format
 msgid "Parameters missing! Required are url and template or request_data."
 msgstr "Parameter fehlen! Benötigt sind die Ziel-URL und das Template oder die Request-Daten."
@@ -593,13 +775,30 @@ msgstr "Eltern Gruppe"
 #: model:ir.model,name:fso_base.model_res_partner
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_partner_partner
 msgid "Partner"
-msgstr "Kontakte"
+msgstr "Person"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/soap.py:70
+#: code:addons/fso_base/tools/soap.py:87
 #, python-format
 msgid "Path to cert- or key-file is longer than 255 chars!"
-msgstr "Pfad zur cert- or key-Datei ist länger als 255 Zeichen!"
+msgstr "Path to cert- or key-file is longer than 255 chars!"
+
+#. module: fso_base
+#: field:frst.personemail,partner_id:0
+#: field:frst.persongruppe,partner_id:0
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Person"
+msgstr "Person"
+
+#. module: fso_base
+#: field:frst.zgruppedetail,frst_personemailgruppe_ids:0
+msgid "PersonEmailGruppe IDS"
+msgstr "PersonEmailGruppe IDS"
+
+#. module: fso_base
+#: field:frst.zgruppedetail,frst_persongruppe_ids:0
+msgid "PersonGruppe IDS"
+msgstr "PersonGruppe IDS"
 
 #. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_planned
@@ -607,20 +806,17 @@ msgid "Planned"
 msgstr "Geplant"
 
 #. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fso_organizer
-msgid "Planung"
-msgstr "Planung"
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_blog_posts
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_doc_posts
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_forum_posts
+msgid "Posts"
+msgstr "Beiträge"
 
 #. module: fso_base
-#: field:res.partner,post_office_box_web:0
-msgid "Post Office Box Web"
-msgstr "Postfach Web"
-
-#. module: fso_base
-#: code:addons/fso_base/tools/soap.py:72
+#: code:addons/fso_base/tools/soap.py:89
 #, python-format
 msgid "Private key file not found at %s"
-msgstr "Private-Key Datei nicht gefunden: %s"
+msgstr "Private-Key-Datei nicht gefunden unter %s"
 
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_product_product
@@ -631,13 +827,18 @@ msgstr "Produkt"
 #. module: fso_base
 #: model:ir.model,name:fso_base.model_product_template
 msgid "Product Template"
-msgstr "Produkt Template"
+msgstr "Produktvorlage"
 
 #. module: fso_base
-#: code:addons/fso_base/models/fs_groups.py:67
+#: code:addons/fso_base/models/fs_groups.py:70
 #, python-format
 msgid "Product variants exist! Please set the FS-Groups there!"
-msgstr "Es existieren Produktvarianten! Daher müssen Sie die FS-Gruppen bitte bei den Produktvarianten setzen!"
+msgstr "Produkt-Variante existiert! Bitte setzen sie die FS-Gruppen dort!"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer
+msgid "Project"
+msgstr "Projekt"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_project
@@ -646,29 +847,56 @@ msgid "Projekte"
 msgstr "Projekte"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey_question_form
+msgid "Questions"
+msgstr "Fragestellungen"
+
+#. module: fso_base
 #: field:product.product,seo_url:0
 msgid "SEO URL"
 msgstr "SEO URL"
 
 #. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_scheduledactions
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_settings_scheduledactions
 msgid "Scheduled Actions"
 msgstr "Geplante Vorgänge"
 
 #. module: fso_base
+#: help:frst.zgruppe,tabellentyp_id:0
+msgid "Select model where Groups in this folder apply"
+msgstr "Select model where Groups in this folder apply"
+
+#. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_settings
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_settings
 msgid "Settings"
 msgstr "Einstellungen"
 
 #. module: fso_base
-#: selection:product.template,fs_product_type:0
-msgid "Sponsorship"
-msgstr "Fördererschaft"
+#: field:frst.personemail,state:0
+msgid "State"
+msgstr "Status"
 
 #. module: fso_base
-#: field:res.partner,street_number_web:0
-msgid "Street Number Web"
-msgstr "Straßen Nummer Web"
+#: field:frst.personemailgruppe,steuerung_bit:0
+#: field:frst.persongruppe,steuerung_bit:0
+msgid "Steuerung Bit"
+msgstr "Steuerung Bit"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey
+msgid "Survey"
+msgstr "Umfrage"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey_user_input_line
+msgid "Survey User Input lines"
+msgstr "Teilnehmer Eingabezeilen"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_survey_surveys
+msgid "Surveys"
+msgstr "Umfragen"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_system
@@ -676,7 +904,7 @@ msgid "System"
 msgstr "System"
 
 #. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fsonline_ir_config_menu
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_settings_ir_config_menu
 msgid "System Parameters"
 msgstr "Systemparameter"
 
@@ -686,14 +914,55 @@ msgid "Tabellentyp ID"
 msgstr "Tabellentyp ID"
 
 #. module: fso_base
-#: field:res.partner,title_web:0
-msgid "Title Web"
-msgstr "Titel Web"
+#: field:frst.zgruppe,tabellentyp_id:0
+msgid "TabellentypID"
+msgstr "TabellentypID"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_doc_toc
+msgid "Table of Content"
+msgstr "Inhaltsverzeichnis"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web_blog_tags
+msgid "Tags"
+msgstr "Schlagwörter"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Telefon"
+msgstr "Telefon"
+
+#. module: fso_base
+#: help:frst.personemail,gueltig_bis:0
+msgid "This can be seen as 'de-activated at' like if we would store the date when we setactive to False in odoo. It is NOT supposed to disable the email addressin the future!!! (Discussed with Rufus on 10.07.2018 by skype)"
+msgstr "This can be seen as 'de-activated at' like if we would store the date when we setactive to False in odoo. It is NOT supposed to disable the email addressin the future!!! (Discussed with Rufus on 10.07.2018 by skype)"
+
+#. module: fso_base
+#: help:frst.personemail,gueltig_von:0
+msgid "This can be seen as the create_date in Fundraising Studio and is NOT supposed to change or be changed by the user!"
+msgstr "This can be seen as the create_date in Fundraising Studio and is NOT supposed to change or be changed by the user!"
+
+#. module: fso_base
+#: help:frst.personemail,email:0
+#: help:frst.personemail,partner_id:0
+msgid "This field should normally NEVER change after record creation. The only exceptionto this rule would be a quick typo fix after manual creation in FRST GUI."
+msgstr "This field should normally NEVER change after record creation. The only exceptionto this rule would be a quick typo fix after manual creation in FRST GUI."
+
+#. module: fso_base
+#: help:frst.personemail,main_address:0
+msgid "This indicates if the record is the primary active e-mail address. It will be used in webforms or exports where only one e-mail is allowed.It should match with the email field in res.partner!"
+msgstr "This indicates if the record is the primary active e-mail address. It will be used in webforms or exports where only one e-mail is allowed.It should match with the email field in res.partner!"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_todo
 msgid "ToDo"
 msgstr "ToDo"
+
+#. module: fso_base
+#: field:res.users,tracking_emails_count:0
+msgid "Tracking emails count"
+msgstr "Tracking E-Mails Zähler"
 
 #. module: fso_base
 #: field:product.product,fs_product_type:0
@@ -702,7 +971,7 @@ msgid "Type"
 msgstr "Typ"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/validate.py:42
+#: code:addons/fso_base/tools/validate.py:43
 #, python-format
 msgid "URL DNS check failed!\n"
 "%s\n"
@@ -714,21 +983,16 @@ msgstr "URL DNS-Prüfung fehlgeschlagen!\n"
 ""
 
 #. module: fso_base
-#: code:addons/fso_base/tools/validate.py:35
+#: code:addons/fso_base/tools/validate.py:36
 #, python-format
 msgid "URL format is not valid: %s"
 msgstr "URL-Format ist nicht gültig: %s"
 
 #. module: fso_base
-#: code:addons/fso_base/tools/validate.py:31
+#: code:addons/fso_base/tools/validate.py:32
 #, python-format
 msgid "URL must be a string!"
 msgstr "URL muss aus Zeichen bestehen!"
-
-#. module: fso_base
-#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_leave
-msgid "Urlaub u. Abwesenheit"
-msgstr "Urlaub u. Abwesenheit"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_leavereq
@@ -736,14 +1000,36 @@ msgid "Urlaubsanspruch erfassen"
 msgstr "Urlaubsanspruch erfassen"
 
 #. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime_leave
+msgid "Urlaubseinträge"
+msgstr "Urlaubseinträge"
+
+#. module: fso_base
+#: model:ir.model,name:fso_base.model_res_users
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_users_menu
 msgid "Users"
 msgstr "Benutzer"
 
 #. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Vertrag"
+msgstr "Vertrag"
+
+#. module: fso_base
 #: model:project.task.type,name:fso_base.project_tt_waiting
 msgid "Waiting"
 msgstr "Wartend"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_web
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_website
+msgid "Website"
+msgstr "Webseite"
+
+#. module: fso_base
+#: model:ir.ui.menu,name:fso_base.menu_fsonline_settings_fiscalyear
+msgid "Wirtschaftsjahre"
+msgstr "Wirtschaftsjahre"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_hrtime
@@ -759,4 +1045,30 @@ msgstr "z.B. 20040"
 #: view:res.company:fso_base.company_instance_settings
 msgid "e.g. dadi"
 msgstr "z.B. dadi"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "zEvent"
+msgstr "zEvent"
+
+#. module: fso_base
+#: field:frst.personemailgruppe,zgruppedetail_id:0
+#: field:frst.persongruppe,zgruppedetail_id:0
+msgid "zGruppeDetail"
+msgstr "zGruppeDetail"
+
+#. module: fso_base
+#: field:frst.zgruppe,zgruppedetail_ids:0
+msgid "zGruppeDetail IDS"
+msgstr "zGruppeDetail IDS"
+
+#. module: fso_base
+#: field:frst.zgruppedetail,zgruppe_id:0
+msgid "zGruppeID"
+msgstr "zGruppeID"
+
+#. module: fso_base
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "zVerzeichnis"
+msgstr "zVerzeichnis"
 

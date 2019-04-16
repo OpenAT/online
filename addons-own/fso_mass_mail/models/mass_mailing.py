@@ -81,6 +81,12 @@ class MassMailing(models.Model):
                                 help="This is the delivery method, e.g. Postcard, Email, or Banner Ad", default=lambda self: self.env.ref('utm.utm_medium_email'))
     clicks_ratio = fields.Integer(compute="_compute_clicks_ratio", string="Number of Clicks")
 
+    # !!!WARNING!!! !!!FIELD REDEFINED AS TEXT BECAUSE HTML FIELD TYPE STRIPS DOCTYPE AND HEAD!!!
+    # TODO: MAYBE WE NEED TO REMOVE THIS AFTER THE TEST IF THERE ARE ANY UNWANTED SIDE EFFECTS?!?
+    # HINT: This does not change body_html of mail.mail or email.template but just of mail.mass_maling therefore the
+    #       risk of the field type change should not bee to high
+    body_html = fields.Text()
+
     # ---------------
     # COMPUTED FIELDS
     # ---------------

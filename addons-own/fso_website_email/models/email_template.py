@@ -202,10 +202,10 @@ class EmailTemplate(models.Model):
                 email_body_prepared_premailer = PremailerWithTimeout(email_body_prepared,
                                                                      base_url=self.get_base_url(),
                                                                      preserve_internal_links=True,
-                                                                     keep_style_tags=True,
+                                                                     keep_style_tags=False,
                                                                      strip_important=False,
                                                                      align_floating_images=False,
-                                                                     remove_unset_properties=False,
+                                                                     remove_unset_properties=True,
                                                                      include_star_selectors=False,
                                                                      cssutils_logging_handler=premailer_log_handler,
                                                                      cssutils_logging_level=logging.FATAL)

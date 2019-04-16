@@ -4,30 +4,19 @@
         <!-- ========= -->
         <!-- FSO START -->
         <!-- ========= -->
-        <menuitem id="menu_fsonline" name="FS-Online" sequence="0" groups="base.group_user"/>
-
-            <!-- ORGANIZER -->
-            <menuitem id="menu_fsonline_organizer" parent="menu_fsonline" name="Organizer" sequence="2000"/>
-                <menuitem id="menu_fsonline_calender" action="calendar.action_calendar_event" parent="menu_fsonline_organizer" name="Calendar" sequence="2010"/>
-                <menuitem id="menu_fsonline_notes" action="note.action_note_note" parent="menu_fsonline_organizer" name="Notes" sequence="2010"/>
-                <menuitem id="menu_fsonline_partner_partner" action="base.action_partner_form" parent="menu_fsonline_organizer" name="Partner" sequence="2020"/>
-    
-            <!-- DASHBOARD -->
-            <menuitem id="menu_fsonline_dashboard" parent="menu_fsonline" name="Dashboards" sequence="2500"/>
-                <menuitem id="menu_fsonline_dashboard_my_dashboard" parent="menu_fsonline_dashboard" name="Meine Dashboards" sequence="2510" action="board.open_board_my_dash_action"/>
-
-            <!-- WEBSITE -->
-            <menuitem id="menu_fsonline_website" parent="menu_fsonline" name="Website" sequence="3000"/>
-                <menuitem id="fso_product_template_menu" parent="menu_fsonline_website" sequence="3100" action="fsonline.fso_product_template_viewaction"/>
-                <menuitem id="menu_fsonline_donationshop_cart" name="Donation Carts" sequence="3200" parent="menu_fsonline_website" action="sale.action_quotations"/>
-                <menuitem id="menu_fsonline_donationshop_order" name="Orders" sequence="3300" parent="menu_fsonline_website" action="sale.action_orders"/>
-                <menuitem id="menu_fsonline_donationshop_payment" name="Payments" sequence="3400" parent="menu_fsonline_website" action="payment.action_payment_transaction"/>
+        <!-- FS-ONLINE: fso_base.menu_fsonline -->
+        
+            <!-- WEBSITE: fso_base.menu_fsonline_website -->
+                <menuitem id="fso_product_template_menu" parent="fso_base.menu_fsonline_website" sequence="3100" action="fsonline.fso_product_template_viewaction"/>
+                <menuitem id="menu_fsonline_donationshop_cart" name="Donation Carts" sequence="3200" parent="fso_base.menu_fsonline_website" action="sale.action_quotations"/>
+                <menuitem id="menu_fsonline_donationshop_order" name="Orders" sequence="3300" parent="fso_base.menu_fsonline_website" action="sale.action_orders"/>
+                <menuitem id="menu_fsonline_donationshop_payment" name="Payments" sequence="3400" parent="fso_base.menu_fsonline_website" action="payment.action_payment_transaction"/>
                 <!-- Domains and Widgets -->
-                <menuitem id="widget_manager_menu" parent="menu_fsonline_website" sequence="3500" action="website_widget_manager.widget_manager_action"/>
-                <menuitem id="widget_manager_lp_menu" parent="menu_fsonline_website" sequence="3600" action="website_widget_manager.widget_manager_lp_action"/>
+                <menuitem id="widget_manager_menu" parent="fso_base.menu_fsonline_website" sequence="3500" action="website_widget_manager.widget_manager_action"/>
+                <menuitem id="widget_manager_lp_menu" parent="fso_base.menu_fsonline_website" sequence="3600" action="website_widget_manager.widget_manager_lp_action"/>
         
             <!-- DONATION DEDUCTION -->
-            <menuitem id="menu_fsonline_donationdeduction" name="Donation Deduction" parent="menu_fsonline" sequence="7500"/>
+            <menuitem id="menu_fsonline_donationdeduction" name="Donation Deduction" parent="fso_base.menu_fsonline" sequence="7500"/>
                 <menuitem id="menu_fsonline_donationdeduction_partner" name="Personen" action="fso_con_zmr.res_partner_bpk_res_partner_action" parent="menu_fsonline_donationdeduction" sequence="7510"/>
                 <menuitem id="menu_fsonline_donationdeduction_bpk" name="BPK Abfragen" action="fso_con_zmr.res_partner_bpk_action" parent="menu_fsonline_donationdeduction" sequence="7520"/>
                 <menuitem id="menu_fsonline_donationdeduction_report" name="Spendenmeldungen"  action="fso_con_zmr.res_partner_donation_report_action" parent="menu_fsonline_donationdeduction" sequence="7525"/>
@@ -37,63 +26,32 @@
         <!-- =========== -->
         <!-- FSO WEBSITE -->
         <!-- =========== -->
-        <menuitem id="menu_fsonline_web" name="Website" sequence="2" groups="base.group_user"/>
+        <!-- Website: fso_base.menu_fsonline_web -->
         
             <!-- DONATION SHOP -->
-            <menuitem id="menu_fsonline_web_shop" name="Donation Shop" sequence="500" parent="menu_fsonline_web"/>
+            <menuitem id="menu_fsonline_web_shop" name="Donation Shop" sequence="500" parent="fso_base.menu_fsonline_web"/>
                 <menuitem id="menu_fsonline_web_shop_product" parent="menu_fsonline_web_shop" sequence="510" action="fsonline.fso_product_template_viewaction"/>
                 <menuitem id="menu_fsonline_web_shop_cart" name="Donation Carts" sequence="520" parent="menu_fsonline_web_shop" action="sale.action_quotations"/>
                 <menuitem id="menu_fsonline_web_shop_order" name="Orders" sequence="530" parent="menu_fsonline_web_shop" action="sale.action_orders"/>
                 <menuitem id="menu_fsonline_web_shop_payment" name="Payments" sequence="540" parent="menu_fsonline_web_shop" action="payment.action_payment_transaction"/>
                 <menuitem id="menu_fsonline_web_widget_manager"  action="website_widget_manager.widget_manager_action" parent="menu_fsonline_web_shop" sequence="1000"/>
                 <menuitem id="menu_fsonline_web_landing_pages_manager" action="website_widget_manager.widget_manager_lp_action" parent="menu_fsonline_web_shop" sequence="1100"/>
-
-            <!-- CRM -->
-            <menuitem id="menu_fsonline_web_crm" name="CRM" sequence="1000" parent="menu_fsonline_web" groups="base.group_user"/>
-                <menuitem id="menu_fsonline_web_crm_leads" name="Neue Anfragen" sequence="11" parent="menu_fsonline_web_crm" action="crm.crm_case_category_act_leads_all"/>
-                <menuitem id="menu_fsonline_web_crm_oppor" name="Bearbeitete Anfragen" sequence="12" parent="menu_fsonline_web_crm" action="crm.crm_case_category_act_oppor11"/>
-    
-            <!-- Blog -->
-            <menuitem id="menu_fsonline_web_blog" name="Blog" sequence="2000" parent="menu_fsonline_web" groups="base.group_user"/>
-                <menuitem id="menu_fsonline_web_blog_blogs" name="Blogs" sequence="2100" parent="menu_fsonline_web_blog" action="website_blog.action_blog_blog"/>
-                <menuitem id="menu_fsonline_web_blog_posts" name="Posts" sequence="2200" parent="menu_fsonline_web_blog" action="website_blog.action_blog_post"/>
-                <menuitem id="menu_fsonline_web_blog_tags" name="Tags" sequence="2300" parent="menu_fsonline_web_blog" action="website_blog.action_tags"/>
-    
-            <!-- Forum -->
-            <menuitem id="menu_fsonline_web_forum" name="Forum" sequence="3000" parent="menu_fsonline_web" groups="base.group_user"/>
-                <menuitem id="menu_fsonline_web_forum_forums" name="Forums" sequence="3100" parent="menu_fsonline_web_forum" action="website_forum.action_forum_forum"/>
-                <menuitem id="menu_fsonline_web_forum_posts" name="Posts" sequence="3200" parent="menu_fsonline_web_forum" action="website_forum.action_forum_post"/>
-    
-            <!-- Documentation -->
-            <menuitem id="menu_fsonline_web_doc" name="Documentation" sequence="4000" parent="menu_fsonline_web" groups="base.group_user"/>
-                <menuitem id="menu_fsonline_web_doc_toc" name="Table of Content" sequence="4100" parent="menu_fsonline_web_doc" action="website_forum_doc.action_documentation_toc"/>
-                <menuitem id="menu_fsonline_web_doc_posts" name="Posts" sequence="4200" parent="menu_fsonline_web_doc" action="website_forum_doc.action_forum_doc_post"/>
-    
-            <!-- Surveys -->
-            <menuitem id="menu_fsonline_web_survey" name="Survey" sequence="5000" parent="menu_fsonline_web" groups="base.group_user"/>
-                <menuitem id="menu_fsonline_web_survey_surveys" sequence="5100" parent="menu_fsonline_web_survey" action="survey.action_survey_form"/>
-                <menuitem id="menu_fsonline_web_survey_user_input" sequence="5200" parent="menu_fsonline_web_survey" action="survey.action_survey_user_input"/>
-                <menuitem id="menu_fsonline_web_survey_page_form" sequence="5300" parent="menu_fsonline_web_survey" action="survey.action_survey_page_form"/>
-                <menuitem id="menu_fsonline_web_survey_question_form" sequence="5400" parent="menu_fsonline_web_survey" action="survey.action_survey_question_form"/>
-                <menuitem id="menu_fsonline_web_survey_label_form" sequence="5500" parent="menu_fsonline_web_survey" action="survey.action_survey_label_form"/>
-                <menuitem id="menu_fsonline_web_survey_user_input_line" sequence="5600" parent="menu_fsonline_web_survey" action="survey.action_survey_user_input_line"/>
-    
-            <!-- Settings -->
-            <menuitem id="menu_fsonline_web_settings" name="Settings" sequence="10000" parent="menu_fsonline_web" groups="base.group_user"/>
-                <menuitem id="menu_fsonline_web_settings_website" action="fso_base_website.website_action" parent="menu_fsonline_web_settings" sequence="500"/>
-                <menuitem id="menu_fsonline_web_settings_categories" action="website_sale_categories.product_public_category_action" parent="menu_fsonline_web_settings" sequence="510"/>
-                <menuitem id="menu_fsonline_web_meinedaten" name="Meine-Daten Formular" action="auth_partner_form.apf_partner_fields_action" parent="menu_fsonline_web_settings" sequence="520"/>
-                <menuitem id="menu_fsonline_web_domain_templates" action="website_domain_manager.domain_templates_action"  parent="menu_fsonline_web_settings" sequence="10100"/>
-                <menuitem id="menu_fsonline_web_website_domains" action="website_domain_manager.website_domains_action"  parent="menu_fsonline_web_settings" sequence="10200"/>
+        
+            <!-- SETTINGS: fso_base.menu_fsonline_web_settings -->
+                <menuitem id="menu_fsonline_web_settings_website" action="fso_base_website.website_action" parent="fso_base.menu_fsonline_web_settings" sequence="500"/>
+                <menuitem id="menu_fsonline_web_settings_categories" action="website_sale_categories.product_public_category_action" parent="fso_base.menu_fsonline_web_settings" sequence="510"/>
+                <menuitem id="menu_fsonline_web_meinedaten" name="Meine-Daten Formular" action="auth_partner_form.apf_partner_fields_action" parent="fso_base.menu_fsonline_web_settings" sequence="520"/>
+                <menuitem id="menu_fsonline_web_domain_templates" action="website_domain_manager.domain_templates_action"  parent="fso_base.menu_fsonline_web_settings" sequence="10100"/>
+                <menuitem id="menu_fsonline_web_website_domains" action="website_domain_manager.website_domains_action"  parent="fso_base.menu_fsonline_web_settings" sequence="10200"/>
         
         
         <!-- ============ -->
         <!-- FSO CHANNELS -->
         <!-- ============ -->
-        <menuitem id="menu_channels" name="Channels" sequence="3" groups="base.group_user"/>
+        <!-- CHANNELS: fso_base.menu_channels -->
 
             <!-- MASS MAILING -->
-            <menuitem id="menu_channels_mm" parent="menu_channels" name="E-Mail" sequence="1000" groups="base.group_user"/>
+            <menuitem id="menu_channels_mm" parent="fso_base.menu_channels" name="E-Mail" sequence="1000" groups="base.group_user"/>
                 <menuitem id="menu_channels_mm_templates" parent="menu_channels_mm"  name="E-Mail Templates" sequence="900" groups="base.group_user" action="fso_mass_mail.action_fso_email_select_iframe"/>
                 <menuitem id="menu_channels_mm_lists" parent="menu_channels_mm" name="Mailing Lists" sequence="1010" groups="base.group_user" action="mass_mailing.action_view_mass_mailing_lists"/>
                 <menuitem id="menu_channels_mm_contacts" parent="menu_channels_mm" name="List Contacts" sequence="1020" groups="base.group_user" action="mass_mailing.action_view_mass_mailing_contacts"/>
@@ -103,7 +61,7 @@
                 <menuitem id="menu_channels_mm_statistics" parent="menu_channels_mm"  name="E-Mail Statistic" sequence="1070" groups="base.group_user" action="mass_mailing.action_view_mail_mail_statistics"/>
                 
             <!-- TRACKING -->
-            <menuitem id="menu_channels_track" parent="menu_channels" name="Tracking" sequence="9000" groups="base.group_user"/>
+            <menuitem id="menu_channels_track" parent="fso_base.menu_channels" name="Tracking" sequence="9000" groups="base.group_user"/>
                 <menuitem id="menu_channels_track_mm_campaigns" parent="menu_channels_track" name="Mailing Campaigns" sequence="9100" groups="mass_mailing.group_mass_mailing_campaign" action="mass_mailing.action_view_mass_mailing_campaigns"/>
                 <menuitem id="menu_channels_track_utm_campaign" parent="menu_channels_track" sequence="9110" groups="base.group_user" action="utm.utm_campaign_act"/>
                 <menuitem id="menu_channels_track_utm_action" parent="menu_channels_track" sequence="9120" groups="base.group_user" action="utm.utm_medium_action"/>
@@ -113,75 +71,36 @@
         <!-- =========== -->
         <!-- FSO PROJECT -->
         <!-- =========== -->
-        <menuitem id="menu_fso_organizer" name="Project" sequence="4" groups="base.group_user"/>
-
-            <!-- ORGANIZER -->
-            <menuitem id="menu_fso_organizer_organizer" parent="menu_fso_organizer" name="Organizer" sequence="1000" groups="base.group_user"/>
-                <menuitem id="menu_fso_organizer_organizer_calender" action="calendar.action_calendar_event" parent="menu_fso_organizer_organizer" name="Kalender" sequence="1010"/>
-                <menuitem id="menu_fso_organizer_organizer_notes" action="note.action_note_note" parent="menu_fso_organizer_organizer" name="Notizen" sequence="1020"/>
-                <menuitem id="menu_fso_organizer_organizer_partner" action="base.action_partner_form" parent="menu_fso_organizer_organizer" name="Kontakte" sequence="1030"/>
-    
-            <!-- PROJEKTE -->
-            <menuitem id="menu_fso_organizer_project" parent="menu_fso_organizer" name="Projekte" sequence="2000" groups="base.group_user"/>
-                <menuitem id="menu_fso_organizer_project_task" action="project.action_view_task" parent="menu_fso_organizer_project" name="Aufgaben" sequence="2010"/>
-                <menuitem id="menu_fso_organizer_project_project" action="project.open_view_project_all" parent="menu_fso_organizer_project" name="Projekte" sequence="2020"/>
-                <menuitem id="menu_fso_organizer_project_analytic" action="account.action_account_analytic_account_form" parent="menu_fso_organizer_project" name="Kostenstellen" sequence="2030"/>
-    
-            <!-- ZEITERFASSUNG -->
-            <menuitem id="menu_fso_organizer_hrtime" parent="menu_fso_organizer" name="Zeiterfassung" sequence="3000" groups="base.group_user"/>
-                <menuitem id="menu_fso_organizer_hrtime_mytimesheet" action="hr_timesheet_sheet.ir_actions_server_timsheet_sheet" name="Mein Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3010"/>
-                <menuitem id="menu_fso_organizer_hrtime_timesheet" action="hr_timesheet_sheet.act_hr_timesheet_sheet_form" name="Alle Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3015"/>
-                <menuitem id="menu_fso_organizer_hrtime_leave" action="cam_hr.hr_alle_urlaubsantraege_action" name="Urlaubseinträge" parent="menu_fso_organizer_hrtime" sequence="3020"/>
-                <menuitem id="menu_fso_organizer_hrtime_sick" action="cam_hr.hr_krankenstaende_action" name="Krankenstände" parent="menu_fso_organizer_hrtime" sequence="3025"/>
-                <menuitem id="menu_fso_organizer_hrtime_leavereq" action="cam_hr.hr_urlaubsanspruch_action" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3030"/>
-    
-            <!-- NACHRICHTEN -->
-            <menuitem id="menu_fso_organizer_msg" parent="menu_fso_organizer" name="Nachrichten" sequence="4100" groups="base.group_user"/>
-                <menuitem id="menu_fso_organizer_msg_inbox" action="portal.action_mail_inbox_feeds_portal" parent="menu_fso_organizer_msg" name="Inbox" sequence="4140"/>
-                <menuitem id="menu_fso_organizer_msg_todo" action="portal.action_mail_star_feeds_portal" parent="menu_fso_organizer_msg" name="ToDo" sequence="4150"/>
-                <menuitem id="menu_fso_organizer_msg_archive" action="portal.action_mail_archives_feeds_portal" parent="menu_fso_organizer_msg" name="Archiv" sequence="4160"/>
+        <!-- PROJECT: fso_base.menu_fso_organizer -->
+        
         
         <!-- ========== -->
         <!-- FSO SYSTEM -->
         <!-- ========== -->
-        <menuitem id="menu_fsonline_system" name="System" sequence="5" groups="base.group_user"/>
-
-            <!-- ACCESS -->
-            <menuitem id="menu_fsonline_access" parent="menu_fsonline_system" name="Access" sequence="1000"/>
-                <menuitem id="menu_fsonline_users_menu" action="base.action_res_users" parent="menu_fsonline_access" sequence="1200"/>
-                <menuitem id="menu_fsonline_groups_menu" action="base.action_res_groups" parent="menu_fsonline_access" sequence="1210"/>
-                <menuitem id="menu_fsonline_fstoken_menu" action="auth_partner.fstoken_action" parent="menu_fsonline_access" sequence="1300"/>
+        <!-- SYSTEM: fso_base.menu_fsonline_system -->
         
-            <!-- FUNDRASING STUDIO -->
-            <menuitem id="menu_frst_settings" parent="menu_fsonline_system" name="Fundrasing Studio" sequence="2000"/>
+            <!-- FUNDRASING STUDIO: fso_base.menu_fsonline_system -->
                 <!-- Seriendruckfelder -->
-                <menuitem id="menu_frst_settings_print_fields" action="fso_print_fields.fso_print_field_action" parent="menu_frst_settings" sequence="2100"/>
-                <menuitem id="menu_frst_settings_print_field_groups" action="fso_print_fields.fso_print_field_group_action" parent="menu_frst_settings" sequence="2110"/>
+                <menuitem id="menu_frst_settings_print_fields" action="fso_print_fields.fso_print_field_action" parent="fso_base.menu_frst_settings" sequence="2100"/>
+                <menuitem id="menu_frst_settings_print_field_groups" action="fso_print_fields.fso_print_field_group_action" parent="fso_base.menu_frst_settings" sequence="2110"/>
                 <!-- e-mail -->
-                <menuitem id="menu_frst_setting_personemail" action="fso_frst_personemail.frst_personemail_action" parent="menu_frst_settings" sequence="2200"/>
+                <menuitem id="menu_frst_setting_personemail" action="fso_frst_personemail.frst_personemail_action" parent="fso_base.menu_frst_settings" sequence="2200"/>
                 <!-- Gruppen -->
-                <menuitem id="menu_frst_setting_zgruppe" action="fso_frst_groups.frst_zgruppe_action" parent="menu_frst_settings" sequence="2300"/>
-                <menuitem id="menu_frst_setting_zgruppedetail" action="fso_frst_groups.frst_zgruppedetail_action" parent="menu_frst_settings" sequence="2310"/>
-                <menuitem id="menu_frst_setting_persongruppe" action="fso_frst_groups.frst_persongruppe_action" parent="menu_frst_settings" sequence="2320"/>
-                <menuitem id="menu_frst_setting_personemailgruppe" action="fso_frst_groups.frst_personemailgruppe_action" parent="menu_frst_settings" sequence="2330"/>
+                <menuitem id="menu_frst_setting_zgruppe" action="fso_frst_groups.frst_zgruppe_action" parent="fso_base.menu_frst_settings" sequence="2300"/>
+                <menuitem id="menu_frst_setting_zgruppedetail" action="fso_frst_groups.frst_zgruppedetail_action" parent="fso_base.menu_frst_settings" sequence="2310"/>
+                <menuitem id="menu_frst_setting_persongruppe" action="fso_frst_groups.frst_persongruppe_action" parent="fso_base.menu_frst_settings" sequence="2320"/>
+                <menuitem id="menu_frst_setting_personemailgruppe" action="fso_frst_groups.frst_personemailgruppe_action" parent="fso_base.menu_frst_settings" sequence="2330"/>
                 <!-- DEPRICATED: -->
-                <!--<menuitem id="menu_frst_fs_group_depricated" name="DEPRICATED FSGroups" action="fso_base.fs_group_action" parent="menu_frst_settings" sequence="2340"/>-->
+                <!--<menuitem id="menu_frst_fs_group_depricated" name="DEPRICATED FSGroups" action="fso_base.fs_group_action" parent="fso_base.menu_frst_settings" sequence="2340"/>-->
             
-            <!-- SETTINGS -->
-            <menuitem id="menu_fsonline_settings" parent="menu_fsonline_system" name="Settings" sequence="10000"/>
-                <!-- Company -->
-                <menuitem id="menu_fsonline_settings_companies" action="base.action_res_company_form" parent="menu_fsonline_settings" sequence="1000"/>
-                <menuitem id="menu_fsonline_settings_fiscalyear" name="Wirtschaftsjahre"  action="account.action_account_fiscalyear" parent="menu_fsonline_settings" sequence="1100"/>
+            <!-- SETTINGS: fso_base.menu_fsonline_settings -->
                 <!-- Website -->
-                <menuitem id="menu_fsonline_settings_website_settings" action="fso_base_website.website_action" parent="menu_fsonline_settings" sequence="2000"/>
-                <menuitem id="menu_fsonline_settings_domain_templates" action="website_domain_manager.domain_templates_action"  parent="menu_fsonline_settings" sequence="2100"/>
-                <menuitem id="menu_fsonline_settings_website_domains" action="website_domain_manager.website_domains_action"  parent="menu_fsonline_settings" sequence="2200"/>
-                <menuitem id="menu_fsonline_settings_widget_manager"  action="website_widget_manager.widget_manager_action" parent="menu_fsonline_settings" sequence="2300"/>
-                <menuitem id="menu_fsonline_settings_landing_pages" action="website_widget_manager.widget_manager_lp_action" parent="menu_fsonline_settings" sequence="2400"/>
-                <menuitem id="menu_fsonline_settings_meinedaten" name="Meine-Daten Formular" action="auth_partner_form.apf_partner_fields_action" parent="menu_fsonline_settings" sequence="2500"/>
-                <!-- odoo system -->
-                <menuitem id="menu_fsonline_settings_scheduledactions" action="base.ir_cron_act" parent="menu_fsonline_settings" sequence="6000"/>
-                <menuitem id="menu_fsonline_settings_ir_config_menu" action="base.ir_config_list_action" parent="menu_fsonline_settings" sequence="6100"/>
+                <menuitem id="menu_fsonline_settings_website_settings" action="fso_base_website.website_action" parent="fso_base.menu_fsonline_settings" sequence="2000"/>
+                <menuitem id="menu_fsonline_settings_domain_templates" action="website_domain_manager.domain_templates_action"  parent="fso_base.menu_fsonline_settings" sequence="2100"/>
+                <menuitem id="menu_fsonline_settings_website_domains" action="website_domain_manager.website_domains_action"  parent="fso_base.menu_fsonline_settings" sequence="2200"/>
+                <menuitem id="menu_fsonline_settings_widget_manager"  action="website_widget_manager.widget_manager_action" parent="fso_base.menu_fsonline_settings" sequence="2300"/>
+                <menuitem id="menu_fsonline_settings_landing_pages" action="website_widget_manager.widget_manager_lp_action" parent="fso_base.menu_fsonline_settings" sequence="2400"/>
+                <menuitem id="menu_fsonline_settings_meinedaten" name="Meine-Daten Formular" action="auth_partner_form.apf_partner_fields_action" parent="fso_base.menu_fsonline_settings" sequence="2500"/>
         
     </data>
 </openerp>

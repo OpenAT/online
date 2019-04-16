@@ -52,5 +52,6 @@ New Controller:
         'views/fson_form.xml',
         'views/fson_form_field.xml',
         'views/templates.xml',
+        'views/fsonline_menu.xml',
     ],
 }

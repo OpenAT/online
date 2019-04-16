@@ -1,0 +1,402 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_forms
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-16 14:17+0000\n"
+"PO-Revision-Date: 2019-04-16 14:17+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_forms
+#: view:website:fso_forms.form
+msgid "&times;"
+msgstr "&times;"
+
+#. module: fso_forms
+#: field:fson.form,snippet_area_bottom:0
+msgid "Bottom Snippet Area"
+msgstr "Unterer Snippet-Bereich"
+
+#. module: fso_forms
+#: field:fson.form_field,css_classes:0
+msgid "CSS classes"
+msgstr "CSS Klassen"
+
+#. module: fso_forms
+#: field:fson.form,clear_session_data_after_submit:0
+msgid "Clear Session Data after Submit"
+msgstr "Session nach Form-Submit leeren"
+
+#. module: fso_forms
+#: field:fson.form_field,clearfix:0
+msgid "Clearfix"
+msgstr "Clearfix"
+
+#. module: fso_forms
+#: view:website:fso_forms.form
+msgid "Close"
+msgstr "Beenden"
+
+#. module: fso_forms
+#: field:fson.form,create_uid:0
+#: field:fson.form_field,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: fso_forms
+#: field:fson.form,create_date:0
+#: field:fson.form_field,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: fso_forms
+#: field:fson.form,custom_css:0
+msgid "Custom CSS"
+msgstr "Custom CSS"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Danger Zone"
+msgstr "Danger Zone"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:282
+#, python-format
+msgid "Data was successfully submitted!"
+msgstr "Daten wurden erfolgreich übermittelt!"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:280
+#, python-format
+msgid "Data was successfully updated!"
+msgstr "Daten wurden erfolgreich aktualisiert!"
+
+#. module: fso_forms
+#: field:fson.form,display_name:0
+#: field:fson.form_field,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: fso_forms
+#: help:fson.form_field,nodata:0
+msgid "Do not show record data in the website form if logged in."
+msgstr "Do not show record data in the website form if logged in."
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fso_forms.py:55
+#, python-format
+msgid "Edit"
+msgstr "Editieren"
+
+#. module: fso_forms
+#: field:fson.form,thank_you_page_edit_data_button:0
+msgid "Edit Data Button"
+msgstr "Editieren Button"
+
+#. module: fso_forms
+#: help:fson.form,frontend_validation:0
+msgid "Enable JavaScript-Frontend-Form-Validation by jquery-validate!"
+msgstr "Aktiviere JavaScript-Frontend-Form-Validierung mittels jquery-validate!"
+
+#. module: fso_forms
+#: model:res.groups,name:fso_forms.group_fso_forms_manager
+msgid "FSO Forms Manager Group"
+msgstr "FSO Forms Manager Group"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "FSON Form"
+msgstr "FSON Form"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_tree
+#: model:ir.actions.act_window,name:fso_forms.fson_form_action
+#: model:ir.ui.menu,name:fso_forms.fso_forms_menu
+#: model:ir.ui.menu,name:fso_forms.fson_form_menu
+msgid "FSON Forms"
+msgstr "Web-Formulare"
+
+#. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+#: view:fson.form_field:fso_forms.fson_form_field_search
+#: view:fson.form_field:fso_forms.fson_form_field_tree
+#: model:ir.actions.act_window,name:fso_forms.fson_form_field_action
+#: model:ir.ui.menu,name:fso_forms.fson_form_field_menu
+msgid "FSON Forms Fields"
+msgstr "FSON Forms Fields"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_search
+msgid "FSON Forms Search"
+msgstr "FSON Forms Search"
+
+#. module: fso_forms
+#: field:fson.form_field,field_id:0
+msgid "Field"
+msgstr "Feld"
+
+#. module: fso_forms
+#: field:fson.form_field,style:0
+msgid "Field Style"
+msgstr "Feld Stil"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+#: field:fson.form,field_ids:0
+msgid "Fields"
+msgstr "Felder"
+
+#. module: fso_forms
+#: field:fson.form_field,binary_name_field_id:0
+msgid "File Name Field"
+msgstr "Feld für Dateinamen"
+
+#. module: fso_forms
+#: field:fson.form_field,form_id:0
+msgid "Form"
+msgstr "Formular"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Form Fields"
+msgstr "Formularfelder"
+
+#. module: fso_forms
+#: field:fson.form,name:0
+msgid "Form Name"
+msgstr "Formularname"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Form-Snippet-Areas"
+msgstr "Formular-Snippet-Bereiche"
+
+#. module: fso_forms
+#: model:ir.ui.menu,name:fso_forms.fso_forms_mainmenu
+msgid "Forms"
+msgstr "Formulare"
+
+#. module: fso_forms
+#: field:fson.form,frontend_validation:0
+msgid "Frontend Validation"
+msgstr "Frontend Validierung"
+
+#. module: fso_forms
+#: field:fson.form,id:0
+#: field:fson.form_field,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: fso_forms
+#: help:fson.form,thank_you_page_edit_data_button:0
+msgid "If set a button will appear on the Thank You page to go back to form to edit the data again!"
+msgstr "Aktiviert einen Button auf der Dankesseite der es ermöglicht zum Formular zurückzukehren und die Daten zu verändern.!"
+
+#. module: fso_forms
+#: help:fson.form,clear_session_data_after_submit:0
+msgid "If set the form will be empty after a successful submit!"
+msgstr "If set the form will be empty after a successful submit!"
+
+#. module: fso_forms
+#: help:fson.form,thank_you_page_after_submit:0
+msgid "If set the form will be empty if called after a successful submit without pressing the edit button on the thank you page!Clear Session Data after submitt has no effect then"
+msgstr "Aktiviert das ändern der Daten ausschließlich über den Button. Geht man über den Browser zurück oder öffent die Form erneut ist diese leer. Lösche Session Daten is ohne Effekt wenn dies gesetzt ist!"
+
+#. module: fso_forms
+#: field:fson.form_field,information:0
+msgid "Information"
+msgstr "Information"
+
+#. module: fso_forms
+#: help:fson.form_field,information:0
+msgid "Information Text. Snippet Area if no Field is not set!"
+msgstr "Informations Text oder Snippet Bereich wenn kein Feld gewählt wird!"
+
+#. module: fso_forms
+#: field:fson.form_field,label:0
+msgid "Label"
+msgstr "Label"
+
+#. module: fso_forms
+#: field:fson.form,__last_update:0
+#: field:fson.form_field,__last_update:0
+msgid "Last Modified on"
+msgstr "Geändert am"
+
+#. module: fso_forms
+#: field:fson.form,write_uid:0
+#: field:fson.form_field,write_uid:0
+msgid "Last Updated by"
+msgstr "Aktualisiert von"
+
+#. module: fso_forms
+#: field:fson.form,write_date:0
+#: field:fson.form_field,write_date:0
+msgid "Last Updated on"
+msgstr "Aktualisiert am"
+
+#. module: fso_forms
+#: field:fson.form_field,mandatory:0
+msgid "Mandatory"
+msgstr "Pflichtfeld"
+
+#. module: fso_forms
+#: field:fson.form,model_id:0
+msgid "Model"
+msgstr "Modell"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:201
+#, python-format
+msgid "No value for mandatory field %s"
+msgstr "Pflichtfeld %s wurde nicht ausgefüllt!"
+
+#. module: fso_forms
+#: field:fson.form_field,nodata:0
+msgid "NoData"
+msgstr "Nicht Vorausfüllen"
+
+#. module: fso_forms
+#: field:fson.form_field,placeholder:0
+msgid "Placeholder Text"
+msgstr "Platzhalter Text"
+
+#. module: fso_forms
+#: help:fson.form_field,clearfix:0
+msgid "Places a DIV box with .clearfix after this field"
+msgstr "Platziert eine DIV Box mit .clearfix nach diesem Feld. Dies ist wie ein erzwungener Umbruch!"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:211
+#, python-format
+msgid "Please enter a valid date for field %s"
+msgstr "Bitte geben sie ein gültiges Datum für das Feld %s ein."
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:231
+#, python-format
+msgid "Please enter a valid float for field %s"
+msgstr "Bitte geben Sie eine Gleitkommazahl für das Feld %s ein."
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:220
+#, python-format
+msgid "Please enter a valid number for field %s"
+msgstr "Bitte geben Sie eine Nummer für das Feld %s ein."
+
+#. module: fso_forms
+#: selection:fson.form_field,style:0
+msgid "Radio"
+msgstr "Radio"
+
+#. module: fso_forms
+#: selection:fson.form_field,style:0
+msgid "Radio + SelectNone"
+msgstr "Radio + KeineAuswahl"
+
+#. module: fso_forms
+#: field:fson.form,redirect_url:0
+msgid "Redirect URL"
+msgstr "Redirect URL"
+
+#. module: fso_forms
+#: help:fson.form,redirect_url:0
+msgid "Redirect URL after form feedback! Do not set unless you really need to!If set the Thank You Page will not be called!"
+msgstr "Redirect URL after form feedback! Do not set unless you really need to!If set the Thank You Page will not be called!"
+
+#. module: fso_forms
+#: selection:fson.form_field,style:0
+msgid "Selection"
+msgstr "Auswahl"
+
+#. module: fso_forms
+#: field:fson.form,sequence:0
+#: field:fson.form_field,sequence:0
+msgid "Sequence"
+msgstr "Sequenz"
+
+#. module: fso_forms
+#: help:fson.form,sequence:0
+#: help:fson.form_field,sequence:0
+msgid "Sequence number for ordering"
+msgstr "Sequenznummer für die Sortierung"
+
+#. module: fso_forms
+#: field:fson.form_field,show:0
+msgid "Show"
+msgstr "Anzeigen"
+
+#. module: fso_forms
+#: help:fson.form_field,show:0
+msgid "Show field in webpage"
+msgstr "Zeige Feld in der Webseite"
+
+#. module: fso_forms
+#: help:fson.form,submission_url:0
+msgid "Subission URL for form data! Do not set unless you really need to!If set no record will be"
+msgstr "Subission URL for form data! Do not set unless you really need to!If set no record will be"
+
+#. module: fso_forms
+#: field:fson.form,submission_url:0
+msgid "Submission URL"
+msgstr "Submission URL"
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fso_forms.py:30
+#, python-format
+msgid "Submit"
+msgstr "Senden"
+
+#. module: fso_forms
+#: field:fson.form,submit_button_text:0
+msgid "Submit Button Text"
+msgstr "Sende-Button Text"
+
+#. module: fso_forms
+#: help:fson.form,custom_css:0
+msgid "TODO! This is not working yet!!!"
+msgstr "TODO! This is not working yet!!!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Thank You Page"
+msgstr "Dankesseite"
+
+#. module: fso_forms
+#: field:fson.form,thank_you_page_snippets:0
+msgid "Thank you page"
+msgstr "Dankesseite"
+
+#. module: fso_forms
+#: field:fson.form,thank_you_page_after_submit:0
+msgid "Thank you page after submit!"
+msgstr "Dankesseite nach erfolgreicher Übertragung!"
+
+#. module: fso_forms
+#: field:fson.form,snippet_area_top:0
+msgid "Top Snippet Area"
+msgstr "Oberer Snippet-Bereich"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:285
+#, python-format
+msgid "Update of Record failed!\n"
+"\n"
+"%s"
+msgstr "Aktualisierung des Datensatzes fehlgeschlagen!\n"
+"\n"
+"%s"
+
+#. module: fso_forms
+#: field:fson.form_field,validation_rule:0
+msgid "Validation Rule"
+msgstr "Validierungsregeln"
+

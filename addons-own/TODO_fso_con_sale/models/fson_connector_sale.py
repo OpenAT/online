@@ -13,15 +13,56 @@ class FSOConnectorSale(models.Model):
     state = fields.Selection(selection=[('new', 'New'),
                                         ('done', 'Done'),
                                         ('error', 'Error')],
-                             string="State", readonly=True)
-
-    received_at = fields.Datetime(string="Received At")
-    updated_at = fields.Datetime(string="Updated")
-    data_log = fields.Text(string="Received Data Log")
+                             string="State",
+                             readonly=True)
+    data_log = fields.Text(string="Data Log",
+                           readonly=True)
     error_details = fields.Text(string='Error Details',
                                 readonly=True)
 
+    # Person and Address (res.partner)
+    firstname = fields.Char(sosync="True")                  # Vorname
+    lastname = fields.Char(sosync="True")                   # Name
+    name_zwei = fields.Char(sosync="True")                  # Name2
+    phone = fields.Char(sosync="True")                      # Festnetznummer
+    mobile = fields.Char(sosync="True")                     # Mobilnummer
+    fax = fields.Char(sosync="True")                        # Fax
+    email = fields.Char(sosync="True")                      # E-Mail
+    street = fields.Char(sosync="True")                     # Strasse
+    street_number_web = fields.Char(sosync="True")          # Hausnummer
+    city = fields.Char(sosync="True")                       # Ort
+    zip = fields.Char(sosync="True")                        # Postleitzahl
+    country_code = fields.Char(sosync="True")               # Laendercode (z.B.: AT)
 
+    # Company and Address (res.partner) OPTIONAL
+    c_lastname = fields.Char(sosync="True")                 # Name
+    c_phone = fields.Char(sosync="True")                    # Festnetznummer
+    c_mobile = fields.Char(sosync="True")                   # Mobilnummer
+    c_fax = fields.Char(sosync="True")                      # Fax
+    c_email = fields.Char(sosync="True")                    # E-Mail
+    c_street = fields.Char(sosync="True")                   # Strasse
+    c_street_number_web = fields.Char(sosync="True")        # Hausnummer
+    c_city = fields.Char(sosync="True")                     # Ort
+    c_zip = fields.Char(sosync="True")                      # Postleitzahl
+    c_country_code = fields.Char(sosync="True")             # Laendercode (z.B.: AT)
+
+    # Sale Order Line
+    product = fields.Char(sosync="True")                    # Produkt (by id or xml_ref?)
+
+    price_donate = fields.Float(sosync="True")              # Spende pro Stueck
+    price_unit = fields.Float(sosync="True")                # Stueckzahl
+    payment_interval_id = fields.Many2one(sosync="True")    # Zahlungsintervall
+
+    fs_ptoken = fields.Char(sosync="True")                  # Token used
+    fs_origin = fields.Char(sosync="True")                  # FRST Herkunft
+    zgruppedetail_ids = fields.Many2many(sosync="True")     # ZGruppeDetail
+
+    # Payment Acquirer and Transaction
+    # TODO: Create a new Payment provider 'fso_payment_con_sale' for fso_con_sale
+    payment_acquirer = fields.Char()                        # Payment Provider (by id or xml_ref?)
+    provider = fields.Char()                                # Zahlungsart (z.b.: VISA)
+
+    # Additional information
 
 
 

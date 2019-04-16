@@ -124,5 +124,6 @@ TODO (must be done manually right now):
         'views/res_company.xml',
         'views/res_partner.xml',
         'views/fs_groups.xml',          # Deprecated replaced by addon fso_frst_groups, should be removed soon
+        'views/fsonline_menu_base.xml',
     ],
 }
