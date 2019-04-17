@@ -30,25 +30,15 @@ class EmailTemplate(models.Model):
         for r in self:
             if r.fso_email_html:
                 content = r.fso_email_html
-
-                # TEST:
-                #content = r.body_html
-
-                #assert content is not r.fso_email_html, "Use copy() instead of ="
-
                 # Convert all Fundraising Studio print fields to mako expressions or ''
                 fso_print_fields = self.env['fso.print_field'].sudo().search([('fs_email_placeholder', '!=', False)])
                 for pf in fso_print_fields:
                     content = content.replace(pf.fs_email_placeholder, pf.mako_expression or '')
 
                 # Set 'fso_email_html_odoo'
-                logger.info('Update email.template field fso_email_html_odoo!')
-                logger.info('content: %s' % content)
                 r.write({'fso_email_html_odoo': content})
             else:
                 r.write({'fso_email_html_odoo': False})
-
-        return True
 
     # ----
     # CRUD
@@ -80,6 +70,7 @@ class EmailTemplate(models.Model):
         if res and 'fso_email_html' in values:
             self._update_fso_email_html_odoo()
 
+        # Replace 'body_html' used by the send mail with content of 'fso_email_html_odoo' for mass mailing e-mails
         if res:
             for r in self:
                 if r and r.mass_mailing_ids:

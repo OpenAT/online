@@ -8,6 +8,9 @@ from openerp.http import request, controllers_per_module
 from openerp.addons.fso_base.tools.validate import is_valid_email
 from openerp.addons.fso_base.tools.image import screenshot
 
+import re
+import cssutils
+
 import datetime
 import tempfile
 import os
@@ -203,12 +206,12 @@ class EmailTemplate(models.Model):
                                                                      base_url=self.get_base_url(),
                                                                      preserve_internal_links=True,
                                                                      keep_style_tags=False,
-                                                                     strip_important=False,
+                                                                     strip_important=True,
                                                                      align_floating_images=False,
                                                                      remove_unset_properties=True,
                                                                      include_star_selectors=False,
                                                                      cssutils_logging_handler=premailer_log_handler,
-                                                                     cssutils_logging_level=logging.FATAL)
+                                                                     cssutils_logging_level=logging.FATAL,)
                 fso_email_html = email_body_prepared_premailer.transform(pretty_print=True)
 
                 # Convert html content to a beautiful soup object again
@@ -230,7 +233,23 @@ class EmailTemplate(models.Model):
                         protocol, address = href.split('://', 1)
                         a['href'] = '%redirector%/' + protocol + '//' + address
 
-                # Convert beautiful soup object to regular html
+                def cycle_rules(rules):
+                    for r in rules:
+                        if r.type == r.STYLE_RULE:
+                            for p in r.style:
+                                p.priority = 'IMPORTANT'
+                        elif hasattr(r, 'cssRules'):
+                            cycle_rules(r)
+
+                # Add important to all CSS tags
+                # HINT: Only the media queries will be left over in the style tags
+                for styletag in email_body_css_inline_soup.find_all('style'):
+                    css = styletag.string
+                    css_parsed = cssutils.parseString(css, validate=True)
+                    cycle_rules(css_parsed)
+                    styletag.string = css_parsed.cssText
+
+                # Convert beautiful soup object back to regular html
                 fso_email_html_parsed = email_body_css_inline_soup.prettify(formatter="minimal")
 
                 # Update the email.template fields
