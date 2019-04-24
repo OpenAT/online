@@ -6,8 +6,8 @@
             <xpath expr='//script[@src="/website_forum/static/src/js/website_forum.editor.js"]' position="after">
 
                 <link id="wfi_css" rel='stylesheet' href='/website_forum_imagedialog/static/src/css/website_forum_imagedialog.css' t-ignore="true"/>
-                <script id="wfi_load_templates" type="text/javascript" src="/website_forum_imagedialog/static/src/js/load_templates.js"/>
-                <script id="cke_jquery_adapter" type="text/javascript" src="/website_forum_imagedialog/static/src/js/adapters/jquery.js"/>
+                <!--<script id="wfi_load_templates" type="text/javascript" src="/website_forum_imagedialog/static/src/js/load_templates.js"/>-->
+                <!--<script id="cke_jquery_adapter" type="text/javascript" src="/website_forum_imagedialog/static/src/js/adapters/jquery.js"/>-->
                 <script id="wfi_script" type="text/javascript" src="/website_forum_imagedialog/static/src/js/website_forum_imagedialog.js"/>
             </xpath>
         </template>
