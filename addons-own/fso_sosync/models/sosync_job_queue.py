@@ -372,9 +372,11 @@ class SosyncJobQueue(models.Model):
     def cleanup_sosync_job_model_and_table(self):
         logger.info("START cleanup_sosync_job_model_and_table()")
 
-        sosync_job_model = False
-        if hasattr(self, 'pool') and 'sosync.job' in self.pool.models:
-            sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
+        # sosync_job_model = False
+        # if hasattr(self, 'pool') and 'sosync.job' in self.pool.models:
+        #     sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
+
+        sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
 
         if sosync_job_model:
             logger.info("sosync.job model (ID %s) found" % sosync_job_model.id)
