@@ -92,6 +92,15 @@ class SosyncJobQueue(models.Model):
             logger.info("Unlink fso_sosync.ir_cron_scheduled_job_queue_cleanup_1 on install/update for recreation!")
             rec.unlink()
 
+        # TODO: reove this after sosync.job model was removed on all instances
+        # Remove scheduled cron job to make sure it will be recreated with values from xml file
+        model_data_obj = self.pool.get('ir.model.data')
+        rec2 = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID,
+                                             'fso_sosync.ir_cron_scheduled_cleanup_sosync_job_model_and_table')
+        if rec2:
+            logger.info("Unlink ir_cron_scheduled_cleanup_sosync_job_model_and_table on install/update for recreation!")
+            rec.unlink()
+
     # METHODS
     @api.multi
     def submit_sync_job(self, instance="", url="", http_header={},
@@ -349,12 +358,6 @@ class SosyncJobQueue(models.Model):
     # -------------------
     @api.model
     def delete_old_jobs(self, limit=100000):
-        # TODO: remove this ugly hack here after all instances are cleared from sosync.job
-        #       check cleanup_sosync_job_model_and_table() for more info
-        # HINT: This does not really belong here but since it can not be done on init or update of fso_sosync we need
-        #       to retry it multiple times ... therefore this is a 'quick' fix for now
-        self.cleanup_sosync_job_model_and_table()
-
         delete_before = datetime.datetime.now() - datetime.timedelta(days=30)
         delete_before = delete_before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         domain = [('job_date', '<=', delete_before),
@@ -364,10 +367,15 @@ class SosyncJobQueue(models.Model):
             logger.warning("Found %s jobs in job queue for cleanup." % len(jobs_to_delete))
             jobs_to_delete.unlink()
 
-    # TODO: Remove this method and the call in delete_old_jobs after all instances are cleared from sosync.job
+    # TODO: Remove this method and related cron job after all instances are cleared from sosync.job
     @api.model
     def cleanup_sosync_job_model_and_table(self):
-        sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
+        logger.info("START cleanup_sosync_job_model_and_table()")
+
+        sosync_job_model = False
+        if hasattr(self, 'pool') and 'sosync.job' in self.pool.models:
+            sosync_job_model = self.env['ir.model'].search([('model', '=', 'sosync.job')])
+
         if sosync_job_model:
             logger.info("sosync.job model (ID %s) found" % sosync_job_model.id)
 
@@ -391,11 +399,11 @@ class SosyncJobQueue(models.Model):
 
             # ATTENTION: Because the model was already removed it will not be in self.pool.models on init or update of
             #            the fso_sosync addon. Without -u or -i of fso_sosync it will be there because it still exits
-            #            in the database in ir.model. A bit like a chicken and egg problem ... Therfore it can not be
+            #            in the database in ir.model. A bit like a chicken and egg problem ... Therefore it can not be
             #            unlinked on init or update of fso_sosync or any addon that depends on it. Because of this
             #            i added it to delete_old_jobs() as an UGLY workaround.
             # ATTENTION: It needs a restart after cleanup_sosync_job_model_and_table did run the first time
-            #            The reason is unknown to me. But therfore i added it to actions_on_update_install.xml
+            #            The reason is unknown to me. But therefore i added it to actions_on_update_install.xml
             if hasattr(self, 'pool'):
                 logger.info('Check if sosync.job is in self.pool.models')
                 if 'sosync.job' in self.pool.models:

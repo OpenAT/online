@@ -94,7 +94,7 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
         'views/fsonline_menu.xml',
         #
         # RUN ACTIONS ON INIT OR UPDATE AFTER INITIALIZATION
-        'data/actions_on_update_install.xml',
+        #'data/actions_on_update_install.xml',
     ],
     'qweb': [
         "static/src/xml/base.xml",
