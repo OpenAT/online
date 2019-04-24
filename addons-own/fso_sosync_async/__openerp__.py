@@ -31,6 +31,7 @@ Submits VERY high priority (>= 1.000.000) sync jobs by connector async queue ins
 
 The cron job is still there and activated for normal priority jobs and as a fallback! 
 
+
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",

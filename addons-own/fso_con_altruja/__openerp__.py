@@ -29,6 +29,7 @@ FS-Online fso_con_altruja
 
 Controller to allow alruja to push data to FS-Online and get status afterwards.
 
+ 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",

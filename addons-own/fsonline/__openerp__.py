@@ -53,6 +53,7 @@ Module tasks:
     1. Root-Category (new/existing) and Settings
     2. Select Products
 
+
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
