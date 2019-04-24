@@ -75,11 +75,10 @@ editor and it's tools like the href edit pop-up window.
         'views/email_editor.xml',
         'views/email_selection.xml',
         #
-        'views/theme.xml',
-        'views/snippets.xml',
+        'views/theme_framework_snippets.xml',
+        'views/theme_framework.xml',
         #
-        'views/theme_default_snippets.xml',
-        #
+        'views/theme_dadi_snippets.xml',
         'views/theme_dadi.xml',
         #
         'data/scheduled_actions.xml',

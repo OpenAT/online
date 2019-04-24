@@ -8,6 +8,17 @@
     </template>
     
     
+    
+    
+    <!-- COMMON ASSETS (JS AND CSS) -->
+    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
+    <template id="common_assets">
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/common.css' t-ignore="true"/>
+        
+        <!-- Mobile Modal Box Preview Fix -->
+        <script type="text/javascript" src="/fso_website_email/static/src/js/website.mobile.js"/>
+    </template>
+    
     <!-- COMMON ASSETS EDIT MODE (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="common_assets_editmode">
@@ -23,19 +34,26 @@
         
     </template>
     
-    <!-- COMMON ASSETS (JS AND CSS) -->
+    
+    
+    <!-- FRAMEWORK ASSETS (Mailchimp) (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
-    <template id="common_assets">
-        <link rel='stylesheet' href='/fso_website_email/static/src/css/common.css' t-ignore="true"/>
-        
-        <!-- Mobile Modal Box Preview Fix -->
-        <script type="text/javascript" src="/fso_website_email/static/src/js/website.mobile.js"/>
+    <template id="theme_framework_assets">
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework.css' t-ignore="true"/>
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets.css' t-ignore="true"/>
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets_buttons.css' t-ignore="true"/>
     </template>
     
-    
-    <!-- THEME 'DEFAULT': EDITOR ASSETS (JS AND CSS) -->
+    <!-- FRAMEWORK ASSETS RESPONSIVE (Mailchimp) (CSS MEDIA QUERIES) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
-    <template id="theme_default_assets_editmode">
+    <template id="theme_framework_assets_responsive">
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_responsive.css' t-ignore="true"/>
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets_buttons_responsive.css' t-ignore="true"/>
+    </template>
+    
+    <!-- FRAMEWORK ASSETS EDIT MODE (Mailchimp) (JS AND CSS) -->
+    <!-- ATTENTION: At least one local css <link> or inline <style> tag MUST exist in an assets template -->
+    <template id="theme_framework_assets_editmode">
         <!-- Set Snippets Template URL to avoid loading the website snippets -->
         <script type="text/javascript">
             //<![CDATA[
@@ -45,7 +63,7 @@
                     website.if_dom_contains('#email_designer', function () {
                         website.snippet.BuildingBlock.include({
                             _get_snippet_url: function () {
-                                return '/fso/email/snippets?snippets_template=fso_website_email.theme_default_snippets';
+                                return '/fso/email/snippets?snippets_template=fso_website_email.theme_framework_snippets';
                             }
                         });
                     });
@@ -54,16 +72,16 @@
         </script>
     </template>
     
-    <!-- THEME 'DEFAULT': ASSETS (JS AND CSS) -->
-    <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
-    <template id="theme_default_assets">
-        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default.css' t-ignore="true"/>
-        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_default_snippet.css' t-ignore="true"/>
-    </template>
+    
     
     
     <!-- COMMON <head> -->
     <template id="theme_head_common">
+        
+        <!-- ========== -->
+        <!-- BASIC TAGS -->
+        <!-- ========== -->
+        
         <meta charset="utf-8"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="viewport" content="initial-scale=1"/>
@@ -84,61 +102,79 @@
             </t>
         </t>
 
-        <!-- ====================== -->
-        <!-- EDIT MODE ASSETS (CSS) -->
-        <!-- ====================== -->
+        
+        <!-- =========================== -->
+        <!-- EDIT MODE ONLY ASSETS (CSS) -->
+        <!-- =========================== -->
+        
         <t t-if="email_editor_mode">
-            <!-- Odoo -->
+            <!-- Odoo Assets -->
             <t t-call-assets="web.assets_common" t-js="false"/>
             <t t-call-assets="website.assets_frontend" t-js="false"/>
             <t t-call-assets="website.assets_editor" t-js="false"/>
             
-            <!-- Common -->
+            <!-- Common Assets -->
             <t t-call-assets="fso_website_email.common_assets_editmode" t-js="false"/>
             
-            <!-- Theme 'DEFAULT' -->
-            <t t-if="load_default_theme">
-                <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-js="false"/>
+            <!-- Theme Framework (mailchimp) -->
+            <t t-if="load_theme_framework">
+                <t t-call-assets="fso_website_email.theme_framework_assets_editmode" t-js="false"/>
             </t>
         </t>
         
-        <!-- ============ -->
-        <!-- ASSETS (CSS) -->
-        <!-- ============ -->
-        <!-- Print Fields -->
-        <!-- ATTENTION: Not able to put in assets because <t-call-assets ...> will not receive any variables! -->
-        <style type="text/css" id="fs_print_fields_styles">
-            /* Change color in edit mode only */
-            #wrapwrap .drop_in_print_field > span {
-                color: white;
-                background-color: darkgrey;
-            }
-
-            /* hide/display fields in preview and edit mode */
-            .drop_in_print_field > span {
-                display: none;
-            }
-            
-            <!--<t t-set="print_fields" t-value="request.env['fso.print_field'].search([])"/>-->
-            <t t-foreach="print_fields" t-as="print_field">
-                .drop_in_print_field.<t t-esc="print_field.css_class"/> > span.<t t-esc="print_field.css_class"/> {
-                    display: initial;
-                }
-            </t>
-        </style>
         
-        <!-- Common-->
+        <!-- ====================== -->
+        <!-- ASSETS (always loaded) -->
+        <!-- ====================== -->
+        
+        <!-- COMMON ASSETS (CSS) -->
+        <!-- =================== -->
+        
+        <!-- common.css -->
+        <!-- HINT: Will load common.css (which is empty by now)
+                   and website.mobile.js to fix the mobile preview -->
         <t t-call-assets="fso_website_email.common_assets" t-js="false"/>
         
-        <!-- Theme 'DEFAULT' -->
-        <t t-if="load_default_theme">
-            <t t-call-assets="fso_website_email.theme_default_assets" t-js="false"/>
-        </t>
         
-        <!-- Theme 'DEFAULT': Internet Explorer Hacks -->
-        <t t-if="load_default_theme">
+        <!-- FRAMEWORK ASSETS (CSS) -->
+        <!-- ====================== -->
+        
+        <!-- Theme Framework (mailchimp) -->
+        <t t-if="load_theme_framework">
+            
+            <!-- Print Fields CSS -->
+            <!-- ATTENTION: Not able to put in assets because <t-call-assets ...> will not receive any variables! -->
+            <style type="text/css" id="fs_print_fields_styles">
+                /* Change color in edit mode only */
+                #wrapwrap .drop_in_print_field > span {
+                    color: white;
+                    background-color: darkgrey;
+                }
+    
+                /* hide/display fields in preview and edit mode */
+                .drop_in_print_field > span {
+                    display: none;
+                }
+                
+                <t t-foreach="print_fields" t-as="print_field">
+                    .drop_in_print_field.<t t-esc="print_field.css_class"/> > span.<t t-esc="print_field.css_class"/> {
+                        display: initial;
+                    }
+                </t>
+            </style>
+            
+            <!-- Theme Framework CSS -->
+            <t t-call-assets="fso_website_email.theme_framework_assets" t-js="false"/>
+            
+            <!-- Theme Framework Responsive CSS (Media Queries) -->
+            <t t-if="not skipp_theme_framework_responsive_css">
+                <t t-call-assets="fso_website_email.theme_framework_assets_responsive" t-js="false"/>
+            </t>
+        
+            <!-- Internet Explorer Hacks -->
             <t t-set='ie_comments'>
             <![CDATA[
+            
                 <!--
                     Outlook Conditional CSS
     
@@ -179,21 +215,31 @@
                     }
                 </style>
                 <![endif]-->
+            
             ]]>
             </t>
             <t t-raw="ie_comments"/>
+            
         </t>
         
+        
+        <!-- ============================================== -->
         <!-- CODE INJECTION (all inside <t t-call> ... </t> -->
+        <!-- ============================================== -->
         <t t-raw="0"/>
         
     </template>
-
-
+    
+    
+    
+    
     <!-- COMMON <body> -->
     <template id="theme_body_common">
         
+        
+        <!-- ============== -->
         <!-- EDITOR ENABLED -->
+        <!-- ============== -->
         <t t-if="email_editor_mode">
             
             <!-- Wrap email editor (#wrapwrap) around theme content -->
@@ -202,8 +248,7 @@
                 <t t-raw="0"/>
             </t>
             
-            <!-- ASSETS EDITMODE (JS) -->
-            <!-- ==================== -->
+            <!-- ASSETS EDITMODE ONLY (JS) -->
             <!-- Odoo -->
             <t t-call-assets="web.assets_common" t-css="false"/>
             <t t-call-assets="website.assets_frontend" t-css="false"/>
@@ -212,26 +257,31 @@
             <!-- Common -->
             <t t-call-assets="fso_website_email.common_assets_editmode" t-css="false"/>
             
-            <!-- Theme 'DEFAULT' -->
-            <t t-if="load_default_theme">
-                <t t-call-assets="fso_website_email.theme_default_assets_editmode" t-css="false"/>
+            <!-- Theme Framework Editmode (mailchimp) -->
+            <t t-if="load_theme_framework">
+                <t t-call-assets="fso_website_email.theme_framework_assets_editmode" t-css="false"/>
             </t>
         </t>
         
+        
+        <!-- =============== -->
         <!-- EDITOR DISABLED -->
+        <!-- =============== -->
         <t t-if="not email_editor_mode">
             <!-- Theme content -->
             <t t-raw="0"/>
         </t>
         
-        <!-- ASSETS (JS) -->
-        <!-- =========== -->
+        
+        <!-- ========================= -->
+        <!-- ASSETS JS (always loaded) -->
+        <!-- ========================= -->
         <!-- Common -->
         <t t-call-assets="fso_website_email.common_assets" t-css="false"/>
         
-        <!-- Theme 'DEFAULT' -->
-        <t t-if="load_default_theme">
-            <t t-call-assets="fso_website_email.theme_default_assets" t-css="false"/>
+        <!-- Theme Framework (mailchimp) -->
+        <t t-if="load_theme_framework">
+            <t t-call-assets="fso_website_email.theme_framework_assets" t-css="false"/>
         </t>
         
     </template>

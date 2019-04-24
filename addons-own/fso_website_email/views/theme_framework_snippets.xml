@@ -2,6 +2,57 @@
 <openerp>
     <data>
         
+        <!-- ATTENTION: Do not remove! Must stay here for backwards compatibility -->
+        <template id="theme_default_snippets">
+            <t t-call="fso_website_email.theme_framework_snippets"/>
+        </template>
+        
+        
+        <!-- Fundraising Studio Print Field Snippet -->
+        <template id="fs_print_field_snippet">
+            <!-- HINT: request.env['fso.print_field'].search([]) can be used here because this template will only be
+                       loaded in edit mode and there request is always bound already! Do not use it in other templates than for the snippet bar! -->
+            <t t-set="print_fields" t-value="print_fields or request.env['fso.print_field'].search([]) if request and request.env else []"/>
+            <div>
+                <!-- Icon and name -->
+                <div class="oe_snippet_thumbnail">
+                    <img class="oe_snippet_thumbnail_img"
+                         src="/fso_website_email/static/src/icons/drop_in_print_field.png"/>
+                    <span class="oe_snippet_thumbnail_title">Print Field</span>
+                </div>
+                <!-- Content -->
+                <span t-att-class="'oe_snippet_body ckediting_disabled drop_in drop_in_print_field ' + print_fields[0].css_class if print_fields else ''"
+                      contenteditable="false">
+                    <t t-foreach="print_fields" t-as="print_field">
+                        <span t-att-class="print_field.css_class" t-att-data-fs-email-placeholder="print_field.fs_email_placeholder" t-att-title="print_field.fs_email_placeholder"><t t-esc="print_field.name"/></span>
+                    </t>
+                </span>
+            </div>
+        </template>
+        
+        
+        <!-- Fundraising Studio Print Field Snippet Options Menu -->
+        <template id="fs_print_field_snippet_options">
+            <!-- TODO: honour 'exclude_in_email_theme_ids' field -->
+            <t t-set="groups" t-value="request.env['fso.print_field.group'].search([]) if request and request.env else []"/>
+            <li class="dropdown-submenu" data-required="true">
+                <a tabindex="-1" href="#">Print Field</a>
+                <ul class="dropdown-menu">
+                    <t t-foreach="groups" t-as="group">
+                        <li class="dropdown-submenu">
+                            <a tabindex="-2" href="#"><t t-esc="group.name"/></a>
+                            <ul class="dropdown-menu">
+                                <t t-foreach="group.print_field_ids" t-as="print_field">
+                                    <li t-att-data-value='print_field.css_class'><a><t t-esc="print_field.fs_email_placeholder"/></a></li>
+                                </t>
+                            </ul>
+                        </li>
+                    </t>
+                </ul>
+            </li>
+        </template>
+        
+        
         <template id="snippet_block">
             <!-- CENTERING TABLE -->
             <!--
@@ -71,9 +122,12 @@
             </table>
         </template>
 
+        
+        
+        
         <!-- Dadi Default E-Mail Theme Snippets -->
-        <template id="theme_default_snippets"
-                  name="DADI E-Mail Theme Snippets">
+        <template id="theme_framework_snippets"
+                  name="Theme Framework (mailchimp) Snippets">
 
             <div class="scroll" t-ignore="1">
 

@@ -2,7 +2,7 @@
 <openerp>
 <data>
     
-    <!-- ASSETS THEME DADI -->
+    <!-- ASSETS THEME DADI (= Default Theme) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag  (even if just empty) MUST exist in an assets template -->
     <template id="theme_dadi_assets">
         <!-- EXAMPLE: Load local css files or even external style sheets and or js -->
@@ -19,7 +19,7 @@
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="theme_dadi_assets_editmode">
         
-        <!-- EXAMPLE: Load custom snippets template -->
+        <!-- EXAMPLE: Load custom snippets template (which in this case will only load the framework snippets) -->
         <script type="text/javascript">
             //<![CDATA[
                 (function () {
@@ -65,14 +65,6 @@
         </style>
     </template>
     
-    <!-- THEME DADI SNIPPETS -->
-    <template id="theme_dadi_snippets">
-        <!-- HINT: Check 'Load custom snippets template' in template
-                   'theme_dadi_assets_editmode' from above -->
-        <!-- HINT: For this theme it would not be necessary to load snippets at all
-             but it is here as an example :) -->
-        <t t-call="fso_website_email.theme_default_snippets"/>
-    </template>
 
     <!-- ATTENTION: This should be called theme_default - it is not the Datadialog theme but the default theme for all customers -->
     <template id="theme_dadi"
@@ -87,7 +79,8 @@
 
             <!-- TEMPLATE SETTINGS -->
             <!-- ================= -->
-            <t t-set="load_default_theme" t-value="True"/>
+            <t t-set="load_theme_framework" t-value="True"/>
+            <t t-set="skipp_theme_framework_responsive_css" t-value="False"/>
             <!-- ================= -->
 
             <head>
@@ -110,7 +103,7 @@
                 <!-- EDITOR MODE AND COMMON JAVA SCRIPT ASSETS -->
                 <t t-call="fso_website_email.theme_body_common">
 
-                    <!-- Dadi Template based on mailchimp boilerplate -->
+                    <!-- Theme Framework based on mailchimp boilerplate -->
                     <center>
                         <table id="bodyTable" class="ckediting_disabled" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
 

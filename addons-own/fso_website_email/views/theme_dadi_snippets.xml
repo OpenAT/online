@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+   
+   <!-- THEME DADI SNIPPETS -->
+    <template id="theme_dadi_snippets">
+        <!-- HINT: Check 'theme_dadi_assets_editmode' template -->
+        <!-- HINT: For this theme it would not be necessary to load snippets at all
+             but it is here as an example :) -->
+        <t t-call="fso_website_email.theme_framework_snippets"/>
+    </template>
+
+</data>
+</openerp>

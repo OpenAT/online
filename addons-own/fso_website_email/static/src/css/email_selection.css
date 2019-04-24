@@ -86,10 +86,10 @@ header, main, footer {
 #email_template form:focus-within .submit-button,
 #email_template form:focus .submit-button,
 #email_template form:hover .submit-button,
-#email_template form:active .submit-button button[type="submit"].btn,
-#email_template form:focus-within .submit-button button[type="submit"].btn,
-#email_template form:focus .submit-button button[type="submit"].btn,
-#email_template form:hover .submit-button button[type="submit"].btn {
+#email_template form:active .submit-button button[type='submit'].btn,
+#email_template form:focus-within .submit-button button[type='submit'].btn,
+#email_template form:focus .submit-button button[type='submit'].btn,
+#email_template form:hover .submit-button button[type='submit'].btn {
     /*color: #337ab7;*/
     /*background-color: #e6e6e6;*/
     color: #ffffff;

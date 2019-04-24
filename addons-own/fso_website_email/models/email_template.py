@@ -14,6 +14,7 @@ import cssutils
 import datetime
 import tempfile
 import os
+from urlparse import urlparse
 
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
@@ -225,6 +226,12 @@ class EmailTemplate(models.Model):
                     if '%open_browser%' in href:
                         a['href'] = '%open_browser%'
                         continue
+                    # Multimailer Token-Links: Add ?fs_ptoken=%xGuid% to token links for FRST
+                    if 'link-withtoken' in a.get('class', ''):
+                        token_query = '&fs_ptoken=%xGuid%' if '?' in href else '?fs_ptoken=%xGuid%'
+                        href = href+token_query
+                        a['href'] = href
+                        logger.info("TOKEN QUERY %s " % href)
                     # Skipp rewrite to tracking link if 'link-donottrack' class is set
                     if 'link-donottrack' in a.get('class', ''):
                         continue

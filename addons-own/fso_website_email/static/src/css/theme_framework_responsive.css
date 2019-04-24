@@ -1,0 +1,47 @@
+/* ----------------------- */
+/* FRAMEWORK MOBILE STYLES */
+/* ----------------------- */
+@media only screen and (max-width: 480px) {
+    body {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    #emailBody,
+    table.flexibleContainer {
+        width: 100% !important;
+    }
+
+    /*
+        The following style rule makes any
+        image classed with 'flexibleImage'
+        fluid when the query activates.
+        Make sure you add an inline max-width
+        to those images to prevent them
+        from blowing out.
+        We gave them different classes for each width, because Mailchimp mixes max-widths between different formats.
+    */
+    img.flexibleImage {
+        height: auto !important;
+        width: 100% !important;
+        max-width: 460px !important;
+    }
+
+    td.bodyCell {
+        padding-top: 10px !important;
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
+
+    table.flexibleContainerRight,
+    table.flexibleContainerLeft,
+    table.flexibleContainer33 {
+        width: 100% !important;
+        text-align: center !important;
+        margin-bottom: 1em !important;
+    }
+    .snippet_block_text_threecol table.flexibleContainer33middle {
+        margin-left: initial !important;
+        margin-right: initial !important;
+    }
+}

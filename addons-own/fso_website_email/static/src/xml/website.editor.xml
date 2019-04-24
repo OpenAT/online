@@ -24,7 +24,7 @@
             <div></div>
         </t>
         
-        <!-- TODO: New Settings Checkboxes -->
+        <!-- New Settings Checkboxes -->
         <t t-jquery="div.form-horizontal:first" t-operation="before">
             <div id="link-dialog-donottrack" class="form-horizontal">
                 <div class="form-group">

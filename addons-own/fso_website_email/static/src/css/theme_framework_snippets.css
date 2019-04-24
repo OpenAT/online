@@ -2,6 +2,13 @@
 /* SNIPPETS AND SNIPPET OPTIONS */
 /* ---------------------------- */
 
+
+/*
+    ======================
+    SHARED SNIPPET OPTIONS
+    ======================
+*/
+
 /*  ----------------
     dadi_sb_fg_width
     dadi_sb_bg_width
@@ -68,8 +75,13 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     border-radius: 3px;
 }
 
+
+
+
 /*
+    ====================
     snippet_block_spacer
+    ====================
 */
 .snippet_block.snippet_block_spacer .flexibleContainerCell {
     padding: 0;
@@ -118,10 +130,16 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
 }
 
 /*
+    ====================
     snippet_block_banner
+    ====================
 */
 .snippet_block_banner .textContent {
-    line-height: 0px;
+    line-height: 0;
+}
+
+.snippet_block_banner .textContent a {
+    line-height: 0;
 }
 
 .snippet_block_banner .flexibleImage,
@@ -138,16 +156,22 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     max-width: 520px;
 }
 
+
 /*
+    ========================
     snippet_block_text_intro
+    ========================
 */
 .snippet_block_text_intro .flexibleContainerCell {
     padding-top: 20px;
     padding-bottom: 20px;
 }
 
+
 /*
+    =============================
     snippet_block_text_image_left
+    =============================
 */
 .snippet_block_text_image_left .flexibleContainerCell {
     padding-top: 20px;
@@ -170,7 +194,9 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
 
 
 /*
+    ==============================
     snippet_block_text_image_right
+    ==============================
 */
 .snippet_block_text_image_right .flexibleContainerCell {
     padding-top: 20px;
@@ -191,8 +217,11 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     width: 300px;
 }
 
+
 /*
+    =========================
     snippet_block_text_twocol
+    =========================
 */
 .snippet_block_text_twocol .flexibleContainerCell {
     padding-top: 20px;
@@ -219,8 +248,11 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     width: 250px;
 }
 
+
 /*
+    ===========================
     snippet_block_text_threecol
+    ===========================
 */
 .snippet_block_text_threecol .flexibleContainerCell {
     padding-top: 20px;
@@ -236,102 +268,3 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
 }
 
 
-/*
-    drop_in_button
-*/
-#emailBody .drop_in_button {
-    display: inline;
-    display: inline-block;
-    background: none;
-    border: none;
-    padding: 0;
-    line-height: 2.1em;
-
-}
-#emailBody .drop_in_button a {
-    display: block;
-    border-radius: 6px;
-    background-color: #268bd8;
-    border: 1px solid transparent;
-    padding: 2px 16px;
-    text-decoration: none;
-    color: #ffffff;
-    box-shadow: 1px 1px 4px rgba(2,2,2,0.3);
-    -webkit-transition: box-shadow 300ms; /* Safari */
-    transition: box-shadow 300ms;
-}
-
-#emailBody .drop_in_button a:hover {
-    box-shadow: 2px 2px 6px rgba(2,2,2,0.4);
-}
-
-
-#emailBody .drop_in_button.dadi_di_button_transparent a {
-    background-color: transparent;
-    border: 1px solid #3a414a;
-    font-weight: bold;
-}
-#emailBody .drop_in_button.dadi_di_button_transparent a {
-    color: #3a414a;
-}
-#emailBody .drop_in_button.dadi_di_button_black a {
-    background-color: #3a414a;
-}
-#emailBody .drop_in_button.dadi_di_button_green a {
-    background-color: #16a651;
-}
-#emailBody .drop_in_button.dadi_di_button_yellow a {
-    background-color: #f7b327;
-}
-#emailBody .drop_in_button.dadi_di_button_yellow a{
-    color: #ffffff;
-}
-#emailBody .drop_in_button.dadi_di_button_red a {
-    background-color: #e7402d;
-}
-
-#emailBody .drop_in_button.dadi_di_button_medium,
-#emailBody .drop_in_button.dadi_di_button_medium a {
-    font-size: 36px;
-    line-height: 60px;
-    border-radius: 12px;
-}
-#emailBody .drop_in_button.dadi_di_button_large,
-#emailBody .drop_in_button.dadi_di_button_large a {
-    font-size: 48px;
-    line-height: 80px;
-    border-radius: 14px;
-    font-weight: 700;
-}
-#emailBody .drop_in_button.dadi_di_button_huge,
-#emailBody .drop_in_button.dadi_di_button_huge a {
-    font-size: 64px;
-    line-height: 120px;
-    border-radius: 18px;
-    font-weight: 700;
-}
-
-#emailBody .drop_in_button.dadi_di_button_fullcenter {
-    display: block;
-    width: 100%;
-    text-align: center;
-}
-#emailBody .drop_in_button.dadi_di_button_fullcenter a {
-    display: inline;
-}
-#emailBody .drop_in_button.dadi_di_button_fullleft {
-    display: block;
-    width: 100%;
-    text-align: left;
-}
-#emailBody .drop_in_button.dadi_di_button_fullleft a {
-    display: inline;
-}
-#emailBody .drop_in_button.dadi_di_button_fullright {
-    display: block;
-    width: 100%;
-    text-align: right;
-}
-#emailBody .drop_in_button.dadi_di_button_fullright a {
-    display: inline;
-}
