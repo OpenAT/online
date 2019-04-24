@@ -22,7 +22,7 @@
     color: #ffffff;
     /* Button Shadow with Transition */
     box-shadow: 1px 1px 4px rgba(2,2,2,0.3);
-    -webkit-transition: box-shadow 300ms; /* Safari */
+    -webkit-transition: box-shadow 300ms;
     transition: box-shadow 300ms;
 }
 

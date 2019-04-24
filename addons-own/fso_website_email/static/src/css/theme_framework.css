@@ -142,3 +142,9 @@ html, body, #bodyTable, #bodyCell {
 }
 
 
+/* Fix for Gmail doctype of html 5 which creates extra spaces under images
+   https://www.emailonacid.com/blog/article/email-development/12_things_you_must_know_when_developing_for_gmail_and_gmail_mobile_apps-2/
+*/
+img.flexibleImage {
+    display: block;
+}

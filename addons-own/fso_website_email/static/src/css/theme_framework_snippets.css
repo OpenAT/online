@@ -134,6 +134,8 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     snippet_block_banner
     ====================
 */
+
+/* No longer needed because we add display block to all flexible images in theme_framework.css
 .snippet_block_banner .textContent {
     line-height: 0;
 }
@@ -141,6 +143,8 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
 .snippet_block_banner .textContent a {
     line-height: 0;
 }
+*/
+
 
 .snippet_block_banner .flexibleImage,
 .snippet_block_banner.dadi_sb_bg_normal .flexibleImage {

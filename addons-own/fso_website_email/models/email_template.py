@@ -195,7 +195,8 @@ class EmailTemplate(models.Model):
                         a['href'] = 'https://' + href
 
                 # Convert beautiful soup object to regular html
-                email_body_prepared = email_body_soup.prettify(formatter="minimal")
+                # HINT: keep html entities like &nbsp; by using the formater "html" instead of "minimal"
+                email_body_prepared = email_body_soup.prettify(formatter="html")
 
                 # Use premailer to:
                 #  - inline CSS and
@@ -204,6 +205,7 @@ class EmailTemplate(models.Model):
                 # ATTENTION: This step will try a lot of requests.packages.urllib3.connectionpool connections
                 #            which may lead to long processing times.
                 email_body_prepared_premailer = PremailerWithTimeout(email_body_prepared,
+                                                                     method='xml',
                                                                      base_url=self.get_base_url(),
                                                                      preserve_internal_links=True,
                                                                      keep_style_tags=False,
@@ -257,7 +259,7 @@ class EmailTemplate(models.Model):
                     styletag.string = css_parsed.cssText
 
                 # Convert beautiful soup object back to regular html
-                fso_email_html_parsed = email_body_css_inline_soup.prettify(formatter="minimal")
+                fso_email_html_parsed = email_body_css_inline_soup.prettify(formatter="html")
 
                 # Update the email.template fields
                 return rec.write({'fso_email_html': fso_email_html,
