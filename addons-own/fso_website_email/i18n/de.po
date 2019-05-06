@@ -31,7 +31,7 @@ msgid "Available Versions"
 msgstr "Verfügbare Versionen"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "BUTTON"
 msgstr "BUTTON"
 
@@ -46,17 +46,17 @@ msgid "Back to Selection"
 msgstr "Zurück zur Auswahl"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Background Grey"
 msgstr "Hintergrund Grau"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Background Style"
 msgstr "Hintergrundstil"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Background Width"
 msgstr "Hintergrundbreite Width"
 
@@ -66,17 +66,17 @@ msgid "Based on"
 msgstr "Basiert auf"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Black"
 msgstr "Schwarz"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Button"
 msgstr "Button"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Center"
 msgstr "Mitte"
 
@@ -97,17 +97,17 @@ msgid "Create Version"
 msgstr "Erstelle Version"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Dark Grey"
 msgstr "Dunkelgrau"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Dashed"
 msgstr "Strichliert"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Default"
 msgstr "Standard"
 
@@ -131,7 +131,7 @@ msgid "Do Not Track"
 msgstr "Link nicht tracken"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Dotted"
 msgstr "Gepunktet"
 
@@ -199,12 +199,12 @@ msgid "FSON Template"
 msgstr "FSON Vorlage"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Foreground Style"
 msgstr "Vordergrundstil"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Foreground Width"
 msgstr "Vordergrundbreite"
 
@@ -214,7 +214,7 @@ msgid "From:"
 msgstr "Von:"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Full Width"
 msgstr "Gesamte Breite"
 
@@ -226,57 +226,57 @@ msgid "Generate Login-Token"
 msgstr "Link mit automatischer Anmeldung (Token)"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Green"
 msgstr "Grün"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Grey"
 msgstr "Grau"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Huge"
 msgstr "Riesig"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Image"
 msgstr "Bild"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Image Left"
 msgstr "Bild Links"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Image Right"
 msgstr "Bild Rechts"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "In Line"
 msgstr "In Line"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Intro"
 msgstr "Intro"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Large"
 msgstr "Groß"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Left"
 msgstr "Links"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Medium"
 msgstr "Mittel"
 
@@ -286,7 +286,7 @@ msgid "Mobile preview"
 msgstr "Mobile Anwendung Voransicht"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Narrow"
 msgstr "Verschmälern"
 
@@ -301,17 +301,17 @@ msgid "No Version available"
 msgstr "Keine Versionen verfügbar"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "None"
 msgstr "Keine"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Normal"
 msgstr "Normal"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Orange"
 msgstr "Orange"
 
@@ -321,7 +321,7 @@ msgid "Please press the 'Edit' button in the upper left to edit these fields!"
 msgstr "Bitte drücken Sie den 'Bearbeiten' Button oben links um diese Felder zu editieren."
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Position"
 msgstr "Position"
 
@@ -337,7 +337,7 @@ msgid "Print Field"
 msgstr "Seriendruckfeld"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Red"
 msgstr "Rot"
 
@@ -352,7 +352,7 @@ msgid "Restore Version"
 msgstr "Version herstellen"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Right"
 msgstr "Rechts"
 
@@ -377,42 +377,42 @@ msgid "Show/Hide Settings"
 msgstr "Ein-/Ausblenden Einstellungen"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Size"
 msgstr "Größe"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Snippets"
 msgstr "Snippets"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Solid"
 msgstr "Durchgehend"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Spacer"
 msgstr "Abstandshalter"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Spacer Size"
 msgstr "Größe"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Spacer Style"
 msgstr "Stil"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Special"
 msgstr "Extras"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Style"
 msgstr "Stil"
 
@@ -427,7 +427,7 @@ msgid "Templates"
 msgstr "Vorlagen"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Text"
 msgstr "Text"
 
@@ -443,12 +443,12 @@ msgid "Themes"
 msgstr "Themes"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Transparent"
 msgstr "Transparent"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Two Columns"
 msgstr "2-spaltig"
 
@@ -485,7 +485,7 @@ msgid "View e-mail in browser"
 msgstr "E-Mail im Browser anzeigen"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.theme_default_snippets
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Yellow"
 msgstr "Gelb"
 
