@@ -135,7 +135,7 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
     ====================
 */
 
-/* No longer needed because we add display block to all flexible images in theme_framework.css
+/* No longer needed because we add "display: block" to all flexible images in theme_framework.css (needed for google because of doctype html5)
 .snippet_block_banner .textContent {
     line-height: 0;
 }

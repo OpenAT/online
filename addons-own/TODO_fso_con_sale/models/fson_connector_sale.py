@@ -20,7 +20,7 @@ class FSOConnectorSale(models.Model):
     error_details = fields.Text(string='Error Details',
                                 readonly=True)
 
-    # Person and Address (res.partner)
+    # Person (res.partner)
     firstname = fields.Char(sosync="True")                  # Vorname
     lastname = fields.Char(sosync="True")                   # Name
     name_zwei = fields.Char(sosync="True")                  # Name2
@@ -34,7 +34,7 @@ class FSOConnectorSale(models.Model):
     zip = fields.Char(sosync="True")                        # Postleitzahl
     country_code = fields.Char(sosync="True")               # Laendercode (z.B.: AT)
 
-    # Company and Address (res.partner) OPTIONAL
+    # Company (res.partner) OPTIONAL
     c_lastname = fields.Char(sosync="True")                 # Name
     c_phone = fields.Char(sosync="True")                    # Festnetznummer
     c_mobile = fields.Char(sosync="True")                   # Mobilnummer

@@ -238,7 +238,7 @@ msgstr "Grau"
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
 msgid "Huge"
-msgstr "Rießig"
+msgstr "Riesig"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_default_snippets
