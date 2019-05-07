@@ -1,5 +1,8 @@
 # -*- coding: utf-'8' "-*-"
-from openerp import models, fields
+from openerp import models, fields, SUPERUSER_ID
+
+import logging
+_logger = logging.getLogger(__name__)
 
 
 # Additional fields for the web checkout
@@ -45,3 +48,25 @@ class ResPartner(models.Model):
     #                                         ('male_female', 'Male/Female'),
     #                                         ])
 
+    def init(self, cr, context=None):
+        _logger.info('def init: Set firstname and lastname for public user and partner for FRST sync')
+        model_data_obj = self.pool.get('ir.model.data')
+        public_partner = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'base.public_partner')
+        partner_obj = self.pool.get('res.partner')
+        if public_partner and not public_partner.lastname:
+            _logger.info('def init: Public Partner found and lastname is not set! UPDATING name for FRST sync!')
+            partner_obj.write(cr, SUPERUSER_ID, [public_partner.id],
+                              {'firstname': 'FS-Online Public/Website',
+                               'lastname': 'System-User (do not delete or edit)'})
+        elif not public_partner:
+            _logger.error('PUBLIC PARTNER NOT FOUND ?!?')
+
+        _logger.info('def init: Set firstname and lastname for admin user and partner for FRST sync')
+        admin_partner = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'base.partner_root')
+        if admin_partner and (not admin_partner.firstname or not admin_partner.lastname):
+            _logger.info('def init: Admin Partner found and lastname is not set! UPDATING name for FRST sync!')
+            partner_obj.write(cr, SUPERUSER_ID, [admin_partner.id],
+                              {'firstname': 'FS-Online Administrator',
+                               'lastname': 'System-User (do not delete or edit)'})
+        elif not admin_partner:
+            _logger.error('ADMIN PARTNER NOT FOUND ?!?')
