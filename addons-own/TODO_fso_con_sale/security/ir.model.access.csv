@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_altruja_all,access_altruja_all,model_altruja,,1,0,0,0
-access_altruja_user,access_altruja_user,model_altruja,fso_con_altruja.group_altruja_user,1,1,1,0
-access_altruja_manager,access_altruja_manager,model_altruja,fso_con_altruja.group_altruja_manager,1,1,1,1

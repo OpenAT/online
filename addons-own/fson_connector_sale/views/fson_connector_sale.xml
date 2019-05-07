@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!--
+        altruja
+    -->
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="fson_connector_sale_form">
+        <field name="name">fson_connector_sale_form</field>
+        <field name="model">fson.connector.sale</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="FS-Online Sale Order Connector">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    
+                    <group string="Internal Data" name="iternal_fields">
+                        <group>
+                            <field name="id"/>
+                            <field name="create_date"/>
+                            <field name="write_date"/>
+                            <field name="received_data_date"/>
+                        </group>
+                        <group>
+<!--                            <field name="partner_id"/>-->
+<!--                            <field name="sale_order_id"/>-->
+<!--                            <field name="sale_order_line_id"/>-->
+<!--                            <field name="payment_transaction_id"/>-->
+<!--                            <field name="bank_id"/>-->
+                        </group>
+                    </group>
+                    
+                    <group string="Error Details" name="error">
+                        <field name="error_details"/>
+                    </group>
+                    
+                    <group name="sale">
+                        <group string="Sale Order" name="sale_order">
+                            <field name="ext_order_id"/>
+                            <field name="followup_for_ext_order_id"/>
+                            <field name="currency"/>
+                        </group>
+                        
+                        <group string="Sale Order Line" name="sale_order_line">
+<!--                            <field name="product"/>-->
+                            <field name="price_donate"/>
+                            <field name="price_unit"/>
+<!--                            <field name="payment_interval_id"/>-->
+<!--                            <field name="zgruppedetail_ids"/>-->
+                        </group>
+                    </group>
+                    
+                    <group name="partner">
+                        <group string="Person or Company" name="sale_order">
+                            <field name="firstname"/>
+                            <field name="lastname"/>
+                            <field name="name_zwei"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="fax"/>
+                            <field name="email"/>
+                            <field name="street"/>
+                            <field name="street_number_web"/>
+                            <field name="city"/>
+                            <field name="zip"/>
+                            <field name="country_code"/>
+                            <field name="is_company"/>
+                        </group>
+                        <group string="Employee" name="employee">
+                            <field name="s_firstname"/>
+                            <field name="s_lastname"/>
+                            <field name="s_name_zwei"/>
+                            <field name="s_phone"/>
+                            <field name="s_mobile"/>
+                            <field name="s_fax"/>
+                            <field name="s_email"/>
+                            <field name="s_street"/>
+                            <field name="s_street_number_web"/>
+                            <field name="s_city"/>
+                            <field name="s_zip"/>
+                            <field name="s_country_code"/>
+                        </group>
+                    </group>
+                    
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="fson_connector_sale_tree">
+        <field name="name">fson_connector_sale_tree</field>
+        <field name="model">fson.connector.sale</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="FS-Online Sale Order Connector">
+                <field name="id"/>
+                <field name="ext_order_id"/>
+                <field name="followup_for_ext_order_id"/>
+                <field name="price_donate"/>
+                <field name="is_company"/>
+                <field name="firstname"/>
+                <field name="lastname"/>
+                <field name="email"/>
+                <field name="street"/>
+                <field name="city"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="fson_connector_sale_search">
+        <field name="name">fson_connector_sale_search</field>
+        <field name="model">fson.connector.sale</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="FS-Online Sale Order Connector">
+                <field name="id"/>
+                <field name="ext_order_id"/>
+                <field name="followup_for_ext_order_id"/>
+                <field name="price_donate"/>
+                <field name="is_company"/>
+                <field name="firstname"/>
+                <field name="lastname"/>
+                <field name="email"/>
+                <field name="street"/>
+                <field name="city"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- ACTIONS -->
+    <!-- Now we create actions for the new views -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="fson_connector_sale_action" model="ir.actions.act_window" >
+        <field name="name">FS-Online Sale Order Connector</field>
+        <field name="res_model">fson.connector.sale</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="fson_connector_sale_search"/>
+    </record>
+    <record id="fson_connector_sale_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="fson_connector_sale_tree"/>
+        <field name="act_window_id" ref="fson_connector_sale_action"/>
+    </record>
+    <record id="fson_connector_sale_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fson_connector_sale_form"/>
+        <field name="act_window_id" ref="fson_connector_sale_action"/>
+    </record>
+    <!-- MENU -->
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="fson_connector_sale_menu" action="fson_connector_sale_action" parent="base.menu_config" sequence="10301" string="FSON Sale Connector"/>
+        
+
+</data></openerp>

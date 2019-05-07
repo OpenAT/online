@@ -1,0 +1,46 @@
+# Authenticate (Login) to FS-Online to geht the session_id cookie
+POST http://demo.local.com/web/session/authenticate
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+      "db": "dadi",
+      "login": "michael.karrer@datadialog.net",
+      "password": "mike1234"
+    }
+}
+
+> {% client.global.set("session_id", response.body["result"].session_id); %}
+
+###############################################################################
+### Create altrua record with spenden_id = 1
+### ATTENTION: spenden_id is set by the URL!
+### ATTENTION: Use session_id cookie for authorization!
+POST http://demo.local.com/fson_connector_sale/create/1234dse
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+Cookie: session_id={{session_id}}
+
+{
+  "jsonrpc": "2.0",
+    "params": {
+      "datum": "2018.01.01",
+      "nachname": "Karrer",
+      "waehrung": "EUR",
+      "spenden_typ": "Einzelspende",
+      "spendenbetrag": "23.05",
+      "intervall": "einmalig",
+      "quelle": "direkt / PayPal"
+    }
+}
+
+###
+
+# Result:
+
+
+

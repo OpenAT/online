@@ -54,8 +54,8 @@ TODO:
         'website_sale_donate',
     ],
     'data': [
-        'security/fso_con_sale_groups.xml',
+        'security/fson_connector_sale_groups.xml',
         'security/ir.model.access.csv',
-        'views/views.xml',
+        'views/fson_connector_sale.xml',
     ],
 }
