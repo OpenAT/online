@@ -19,12 +19,16 @@ def form_feedback(self, cr, uid, data, acquirer_name, context=None):
     # Try to find related tx before form_feedback() is done
     # -----------------------------------------------------
     tx_state_start = False
-    try:
-        if hasattr(self, tx_find_method_name):
+    if hasattr(self, tx_find_method_name):
+        try:
             tx = getattr(self, tx_find_method_name)(cr, uid, data, context=context)
-            if tx:
-                tx_state_start = deepcopy(tx.state)
-    except Exception:
+        except TypeError:
+            _logger.warning("Try to call %s in new api format" % tx_find_method_name)
+            tx = getattr(self, tx_find_method_name)(data)
+            pass
+    if tx:
+        tx_state_start = deepcopy(tx.state)
+    else:
         _logger.info("Could not find a payment transaction before form_feedback()")
 
     # Call original odoo/addons/payment/models/payment_acquirer.py >>> form_feedback()
@@ -34,13 +38,19 @@ def form_feedback(self, cr, uid, data, acquirer_name, context=None):
     #   2.) '_%s_form_get_invalid_parameters'
     #   3.) '_%s_form_validate'
     # HINT: RES could be True, False or, just if implemented by the PP, a method (which may return the TX id)
-    res = super(PaymentTransaction, self).form_feedback(cr, uid, data, acquirer_name, context=context)
+    try:
+        res = super(PaymentTransaction, self).form_feedback(cr, uid, data, acquirer_name, context=context)
+    except TypeError:
+        res = super(PaymentTransaction, self).form_feedback(data, acquirer_name)
 
     # Try to find related tx after form_feedback() is done
     # ----------------------------------------------------
     try:
         if hasattr(self, tx_find_method_name):
-            tx = getattr(self, tx_find_method_name)(cr, uid, data, context=context)
+            try:
+                tx = getattr(self, tx_find_method_name)(cr, uid, data, context=context)
+            except TypeError:
+                tx = getattr(self, tx_find_method_name)(data)
 
         # Log Information about the tx
         _logger.info('<%s> (ID %s) payment transaction processed: tx ref:%s, tx amount: %s',

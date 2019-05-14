@@ -12,20 +12,21 @@ import json
 
 class FSOConSaleControllers(http.Controller):
 
-    @http.route('/fson_connector_sale/create/<string:ext_order_id>', type='json', auth="user", website=True)
-    def fson_connector_sale_create(self, ext_order_id, **post):
+    @http.route('/fson_connector_sale/create', type='json', auth="user", website=True)
+    def fson_connector_sale_create(self, **post):
         assert post, "Payload of request is empty!"
+        client_order_ref = post.get('client_order_ref')
 
         # Make sure only allowed fields are written!
         # ATTENTION: (f for f in) will create a generator! Use tuple(f for f in) instead!
         con_obj = http.request.env['fson.connector.sale']
-        connector_fields = con_obj.get_fields_by_con_group('all_con_fields')
+        connector_fields = con_obj.get_fields_by_con_group('all')
         unknown_fields = tuple(f for f in post if f not in connector_fields)
         assert not unknown_fields, "Unknown fields found: %s" % str(unknown_fields)
 
         # Search for an existing record
-        record = con_obj.search([('ext_order_id', '=', ext_order_id)])
-        assert len(record) <= 1, "More than one record found for ext_order_id %s !" % ext_order_id
+        record = con_obj.search([('client_order_ref', '=', client_order_ref)])
+        assert len(record) <= 1, "More than one record found for client_order_ref %s !" % client_order_ref
 
         # Add additional data
         now = fields.datetime.now()
@@ -36,7 +37,7 @@ class FSOConSaleControllers(http.Controller):
 
         # Create record
         if not record:
-            _logger.info("Create fson.connector.sale for ext_order_id %s" % ext_order_id)
+            _logger.info("Create fson.connector.sale for client_order_ref %s" % client_order_ref)
             record = con_obj.create(post)
 
         # Update record
@@ -46,5 +47,6 @@ class FSOConSaleControllers(http.Controller):
 
         # Return status
         assert record.state != 'error', "ERROR: %s" % record.error_details
-        return {'id': record.id,
+        return {'client_order_ref': client_order_ref,
+                'id': record.id,
                 'state': record.state}

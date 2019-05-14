@@ -25,11 +25,12 @@
                             <field name="received_data_date"/>
                         </group>
                         <group>
-<!--                            <field name="partner_id"/>-->
-<!--                            <field name="sale_order_id"/>-->
-<!--                            <field name="sale_order_line_id"/>-->
-<!--                            <field name="payment_transaction_id"/>-->
-<!--                            <field name="bank_id"/>-->
+                            <field name="partner_id"/>
+                            <field name="employee_id"/>
+                            <field name="donee_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="sale_order_line_id"/>
+                            <field name="payment_transaction_id"/>
                         </group>
                     </group>
                     
@@ -37,24 +38,8 @@
                         <field name="error_details"/>
                     </group>
                     
-                    <group name="sale">
-                        <group string="Sale Order" name="sale_order">
-                            <field name="ext_order_id"/>
-                            <field name="followup_for_ext_order_id"/>
-                            <field name="currency"/>
-                        </group>
-                        
-                        <group string="Sale Order Line" name="sale_order_line">
-<!--                            <field name="product"/>-->
-                            <field name="price_donate"/>
-                            <field name="price_unit"/>
-<!--                            <field name="payment_interval_id"/>-->
-<!--                            <field name="zgruppedetail_ids"/>-->
-                        </group>
-                    </group>
-                    
-                    <group name="partner">
-                        <group string="Person or Company" name="sale_order">
+                    <group name="allpartner">
+                        <group string="Person/Company to Invoice" name="partner">
                             <field name="firstname"/>
                             <field name="lastname"/>
                             <field name="name_zwei"/>
@@ -67,22 +52,75 @@
                             <field name="city"/>
                             <field name="zip"/>
                             <field name="country_code"/>
+                            <field name="birthdate_web"/>
+                            <field name="newsletter_web"/>
                             <field name="is_company"/>
                         </group>
                         <group string="Employee" name="employee">
-                            <field name="s_firstname"/>
-                            <field name="s_lastname"/>
-                            <field name="s_name_zwei"/>
-                            <field name="s_phone"/>
-                            <field name="s_mobile"/>
-                            <field name="s_fax"/>
-                            <field name="s_email"/>
-                            <field name="s_street"/>
-                            <field name="s_street_number_web"/>
-                            <field name="s_city"/>
-                            <field name="s_zip"/>
-                            <field name="s_country_code"/>
+                            <field name="e_firstname"/>
+                            <field name="e_lastname"/>
+                            <field name="e_name_zwei"/>
+                            <field name="e_phone"/>
+                            <field name="e_mobile"/>
+                            <field name="e_fax"/>
+                            <field name="e_email"/>
+                            <field name="e_street"/>
+                            <field name="e_street_number_web"/>
+                            <field name="e_city"/>
+                            <field name="e_zip"/>
+                            <field name="e_country_code"/>
+                            <field name="e_birthdate_web"/>
+                            <field name="e_newsletter_web"/>
+                            <field name="e_send_to_this_address"/>
                         </group>
+                        <group string="Donee" name="donee">
+                            <field name="d_firstname"/>
+                            <field name="d_lastname"/>
+                            <field name="d_name_zwei"/>
+                            <field name="d_phone"/>
+                            <field name="d_mobile"/>
+                            <field name="d_fax"/>
+                            <field name="d_email"/>
+                            <field name="d_street"/>
+                            <field name="d_street_number_web"/>
+                            <field name="d_city"/>
+                            <field name="d_zip"/>
+                            <field name="d_country_code"/>
+                            <field name="d_birthdate_web"/>
+                            <field name="d_newsletter_web"/>
+                        </group>                        
+                    </group>
+                    
+                    <group name="sale">
+                        <group string="Sale Order" name="sale_order">
+                            <field name="client_order_ref"/>
+                            <field name="followup_for_client_order_ref"/>
+                            <field name="currency"/>
+                        </group>
+                        <group string="Sale Order Line" name="sale_order_line">
+                            <field name="product_id"/>
+                            <field name="price_donate"/>
+                            <field name="price_unit"/>
+                            <field name="payment_interval_id"/>
+<!--                            <field name="zgruppedetail_ids"/>-->
+                        </group>
+                    </group>
+                    
+                    <group name="payment">
+                        <group string="Payment Transaction" name="payment_transaction">
+                            <field name="acquirer_id"/>
+                            <field name="acquirer_reference"/>
+                        </group>
+                        <group string="Provider Fields" name="provider_fields">
+                            <field name="do_not_send_payment_forms"/>
+                            <field name="frst_iban"/>
+                            <field name="frst_bic"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Additional Info" name="info">
+                        <field name="origin"/>
+                        <field name="notes"/>
                     </group>
                     
                 </sheet>
@@ -98,8 +136,8 @@
         <field name="arch" type="xml">
             <tree string="FS-Online Sale Order Connector">
                 <field name="id"/>
-                <field name="ext_order_id"/>
-                <field name="followup_for_ext_order_id"/>
+                <field name="client_order_ref"/>
+                <field name="followup_for_client_order_ref"/>
                 <field name="price_donate"/>
                 <field name="is_company"/>
                 <field name="firstname"/>
@@ -120,8 +158,8 @@
         <field name="arch" type="xml">
             <search string="FS-Online Sale Order Connector">
                 <field name="id"/>
-                <field name="ext_order_id"/>
-                <field name="followup_for_ext_order_id"/>
+                <field name="client_order_ref"/>
+                <field name="followup_for_client_order_ref"/>
                 <field name="price_donate"/>
                 <field name="is_company"/>
                 <field name="firstname"/>
