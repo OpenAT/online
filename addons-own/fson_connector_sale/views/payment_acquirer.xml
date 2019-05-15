@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+        <!-- Extend the product form view  -->
+        <record model="ir.ui.view" id="payment_acquirer_form">
+            <field name="name">fson_connector_sale payment_acquirer_form</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="website_sale_donate.payment_acquirer_form_recurring"/>
+            <field name="arch" type="xml">
+                <field name="globally_hidden" position="before">
+                    <field name="fson_connector_sale"/>
+                </field>
+            </field>
+        </record>
+
+</data></openerp>

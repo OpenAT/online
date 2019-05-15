@@ -71,6 +71,7 @@ class FSOConnectorSale(models.Model):
     birthdate_web = fields.Date(string="Birthdate", con='partner', help="Geburtsdatum")
     newsletter_web = fields.Boolean(string="Newsletter", con='partner', help="Newsletter")
     is_company = fields.Boolean(string="Is a Company", con='partner', help="Ist eine Firma?")
+    # TODO: Checkbox Spendenabsetzbarkeit OPT-OUT
 
     # EMPLOYEE / DOCUMENT RECEIVER: (OPTIONAL) (Zu Handen Adresse) (res.partner)
     # --------------------------------------------------------------------------
@@ -138,7 +139,7 @@ class FSOConnectorSale(models.Model):
                                           string="Payment Interval", con='orderline', required=True,
                                           index=True, ondelete='set null',
                                           help="ID (INTEGER) des Zahlungsintervals")
-    # TODO: zgruppedetail_ids
+    # TODO: zgruppedetail_ids override ?!? oder nur vom produkt erlauben?
 
     # PAYMENT: PAYMENT TRANSACTION (payment.transaction)
     # --------------------------------------------------
@@ -148,7 +149,7 @@ class FSOConnectorSale(models.Model):
     # -----------
     acquirer_id = fields.Many2one(comodel_name='payment.acquirer', inverse_name="fson_connector_sale_ids",
                                   string="Acquirer", con='tx', required=True, index=True, ondelete='set null')
-    acquirer_reference = fields.Char(string="Acquirer Transaction Reference", con='tx', required=True)
+    acquirer_reference = fields.Char(string="Acquirer Transaction Reference", con='tx')
     # date_validate = fields.Datetime(string="Validation Date")
     # reference = fields.Char(string="Order Reference")
     #             # client_order_ref OR request.env['payment.transaction'].get_next_reference(order.name)
@@ -266,24 +267,54 @@ class FSOConnectorSale(models.Model):
         for r in self:
             logger.info("fson_connector_sale() Validate record %s" % r.id)
 
-            # Validate 'partner.is_company'
+            # Validate Partner
             if r.is_company:
-                if r.firstname:
-                    raise ValidationError("Field 'firstname' is not allowed if 'is_company' is set!")
-            elif not r.is_company:
-                employee_fields = self.get_fields_by_con_group('employee')
-                if any(r[fname] for fname in employee_fields):
+                if r.firstname or r.name_zwei or r.birthdate_web:
+                    raise ValidationError("Fields 'firstname', 'name_zwei' and 'birthdate_web' are not allowed "
+                                          "if 'is_company' is set!")
+
+            # Validate Employee
+            employee_fields = self.get_fields_by_con_group('employee')
+            if any(r[fname] for fname in employee_fields):
+                if not r.is_company:
                     raise ValidationError("Employee fields are only allowed if 'is_company' is set!"
                                           "These fields must be empty: %s" % employee_fields)
+                if not r.e_lastname:
+                    raise ValidationError("Field e_lastname must be set for the employee!")
+
+            # Validate Donee
+            donee_fields = self.get_fields_by_con_group('donee')
+            if any(r[fname] for fname in donee_fields):
+                if not r.d_lastname:
+                    raise ValidationError("Field d_lastname must be set for the donee!")
 
             # Validate 'price_donate' and 'price_unit' are not used at the same time!
             if self.price_donate and self.price_unit:
                 raise ValidationError(_("Field 'price_donate' and 'price_unit' is set! "
                                         "Use 'price_donate' for donations and 'price_unit' for regular products!"))
 
-            # TODO: Make sure only allowed acquirers are used (acquirer_id)
-            # TODO: Make sure only allowed products are used (product_id)
-            # TODO: Make sure only allowed payment intervals for the product are used (maybe done by _cart_update()?)
+            # Validate Product
+            if r.product_id:
+                if not r.product_id.fson_connector_sale:
+                    raise ValidationError("This product is not available for the connector!")
+                if r.price_donate:
+                    if not r.product_id.price_donate:
+                        raise ValidationError("This product can not be used with 'price_donate'!")
+                    if r.product_id.price_donate_min and r.price_donate < r.product_id.price_donate_min:
+                        raise ValidationError("price_donate must be at least %s" % r.product_id.price_donate_min)
+                if r.product_id.payment_interval_lines_ids:
+                    interval_ids = tuple(l.payment_interval_id.id for l in r.product_id.payment_interval_lines_ids)
+                    if r.payment_interval_id.id not in interval_ids:
+                        raise ValidationError("This payment interval is not available for the product! "
+                                              "Allowed payment interval ids for this product: %s" % str(interval_ids))
+
+            # TODO: Validate payment transaction
+            #       - if acquirer is enabled by 'fson_connector_sale'
+            #       - if only correct fields are used (e.g. frst_iban)
+            #       - if all needed partner fields are set for this acquirer
+            if r.acquirer_id:
+                if not r.acquirer_id.fson_connector_sale:
+                    raise ValidationError("This acquirer (id %s) is not enabled for the connector!" % r.acquirer_id.id)
 
     @api.multi
     def validate_update_data(self, vals=None):
@@ -297,7 +328,7 @@ class FSOConnectorSale(models.Model):
         for r in self:
             logger.info("fson_connector_sale() Validate update values for record %s" % r.id)
 
-            # TODO
+            # TODO: Validate vals for current record data (mainly the state of the tx and so)
 
     # ------------------------------
     # CONVERSION AND LINKING METHODS
@@ -531,7 +562,7 @@ class FSOConnectorSale(models.Model):
             # ---------------
             r.validate_record()
 
-            # TODO: POSSIBLE UPDATES (Right now disabled in controller)
+            # TODO: Must be discussed in the team first! (Right now already disabled in the controller)
 
     # ------------
     # CRUD METHODS

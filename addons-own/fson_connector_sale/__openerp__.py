@@ -57,5 +57,7 @@ TODO:
         'security/fson_connector_sale_groups.xml',
         'security/ir.model.access.csv',
         'views/fson_connector_sale.xml',
+        'views/product_template.xml',
+        'views/payment_acquirer.xml',
     ],
 }

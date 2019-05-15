@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+        <!-- Extend the product form view  -->
+        <record model="ir.ui.view" id="product_template_form_view">
+            <field name="name">fson_connector_sale product_template_form_view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="website_sale_donate.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <field name="simple_checkout" position="before">
+                    <field name="fson_connector_sale"/>
+                </field>
+            </field>
+        </record>
+
+</data></openerp>
