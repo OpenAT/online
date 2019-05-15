@@ -385,11 +385,11 @@ class FSOConnectorSale(models.Model):
         vals.pop('currency', None)
         
         # Handle followup payments (followup_for_client_order_ref)
-        ffcorf = vals.pop('followup_for_client_order_ref', None)
-        if ffcorf:
-            original_order = self.search([('followup_for_client_order_ref', '=', ffcorf)])
+        fup = vals.pop('followup_for_client_order_ref', None)
+        if fup:
+            original_order = self.search([('followup_for_client_order_ref', '=', fup)])
             assert len(original_order) == 1, _("Original sale order not found or multiple sale order found for "
-                                               "client_order_ref %s!" % ffcorf)
+                                               "client_order_ref %s!" % fup)
             assert original_order.state == 'done', _("Original sale order state is %s but must be 'done'!"
                                                      "" % original_order.state)
 
@@ -510,7 +510,7 @@ class FSOConnectorSale(models.Model):
             r.add_partner_donee()
 
             # Add sale.order
-            r.add_sale_order()
+            sale_order = r.add_sale_order()
 
             # Add sale.order.line
             r.add_sale_order_line()
@@ -518,18 +518,20 @@ class FSOConnectorSale(models.Model):
             # Add payment.transaction
             r.add_payment_transaction()
 
-            # Update Sale.Order State (Maybe not needed because done by payment.transaction?!? To be tested)
+            # TODO: Create method for state computation
+            if sale_order and sale_order.state not in ('draft', 'error'):
+                r.write({'state': 'done'})
 
     @api.multi
     def update_sale_order(self):
         for r in self:
-            logger.info("Update sale order for record %s" % r.id)
+            logger.info("NOT IMPLEMENTED! Update sale order for record %s" % r.id)
 
             # VALIDATE RECORD
             # ---------------
             r.validate_record()
 
-            # TODO UPDATE SALE ORDER
+            # TODO: POSSIBLE UPDATES (Right now disabled in controller)
 
     # ------------
     # CRUD METHODS

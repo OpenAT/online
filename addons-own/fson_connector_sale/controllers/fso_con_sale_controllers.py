@@ -25,8 +25,11 @@ class FSOConSaleControllers(http.Controller):
         assert not unknown_fields, "Unknown fields found: %s" % str(unknown_fields)
 
         # Search for an existing record
-        record = con_obj.search([('client_order_ref', '=', client_order_ref)])
+        record = con_obj.search([('client_order_ref', '=', client_order_ref)], limit=2)
         assert len(record) <= 1, "More than one record found for client_order_ref %s !" % client_order_ref
+
+        # TODO: Remove after updates are implemented
+        assert not record, "This client_order_ref is already in use! The client_order_ref must be unique!"
 
         # Add additional data
         now = fields.datetime.now()
@@ -37,7 +40,7 @@ class FSOConSaleControllers(http.Controller):
 
         # Create record
         if not record:
-            _logger.info("Create fson.connector.sale for client_order_ref %s" % client_order_ref)
+            _logger.info("Create fson.connector.sale record for client_order_ref %s" % client_order_ref)
             record = con_obj.create(post)
 
         # Update record

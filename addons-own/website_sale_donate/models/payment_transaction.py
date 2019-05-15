@@ -10,14 +10,18 @@ _logger = logging.getLogger(__name__)
 
 
 # Replaces completely website_sale.models.payment >>> form_feedback()
-# HINT: This would make further inheritance still possibe
+# HINT: This would make further inheritance still possible
 # ATTENTION: The replacement is done at the end of this file!
+#
+# We do this to
+#     - update the sale order state and
+#     - to send an email if the state of the payment transaction changes
 def form_feedback(self, cr, uid, data, acquirer_name, context=None):
     tx = None
     tx_find_method_name = '_%s_form_get_tx_from_data' % acquirer_name
 
-    # Try to find related tx before form_feedback() is done
-    # -----------------------------------------------------
+    # Get payment transaction state before form_feedback
+    # --------------------------------------------------
     tx_state_start = False
     if hasattr(self, tx_find_method_name):
         try:
@@ -41,15 +45,17 @@ def form_feedback(self, cr, uid, data, acquirer_name, context=None):
     try:
         res = super(PaymentTransaction, self).form_feedback(cr, uid, data, acquirer_name, context=context)
     except TypeError:
+        _logger.warning("Try to call form_feedback() in new api format")
         res = super(PaymentTransaction, self).form_feedback(data, acquirer_name)
 
-    # Try to find related tx after form_feedback() is done
-    # ----------------------------------------------------
+    # Get payment transaction state after form_feedback
+    # -------------------------------------------------
     try:
         if hasattr(self, tx_find_method_name):
             try:
                 tx = getattr(self, tx_find_method_name)(cr, uid, data, context=context)
             except TypeError:
+                _logger.warning("Try to call %s in new api format" % tx_find_method_name)
                 tx = getattr(self, tx_find_method_name)(data)
 
         # Log Information about the tx
