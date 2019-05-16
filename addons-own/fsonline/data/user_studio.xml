@@ -6,8 +6,8 @@
         <!-- Fundraising Studio requests PARTNER -->
         <record model="res.partner" id="base.partner_studio">
             <!--<field name="name">studio studio</field>-->
-            <field name="firstname">studio</field>
-            <field name="lastname">studio</field>
+            <field name="firstname">FS-Online System-User</field>
+            <field name="lastname">Syncer FRST-Access</field>
             <!-- field name="company_id" ref="base.main_company"/ -->
             <field name="customer" eval="False"/>
             <field name="email">studio@datadialog.net</field>
@@ -16,8 +16,8 @@
         <!-- Fundraising Studio requests USER -->
         <record model="res.users" id="base.user_studio">
             <!--<field name="name">studio studio</field>-->
-            <field name="firstname">studio</field>
-            <field name="lastname">studio</field>
+            <field name="firstname">FS-Online System-User</field>
+            <field name="lastname">Syncer FRST-Access</field>
             <field name="login">studio</field>
             <field name="partner_id" ref="base.partner_studio"/>
             <field name="company_id" ref="base.main_company"/>

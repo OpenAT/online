@@ -13,9 +13,12 @@ class FSOConnectorSale(models.Model):
 
     Additional Field Attributes:
     con = 'connector field group'   If set it means that this field can be set by the JSON controller (web route)
-    con_update = True               If True an Update to the field is allowed
+    con_update = True               If set the value of the field can be updated (in certain circumstances)
     """
     _name = "fson.connector.sale"
+
+    # Disabled because this would need higher access rights for the fson_connector_sale user
+    # _inherit = ['mail.thread']
 
     # HINT: Check get_fields_by_con_group()
     # ATTENTION: key 'all' holds a list with all fields!
@@ -35,7 +38,7 @@ class FSOConnectorSale(models.Model):
                              string="State", readonly=True, default='new')
     received_data_log = fields.Text(string="Received-Data Log",
                                     readonly=True)
-    received_data_date = fields.Datetime(string="Received Data at", readonly=True)
+    received_data_date = fields.Datetime(string="Data from controller at", readonly=True)
     error_details = fields.Text(string='Error Details', readonly=True)
 
     # Linking
@@ -113,7 +116,7 @@ class FSOConnectorSale(models.Model):
 
     # ORDER: SALE ORDER (sale.order)
     # ------------------------------
-    client_order_ref = fields.Char(string="Order ID", required=True, con='order',
+    client_order_ref = fields.Char(string="Merchant Order ID", required=True, con='order',
                                    help="Unique identifier from the merchant for this sale order")
     # non sale.order fields
     followup_for_client_order_ref = fields.Char(string="Follow Up for Order with ID", con='order',
@@ -149,40 +152,52 @@ class FSOConnectorSale(models.Model):
     # -----------
     acquirer_id = fields.Many2one(comodel_name='payment.acquirer', inverse_name="fson_connector_sale_ids",
                                   string="Acquirer", con='tx', required=True, index=True, ondelete='set null')
-    acquirer_reference = fields.Char(string="Acquirer Transaction Reference", con='tx')
-    # date_validate = fields.Datetime(string="Validation Date")
-    # reference = fields.Char(string="Order Reference")
-    #             # client_order_ref OR request.env['payment.transaction'].get_next_reference(order.name)
-    # amount = fields.Float() not needed since we have price donate     # = sale_order_id.amount_total
-    # currency_id = fields.Many2one()                                   # = currency
-    # fees = fields.Float()
-    # type = fields.Selection()                  # = 'form'
-    # state = fields.Selection()                 # should be set by *_form_validate
-    # partner_id = fields.Many2one()             # sale_order_id.partner_id OR partner_id
-    # partner_country_id = Fields.Many2one()     # sale_order_id.partner_id.country_id.id OR partner_id.country_id.id
-    # sale_order_id         # sale_order_id.id
+    acquirer_reference = fields.Char(string="Acquirer Transaction Reference", con='tx, payment_consale')
 
     # Payment Method: payment_fsotransfer (Zahlschein)
     # ------------------------------------------------
-    # ATTENTION: TODO: Handly manually in add_payment_transaction() since the field name does not start with
-    #                  the provider name :(
-    do_not_send_payment_forms = fields.Boolean(string="Do not send payment forms", con='tx')
+    do_not_send_payment_forms = fields.Boolean(string="Do not send payment forms", con='tx, payment_fsotransfer')
 
     # Payment Method: payment_frst (Bankeinzug)
     # -----------------------------------------
-    frst_iban = fields.Char(string="IBAN", con='tx')
-    frst_bic = fields.Char(string="BIC (optional)", con='tx')
+    frst_iban = fields.Char(string="IBAN", con='tx, payment_frst')
+    frst_bic = fields.Char(string="BIC (optional)", con='tx, payment_frst')
 
-    # Payment Method: TODO: payment_consale (Webschnittstelle/Extern)
+    # Payment Method: payment_consale (Webschnittstelle/Extern)
     # ---------------------------------------------------------------
-    #consale_state = fields.Selection(string="Payment Transaction State")
-    #consale_payment_method = fields.Selection(string="Payment Method (PM)")
-    #consale_brand = fields.Char(string="Brand (BRAND)")
-    #consale_trxdate = fields.Datetime(string="Transaction Date and Time (TRXDATE)")
-    #consale_common_name = fields.Char("Common Name (CN)")
-    #consale_eci = fields.Char(string="Electronic Commerce Indicator (ECI)")
-    #consale_expiry_date = fields.Char(string="Expiry Date (ED)")
-    #consale_payid = fields.Char(string="PayID")
+    consale_state = fields.Selection(selection=[('draft', 'Draft'),
+                                                ('pending', 'Pending'),
+                                                ('done', 'Done'),
+                                                ('error', 'Error'),
+                                                ('cancel', 'Canceled')],
+                                     string='State', con='tx, payment_consale')
+    consale_transaction_date = fields.Date(string='Payment Transaction Date', con='tx, payment_consale')
+
+    consale_provider_name = fields.Char(string='Payment Provider Name', con='tx, payment_consale',
+                                        help='e.g.: Wirecard, Ogone, ApplePay, ...')
+    consale_provider_status = fields.Char(string="Transaction Status Information", con='tx, payment_consale')
+
+    consale_method = fields.Selection(selection=[('paypal', 'PayPal'),
+                                                 ('sofortueberweisung', 'Sofortüberweisung'),
+                                                 ('applepay', 'Apple Pay'),
+                                                 ('googlepay', 'Google Pay'),
+                                                 ('banktransfer', 'Bank Transfer'),
+                                                 ('creditcard', 'Credit Card'),
+                                                 ('other', 'Other')],
+                                      string='Payment Method', con='tx, payment_consale')
+    consale_method_other = fields.Char(string='"Other" Payment Method Name', con='tx, payment_consale')
+    consale_method_brand = fields.Char(string='Payment Method Brand', con='tx, payment_consale',
+                                       help="e.g.: Visa, Mastercard, Apple, ...")
+
+    consale_amount = fields.Float(string="Total Amount", con='tx, payment_consale')
+    consale_currency = fields.Char(string='Currency', con='tx, payment_consale')
+
+    consale_payid = fields.Char(string='PayID', con='tx, payment_consale')
+    consale_eci = fields.Char(string='Electronic Commerce Indicatior', con='tx, payment_consale')
+    consale_common_name = fields.Char(string='Common Name', con='tx, payment_consale')
+    consale_error_code = fields.Char(string='Error Code', con='tx, payment_consale')
+    consale_error_msg = fields.Char(string='Error Message', con='tx, payment_consale')
+    consale_ip_address = fields.Char(string='Caller IP Address', con='tx, payment_consale')
 
     # ADDITIONAL INFORMATION
     # ----------------------
@@ -222,6 +237,7 @@ class FSOConnectorSale(models.Model):
             fbcg['all'] = list()
             fbcg['update_allowed'] = list()
             fbcg['update_denied'] = list()
+            fbcg['all_provider_fields'] = list()
             for fname, field in self._fields.iteritems():
                 if hasattr(field, "_attrs") and 'con' in field._attrs:
 
@@ -235,14 +251,23 @@ class FSOConnectorSale(models.Model):
                     # 'update_denied'
                     else:
                         fbcg['update_denied'].append(fname)
-                    
-                    # 'con=' group name
-                    con_group_name = field._attrs['con']
-                    if con_group_name not in fbcg:
-                        fbcg[con_group_name] = list()
-                    fbcg[con_group_name].append(fname)
+
+                    # 'con=' list of field-group-names separated by ','
+                    con_group_names = tuple(n.strip() for n in field._attrs['con'].split(','))
+
+                    # Append payment provider fields to con group 'all_provider_fields'
+                    if 'tx' in con_group_names and len(con_group_names) >= 2:
+                        if any(g.startswith('payment_') for g in con_group_names):
+                            fbcg['all_provider_fields'].append(fname)
+
+                    # Add field name to all field-groups in con_group_names
+                    for con_group_name in con_group_names:
+                        if con_group_name not in fbcg:
+                            fbcg[con_group_name] = list()
+                        fbcg[con_group_name].append(fname)
 
             # Store result in class attribute
+            logger.info("Update class attribute '_fields_by_con_group': %s" % str(fbcg))
             cls._fields_by_con_group = fbcg
 
         # Return fields
@@ -308,13 +333,25 @@ class FSOConnectorSale(models.Model):
                         raise ValidationError("This payment interval is not available for the product! "
                                               "Allowed payment interval ids for this product: %s" % str(interval_ids))
 
-            # TODO: Validate payment transaction
+            # Validate payment transaction
             #       - if acquirer is enabled by 'fson_connector_sale'
             #       - if only correct fields are used (e.g. frst_iban)
-            #       - if all needed partner fields are set for this acquirer
+            # TODO:
+            #       - if all needed partner fields are set for this acquirer - maybe done by the _*_ methods form_feedb?
+            #       - check if acquirer recurring-allowed-setting matches with payment interval
             if r.acquirer_id:
+                # Check if provider is enabled
                 if not r.acquirer_id.fson_connector_sale:
                     raise ValidationError("This acquirer (id %s) is not enabled for the connector!" % r.acquirer_id.id)
+                # Check if the correct payment provider fields are used
+                # ATTENTION: This will only work if all payment addons stick to the naming convention!
+                all_provider_fields = self.get_fields_by_con_group('all_provider_fields')
+                allowed_provider_fields = self.get_fields_by_con_group('payment_'+self.acquirer_id.provider)
+                invalid_provider_fields = tuple(k for k in all_provider_fields
+                                                if self[k] and k not in allowed_provider_fields)
+                if invalid_provider_fields:
+                    raise ValidationError('Fields are not valid for the current acquirer (ID %s): %s'
+                                          '' % (r.acquirer_id.id, invalid_provider_fields))
 
     @api.multi
     def validate_update_data(self, vals=None):
@@ -328,7 +365,7 @@ class FSOConnectorSale(models.Model):
         for r in self:
             logger.info("fson_connector_sale() Validate update values for record %s" % r.id)
 
-            # TODO: Validate vals for current record data (mainly the state of the tx and so)
+            # TODO: Validate vals against current record data (mainly the state of the tx and so)
 
     # ------------------------------
     # CONVERSION AND LINKING METHODS
@@ -502,17 +539,16 @@ class FSOConnectorSale(models.Model):
         # Get provider name (e.g.: 'frst' or 'ogonedadi')
         provider = self.acquirer_id.provider
 
-        # Get all fields from the tx group that starts with the providername (e.g.: 'frst_iban')
-        data = {k: self[k] for k in self.get_fields_by_con_group('tx') if self[k] and k.startswith(provider)}
-
-        # Add additional values to data to pass _*_form_get_invalid_parameters
+        # Prepare provider-field-data for form_feedback()
+        provider_fields = self.get_fields_by_con_group('payment_' + provider)
+        data = {k: self[k] for k in provider_fields if self[k]}
         data['reference'] = tx.reference
         data['amount'] = tx.amount
         data['currency'] = tx.currency_id.name
 
-        # Use form_feedback to update the payment transaction by the specific methods of the provider
+        # Use form_feedback() to update the payment transaction by the specific methods of the provider
         # ATTENTION: !!! form_feedback() IS MONKEY PATCHED IN website_sale_donate !!!
-        #            the monkey patched version will update the sale order!
+        #            the monkey patched version will update the sale order and send an e-mail on tx.state changes!
         tx.form_feedback(self.env.cr, self.env.uid, data, provider, context=self.env.context)
 
         # Link Payment Transaction
@@ -521,46 +557,67 @@ class FSOConnectorSale(models.Model):
         return tx
 
     @api.multi
+    def update_state_by_sale_order_state(self):
+        for r in self:
+            sale_order = r.sale_order_id
+            if sale_order and sale_order.state not in ('draft', 'error'):
+                r.write({'state': 'done'})
+
+    # --------------------
+    # MAIN PROCESS METHODS
+    # --------------------
+    @api.multi
     def create_sale_order(self):
         for r in self:
-            logger.info("Create sale order for record %s" % r.id)
+            logger.info("Run create_sale_order() as superuser for record %s" % r.id)
+
+            # Switch to fson_connector_sale admin user
+            # ----------------------------------------
+            # ATTENTION: Since the fson_connector_sale user group will only get minimal privileges we need to run
+            #            the validation and linked record creation as user 'user_consale_admin'
+            r_admin = r.sudo(user=self.env.ref('fson_connector_sale.user_consale_admin'))
 
             # VALIDATE RECORD
             # ---------------
-            r.validate_record()
+            r_admin.validate_record()
 
             # CREATE AND LINK RECORDS
             # -----------------------
             # Add Partner res.partner
-            r.add_partner()
+            r_admin.add_partner()
 
             # Add Employee res.partner
-            r.add_partner_employee()
+            r_admin.add_partner_employee()
 
             # Add Donee res.partner
-            r.add_partner_donee()
+            r_admin.add_partner_donee()
 
             # Add sale.order
-            sale_order = r.add_sale_order()
+            r_admin.add_sale_order()
 
             # Add sale.order.line
-            r.add_sale_order_line()
+            r_admin.add_sale_order_line()
 
             # Add payment.transaction
-            r.add_payment_transaction()
+            r_admin.add_payment_transaction()
 
-            # TODO: Create method for state computation
-            if sale_order and sale_order.state not in ('draft', 'error'):
-                r.write({'state': 'done'})
+            # Update the state of the fson_connector_sale record
+            r_admin.update_state_by_sale_order_state()
 
     @api.multi
     def update_sale_order(self):
         for r in self:
-            logger.info("NOT IMPLEMENTED! Update sale order for record %s" % r.id)
+            logger.info("NOT IMPLEMENTED! Run update_sale_order() as superuser for record %s" % r.id)
+
+            # Switch to fson_connector_sale admin user
+            # ----------------------------------------
+            # ATTENTION: Since the fson_connector_sale user group will only get minimal privileges we need to run
+            #            the validation and linked record creation as user 'user_consale_admin'
+            r_admin = r.sudo(user=self.env.ref('fson_connector_sale.user_consale_admin'))
 
             # VALIDATE RECORD
             # ---------------
-            r.validate_record()
+            r_admin.validate_record()
 
             # TODO: Must be discussed in the team first! (Right now already disabled in the controller)
 
@@ -570,7 +627,7 @@ class FSOConnectorSale(models.Model):
     @api.model
     def create(self, vals):
         # Create Record
-        record = super(FSOConnectorSale, self).create(vals=vals)
+        record = super(FSOConnectorSale, self).create(vals)
 
         # Validate records and process sale order and related records
         if any(f in vals for f in self.get_fields_by_con_group('all')):
@@ -585,10 +642,10 @@ class FSOConnectorSale(models.Model):
             self.validate_update_data(vals=vals)
 
         # Update Records
-        res = super(FSOConnectorSale, self).write(vals=vals)
+        res = super(FSOConnectorSale, self).write(vals)
 
         # Validate records and process sale order and related records
         if any(f in vals for f in self.get_fields_by_con_group('update_allowed')):
-            self.update_sale_order(vals=vals)
+            self.update_sale_order()
 
         return res

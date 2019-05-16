@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data noupdate="0">
+    
+    
+    <!--
+        This user/partner is not for login but only to create the linked records to avoid sudo()
+    -->
+    <!-- partner for fson_connector_sale admin -->
+    <record model="res.partner" id="partner_consale_admin">
+        <field name="firstname">FS-Online System-User</field>
+        <field name="lastname">Webschnittstelle</field>
+        <field name="customer" eval="False"/>
+        <field name="email">fson_connector_sale@datadialog.net</field>
+    </record>
+
+    <!-- user fo fson_connector_sale admin -->
+    <record model="res.users" id="user_consale_admin">
+        <field name="firstname">FS-Online System-User</field>
+        <field name="lastname">Webschnittstelle</field>
+        <field name="login">fson_connector_sale@datadialog.net</field>
+        <field name="partner_id" ref="fson_connector_sale.partner_consale_admin"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
+    </record>
+    
+    
+    <!--
+        For external users using the 'webschnittstelle' always use the group 'fson_connector_sale_user_group'
+        The manager group is only for record creation and system-internal usage!
+    -->
+    <record id="fson_connector_sale_user_group" model="res.groups">
+        <field name="name">fson_connector_sale User</field>
+    </record>
+    
+    <record id="fson_connector_sale_manager_group" model="res.groups">
+        <field name="name">fson_connector_sale Manager</field>
+        <!-- Add user -->
+        <field name="users" eval="[(4, ref('fson_connector_sale.user_consale_admin'))]"/>
+        <!-- Inherited groups -->
+        <field name="implied_ids" eval="[(4, ref('fson_connector_sale.fson_connector_sale_user_group')),
+                                         (4, ref('base.group_sale_salesman'))]"/>
+    </record>
+    
+    
+</data>
+</openerp>

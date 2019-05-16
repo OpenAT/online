@@ -21,16 +21,10 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_con_sale",
-    'summary': """FS-Online Webschnittstelle fuer website_sale_donate""",
+    'name': "FS-Online payment_consale",
+    'summary': """FS-Online payment acquirer for external payments""",
     'description': """
-FS-Online fso_con_sale
-=========================
-Add Sale Orders by HTTP-POST-Requests in JSON format!
-
-TODO:
------
-  - Multi company (will now always take the default company)
+Used to handle the external payments for fson_connector_sale 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
@@ -43,10 +37,9 @@ TODO:
         'website_sale_donate',
     ],
     'data': [
-        'security/user_and_groups.xml',
-        'security/ir.model.access.csv',
-        'views/fson_connector_sale.xml',
-        'views/product_template.xml',
-        'views/payment_acquirer.xml',
+        'views/consale_acquirerbutton.xml',
+        'data/consale_data.xml',
+        'views/consale.xml',
+
     ],
 }

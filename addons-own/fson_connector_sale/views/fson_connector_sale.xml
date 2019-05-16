@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data>
     
-    <!--
-        altruja
-    -->
-    
     <!-- FORM VIEW -->
     <record model="ir.ui.view" id="fson_connector_sale_form">
         <field name="name">fson_connector_sale_form</field>
@@ -21,7 +17,9 @@
                         <group>
                             <field name="id"/>
                             <field name="create_date"/>
+                            <field name="create_uid"/>
                             <field name="write_date"/>
+                            <field name="write_uid"/>
                             <field name="received_data_date"/>
                         </group>
                         <group>
@@ -107,16 +105,42 @@
                     </group>
                     
                     <group name="payment">
-                        <group string="Payment Transaction" name="payment_transaction">
-                            <field name="acquirer_id"/>
-                            <field name="acquirer_reference"/>
-                        </group>
-                        <group string="Provider Fields" name="provider_fields">
-                            <field name="do_not_send_payment_forms"/>
-                            <field name="frst_iban"/>
-                            <field name="frst_bic"/>
-                        </group>
+                          <field name="acquirer_id"/>
+                          <field name="acquirer_reference"/>
                     </group>
+                    
+                    <notebook>
+                        <page string="payment_consale">
+                            <group>
+                                <field name="consale_state"/>
+                                <field name="consale_transaction_date"/>
+                                <field name="consale_provider_name"/>
+                                <field name="consale_provider_status"/>
+                                <field name="consale_method"/>
+                                <field name="consale_method_other"/>
+                                <field name="consale_method_brand"/>
+                                <field name="consale_amount"/>
+                                <field name="consale_currency"/>
+                                <field name="consale_payid"/>
+                                <field name="consale_eci"/>
+                                <field name="consale_common_name"/>
+                                <field name="consale_error_code"/>
+                                <field name="consale_error_msg"/>
+                                <field name="consale_ip_address"/>
+                            </group>
+                        </page>
+                        <page string="payment_frst">
+                            <group>
+                                <field name="frst_iban"/>
+                                <field name="frst_bic"/>
+                            </group>
+                        </page>
+                        <page string="payment_fsotransfer">
+                            <group>
+                                <field name="do_not_send_payment_forms"/>
+                            </group>
+                        </page>
+                    </notebook>
                     
                     <group string="Additional Info" name="info">
                         <field name="origin"/>
@@ -177,7 +201,7 @@
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
     <record id="fson_connector_sale_action" model="ir.actions.act_window" >
-        <field name="name">FS-Online Sale Order Connector</field>
+        <field name="name">Connector Sale</field>
         <field name="res_model">fson.connector.sale</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -198,7 +222,7 @@
     </record>
     <!-- MENU -->
     <!-- And we add the Action to a Menu with the shortcut menuitem -->
-    <menuitem id="fson_connector_sale_menu" action="fson_connector_sale_action" parent="base.menu_config" sequence="10301" string="FSON Sale Connector"/>
+    <menuitem id="fson_connector_sale_menu" action="fson_connector_sale_action" parent="base.menu_config" sequence="10301" name="Connector Sale"/>
         
 
 </data></openerp>

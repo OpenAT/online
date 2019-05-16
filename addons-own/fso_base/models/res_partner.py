@@ -49,24 +49,39 @@ class ResPartner(models.Model):
     #                                         ])
 
     def init(self, cr, context=None):
-        _logger.info('def init: Set firstname and lastname for public user and partner for FRST sync')
-        model_data_obj = self.pool.get('ir.model.data')
-        public_partner = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'base.public_partner')
-        partner_obj = self.pool.get('res.partner')
-        if public_partner and not public_partner.lastname:
-            _logger.info('def init: Public Partner found and lastname is not set! UPDATING name for FRST sync!')
-            partner_obj.write(cr, SUPERUSER_ID, [public_partner.id],
-                              {'firstname': 'FS-Online Public/Website',
-                               'lastname': 'System-User (do not delete or edit)'})
-        elif not public_partner:
-            _logger.error('PUBLIC PARTNER NOT FOUND ?!?')
+        _logger.warning('UPDATE SYSTEM USER NAMES')
 
-        _logger.info('def init: Set firstname and lastname for admin user and partner for FRST sync')
-        admin_partner = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'base.partner_root')
-        if admin_partner and (not admin_partner.firstname or not admin_partner.lastname):
-            _logger.info('def init: Admin Partner found and lastname is not set! UPDATING name for FRST sync!')
-            partner_obj.write(cr, SUPERUSER_ID, [admin_partner.id],
-                              {'firstname': 'FS-Online Administrator',
-                               'lastname': 'System-User (do not delete or edit)'})
-        elif not admin_partner:
-            _logger.error('ADMIN PARTNER NOT FOUND ?!?')
+        def set_name(partners={}, force=False):
+            model_data_obj = self.pool.get('ir.model.data')
+            partner_obj = self.pool.get('res.partner')
+            for xml_ref, vals in partners.iteritems():
+                _logger.info('Find partner %s' % xml_ref)
+                partner = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, xml_ref)
+                if partner and (force or not partner.lastname):
+                    _logger.warning('Update partner %s with vals %s' % (xml_ref, str(vals)))
+                    partner_obj.write(cr, SUPERUSER_ID, [partner.id], vals)
+                elif not partner:
+                    _logger.warning('Partner %s not found' % xml_ref)
+                else:
+                    _logger.info('Partner %s found but no update is needed' % xml_ref)
+
+        # Hint do use force=True for admin because the name might be used in E-Mail Templates and therefore altered!
+        admin = {'base.partner_root': {'firstname': 'FS-Online',
+                                       'lastname': 'Administrator'}}
+        set_name(admin)
+
+        public = {'base.public_partner': {'firstname': 'FS-Online',
+                                          'lastname': 'Website/Public'}}
+        set_name(public, force=True)
+
+        sosync = {'base.partner_sosync': {'firstname': 'FS-Online',
+                                          'lastname': 'Syncer Service'}}
+        set_name(sosync, force=True)
+
+        sosync_frst = {'base.partner_studio': {'firstname': 'FS-Online',
+                                               'lastname': 'Syncer FRST-Access'}}
+        set_name(sosync_frst, force=True)
+
+        consale = {'fson_connector_sale.partner_consale_admin': {'firstname': 'FS-Online',
+                                                                 'lastname': 'Webschnittstelle'}}
+        set_name(consale, force=True)
