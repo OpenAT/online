@@ -50,7 +50,7 @@ def send_internal_email(odoo_env_obj=None, fromaddr='', toaddr='', subject='', b
         text = msg.as_string()
 
         # Send e-mail
-        server = smtplib.SMTP('192.168.37.1', 25)
+        server = smtplib.SMTP(host='192.168.37.1', port=25, timeout=3)
         # server.starttls()
         # server.login(fromaddr, "YOUR PASSWORD")
         logger.info("send_internal_email() Sending e-mail: %s" % text)
