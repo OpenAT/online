@@ -7,6 +7,7 @@ from openerp.models import MAGIC_COLUMNS
 from dateutil import parser
 import datetime
 import json
+import sys
 
 import logging
 logger = logging.getLogger(__name__)
@@ -77,16 +78,42 @@ class BaseSosync(models.AbstractModel):
 
     @api.model
     def _sosync_watched_fields(self, values={}):
+        watched_fields = dict()
         if not values:
-            return dict()
+            return watched_fields
 
+        # Get all tracked fields
         tracked_fields = self._get_sosync_tracked_fields()
-        try:
-            watched_fields = {key: str(values[key]) for key in values if key in tracked_fields}
-        except Exception as e:
-            logger.error("_sosync_watched_fields: %s" % repr(e))
-            watched_fields = {key: values[key] for key in values if key in tracked_fields}
-            pass
+
+        # Get watched_fields and val data
+        for f_name, val in values.iteritems():
+            if f_name in tracked_fields:
+                # Do not store binary field data
+                try:
+                    if self._fields[f_name].type == 'binary':
+                        val = 'binary data'
+                except:
+                    pass
+
+                # Convert to string
+                try:
+                    val = str(val)
+                except:
+                    try:
+                        val = json.dumps(val, ensure_ascii=False)
+                    except:
+                        val = 'Could not convert to string'
+
+                # Skipp long strings
+                try:
+                    if len(val) > 64:
+                        val = val[0:63] + ' ...too large to log'
+                except:
+                    val = 'could not check size, logging skipped'
+
+                # Append to watched_fields
+                watched_fields[f_name] = val
+
         return watched_fields
 
     @api.model
