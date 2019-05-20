@@ -6,6 +6,7 @@ $(document).ready(function () {
 
     // JQUERY-VALIDATE SETTINGS
     $( "form#fso_form.fso_form_validate" ).validate({
+
         // EXAMPLES FOR CUSTOM/ADDITIONAL RULES CONFIGURATION
         rules: {
             // email: {
@@ -32,6 +33,7 @@ $(document).ready(function () {
     // HINT: This is also needed to make jquery-validate work with a submit button instead of an submit input
     //       http://stackoverflow.com/questions/11914626/jquery-validation-with-button-type-rather-than-submit-type-for-a-form
     $("#apf_submit_button").click(function(event) {
+        // console.log('SUBMIT fso_forms FORM');
         $("form#fso_form.fso_form_validate").submit();
     });
 

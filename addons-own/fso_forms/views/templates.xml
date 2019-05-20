@@ -110,7 +110,7 @@
                                                                 <input type="checkbox"
                                                                        t-att-id="f_name"
                                                                        t-att-name="f_name"
-                                                                       t-att-value="kwargs.get(f_name) if field.nodata else record[f_name]"
+                                                                       t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                        t-att-checked="True if record[f_name] else ''"
                                                                        t-att-required="field.mandatory"/>
                                                             </t>
@@ -160,7 +160,7 @@
                                                                    t-att-id="f_name"
                                                                    t-att-name="f_name"
                                                                    class="form-control"
-                                                                   t-att-value="kwargs.get(f_name) if field.nodata else record[f_name]"
+                                                                   t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                    t-att-placeholder="field.placeholder"
                                                                    t-att-required="field.mandatory"
                                                                    t-att="validation_rule"
@@ -191,7 +191,7 @@
                                                                    t-att-id="f_name"
                                                                    t-att-name="f_name"
                                                                    class="form-control"
-                                                                   t-att-value="kwargs.get(f_name) if field.nodata else record[f_name]"
+                                                                   t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                    t-att-placeholder="field.placeholder"
                                                                    t-att-required="field.mandatory"
                                                                    t-att="validation_rule"

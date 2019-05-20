@@ -263,6 +263,10 @@ class FsoForms(http.Controller):
             # Validate Fields
             form_field_errors = self.validate_fields(form, field_data=kwargs)
             if form_field_errors:
+
+                # Add field error messages to the warnings
+                warnings += ['"%s": %s' % (kwargs.get(f, f), msg) for f, msg in form_field_errors.iteritems()]
+
                 return http.request.render('fso_forms.form',
                                            {'kwargs': kwargs,
                                             'form': form,
@@ -286,7 +290,7 @@ class FsoForms(http.Controller):
 
             # Redirect to Thank you Page
             if form.thank_you_page_after_submit and not form_field_errors and not warnings and not errors:
-                request.session['mikes_test'] = {'a': 1, 'b': {'c': 'form'}}
+                # request.session['mikes_test'] = {'a': 1, 'b': {'c': 'form'}}
                 return request.redirect("/fso/form/thanks/"+str(form.id))
                 # return http.request.render('fso_forms.thanks',
                 #                            {'kwargs': kwargs,
