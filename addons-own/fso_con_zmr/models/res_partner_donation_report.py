@@ -1087,6 +1087,25 @@ class ResPartnerFADonationReport(models.Model):
             if any(r[f_name].id != subm_vals[f_name] if hasattr(r[f_name], 'id') else r[f_name] != subm_vals[f_name]
                    for f_name in subm_vals):
                 r.write(subm_vals)
+
+                # Special Case: Skipp !ANY! older donation reports for the same private bpk!
+                # --------------------------------------------------------------------------
+                # HINT: They may exist because meldungs_jahr is outside of automatic submission.
+                # ATTENTION: Even on a BPK-Change before submission there should be no problem with skipping old reports
+                reports_to_skip = r.sudo().search([('donor_instruction', '=', False),
+                                                   ('submission_env', '=', r.submission_env),
+                                                   ('partner_id', '=', r.partner_id.id),
+                                                   ('bpk_company_id', '=', r.bpk_company_id.id),
+                                                   ('meldungs_jahr', '=', r.meldungs_jahr),
+                                                   ('submission_bpk_private', '=', r.submission_bpk_private),
+                                                   ('state', 'in', r._changes_allowed_states()),
+                                                   ('anlage_am_um', '<', r.anlage_am_um),
+                                                   ('id', '!=', r.id)])
+                # Skip older reports and unlink them from any donation_report.submission
+                # HINT: We are already the superuser in this environment
+                for report_to_skip in reports_to_skip:
+                    update_report(report_to_skip, state='skipped', skipped_by_id=r.id)
+
             continue
 
     @api.multi
