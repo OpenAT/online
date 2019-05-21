@@ -949,7 +949,8 @@ class ResPartnerFADonationReport(models.Model):
             # ----------------------------------------------------------------------------------------
             # ATTENTION: Such partners must be merged before the donation report can be submitted
             # HINT: It is ok if there are donation reports for the same partner with different bpk numbers
-            # HINT: If is ok if there are other partners with the same BPK but no donation reports
+            # HINT: It is ok if there are other partners with the same BPK but no donation reports
+            # HINT: It is ok if the lsr of the other partners is submitted cancellation report
             # ATTENTION: This test can !!!NOT!!! be applied to cancellation donation reports!
             bpk_private = bpk.bpk_private
             if bpk_private and (not r.cancellation_for_bpk_private and r.betrag > 0):
