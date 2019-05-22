@@ -1,489 +1,510 @@
-openerp.website.if_dom_contains('.website_forum', function () {
-    console.log('website forum imagedialog dom contains long');
+(function () {
+    'use strict;'
+    var website = openerp.website;
+    var webEditor = website.editor;
 
-    var uniqueNameCounter = 0,
-		// Black rectangle which is shown before the image is loaded.
-		loadingImage = 'data:image/gif;base64,R0lGODlhDgAOAIAAAAAAAP///yH5BAAAAAAALAAAAAAOAA4AAAIMhI+py+0Po5y02qsKADs=';
+    //--------------------------------------
+    // Find the classnames of styled comments
+    //--------------------------------------
+    var wfi_content = $('[class^="wfi_style_"]');
+    for (var i = 0; i < wfi_content.length; i++) {
+        var wfiClassName = wfi_content[i].className;
+        var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
+        var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
+        var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
+        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
 
-	// Returns number as a string. If a number has 1 digit only it returns it prefixed with an extra 0.
-	function padNumber( input ) {
-		if ( input <= 9 ) {
-			input = '0' + input;
-		}
+        if (wfiStyleText) {
+            $('.' + wfiClassName).attr('style', 'text-align:' + wfiStyleText[1] + ';');
+        } else if (wfiStyleIndent) {
+            $('.' + wfiClassName).attr('style', 'margin-left:' + wfiStyleIndent[1] + ';');
+        } else if (wfiStyleColor) {
+            $('.' + wfiClassName).attr('style', 'color:#' + wfiStyleColor[1] + ';');
+        } else if (wfiStyleBG) {
+            $('.' + wfiClassName).attr('style', 'background-color:#' + wfiStyleBG[1] + ';');
+        }
+    }
 
-		return String( input );
-	}
+    // Check if in ask/edit question
+    if(!$('textarea.load_editor').length) {
+//        console.log('not in forum');
 
-	// Returns a unique image file name.
-	function getUniqueImageFileName( type ) {
-		var date = new Date(),
-			dateParts = [ date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds() ];
+        return $.Deferred().reject("DOM doesn't contain '.website_forum'");
+    }
 
-		uniqueNameCounter += 1;
+    //--------------------------------------
+    // Destroy and replace existing CKEditor
+    //--------------------------------------
+    var old_editor = CKEDITOR.instances['content'];
 
-		return 'image-' + CKEDITOR.tools.array.map( dateParts, padNumber ).join( '' ) + '-' + uniqueNameCounter + '.' + type;
-	}
+    if (old_editor) {
+        old_editor.destroy(true);
+    }
 
-	CKEDITOR.plugins.add( 'uploadimage', {
-		requires: 'uploadwidget',
+    CKEDITOR.replace('content', _forum_config());
 
-		onLoad: function() {
-			CKEDITOR.addCss(
-				'.cke_upload_uploading img{' +
-					'opacity: 0.3' +
-				'}'
-			);
-		},
+    //--------------------------------------
+    // Change of the EventNumber, because website_forum.js would change it to the wrong ones
+    //--------------------------------------
+    var editor = CKEDITOR.instances['content'];
+    editor.on('instanceReady', CKEDITORLoadCompleteForum);
 
-		init: function( editor ) {
-			// Do not execute this paste listener if it will not be possible to upload file.
-			if ( !CKEDITOR.plugins.clipboard.isFileApiSupported ) {
-				return;
-			}
+    editor.on('instanceReady', function (ev) {
+        var wfi_content = ev.editor.document.$.body.children;
 
-			var fileTools = CKEDITOR.fileTools,
-				uploadUrl = fileTools.getUploadUrl( editor.config, 'image' );
+        for (var i = 0; i < wfi_content.length; i++) {
+            var wfiClassName = wfi_content[i].className;
+            var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
+            var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
 
-			if ( !uploadUrl ) {
-				return;
-			}
+            if (wfiStyleText) {
+                wfi_content[i].style.textAlign = wfiStyleText[1];
+            } else if (wfiStyleIndent) {
+                wfi_content[i].style.marginLeft = wfiStyleIndent[1];
+            }
 
-			// Handle images which are available in the dataTransfer.
-			fileTools.addUploadWidget( editor, 'uploadimage', {
-				supportedTypes: /image\/(jpeg|png|gif|bmp)/,
+            if (wfi_content[i].children.length) {
+                var wfi_content_children = wfi_content[i].children;
+                for (var j = 0; j < wfi_content_children.length; j++) {
+                    var wfiChildClassName = wfi_content_children[j].className;
+                    var wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
+                    var wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
 
-				uploadUrl: uploadUrl,
+                    if (wfiStyleColor) {
+                        wfi_content_children[j].style.color = hexToRGB(wfiStyleColor[1]);
+                    } else if (wfiStyleBG) {
+                        wfi_content_children[j].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                    }
 
-				fileToElement: function() {
-					var img = new CKEDITOR.dom.element( 'img' );
-					img.setAttribute( 'src', loadingImage );
-					return img;
-				},
+                    if (wfi_content_children[j].children.length) {
+                        if (wfi_content_children[j].children[0].className) {
+                            wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                            wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                        } else {
+                            if (wfi_content_children[j].children[0].children.length) {
+                                if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                    wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                                    wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                                } else {
+                                    wfi_content_children[j]
+                                }
 
-				parts: {
-					img: 'img'
-				},
-
-				onUploading: function( upload ) {
-					// Show the image during the upload.
-					this.parts.img.setAttribute( 'src', upload.data );
-				},
-
-				onUploaded: function( upload ) {
-					// Width and height could be returned by server (https://dev.ckeditor.com/ticket/13519).
-					var $img = this.parts.img.$,
-						width = upload.responseData.width || $img.naturalWidth,
-						height = upload.responseData.height || $img.naturalHeight;
-
-					// Set width and height to prevent blinking.
-					this.replaceWith( '<img src="' + upload.url + '" ' +
-						'width="' + width + '" ' +
-						'height="' + height + '">' );
-				}
-			} );
-
-			// Handle images which are not available in the dataTransfer.
-			// This means that we need to read them from the <img src="data:..."> elements.
-			editor.on( 'paste', function( evt ) {
-				// For performance reason do not parse data if it does not contain img tag and data attribute.
-				if ( !evt.data.dataValue.match( /<img[\s\S]+data:/i ) ) {
-					return;
-				}
-
-				var data = evt.data,
-					// Prevent XSS attacks.
-					tempDoc = document.implementation.createHTMLDocument( '' ),
-					temp = new CKEDITOR.dom.element( tempDoc.body ),
-					imgs, img, i;
-
-				// Without this isReadOnly will not works properly.
-				temp.data( 'cke-editable', 1 );
-
-				temp.appendHtml( data.dataValue );
-
-				imgs = temp.find( 'img' );
-
-				for ( i = 0; i < imgs.count(); i++ ) {
-					img = imgs.getItem( i );
-
-					// Assign src once, as it might be a big string, so there's no point in duplicating it all over the place.
-					var imgSrc = img.getAttribute( 'src' ),
-						// Image have to contain src=data:...
-						isDataInSrc = imgSrc && imgSrc.substring( 0, 5 ) == 'data:',
-						isRealObject = img.data( 'cke-realelement' ) === null;
-
-					// We are not uploading images in non-editable blocs and fake objects (https://dev.ckeditor.com/ticket/13003).
-					if ( isDataInSrc && isRealObject && !img.data( 'cke-upload-id' ) && !img.isReadOnly( 1 ) ) {
-						// Note that normally we'd extract this logic into a separate function, but we should not duplicate this string, as it might
-						// be large.
-						var imgFormat = imgSrc.match( /image\/([a-z]+?);/i ),
-							loader;
-
-						imgFormat = ( imgFormat && imgFormat[ 1 ] ) || 'jpg';
-
-						loader = editor.uploadRepository.create( imgSrc, getUniqueImageFileName( imgFormat ) );
-						loader.upload( uploadUrl );
-
-						fileTools.markElement( img, 'uploadimage', loader.id );
-
-						fileTools.bindNotifications( editor, loader );
-					}
-				}
-
-				data.dataValue = temp.getHtml();
-			} );
-		}
-	} );
-
-
-    CKEDITOR.on('dialogDefinition', function(ev) {
-    // Take the dialog window name and its definition from the event data.
-        var dialogName = ev.data.name;
-        var dialogDefinition = ev.data.definition;
-        var dialog = CKEDITOR.dialog.getCurrent();
-
-        console.log(ev.editor.plugins.filebrowser);
-        console.log(ev.data.definition);
-
-//        var definition = ev.data.definition;
-//		var element;
-		// Associate filebrowser to elements with 'filebrowser' attribute.
-//		for (var i = 0; i < definition.contents.length; ++i) {
-//			if ((element = definition.contents[i])) {
-//				attachFileBrowser(ev.editor, ev.data.name, definition, element.elements);
-//				if (element.hidden && element.filebrowser)
-//					element.hidden = !isConfigured(definition, element.id, element.filebrowser);
-//
-//			}
-//		}
-
-        if (dialogName == 'image') {
-//            dialogDefinition.onShow = function() {
-                console.log('click test');
-                var infoTab = dialogDefinition.getContents('info');
-                console.log(infoTab);
-                // Remove unnecessary widgets
-                infoTab.remove( 'ratioLock' );
-//                infoTab.remove( 'txtHeight' );
-//                infoTab.remove( 'txtWidth' );
-                infoTab.remove( 'txtBorder');
-                infoTab.remove( 'txtHSpace');
-                infoTab.remove( 'txtVSpace');
-                infoTab.remove( 'cmbAlign' );
-                var tes = CKEDITOR.instances['image'];
-                console.log(tes);
-//                tes.setValue('asdfasbgfb');
-//                infoTab.remove( 'htmlPreview' );
-
-
-//                var btnTest = '<button onclick="returnFileUrl()">Select File</button>';
-//                $('td.cke_dialog_ui_hbox_last').replaceWith('<button onclick="returnFileUrl()">Select File</button>');
-//                var dialog = CKEDITOR.dialog.getCurrent();
-
-//                var elem = dialog.getContentElement('info','htmlPreview');
-//                elem.getElement().hide();
-//                dialog.hidePage( 'Link' );
-//                dialog.hidePage( 'advanced' );
-//                dialog.hidePage( 'info' ); // works now (CKEditor v3.6.4)
-//                this.selectPage('Upload');
-                dialogDefinition.onShow = function () {
-                    var dialog = CKEDITOR.dialog.getCurrent();
-//
-                    var elem = dialog.getContentElement('info','htmlPreview');
-
-
-//                    elem.getElement().hide();
-//
-//                    dialog.hidePage( 'Link' );
-//                    dialog.hidePage( 'advanced' );
-//                    dialog.hidePage( 'info' ); // works now (CKEditor v3.6.4)
-//                    this.selectPage('FileBrowser');
-//
-//                    /*var uploadTab = dialogDefinition.getContents('Upload');
-//                    var uploadButton = uploadTab.get('uploadButton');
-//                    uploadButton['filebrowser']['onSelect'] = function( fileUrl, errorMessage ) {
-//                        //$("input.cke_dialog_ui_input_text").val(fileUrl);
-//                        dialog.getContentElement('info', 'txtUrl').setValue(fileUrl);
-//                        //$(".cke_dialog_ui_button_ok span").click();
-//                    }*/
-//                    $('.cke_dialog_ui_hbox_first').first().after(
-                    $('td.cke_dialog_ui_hbox_last').first().replaceWith(
-                        openerp.qweb.render(
-                        'wfi_imageDialog'
-                    ));
-                    var newURL = 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/intermediary/f/5cb38afa-bb36-4027-adbb-db659613c16a/dct0nrw-36b5f309-502c-4cf5-be88-a3cb0f19eea5.jpg/v1/fill/w_1280,h_800,q_70,strp/would_you_remember__by_lightdrop_dct0nrw-fullview.jpg';
-//                    dialog.setValueOf('info', 'txtUrl', newURL);
-                };
-
-//////                $('.cke_dialog_body').replaceWith(
-//                $('.cke_dialog_ui_hbox_last').replaceWith(
-//                    openerp.qweb.render(
-//                    'wfi_imageDialog'
-//                ));
-////                dialog.hide();
-//
-////                init_wfi_filepicker();
-////                console.log($(".cke_reset_all").css());
-////                $('.cke_dialog_ui_vbox_child').remove();
-////                $('.cke_dialog_body').remove(); // remove complete body and build own
-//                // This code will open the Link tab.
-////                this.selectPage( 'Link' );
-//                };
+                            }
+                        }
+                    }
+                }
+            }
         }
     });
 
-//    function attachFileBrowser(editor, dialogName, definition, elements) {
-//		if (!elements || !elements.length)
-//			return;
-//
-//		var element;
-//
-//		for (var i = elements.length; i--;) {
-//			element = elements[i];
-//
-//			if (element.type == 'hbox' || element.type == 'vbox' || element.type == 'fieldset')
-//				attachFileBrowser(editor, dialogName, definition, element.children);
-//
-//			if (!element.filebrowser)
-//				continue;
-//
-//			if (typeof element.filebrowser == 'string') {
-//				var fb = {
-//					action: (element.type == 'fileButton') ? 'QuickUpload' : 'Browse',
-//					target: element.filebrowser
-//				};
-//				element.filebrowser = fb;
-//			}
-//
-//			if (element.filebrowser.action == 'Browse') {
-//				var url = element.filebrowser.url;
-//				if (url === undefined) {
-//					url = editor.config['filebrowser' + ucFirst(dialogName) + 'BrowseUrl'];
-//					if (url === undefined)
-//						url = editor.config.filebrowserBrowseUrl;
-//				}
-//
-//				if (url) {
-//					element.onClick = browseServer;
-//					element.filebrowser.url = url;
-//					element.hidden = false;
-//				}
-//			} else if (element.filebrowser.action == 'QuickUpload' && element['for']) {
-//				url = element.filebrowser.url;
-//				if (url === undefined) {
-//					url = editor.config['filebrowser' + ucFirst(dialogName) + 'UploadUrl'];
-//					if (url === undefined)
-//						url = editor.config.filebrowserUploadUrl;
-//				}
-//
-//				if (url) {
-//					var onClick = element.onClick;
-//
-//					// "element" here means the definition object, so we need to find the correct
-//					// button to scope the event call
-//					element.onClick = function(ev) {
-//						var sender = ev.sender,
-//							fileInput = sender.getDialog().getContentElement(this['for'][0], this['for'][1]).getInputElement(),
-//							isFileUploadApiSupported = CKEDITOR.fileTools && CKEDITOR.fileTools.isFileUploadSupported;
-//
-//						if (onClick && onClick.call(sender, ev) === false) {
-//							return false;
-//						}
-//
-//						if (uploadFile.call(sender, ev)) {
-//							// Use one of two upload strategies, either form or XHR based (#643).
-//							if (editor.config.filebrowserUploadMethod === 'form' || !isFileUploadApiSupported) {
-//								// Append token preventing CSRF attacks.
-//								appendToken(fileInput);
-//								return true;
-//							} else {
-//								var loader = editor.uploadRepository.create(fileInput.$.files[0]);
-//
-//								loader.on('uploaded', function(ev) {
-//									var response = ev.sender.responseData;
-//									setUrl.call(ev.sender.editor, response.url, response.message);
-//								});
-//
-//								// Return non-false value will disable fileButton in dialogui,
-//								// below listeners takes care of such situation and re-enable "send" button.
-//								loader.on('error', xhrUploadErrorHandler.bind(this));
-//								loader.on('abort', xhrUploadErrorHandler.bind(this));
-//
-//								loader.loadAndUpload(addMissingParams(url));
-//
-//								return 'xhr';
-//							}
-//						}
-//						return false;
-//					};
-//
-//					element.filebrowser.url = url;
-//					element.hidden = false;
-//					setupFileElement(editor, definition.getContents(element['for'][0]).get(element['for'][1]), element.filebrowser);
-//				}
-//			}
-//		}
-//	}
-//
-//	function ucFirst(str) {
-//		str += '';
-//		var f = str.charAt(0).toUpperCase();
-//		return f + str.substr(1);
-//	}
-//
-//    function uploadFile() {
-//            var dialog = this.getDialog();
-//            var editor = dialog.getParentEditor();
-//
-//            editor._.filebrowserSe = this;
-//
-//            // If user didn't select the file, stop the upload.
-//            if (!dialog.getContentElement(this['for'][0], this['for'][1]).getInputElement().$.value)
-//                return false;
-//
-//            if (!dialog.getContentElement(this['for'][0], this['for'][1]).getAction())
-//                return false;
-//
-//            return true;
-//	}
-//
-//    function setUrl(fileUrl, data) {
-//		var dialog = this._.filebrowserSe.getDialog(),
-//			targetInput = this._.filebrowserSe['for'],
-//			onSelect = this._.filebrowserSe.filebrowser.onSelect;
-//
-//		if (targetInput)
-//			dialog.getContentElement(targetInput[0], targetInput[1]).reset();
-//
-//		if (typeof data == 'function' && data.call(this._.filebrowserSe) === false)
-//			return;
-//
-//		if (onSelect && onSelect.call(this._.filebrowserSe, fileUrl, data) === false)
-//			return;
-//
-//		// The "data" argument may be used to pass the error message to the editor.
-//		if (typeof data == 'string' && data)
-//			alert(data); // jshint ignore:line
-//
-//		if (fileUrl)
-//			updateTargetElement(fileUrl, this._.filebrowserSe);
-//	}
-//
-//	function updateTargetElement(url, sourceElement) {
-//		var dialog = sourceElement.getDialog();
-//		var targetElement = sourceElement.filebrowser.target || null;
-//
-//		// If there is a reference to targetElement, update it.
-//		if (targetElement) {
-//			var target = targetElement.split(':');
-//			var element = dialog.getContentElement(target[0], target[1]);
-//			if (element) {
-//				element.setValue(url);
-//				dialog.selectPage(target[0]);
-//			}
-//		}
-//	}
-//
-//    function appendToken(fileInput) {
-//		var tokenElement;
-//		var form = new CKEDITOR.dom.element(fileInput.$.form);
-//
-//		if (form) {
-//			// Check if token input element already exists.
-//			tokenElement = form.$.elements['ckCsrfToken'];
-//
-//			// Create new if needed.
-//			if (!tokenElement) {
-//				tokenElement = new CKEDITOR.dom.element('input');
-//				tokenElement.setAttributes( {
-//					name: 'ckCsrfToken',
-//					type: 'hidden'
-//				} );
-//
-//				form.append(tokenElement);
-//			} else {
-//				tokenElement = new CKEDITOR.dom.element(tokenElement);
-//			}
-//
-//			tokenElement.setAttribute('value', CKEDITOR.tools.getCsrfToken());
-//		}
-//	}
-//
-//    function isConfigured(definition, tabId, elementId) {
-//		if (elementId.indexOf(';') !== -1) {
-//			var ids = elementId.split(';');
-//			for (var i = 0; i < ids.length; i++) {
-//				if (isConfigured(definition, tabId, ids[i]))
-//					return true;
-//			}
-//			return false;
-//		}
-//
-//		var elementFileBrowser = definition.getContents(tabId).get(elementId).filebrowser;
-//		return (elementFileBrowser && elementFileBrowser.url);
-//	}
-//
-//	function addMissingParams(url) {
-//		if (!url.match(/command=QuickUpload/) || url.match(/(\?|&)responseType=json/)) {
-//			return url;
-//		}
-//
-//		return addQueryString(url, {responseType: 'json'});
-//	}
-//
-//    function addQueryString(url, params) {
-//		var queryString = [];
-//
-//		if (!params)
-//			return url;
-//		else {
-//			for (var i in params)
-//				queryString.push(i + '=' + encodeURIComponent(params[i]));
-//		}
-//
-//		return url + ((url.indexOf('?') != -1) ? '&' : '?') + queryString.join('&');
-//	}
-//
-//    function browseServer() {
-//		var dialog = this.getDialog();
-//		var editor = dialog.getParentEditor();
-//
-//		editor._.filebrowserSe = this;
-//
-//		var width = editor.config['filebrowser' + ucFirst(dialog.getName()) + 'WindowWidth'] || editor.config.filebrowserWindowWidth || '80%';
-//		var height = editor.config['filebrowser' + ucFirst(dialog.getName()) + 'WindowHeight'] || editor.config.filebrowserWindowHeight || '70%';
-//
-//		var params = this.filebrowser.params || {};
-//		params.CKEditor = editor.name;
-//		params.CKEditorFuncNum = editor._.filebrowserFn;
-//		if (!params.langCode)
-//			params.langCode = editor.langCode;
-//
-//		var url = addQueryString(this.filebrowser.url, params);
-//		// TODO: V4: Remove backward compatibility (https://dev.ckeditor.com/ticket/8163).
-//		editor.popup(url, width, height, editor.config.filebrowserWindowFeatures || editor.config.fileBrowserWindowFeatures);
-//	}
-//
-//    function setupFileElement(editor, fileInput, filebrowser) {
-//		var params = filebrowser.params || {};
-//		params.CKEditor = editor.name;
-//		params.CKEditorFuncNum = editor._.filebrowserFn;
-//		if (!params.langCode)
-//			params.langCode = editor.langCode;
-//
-//		fileInput.action = addQueryString(filebrowser.url, params);
-//		fileInput.filebrowser = filebrowser;
-//	}
-//
-//    function xhrUploadErrorHandler(ev) {
-//		var response = {};
-//
-//		try {
-//			response = JSON.parse(ev.sender.xhr.response) || {};
-//		} catch (e) {}
-//
-//		// `this` is a reference to ui.dialog.fileButton.
-//		this.enable();
-//		alert(response.error ? response.error.message : ev.sender.message); // jshint ignore:line
-//	}
-});
+    function hexToRGB (hex) {
+        r = parseInt(hex.substring(0,2), 16);
+        g = parseInt(hex.substring(2,4), 16);
+        b = parseInt(hex.substring(4,6), 16);
+
+        result = 'rgb('+r+','+g+','+b+')';
+        return result;
+    }
+
+    //--------------------------------------
+    // To Bypass XSS adding Classnames to the new Style (for color and text positioning)
+    //--------------------------------------
+    editor.on('change', function (ev) {
+        var wfi_content = ev.editor.document.$.body.children;
+
+        for (var i = 0; i < wfi_content.length; i++) {
+
+            var parent_style = wfi_content[i].style;
+
+            if (parent_style[0]) {
+                if (wfi_content[i].className.match(/wfi_style_text_(.*)/)) {
+                    if (wfi_content[i].className === 'wfi_style_text_' + parent_style.textAlign) {
+                        wfi_content[i].className = '';
+                    } else if (wfi_content[i].className !== 'wfi_style_text_' + parent_style.textAlign) {
+                        wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
+                    }
+                } else if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
+                    wfi_content[i].className = '';
+                    wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                } else {
+                    if (parent_style.textAlign) {
+                        wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
+                    } else if (parent_style.marginLeft) {
+                        wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                    }
+                }
+            } else if (!parent_style[0]) {
+                wfi_content[i].className = '';
+            }
+
+            if (wfi_content[i].children.length) {
+
+                var wfi_content_children = wfi_content[i].children;
+
+                for (var j = 0; j < wfi_content_children.length; j++) {
+
+                    var child_style = wfi_content_children[j].style;
+                    if (child_style[0]) {
+                        if (wfi_content_children[j].children.length){
+                            if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
+                                wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+                            }
+                        }
+
+                        if (wfi_content_children[j].style[0] === 'color') {
+                            var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
+                            wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                        }
+
+                        if ((wfi_content_children[j].style[0] === 'background-color') && (!wfi_content_children[j].className)) {
+                            var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
+                            wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                        }
+                    } else if (wfi_content_children[j].children.length) {
+                        if (wfi_content_children[j].children[0].children.length){
+                            wfi_content_children[j].children[0].style.backgroundColor = wfi_content_children[j].children[0].children[0].style.backgroundColor;
+                            wfi_content_children[j].children[0].innerHTML = wfi_content_children[j].children[0].children[0].innerHTML;
+                        }
+
+                        if (wfi_content_children[j].children[0].style.backgroundColor) {
+
+                            var color = wfi_content_children[j].children[0].style.backgroundColor.match(/rgb(.*)/);
+                            wfi_content_children[j].children[0].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    function fullColorHex(rgb) {
+        var color = rgb.replace(/[{()}]/g, '');
+        color = color.split(', ')
+        var red = rgbToHex(color[0]);
+        var green = rgbToHex(color[1]);
+        var blue = rgbToHex(color[2]);
+        return red+green+blue;
+    };
+
+    var rgbToHex = function (rgb) {
+        var hex = Number(rgb).toString(16);
+        if (hex.length < 2) {
+             hex = "0" + hex;
+        }
+        return hex;
+    };
+
+    function CKEDITORLoadCompleteForum(){
+        $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(41,30)');
+        $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
+        $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
+        $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
+    }
+
+    //----------------------------------------
+    // Copy of the Odoo Toolbar in the Edit Mode
+    //----------------------------------------
+    function is_editing_host(element) {
+        return element.getAttribute('contentEditable') === 'true';
+    }
+
+    function is_editable_node(element) {
+        return !(element.data('oe-model') === 'ir.ui.view'
+              || element.data('cke-realelement')
+              || (is_editing_host(element) && element.getAttribute('attributeEditable') !== 'true')
+              || element.isReadOnly());
+    }
+
+    function link_dialog(editor) {
+        return new webEditor.RTELinkDialog(editor).appendTo(document.body);
+    }
+    function image_dialog(editor, image) {
+        return new webEditor.MediaDialog(editor, image).appendTo(document.body);
+    }
+
+    function get_selected_link(editor) {
+        var sel = editor.getSelection(),
+            el = sel.getSelectedElement();
+        if (el && el.is('a')) { return el; }
+
+        var range = sel.getRanges(true)[0];
+        if (!range) { return null; }
+
+        range.shrink(CKEDITOR.SHRINK_TEXT);
+        var commonAncestor = range.getCommonAncestor();
+        var viewRoot = editor.elementPath(commonAncestor).contains(function (element) {
+            return element.data('oe-model') === 'ir.ui.view';
+        });
+        if (!viewRoot) { return null; }
+        // if viewRoot is the first link, don't edit it.
+        return new CKEDITOR.dom.elementPath(commonAncestor, viewRoot)
+                .contains('a', true);
+    }
+
+    CKEDITOR.plugins.add('customdialogs_forum', {
+        // requires: 'link,image',
+        init: function (editor) {
+            editor.on('doubleclick', function (evt) {
+                var element = evt.data.element;
+                if ((element.is('img') || element.$.className.indexOf(' fa-') != -1) && is_editable_node(element)) {
+                    image_dialog(editor, element);
+                    return;
+                }
+                var parent = new CKEDITOR.dom.element(element.$.parentNode);
+                if (parent.$.className.indexOf('media_iframe_video') != -1 && is_editable_node(parent)) {
+                    image_dialog(editor, parent);
+                    return;
+                }
+
+                element = get_selected_link(editor) || evt.data.element;
+                if (!(element.is('a') && is_editable_node(element))) {
+                    return;
+                }
+
+                editor.getSelection().selectElement(element);
+                link_dialog(editor);
+            }, null, null, 500);
+
+            //noinspection JSValidateTypes
+            editor.addCommand('link', {
+                exec: function (editor) {
+                    link_dialog(editor);
+                    return true;
+                },
+                canUndo: false,
+                editorFocus: true,
+                context: 'a',
+            });
+            //noinspection JSValidateTypes
+            editor.addCommand('cimage', {
+                exec: function (editor) {
+                    image_dialog(editor);
+                    return true;
+                },
+                canUndo: false,
+                editorFocus: true,
+                context: 'img',
+            });
+
+            editor.ui.addButton('Link', {
+                label: 'Link',
+                command: 'link',
+                toolbar: 'links,10',
+            });
+            editor.ui.addButton('Image', {
+                label: 'Image',
+                command: 'cimage',
+                toolbar: 'insert,10',
+            });
+
+            editor.setKeystroke(CKEDITOR.CTRL + 76 /*L*/, 'link');
+        }
+    });
+
+    CKEDITOR.plugins.add( 'tablebutton_forum', {
+        requires: 'panelbutton,floatpanel',
+        init: function( editor ) {
+            var label = "Table";
+            editor.ui.add('TableButton', CKEDITOR.UI_PANELBUTTON, {
+                label: label,
+                title: label,
+                // use existing 'table' icon
+                icon: 'table',
+                modes: { wysiwyg: true },
+                editorFocus: true,
+                // panel opens in iframe, @css is CSS file <link>-ed within
+                // frame document, @attributes are set on iframe itself.
+                panel: {
+                    css: '/website/static/src/css/editor.css',
+                    attributes: { 'role': 'listbox', 'aria-label': label, },
+                },
+
+                onBlock: function (panel, block) {
+                    block.autoSize = true;
+                    block.element.setHtml(openerp.qweb.render('website.editor.table.panel', {
+                        rows: 5,
+                        cols: 5,
+                    }));
+
+                    var $table = $(block.element.$).on('mouseenter', 'td', function (e) {
+                        var $e = $(e.target);
+                        var y = $e.index() + 1;
+                        var x = $e.closest('tr').index() + 1;
+
+                        $table
+                            .find('td').removeClass('selected').end()
+                            .find('tr:lt(' + String(x) + ')')
+                            .children().filter(function () { return $(this).index() < y; })
+                            .addClass('selected');
+                    }).on('click', 'td', function (e) {
+                        var $e = $(e.target);
+
+                        //noinspection JSPotentiallyInvalidConstructorUsage
+                        var table = new CKEDITOR.dom.element(
+                            $(openerp.qweb.render('website.editor.table', {
+                                rows: $e.closest('tr').index() + 1,
+                                cols: $e.index() + 1,
+                            }))[0]);
+
+                        editor.insertElement(table);
+                        setTimeout(function () {
+                            //noinspection JSPotentiallyInvalidConstructorUsage
+                            var firstCell = new CKEDITOR.dom.element(table.$.rows[0].cells[0]);
+                            var range = editor.createRange();
+                            range.moveToPosition(firstCell, CKEDITOR.POSITION_AFTER_START);
+                            range.select();
+                        }, 0);
+                    });
+
+                    block.element.getDocument().getBody().setStyle('overflow', 'hidden');
+                    CKEDITOR.ui.fire('ready', this);
+                },
+            });
+        }
+    });
+
+    CKEDITOR.plugins.add('oeref_forum', {
+        requires: 'widget',
+
+        init: function (editor) {
+            var specials = {
+                // Can't find the correct ACL rule to only allow img tags
+                image: { content: '*' },
+                html: { text: '*' },
+                monetary: {
+                    text: {
+                        selector: 'span.oe_currency_value',
+                        allowedContent: true
+                    }
+                }
+            };
+            _(specials).each(function (editable, type) {
+                editor.widgets.add(type, {
+                    draggable: false,
+                    editables: editable,
+                    upcast: function (el) {
+                        return  el.attributes['data-oe-type'] === type;
+
+                    }
+                });
+            });
+            editor.widgets.add('oeref', {
+                draggable: false,
+                editables: {
+                    text: {
+                        selector: '*',
+                        allowedContent: true
+                    },
+                },
+                upcast: function (el) {
+                    var type = el.attributes['data-oe-type'];
+                    if (!type || (type in specials)) {
+                        return false;
+                    }
+                    if (el.attributes['data-oe-original']) {
+                        while (el.children.length) {
+                            el.children[0].remove();
+                        }
+                        el.add(new CKEDITOR.htmlParser.text(
+                            el.attributes['data-oe-original']
+                        ));
+                    }
+                    return true;
+                }
+            });
+
+            editor.widgets.add('icons', {
+                draggable: false,
+
+                init: function () {
+                    this.on('edit', function () {
+                        new webEditor.MediaDialog(editor, this.element)
+                            .appendTo(document.body);
+                    });
+                },
+                upcast: function (el) {
+                    return el.hasClass('fa')
+                        // ignore ir.ui.view (other data-oe-model should
+                        // already have been matched by oeref and
+                        // monetary?
+                        && !el.attributes['data-oe-model'];
+                }
+            });
+        }
+    });
+
+    function _forum_config() {
+        // base plugins minus
+        // - magicline (captures mousein/mouseout -> breaks draggable)
+        // - contextmenu & tabletools (disable contextual menu)
+        // - bunch of unused plugins
+        var plugins = [
+            'a11yhelp', 'basicstyles', 'blockquote',
+            'clipboard', 'colorbutton', 'colordialog', 'dialogadvtab',
+            'elementspath', /*'enterkey',*/ 'entities', 'filebrowser',
+            'find', 'floatingspace','format', 'htmlwriter', 'iframe',
+            'indentblock', 'indentlist', 'justify',
+            'list', 'pastefromword', 'pastetext', 'preview',
+            'removeformat', 'resize', 'save', 'selectall', 'stylescombo',
+            'table', 'templates', 'toolbar', 'undo', 'wysiwygarea',
+            'floatpanel', 'panelbutton'
+        ];
+        return {
+            // FIXME
+            language: 'en',
+            // Disable auto-generated titles
+            // FIXME: accessibility, need to generate user-sensible title, used for @title and @aria-label
+            title: false,
+            plugins: plugins.join(','),
+            uiColor: '',
+            // FIXME: currently breaks RTE?
+            // Ensure no config file is loaded
+            customConfig: '',
+            // Disable ACF
+            allowedContent: true,
+            extraAllowedContent: 'span style',
+            // Don't insert paragraphs around content in e.g. <li>
+            autoParagraph: false,
+            // Don't automatically add &nbsp; or <br> in empty block-level
+            // elements when edition starts
+            fillEmptyBlocks: false,
+            filebrowserImageUploadUrl: "/website/attach",
+            // Support for sharedSpaces in 4.x
+            extraPlugins: 'sharedspace,customdialogs_forum,tablebutton_forum,oeref_forum',
+            // Place toolbar in controlled location
+            sharedSpaces: { top: 'oe_rte_toolbar' },
+            toolbar: [{
+                    name: 'basicstyles', items: [
+                    "Bold", "Italic", "Underline", "Strike", "Subscript",
+                    "Superscript", "TextColor", "BGColor", "RemoveFormat"
+                ]},{
+                name: 'span', items: [
+                    "Link", "Blockquote", "BulletedList",
+                    "NumberedList", "Indent", "Outdent"
+                ]},{
+                name: 'justify', items: [
+                    "JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock"
+                ]},{
+                name: 'special', items: [
+                    "Image", "TableButton"
+                ]},{
+                name: 'styles', items: [
+                    "Styles"
+                ]}
+            ],
+            // styles dropdown in toolbar
+            stylesSet: [
+                {name: "Normal", element: 'p'},
+                {name: "Heading 1", element: 'h1'},
+                {name: "Heading 2", element: 'h2'},
+                {name: "Heading 3", element: 'h3'},
+                {name: "Heading 4", element: 'h4'},
+                {name: "Heading 5", element: 'h5'},
+                {name: "Heading 6", element: 'h6'},
+                {name: "Formatted", element: 'pre'},
+                {name: "Address", element: 'address'}
+            ],
+        };
+    }
+})();
+

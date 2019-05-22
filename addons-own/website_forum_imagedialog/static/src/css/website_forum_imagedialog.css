@@ -1,6 +1,16 @@
 .wfi_imgD {
-    width: 25%;
-    /*height: 50px !important;*/
-    margin-top: 7% !important;
-    background-color: green !important;
+    width: 50px !important;
+    margin-top: 15px !important;
+
+    color: #fff !important;
+    text-shadow: 0 -1px 0 #55830c;
+    border-color: #62a60a #62a60a #4d9200;
+    background: #69b10b !important;
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#9ad717),to(#69b10b));
+    background-image: -webkit-linear-gradient(top,#9ad717,#69b10b);
+    background-image: -o-linear-gradient(top,#9ad717,#69b10b);
+    background-image: linear-gradient(to bottom,#9ad717,#69b10b);
+    background-image: -moz-linear-gradient(top,#9ad717,#69b10b);
+    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0,startColorstr='#9ad717',endColorstr='#69b10b');
+
 }
