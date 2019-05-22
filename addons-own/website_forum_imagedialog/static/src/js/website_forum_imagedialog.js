@@ -77,8 +77,20 @@
                     }
 
                     if (wfi_content_children[j].children.length) {
-                        wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                        wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                        if (wfi_content_children[j].children[0].className) {
+                            wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                            wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                        } else {
+                            if (wfi_content_children[j].children[0].children.length) {
+                                if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                    wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                                    wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                                } else {
+                                    wfi_content_children[j]
+                                }
+
+                            }
+                        }
                     }
                 }
             }
@@ -155,6 +167,7 @@
                         }
 
                         if (wfi_content_children[j].children[0].style.backgroundColor) {
+
                             var color = wfi_content_children[j].children[0].style.backgroundColor.match(/rgb(.*)/);
                             wfi_content_children[j].children[0].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
                         }
