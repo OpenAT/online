@@ -186,9 +186,6 @@
         $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
         $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
         $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
-
-        $('.cke_button__textcolor').attr('onclick','website_forum_IsKarmaValid(29,30)');
-        $('.cke_button__bgcolor').attr('onclick','website_forum_IsKarmaValid(33,30)');
     }
 
     //----------------------------------------
