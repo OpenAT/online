@@ -341,13 +341,24 @@ class ResPartnerFADonationReport(models.Model):
     @api.constrains('donor_instruction', 'donor_instruction_info', 'state')
     def _constrain_donor_instruction(self):
         for r in self:
+            # Check donor instruction
             if r.donor_instruction:
-                if not r.donor_instruction_info or r.state != 'skipped' or not r.anlage_am_um or any(
-                        r[f] for f in ('imported', 'force_submission',
-                                       'cancelled_lsr_id', 'cancellation_for_bpk_private', 'submission_bpk_private',
-                                       'submission_type', 'submission_refnr', 'submission_id')):
-                    raise ValidationError(_("Reports with 'donor_instruction' set must be in state 'skipped' and the"
-                                            "field 'donor_instruction_info' must be filled!"))
+                if not r.donor_instruction_info:
+                    raise ValidationError('For donor_instructions the field "donor_instruction_info" must be set')
+                if r.state != 'skipped':
+                    raise ValidationError('For donor_instructions the "state" must be "skipped" but is %s' % r.state)
+                if not r.anlage_am_um:
+                    raise ValidationError('For donor_instructions the field "anlage_am_um" must be set')
+                # Check fields that must be empty for donor instructions
+                empty_fields = ('imported', 'force_submission',
+                                'cancelled_lsr_id', 'cancellation_for_bpk_private', 'submission_bpk_private',
+                                'submission_type', 'submission_refnr', 'submission_id')
+                invalid_fields = {f: r[f] for f in empty_fields if r[f]}
+                if invalid_fields:
+                    msg = _("Fields %s must be empty for donor_instructions but some are set %s"
+                            "") % (str(empty_fields), str(invalid_fields))
+                    logger.error(msg)
+                    raise ValidationError(msg)
             else:
                 if r.donor_instruction_info:
                     raise ValidationError(_("'donor_instruction_info' must be empty if 'donor_instruction' is not set"))
