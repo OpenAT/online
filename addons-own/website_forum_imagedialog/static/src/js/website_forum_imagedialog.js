@@ -43,6 +43,8 @@
 
     CKEDITOR.replace('content', _forum_config());
 
+    CKEDITOR.dtd.$removeEmpty.span = false;
+
     //--------------------------------------
     // Change of the EventNumber, because website_forum.js would change it to the wrong ones
     //--------------------------------------
@@ -77,7 +79,7 @@
                     }
 
                     if (wfi_content_children[j].children.length) {
-                        if (wfi_content_children[j].children[0].className) {
+                        if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
                             wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
                             wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
                         } else {
@@ -433,6 +435,8 @@
         }
     });
 
+    CKEDITOR.plugins.addExternal( 'fontawesome', '/website_forum_imagedialog/static/src/plugin/fontawesome/plugin.js' );
+
     function _forum_config() {
         // base plugins minus
         // - magicline (captures mousein/mouseout -> breaks draggable)
@@ -470,7 +474,8 @@
             fillEmptyBlocks: false,
             filebrowserImageUploadUrl: "/website/attach",
             // Support for sharedSpaces in 4.x
-            extraPlugins: 'sharedspace,customdialogs_forum,tablebutton_forum,oeref_forum',
+            extraPlugins: 'sharedspace,customdialogs_forum,tablebutton_forum,oeref_forum,fontawesome',
+            contentsCss: '/web/static/lib/fontawesome/css/font-awesome.css',
             // Place toolbar in controlled location
             sharedSpaces: { top: 'oe_rte_toolbar' },
             toolbar: [{
