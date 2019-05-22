@@ -113,12 +113,54 @@
     //--------------------------------------
     editor.on('change', function (ev) {
         var wfi_content = ev.editor.document.$.body.children;
+        var innerChanged = false;
 
         for (var i = 0; i < wfi_content.length; i++) {
 
+            if (wfi_content[i].children.length) {
+
+                var wfi_content_children = wfi_content[i].children;
+
+                for (var j = 0; j < wfi_content_children.length; j++) {
+
+                    var child_style = wfi_content_children[j].style;
+                    if (child_style[0]) {
+                        if (wfi_content_children[j].children.length){
+                            if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
+                                wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+                            }
+                        }
+
+                        if (wfi_content_children[j].style[0] === 'color') {
+                            var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
+                            wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                            innerChanged = true;
+                        }
+
+                        if ((wfi_content_children[j].style[0] === 'background-color') && (!wfi_content_children[j].className)) {
+                            var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
+                            wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                            innerChanged = true;
+                        }
+                    } else if (wfi_content_children[j].children.length) {
+                        if (wfi_content_children[j].children[0].children.length){
+                            wfi_content_children[j].children[0].style.backgroundColor = wfi_content_children[j].children[0].children[0].style.backgroundColor;
+                            wfi_content_children[j].children[0].innerHTML = wfi_content_children[j].children[0].children[0].innerHTML;
+                        }
+
+                        if (wfi_content_children[j].children[0].style.backgroundColor) {
+
+                            var color = wfi_content_children[j].children[0].style.backgroundColor.match(/rgb(.*)/);
+                            wfi_content_children[j].children[0].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                            innerChanged = true;
+                        }
+                    }
+                }
+            }
+
             var parent_style = wfi_content[i].style;
 
-            if (parent_style[0]) {
+            if (parent_style[0] && !innerChanged) {
                 if (wfi_content[i].className.match(/wfi_style_text_(.*)/)) {
                     if (wfi_content[i].className === 'wfi_style_text_' + parent_style.textAlign) {
                         wfi_content[i].className = '';
@@ -139,43 +181,7 @@
                 wfi_content[i].className = '';
             }
 
-            if (wfi_content[i].children.length) {
-
-                var wfi_content_children = wfi_content[i].children;
-
-                for (var j = 0; j < wfi_content_children.length; j++) {
-
-                    var child_style = wfi_content_children[j].style;
-                    if (child_style[0]) {
-                        if (wfi_content_children[j].children.length){
-                            if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
-                                wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
-                            }
-                        }
-
-                        if (wfi_content_children[j].style[0] === 'color') {
-                            var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
-                            wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                        }
-
-                        if ((wfi_content_children[j].style[0] === 'background-color') && (!wfi_content_children[j].className)) {
-                            var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
-                            wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                        }
-                    } else if (wfi_content_children[j].children.length) {
-                        if (wfi_content_children[j].children[0].children.length){
-                            wfi_content_children[j].children[0].style.backgroundColor = wfi_content_children[j].children[0].children[0].style.backgroundColor;
-                            wfi_content_children[j].children[0].innerHTML = wfi_content_children[j].children[0].children[0].innerHTML;
-                        }
-
-                        if (wfi_content_children[j].children[0].style.backgroundColor) {
-
-                            var color = wfi_content_children[j].children[0].style.backgroundColor.match(/rgb(.*)/);
-                            wfi_content_children[j].children[0].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                        }
-                    }
-                }
-            }
+            innerChanged = false;
         }
     });
 
