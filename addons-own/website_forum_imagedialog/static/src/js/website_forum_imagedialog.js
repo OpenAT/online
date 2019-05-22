@@ -3,9 +3,32 @@
     var website = openerp.website;
     var webEditor = website.editor;
 
+    //--------------------------------------
+    // Find the classnames of styled comments
+    //--------------------------------------
+    var wfi_content = $('[class^="wfi_style_"]');
+    for (var i = 0; i < wfi_content.length; i++) {
+        var wfiClassName = wfi_content[i].className;
+        var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
+        var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
+        var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
+        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
+
+        if (wfiStyleText) {
+            $('.' + wfiClassName).attr('style', 'text-align:' + wfiStyleText[1] + ';');
+        } else if (wfiStyleIndent) {
+            $('.' + wfiClassName).attr('style', 'margin-left:' + wfiStyleIndent[1] + ';');
+        } else if (wfiStyleColor) {
+            $('.' + wfiClassName).attr('style', 'color:#' + wfiStyleColor[1] + ';');
+        } else if (wfiStyleBG) {
+            $('.' + wfiClassName).attr('style', 'background-color:#' + wfiStyleBG[1] + ';');
+        }
+    }
+
     // Check if in ask/edit question
     if(!$('textarea.load_editor').length) {
-        console.log('not in forum');
+//        console.log('not in forum');
+
         return $.Deferred().reject("DOM doesn't contain '.website_forum'");
     }
 
@@ -26,11 +49,146 @@
     var editor = CKEDITOR.instances['content'];
     editor.on('instanceReady', CKEDITORLoadCompleteForum);
 
+    editor.on('instanceReady', function (ev) {
+        var wfi_content = ev.editor.document.$.body.children;
+
+        for (var i = 0; i < wfi_content.length; i++) {
+            var wfiClassName = wfi_content[i].className;
+            var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
+            var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
+
+            if (wfiStyleText) {
+                wfi_content[i].style.textAlign = wfiStyleText[1];
+            } else if (wfiStyleIndent) {
+                wfi_content[i].style.marginLeft = wfiStyleIndent[1];
+            }
+
+            if (wfi_content[i].children.length) {
+                var wfi_content_children = wfi_content[i].children;
+                for (var j = 0; j < wfi_content_children.length; j++) {
+                    var wfiChildClassName = wfi_content_children[j].className;
+                    var wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
+                    var wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
+
+                    if (wfiStyleColor) {
+                        wfi_content_children[j].style.color = hexToRGB(wfiStyleColor[1]);
+                    } else if (wfiStyleBG) {
+                        wfi_content_children[j].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                    }
+
+                    if (wfi_content_children[j].children.length) {
+                        wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                        wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                    }
+                }
+            }
+        }
+    });
+
+    function hexToRGB (hex) {
+        r = parseInt(hex.substring(0,2), 16);
+        g = parseInt(hex.substring(2,4), 16);
+        b = parseInt(hex.substring(4,6), 16);
+
+        result = 'rgb('+r+','+g+','+b+')';
+        return result;
+    }
+
+    //--------------------------------------
+    // To Bypass XSS adding Classnames to the new Style (for color and text positioning)
+    //--------------------------------------
+    editor.on('change', function (ev) {
+        var wfi_content = ev.editor.document.$.body.children;
+
+        for (var i = 0; i < wfi_content.length; i++) {
+
+            var parent_style = wfi_content[i].style;
+
+            if (parent_style[0]) {
+                if (wfi_content[i].className.match(/wfi_style_text_(.*)/)) {
+                    if (wfi_content[i].className === 'wfi_style_text_' + parent_style.textAlign) {
+                        wfi_content[i].className = '';
+                    } else if (wfi_content[i].className !== 'wfi_style_text_' + parent_style.textAlign) {
+                        wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
+                    }
+                } else if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
+                    wfi_content[i].className = '';
+                    wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                } else {
+                    if (parent_style.textAlign) {
+                        wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
+                    } else if (parent_style.marginLeft) {
+                        wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                    }
+                }
+            } else if (!parent_style[0]) {
+                wfi_content[i].className = '';
+            }
+
+            if (wfi_content[i].children.length) {
+
+                var wfi_content_children = wfi_content[i].children;
+
+                for (var j = 0; j < wfi_content_children.length; j++) {
+
+                    var child_style = wfi_content_children[j].style;
+                    if (child_style[0]) {
+                        if (wfi_content_children[j].children.length){
+                            if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
+                                wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+                            }
+                        }
+
+                        if (wfi_content_children[j].style[0] === 'color') {
+                            var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
+                            wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                        }
+
+                        if ((wfi_content_children[j].style[0] === 'background-color') && (!wfi_content_children[j].className)) {
+                            var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
+                            wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                        }
+                    } else if (wfi_content_children[j].children.length) {
+                        if (wfi_content_children[j].children[0].children.length){
+                            wfi_content_children[j].children[0].style.backgroundColor = wfi_content_children[j].children[0].children[0].style.backgroundColor;
+                            wfi_content_children[j].children[0].innerHTML = wfi_content_children[j].children[0].children[0].innerHTML;
+                        }
+
+                        if (wfi_content_children[j].children[0].style.backgroundColor) {
+                            var color = wfi_content_children[j].children[0].style.backgroundColor.match(/rgb(.*)/);
+                            wfi_content_children[j].children[0].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    function fullColorHex(rgb) {
+        var color = rgb.replace(/[{()}]/g, '');
+        color = color.split(', ')
+        var red = rgbToHex(color[0]);
+        var green = rgbToHex(color[1]);
+        var blue = rgbToHex(color[2]);
+        return red+green+blue;
+    };
+
+    var rgbToHex = function (rgb) {
+        var hex = Number(rgb).toString(16);
+        if (hex.length < 2) {
+             hex = "0" + hex;
+        }
+        return hex;
+    };
+
     function CKEDITORLoadCompleteForum(){
         $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(41,30)');
         $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
         $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
         $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
+
+        $('.cke_button__textcolor').attr('onclick','website_forum_IsKarmaValid(29,30)');
+        $('.cke_button__bgcolor').attr('onclick','website_forum_IsKarmaValid(33,30)');
     }
 
     //----------------------------------------
@@ -48,13 +206,9 @@
     }
 
     function link_dialog(editor) {
-        console.log('link')
-        console.log(editor)
         return new webEditor.RTELinkDialog(editor).appendTo(document.body);
     }
     function image_dialog(editor, image) {
-        console.log('image')
-        console.log(editor)
         return new webEditor.MediaDialog(editor, image).appendTo(document.body);
     }
 
@@ -80,7 +234,6 @@
     CKEDITOR.plugins.add('customdialogs_forum', {
         // requires: 'link,image',
         init: function (editor) {
-            console.log(editor)
             editor.on('doubleclick', function (evt) {
                 var element = evt.data.element;
                 if ((element.is('img') || element.$.className.indexOf(' fa-') != -1) && is_editable_node(element)) {
@@ -211,7 +364,7 @@
                 monetary: {
                     text: {
                         selector: 'span.oe_currency_value',
-                        allowedContent: { }
+                        allowedContent: true
                     }
                 }
             };
@@ -230,7 +383,7 @@
                 editables: {
                     text: {
                         selector: '*',
-                        allowedContent: { }
+                        allowedContent: true
                     },
                 },
                 upcast: function (el) {
@@ -283,7 +436,8 @@
             'indentblock', 'indentlist', 'justify',
             'list', 'pastefromword', 'pastetext', 'preview',
             'removeformat', 'resize', 'save', 'selectall', 'stylescombo',
-            'table', 'templates', 'toolbar', 'undo', 'wysiwygarea'
+            'table', 'templates', 'toolbar', 'undo', 'wysiwygarea',
+            'floatpanel', 'panelbutton'
         ];
         return {
             // FIXME
@@ -298,6 +452,7 @@
             customConfig: '',
             // Disable ACF
             allowedContent: true,
+            extraAllowedContent: 'span style',
             // Don't insert paragraphs around content in e.g. <li>
             autoParagraph: false,
             // Don't automatically add &nbsp; or <br> in empty block-level
