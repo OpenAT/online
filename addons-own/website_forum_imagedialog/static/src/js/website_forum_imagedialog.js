@@ -197,8 +197,8 @@
     };
 
     function CKEDITORLoadCompleteForum(){
-        $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(41,30)');
-        $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
+        $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(43,30)');
+        $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(83,30)');
         $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
         $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
     }
