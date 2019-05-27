@@ -50,6 +50,10 @@ class DonationReportSubmission(models.Model):
                                  "The 'Prepare' button will not add new donation reports automatically to this "
                                  "submission!",
                             readonly=True, states={'new': [('readonly', False)], 'error': [('readonly', False)]})
+    force_submission = fields.Boolean(compute='compute_force_submission', store=True,
+                                      string="Force Submission", readonly=True,
+                                      help="Will be submitted to FinazOnline by scheduler even if outside of automatic "
+                                           " submission range! (Meldezeitraum)")
 
     # Error fields for states 'error'
     # ATTENTION: The state error is only valid PRIOR to submission of for file upload service error!
@@ -239,6 +243,13 @@ class DonationReportSubmission(models.Model):
             else:
                 r.submission_content_file = False
                 r.submission_content_filename = False
+
+    def compute_force_submission(self):
+        for r in self:
+            if not r.donation_report_ids or any(dr.force_submission is not True for dr in r.donation_report_ids):
+                r.force_submission = False
+            else:
+                r.force_submission = True
 
     # ----
     # CRUD
@@ -1290,6 +1301,23 @@ class DonationReportSubmission(models.Model):
 
             # SEND FORCE_SUBMISSION REPORTS FIRST
             # -----------------------------------
+            logger.info('Search and submit any left-over submissions where computed field force_submission is True')
+            existing_forced = self.sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
+                ('state', 'in', ['new', 'prepared', 'error']),
+                ('manual', '=', True),
+                ('force_submission', '=', True),
+                ('submission_env', '=', 'P'),
+            ])
+            if existing_forced:
+                logger.info('scheduled_submission(): %s "donation report submission(s)" with force_submission found!'
+                            % len(existing_forced))
+            for s in existing_forced:
+                if prepare(s):
+                    submit(s)
+
+            # Check if there are any donation reports with attribute force_submission set
             force_submission_reports = self.env['res.partner.donation_report'].sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
                 ('bpk_company_id', '=', y.company_id.id),

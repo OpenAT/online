@@ -801,13 +801,13 @@ class ResPartnerFADonationReport(models.Model):
         logger.info("update_state_and_submission_information() "
                     "Compute state and submission information for %s donation reports!" % len(self))
         for r in self:
-            # Skip donor instruction donation reports!
-            # ----------------------------------------
+            # Skip computation for donor instruction donation reports!
+            # --------------------------------------------------------
             if r.donor_instruction:
                 continue
 
-            # Skip imported donation reports!
-            # -------------------------------
+            # Skip computation for imported donation reports!
+            # -----------------------------------------------
             if r.imported:
                 continue
 

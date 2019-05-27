@@ -36,6 +36,7 @@
                             <field name="meldungs_jahr"/>
                             <field name="bpk_company_id"/>
                             <field name="manual"/>
+                            <field name="force_submission"/>
                         </group>
                         <group string="System">
                             <field name="id" readonly="True"/>
@@ -144,6 +145,9 @@
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>
                 <field name="submission_datetime"/>
+                <field name="manual"/>
+                <field name="force_submission"/>
+                <field name="submission_env" string="Env."/>
                 <field name="state"/>
             </tree>
         </field>
@@ -157,10 +161,13 @@
         <field name="arch" type="xml">
             <search string="Donation Report Submissions">
                 <field name="name"/>
+                <field name="id"/>
                 <field name="donation_report_ids"/>
                 <field name="meldungs_jahr"/>
                 <field name="bpk_company_id"/>
                 <field name="submission_datetime"/>
+                <field name="manual"/>
+                <field name="force_submission"/>
                 <field name="state"/>
                 <field name="submission_env"/>
             </search>
