@@ -21,7 +21,8 @@
                     <span class="oe_snippet_thumbnail_title">Print Field</span>
                 </div>
                 <!-- Content -->
-                <span t-att-class="'oe_snippet_body ckediting_disabled drop_in drop_in_print_field ' + print_fields[0].css_class if print_fields else ''"
+                <!-- ATTENTION: ".drop_in" class was removed on purpose to set the targets precisely for .drop_in_print_field  -->
+                <span t-att-class="'oe_snippet_body ckediting_disabled drop_in_print_field ' + print_fields[0].css_class if print_fields else ''"
                       contenteditable="false">
                     <t t-foreach="print_fields" t-as="print_field">
                         <span t-att-class="print_field.css_class" t-att-data-fs-email-placeholder="print_field.fs_email_placeholder" t-att-title="print_field.fs_email_placeholder"><t t-esc="print_field.name"/></span>
@@ -132,11 +133,11 @@
             <div class="scroll" t-ignore="1">
 
                 <!-- SNIPPET MENU -->
-                <ul class="nav navbar-nav nav-tabs">
-                    <li class="active">
+                <ul id="snippet_menu" class="nav navbar-nav nav-tabs">
+                    <li id="snippet_menu_snippets" class="active">
                         <a href="#snippet_email_blocks" data-toggle="tab">Snippets</a>
                     </li>
-                    <li>
+                    <li id="snippet_menu_special">
                         <a href="#snippet_email_special" data-toggle="tab">Special</a>
                     </li>
                 </ul>
@@ -586,15 +587,42 @@
                             </li>
                         </div>
                         
+                        
+                        <!-- PRINT FIELDS -->
+                        <!-- ============ -->
+                        <div data-snippet-option-id="drop_in_print_field_target"
+                             data-selector=".drop_in_print_field"
+                             data-selector-sibblings=".snippet_block .ckediting_enabled .drop_in_print_field"
+                             data-selector-children=".snippet_block .ckediting_enabled span,
+                                                     .snippet_block .ckediting_enabled pre,
+                                                     .snippet_block .ckediting_enabled em,
+                                                     .snippet_block .ckediting_enabled p,
+                                                     .snippet_block .ckediting_enabled a,
+                                                     .snippet_block .ckediting_enabled h1,
+                                                     .snippet_block .ckediting_enabled h2,
+                                                     .snippet_block .ckediting_enabled h3,
+                                                     .snippet_block .ckediting_enabled h4,
+                                                     .snippet_block .ckediting_enabled h5,
+                                                     .snippet_block .ckediting_enabled h6">
+                        </div>
+                        
+                        
                         <!-- DROP_IN(s): drop_in -->
                         <!-- =================== -->
                         <div data-snippet-option-id="drop_in"
                              data-selector=".drop_in"
-                             data-selector-siblings=".drop_in"
-                             data-selector-children=".snippet_block .ckediting_enabled p,
-                                                     .snippet_block .ckediting_enabled h1, .snippet_block .ckediting_enabled h2, .snippet_block .ckediting_enabled h3, .snippet_block .ckediting_enabled h4, .snippet_block .ckediting_enabled h5, .snippet_block .ckediting_enabled h6,
-                                                     .snippet_block .ckediting_enabled span, .snippet_block .ckediting_enabled strong, .snippet_block .ckediting_enabled pre">
+                             data-selector-siblings=".snippet_block .ckediting_enabled .drop_in,
+                                                     .snippet_block .ckediting_enabled p,
+                                                     .snippet_block .ckediting_enabled h1,
+                                                     .snippet_block .ckediting_enabled h2,
+                                                     .snippet_block .ckediting_enabled h3,
+                                                     .snippet_block .ckediting_enabled h4,
+                                                     .snippet_block .ckediting_enabled h5,
+                                                     .snippet_block .ckediting_enabled h6"
+                             data-selector-children=".snippet_block .ckediting_enabled">
                         </div>
+                        
+                       
                         
                         <!-- OPTION_GROUP: drop_in_print_field -->
                         <div data-snippet-option-id='drop_in_print_field'
