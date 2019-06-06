@@ -13,6 +13,7 @@ class SaleOrderLineSosync(models.Model):
 
     # Price per item (price_donate will be copied to this field!)
     price_unit = fields.Float(sosync="True")
+
     # Number of items
     product_uos_qty = fields.Float(sosync="True")
 

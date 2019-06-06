@@ -463,7 +463,7 @@
                                 <span class="oe_snippet_thumbnail_title">Button</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
-                            <span class="oe_snippet_body ckediting_enabled drop_in drop_in_button dadi_di_button_default dadi_di_button_normal dadi_di_button_inline"
+                            <span class="oe_snippet_body ckediting_enabled drop_in drop_next drop_in_button dadi_di_button_default dadi_di_button_normal dadi_di_button_inline"
                                   contenteditable="true">
                                 <a href="#">BUTTON</a>
                             </span>
