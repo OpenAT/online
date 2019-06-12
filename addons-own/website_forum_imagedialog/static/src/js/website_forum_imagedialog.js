@@ -4,7 +4,7 @@
     var webEditor = website.editor;
 
     //--------------------------------------
-    // Find the classnames of styled comments
+    // Find the classnames of styled comments and apply the style to the elements
     //--------------------------------------
     var wfi_content = $('[class^="wfi_style_"]');
     for (var i = 0; i < wfi_content.length; i++) {
@@ -51,7 +51,10 @@
     var editor = CKEDITOR.instances['content'];
     editor.on('instanceReady', CKEDITORLoadCompleteForum);
 
-    editor.on('instanceReady', function (ev) {
+    //--------------------------------------
+    // Apply Style in Editor when editing a Comment/Question
+    //--------------------------------------
+    editor.on('contentDom', function (ev) {
         var wfi_content = ev.editor.document.$.body.children;
 
         for (var i = 0; i < wfi_content.length; i++) {
@@ -83,6 +86,7 @@
                             wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
                             wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
                         } else {
+
                             if (wfi_content_children[j].children[0].children.length) {
                                 if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
                                     wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
@@ -91,6 +95,15 @@
                                     wfi_content_children[j]
                                 }
 
+                            } else if (wfi_content_children[j].children.length) {
+                                var wfi_content_grandchildren = wfi_content_children[j].children;
+                                for (var k = 0; k < wfi_content_grandchildren.length; k++) {
+                                    if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                        wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
+                                        wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -110,51 +123,89 @@
 
     //--------------------------------------
     // To Bypass XSS adding Classnames to the new Style (for color and text positioning)
+    // Also select content after color/background-color changed, because no correct behaviour (selection vanishes -->
+    // next change: moves content from span with color or background-color deletes content) after changing to often
     //--------------------------------------
     editor.on('change', function (ev) {
+        // Elements which need a classname
         var wfi_content = ev.editor.document.$.body.children;
+        // Helpers to check if something changed in a deeper level
         var innerChanged = false;
+        var innerGrandChanged = false;
+        // For Selection of content after change
+        var body = ev.editor.document.getBody();
+        var selection = ev.editor.getSelection();
+        var range = ev.editor.createRange();
 
+        // Search elements and add classnames
+        // 1.) check if children exist, if children exist go to second loop and check if there are 'grandchildren'
+        // 2.) in children/grandchildren loop replace innerHtml and style for child/grandchild
+        // 3.) add classname with color/background-color value
+        // 4.) if no children exist, add only classname (for text alignment) or classname with color/background-color value
         for (var i = 0; i < wfi_content.length; i++) {
 
             if (wfi_content[i].children.length) {
 
                 var wfi_content_children = wfi_content[i].children;
-
                 for (var j = 0; j < wfi_content_children.length; j++) {
 
+                    if (wfi_content_children[j].children.length) {
+                        var wfi_content_grandchildren = wfi_content_children[j].children;
+                        for (var k = 0; k < wfi_content_grandchildren.length; k++) {
+                            if (wfi_content_grandchildren[k].style[0]) {
+                                if (wfi_content_grandchildren[k].style.backgroundColor) {
+                                    wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
+                                    wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
+                                    // select the current element
+                                    range.selectNodeContents( body.getChild(j) );
+                                    selection.selectRanges( [ range ] );
+                                    innerGrandChanged = true;
+                                }
+                            }
+                        }
+                    }
+
                     var child_style = wfi_content_children[j].style;
-                    if (child_style[0]) {
+                    if (child_style[0] && !innerGrandChanged) {
                         if (wfi_content_children[j].children.length){
                             if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
                                 wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+                                // select the current element
+                                range.selectNodeContents( body.getChild(j) );
+                                selection.selectRanges( [ range ] );
+                                if (wfi_content_children[j].children[0]) {
+                                    wfi_content_children[j].children[0].className = '';
+                                }
                             }
                         }
 
-                        if (wfi_content_children[j].style[0] === 'color') {
+                        if (wfi_content_children[j].style.color) {
                             var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
                             wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
                             innerChanged = true;
                         }
 
-                        if ((wfi_content_children[j].style[0] === 'background-color') && (!wfi_content_children[j].className)) {
-                            var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
-                            wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                            innerChanged = true;
-                        }
-                    } else if (wfi_content_children[j].children.length) {
-                        if (wfi_content_children[j].children[0].children.length){
-                            wfi_content_children[j].children[0].style.backgroundColor = wfi_content_children[j].children[0].children[0].style.backgroundColor;
-                            wfi_content_children[j].children[0].innerHTML = wfi_content_children[j].children[0].children[0].innerHTML;
+                        if ((wfi_content_children[j].style.backgroundColor)) {
+                            if (!wfi_content_children[j].parentElement.style.color) {
+                                console.log(wfi_content_children[j].parentElement.style.color)
+                                wfi_content[i].style.backgroundColor = wfi_content_children[j].style.backgroundColor;
+                                wfi_content[i].innerHTML = wfi_content_children[j].innerHTML;
+                                // select the current element
+                                range.selectNodeContents( body.getChild(i) );
+                                selection.selectRanges( [ range ] );
+                            } else {
+                                var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
+                                wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                                innerChanged = true;
+                            }
                         }
 
-                        if (wfi_content_children[j].children[0].style.backgroundColor) {
-
-                            var color = wfi_content_children[j].children[0].style.backgroundColor.match(/rgb(.*)/);
-                            wfi_content_children[j].children[0].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                            innerChanged = true;
-                        }
                     }
+
+                    if (innerGrandChanged) {
+                        innerChanged = true;
+                    }
+                    innerGrandChanged = false;
                 }
             }
 
@@ -177,6 +228,23 @@
                         wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
                     }
                 }
+
+                if (parent_style.color) {
+                    if (wfi_content[i].children.length) {
+                        wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
+                        // select the current element
+                        range.selectNodeContents( body.getChild(i) );
+                        selection.selectRanges( [ range ] );
+                    }
+                    var color = parent_style.color.match(/rgb(.*)/);
+                    wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                }
+
+                if (parent_style.backgroundColor) {
+                    var color = parent_style.backgroundColor.match(/rgb(.*)/);
+                    wfi_content[i].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                }
+
             } else if (!parent_style[0]) {
                 wfi_content[i].className = '';
             }
