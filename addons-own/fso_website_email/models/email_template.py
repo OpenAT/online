@@ -75,13 +75,14 @@ class EmailTemplate(models.Model):
     @api.model
     def get_base_url(self):
         # Get base_url to replace relative urls with absolute urls
+        # HINT: email.base.url is a new config parameter introduced in this addon
         try:
             req = request
             host_url = req.httprequest.host_url
         except Exception as e:
             host_url = ''
         get_param = self.env['ir.config_parameter'].get_param
-        base_url = host_url or get_param('web.freeze.url') or get_param('web.base.url')
+        base_url = get_param('email.base.url') or get_param('web.base.url') or host_url
         return base_url
 
     # ------
@@ -196,7 +197,9 @@ class EmailTemplate(models.Model):
 
                 # Convert beautiful soup object to regular html
                 # HINT: keep html entities like &nbsp; by using the formater "html" instead of "minimal"
-                email_body_prepared = email_body_soup.prettify(formatter="html")
+                # ATTENTION: Do NOT pretty print the document because it may lead to wrong spaces!
+                # email_body_prepared = email_body_soup.prettify(formatter="html")
+                email_body_prepared = email_body_soup.decode(pretty_print=False, formatter="html")
 
                 # Use premailer to:
                 #  - inline CSS and
@@ -215,7 +218,7 @@ class EmailTemplate(models.Model):
                                                                      include_star_selectors=False,
                                                                      cssutils_logging_handler=premailer_log_handler,
                                                                      cssutils_logging_level=logging.FATAL,)
-                fso_email_html = email_body_prepared_premailer.transform(pretty_print=True)
+                fso_email_html = email_body_prepared_premailer.transform(pretty_print=False)
 
                 # Convert html content to a beautiful soup object again
                 email_body_css_inline_soup = BeautifulSoup(fso_email_html, "lxml")
@@ -250,7 +253,7 @@ class EmailTemplate(models.Model):
                         elif hasattr(r, 'cssRules'):
                             cycle_rules(r)
 
-                # Add important to all CSS tags
+                # Add !important to all CSS tags
                 # HINT: Only the media queries will be left over in the style tags
                 for styletag in email_body_css_inline_soup.find_all('style'):
                     css = styletag.string
@@ -259,7 +262,9 @@ class EmailTemplate(models.Model):
                     styletag.string = css_parsed.cssText
 
                 # Convert beautiful soup object back to regular html
-                fso_email_html_parsed = email_body_css_inline_soup.prettify(formatter="html")
+                # ATTENTION: Do NOT pretty print the document because it may lead to wrong spaces!
+                # fso_email_html_parsed = email_body_css_inline_soup.prettify(formatter="html")
+                fso_email_html_parsed = email_body_css_inline_soup.decode(pretty_print=False, formatter="html")
 
                 # Update the email.template fields
                 return rec.write({'fso_email_html': fso_email_html,

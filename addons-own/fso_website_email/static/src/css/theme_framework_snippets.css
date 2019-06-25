@@ -272,3 +272,11 @@ div.dadi_sb_fg_narrow .flexibleContainerCell .nestedContainerCell {
 }
 
 
+/*
+    ===================
+    drop_in_print_field
+    ===================
+*/
+.drop_in_print_field {
+    display: inline-block;
+}
