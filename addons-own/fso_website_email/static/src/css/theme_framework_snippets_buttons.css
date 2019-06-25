@@ -20,6 +20,8 @@
     padding: 0.5em 1em;
     text-decoration: none;
     color: #ffffff;
+    /* New by Mike */
+    text-align: center;
     /* Button Shadow with Transition */
     box-shadow: 1px 1px 4px rgba(2,2,2,0.3);
     -webkit-transition: box-shadow 300ms;
