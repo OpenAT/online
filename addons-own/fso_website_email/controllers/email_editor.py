@@ -199,6 +199,9 @@ class FSOEmailEditor(http.Controller):
         template_id = int(template_id)
 
         template_to_delete = request.env['email.template'].browse([template_id])
-        template_to_delete.unlink()
+
+        # Do not really delete the template but "hide" it
+        if template_to_delete:
+            template_to_delete.write({'active': False})
 
         return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
