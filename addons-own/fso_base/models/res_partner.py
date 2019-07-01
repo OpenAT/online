@@ -1,5 +1,5 @@
 # -*- coding: utf-'8' "-*-"
-from openerp import models, fields, SUPERUSER_ID
+from openerp import api, models, fields, SUPERUSER_ID
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -48,24 +48,30 @@ class ResPartner(models.Model):
     #                                         ('male_female', 'Male/Female'),
     #                                         ])
 
-    def init(self, cr, context=None):
-        _logger.warning('UPDATE SYSTEM USER NAMES')
+    @api.model
+    def update_system_user_names_for_firstname_lastname_addon(self):
+        _logger.info('UPDATE SYSTEM USER NAMES FOR FIRSTNAME-LASTNAME-ADDON AND TO SUPPORT SOSYNC V2')
 
         def set_name(partners={}, force=False):
-            model_data_obj = self.pool.get('ir.model.data')
-            partner_obj = self.pool.get('res.partner')
             for xml_ref, vals in partners.iteritems():
                 _logger.info('Find partner %s' % xml_ref)
-                partner = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, xml_ref)
+
+                # Find Partner
+                partner = self.sudo().env.ref(xml_ref, raise_if_not_found=False)
+
+                # Update Partner
                 if partner and (force or not partner.lastname):
                     _logger.warning('Update partner %s with vals %s' % (xml_ref, str(vals)))
-                    partner_obj.write(cr, SUPERUSER_ID, [partner.id], vals)
+                    try:
+                        partner.write(vals)
+                    except Exception as e:
+                        _logger.error("Could not update partner!\n%s" % repr(e))
                 elif not partner:
                     _logger.warning('Partner %s not found' % xml_ref)
                 else:
                     _logger.info('Partner %s found but no update is needed' % xml_ref)
 
-        # Hint do use force=True for admin because the name might be used in E-Mail Templates and therefore altered!
+        # Hint do !NOT! use force=True for admin because the user might be altered and used in E-Mail Templates!
         admin = {'base.partner_root': {'firstname': 'FS-Online',
                                        'lastname': 'Administrator'}}
         set_name(admin)

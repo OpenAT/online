@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+from openerp import api, SUPERUSER_ID
+
+import logging
+_logger = logging.getLogger(__name__)
+
+
+def post_init_hook(cr, registry):
+    with api.Environment.manage():
+        _logger.info('UPDATE SYSTEM USER NAMES FOR FIRSTNAME AND LASTNAME FIELDS TO SUPPORT SOSYNC V2')
+
+        # Get a new Environment
+        env = api.Environment(cr, SUPERUSER_ID, {})
+
+        def set_name(partners={}, force=False):
+            partner_obj = env['res.partner']
+            for xml_ref, vals in partners.iteritems():
+                _logger.info('Find partner %s' % xml_ref)
+                partner = partner_obj.ref(xml_ref, raise_if_not_found=False)
+                if partner and (force or not partner.lastname):
+                    _logger.warning('Update partner %s with vals %s' % (xml_ref, str(vals)))
+                    try:
+                        partner.write(vals)
+                    except Exception as e:
+                        _logger.error("Could not update partner!\n%s" % repr(e))
+                elif not partner:
+                    _logger.warning('Partner %s not found' % xml_ref)
+                else:
+                    _logger.info('Partner %s found but no update is needed' % xml_ref)
+
+        # Hint do !NOT! use force=True for admin because the user might be altered and used in E-Mail Templates!
+        admin = {'base.partner_root': {'firstname': 'FS-Online',
+                                       'lastname': 'Administrator'}}
+        set_name(admin)
+
+        public = {'base.public_partner': {'firstname': 'FS-Online',
+                                          'lastname': 'Website/Public'}}
+        set_name(public, force=True)
+
+        sosync = {'base.partner_sosync': {'firstname': 'FS-Online',
+                                          'lastname': 'Syncer Service'}}
+        set_name(sosync, force=True)
+
+        sosync_frst = {'base.partner_studio': {'firstname': 'FS-Online',
+                                               'lastname': 'Syncer FRST-Access'}}
+        set_name(sosync_frst, force=True)
+
+        consale = {'fson_connector_sale.partner_consale_admin': {'firstname': 'FS-Online',
+                                                                 'lastname': 'Webschnittstelle'}}
+        set_name(consale, force=True)

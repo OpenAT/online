@@ -125,5 +125,8 @@ TODO (must be done manually right now):
         'views/res_partner.xml',
         'views/fs_groups.xml',          # Deprecated replaced by addon fso_frst_groups, should be removed soon
         'views/fsonline_menu_base.xml',
+        #
+        'data/run_on_install_update.xml',
     ],
+    # 'post_init_hook': 'post_init_hook',  # DISABLED BECAUSE THIS WOULD ONLY RUN ON INSTALL! Update system users AFTER install/init ( ! will not work in def init() ! )
 }
