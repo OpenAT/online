@@ -1196,7 +1196,7 @@ class ResPartnerZMRGetBPK(models.Model):
         }
 
     def _max_runtime_in_seconds(self, action=''):
-        scheduled_action = self.env.ref(action)
+        scheduled_action = self.env.ref(action, raise_if_not_found=False)
         assert scheduled_action, _("Scheduled action %s not found!") % action
         interval_to_seconds = self._interval_to_seconds()
         interval_type = scheduled_action.interval_type

@@ -1302,7 +1302,7 @@ class ResPartnerFADonationReport(models.Model):
         This will set the state computation cron nextcall date to now
         :return: boolean
         """
-        action = self.env.ref('fso_con_zmr.ir_cron_scheduled_set_donation_report_state')
+        action = self.env.ref('fso_con_zmr.ir_cron_scheduled_set_donation_report_state', raise_if_not_found=False)
         if action:
             try:
                 # HINT: The related cron job is in data.xml
