@@ -87,19 +87,19 @@ class SosyncJobQueue(models.Model):
     def init(self, cr, context=None):
         # Remove scheduled cron job to make sure it will be recreated with values from xml file
         model_data_obj = self.pool.get('ir.model.data')
-        rec = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'fso_sosync.ir_cron_scheduled_job_queue_cleanup_1')
-        if rec:
+        scheduler_a = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'fso_sosync.ir_cron_scheduled_job_queue_cleanup_1')
+        if scheduler_a:
             logger.info("Unlink fso_sosync.ir_cron_scheduled_job_queue_cleanup_1 on install/update for recreation!")
-            rec.unlink()
+            scheduler_a.unlink()
 
-        # TODO: reove this after sosync.job model was removed on all instances
+        # TODO: Remove this code after sosync.job model was removed on all instances
         # Remove scheduled cron job to make sure it will be recreated with values from xml file
         model_data_obj = self.pool.get('ir.model.data')
-        rec2 = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID,
+        scheduler_b = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID,
                                              'fso_sosync.ir_cron_scheduled_cleanup_sosync_job_model_and_table')
-        if rec2:
+        if scheduler_b:
             logger.info("Unlink ir_cron_scheduled_cleanup_sosync_job_model_and_table on install/update for recreation!")
-            rec.unlink()
+            scheduler_b.unlink()
 
     # METHODS
     @api.multi
