@@ -14,7 +14,6 @@
              */
             $( "body .ckediting_disabled" ).attr( "contenteditable", "false" );
             $( "body .ckediting_enabled" ).attr( "contenteditable", "true" );
-            console.log('tesagsdgfhfdfgfd')
 
             // Show E-Mail settings in edit mode by default
             $( "#email_template_settings" ).collapse('show');
