@@ -6,7 +6,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="icon-box">
-                            <span class="glyphicon glyphicon-fire" aria-hidden="true"/>
+                            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"/>
                         </div>
                         <h5 class="modal-title">Are you sure?</h5>
                     </div>
