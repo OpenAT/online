@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="perserve">
+    <t t-name="fso_wem_delete">
+        <div id="fso_wem_delete_modal" class="modal fsoWemDeleteModal" tabindex="-1">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="icon-box">
+                            <span class="glyphicon glyphicon-fire" aria-hidden="true"/>
+                        </div>
+                        <h5 class="modal-title">Are you sure?</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you want to delete?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <btn type="button" class="btn btn-info close_fso_wem_modal">
+                            Cancel
+                        </btn>
+                        <btn type="button" class="btn btn-danger" t-att-href="'/fso/email/delete?template_id='+template_id">
+                            Delete
+                        </btn>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
