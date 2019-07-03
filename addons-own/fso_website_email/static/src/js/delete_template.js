@@ -8,7 +8,7 @@
     }
 
     function try_delete_template (e) {
-        var template_id = e.path[0].id;
+        var template_id = e.path[0].dataset.templateId;
 
         $('#email_templates').after(
             openerp.qweb.render(

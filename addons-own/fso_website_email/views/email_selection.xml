@@ -113,7 +113,7 @@
                             <div class="email_preview_border">
 
                                 <div class="email_template_delete">
-                                    <a class="btn-danger fso_wem_delete_template" t-att-id="template.id">
+                                    <a class="btn-danger fso_wem_delete_template" t-att-data-template-id="template.id">
                                         Delete
                                         <!--t-att-href="'/fso/email/delete?template_id='+str(template.id)">-->
                                     </a>
