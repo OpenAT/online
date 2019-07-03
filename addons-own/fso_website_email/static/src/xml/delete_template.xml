@@ -14,12 +14,12 @@
                         <p>Do you want to delete?</p>
                     </div>
                     <div class="modal-footer">
-                        <btn type="button" class="btn btn-info close_fso_wem_modal">
+                        <a class="btn btn-info close_fso_wem_modal">
                             Cancel
-                        </btn>
-                        <btn type="button" class="btn btn-danger" t-att-href="'/fso/email/delete?template_id='+template_id">
+                        </a>
+                        <a class="btn btn-danger" t-att-href="'/fso/email/delete?template_id='+template_id">
                             Delete
-                        </btn>
+                        </a>
                     </div>
                 </div>
             </div>
