@@ -18,20 +18,20 @@
         <!-- Mobile Modal Box Preview Fix -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/website.mobile.js"/>
     </template>
-    
+
     <!-- COMMON ASSETS EDIT MODE (JS AND CSS) -->
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="common_assets_editmode">
         <!-- Common Editor CSS -->
         <link href='/fso_website_email/static/src/css/common_editmode.css' rel='stylesheet' type='text/css' t-ignore="true"/>
-        
+
         <!-- Load additional templates -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/load_templates.js"/>
-        
+
         <!-- CKEditor -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_common.js"/>
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_default_settings.js"/>
-        
+
     </template>
     
     
@@ -71,10 +71,10 @@
             //]]>
         </script>
     </template>
+
     
-    
-    
-    
+
+
     <!-- COMMON <head> -->
     <template id="theme_head_common">
         
@@ -255,10 +255,10 @@
             <t t-call-assets="web.assets_common" t-css="false"/>
             <t t-call-assets="website.assets_frontend" t-css="false"/>
             <t t-call-assets="website.assets_editor" t-css="false"/>
-            
+
             <!-- Common -->
             <t t-call-assets="fso_website_email.common_assets_editmode" t-css="false"/>
-            
+
             <!-- Theme Framework Editmode (mailchimp) -->
             <t t-if="load_theme_framework">
                 <t t-call-assets="fso_website_email.theme_framework_assets_editmode" t-css="false"/>

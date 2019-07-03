@@ -39,6 +39,7 @@
 
                 <!-- Editor CSS Overwrites -->
                 <link rel='stylesheet' href='/fso_website_email/static/src/css/email_selection.css' t-ignore="true"/>
+                <link rel='stylesheet' href='/fso_website_email/static/src/css/delete_template.css' t-ignore="true"/>
 
                 <!-- Maybe this is not needed? -->
                 <t t-raw="head or ''" name='layout_head'/>
@@ -66,6 +67,10 @@
                 <t t-call-assets="web.assets_common" t-css="false"/>
                 <t t-call-assets="website.assets_frontend" t-css="false"/>
                 <t t-call-assets="website.assets_editor" t-css="false"/>
+
+                <script type="text/javascript" src="/fso_website_email/static/src/js/delete_template.js"/>
+                <script type="text/javascript" src="/fso_website_email/static/src/js/load_delete_template.js"/>
+
             </body>
         </html>
 
@@ -79,11 +84,11 @@
         <t t-call="fso_website_email.layout">
             <div id="wrap" class="container" t-ignore="True">
                 <div class="oe_structure"/>
-                
-                
+
+
 
                 <div id="email_template" class="container mb32">
-                    
+
                     <!-- ====================================================== -->
                     <!-- E-Mail TEMPLATES: email.template FSON E-Mail Templates -->
                     <!-- ====================================================== -->
@@ -92,25 +97,25 @@
                             Templates
                         </h1>
                     </div>
-                    
+
                     <!-- pager for email templates (from website_sale template with id="products") -->
                     <div class="email_templates_pager">
                         <div class="row" style="width: 100%;">
                             <t t-call="website.pager"/>
                         </div>
                     </div>
-                    
+
                     <div class="row" id="email_templates">
                         <!-- email templates -->
                         <!-- HINT: col-lg-2 = 12/2 = 6 per page -->
                         <div t-foreach="templates" t-as="template" class="email_template_box col-lg-2 col-md-3 col-sm-6 text-center">
 
                             <div class="email_preview_border">
-                                
+
                                 <div class="email_template_delete">
-                                    <a class="btn-danger"
-                                       t-att-href="'/fso/email/delete?template_id='+str(template.id)">
+                                    <a class="btn-danger fso_wem_delete_template" t-att-data-template-id="template.id">
                                         Delete
+                                        <!--t-att-href="'/fso/email/delete?template_id='+str(template.id)">-->
                                     </a>
                                 </div>
                                 
@@ -270,7 +275,6 @@
         </t>
 
     </template>
-
 
 </data>
 </openerp>
