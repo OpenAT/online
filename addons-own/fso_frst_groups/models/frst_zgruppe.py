@@ -9,6 +9,11 @@ logger = logging.getLogger(__name__)
 # Fundraising Studio group folders
 # zGruppe are "folders" for groups that determine for what model a zGruppeDetail is valid
 class FRSTzGruppe(models.Model):
+    """
+    zGruppe (frst.zgruppe) are like "Folders" for the real groups (= zGruppeDetail).
+    These "folders" will set the "tabellentyp_id" or in other words the "model" that the "groups" inside of this
+    folder are valid for!
+    """
     _name = "frst.zgruppe"
     _rec_name = "gruppe_lang"
 

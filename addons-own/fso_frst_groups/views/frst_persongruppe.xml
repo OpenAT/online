@@ -20,6 +20,10 @@
                         <field name="steuerung_bit"/>
                         <field name="gueltig_von"/>
                         <field name="gueltig_bis"/>
+
+                        <field name="bestaetigt_am_um"/>
+                        <field name="bestaetigt_typ"/>
+                        <field name="bestaetigt_herkunft"/>
                     </group>
                 </sheet>
             </form>
@@ -38,6 +42,8 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="bestaetigt_am_um"/>
+                <field name="bestaetigt_typ"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -55,6 +61,9 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="bestaetigt_am_um"/>
+                <field name="bestaetigt_typ"/>
+                <field name="bestaetigt_herkunft"/>
                 <field name="state"/>
             </search>
         </field>

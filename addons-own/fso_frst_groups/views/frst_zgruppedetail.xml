@@ -16,6 +16,7 @@
                         <field name="gui_anzeigen"/>
                         <field name="gueltig_von"/>
                         <field name="gueltig_bis"/>
+                        <field name="bestaetigung_erforderlich"/>
                     </group>
                     <group string="PersonGruppe">
                         <field name="frst_persongruppe_ids"/>
@@ -41,6 +42,7 @@
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="bestaetigung_erforderlich"/>
             </tree>
         </field>
     </record>
@@ -58,6 +60,7 @@
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="bestaetigung_erforderlich"/>
             </search>
         </field>
     </record>

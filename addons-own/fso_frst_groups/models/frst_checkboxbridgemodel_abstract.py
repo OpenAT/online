@@ -74,7 +74,6 @@ class FRSTCheckboxBridgeModel(models.AbstractModel):
 
         return group
 
-
     @api.model
     def get_checkboxgroup_config(self):
         bridge_model_name = self.__class__.__name__

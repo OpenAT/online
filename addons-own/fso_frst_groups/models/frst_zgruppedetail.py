@@ -22,7 +22,11 @@ class FRSTzGruppeDetail(models.Model):
     gui_anzeigen = fields.Boolean("GuiAnzeigen",
                                   help="If set this group is available for this instance")
 
-    # ATTENTION: gueltig_von und gueltig_bis is NOT IN USE for zGruppeDetail and can be removed in the future
+    # ATTENTION: "gueltig_von" und "gueltig_bis" is NOT IN USE for zGruppeDetail and may be removed in the future!
+    #
+    #            But these fields ARE IN USE by the specific groups-for-models models like "frst.persongruppe"!
+    #            The fields are inherited through the abstract class "frst.gruppestate"
+    #
     gueltig_von = fields.Date("GueltigVon", required=True)   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
     gueltig_bis = fields.Date("GueltigBis", required=True)   # Not used
 
@@ -34,3 +38,16 @@ class FRSTzGruppeDetail(models.Model):
     frst_personemailgruppe_ids = fields.One2many(comodel_name="frst.personemailgruppe", inverse_name='zgruppedetail_id',
                                                  string="PersonEmailGruppe IDS")
 
+    # NEW SETTING FOR GROUPS / CHECKBOXES THAT MUST BE VALIDATE BY BY SOME SORT OF APPROVAL
+    # HINT: This field is checked on group creation in abstract class frst.gruppestate > create()
+    # approval_needed = fields.Boolean("Approval needed",
+    #                                  default=False,
+    #                                  help="If this checkbox is set gueltig_von and gueltig_bis will be set to "
+    #                                       "the past date 09.09.1999 when the group is created to indicate that "
+    #                                       "an approval is needed before set the group to active.")
+
+    bestaetigung_erforderlich = fields.Boolean("Approval needed",
+                                               default=False,
+                                               help="If this checkbox is set gueltig_von and gueltig_bis will be set "
+                                                    "to the past date 09.09.1999 when the group is created to indicate "
+                                                    "that an approval is needed before set the group to active.")
