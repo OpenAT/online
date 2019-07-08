@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp><data>
-    
-        <!-- person -->
+<openerp>
+    <data>
+        
+        <!-- pfg_person -->
         <record id="pf_vorname" model="fso.print_field">
             <field name="sequence" eval="1"/>
             <field name="name">Maximilian</field>
@@ -10,7 +11,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_name" model="fso.print_field">
             <field name="sequence" eval="2"/>
             <field name="name">Mustermann</field>
@@ -19,7 +20,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_anredelower" model="fso.print_field">
             <field name="sequence" eval="3"/>
             <field name="name">AnredeLower</field>
@@ -27,7 +28,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_anredekurz" model="fso.print_field">
             <field name="sequence" eval="4"/>
             <field name="name">AnredeKurz</field>
@@ -35,7 +36,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_anredelang" model="fso.print_field">
             <field name="sequence" eval="5"/>
             <field name="name">AnredeLang</field>
@@ -51,7 +52,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_titelnachname" model="fso.print_field">
             <field name="sequence" eval="7"/>
             <field name="name">TitelNachname</field>
@@ -59,7 +60,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_email" model="fso.print_field">
             <field name="sequence" eval="8"/>
             <field name="name">maximilian.mustermann@meinedomain.com</field>
@@ -68,7 +69,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-    
+        
         <record id="pf_geburtsdatum" model="fso.print_field">
             <field name="sequence" eval="9"/>
             <field name="name">01.01.1980</field>
@@ -77,64 +78,100 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-
-        <!-- person_extra -->
+        
+        
+        <!-- pfg_person_accounting -->
+        <record id="pf_Bank" model="fso.print_field">
+            <field name="sequence" eval="95"/>
+            <field name="name">Bank</field>
+            <field name="fs_email_placeholder">%Bank%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
+        </record>
+        <record id="pf_iban_verschluesselt" model="fso.print_field">
+            <field name="sequence" eval="100"/>
+            <field name="name">IBAN_Verschlüsselt</field>
+            <field name="fs_email_placeholder">%IBAN_Verschlüsselt%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
+        </record>
         <record id="pf_iban" model="fso.print_field">
             <field name="sequence" eval="100"/>
             <field name="name">IBAN</field>
             <field name="fs_email_placeholder">%IBAN%</field>
             <field name="group_ids"
-                   eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-    
+        <record id="pf_bic" model="fso.print_field">
+            <field name="sequence" eval="100"/>
+            <field name="name">BIC</field>
+            <field name="fs_email_placeholder">%BIC%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
+        </record>
         <record id="pf_jahresbeitrag" model="fso.print_field">
             <field name="sequence" eval="101"/>
             <field name="name">Jahresbeitrag</field>
             <field name="fs_email_placeholder">%Jahresbeitrag%</field>
             <field name="group_ids"
-                   eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-    
-           <record id="pf_zahlungsintervall" model="fso.print_field">
+        <record id="pf_teilbeitrag" model="fso.print_field">
+            <field name="sequence" eval="101"/>
+            <field name="name">Teilbeitrag</field>
+            <field name="fs_email_placeholder">%Teilbeitrag%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
+        </record>
+        <record id="pf_zahlungsintervall" model="fso.print_field">
             <field name="sequence" eval="102"/>
             <field name="name">Zahlungsintervall</field>
             <field name="fs_email_placeholder">%Zahlungsintervall%</field>
             <field name="group_ids"
-                   eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-    
+        
         <record id="pf_naechstevorlageammonatjahr" model="fso.print_field">
             <field name="sequence" eval="103"/>
             <field name="name">NaechsteVorlageAmMonatJahr</field>
             <field name="fs_email_placeholder">%NaechsteVorlageAmMonatJahr%</field>
             <field name="group_ids"
-                   eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-    
+        
         <record id="pf_wunschspendenbetrag" model="fso.print_field">
             <field name="sequence" eval="104"/>
             <field name="name">WunschSpendenbetrag</field>
             <field name="fs_email_placeholder">%WunschSpendenbetrag%</field>
             <field name="group_ids"
-                   eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-    
+        
         <record id="pf_zahlungsreferenz" model="fso.print_field">
             <field name="sequence" eval="105"/>
             <field name="name">Zahlungsreferenz</field>
             <field name="fs_email_placeholder">%Zahlungsreferenz%</field>
             <field name="group_ids"
-                   eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-    
+        
         <record id="pf_betragspendenquittung" model="fso.print_field">
             <field name="sequence" eval="106"/>
             <field name="name">BetragSpendenquittung</field>
             <field name="fs_email_placeholder">%BetragSpendenquittung%</field>
             <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
+        </record>
+        
+        
+        <!--  pfg_person_extra  -->
+        <record id="pf_jahr" model="fso.print_field">
+            <field name="sequence" eval="304"/>
+            <field name="name">Jahr</field>
+            <field name="fs_email_placeholder">%Jahr%</field>
+            <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
         </record>
-    
         <record id="pf_patentier" model="fso.print_field">
             <field name="sequence" eval="107"/>
             <field name="name">Patentier</field>
@@ -142,7 +179,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
         </record>
-    
+        
         <record id="pf_namebeschenkter" model="fso.print_field">
             <field name="sequence" eval="108"/>
             <field name="name">NameBeschenkter</field>
@@ -150,7 +187,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
         </record>
-    
+        
         <record id="pf_nameschenker" model="fso.print_field">
             <field name="sequence" eval="109"/>
             <field name="name">NameSchenker</field>
@@ -158,7 +195,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
         </record>
-    
+        
         <record id="pf_patenkind" model="fso.print_field">
             <field name="sequence" eval="110"/>
             <field name="name">Patenkind</field>
@@ -166,7 +203,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
         </record>
-    
+        
         <record id="pf_patenkindvorname" model="fso.print_field">
             <field name="sequence" eval="111"/>
             <field name="name">PatenkindVorname</field>
@@ -174,8 +211,9 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_extra')),]"/>
         </record>
-    
-        <!-- person_bpk -->
+        
+        
+        <!-- pfg_person_bpk -->
         <record id="pf_bpkvorname" model="fso.print_field">
             <field name="sequence" eval="200"/>
             <field name="name">BPKVorname</field>
@@ -184,7 +222,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
-    
+        
         <record id="pf_bpknachname" model="fso.print_field">
             <field name="sequence" eval="201"/>
             <field name="name">BPKNachName</field>
@@ -193,7 +231,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
-    
+        
         <record id="pf_bpkgeburtsdatum" model="fso.print_field">
             <field name="sequence" eval="202"/>
             <field name="name">BPKGeburtsdatum</field>
@@ -202,7 +240,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
-    
+        
         <record id="pf_bpkplz" model="fso.print_field">
             <field name="sequence" eval="203"/>
             <field name="name">BPKPLZ</field>
@@ -211,8 +249,9 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_bpk')),]"/>
         </record>
-    
-        <!-- system -->
+        
+        
+        <!-- pfg_system -->
         <record id="pf_personid" model="fso.print_field">
             <field name="sequence" eval="300"/>
             <field name="name">PersonID</field>
@@ -221,7 +260,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>
-    
+        
         <record id="pf_formularnummer" model="fso.print_field">
             <field name="sequence" eval="301"/>
             <field name="name">Formularnummer</field>
@@ -229,7 +268,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>
-    
+        
         <record id="pf_xguid" model="fso.print_field">
             <field name="sequence" eval="302"/>
             <field name="name">xGuid</field>
@@ -237,7 +276,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>
-    
+        
         <record id="pf_mandatsid" model="fso.print_field">
             <field name="sequence" eval="303"/>
             <field name="name">MandatsID</field>
@@ -245,7 +284,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>
-    
+        
         <record id="pf_emaildatum" model="fso.print_field">
             <field name="sequence" eval="304"/>
             <field name="name">Emaildatum</field>
@@ -253,5 +292,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>
+        
     
-</data></openerp>
+    </data>
+</openerp>

@@ -2,22 +2,27 @@
 <openerp><data>
     
         <record id="pfg_person" model="fso.print_field.group">
-            <field name="sequence" eval="1"/>
+            <field name="sequence" eval="10"/>
             <field name="name">Person</field>
         </record>
     
+        <record id="pfg_person_accounting" model="fso.print_field.group">
+            <field name="sequence" eval="20"/>
+            <field name="name">Person Monetär</field>
+        </record>
+    
         <record id="pfg_person_extra" model="fso.print_field.group">
-            <field name="sequence" eval="2"/>
+            <field name="sequence" eval="30"/>
             <field name="name">Person Extra</field>
         </record>
     
         <record id="pfg_person_bpk" model="fso.print_field.group">
-            <field name="sequence" eval="3"/>
+            <field name="sequence" eval="40"/>
             <field name="name">Person BPK</field>
         </record>
     
         <record id="pfg_system" model="fso.print_field.group">
-            <field name="sequence" eval="4"/>
+            <field name="sequence" eval="50"/>
             <field name="name">System</field>
         </record>
 
