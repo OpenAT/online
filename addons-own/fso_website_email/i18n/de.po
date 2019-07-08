@@ -6,14 +6,107 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-24 11:18+0000\n"
-"PO-Revision-Date: 2018-05-24 11:18+0000\n"
+"POT-Creation-Date: 2019-07-03 12:55+0000\n"
+"PO-Revision-Date: 2019-07-03 12:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_framework_snippets
+msgid "&nbsp;"
+msgstr "&nbsp;"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_dadi
+msgid "&nbsp;|&nbsp;"
+msgstr "&nbsp;|&nbsp;"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_head_common
+msgid "<!--\n"
+"                    Outlook Conditional CSS\n"
+"    \n"
+"                    These two style blocks target Outlook 2007 & 2010 specifically, forcing\n"
+"                    columns into a single vertical stack as on mobile clients. This is\n"
+"                    primarily done to avoid the page break bug and is optional.\n"
+"    \n"
+"                    Third block targets Outlook 2013, having troubles with webfonts\n"
+"    \n"
+"                    More information here:\n"
+"                    http://templates.mailchimp.com/development/css/outlook-conditional-css\n"
+"                -->\n"
+"                <!--[if mso 12]>\n"
+"                <style type=\"text/css\">\n"
+"                    .flexibleContainer {\n"
+"                        display: block !important;\n"
+"                        width: 100% !important;\n"
+"                    }\n"
+"                </style>\n"
+"                <![endif]-->\n"
+"                <!--[if mso 14]>\n"
+"                <style type=\"text/css\">\n"
+"                    .flexibleContainer {\n"
+"                        display: block !important;\n"
+"                        width: 100% !important;\n"
+"                    }\n"
+"                </style>\n"
+"                <![endif]-->\n"
+"                <!--[if mso 15]>\n"
+"                <style type=\"text/css\">\n"
+"                    h1, h2, h3, h4, h5, h6,\n"
+"                    .headerCell, .footerCell,\n"
+"                    .textContent, .textContentLast,\n"
+"                    .buttonContent,\n"
+"                    .emailCalendarDay, .emailCalendarMonth {\n"
+"                        font-family: Arial, sans-serif !important;\n"
+"                        mso-line-height-rule: exactly;\n"
+"                    }\n"
+"                </style>\n"
+"                <![endif]-->"
+msgstr "<!--\n"
+"                    Outlook Conditional CSS\n"
+"    \n"
+"                    These two style blocks target Outlook 2007 & 2010 specifically, forcing\n"
+"                    columns into a single vertical stack as on mobile clients. This is\n"
+"                    primarily done to avoid the page break bug and is optional.\n"
+"    \n"
+"                    Third block targets Outlook 2013, having troubles with webfonts\n"
+"    \n"
+"                    More information here:\n"
+"                    http://templates.mailchimp.com/development/css/outlook-conditional-css\n"
+"                -->\n"
+"                <!--[if mso 12]>\n"
+"                <style type=\"text/css\">\n"
+"                    .flexibleContainer {\n"
+"                        display: block !important;\n"
+"                        width: 100% !important;\n"
+"                    }\n"
+"                </style>\n"
+"                <![endif]-->\n"
+"                <!--[if mso 14]>\n"
+"                <style type=\"text/css\">\n"
+"                    .flexibleContainer {\n"
+"                        display: block !important;\n"
+"                        width: 100% !important;\n"
+"                    }\n"
+"                </style>\n"
+"                <![endif]-->\n"
+"                <!--[if mso 15]>\n"
+"                <style type=\"text/css\">\n"
+"                    h1, h2, h3, h4, h5, h6,\n"
+"                    .headerCell, .footerCell,\n"
+"                    .textContent, .textContentLast,\n"
+"                    .buttonContent,\n"
+"                    .emailCalendarDay, .emailCalendarMonth {\n"
+"                        font-family: Arial, sans-serif !important;\n"
+"                        mso-line-height-rule: exactly;\n"
+"                    }\n"
+"                </style>\n"
+"                <![endif]-->"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
@@ -24,6 +117,13 @@ msgstr "Aktionen"
 #: field:email.template,active:0
 msgid "Active"
 msgstr "Aktiv"
+
+#. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/delete_template.xml:11
+#, python-format
+msgid "Are you sure?"
+msgstr "Bist du sicher?"
 
 #. module: fso_website_email
 #: field:email.template,version_ids:0
@@ -76,6 +176,13 @@ msgid "Button"
 msgstr "Button"
 
 #. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/delete_template.xml:17
+#, python-format
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
 msgid "Center"
 msgstr "Mitte"
@@ -86,7 +193,7 @@ msgid "Copy"
 msgstr "Kopie"
 
 #. module: fso_website_email
-#: code:addons/fso_website_email/models/email_template.py:198
+#: code:addons/fso_website_email/models/email_template.py:423
 #, python-format
 msgid "Could not create a version of the email template before restore!"
 msgstr "Could not create a version of the email template before restore!"
@@ -112,7 +219,10 @@ msgid "Default"
 msgstr "Standard"
 
 #. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/delete_template.xml:20
 #: view:website:fso_website_email.fso_email_selection
+#, python-format
 msgid "Delete"
 msgstr "Löschen"
 
@@ -131,31 +241,65 @@ msgid "Do Not Track"
 msgstr "Link nicht tracken"
 
 #. module: fso_website_email
+#. openerp-web
+#: code:addons/fso_website_email/static/src/xml/delete_template.xml:14
+#, python-format
+msgid "Do you want to delete?"
+msgstr "Möchtest du diese Vorlage tatsächlich löschen?"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
 msgid "Dotted"
 msgstr "Gepunktet"
 
 #. module: fso_website_email
-#: field:email.template,fso_email_html:0
-msgid "E-Mail HTML"
-msgstr "E-Mail HTML"
+#: view:website:fso_website_email.theme_dadi
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:381
+#, python-format
+msgid "E-Mail Template Versions can only be created for a single E-Mail Template"
+msgstr "Eine Version kann nur für ein E-Mail Template erstellt werden und nicht für mehrere!"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:397
+#, python-format
+msgid "E-Mail Template Versions can only be restored for a single E-Mail Template"
+msgstr "Eine Version kann nur für ein E-Mail Template wiederhergestellt werden und nicht für mehrere!"
 
 #. module: fso_website_email
 #: field:email.template,fso_email_html_parsed:0
-msgid "E-Mail HTML parsed"
-msgstr "E-Mail HTML parsed"
+msgid "E-Mail body FRST-Multimailer"
+msgstr "E-Mail body FRST-Multimailer"
 
 #. module: fso_website_email
-#: code:addons/fso_website_email/models/email_template.py:157
-#, python-format
-msgid "E-Mail Template Versions can only be created for a single E-Mail Template"
-msgstr "E-Mail Template Versions can only be created for a single E-Mail Template"
+#: field:email.template,fso_email_html:0
+msgid "E-Mail body FSON"
+msgstr "E-Mail body FSON"
 
 #. module: fso_website_email
-#: code:addons/fso_website_email/models/email_template.py:174
-#, python-format
-msgid "E-Mail Template Versions can only be restored for a single E-Mail Template"
-msgstr "E-Mail Template Versions can only be restored for a single E-Mail Template"
+#: help:email.template,fso_email_html:0
+msgid "E-Mail body HTML code with Fundraising Studio print field placeholders!\n"
+"  - https:// added to href targets if missing\n"
+"  - absolute urls based on self.get_base_url()\n"
+"  - inline css\n"
+"  - print fields html replaced with FRST print fields placeholders"
+msgstr "E-Mail body HTML code with Fundraising Studio print field placeholders!\n"
+"  - https:// added to href targets if missing\n"
+"  - absolute urls based on self.get_base_url()\n"
+"  - inline css\n"
+"  - print fields html replaced with FRST print fields placeholders"
+
+#. module: fso_website_email
+#: help:email.template,fso_email_html_parsed:0
+msgid "E-Mail body HTML to be used by Fundraising Studio 'Multimailer'!\n"
+" - URL's rewritten to FRST-Multimailer format\n"
+""
+msgstr "E-Mail body HTML to be used by Fundraising Studio 'Multimailer'!\n"
+" - URL's rewritten to FRST-Multimailer format\n"
+""
 
 #. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
@@ -181,7 +325,7 @@ msgstr "Bearbeite HTML"
 #. module: fso_website_email
 #: model:ir.model,name:fso_website_email.model_email_template
 msgid "Email Templates"
-msgstr "E-Mail Vorlagen"
+msgstr "E-Mail-Vorlagen"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.layout
@@ -194,9 +338,26 @@ msgid "FSON E-Mail Template"
 msgstr "FSON E-Mail Vorlage"
 
 #. module: fso_website_email
+#: field:ir.ui.view,fso_email_screenshot:0
+msgid "FSON E-Mail-Theme Screenshot"
+msgstr "FSON E-Mail-Theme Screenshot"
+
+#. module: fso_website_email
 #: field:email.template,fso_email_template:0
 msgid "FSON Template"
 msgstr "FSON Vorlage"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:144
+#, python-format
+msgid "Field 'email_from' contains no valid e-mail address!"
+msgstr "Das Feld 'email_from' enthällt keine gültige E-Mail Adresse!"
+
+#. module: fso_website_email
+#: code:addons/fso_website_email/models/email_template.py:146
+#, python-format
+msgid "Field 'reply_to' contains no valid e-mail address!"
+msgstr "Das Feld 'reply_to' enthällt keine gültige E-Mail Adresse!"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
@@ -261,9 +422,19 @@ msgid "In Line"
 msgstr "In Line"
 
 #. module: fso_website_email
+#: help:email.template,screenshot_pending:0
+msgid "Indicates that a screenshot must be rendered in the background"
+msgstr "Indicates that a screenshot must be rendered in the background"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
 msgid "Intro"
 msgstr "Intro"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_dadi
+msgid "Kontaktformular"
+msgstr "Kontaktformular"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
@@ -276,9 +447,19 @@ msgid "Left"
 msgstr "Links"
 
 #. module: fso_website_email
+#: help:ir.ui.view,fso_email_template:0
+msgid "Mark this view as a theme for a FS-Online e-mail template"
+msgstr "Mark this view as a theme for a FS-Online e-mail template"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
 msgid "Medium"
 msgstr "Mittel"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_framework_snippets
+msgid "Middle"
+msgstr "Mittig"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.editor_toolbar
@@ -294,11 +475,6 @@ msgstr "Verschmälern"
 #: view:website:fso_website_email.fso_email_selection
 msgid "New Template"
 msgstr "Neue Vorlage"
-
-#. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "No Version available"
-msgstr "Keine Versionen verfügbar"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
@@ -318,7 +494,7 @@ msgstr "Orange"
 #. module: fso_website_email
 #: view:website:fso_website_email.email_editor
 msgid "Please press the 'Edit' button in the upper left to edit these fields!"
-msgstr "Bitte drücken Sie den 'Bearbeiten' Button oben links um diese Felder zu editieren."
+msgstr "Bitte drücke den 'Bearbeiten' Button oben links um diese Felder zu editieren."
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
@@ -364,9 +540,24 @@ msgid "Save"
 msgstr "Speichern"
 
 #. module: fso_website_email
+#: field:email.template,screenshot:0
+msgid "Screenshot"
+msgstr "Screenshot"
+
+#. module: fso_website_email
+#: field:email.template,screenshot_pending:0
+msgid "Screenshot pending"
+msgstr "Screenshot pending"
+
+#. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
 msgid "Select Theme"
 msgstr "Theme auswählen"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.editor_toolbar
+msgid "Show Version"
+msgstr "Version anzeigen"
 
 #. module: fso_website_email
 #. openerp-web
@@ -444,6 +635,11 @@ msgstr "Themes"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
+msgid "Three Columns"
+msgstr "Drei Spalten"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_framework_snippets
 msgid "Transparent"
 msgstr "Transparent"
 
@@ -454,14 +650,14 @@ msgstr "2-spaltig"
 
 #. module: fso_website_email
 #: field:ir.ui.view,fso_email_template_ids:0
-msgid "Used by E-Mails Templates"
-msgstr "Verwendet in E-Mail Vorlagen"
+msgid "Used in E-Mail Templates"
+msgstr "Used in E-Mail Templates"
 
 #. module: fso_website_email
-#: code:addons/fso_website_email/models/email_template.py:185
+#: code:addons/fso_website_email/models/email_template.py:408
 #, python-format
 msgid "Version is not a Version of this E-Mail Template"
-msgstr "Version is not a Version of this E-Mail Template"
+msgstr "Diese Version gehört nicht zum aktuellen E-Mail Template"
 
 #. module: fso_website_email
 #: field:email.template,version_of_email_id:0
@@ -469,10 +665,32 @@ msgid "Version of"
 msgstr "Version von"
 
 #. module: fso_website_email
-#: code:addons/fso_website_email/models/email_template.py:184
+#: code:addons/fso_website_email/models/email_template.py:407
 #, python-format
 msgid "Version to restore was not found!"
-msgstr "Version to restore was not found!"
+msgstr "Die Version zum Wiederherstellen konnte nicht gefunden werden!"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_framework_snippets
+msgid "Vestibulum vitae metus sed purus elementum\n"
+"                                                        malesuada. Aliquam feugiat metus ut orci. Etiam\n"
+"                                                        scelerisque lacus eu tellus. ..."
+msgstr "Vestibulum vitae metus sed purus elementum\n"
+"                                                        malesuada. Aliquam feugiat metus ut orci. Etiam\n"
+"                                                        scelerisque lacus eu tellus. ..."
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_framework_snippets
+msgid "Vestibulum vitae metus sed purus elementum malesuada.\n"
+"                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus\n"
+"                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,\n"
+"                                        tempor eleifend, sem.\n"
+"                                        ..."
+msgstr "Vestibulum vitae metus sed purus elementum malesuada.\n"
+"                                        Aliquam feugiat metus ut orci. Etiam scelerisque lacus\n"
+"                                        eu tellus. Praesent neque est, placerat in, rhoncus nec,\n"
+"                                        tempor eleifend, sem.\n"
+"                                        ..."
 
 #. module: fso_website_email
 #: view:website:fso_website_email.fso_email_selection
@@ -481,8 +699,18 @@ msgstr "View"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_dadi
-msgid "View e-mail in browser"
-msgstr "E-Mail im Browser anzeigen"
+msgid "Wenn diese Nachricht nicht richtig angezeigt wird, verwenden Sie bitte die\n"
+"                                    \n"
+"                                    <a id=\"view-email-in-browser\"\n"
+"                                       href=\"%open_browser%\" target=\"_blank\">\n"
+"                                         Online-Version\n"
+"                                    </a>"
+msgstr "Wenn diese Nachricht nicht richtig angezeigt wird, verwenden Sie bitte die\n"
+"                                    \n"
+"                                    <a id=\"view-email-in-browser\"\n"
+"                                       href=\"%open_browser%\" target=\"_blank\">\n"
+"                                         Online-Version\n"
+"                                    </a>"
 
 #. module: fso_website_email
 #: view:website:fso_website_email.theme_framework_snippets
@@ -490,12 +718,18 @@ msgid "Yellow"
 msgstr "Gelb"
 
 #. module: fso_website_email
-#: code:addons/fso_website_email/models/email_template.py:175
+#: code:addons/fso_website_email/models/email_template.py:398
 #, python-format
 msgid "You can not restore a version of a version!"
-msgstr "You can not restore a version of a version!"
+msgstr "Du kannst keine Version einer Version wiederherstellen!"
 
 #. module: fso_website_email
-#: view:website:fso_website_email.editor_toolbar
-msgid "Show Version"
-msgstr "Version anzeigen"
+#: view:website:fso_website_email.theme_dadi
+msgid "vom Newsletter abmelden?"
+msgstr "vom Newsletter abmelden?"
+
+#. module: fso_website_email
+#: view:website:fso_website_email.theme_dadi
+msgid "www.datadialog.net"
+msgstr "www.datadialog.net"
+
