@@ -49,7 +49,7 @@
     // Change of the EventNumber, because website_forum.js would change it to the wrong ones
     //--------------------------------------
     var editor = CKEDITOR.instances['content'];
-    editor.on('instanceReady', CKEDITORLoadCompleteForum);
+//    editor.on('instanceReady', CKEDITORLoadCompleteForum);
 
     //--------------------------------------
     // Apply Style in Editor when editing a Comment/Question
@@ -253,34 +253,34 @@
         }
     });
 
-    function fullColorHex(rgb) {
-        var color = rgb.replace(/[{()}]/g, '');
-        color = color.split(', ')
-        var red = rgbToHex(color[0]);
-        var green = rgbToHex(color[1]);
-        var blue = rgbToHex(color[2]);
-        return red+green+blue;
-    };
+//    function fullColorHex(rgb) {
+//        var color = rgb.replace(/[{()}]/g, '');
+//        color = color.split(', ')
+//        var red = rgbToHex(color[0]);
+//        var green = rgbToHex(color[1]);
+//        var blue = rgbToHex(color[2]);
+//        return red+green+blue;
+//    };
+//
+//    var rgbToHex = function (rgb) {
+//        var hex = Number(rgb).toString(16);
+//        if (hex.length < 2) {
+//             hex = "0" + hex;
+//        }
+//        return hex;
+//    };
 
-    var rgbToHex = function (rgb) {
-        var hex = Number(rgb).toString(16);
-        if (hex.length < 2) {
-             hex = "0" + hex;
-        }
-        return hex;
-    };
-
-    function CKEDITORLoadCompleteForum(){
-        if ($("#cke_28").length) {
-            $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(43,30)');
-            $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(83,30)');
-        } else if ($("#cke_58").length) {
-            $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(41,30)');
-            $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
-        }
-        $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
-        $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
-    }
+//    function CKEDITORLoadCompleteForum(){
+//        if ($("#cke_28").length) {
+//            $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(43,30)');
+//            $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(83,30)');
+//        } else if ($("#cke_58").length) {
+//            $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(41,30)');
+//            $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
+//        }
+//        $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
+//        $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
+//    }
 
     //----------------------------------------
     // Copy of the Odoo Toolbar in the Edit Mode
@@ -379,68 +379,6 @@
             });
 
             editor.setKeystroke(CKEDITOR.CTRL + 76 /*L*/, 'link');
-        }
-    });
-
-    CKEDITOR.plugins.add( 'tablebutton_forum', {
-        requires: 'panelbutton,floatpanel',
-        init: function( editor ) {
-            var label = "Table";
-            editor.ui.add('TableButton', CKEDITOR.UI_PANELBUTTON, {
-                label: label,
-                title: label,
-                // use existing 'table' icon
-                icon: 'table',
-                modes: { wysiwyg: true },
-                editorFocus: true,
-                // panel opens in iframe, @css is CSS file <link>-ed within
-                // frame document, @attributes are set on iframe itself.
-                panel: {
-                    css: '/website/static/src/css/editor.css',
-                    attributes: { 'role': 'listbox', 'aria-label': label, },
-                },
-
-                onBlock: function (panel, block) {
-                    block.autoSize = true;
-                    block.element.setHtml(openerp.qweb.render('website.editor.table.panel', {
-                        rows: 5,
-                        cols: 5,
-                    }));
-
-                    var $table = $(block.element.$).on('mouseenter', 'td', function (e) {
-                        var $e = $(e.target);
-                        var y = $e.index() + 1;
-                        var x = $e.closest('tr').index() + 1;
-
-                        $table
-                            .find('td').removeClass('selected').end()
-                            .find('tr:lt(' + String(x) + ')')
-                            .children().filter(function () { return $(this).index() < y; })
-                            .addClass('selected');
-                    }).on('click', 'td', function (e) {
-                        var $e = $(e.target);
-
-                        //noinspection JSPotentiallyInvalidConstructorUsage
-                        var table = new CKEDITOR.dom.element(
-                            $(openerp.qweb.render('website.editor.table', {
-                                rows: $e.closest('tr').index() + 1,
-                                cols: $e.index() + 1,
-                            }))[0]);
-
-                        editor.insertElement(table);
-                        setTimeout(function () {
-                            //noinspection JSPotentiallyInvalidConstructorUsage
-                            var firstCell = new CKEDITOR.dom.element(table.$.rows[0].cells[0]);
-                            var range = editor.createRange();
-                            range.moveToPosition(firstCell, CKEDITOR.POSITION_AFTER_START);
-                            range.select();
-                        }, 0);
-                    });
-
-                    block.element.getDocument().getBody().setStyle('overflow', 'hidden');
-                    CKEDITOR.ui.fire('ready', this);
-                },
-            });
         }
     });
 
@@ -553,40 +491,20 @@
             fillEmptyBlocks: false,
             filebrowserImageUploadUrl: "/website/attach",
             // Support for sharedSpaces in 4.x
-            extraPlugins: 'sharedspace,customdialogs_forum,tablebutton_forum,oeref_forum,fontawesome',
+            extraPlugins: 'sharedspace,customdialogs_forum,oeref_forum,fontawesome',
             contentsCss: '/web/static/lib/fontawesome/css/font-awesome.css',
             // Place toolbar in controlled location
             sharedSpaces: { top: 'oe_rte_toolbar' },
             toolbar: [{
                     name: 'basicstyles', items: [
-                    "Bold", "Italic", "Underline", "Strike", "Subscript",
-                    "Superscript", "TextColor", "BGColor", "RemoveFormat"
+                    "Bold", "Italic"
+                ]},{
+                name: 'paragraph', items: [
+                    "NumberedList", "BulletedList", "Blockquote"
                 ]},{
                 name: 'span', items: [
-                    "Link", "Blockquote", "BulletedList",
-                    "NumberedList", "Indent", "Outdent"
-                ]},{
-                name: 'justify', items: [
-                    "JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock"
-                ]},{
-                name: 'special', items: [
-                    "Image", "TableButton"
-                ]},{
-                name: 'styles', items: [
-                    "Styles"
+                    "Indent", "Outdent", "Link", "Strike", "Image"
                 ]}
-            ],
-            // styles dropdown in toolbar
-            stylesSet: [
-                {name: "Normal", element: 'p'},
-                {name: "Heading 1", element: 'h1'},
-                {name: "Heading 2", element: 'h2'},
-                {name: "Heading 3", element: 'h3'},
-                {name: "Heading 4", element: 'h4'},
-                {name: "Heading 5", element: 'h5'},
-                {name: "Heading 6", element: 'h6'},
-                {name: "Formatted", element: 'pre'},
-                {name: "Address", element: 'address'}
             ],
         };
     }
