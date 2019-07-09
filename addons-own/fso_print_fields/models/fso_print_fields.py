@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.tools import SUPERUSER_ID
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class FsoPrintField(models.Model):
@@ -33,6 +37,16 @@ class FsoPrintField(models.Model):
         for r in self:
             r.css_class = 'pf_'+r.fs_email_placeholder.replace('%', '').lower() if r.fs_email_placeholder else False
 
+    def init(self, cr, context=None):
+        try:
+            logger.warning("Deleting print fields on init or update to make sure we use latest data from xml!")
+            pf_obj = self.pool.get('fso.print_field')
+            pf_ids = pf_obj.search(cr, SUPERUSER_ID, [])
+            pf_obj.unlink(cr, SUPERUSER_ID, pf_ids, context=context)
+            # self.env['fso.print_field'].sudo().search([]).unlink()
+        except Exception as e:
+            logger.error("Could not delete print fields before init/update: %s" % repr(e))
+
 
 class FsoPrintFieldsGroup(models.Model):
     _name = "fso.print_field.group"
@@ -49,6 +63,16 @@ class FsoPrintFieldsGroup(models.Model):
     # Excluded in E-Mail Theme(s)
     exclude_in_email_theme_ids = fields.Many2many(string="Exclude in E-Mail Themes", comodel_name="ir.ui.view",
                                                   domain="[('fso_email_template','=',True)]")
+
+    def init(self, cr, context=None):
+        try:
+            logger.warning("Deleting print field groups on init or update to make sure we use latest data from xml!")
+            pfg_obj = self.pool.get('fso.print_field.group')
+            pfg_ids = pfg_obj.search(cr, SUPERUSER_ID, [])
+            pfg_obj.unlink(cr, SUPERUSER_ID, pfg_ids, context=context)
+            # self.env['fso.print_field.group'].sudo().search([]).unlink()
+        except Exception as e:
+            logger.error("Could not delete print field groups before init/update: %s" % repr(e))
 
 
 class IrUiView(models.Model):

@@ -166,7 +166,7 @@
         
         <!--  pfg_person_extra  -->
         <record id="pf_jahr" model="fso.print_field">
-            <field name="sequence" eval="304"/>
+            <field name="sequence" eval="105"/>
             <field name="name">Jahr</field>
             <field name="fs_email_placeholder">%Jahr%</field>
             <field name="group_ids"
