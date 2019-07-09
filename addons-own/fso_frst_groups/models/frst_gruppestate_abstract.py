@@ -116,8 +116,8 @@ class FRSTGruppeState(models.AbstractModel):
                         "" % (len(all_groups), self.__class__.__name__, time.time()-start))
             return True
 
-        # Optimized version
-        # =================
+        # Optimized version (way faster!)
+        # ===============================
         logger.info("Compute group state with optimized routine for model %s" %  self.__class__.__name__)
 
         # Get current datetime
