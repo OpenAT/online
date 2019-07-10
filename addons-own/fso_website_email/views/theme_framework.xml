@@ -23,7 +23,10 @@
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="common_assets_editmode">
         <!-- Common Editor CSS -->
-        <link href='/fso_website_email/static/src/css/common_editmode.css' rel='stylesheet' type='text/css' t-ignore="true"/>
+        <link href='/fso_website_email/static/src/css/common_editmode.css' rel='stylesheet' t-ignore="true"/>
+
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/ckeditor_print_field.css' type='text/css' t-ignore="true"/>
+
 
         <!-- Load additional templates -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/load_templates.js"/>
@@ -31,6 +34,7 @@
         <!-- CKEditor -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_common.js"/>
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_default_settings.js"/>
+        <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_print_field_plugin.js"/>
 
     </template>
     

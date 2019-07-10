@@ -1,6 +1,15 @@
 (function () {
     'use strict';
 
+    $('.cke_button_icon.cke_button__printfield_icon').change(function() {
+        console.log('change')
+        $('.cke_button_icon.cke_button__printfield_icon').css({
+           'background-image' : 'url(/fso_website_email/static/src/icons/drop_in_print_field.png)',
+           'background-position' : '0 0px',
+           'background-size' : 'auto'
+        });
+    });
+
     // Overwrite class method of website/static/src/js/website.editor.js@839
     // to append/set/override CKEDITOR.config for wrapwrap editor
     openerp.website.RTE = openerp.website.RTE.extend({
@@ -25,9 +34,16 @@
             // Add Custom font and font background colors
             config.colorButton_colors = 'CF5D4E,454545';
 
+            // Add Plugin for print_field snippet
+            config.extraPlugins = 'print_field,sharedspace,customdialogs,tablebutton,oeref';
+
             // Set custom toolbar
             // https://docs.ckeditor.com/ckeditor4/latest/guide/dev_toolbar.html
             config.toolbar = [{
+                name: 'insert', items: [
+                    "PrintField"
+                ]
+            }, {
                 name: 'basicstyles', items: [
                     "Bold", "Italic", "Underline", "Strike", "Subscript",
                     "Superscript", "RemoveFormat"
