@@ -23,7 +23,7 @@
     <!-- ATTENTION: At least on local css <link> or inline <style> tag MUST exist in an assets template -->
     <template id="common_assets_editmode">
         <!-- Common Editor CSS -->
-        <link href='/fso_website_email/static/src/css/common_editmode.css' rel='stylesheet' t-ignore="true"/>
+        <link href='/fso_website_email/static/src/css/common_editmode.css' type='text/css' rel='stylesheet' t-ignore="true"/>
 
         <link rel='stylesheet' href='/fso_website_email/static/src/css/ckeditor_print_field.css' type='text/css' t-ignore="true"/>
 
