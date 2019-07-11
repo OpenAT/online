@@ -12,12 +12,17 @@
                 exec: function( editor ) {
                     var printFieldSnippet = $('.oe_snippet_body.drop_in.drop_in_print_field');
                     if ( printFieldSnippet.length ) {
+                        
                         // clone the element to avoid editing the original
                         var printFieldSnippetClone = printFieldSnippet.clone();
+                        
                         // remove class .oe_snippet_body just like it would happen when drag and droppiung snippets
                         printFieldSnippetClone.removeClass("oe_snippet_body");
+                        
                         // insert the html at the cursor position
-                        editor.insertHtml(printFieldSnippetClone[0].outerHTML);
+                        // editor.insertHtml(printFieldSnippetClone[0].outerHTML, 'unfiltered_html');
+                        var element = CKEDITOR.dom.element.createFromHtml( printFieldSnippetClone[0].outerHTML );
+                        editor.insertElement(element);
                     }
                 }
             });
