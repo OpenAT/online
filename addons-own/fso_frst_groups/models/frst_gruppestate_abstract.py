@@ -15,17 +15,17 @@ class FRSTGruppeState(models.AbstractModel):
     State Descriptions
     ------------------
     approval_pending:   The Group is assigned but waiting for approval
-                        CONDITION: gueltig_von and gueltig_bis is set to past-date '09.09.1999'
+                        CONDITION: gueltig_von and gueltig_bis is set to past-date '09.09.1999' and steuerung_bit
                         FRST ACTIVE: False
                         FSON CHECKBOX: True !!!
 
     subscribed:         The group is active
-                        CONDITION: gueltig_von <= now <= gueltig_bis and not bestaetigt_am_um
+                        CONDITION: gueltig_von <= now <= gueltig_bis and not bestaetigt_am_um and steuerung_bit
                         FRST ACTIVE: True
                         FSON CHECKBOX: True
 
     approved:           The group is subscribed and approved
-                        CONDITION: (gueltig_von <= now <= gueltig_bis) and bestaetigt_am_um
+                        CONDITION: (gueltig_von <= now <= gueltig_bis) and bestaetigt_am_um and steuerung_bit
                         FRST ACTIVE: True
                         FSON CHECKBOX: True
 
