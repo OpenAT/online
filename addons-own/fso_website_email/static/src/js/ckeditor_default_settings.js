@@ -25,9 +25,16 @@
             // Add Custom font and font background colors
             config.colorButton_colors = 'CF5D4E,454545';
 
+            // Add Plugin for print_field snippet
+            config.extraPlugins = 'print_field,sharedspace,customdialogs,tablebutton,oeref';
+
             // Set custom toolbar
             // https://docs.ckeditor.com/ckeditor4/latest/guide/dev_toolbar.html
             config.toolbar = [{
+                name: 'insert', items: [
+                    "PrintField"
+                ]
+            }, {
                 name: 'basicstyles', items: [
                     "Bold", "Italic", "Underline", "Strike", "Subscript",
                     "Superscript", "RemoveFormat"
