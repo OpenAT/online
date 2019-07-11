@@ -27,7 +27,6 @@
 
         <link rel='stylesheet' href='/fso_website_email/static/src/css/ckeditor_print_field.css' type='text/css' t-ignore="true"/>
 
-
         <!-- Load additional templates -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/load_templates.js"/>
 
@@ -46,6 +45,7 @@
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework.css' t-ignore="true"/>
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets.css' t-ignore="true"/>
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets_buttons.css' t-ignore="true"/>
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets_bpbuttons.css' t-ignore="true"/>
     </template>
     
     <!-- FRAMEWORK ASSETS RESPONSIVE (Mailchimp) (CSS MEDIA QUERIES) -->
@@ -53,6 +53,7 @@
     <template id="theme_framework_assets_responsive">
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_responsive.css' t-ignore="true"/>
         <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets_buttons_responsive.css' t-ignore="true"/>
+        <link rel='stylesheet' href='/fso_website_email/static/src/css/theme_framework_snippets_bpbuttons_responsive.css' t-ignore="true"/>
     </template>
     
     <!-- FRAMEWORK ASSETS EDIT MODE (Mailchimp) (JS AND CSS) -->

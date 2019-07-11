@@ -1,0 +1,33 @@
+/*
+    ======================
+    snippet_block_bpbutton
+    ======================
+*/
+@media only screen and (max-width: 480px) {
+    /* Additional button sizes */
+    /* ----------------------- */
+    /* medium*/
+    .snippet_block_bpbutton.bpbutton_medium .bpbutton_table {
+        border-radius: 4px;
+    }
+    .snippet_block_bpbutton.bpbutton_medium .bpbutton_table a {
+        font-size: 18px;
+        border-width: 0.5em 1.25em;
+    }
+    /* large */
+    .snippet_block_bpbutton.bpbutton_large .bpbutton_table {
+        border-radius: 5px;
+    }
+    .snippet_block_bpbutton.bpbutton_large .bpbutton_table a {
+        font-size: 20px;
+        border-width: 0.5em 1.56em;
+    }
+    /* huge */
+    .snippet_block_bpbutton.bpbutton_huge .bpbutton_table {
+        border-radius: 5px;
+    }
+    .snippet_block_bpbutton.bpbutton_huge .bpbutton_table a {
+        font-size: 24px;
+        border-width: 0.4em 1.95em;
+    }
+}

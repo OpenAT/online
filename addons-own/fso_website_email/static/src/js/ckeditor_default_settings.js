@@ -26,7 +26,8 @@
             config.colorButton_colors = 'CF5D4E,454545';
 
             // Add Plugin for print_field snippet
-            config.extraPlugins = 'print_field,sharedspace,customdialogs,tablebutton,oeref';
+            // config.extraPlugins = 'sharedspace,customdialogs,tablebutton,oeref';
+            config.extraPlugins = 'printfield,sharedspace,customdialogs,tablebutton,oeref';
 
             // Set custom toolbar
             // https://docs.ckeditor.com/ckeditor4/latest/guide/dev_toolbar.html

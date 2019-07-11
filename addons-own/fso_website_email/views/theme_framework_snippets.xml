@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        
+
         <!-- ATTENTION: Do not remove! Must stay here for backwards compatibility -->
         <template id="theme_default_snippets">
             <t t-call="fso_website_email.theme_framework_snippets"/>
         </template>
-        
-        
+
+
         <!-- Fundraising Studio Print Field Snippet -->
         <template id="fs_print_field_snippet">
             <!-- HINT: request.env['fso.print_field'].search([]) can be used here because this template will only be
@@ -24,13 +24,15 @@
                 <span t-att-class="'oe_snippet_body ckediting_disabled drop_in drop_in_print_field ' + print_fields[0].css_class if print_fields else ''"
                       contenteditable="false">
                     <t t-foreach="print_fields" t-as="print_field">
-                        <span t-att-class="print_field.css_class" t-att-data-fs-email-placeholder="print_field.fs_email_placeholder" t-att-title="print_field.fs_email_placeholder"><t t-esc="print_field.name"/></span>
+                        <span t-att-class="print_field.css_class" t-att-data-fs-email-placeholder="print_field.fs_email_placeholder" t-att-title="print_field.fs_email_placeholder">
+                            <t t-esc="print_field.name"/>
+                        </span>
                     </t>
                 </span>
             </div>
         </template>
-        
-        
+
+
         <!-- Fundraising Studio Print Field Snippet Options Menu -->
         <template id="fs_print_field_snippet_options">
             <!-- TODO: honour 'exclude_in_email_theme_ids' field -->
@@ -40,10 +42,16 @@
                 <ul class="dropdown-menu">
                     <t t-foreach="groups" t-as="group">
                         <li class="dropdown-submenu">
-                            <a tabindex="-2" href="#"><t t-esc="group.name"/></a>
+                            <a tabindex="-2" href="#">
+                                <t t-esc="group.name"/>
+                            </a>
                             <ul class="dropdown-menu">
                                 <t t-foreach="group.print_field_ids" t-as="print_field">
-                                    <li t-att-data-value='print_field.css_class'><a><t t-esc="print_field.fs_email_placeholder"/></a></li>
+                                    <li t-att-data-value='print_field.css_class'>
+                                        <a>
+                                            <t t-esc="print_field.fs_email_placeholder"/>
+                                        </a>
+                                    </li>
                                 </t>
                             </ul>
                         </li>
@@ -51,8 +59,8 @@
                 </ul>
             </li>
         </template>
-        
-        
+
+
         <template id="snippet_block">
             <!-- CENTERING TABLE -->
             <!--
@@ -73,47 +81,47 @@
                         <!-- flexibleContainer 600 px 0 padding 0 margin -->
                         <table class="flexibleContainer" border="0" cellpadding="0" cellspacing="0">
                             <tr>
-                                
+
                                 <!-- flexibleContainerCell 560 px 20 padding left and right 0 margin -->
                                 <td class="flexibleContainerCell" align="center" valign="top">
-                                    
+
                                     <!-- Nested Container -->
                                     <table class="nestedContainer" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-                                                
+
                                                 <!-- Nested Container Cell -->
                                                 <td class="nestedContainerCell" align="center" valign="top">
-                    
-                    
+
+
                                                     <!-- CONTENT TABLE -->
                                                     <table class="contentTable" border="0" cellpadding="0" cellspacing="0">
                                                         <tr>
-                                                            
+
                                                             <t t-if="nockedit">
                                                                 <td class="textContent">
-                                                                    
+
                                                                     <t t-raw="0"/>
-                                                                    
+
                                                                 </td>
                                                             </t>
-                                                            
+
                                                             <t t-if="not nockedit">
                                                                 <td class="textContent ckediting_enabled" contenteditable="true">
-                                                                    
+
                                                                     <t t-raw="0"/>
-                                                                    
+
                                                                 </td>
                                                             </t>
 
                                                         </tr>
                                                     </table>
-                
+
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    
+
                                 </td>
                             </tr>
                         </table>
@@ -122,9 +130,9 @@
             </table>
         </template>
 
-        
-        
-        
+
+
+
         <!-- Dadi Default E-Mail Theme Snippets -->
         <template id="theme_framework_snippets"
                   name="Theme Framework (mailchimp) Snippets">
@@ -148,7 +156,7 @@
                     <!-- Snippets         -->
                     <!-- ================ -->
                     <div id="snippet_email_blocks" class="tab-pane fade in active">
-                        
+
                         <!-- SPACER -->
                         <div>
                             <!-- Icon and name -->
@@ -160,10 +168,10 @@
                             <!-- SNIPPET BLOCK -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_spacer"
                                  contenteditable="false">
-                                
+
                                 <t t-call="fso_website_email.snippet_block">
                                     <t t-set="nockedit" t-value="True"/>
-                                    
+
                                     <!-- CONTENT TABLE TOP -->
                                     <table class="snippet_block_spacer_top" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
@@ -174,7 +182,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-    
+
                                     <!-- CONTENT TABLE BOTTOM -->
                                     <table class="snippet_block_spacer_bottom" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
@@ -185,9 +193,9 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    
+
                                 </t>
-                                
+
                             </div>
                         </div>
                         <span class="snippet_menu_vertical_divider"/>
@@ -203,16 +211,16 @@
                             <!-- SNIPPET BLOCK -->
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_banner dadi_sb_bg_full"
                                  contenteditable="false">
-                                
+
                                 <t t-call="fso_website_email.snippet_block">
 
                                     <a href="#">
                                         <img src="/fso_website_email/static/src/images/banner_600.png"
                                              class="flexibleImage snippet_block_banner_image"/>
                                     </a>
-                                    
+
                                 </t>
-                                
+
                             </div>
                         </div>
                         <span class="snippet_menu_vertical_divider"/>
@@ -237,11 +245,11 @@
                                         tempor eleifend, sem.
                                         ...
                                     </p>
-                                    
+
                                 </t>
                             </div>
                         </div>
-                        
+
                         <!-- TEXT WITH IMAGE LEFT -->
                         <div>
                             <!-- Icon and name -->
@@ -254,25 +262,25 @@
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_image_left" contenteditable="false">
                                 <t t-call="fso_website_email.snippet_block">
                                     <t t-set="nockedit" t-value="True"/>
-    
+
                                     <!-- CONTENT TABLE LEFT -->
                                     <table class="flexibleContainerLeft" align="left" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-                
+
                                                 <td align="left" valign="top" class="imageContent ckediting_enabled" contenteditable="true">
                                                     <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                 </td>
-            
+
                                             </tr>
                                         </tbody>
                                     </table>
-    
+
                                     <!-- CONTENT TABLE RIGHT -->
                                     <table class="flexibleContainerRight" align="right" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-                
+
                                                 <td valign="top" class="textContent ckediting_enabled" contenteditable="true">
                                                     <h3>Right</h3>
                                                     <p>
@@ -281,15 +289,15 @@
                                                         scelerisque lacus eu tellus. ...
                                                     </p>
                                                 </td>
-            
+
                                             </tr>
                                         </tbody>
                                     </table>
-                                    
+
                                 </t>
                             </div>
                         </div>
-                        
+
                         <!-- TEXT WITH IMAGE RIGHT -->
                         <div>
                             <!-- Icon and name -->
@@ -302,12 +310,12 @@
                             <div class="oe_snippet_body ckediting_disabled snippet_block snippet_block_text_image_right" contenteditable="false">
                                 <t t-call="fso_website_email.snippet_block">
                                     <t t-set="nockedit" t-value="True"/>
-    
+
                                     <!-- CONTENT TABLE LEFT -->
                                     <table class="flexibleContainerLeft" align="left" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-                                                
+
                                                 <td valign="top" class="textContent ckediting_enabled" contenteditable="true">
                                                     <h3>Left</h3>
                                                     <p>
@@ -316,28 +324,28 @@
                                                         scelerisque lacus eu tellus. ...
                                                     </p>
                                                 </td>
-                                                
+
                                             </tr>
                                         </tbody>
                                     </table>
-    
+
                                     <!-- CONTENT TABLE RIGHT -->
                                     <table class="flexibleContainerRight" align="right" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-    
+
                                                 <td align="left" valign="top" class="imageContent ckediting_enabled" contenteditable="true">
                                                     <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                 </td>
-                                                
+
                                             </tr>
                                         </tbody>
                                     </table>
-                                    
+
                                 </t>
                             </div>
                         </div>
-                        
+
                         <!-- TEXT TWO COLUMNS -->
                         <div>
                             <!-- Icon and name -->
@@ -355,7 +363,7 @@
                                     <table class="flexibleContainerLeft" align="left" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-                                                
+
                                                 <td align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
                                                     <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                     <h3>Left</h3>
@@ -365,16 +373,16 @@
                                                         scelerisque lacus eu tellus. ...
                                                     </p>
                                                 </td>
-                                                
+
                                             </tr>
                                         </tbody>
                                     </table>
-    
+
                                     <!-- CONTENT TABLE RIGHT -->
                                     <table class="flexibleContainerRight" align="right" border="0" cellpadding="0" cellspacing="0">
                                         <tbody>
                                             <tr>
-    
+
                                                 <td align="center" valign="top" class="textContent ckediting_enabled" contenteditable="true">
                                                     <img src="/fso_website_email/static/src/images/klimtbruecke.jpg" class="flexibleImage"/>
                                                     <h3>Right</h3>
@@ -384,15 +392,15 @@
                                                         scelerisque lacus eu tellus. ...
                                                     </p>
                                                 </td>
-                                                
+
                                             </tr>
                                         </tbody>
                                     </table>
-                                    
+
                                 </t>
                             </div>
                         </div>
-                        
+
                         <!-- TEXT THREE COLUMNS -->
                         <div>
                             <!-- Icon and name -->
@@ -442,17 +450,17 @@
 
                                 </t>
                             </div>
-                        </div>                        
+                        </div>
                         <span class="snippet_menu_vertical_divider"/>
 
                     </div>
-                    
-                  
+
+
                     <!-- ================ -->
                     <!-- Special          -->
                     <!-- ================ -->
                     <div id="snippet_email_special" class="tab-pane fade">
-                        
+
                         <!-- Button Links -->
                         <!-- https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
                         <div>
@@ -460,18 +468,49 @@
                             <div class="oe_snippet_thumbnail">
                                 <img class="oe_snippet_thumbnail_img"
                                      src="/fso_website_email/static/src/icons/drop_in_button.png"/>
-                                <span class="oe_snippet_thumbnail_title">Button</span>
+                                <span class="oe_snippet_thumbnail_title">Modern Button</span>
                             </div>
                             <!-- SNIPPET BLOCK -->
                             <span class="oe_snippet_body ckediting_enabled drop_in drop_next drop_in_button dadi_di_button_default dadi_di_button_normal dadi_di_button_inline"
                                   contenteditable="true">
-                                <a href="#">BUTTON</a>
+                                <a href="#">Modern Button</a>
                             </span>
-                            
+                        </div>
+
+                        <!-- NEW: Bullet Proof Buttons -->
+                        <!-- These Buttons will work in outlook! -->
+                        <!-- https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
+                        <div>
+                            <!-- Icon and name -->
+                            <div class="oe_snippet_thumbnail">
+                                <img class="oe_snippet_thumbnail_img"
+                                     src="/fso_website_email/static/src/icons/drop_in_button.png"/>
+                                <span class="oe_snippet_thumbnail_title">BulletProofButton</span>
+                            </div>
+                            <!-- SNIPPET BLOCK -->
+                            <div class="oe_snippet_body ckediting_disabled snippet_block_bpbutton bpbutton_normal bpbutton_center bpbutton_style_default" contenteditable="false">
+                                <t t-call="fso_website_email.snippet_block">
+                                    <t t-set="nockedit" t-value="True"/>
+
+                                    <!-- This table is only here to allow full width buttons (but the full width is still not clickable!)  -->
+                                    <table class="bpbutton_table">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <a class="bpbutton_link ckediting_enabled" contenteditable="true" href="https://www.datadialog.at">
+                                                        Bullet Proof Button
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </t>
+                            </div>
                         </div>
 
                         <!-- Fundraising Studio Print Fields -->
-                        <t t-call="fso_website_email.fs_print_field_snippet" />
+                        <t t-call="fso_website_email.fs_print_field_snippet"/>
                         <span class="snippet_menu_vertical_divider"/>
 
                     </div>
@@ -480,15 +519,15 @@
                     <!-- SNIPPET TARGETS AND OPTIONS -->
                     <!-- =========================== -->
                     <div id="snippet_options" class="hidden">
-                        
+
                         <!-- SNIPPET(S): snippet_block -->
                         <!-- ========================= -->
                         <div data-snippet-option-id='snippet_block'
-                             data-selector=".snippet_block"
+                             data-selector=".snippet_block, .snippet_block_bpbutton"
                              data-selector-siblings="[data-oe-field='body_html'] > div"
                              data-selector-children="[data-oe-field='body_html']">
                         </div>
-                        
+
                         <!-- OPTION_GROUP: dadi_sb_spacer_height -->
                         <div data-snippet-option-id='dadi_sb_spacer_height'
                              data-selector=".snippet_block_spacer">
@@ -496,10 +535,18 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Spacer Size</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value='dadi_sb_spacer_none'><a>None</a></li>
-                                    <li data-value='dadi_sb_spacer_normal'><a>Normal</a></li>
-                                    <li data-value='dadi_sb_spacer_medium'><a>Medium</a></li>
-                                    <li data-value='dadi_sb_spacer_large'><a>Large</a></li>
+                                    <li data-value='dadi_sb_spacer_none'>
+                                        <a>None</a>
+                                    </li>
+                                    <li data-value='dadi_sb_spacer_normal'>
+                                        <a>Normal</a>
+                                    </li>
+                                    <li data-value='dadi_sb_spacer_medium'>
+                                        <a>Medium</a>
+                                    </li>
+                                    <li data-value='dadi_sb_spacer_large'>
+                                        <a>Large</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
@@ -510,14 +557,22 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Spacer Style</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value='dadi_sb_spacer_none'><a>None</a></li>
-                                    <li data-value='dadi_sb_spacer_dotted'><a>Dotted</a></li>
-                                    <li data-value='dadi_sb_spacer_dashed'><a>Dashed</a></li>
-                                    <li data-value='dadi_sb_spacer_solid'><a>Solid</a></li>
+                                    <li data-value='dadi_sb_spacer_none'>
+                                        <a>None</a>
+                                    </li>
+                                    <li data-value='dadi_sb_spacer_dotted'>
+                                        <a>Dotted</a>
+                                    </li>
+                                    <li data-value='dadi_sb_spacer_dashed'>
+                                        <a>Dashed</a>
+                                    </li>
+                                    <li data-value='dadi_sb_spacer_solid'>
+                                        <a>Solid</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: dadi_sb_fg_color -->
                         <div data-snippet-option-id='dadi_sb_fg_color'
                              data-selector=".snippet_block_text_intro,
@@ -527,16 +582,28 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Foreground Style</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value=''><a>None</a></li>
-                                    <li data-value='dadi_sb_fg_transparent'><a>Transparent</a></li>
-                                    <li data-value='dadi_sb_fg_lightgrey'><a>Background Grey</a></li>
-                                    <li data-value='dadi_sb_fg_grey'><a>Grey</a></li>
-                                    <li data-value='dadi_sb_fg_darkgrey'><a>Dark Grey</a></li>
-                                    <li data-value='dadi_sb_fg_orange'><a>Orange</a></li>
+                                    <li data-value=''>
+                                        <a>None</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_transparent'>
+                                        <a>Transparent</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_lightgrey'>
+                                        <a>Background Grey</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_grey'>
+                                        <a>Grey</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_darkgrey'>
+                                        <a>Dark Grey</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_orange'>
+                                        <a>Orange</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: dadi_sb_fg_width -->
                         <div data-snippet-option-id='dadi_sb_fg_width'
                              data-selector=".snippet_block_text_intro, .snippet_block_spacer">
@@ -544,49 +611,78 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Foreground Width</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value=''><a>None</a></li>
-                                    <li data-value='dadi_sb_fg_full'><a>Full Width</a></li>
-                                    <li data-value='dadi_sb_fg_normal'><a>Normal</a></li>
-                                    <li data-value='dadi_sb_fg_narrow'><a>Narrow</a></li>
+                                    <li data-value=''>
+                                        <a>None</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_full'>
+                                        <a>Full Width</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_normal'>
+                                        <a>Normal</a>
+                                    </li>
+                                    <li data-value='dadi_sb_fg_narrow'>
+                                        <a>Narrow</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: dadi_sb_bg_color -->
                         <div data-snippet-option-id='dadi_sb_bg_color'
-                             data-selector=".snippet_block">
+                             data-selector=".snippet_block, .snippet_block_bpbutton">
                             <!-- Snippet options menu -->
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Background Style</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value=''><a>None</a></li>
-                                    <li data-value='dadi_sb_bg_transparent'><a>Transparent</a></li>
-                                    <li data-value='dadi_sb_bg_lightgrey'><a>Background Grey</a></li>
-                                    <li data-value='dadi_sb_bg_grey'><a>Grey</a></li>
-                                    <li data-value='dadi_sb_bg_darkgrey'><a>Dark Grey</a></li>
-                                    <li data-value='dadi_sb_bg_orange'><a>Orange</a></li>
+                                    <li data-value=''>
+                                        <a>None</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_transparent'>
+                                        <a>Transparent</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_lightgrey'>
+                                        <a>Background Grey</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_grey'>
+                                        <a>Grey</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_darkgrey'>
+                                        <a>Dark Grey</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_orange'>
+                                        <a>Orange</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: dadi_sb_bg_width -->
                         <div data-snippet-option-id='dadi_sb_bg_width'
                              data-selector="
                                             .snippet_block_banner,
-                                            .snippet_block_text_intro">
+                                            .snippet_block_text_intro,
+                                            .snippet_block_bpbutton">
                             <!-- Snippet options menu -->
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Background Width</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value=''><a>None</a></li>
-                                    <li data-value='dadi_sb_bg_full'><a>Full Width</a></li>
-                                    <li data-value='dadi_sb_bg_normal'><a>Normal</a></li>
-                                    <li data-value='dadi_sb_bg_narrow'><a>Narrow</a></li>
+                                    <li data-value=''>
+                                        <a>None</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_full'>
+                                        <a>Full Width</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_normal'>
+                                        <a>Normal</a>
+                                    </li>
+                                    <li data-value='dadi_sb_bg_narrow'>
+                                        <a>Narrow</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
-                        
+
+
                         <!-- drop_in -->
                         <!-- ======= -->
                         <div data-snippet-option-id="drop_in_target"
@@ -604,8 +700,8 @@
                                                      .snippet_block .ckediting_enabled h5,
                                                      .snippet_block .ckediting_enabled h6">
                         </div>
-                        
-                        
+
+
                         <!-- drop_next -->
                         <!-- ========= -->
                         <div data-snippet-option-id="drop_next_target"
@@ -620,16 +716,16 @@
                                                      .snippet_block .ckediting_enabled h6"
                              data-selector-children=".snippet_block .ckediting_enabled">
                         </div>
-                        
-                       
-                        
+
+
+
                         <!-- OPTION_GROUP: drop_in_print_field -->
                         <div data-snippet-option-id='drop_in_print_field'
                              data-selector=".drop_in_print_field">
                             <!-- Fundraising Studio Print Field Options -->
                             <t t-call="fso_website_email.fs_print_field_snippet_options"/>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: drop_in_button_style -->
                         <div data-snippet-option-id='drop_in_button_style'
                              data-selector=".drop_in_button">
@@ -637,16 +733,28 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Style</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value='dadi_di_button_default'><a>Default</a></li>
-                                    <li data-value='dadi_di_button_transparent'><a>Transparent</a></li>
-                                    <li data-value='dadi_di_button_black'><a>Black</a></li>
-                                    <li data-value='dadi_di_button_green'><a>Green</a></li>
-                                    <li data-value='dadi_di_button_yellow'><a>Yellow</a></li>
-                                    <li data-value='dadi_di_button_red'><a>Red</a></li>
+                                    <li data-value='dadi_di_button_default'>
+                                        <a>Default</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_transparent'>
+                                        <a>Transparent</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_black'>
+                                        <a>Black</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_green'>
+                                        <a>Green</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_yellow'>
+                                        <a>Yellow</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_red'>
+                                        <a>Red</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: drop_in_button_size -->
                         <div data-snippet-option-id='drop_in_button_size'
                              data-selector=".drop_in_button">
@@ -654,14 +762,22 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Size</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value='dadi_di_button_normal'><a>Normal</a></li>
-                                    <li data-value='dadi_di_button_medium'><a>Medium</a></li>
-                                    <li data-value='dadi_di_button_large'><a>Large</a></li>
-                                    <li data-value='dadi_di_button_huge'><a>Huge</a></li>
+                                    <li data-value='dadi_di_button_normal'>
+                                        <a>Normal</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_medium'>
+                                        <a>Medium</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_large'>
+                                        <a>Large</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_huge'>
+                                        <a>Huge</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>
-                        
+
                         <!-- OPTION_GROUP: drop_in_button_width -->
                         <div data-snippet-option-id='drop_in_button_width'
                              data-selector=".drop_in_button">
@@ -669,10 +785,89 @@
                             <li class="dropdown-submenu" data-required="true">
                                 <a tabindex="-1" href="#">Position</a>
                                 <ul class="dropdown-menu">
-                                    <li data-value='dadi_di_button_inline'><a>In Line</a></li>
-                                    <li data-value='dadi_di_button_fullcenter'><a>Center</a></li>
-                                    <li data-value='dadi_di_button_fullleft'><a>Left</a></li>
-                                    <li data-value='dadi_di_button_fullright'><a>Right</a></li>
+                                    <li data-value='dadi_di_button_inline'>
+                                        <a>In Line</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_fullcenter'>
+                                        <a>Center</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_fullleft'>
+                                        <a>Left</a>
+                                    </li>
+                                    <li data-value='dadi_di_button_fullright'>
+                                        <a>Right</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </div>
+
+
+                        <!-- OPTION_GROUP: snippet_block_bpbutton_size -->
+                        <div data-snippet-option-id='snippet_block_bpbutton_size'
+                             data-selector=".snippet_block_bpbutton">
+                            <!-- drop_in options menu -->
+                            <li class="dropdown-submenu" data-required="true">
+                                <a tabindex="-1" href="#">Size</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='bpbutton_normal'>
+                                        <a>Normal</a>
+                                    </li>
+                                    <li data-value='bpbutton_medium'>
+                                        <a>Medium</a>
+                                    </li>
+                                    <li data-value='bpbutton_large'>
+                                        <a>Large</a>
+                                    </li>
+                                    <li data-value='bpbutton_huge'>
+                                        <a>Huge</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </div>
+
+                        <!-- OPTION_GROUP: snippet_block_bpbutton_pos -->
+                        <div data-snippet-option-id='snippet_block_bpbutton_pos'
+                             data-selector=".snippet_block_bpbutton">
+                            <!-- drop_in options menu -->
+                            <li class="dropdown-submenu" data-required="true">
+                                <a tabindex="-1" href="#">Position</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='bpbutton_left'>
+                                        <a>Left</a>
+                                    </li>
+                                    <li data-value='bpbutton_center'>
+                                        <a>Center</a>
+                                    </li>
+                                    <li data-value='bpbutton_right'>
+                                        <a>Right</a>
+                                    </li>
+                                    <li data-value='bpbutton_center_full'>
+                                        <a>Center Full Width</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </div>
+
+
+                        <!-- OPTION_GROUP: snippet_block_bpbutton_style -->
+                        <div data-snippet-option-id='snippet_block_bpbutton_style'
+                             data-selector=".snippet_block_bpbutton">
+                            <!-- drop_in options menu -->
+                            <li class="dropdown-submenu" data-required="true">
+                                <a tabindex="-1" href="#">Style</a>
+                                <ul class="dropdown-menu">
+                                    <li data-value='bpbutton_style_default'>
+                                        <a>Default</a>
+                                    </li>
+                                    <li data-value='bpbutton_style_transparent'>
+                                        <a>Transparent</a>
+                                    </li>
+                                    <li data-value='bpbutton_style_black'>
+                                        <a>Black</a>
+                                    </li>
+                                   <li data-value='bpbutton_style_white'>
+                                        <a>White</a>
+                                    </li>
                                 </ul>
                             </li>
                         </div>

@@ -1,0 +1,153 @@
+/*
+    ======================
+    snippet_block_bpbutton
+    ======================
+*/
+
+/* Outer table */
+.snippet_block_bpbutton .bpbutton_table {
+    width: auto;
+    line-height: initial;
+    /* make "border-radius" work for cells inside */
+    border-collapse: separate;
+    /* reserve some space for the button shadow */
+    margin-bottom: 5px;
+    /*  reset webkit horizontal spacing  */
+    -webkit-border-horizontal-spacing: 0;
+    -webkit-border-vertical-spacing: 0;
+    /* box style */
+    border-radius: 3px;
+    border-width: 1px;
+    /* box shadow and animation */
+    box-shadow: 1px 1px 4px rgba(2,2,2,0.3);
+    -webkit-transition: box-shadow 300ms;
+    transition: box-shadow 300ms;
+    /* safety for full width */
+    text-align: center;
+}
+.snippet_block_bpbutton .bpbutton_table:hover {
+    /* hover box shadow */
+    box-shadow: 2px 2px 6px rgba(2,2,2,0.4);
+}
+/* Inner anchor */
+.snippet_block_bpbutton .bpbutton_table a {
+    line-height: initial;
+    /* text style */
+    text-decoration: none;
+    text-align: center;
+    /* box style */
+    display: inline-block; /* will not work in outlook */
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    border-width: 0.5em 1em;
+    /* reset box shadow and animation (moved to outer .bpbutton_table) */
+    box-shadow: none;
+    -webkit-transition: none;
+    transition: none;
+}
+.snippet_block_bpbutton .bpbutton_table a:hover {
+    /* reset box shadow (moved to outer .bpbutton_table) */
+    box-shadow: none;
+}
+/* Style */
+.snippet_block_bpbutton .bpbutton_table,
+.snippet_block_bpbutton .bpbutton_table a {
+    border-style: solid;
+    background-color: #268bd8;
+    border-color: #268bd8;
+    color: #ffffff;
+}
+
+/*
+    ---------------
+    SNIPPET OPTIONS
+    ---------------
+*/
+
+/* Additional button sizes */
+/* ----------------------- */
+/* medium*/
+.snippet_block_bpbutton.bpbutton_medium .bpbutton_table {
+    border-radius: 4px;
+}
+.snippet_block_bpbutton.bpbutton_medium .bpbutton_table a {
+    font-size: 22px;
+    border-width: 0.5em 1.25em;
+}
+/* large */
+.snippet_block_bpbutton.bpbutton_large .bpbutton_table {
+    border-radius: 5px;
+}
+.snippet_block_bpbutton.bpbutton_large .bpbutton_table a {
+    font-size: 26px;
+    border-width: 0.5em 1.56em;
+}
+/* huge */
+.snippet_block_bpbutton.bpbutton_huge .bpbutton_table {
+    border-radius: 6px;
+}
+.snippet_block_bpbutton.bpbutton_huge .bpbutton_table a {
+    font-size: 34px;
+    border-width: 0.4em 1.95em;
+}
+
+
+/* Additional button positions */
+/* --------------------------- */
+/* left */
+.snippet_block_bpbutton.bpbutton_left .bpbutton_table {
+    margin-right: auto;
+    /* will be transformed by premailer to align="left" which is great for outlook */
+    text-align: left;
+}
+/* center */
+.snippet_block_bpbutton.bpbutton_center .bpbutton_table {
+    margin-left: auto;
+    margin-right: auto;
+    /* will be transformed by premailer to align="center" which is great for outlook */
+    text-align: center;
+}
+/* right */
+.snippet_block_bpbutton.bpbutton_right .bpbutton_table {
+    margin-left: auto;
+    /* will be transformed by premailer to align="right" which is great for outlook */
+    text-align: right;
+}
+/* center full width*/
+.snippet_block_bpbutton.bpbutton_center_full .bpbutton_table {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+.snippet_block_bpbutton.bpbutton_center_full .bpbutton_table {
+    width: 100%;
+}
+
+
+/* Additional button colors */
+/* ------------------------ */
+/* bpbutton_style_default */
+.snippet_block_bpbutton.bpbutton_style_default .bpbutton_table,
+.snippet_block_bpbutton.bpbutton_style_default .bpbutton_table a {
+    /*  do nothing :) just use the styles from above - but makes it easier to override the default style in custommer addon  */
+}
+/* transparent */
+.snippet_block_bpbutton.bpbutton_style_transparent .bpbutton_table,
+.snippet_block_bpbutton.bpbutton_style_transparent .bpbutton_table a {
+    background-color: transparent;
+    border-color: transparent;
+    color: black;
+}
+.snippet_block_bpbutton.bpbutton_style_black .bpbutton_table,
+.snippet_block_bpbutton.bpbutton_style_black .bpbutton_table a {
+    background-color: black;
+    border-color: black;
+    color: white;
+}
+.snippet_block_bpbutton.bpbutton_style_white .bpbutton_table,
+.snippet_block_bpbutton.bpbutton_style_white .bpbutton_table a {
+    background-color: #d6d6d6;
+    border-color: #d6d6d6;
+    color: black;
+}
