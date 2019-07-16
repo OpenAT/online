@@ -491,9 +491,11 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <a class="bpbutton_link ckediting_enabled" contenteditable="true" href="https://www.datadialog.at">
-                                                        Bullet Proof Button
-                                                    </a>
+                                                    <p class="ckediting_enabled" contenteditable="true">
+                                                        <a class="bpbutton_link" href="https://www.datadialog.at">
+                                                            Bullet Proof Button
+                                                        </a>
+                                                    </p>
                                                 </td>
                                             </tr>
                                         </tbody>
