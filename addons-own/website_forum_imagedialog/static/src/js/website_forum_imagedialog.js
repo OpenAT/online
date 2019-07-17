@@ -9,19 +9,10 @@
     var wfi_content = $('[class^="wfi_style_"]');
     for (var i = 0; i < wfi_content.length; i++) {
         var wfiClassName = wfi_content[i].className;
-        var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
         var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
-        var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
-        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
 
-        if (wfiStyleText) {
-            $('.' + wfiClassName).attr('style', 'text-align:' + wfiStyleText[1] + ';');
-        } else if (wfiStyleIndent) {
+        if (wfiStyleIndent) {
             $('.' + wfiClassName).attr('style', 'margin-left:' + wfiStyleIndent[1] + ';');
-        } else if (wfiStyleColor) {
-            $('.' + wfiClassName).attr('style', 'color:#' + wfiStyleColor[1] + ';');
-        } else if (wfiStyleBG) {
-            $('.' + wfiClassName).attr('style', 'background-color:#' + wfiStyleBG[1] + ';');
         }
     }
 
@@ -35,21 +26,24 @@
     //--------------------------------------
     // Destroy and replace existing CKEditor
     //--------------------------------------
-    var old_editor = CKEDITOR.instances['content'];
 
-    if (old_editor) {
-        old_editor.destroy(true);
+    CKEDITOR.instances['content'].on('loaded', function(ev) {
+        if (CKEDITOR.instances['content']) {
+            CKEDITOR.instances['content'].destroy(true);
+        }
+        CKEDITOR.replace('content', _forum_config());
+    });
+
+    if (CKEDITOR.instances['content'].loaded) {
+        if (CKEDITOR.instances['content']) {
+            CKEDITOR.instances['content'].destroy(true);
+        }
+        CKEDITOR.replace('content', _forum_config());
     }
-
-    CKEDITOR.replace('content', _forum_config());
 
     CKEDITOR.dtd.$removeEmpty.span = false;
 
-    //--------------------------------------
-    // Change of the EventNumber, because website_forum.js would change it to the wrong ones
-    //--------------------------------------
     var editor = CKEDITOR.instances['content'];
-//    editor.on('instanceReady', CKEDITORLoadCompleteForum);
 
     //--------------------------------------
     // Apply Style in Editor when editing a Comment/Question
@@ -59,228 +53,34 @@
 
         for (var i = 0; i < wfi_content.length; i++) {
             var wfiClassName = wfi_content[i].className;
-            var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
             var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
 
-            if (wfiStyleText) {
-                wfi_content[i].style.textAlign = wfiStyleText[1];
-            } else if (wfiStyleIndent) {
+            if (wfiStyleIndent) {
                 wfi_content[i].style.marginLeft = wfiStyleIndent[1];
-            }
-
-            if (wfi_content[i].children.length) {
-                var wfi_content_children = wfi_content[i].children;
-                for (var j = 0; j < wfi_content_children.length; j++) {
-                    var wfiChildClassName = wfi_content_children[j].className;
-                    var wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
-                    var wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
-
-                    if (wfiStyleColor) {
-                        wfi_content_children[j].style.color = hexToRGB(wfiStyleColor[1]);
-                    } else if (wfiStyleBG) {
-                        wfi_content_children[j].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                    }
-
-                    if (wfi_content_children[j].children.length) {
-                        if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                            wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                            wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                        } else {
-
-                            if (wfi_content_children[j].children[0].children.length) {
-                                if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                    wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                                    wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                                } else {
-                                    wfi_content_children[j]
-                                }
-
-                            } else if (wfi_content_children[j].children.length) {
-                                var wfi_content_grandchildren = wfi_content_children[j].children;
-                                for (var k = 0; k < wfi_content_grandchildren.length; k++) {
-                                    if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                        wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
-                                        wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     });
 
-    function hexToRGB (hex) {
-        r = parseInt(hex.substring(0,2), 16);
-        g = parseInt(hex.substring(2,4), 16);
-        b = parseInt(hex.substring(4,6), 16);
-
-        result = 'rgb('+r+','+g+','+b+')';
-        return result;
-    }
-
     //--------------------------------------
-    // To Bypass XSS adding Classnames to the new Style (for color and text positioning)
-    // Also select content after color/background-color changed, because no correct behaviour (selection vanishes -->
-    // next change: moves content from span with color or background-color deletes content) after changing to often
+    // To Bypass XSS adding Classnames to the new Style (text positioning)
     //--------------------------------------
     editor.on('change', function (ev) {
         // Elements which need a classname
         var wfi_content = ev.editor.document.$.body.children;
-        // Helpers to check if something changed in a deeper level
-        var innerChanged = false;
-        var innerGrandChanged = false;
-        // For Selection of content after change
-        var body = ev.editor.document.getBody();
-        var selection = ev.editor.getSelection();
-        var range = ev.editor.createRange();
 
-        // Search elements and add classnames
-        // 1.) check if children exist, if children exist go to second loop and check if there are 'grandchildren'
-        // 2.) in children/grandchildren loop replace innerHtml and style for child/grandchild
-        // 3.) add classname with color/background-color value
-        // 4.) if no children exist, add only classname (for text alignment) or classname with color/background-color value
         for (var i = 0; i < wfi_content.length; i++) {
-
-            if (wfi_content[i].children.length) {
-
-                var wfi_content_children = wfi_content[i].children;
-                for (var j = 0; j < wfi_content_children.length; j++) {
-
-                    if (wfi_content_children[j].children.length) {
-                        var wfi_content_grandchildren = wfi_content_children[j].children;
-                        for (var k = 0; k < wfi_content_grandchildren.length; k++) {
-                            if (wfi_content_grandchildren[k].style[0]) {
-                                if (wfi_content_grandchildren[k].style.backgroundColor) {
-                                    wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
-                                    wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
-                                    // select the current element
-                                    range.selectNodeContents( body.getChild(j) );
-                                    selection.selectRanges( [ range ] );
-                                    innerGrandChanged = true;
-                                }
-                            }
-                        }
-                    }
-
-                    var child_style = wfi_content_children[j].style;
-                    if (child_style[0] && !innerGrandChanged) {
-                        if (wfi_content_children[j].children.length){
-                            if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
-                                wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
-                                // select the current element
-                                range.selectNodeContents( body.getChild(j) );
-                                selection.selectRanges( [ range ] );
-                                if (wfi_content_children[j].children[0]) {
-                                    wfi_content_children[j].children[0].className = '';
-                                }
-                            }
-                        }
-
-                        if (wfi_content_children[j].style.color) {
-                            var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
-                            wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                            innerChanged = true;
-                        }
-
-                        if ((wfi_content_children[j].style.backgroundColor)) {
-                            if (!wfi_content_children[j].parentElement.style.color) {
-                                console.log(wfi_content_children[j].parentElement.style.color)
-                                wfi_content[i].style.backgroundColor = wfi_content_children[j].style.backgroundColor;
-                                wfi_content[i].innerHTML = wfi_content_children[j].innerHTML;
-                                // select the current element
-                                range.selectNodeContents( body.getChild(i) );
-                                selection.selectRanges( [ range ] );
-                            } else {
-                                var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
-                                wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                innerChanged = true;
-                            }
-                        }
-
-                    }
-
-                    if (innerGrandChanged) {
-                        innerChanged = true;
-                    }
-                    innerGrandChanged = false;
-                }
-            }
 
             var parent_style = wfi_content[i].style;
 
-            if (parent_style[0] && !innerChanged) {
-                if (wfi_content[i].className.match(/wfi_style_text_(.*)/)) {
-                    if (wfi_content[i].className === 'wfi_style_text_' + parent_style.textAlign) {
-                        wfi_content[i].className = '';
-                    } else if (wfi_content[i].className !== 'wfi_style_text_' + parent_style.textAlign) {
-                        wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
-                    }
-                } else if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
-                    wfi_content[i].className = '';
-                    wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
-                } else {
-                    if (parent_style.textAlign) {
-                        wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
-                    } else if (parent_style.marginLeft) {
-                        wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
-                    }
-                }
-
-                if (parent_style.color) {
-                    if (wfi_content[i].children.length) {
-                        wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
-                        // select the current element
-                        range.selectNodeContents( body.getChild(i) );
-                        selection.selectRanges( [ range ] );
-                    }
-                    var color = parent_style.color.match(/rgb(.*)/);
-                    wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                }
-
-                if (parent_style.backgroundColor) {
-                    var color = parent_style.backgroundColor.match(/rgb(.*)/);
-                    wfi_content[i].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                }
-
-            } else if (!parent_style[0]) {
+            if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
                 wfi_content[i].className = '';
+                wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
             }
-
-            innerChanged = false;
+            if (parent_style.marginLeft) {
+                wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+            }
         }
     });
-
-//    function fullColorHex(rgb) {
-//        var color = rgb.replace(/[{()}]/g, '');
-//        color = color.split(', ')
-//        var red = rgbToHex(color[0]);
-//        var green = rgbToHex(color[1]);
-//        var blue = rgbToHex(color[2]);
-//        return red+green+blue;
-//    };
-//
-//    var rgbToHex = function (rgb) {
-//        var hex = Number(rgb).toString(16);
-//        if (hex.length < 2) {
-//             hex = "0" + hex;
-//        }
-//        return hex;
-//    };
-
-//    function CKEDITORLoadCompleteForum(){
-//        if ($("#cke_28").length) {
-//            $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(43,30)');
-//            $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(83,30)');
-//        } else if ($("#cke_58").length) {
-//            $('.cke_button__link').attr('onclick','website_forum_IsKarmaValid(41,30)');
-//            $('.cke_button__image').attr('onclick','website_forum_IsKarmaValid(81,30)');
-//        }
-//        $('.cke_button__link').attr('class', 'cke_button__link_1 cke_button cke_button_off');
-//        $('.cke_button__image').attr('class', 'cke_button__image_1 cke_button cke_button_off');
-//    }
 
     //----------------------------------------
     // Copy of the Odoo Toolbar in the Edit Mode
@@ -376,6 +176,23 @@
                 label: 'Image',
                 command: 'cimage',
                 toolbar: 'insert,10',
+            });
+
+            editor.addCommand('unlink', {
+                exec: function (editor) {
+                    editor.removeStyle(new CKEDITOR.style({
+                        element: 'a',
+                        type: CKEDITOR.STYLE_INLINE,
+                        alwaysRemoveElement: true,
+                    }));
+                },
+                canUndo: false,
+                editorFocus: true,
+            });
+            editor.ui.addButton('Unlink', {
+                label: 'Unlink',
+                command: 'unlink',
+                toolbar: 'links,11',
             });
 
             editor.setKeystroke(CKEDITOR.CTRL + 76 /*L*/, 'link');
@@ -503,7 +320,7 @@
                     "NumberedList", "BulletedList", "Blockquote"
                 ]},{
                 name: 'span', items: [
-                    "Indent", "Outdent", "Link", "Strike", "Image"
+                    "Indent", "Outdent", "Link", "Unlink", "Image"
                 ]}
             ],
         };
