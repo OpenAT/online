@@ -26,12 +26,17 @@
     //--------------------------------------
     // Destroy and replace existing CKEditor
     //--------------------------------------
-
     CKEDITOR.instances['content'].on('loaded', function(ev) {
         if (CKEDITOR.instances['content']) {
             CKEDITOR.instances['content'].destroy(true);
         }
         CKEDITOR.replace('content', _forum_config());
+
+        var editor = CKEDITOR.instances['content'];
+
+        loadStyleInCKEDITOR(editor);
+        changeStyleInCKEDITOR(editor);
+
     });
 
     if (CKEDITOR.instances['content'].loaded) {
@@ -41,46 +46,52 @@
         CKEDITOR.replace('content', _forum_config());
     }
 
-    CKEDITOR.dtd.$removeEmpty.span = false;
+//    CKEDITOR.dtd.$removeEmpty.span = false;
 
     var editor = CKEDITOR.instances['content'];
+    loadStyleInCKEDITOR(editor);
+    changeStyleInCKEDITOR(editor);
 
     //--------------------------------------
     // Apply Style in Editor when editing a Comment/Question
     //--------------------------------------
-    editor.on('contentDom', function (ev) {
-        var wfi_content = ev.editor.document.$.body.children;
+    function loadStyleInCKEDITOR (editor) {
+        editor.on('contentDom', function (ev) {
+            var wfi_content = ev.editor.document.$.body.children;
 
-        for (var i = 0; i < wfi_content.length; i++) {
-            var wfiClassName = wfi_content[i].className;
-            var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
+            for (var i = 0; i < wfi_content.length; i++) {
+                var wfiClassName = wfi_content[i].className;
+                var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
 
-            if (wfiStyleIndent) {
-                wfi_content[i].style.marginLeft = wfiStyleIndent[1];
+                if (wfiStyleIndent) {
+                    wfi_content[i].style.marginLeft = wfiStyleIndent[1];
+                }
             }
-        }
-    });
+        });
+    }
 
     //--------------------------------------
     // To Bypass XSS adding Classnames to the new Style (text positioning)
     //--------------------------------------
-    editor.on('change', function (ev) {
-        // Elements which need a classname
-        var wfi_content = ev.editor.document.$.body.children;
+    function changeStyleInCKEDITOR (editor) {
+        editor.on('change', function (ev) {
+            // Elements which need a classname
+            var wfi_content = ev.editor.document.$.body.children;
 
-        for (var i = 0; i < wfi_content.length; i++) {
+            for (var i = 0; i < wfi_content.length; i++) {
 
-            var parent_style = wfi_content[i].style;
+                var parent_style = wfi_content[i].style;
 
-            if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
-                wfi_content[i].className = '';
-                wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
+                    wfi_content[i].className = '';
+                    wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                }
+                if (parent_style.marginLeft) {
+                    wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
+                }
             }
-            if (parent_style.marginLeft) {
-                wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
-            }
-        }
-    });
+        });
+    }
 
     //----------------------------------------
     // Copy of the Odoo Toolbar in the Edit Mode
