@@ -74,8 +74,8 @@ class ResPartnerFSToken(models.Model):
     @api.constrains('name')
     def _check_fstoken_format(self):
         for record in self:
-            if len(record.name) < 6:
-                raise ValidationError("FS Partner Token is too short (6 char min): %s" % record.name)
+            if len(record.name) < 9:
+                raise ValidationError("FS Partner Token is too short (9 char min): %s" % record.name)
             if not record.name.isalnum():
                 raise ValidationError("FS Partner Token must be alphanumeric: %s" % record.name)
 

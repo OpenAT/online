@@ -14,11 +14,18 @@
                                 <field name="name"/>
                                 <field name="model_id"/>
                                 <field name="submit_button_text"/>
+                                <field name="clear_session_data_after_submit"/>
+                                <field name="edit_existing_record_if_logged_in"/>
+                                <field name="email_only"/>
+                                <field name="confirmation_email_template"/>
+                                <field name="information_email_receipients" widget="many2many_tags"/>
+                                <field name="information_email_template"/>
                             </group>
                             <group name="system_data">
-                                <field name="id"/>
-                                <field name="create_date"/>
-                                <field name="write_date"/>
+                                <!-- TODO: Show clickable form link -->
+                                <field name="id" readonly="True"/>
+                                <field name="create_date" readonly="True"/>
+                                <field name="write_date" readonly="True"/>
                             </group>
                         </group>
                         <notebook>
@@ -30,22 +37,29 @@
                                     <tree string="Fields" editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="show"/>
+                                        <!-- ATTENTION: The Domain for 'field_id' is computed dynamically in the onchange method! -->
                                         <field name="field_id"
-                                               domain="[('model_id','=',context.get('form_model_id')),
-                                                        ('readonly','=',False)]"/>
+                                               options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                                        <field name="field_ttype"/>
                                         <field name="binary_name_field_id"
-                                               attrs="{'readonly': [('field_id','=',False)]}"
+                                               attrs="{'readonly': [('field_ttype','!=','binary')]}"
                                                domain="[('model_id','=',context.get('form_model_id')),
                                                         ('ttype','=','char'),
-                                                        ('readonly','=',False)]"/>
-                                        <field name="mandatory"/>
+                                                        ('readonly','=',False)]"
+                                               options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                                         <field name="label"/>
-                                        <field name="placeholder"/>
+                                        <field name="placeholder" attrs="{'readonly': [('field_ttype','in',['boolean',])]}"/>
+                                        <field name="yes_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
+                                        <field name="no_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
+                                        <field name="mandatory"/>
+                                        <field name="nodata"/>
+                                        <field name="readonly"/>
+                                        <field name="login"/>
+                                        <field name="confirmation_email" attrs="{'readonly': [('field_ttype','!=','char')]}"/>
                                         <field name="validation_rule"/>
                                         <field name="css_classes"/>
                                         <field name="clearfix"/>
-                                        <field name="nodata"/>
-                                        <field name="style"/>
+                                        <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
                                     </tree>
                                 </field>
                             </page>
@@ -67,7 +81,6 @@
                                     <field name="frontend_validation"/>
                                     <field name="submission_url"/>
                                     <field name="redirect_url"/>
-                                    <field name="clear_session_data_after_submit"/>
                                     <field name="custom_css"/>
                                 </group>
                             </page>

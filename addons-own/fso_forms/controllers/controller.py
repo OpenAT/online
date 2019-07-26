@@ -20,169 +20,184 @@ from openerp import http
 from openerp.http import request
 from openerp.tools.translate import _
 
-#import locale
-#import urllib2
+# import locale
+# import urllib2
 import base64
 import datetime
+
 import logging
 _logger = logging.getLogger(__name__)
 
 
 class FsoForms(http.Controller):
 
-    _valid_form_sdata_keys = ('form_uid', 'form_record_id', 'form_model_id', 'clear_session_data')
+    # Allowed and necessary keys for a fso_form in request.session
+    _valid_form_sdata_keys = ('form_id', 'form_uid', 'form_record_id', 'form_model_id',
+                              'clear_session_data')
 
-    # ATTENTION: request.session information will be copied but not DEEP copied so only use flat dicts!
+    def get_fso_form_session_key(self, form_id):
+        assert form_id and int(form_id), "FSO Form ID must be a valid integer!"
+        return 'fso_form_' + str(form_id)
 
-    def get_fso_form_session_data(self, form_id, check_clear_session_data=True):
-        if form_id:
-            form_id = str(form_id)
+    # ATTENTION: !!! request.session information will be copied between multiple request but
+    #                NOT DEEP copied! Therefore never use nested data structures in request.session!
+    def set_fso_form_session_data(self, form_id, form_uid, form_record_id, form_model_id,
+                                  clear_session_data=False):
+        form_id = str(form_id)
+        form_key = self.get_fso_form_session_key(form_id)
 
-        form_key = 'fso_form_' + form_id
+        # Store / Overwrite the form information in the current session
+        request.session[form_key] = {
+            'form_id': form_id,
+            'form_uid': form_uid,
+            'form_record_id': form_record_id,
+            'form_model_id': form_model_id,
+            'clear_session_data': clear_session_data,
+        }
+
+    def get_fso_form_session_data(self, form, check_clear_session_data=True):
+        """
+        Returns the session data of the form if the data still matches the current form data and request user
+
+        :param form_id:
+        :param check_clear_session_data:
+        :return:
+        """
+        form_id = str(form.id)
+        form_key = self.get_fso_form_session_key(form_id)
 
         # Get form session data
         form_sdata = request.session.get(form_key, False)
-        if not form_sdata:
-            form_sdata = dict()
-            return form_sdata
 
-        # Check keys
+        # Return an empty dict if there is no session data at all
+        if not form_sdata:
+            _logger.info("No fso form session data found for form_id %s" % form_id)
+            return dict()
+
+        # Check the structure of the form session data
         form_sdata_keys = form_sdata.keys()
         if not isinstance(form_sdata, dict) or set(form_sdata_keys) != set(self._valid_form_sdata_keys):
             _logger.error('Remove fso_form %s session data because of unexpected or missing keys in %s!'
                           '' % (form_id, str(form_sdata_keys)))
-            request.session.pop(form_key)
-            form_sdata = dict()
-            return form_sdata
+            self.remove_fso_form_session_data(form_id)
+            return dict()
 
-        # Check clear_session_data
+        # Check if the user changed (e.g. after an login or logout)
+        if request.uid != form_sdata['form_uid']:
+            self.remove_fso_form_session_data(form_id)
+            return dict()
+
+        # Check if the form model changed
+        if form.model_id.id != form_sdata['form_model_id']:
+            self.remove_fso_form_session_data(form_id)
+            return dict()
+
+        # Check if we need to clear the form session data anyway
         if check_clear_session_data:
             if form_sdata['clear_session_data']:
-                request.session.pop(form_key)
-                form_sdata = dict()
-                return form_sdata
+                self.remove_fso_form_session_data(form_id)
+                return dict()
 
         # Return the form session data
         return form_sdata
 
-    def set_fso_form_session_data(self, form_id, form_uid, form_record_id, form_model_id, clear_session_data=False):
-        if form_id:
-            form_id = str(form_id)
-
-        form_key = 'fso_form_' + form_id
-
-        # Overwrite or create the form session data
-        request.session[form_key] = {
-            'form_uid': form_uid,
-            'form_record_id': form_record_id,
-            'form_model_id': form_model_id,
-            'clear_session_data': clear_session_data
-        }
-
-    def pop_fso_form_session_data(self, form_id):
-        if form_id:
-            form_id = str(form_id)
-
-        form_key = 'fso_form_' + form_id
-
+    def remove_fso_form_session_data(self, form_id):
+        form_id = str(form_id)
+        form_key = self.get_fso_form_session_key(form_id)
+        # Remove the form session data
         request.session.pop(form_key, False)
 
-    def get_record(self, form):
-        form_sdata = self.get_fso_form_session_data(form.id)
+    def get_fso_form_records_by_user(self, form=None, user=None):
+        """
+        Return all records of the form model (form.model_id.model) where the login-marked-field of the form model
+        matches the given user or it's related partner!
 
-        # No session data for this form
+        Inherit this method if you need to choose a specific record out of the found records. (e.g. status=approved)
+
+        :param form: The fso form record
+        :param user: The logged in user record
+        :return: recordset of the form model
+        """
+        form_model_name = form.model_id.model
+
+        # TODO: Replace sudo with the logged in user or by users set in the form to write the record
+        form_model_obj = request.env[form_model_name].sudo()
+
+        if form_model_name == 'res.user':
+            return user
+        if form_model_name == 'res.partner':
+            return user.partner_id
+
+        # Try to find a 'login' field in the current form
+        login_field = form.field_ids.filtered(lambda r: r.login)
+        if not login_field or len(login_field) != 1 or login_field.field_id.related not in ['res.user', 'res.partner']:
+            return form_model_obj
+
+        # Search for all records in the form-model where the login field matches the currently logged in user or
+        # its related partner
+        search_id = user.id if login_field.field_id.related == 'res.user' else user.partner_id.id
+        records = form_model_obj.search([(login_field.field_id.name, '=', search_id)])
+        if not records:
+            return form_model_obj
+
+        return records
+
+    def get_fso_form_record(self, form):
+        """
+        Search
+        :param form: The form recordset.ensureone()
+        :return: recordset of the form model (one record or empty recordset!)
+        """
+        form_model_name = form.model_id.model
+
+        # TODO: Replace sudo with the logged in user or by users set in the form to write the record
+        form_model_obj = request.env[form_model_name].sudo()
+
+        # Get the request user if the current user is not the website public user
+        logged_in_user = False
+        if request.website.user_id.id != request.uid:
+            logged_in_user = request.env['res.users'].sudo().browse([request.uid])
+
+        # A) TRY TO FIND A FORM-RELATED-RECORD BASED ON THE LOGGED IN USER AND THE LOGIN-MARKED-FIELD
+        # -------------------------------------------------------------------------------------------
+        # HINT: Only if 'edit_existing_record_if_logged_in' is set in the form!
+        if logged_in_user and form.edit_existing_record_if_logged_in:
+
+            # HINT: You may inherit get_fso_form_records_by_user() to select or filter for a different record!
+            form_records_by_user = self.get_fso_form_records_by_user(form=form, user=logged_in_user)
+
+            # Return a record only if exactly ONE record was found
+            # Record found
+            if form_records_by_user and len(form_records_by_user) == 1:
+                record_by_user = form_records_by_user
+
+                # Set/Update the session data based on the found record but without clear session data since
+                # 'edit_existing_record_if_logged_in' is set!
+                self.set_fso_form_session_data(form_id=form.id,
+                                               form_uid=logged_in_user.id,
+                                               form_record_id=record_by_user.id,
+                                               form_model_id=form.model_id.id,
+                                               clear_session_data=False)
+
+                # Return the record
+                return form_records_by_user
+
+            # Record was not found
+            else:
+                return form_model_obj
+
+        # B) TRY TO FIND THE RECORD BASED ON THE CURRENT SESSION
+        # ------------------------------------------------------
+        form_sdata = self.get_fso_form_session_data(form)
         if not form_sdata:
-            return request.env[form.model_id.model]
-
-        # User changed
-        if form_sdata['form_uid'] != request.uid:
-            self.pop_fso_form_session_data(form.id)
-            _logger.warning('Form user changed!')
-            return request.env[form.model_id.model]
-
-        # Form model changed
-        if form_sdata['form_model_id'] != form.model_id.id:
-            self.pop_fso_form_session_data(form.id)
-            _logger.warning('Form model changed!')
-            return request.env[form.model_id.model]
-
-        # Return the record
-        record = request.env[form.model_id.model].browse([form_sdata['form_record_id']])
-        return record
-
-    # TODO: Maybe we need to move this to the model?!? right now an exception on write kills the rendering ?!?
-    def update_record(self, form, field_data):
-        # Prepare values
-        values = {}
-        for f in form.field_ids:
-            if f.field_id and f.show:
-                f_name = f.field_id.name
-                f_type = f.field_id.ttype
-                # HINT: Boolean fields would not be in 'field_data' if not checked in the form
-                f_value = field_data.get(f_name, False) if f_type == 'boolean' else field_data[f_name]
-
-                # NODATA
-                # Fields with no pre-filled data (nodata) can only be included if there is a value in field_data to not
-                # clear them accidentally!
-                if f.nodata and not f_value:
-                    continue
-
-                # BOOLEAN TYPE
-                if f_type == 'boolean':
-                    values[f_name] = True if f_value else False
-
-                # DATE TYPE
-                elif f_type == 'date':
-                    if f_value:
-                        # TODO: Localization
-                        f_value = datetime.datetime.strptime(f_value.strip(), '%d.%m.%Y')
-                    values[f_name] = f_value or False
-
-                # BINARY TYPE
-                elif f_type == 'binary':
-                    if f_value:
-                        values[f_name] = base64.encodestring(f_value.read()) or False
-                        if f.binary_name_field_id:
-                            values[f.binary_name_field_id.name] = f_value.filename if values[f_name] else False
-                    else:
-                        values[f_name] = False
-                        if f.binary_name_field_id:
-                            values[f.binary_name_field_id.name] = False
-
-                # FLOAT TYPE
-                # TODO: Localization - !!! Right now we expect DE values from the forms !!!
-                elif f_type == 'float':
-                    if f_value:
-                        values[f_name] = f_value.replace(',', ':').replace('.', '').replace(':', '.')
-
-                # ALL OTHER FIELD TYPES
-                else:
-                    values[f_name] = f_value or False
-
-        # Get current record if any
-        # HINT: get_record() will handle user changes and model changes so no need to do it here again
-        record = self.get_record(form)
-
-        # Return the record if no values are there to update
-        if not values:
-            _logger.warning('No values to update! Returning record without update!')
-            return record
-
-        # Update or create the record
-        if record:
-            # TODO: Remove sudo() for record creation and add special fields in form to set access for record creation
-            record.sudo().write(values)
-        else:
-            # TODO: Remove sudo() for record creation and add special fields in form to set access for record creation
-            record = request.env[form.model_id.model].sudo().create(values)
-
-        # Update the session data and set clear_session_data
-        # ATTENTION: !!! If clear_session_data is True the data will be removed by get_fso_form_session_data() !!!
-        self.set_fso_form_session_data(form_id=form.id, form_uid=request.uid, form_record_id=record.id,
-                                       form_model_id=form.model_id.id,
-                                       clear_session_data=form.clear_session_data_after_submit)
-
-        # Return the created or updated record
+            return form_model_obj
+        record = form_model_obj.sudo().browse([form_sdata['form_record_id']])
+        # Record not found
+        if len(record) != 1:
+            _logger.error('Fso form record stored in session data not found! Removing form data from session!')
+            self.remove_fso_form_session_data(form.id)
+            return form_model_obj
+        # Record found
         return record
 
     def validate_fields(self, form, field_data):
@@ -190,19 +205,35 @@ class FsoForms(http.Controller):
         for f in form.field_ids:
 
             if f.field_id and f.show:
-                f_name = f.field_id.name
-                f_type = f.field_id.ttype
-                # HINT: Boolean fields would not be in 'field_data' if not checked in the form
-                f_value = field_data.get(f_name, False) if f_type == 'boolean' else field_data[f_name]
-                f_display_name = f.label if f.label else f_name
 
-                # Check mandatory setting
+                # ATTENTION: Skipp readonly fields if a user is logged in
+                if f.readonly and request.website.user_id.id != request.uid:
+                    continue
+
+                f_name = f.field_id.name
+                f_display_name = f.label if f.label else f_name
+                f_type = f.field_id.ttype
+                f_style = f.style
+
+                # Get the value of the field
+                if f_type == 'boolean':
+                    if f_style == 'radio':
+                        f_value = True if field_data.get(f_name, None) == 'True' else False
+                    else:
+                        f_value = True if field_data.get(f_name, None) else False
+                else:
+                    if f_style in ['radio', 'radio_selectnone']:
+                        f_value = field_data.get(f_name, False)
+                    else:
+                        f_value = field_data[f_name]
+
+                # Mandatory
                 if f.mandatory and not f_value:
                     field_errors[f_name] = _("No value for mandatory field %s" % f_display_name)
                     continue
 
-                # Check date format
-                # TODO: Localization
+                # Date format
+                # TODO: Localization !!!
                 if f.field_id.ttype == 'date' and f_value:
                     try:
                         datetime.datetime.strptime(f_value.strip(), '%d.%m.%Y')
@@ -224,6 +255,7 @@ class FsoForms(http.Controller):
                 # TODO: Localization - !!! Right now we always expect DE values e.g.: 22.000,12 !!!
                 if f.field_id.ttype == 'float' and f_value:
                     try:
+                        # Clean up and convert DE Float-Strings
                         assert len(f_value.rsplit(',')[-1]) <= len(f_value.rsplit('.')[-1]), 'Wrong float format?!?'
                         float(f_value.replace(',', ':').replace('.', '').replace(':', '.'))
                     except Exception as e:
@@ -231,86 +263,165 @@ class FsoForms(http.Controller):
                         field_errors[f_name] = _("Please enter a valid float for field %s" % f_display_name)
                         continue
 
-                # TODO: validate binary
+                # TODO: validate binary (mime type)
 
         return field_errors
 
-    @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
-    def fso_form(self, form_id=False, **kwargs):
-        ses = request.session
-        form_id = int(form_id) if form_id else form_id
+    def _prepare_field_data(self, form=None, form_field_data=None):
+        form_field_data = form_field_data or {}
 
-        errors = list()
-        warnings = list()
-        messages = list()
+        # Transform the form field data if needed
+        values = {}
 
-        form_field_errors = dict()
+        # Loop through all the fields in the form
+        for f in form.field_ids:
+            if f.field_id and f.show:
 
-        # Get Form
-        # ATTENTION: Always use a list for browse()
-        form = request.env['fson.form'].browse([form_id])
-        if not form:
-            _logger.error('Form with id %s not found! Redirecting to startpage!' % str(form_id))
-            return request.redirect("/")
+                # ATTENTION: Skipp readonly fields if a user is logged in
+                if f.readonly and request.website.user_id.id != request.uid:
+                    continue
 
-        # Get Record FROM FORM SESSION_DATA
-        record = self.get_record(form)
+                f_name = f.field_id.name
+                f_type = f.field_id.ttype
+                f_style = f.style
 
-        # FORM SUBMIT
-        if kwargs and request.httprequest.method == 'POST':
-            logging.info("FORM SUBMIT: %s" % kwargs)
-
-            # Validate Fields
-            form_field_errors = self.validate_fields(form, field_data=kwargs)
-            if form_field_errors:
-
-                # Add field error messages to the warnings
-                warnings += ['"%s": %s' % (kwargs.get(f, f), msg) for f, msg in form_field_errors.iteritems()]
-
-                return http.request.render('fso_forms.form',
-                                           {'kwargs': kwargs,
-                                            'form': form,
-                                            'form_field_errors': form_field_errors,
-                                            'record': record,
-                                            'errors': errors,
-                                            'warnings': warnings,
-                                            'messages': messages,
-                                            })
-
-            # Create or update the record AND THE FORM_SESSION_DATA
-            try:
-                new_record = self.update_record(form, field_data=kwargs)
-                if new_record == record:
-                    messages.append(_('Data was successfully updated!'))
+                # Get the value of the field
+                if f_type == 'boolean':
+                    if f_style == 'radio':
+                        f_value = True if form_field_data.get(f_name, None) == 'True' else False
+                    else:
+                        f_value = True if form_field_data.get(f_name, None) else False
                 else:
-                    messages.append(_('Data was successfully submitted!'))
-                record = new_record
-            except Exception as e:
-                warnings.append(_('Update of Record failed!\n\n%s' % repr(e)))
+                    if f_style in ['radio', 'radio_selectnone']:
+                        f_value = form_field_data.get(f_name, False)
+                    else:
+                        f_value = form_field_data[f_name]
 
-            # Redirect to Thank you Page
-            if form.thank_you_page_after_submit and not form_field_errors and not warnings and not errors:
-                # request.session['mikes_test'] = {'a': 1, 'b': {'c': 'form'}}
-                return request.redirect("/fso/form/thanks/"+str(form.id))
-                # return http.request.render('fso_forms.thanks',
-                #                            {'kwargs': kwargs,
-                #                             # form
-                #                             'form': form})
+                # Skipp NODATA fields if empty or False
+                # HINT: Fields with no pre-filled data (nodata) can only be included if there is a value in field_data
+                #       Otherwise we may clear the existing value by accident!
+                if f.nodata and not f_value:
+                    continue
 
-        # Remove binary fields from kwargs before rendering the form
+                # Add BOOLEAN
+                if f_type == 'boolean':
+                    values[f_name] = True if f_value else False
+
+                # Add DATE
+                elif f_type == 'date':
+                    if f_value:
+                        # TODO: Localization !!!
+                        f_value = datetime.datetime.strptime(f_value.strip(), '%d.%m.%Y')
+                    values[f_name] = f_value or False
+
+                # Add BINARY
+                elif f_type == 'binary':
+                    if f_value:
+                        values[f_name] = base64.encodestring(f_value.read()) or False
+                        if f.binary_name_field_id:
+                            values[f.binary_name_field_id.name] = f_value.filename if values[f_name] else False
+                    else:
+                        values[f_name] = False
+                        if f.binary_name_field_id:
+                            values[f.binary_name_field_id.name] = False
+
+                # Add FLOAT
+                # TODO: Localization - !!! Right now we expect DE values from the forms !!!
+                elif f_type == 'float':
+                    if f_value:
+                        values[f_name] = f_value.replace(',', ':').replace('.', '').replace(':', '.')
+
+                # Add OTHER FIELD TYPES
+                else:
+                    values[f_name] = f_value or False
+
+        return values
+
+    def _prepare_kwargs_for_form(self, form, **kwargs):
+        # Remove binary fields (e.g. images) from kwargs before rendering the form
+        # TODO: This will be disabled in the future since we need to 'show' the images for GL2K Nationalparkgarten!
         if kwargs:
             for f in form.field_ids:
                 if f.field_id and f.field_id.ttype == 'binary':
                     if f.field_id.name in kwargs:
                         kwargs.pop(f.field_id.name)
+        return kwargs
 
-        # Render the template
+    @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
+    def fso_form(self, form_id=False, **kwargs):
+        form_id = int(form_id)
+        form = request.env['fson.form'].sudo().browse([form_id])
+        if len(form) != 1:
+            _logger.error('Form with id %s not found! Redirecting to startpage!' % str(form_id))
+            return request.redirect("/")
+
+        # Initialize the frontend message lists
+        errors = list()
+        warnings = list()
+        messages = list()
+        form_field_errors = dict()
+
+        # Get the form and session related record
+        # HINT: This will either return a single record or an empty recordset (= form.model_id.model object)
+        # HINT: The recordset user is always sudo() right now! :(
+        #       TODO: add user fields to form for security restrictions
+        # TODO: If 'edit_existing_record_if_logged_in' is set in the form there is no way right now to create a new
+        #       record - which is just what we want since we expect one and only one record per form for this logged
+        #       in user. BUT if we once expand the generator for more than one record we need to find a mechanism
+        #       To allow this in the form - maybe a "Create new record" button
+        record = self.get_fso_form_record(form)
+
+        # HANDLE FORM SUBMISSION
+        # ----------------------
+        if kwargs and request.httprequest.method == 'POST':
+            logging.info("FSO FORM SUBMIT: %s" % kwargs)
+
+            # Validate Fields before we create or update a record
+            form_field_errors = self.validate_fields(form, field_data=kwargs)
+            warnings += ['"%s": %s' % (kwargs.get(f, f), msg) for f, msg in form_field_errors.iteritems()]
+
+            if not warnings and not errors:
+                # Create or Update the record
+                # HINT: User rights are handled by get_fso_form_record() ...  always sudo() right now :(
+                values = self._prepare_field_data(form=form, form_field_data=kwargs)
+                if values:
+                    try:
+                        if not record:
+                            record = record.create(values)
+                            messages.append(_('Data was successfully submitted!'))
+                        else:
+                            record.write(values)
+                            messages.append(_('Data was successfully updated!'))
+                        # Update the session data
+                        # HINT: If clear_session_data_after_submit is set the form will be empty at the next hit/load!
+                        #       This has no effect if a user is logged in and 'edit_existing_record_if_logged_in' is
+                        #       also set! In that case get_fso_form_record() will overwrite the session data set here
+                        #       and set 'clear_session_data' to False in the method get_fso_form_record() !
+                        self.set_fso_form_session_data(form_id=form.id,
+                                                       form_uid=request.uid,
+                                                       form_record_id=record.id,
+                                                       form_model_id=form.model_id.id,
+                                                       clear_session_data=form.clear_session_data_after_submit)
+                    except Exception as e:
+                        errors.append(_('Submission failed!\n\n%s' % repr(e)))
+                        pass
+
+                # Redirect to Thank you Page if set by the form
+                # HINT: This is the only page where you could edit the data again if not logged in by pressing the
+                #       edit button
+                if form.thank_you_page_after_submit and not warnings and not errors:
+                    # request.session['mikes_test'] = {'a': 1, 'b': {'c': 'form'}}
+                    return request.redirect("/fso/form/thanks/"+str(form.id))
+
+        # FINALLY RENDER THE FORM
+        # -----------------------
         return http.request.render('fso_forms.form',
-                                   {'kwargs': kwargs,
-                                    # form
+                                   {'kwargs': self._prepare_kwargs_for_form(form, **kwargs),
+                                    # Form record
                                     'form': form,
+                                    # Set error css-classes to the field-form-groups
                                     'form_field_errors': form_field_errors,
-                                    # Record created by the form or partner if model is res.partner and logged in
+                                    # Record created by the form
                                     'record': record,
                                     # Messages
                                     'errors': errors,
@@ -320,8 +431,7 @@ class FsoForms(http.Controller):
 
     @http.route(['/fso/form/thanks/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
     def fso_form_thanks(self, form_id=False, **kwargs):
-        ses = request.session
-        form_id = int(form_id) if form_id else form_id
+        form_id = int(form_id)
 
         # Get Form
         # ATTENTION: Always use a list for browse()
@@ -331,9 +441,14 @@ class FsoForms(http.Controller):
             return request.redirect("/")
 
         # FORM SUBMIT FOR EDIT BUTTON
+        # TODO: Right now this is a simple get request from an <a></a>
+        #       We should add a UUID im the session data and submit a form by the edit button with a hidden input field
+        #       containing the guid - it may be safer than just depend on the form data in the session - but im not
+        #       sure about that since an attacker that will call /fso/form/[n]?edit_form_data=True would still have
+        #       no form data in the memory on the server.
         if kwargs.get('edit_form_data', False):
             # Set 'clear_session_data' to False before we redirect to the form again
-            form_sdata = self.get_fso_form_session_data(form.id, check_clear_session_data=False)
+            form_sdata = self.get_fso_form_session_data(form, check_clear_session_data=False)
             if form_sdata:
                 self.set_fso_form_session_data(form.id,
                                                form_sdata['form_uid'],

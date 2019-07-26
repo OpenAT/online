@@ -1,1 +1,52 @@
+@charset "utf-8";
 
+
+/* FSO FORMS JQUERY VALIDATE */
+/* reset bootstrap setting for auth_partner_form */
+.fsoforms_container .has-feedback label ~ .form-control-feedback {
+    top: initial;
+}
+/* set default values */
+.fsoforms_container .form-control-feedback {
+    right: 18px;
+    bottom: -1px;
+}
+.fsoforms_container .large-input .form-control-feedback {
+    bottom: 5px;
+}
+
+
+/* FSO FORMS STYLES */
+/* ---------------- */
+
+/* Narrow form on large screens */
+@media (min-width: 992px){
+    #wrap .fsoforms_container.container {
+        width: 68%;
+    }
+}
+
+/* Form Container */
+#fso_form {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+/* Labels */
+#fso_form label {
+    /*color: #909090;*/
+    /*font-size: 85%;*/
+}
+
+/* Logout Button */
+/* TODO: Right now there is no logout button in the template */
+#fsoforms_logout_button {
+    margin-top: 1em;
+}
+
+/* Submit Button */
+#fsoforms_submit_button {
+    margin-top: 1em;
+    margin-left: 15px;
+    margin-right: 15px;
+}

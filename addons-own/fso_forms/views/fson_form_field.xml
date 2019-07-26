@@ -13,13 +13,20 @@
                         <field name="show"/>
                         <field name="form_id"/>
                         <field name="field_id"/>
-                        <field name="mandatory"/>
+                        <field name="field_ttype"/>
+                        <field name="binary_name_field_id"/>
                         <field name="label"/>
                         <field name="placeholder"/>
+                        <field name="yes_text"/>
+                        <field name="no_text"/>
+                        <field name="mandatory"/>
+                        <field name="nodata"/>
+                        <field name="readonly"/>
+                        <field name="login"/>
+                        <field name="confirmation_email"/>
                         <field name="validation_rule"/>
                         <field name="css_classes"/>
                         <field name="clearfix"/>
-                        <field name="nodata"/>
                         <field name="style"/>
                         <field name="information"/>
                     </group>
@@ -32,18 +39,24 @@
             <field name="arch" type="xml">
                 <tree string="FSON Forms Fields" default_order="sequence">
                     <field name="sequence" widget="handle"/>
-                    <field name="show"/>
-                    <field name="form_id"/>
-                    <field name="field_id"/>
-                    <field name="mandatory"/>
-                    <field name="label"/>
-                    <field name="placeholder"/>
-                    <field name="validation_rule"/>
-                    <field name="css_classes"/>
-                    <field name="clearfix"/>
-                    <field name="nodata"/>
-                    <field name="style"/>
-                    <field name="information"/>
+                        <field name="show"/>
+                        <field name="form_id"/>
+                        <field name="field_id"/>
+                        <field name="field_ttype"/>
+                        <field name="binary_name_field_id"/>
+                        <field name="label"/>
+                        <field name="placeholder"/>
+                        <field name="yes_text"/>
+                        <field name="no_text"/>
+                        <field name="mandatory"/>
+                        <field name="nodata"/>
+                        <field name="readonly"/>
+                        <field name="login"/>
+                        <field name="confirmation_email"/>
+                        <field name="validation_rule"/>
+                        <field name="css_classes"/>
+                        <field name="clearfix"/>
+                        <field name="style"/>
                 </tree>
             </field>
         </record>
@@ -52,18 +65,25 @@
             <field name="model">fson.form_field</field>
             <field name="arch" type="xml">
                 <search string="FSON Forms Fields">
-                    <field name="show"/>
-                    <field name="form_id"/>
-                    <field name="field_id"/>
-                    <field name="mandatory"/>
-                    <field name="label"/>
-                    <field name="placeholder"/>
-                    <field name="validation_rule"/>
-                    <field name="css_classes"/>
-                    <field name="clearfix"/>
-                    <field name="nodata"/>
-                    <field name="style"/>
-                    <field name="information"/>
+                        <field name="show"/>
+                        <field name="form_id"/>
+                        <field name="field_id"/>
+                        <field name="field_ttype"/>
+                        <field name="binary_name_field_id"/>
+                        <field name="label"/>
+                        <field name="placeholder"/>
+                        <field name="yes_text"/>
+                        <field name="no_text"/>
+                        <field name="mandatory"/>
+                        <field name="nodata"/>
+                        <field name="readonly"/>
+                        <field name="login"/>
+                        <field name="confirmation_email"/>
+                        <field name="validation_rule"/>
+                        <field name="css_classes"/>
+                        <field name="clearfix"/>
+                        <field name="style"/>
+                        <field name="information"/>
                 </search>
             </field>
         </record>

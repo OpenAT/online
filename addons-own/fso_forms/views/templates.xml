@@ -43,17 +43,21 @@
 
 
         <!-- Website Template: form -->
-        <!-- TODO: Change all 'apf_' classes to 'fsoforms_' and update fso_forms.css -->
+        <!-- TODO: Change all 'fsoforms_' classes to 'fsoforms_' and update fso_forms.css -->
         <template id="form" name="FSON Forms Website Template" page="True">
             <t t-call="website.layout">
                 <t t-set="title"><t t-esc="form.name"/></t>
+
+                <!-- Check if a user is logged in -->
+                <t t-set="user_is_logged_in" t-value="True if website.user_id != user_id else False"/>
+
                 <div id="wrap" t-att-class="'fso_form_wrap fso_form_wrap_'+str(form.id)">
-                    <div class="container apf_container">
+                    <div class="container fsoforms_container">
 
                         <!-- TOP SNIPPETS ON FORM PAGE -->
                         <div class="row">
                             <div class="col-lg-12">
-                                <div t-field="form.snippet_area_top" class="oe_structure apf_top_snippets"/>
+                                <div t-field="form.snippet_area_top" class="oe_structure fsoforms_top_snippets"/>
                             </div>
                         </div>
                         
@@ -72,11 +76,11 @@
                                         <t t-if="field.show">
                                             <!-- Get field css classes -->
                                             <t t-set="css_classes" t-value="field.css_classes"/>
-                                            
+
                                             <!-- SNIPPET AREA FIELD -->
                                             <t t-if="not field.field_id">
                                                 <div t-att-class="css_classes if css_classes else 'col-lg-12'">
-                                                    <div t-field="field.information" class="oe_structure apf_field_snippet"/>
+                                                    <div t-field="field.information" class="oe_structure fsoforms_field_snippet"/>
                                                     <t t-if="field.clearfix">
                                                         <div class="clearfix"/>
                                                     </t>
@@ -87,36 +91,88 @@
                                             <t t-if="field.field_id">
                                                 
                                                 <!-- Get Regular Field Info -->
+                                                <!-- ====================== -->
                                                 <t t-set="f_name" t-value="field.field_id.name"/>
                                                 <t t-set="f_type" t-value="field.field_id.ttype"/>
+                                                <t t-set="f_style" t-value="field.style or 'none'"/>
+                                                <t t-set="f_required" t-value="field.mandatory"/>
+                                                <!-- Jquery Validate Data Rules -->
                                                 <t t-set="validation_rule" t-value="{}"/>
                                                 <t t-if="field.validation_rule">
                                                     <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
                                                 </t>
+                                                <!--
+                                                    Only set the field to readonly if a record exists and a user is logged in!
+                                                    In other words: Always allow changing the field as long as no record exists or no user is logged in!
+                                                 -->
+                                                <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
+                                                <!--<t t-if="f_readonly">-->
+                                                <!--    <t t-set="validation_rule" t-value="{'data-rule-ignore': 'True'}"/>-->
+                                                <!--    <t t-set="f_required" t-value="False"/>-->
+                                                <!--</t>-->
+                                                <!-- ====================== -->
                                                 
                                                 <!-- !!! LIMIT FIELD TYPES !!! -->
-                                                <!-- TODO: Add an api constrain in the model that restrict other field types -->
-                                                <t t-if="f_type in ('boolean', 'char', 'selection', 'date', 'integer', 'float', 'binary')">
+                                                <t t-if="f_type in request.env['fson.form_field']._allowed_field_types">
                                                     
                                                     <!-- form group -->
-                                                    <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
+                                                    <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
                                                         
                                                         <!-- LABELS (AND BOOLEAN FIELDS) -->
-                                                        <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if field.mandatory else '')"
+                                                        <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if f_required and not f_readonly else '')"
                                                                t-att-for="f_name">
                                                             
-                                                            <!-- BOOLEAN FIELDS -->
-                                                            <t t-if="f_type == 'boolean'">
+                                                            <!-- BOOLEAN FIELD AS CHECKBOX -->
+                                                            <t t-if="f_type == 'boolean' and not field.style">
                                                                 <input type="checkbox"
                                                                        t-att-id="f_name"
                                                                        t-att-name="f_name"
                                                                        t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                        t-att-checked="True if record[f_name] else ''"
-                                                                       t-att-required="field.mandatory"/>
+                                                                       t-att-disabled="f_readonly"
+                                                                       t-att-required="f_required"/>
                                                             </t>
                                                             
                                                             <t t-raw="field.label"/>
                                                         </label>
+                                                        
+                                                        
+                                                        <!-- BOOLEAN FIELD AS RADIO BUTTONS -->
+                                                        <!-- TODO: CORRECT ERROR MESSAGE IF NO RADIO(VALUE) WAS SELECTED BY SERVER VALIDATION -->
+                                                        <t t-if="f_type == 'boolean' and field.style and field.style == 'radio'">
+                                                            <!-- Checked / True-->
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio"
+                                                                           t-att-id="f_name+'_boolean_true'"
+                                                                           t-att-name="f_name"
+                                                                           value="True"
+                                                                           t-att-checked="True if not field.nodata and (record and record[f_name]) else True if kwargs.get(f_name, None) == 'True' else ''"
+                                                                           t-att-disabled="f_readonly"
+                                                                           t-att-required="f_required"
+                                                                    />
+                                                                    <t t-if="field.yes_text"><t t-raw="field.yes_text"/></t>
+                                                                    <t t-if="not field.yes_text">Yes</t>
+                                                                </label>
+                                                            </div>
+                                                            <!-- Unchecked / False -->
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio"
+                                                                           t-att-id="f_name+'_boolean_false'"
+                                                                           t-att-name="f_name"
+                                                                           value="False"
+                                                                           t-att-checked="True if not field.nodata and (record and not record[f_name]) else True if kwargs.get(f_name, None) == 'False' else ''"
+                                                                           t-att-disabled="f_readonly"
+                                                                           t-att-required="f_required"
+                                                                    />
+                                                                    <t t-if="field.no_text"><t t-raw="field.no_text"/></t>
+                                                                    <t t-if="not field.no_text">No</t>
+                                                                </label>
+                                                            </div>
+                                                        </t>
+
+                                                        <!-- TODO: !!! RADIO BOX FIELDS FORCE SELECTION BEFORE SEND BY FRONTEND VALIDATION AND CORRECT ERROR MESSAGE IF PROCESSED BY CONTROlLER !!! -->
                                                         
                                                         <!-- MODAL BOX -->
                                                         <t t-if="field.information">
@@ -154,7 +210,7 @@
                                                             </div>
                                                         </t>
 
-                                                        <!-- CHAR FIELDS -->
+                                                        <!-- CHAR FIELD -->
                                                         <t t-if="f_type in ['char',]">
                                                             <input type="text"
                                                                    t-att-id="f_name"
@@ -162,13 +218,15 @@
                                                                    class="form-control"
                                                                    t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                    t-att-placeholder="field.placeholder"
-                                                                   t-att-required="field.mandatory"
+                                                                   t-att-disabled="f_readonly"
+                                                                   t-att-required="f_required"
                                                                    t-att="validation_rule"
                                                             />
                                                         </t>
 
-                                                        <!-- DATE FIELDS -->
+                                                        <!-- DATE FIELD -->
                                                         <t t-if="f_type in ['date',]">
+                                                            <!-- TODO: Localization (right now forced to DE) check how it is done in website_sale -->
                                                             <t t-set="date_de_value" t-value="record[f_name]"/>
                                                             <t t-set="date_de"
                                                                t-value="datetime.datetime.strftime(datetime.datetime.strptime(date_de_value,'%Y-%m-%d'), '%d.%m.%Y') if date_de_value else None"
@@ -179,12 +237,13 @@
                                                                    class="form-control"
                                                                    t-att-value="kwargs.get(f_name) if field.nodata else date_de"
                                                                    t-att-placeholder="field.placeholder"
-                                                                   t-att-required="field.mandatory"
+                                                                   t-att-disabled="f_readonly"
+                                                                   t-att-required="f_required"
                                                                    t-att="validation_rule"
                                                             />
                                                         </t>
                                                         
-                                                        <!-- INTEGER FIELDS -->
+                                                        <!-- INTEGER FIELD -->
                                                         <!-- HINT: type=number is html5 but will work in most browser for html 4.01 -->
                                                         <t t-if="f_type in ['integer',]">
                                                             <input type="number"
@@ -193,13 +252,14 @@
                                                                    class="form-control"
                                                                    t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                    t-att-placeholder="field.placeholder"
-                                                                   t-att-required="field.mandatory"
+                                                                   t-att-disabled="f_readonly"
+                                                                   t-att-required="f_required"
                                                                    t-att="validation_rule"
                                                                    step="1"
                                                             />
                                                         </t>
                                                         
-                                                        <!-- FLOAT FIELDS -->
+                                                        <!-- FLOAT FIELD -->
                                                         <!-- HINT: type=number is html5 but will work in most browser for html 4.01 -->
                                                         <!-- TODO: Localization (right now forced to DE) check how it is done in website_sale -->
                                                         <t t-if="f_type in ['float',]">
@@ -209,12 +269,13 @@
                                                                    class="form-control"
                                                                    t-att-value="kwargs.get(f_name, '0,00') if field.nodata else str(record[f_name]).replace('.', ',') if record else '0,00'"
                                                                    t-att-placeholder="field.placeholder if field.placeholder else '0,00'"
-                                                                   t-att-required="field.mandatory"
+                                                                   t-att-disabled="f_readonly"
+                                                                   t-att-required="f_required"
                                                                    t-att="validation_rule"
                                                             />
                                                         </t>
                                                         
-                                                        <!-- BINARY (FILE) FIELDS -->
+                                                        <!-- BINARY (FILE) FIELD -->
                                                         <!-- TODO: Handle image previews -->
                                                         <!-- TODO: Handle mime and file types -->
                                                         <t t-if="f_type in ['binary',]">
@@ -222,36 +283,63 @@
                                                                    t-att-id="f_name"
                                                                    t-att-name="f_name"
                                                                    class="input-file file form-control"
-                                                                   t-att-required="field.mandatory"
+                                                                   t-att-disabled="f_readonly"
+                                                                   t-att-required="f_required"
                                                                    t-att="validation_rule"
                                                                    multiple="false"
                                                             />
                                                         </t>
 
-                                                        <!-- SELECTION FIELDS -->
-                                                        <!-- ATTENTION: This is not for relational fields like Many2* -->
-                                                        <t t-if="f_type == 'selection'">
-
-                                                            <!-- Selection List Style -->
+                                                        <!-- SELECTION FIELD and MANY2ONE FIELD -->
+                                                        <t t-if="f_type in ['selection', 'many2one']">
+                                                            
+                                                            <!-- Initialize options list -->
+                                                            <t t-set="options" t-value="list()"/>
+                                                            
+                                                            <!-- Get options for selection fields -->
+                                                            <t t-if="f_type == 'selection'">
+                                                                <!-- Loop through all selection values -->
+                                                                <t t-foreach="request.env[form.model_id.model]._columns[f_name].selection or []" t-as="selection_item">
+                                                                    <t t-set="item_id" t-value="selection_item[0]"/>
+                                                                    <t t-set="item_name" t-value="dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection'])[item_id]"/>
+                                                                    <!-- Add to options list -->
+                                                                    <t t-set="options" t-value="options + [{'item_id': item_id, 'item_name': item_name}]"/>
+                                                                </t>
+                                                            </t>
+                                                            
+                                                            <!-- Get options for many2one fields -->
+                                                            <t t-if="f_type == 'many2one'">
+                                                                <!-- Loop through all records of the many2one field model -->
+                                                                <t t-foreach="request.env[field.field_id.relation].search([]) or []" t-as="m2o_field_record">
+                                                                    <t t-set="item_id" t-value="m2o_field_record.id"/>
+                                                                    <t t-set="item_name" t-value="m2o_field_record.name"/>
+                                                                    <!-- Add to options list -->
+                                                                    <t t-set="options" t-value="options + [{'item_id': item_id, 'item_name': item_name}]"/>
+                                                                </t>
+                                                            </t>
+                                                            
+                                                            <!-- List Style -->
                                                             <t t-if="field.style == 'selection' or not field.style">
                                                                 <select t-att-id="f_name"
                                                                         t-att-name="f_name"
                                                                         class="form-control"
-                                                                        t-att-required="field.mandatory">
+                                                                        t-att-disabled="f_readonly"
+                                                                        t-att-required="f_required">
                                                                     <!-- Default empty option -->
                                                                     <option value=""><t t-esc="field.placeholder"/></option>
                                                                     <!-- Selection Values as options -->
-                                                                    <t t-foreach="request.env[form.model_id.model]._columns[f_name].selection or []" t-as="option">
+                                                                    <t t-foreach="options" t-as="option">
                                                                         <!-- Create Option List -->
-                                                                        <option t-att-value="option[0]"
-                                                                                t-att-selected="True if (record[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None">
-                                                                            <t t-esc="dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                        <option t-att-value="option['item_id']"
+                                                                                t-att-selected="True if (str((record[f_name].id if record[f_name] and f_type == 'many2one' else record[f_name]) or '') == str(option['item_id']) and not field.nodata) or (kwargs.get(f_name) == str(option['item_id'])) else None">
+                                                                            <t t-esc="option['item_name']"/>
                                                                         </option>
                                                                     </t>
                                                                 </select>
                                                             </t>
 
                                                             <!-- Radio Buttons Style -->
+                                                            <!-- TODO: CORRECT ERROR MESSAGE IF NO RADIO(VALUE) WAS SELECTED BY SERVER VALIDATION -->
                                                             <t t-if="field.style in ('radio', 'radio_selectnone')">
                                                                 <t t-if="field.style == 'radio_selectnone'">
                                                                     <div class="radio">
@@ -261,28 +349,31 @@
                                                                                    t-att-name="f_name"
                                                                                    value=""
                                                                                    t-att-checked="True if not record[f_name] and not kwargs.get(f_name) else None"
+                                                                                   t-att-disabled="f_readonly"
+                                                                                   t-att-required="f_required"
                                                                             />
                                                                             <t t-esc="field.placeholder or 'No Selection'"/>
                                                                         </label>
                                                                     </div>
                                                                 </t>
-                                                                <t t-foreach="request.env[form.model_id.model]._columns[f_name].selection or []" t-as="option">
+                                                                <t t-foreach="options" t-as="option">
                                                                     <div class="radio">
                                                                         <label>
                                                                             <input type="radio"
-                                                                                   t-att-id="option[0]"
+                                                                                   t-att-id="option['item_id']"
                                                                                    t-att-name="f_name"
-                                                                                   t-att-value="option[0]"
-                                                                                   t-att-checked="True if (record[f_name] == option[0] and not field.nodata) or (kwargs.get(f_name) == str(option[0])) else None"
+                                                                                   t-att-value="option['item_id']"
+                                                                                   t-att-checked="True if (str((record[f_name].id if record[f_name] and f_type == 'many2one' else record[f_name]) or '') == str(option['item_id']) and not field.nodata) or (kwargs.get(f_name) == str(option['item_id'])) else None"
+                                                                                   t-att-disabled="f_readonly"
+                                                                                   t-att-required="f_required"
                                                                             />
-                                                                            <t t-esc="dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection'])[option[0]]"/>
+                                                                            <t t-esc="option['item_name']"/>
                                                                         </label>
                                                                     </div>
                                                                 </t>
                                                             </t>
+                                                            
                                                         </t>
-                                                        
-                                                        <!-- TODO: Many2One -->
                                                         
                                                         <!-- TODO: One2Many and Many2Many  -->
                                                         
@@ -299,9 +390,9 @@
                                     </t>
 
                                     <!-- Submit Button -->
-                                    <div class="row apf_submit">
+                                    <div class="row fsoforms_submit">
                                         <div class="col-lg-12">
-                                            <a id="apf_submit_button" class="btn btn-primary btn-lg a-submit">
+                                            <a id="fsoforms_submit_button" class="btn btn-primary btn-lg a-submit">
                                                 <span t-field="form.submit_button_text"/>
                                             </a>
                                         </div>
@@ -314,7 +405,7 @@
                         <!-- BOTTOM SNIPPETS ON FORM PAGE -->
                         <div class="row">
                             <div class="col-lg-12">
-                                <div t-field="form.snippet_area_bottom" class="oe_structure apf_bottom_snippets"/>
+                                <div t-field="form.snippet_area_bottom" class="oe_structure fsoforms_bottom_snippets"/>
                             </div>
                         </div>
                         
@@ -326,7 +417,7 @@
         
         <!-- SubTemplate: Message Display -->
         <template id="messages" name="Messages">
-            <div t-att-id="msg_block_id" class="row apf_messages">
+            <div t-att-id="msg_block_id" class="row fsoforms_messages">
                 <div class="col-lg-12">
                     <t t-foreach="err" t-as="error">
                         <div class="alert alert-danger" role="alert">

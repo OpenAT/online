@@ -33,7 +33,7 @@ msgstr "CSS Klassen"
 #. module: fso_forms
 #: field:fson.form,clear_session_data_after_submit:0
 msgid "Clear Session Data after Submit"
-msgstr "Session nach Form-Submit leeren"
+msgstr "Form nach dem Senden leeren"
 
 #. module: fso_forms
 #: field:fson.form_field,clearfix:0

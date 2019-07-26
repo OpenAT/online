@@ -25,24 +25,38 @@ $(document).ready(function () {
             //     }
             // }
 
+        },
+
+        submitHandler: function(form) {
+            form.submit();
+          },
+        invalidHandler: function(event, validator) {
+            console.log('Form is invalid!');
+            // Reenable the button for another submission try
+            $("#fsoforms_submit_button").removeClass('submission-pending')
+        }
+    });
+    
+    // Submit the form by java script on click or keyup
+    $('#fsoforms_submit_button').on('click keyup', function () {
+        if ($("#fsoforms_submit_button").hasClass('submission-pending')) {
+            // console.log('Submission Pending')
+        }
+        else {
+            // console.log('Submit Form');
+            // Lock the Button until validation fails (or form is submitted)
+            $("#fsoforms_submit_button").addClass('submission-pending');
+            $("form#fso_form.fso_form_validate").submit();
         }
     });
 
-    // SUBMIT-BUTTON BY JS
-    // HINT: Submit only after document ready and by java script
-    // HINT: This is also needed to make jquery-validate work with a submit button instead of an submit input
-    //       http://stackoverflow.com/questions/11914626/jquery-validation-with-button-type-rather-than-submit-type-for-a-form
-    // $("#apf_submit_button").click(function(event) {
-    //     // console.log('SUBMIT fso_forms FORM');
-    //     $("form#fso_form.fso_form_validate").submit();
-    // });
-
     // HINT: The debounce library is loaded in fso_base_website ;)
-    $('#apf_submit_button').on('click keyup',
-        $.debounce(800, function (event) {
-            console.log('#apf_submit_button debounced form submit');
-            $("form#fso_form.fso_form_validate").submit();
-        })
-    );
+    // HINT: https://jqueryvalidation.org/documentation/#link-too-much-recursion
+    // $('#fsoforms_submit_button').on('click keyup',
+    //     $.debounce(400, function (event) {
+    //         console.log('#fsoforms_submit_button debounced form submit');
+    //         $("form#fso_form.fso_form_validate").submit();
+    //     })
+    // );
 
 });

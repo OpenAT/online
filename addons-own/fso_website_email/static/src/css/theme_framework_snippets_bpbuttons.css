@@ -30,8 +30,24 @@
     box-shadow: 2px 2px 6px rgba(2,2,2,0.4);
 }
 /* Inner anchor */
+.snippet_block_bpbutton .bpbutton_table p {
+    line-height: initial;
+    line-height: normal;
+    /* reset padding */
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    /* reset margin */
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+
+}
 .snippet_block_bpbutton .bpbutton_table a {
     line-height: initial;
+    line-height: normal;
     /* text style */
     text-decoration: none;
     text-align: center;
