@@ -652,6 +652,19 @@
                             </li>
                         </div>
 
+                        <!---->
+                        <!-- Snippet anchor -->
+                        <div data-snippet-option-id="anchor"
+                            data-selector=".snippet_block">
+                            <li>
+                                <a class="js_anchor"
+                                   title="Use anchors to go directly to a section of your page, appending #anchor to the URL">
+                                    Set anchor
+                                </a>
+                            </li>
+                        </div>
+                        <!---->
+
                         <!-- OPTION_GROUP: dadi_sb_bg_width -->
                         <div data-snippet-option-id='dadi_sb_bg_width'
                              data-selector="
