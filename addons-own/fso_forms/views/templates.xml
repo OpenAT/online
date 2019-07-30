@@ -403,7 +403,7 @@
 
                                             <t t-if="website.user_id != user_id and form.logout_button_text">
                                                 <a id="fsoforms_logout_button" class="btn btn-lg"
-                                                   t-att-href="/web/session/logout?redirect=#{ request.httprequest.base_url }">
+                                                   t-att-href="'/web/session/logout?redirect=/fso/form/'+str(form.id)">
                                                     <span t-field="form.logout_button_text"/>
                                                 </a>
                                             </t>
