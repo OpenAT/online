@@ -50,3 +50,11 @@
     margin-left: 15px;
     margin-right: 15px;
 }
+
+/* Binary Field Image previews */
+.fso-form-widget-image .widget-image-container {
+    margin-top: 1em;
+}
+.fso-form-widget-image .widget-image-image {
+    max-width: 260px;
+}

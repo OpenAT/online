@@ -74,6 +74,7 @@
                                     <!-- FORM FIELDS LOOP -->
                                     <t t-foreach="form.field_ids" t-as="field">
                                         <t t-if="field.show">
+
                                             <!-- Get field css classes -->
                                             <t t-set="css_classes" t-value="field.css_classes"/>
 
@@ -101,15 +102,9 @@
                                                 <t t-if="field.validation_rule">
                                                     <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
                                                 </t>
-                                                <!--
-                                                    Only set the field to readonly if a record exists and a user is logged in!
-                                                    In other words: Always allow changing the field as long as no record exists or no user is logged in!
-                                                 -->
+                                                <!-- Readonly if logged in
+                                                     Only set the field to readonly if a record exists and a user is logged in! -->
                                                 <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
-                                                <!--<t t-if="f_readonly">-->
-                                                <!--    <t t-set="validation_rule" t-value="{'data-rule-ignore': 'True'}"/>-->
-                                                <!--    <t t-set="f_required" t-value="False"/>-->
-                                                <!--</t>-->
                                                 <!-- ====================== -->
                                                 
                                                 <!-- !!! LIMIT FIELD TYPES !!! -->
@@ -276,7 +271,6 @@
                                                         </t>
                                                         
                                                         <!-- BINARY (FILE) FIELD -->
-                                                        <!-- TODO: Handle image previews -->
                                                         <!-- TODO: Handle mime and file types -->
                                                         <t t-if="f_type in ['binary',]">
                                                             <input type="file"
@@ -288,6 +282,17 @@
                                                                    t-att="validation_rule"
                                                                    multiple="false"
                                                             />
+
+                                                            <!-- Handle image previews (fso-form-widget-image) -->
+                                                            <!-- ATTENTION: Request user must have access to the image field ! -->
+                                                            <t t-if="record and record[f_name]">
+                                                                <t t-if="'fso-form-widget-image' in css_classes">
+                                                                    <div class="widget-image-container">
+                                                                        <img class="widget-image-image" t-att-src="'/website/image/'+form.model_id.model+'/'+str(record.id)+'/'+f_name"/>
+                                                                    </div>
+                                                                </t>
+                                                            </t>
+
                                                         </t>
 
                                                         <!-- SELECTION FIELD and MANY2ONE FIELD -->
@@ -389,15 +394,22 @@
                                         </t>
                                     </t>
 
-                                    <!-- Submit Button -->
+                                    <!-- Submit and Logout Button -->
                                     <div class="row fsoforms_submit">
                                         <div class="col-lg-12">
                                             <a id="fsoforms_submit_button" class="btn btn-primary btn-lg a-submit">
                                                 <span t-field="form.submit_button_text"/>
                                             </a>
+
+                                            <t t-if="website.user_id != user_id and form.logout_button_text">
+                                                <a id="fsoforms_logout_button" class="btn btn-lg"
+                                                   t-att-href="/web/session/logout?redirect=#{ request.httprequest.base_url }">
+                                                    <span t-field="form.logout_button_text"/>
+                                                </a>
+                                            </t>
                                         </div>
                                     </div>
-                                    
+
                                 </form>
                             </div>
                         </div>

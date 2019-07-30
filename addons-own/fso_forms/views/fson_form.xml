@@ -14,6 +14,7 @@
                                 <field name="name"/>
                                 <field name="model_id"/>
                                 <field name="submit_button_text"/>
+                                <field name="logout_button_text"/>
                                 <field name="clear_session_data_after_submit"/>
                                 <field name="edit_existing_record_if_logged_in"/>
                                 <field name="email_only"/>
@@ -37,10 +38,13 @@
                                     <tree string="Fields" editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="show"/>
-                                        <!-- ATTENTION: The Domain for 'field_id' is computed dynamically in the onchange method! -->
+                                        <field name="form_model_name" invisible="1"/>
+                                        <!-- ATTENTION: The Domain for 'field_id' is also set dynamically by oc_field_id_dynamic_domain() -->
                                         <field name="field_id"
+                                               domain="[('model_id','=',context.get('form_model_id'))]"
                                                options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                                        <field name="field_ttype"/>
+                                        <field name="field_ttype" invisible="1"/>
+                                        <field name="field_model_name" invisible="1"/>
                                         <field name="binary_name_field_id"
                                                attrs="{'readonly': [('field_ttype','!=','binary')]}"
                                                domain="[('model_id','=',context.get('form_model_id')),

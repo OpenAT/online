@@ -6,6 +6,8 @@ from openerp.tools.translate import _
 from openerp.tools import SUPERUSER_ID
 from openerp.models import MAGIC_COLUMNS
 
+from lxml import etree
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -28,6 +30,7 @@ class FSONForm(models.Model):
                                help="Redirect URL after form feedback! Do not set unless you really need to!"
                                     "If set the Thank You Page will not be called!")
     submit_button_text = fields.Char(string="Submit Button Text", default=_('Submit'), required=True, translate=True)
+    logout_button_text = fields.Char(string="Logout Button Text", translate=True)
 
     frontend_validation = fields.Boolean(string="Frontend Validation", default=True,
                                          help="Enable JavaScript-Frontend-Form-Validation by jquery-validate!")
@@ -42,21 +45,22 @@ class FSONForm(models.Model):
     #       website. Make sure the controller then checks these groups correctly!
     #       Default should be the public user of the website so all are allowed to view/use the form by default
 
-    clear_session_data_after_submit = fields.Boolean(string="Clear Session Data after Submit",
+    clear_session_data_after_submit = fields.Boolean(string="Clear Form after Submit",
                                                      default=True,
-                                                     help="If set the form will be empty after a successful submit!")
+                                                     help="If set the form will be empty again after a successful "
+                                                          "submit!")
 
     # Edit existing record if logged in TODO: add this to ghe form views
     edit_existing_record_if_logged_in = fields.Boolean(string="Edit existing record if logged in",
                                                        help="If set and a user is logged in (e.g. by token) he can edit"
                                                             " one existing record related to model linked to the form."
-                                                            "If the current form model is not res.partner or res.user"
-                                                            "you can mark a res.partner or res.user many2one field of"
-                                                            "the form as the login field. The record in the form-model"
-                                                            "where the marked field matches the logged in user (or the "
-                                                            "users partner) can than be edited.\n"
-                                                            "Clear Session Data after Submit will NOT WORK if this"
-                                                            "is set and a user is logged in!")
+                                                            " If the current form model is not res.partner or res.user"
+                                                            " you can mark a res.partner or res.user many2one field of"
+                                                            " the form as the login field. The record in the form-model"
+                                                            " where the marked field matches the logged in user (or"
+                                                            " the users partner) can than be edited.\n"
+                                                            "Clear Session Data after Submit WILL NOT WORK if this"
+                                                            " is set and a user is logged in!")
 
     # TODO: !!!! E-Mail Stuff - only Fields are prepared right now !!!!
     email_only = fields.Boolean(string="E-Mail Only", help="Do !NOT! create a record but only send an E-Mail to the"
@@ -91,7 +95,7 @@ class FSONForm(models.Model):
     def constrain_model_id_field_ids(self):
         for r in self:
             # Check all fields are fields of the current form_model
-            if any(f.field_id.model_id != r.model_id for f in r.field_ids):
+            if any(f.field_id.model_id != r.model_id for f in r.field_ids if f.field_id):
                 raise ValidationError("Mismatch between some fields and current form model! "
                                       "Please remove fields for other models!")
             # Check that no field is marked as login field for res.partner or res.user forms
@@ -109,21 +113,21 @@ class FSONForm(models.Model):
                                          if f.field_id and field_ids.count(f.field_id.id) > 1])
                 raise ValidationError("A field is only allowed once in a form! Duplicated fields: %s "
                                       "" % str(duplicated_fields))
-            # DISABLED: Check all regular required fields with no defaults are in the form!
-            # ATTENTION: This is not possible to find out because some fields might get set in the CRUD mehtods!
-            #            Therefore i disabled this check!
-            # if r.model_id and r.field_ids:
-            #     form_field_names = [f.field_id.name for f in r.field_ids]
-            #     form_model = self.env[r.model_id.model].sudo()
-            #     protected_fields = self.env['fson.form_field'].sudo()._protected_fields
-            #     missing_required_fields = [fname for fname in form_model._fields if fname not in form_field_names
-            #                                and fname not in protected_fields
-            #                                and form_model._fields[fname].required
-            #                                and not form_model._fields[fname].store
-            #                                and not form_model._fields[fname].related
-            #                                and not form_model._fields[fname].readonly
-            #                                and not form_model._fields[fname].computed_fields
-            #                                and not form_model._fields[fname].default]
+
+    # Remove noupdate for view auth_partner_form.meinedaten on addon update
+    def init(self, cr, context=None):
+        # Get all xml_ids for views and templates where the update would be prevented on addon install/update
+        ir_model_data_obj = self.pool.get('ir.model.data')
+        fso_forms_views_noupdate_ids = ir_model_data_obj.search(cr, SUPERUSER_ID,
+                                                                [('module', '=', 'fso_forms'),
+                                                                 ('model', '=', 'ir.ui.view'),
+                                                                 ('noupdate', '=', True)
+                                                                 ])
+        if fso_forms_views_noupdate_ids:
+            logger.warning('Views and or templates with noupdate found! %s' % fso_forms_views_noupdate_ids)
+            logger.info('Removing noupdate from ir.model.data %s' % fso_forms_views_noupdate_ids)
+            ir_model_data_records = ir_model_data_obj.browse(cr, SUPERUSER_ID, fso_forms_views_noupdate_ids)
+            ir_model_data_records.write({"noupdate": False})
 
 
 class FSONFormField(models.Model):
@@ -139,12 +143,15 @@ class FSONFormField(models.Model):
 
     form_id = fields.Many2one(comodel_name="fson.form", string="Form", required=True,
                               index=True, ondelete='cascade')
+    form_model_name = fields.Char(string="Form Model", related='form_id.model_id.model', help='Form Model name',
+                                  readonly=True, store=True)
     # ATTENTION: The domain is computed dynamically in the onchange method!
     field_id = fields.Many2one(string="Field", comodel_name='ir.model.fields',
                                index=True, ondelete='cascade')
     field_ttype = fields.Selection(string="Field Type", related='field_id.ttype', help='ttype',
                                    readonly=True, store=True)
-
+    field_model_name = fields.Char(string="Field Model", related='field_id.model_id.model', help='Model name',
+                                   readonly=True, store=True)
     binary_name_field_id = fields.Many2one(string="File Name Field", comodel_name='ir.model.fields',
                                            domain="[('ttype','=','char'), "
                                                   " ('readonly','=',False), "
@@ -152,26 +159,26 @@ class FSONFormField(models.Model):
                                            index=True, ondelete='cascade')
     label = fields.Char(string='Label', translate=True)
     placeholder = fields.Char(string='Placeholder Text', translate=True,
-                              help="This is the placeholder text that will be shown inside of the input fields!"
-                                   "For radio boxed styled boolean fields you can use this field to set the text for"
-                                   "the yes and no radio boxes like this: "
-                                   "{'yes': 'Sure i want this!', 'no': 'No thank you'}")
+                              help="This is the placeholder text that will be shown inside of the input fields!")
     yes_text = fields.Char(string="Yes Text", help="Only for radio-styled boolean fields!")
     no_text = fields.Char(string="No Text", help="Only for radio-styled boolean fields")
     mandatory = fields.Boolean(string='Mandatory', help="For boolean fields mandatory means you have to choose 'yes'"
                                                         "even if it is shown as a radio button!")
-    nodata = fields.Boolean(string='No Data', help='Do not show/pre-fill data in the website form if logged in.')
-    readonly = fields.Boolean(string='Read only if logged in',
+    nodata = fields.Boolean(string='Hide Data if logged in',
+                            help='Do not show/pre-fill data in the website form if logged in.')
+    readonly = fields.Boolean(string='Readonly if logged in',
                               help='Do not allow changing the data of the field if logged in and a record exits '
                                    'already! WARNING: This has NO effect if no record exists of no user is logged in!')
-    login = fields.Boolean(string="Login Link", help="Only valid for many2one res.partner or res.user fields! "
-                                                     "If set and the logged user relates to the partner or is the "
-                                                     "user set in this field we try to load the corresponding record"
-                                                     "and it's data to prefil the form and update the existing"
-                                                     "record on form submit!")
+    login = fields.Boolean(string="Login Record", help="Only valid for many2one res.partner or res.user fields! "
+                                                       "If set and the logged user relates to the partner or is the "
+                                                       "user set in this field we try to load the corresponding record "
+                                                       "and it's data to prefil the form and update the existing"
+                                                       "record on form submit!")
     confirmation_email = fields.Boolean(string='Confirmation Email', help='Send a confirmation e-mail to this address')
     validation_rule = fields.Char(string='Frontend Validation', help="JQuery Frontend Validation Settings")
-    css_classes = fields.Char(string='CSS classes', default='col-lg-6')
+    css_classes = fields.Char(string='CSS classes', default='col-lg-6',
+                              help="Besides Bootstrap classes you can use special fso-form-widget-* classes e.g.: "
+                                   "for image previews 'fso-form-widget-image' or image icons 'fso-form-widget-icon'!")
     clearfix = fields.Boolean(string='Clearfix', help='Places a DIV box with .clearfix after this field')
     style = fields.Selection(selection=[('selection', 'Selection'),
                                         ('radio_selectnone', 'Radio + SelectNone'),
@@ -188,8 +195,8 @@ class FSONFormField(models.Model):
         for r in self:
             if r.field_id:
                 # Check readonly
-                if r.field_id.readonly:
-                    raise ValidationError('You can not add readonly fields!')
+                if r.field_id.readonly and r.show:
+                    raise ValidationError('You can not add readonly fields that you show on the form!')
                 # Check protected fields
                 if r.field_id.name in self._protected_fields:
                     raise ValidationError('Protected and system fields are not allowed!')
@@ -206,7 +213,7 @@ class FSONFormField(models.Model):
                 if r.login:
                     if r.field_ttype != 'many2one':
                         raise ValueError('The login field must be of type "many2one"!')
-                    if r.field_id.model_name not in ['res.partner', 'res.user']:
+                    if r.field_id.relation not in ['res.partner', 'res.user']:
                         raise ValueError('The login field must relate to the "res.partner" or "res.user" model!')
             if r.binary_name_field_id:
                 # Check field_id
@@ -246,13 +253,48 @@ class FSONFormField(models.Model):
         if self.style == 'radio_selectnone':
             self.mandatory = False
 
-    @api.onchange('field_id', 'form_id')
-    def oc_field_id_dynamic_domain(self):
-        field_id_domain = [('readonly', '=', False),
-                           ('ttype', 'in', self._allowed_field_types),
+    @api.model
+    def _field_id_domain(self):
+        field_id_domain = [('ttype', 'in', self._allowed_field_types),
                            ('name', 'not in', list(self._protected_fields))]
-        if self.form_id and self.form_id.model_id:
-            field_id_domain.append(('model_id', '=', self.form_id.model_id.id))
+        # Try to get the form model id
+        try:
+            if self.form_id and self.form_id.model_id:
+                field_id_domain.append(('model_id', '=', self.form_id.model_id.id))
+        except Exception as e:
+            logger.warning('Could not set dynamic domain for field_id:\n%s' % repr(e))
+            field_id_domain.append(('model_id', '=', False))
+            pass
+        return field_id_domain
 
+    # Set the initial domain on 'view load' for field_id
+    # DISABLED: Seems not to work for nested tree views in form views! We would need to create a tree view and use
+    #           this for the one2many field 'field_ids' instead of a nested tree view in fson_form.xml
+    # @api.model
+    # def fields_view_get(self, view_id=None, view_type='tree', context=None, toolbar=False, submenu=False):
+    #     context = context if context else {}
+    #     result = super(FSONFormField, self).fields_view_get(view_id=view_id, view_type=view_type, context=context,
+    #                                                         toolbar=toolbar, submenu=submenu)
+    #
+    #     if view_type == 'tree':
+    #         # Get our domain filter
+    #         # TODO: Maybe we need to get field values from the context ?
+    #         field_id_domain_string = str(self._field_id_domain())
+    #
+    #         # Convert the view to an element tree object
+    #         doc = etree.XML(result['arch'])
+    #
+    #         # Update the field with our domain filter
+    #         for node in doc.xpath("//field[@name='field_id']"):
+    #             node.set('domain', field_id_domain_string)
+    #
+    #         # Overwrite the view xml with our modified version
+    #         result['arch'] = etree.tostring(doc)
+    #
+    #     return result
+
+    # Set dynamic Domain for field_id if things like the form model changes
+    @api.onchange('field_id', 'form_id', 'form_model_name')
+    def oc_field_id_dynamic_domain(self):
+        field_id_domain = self._field_id_domain()
         return {'domain': {'field_id': field_id_domain}}
-

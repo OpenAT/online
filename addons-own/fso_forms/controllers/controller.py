@@ -61,7 +61,7 @@ class FsoForms(http.Controller):
 
         :param form_id:
         :param check_clear_session_data:
-        :return:
+        :return: dict with session data or empty
         """
         form_id = str(form.id)
         form_key = self.get_fso_form_session_key(form_id)
@@ -130,12 +130,12 @@ class FsoForms(http.Controller):
 
         # Try to find a 'login' field in the current form
         login_field = form.field_ids.filtered(lambda r: r.login)
-        if not login_field or len(login_field) != 1 or login_field.field_id.related not in ['res.user', 'res.partner']:
+        if not login_field or len(login_field) != 1 or login_field.field_id.relation not in ['res.user', 'res.partner']:
             return form_model_obj
 
         # Search for all records in the form-model where the login field matches the currently logged in user or
         # its related partner
-        search_id = user.id if login_field.field_id.related == 'res.user' else user.partner_id.id
+        search_id = user.id if login_field.field_id.relation == 'res.user' else user.partner_id.id
         records = form_model_obj.search([(login_field.field_id.name, '=', search_id)])
         if not records:
             return form_model_obj
@@ -320,10 +320,13 @@ class FsoForms(http.Controller):
                         values[f_name] = base64.encodestring(f_value.read()) or False
                         if f.binary_name_field_id:
                             values[f.binary_name_field_id.name] = f_value.filename if values[f_name] else False
-                    else:
-                        values[f_name] = False
-                        if f.binary_name_field_id:
-                            values[f.binary_name_field_id.name] = False
+
+                    # ATTENTION: We do no longer empty binary fields by default.
+                    #            (The same effect as nodata was set to True)
+                    #else:
+                        # values[f_name] = False
+                        # if f.binary_name_field_id:
+                        #     values[f.binary_name_field_id.name] = False
 
                 # Add FLOAT
                 # TODO: Localization - !!! Right now we expect DE values from the forms !!!
@@ -339,7 +342,6 @@ class FsoForms(http.Controller):
 
     def _prepare_kwargs_for_form(self, form, **kwargs):
         # Remove binary fields (e.g. images) from kwargs before rendering the form
-        # TODO: This will be disabled in the future since we need to 'show' the images for GL2K Nationalparkgarten!
         if kwargs:
             for f in form.field_ids:
                 if f.field_id and f.field_id.ttype == 'binary':
@@ -442,10 +444,10 @@ class FsoForms(http.Controller):
 
         # FORM SUBMIT FOR EDIT BUTTON
         # TODO: Right now this is a simple get request from an <a></a>
-        #       We should add a UUID im the session data and submit a form by the edit button with a hidden input field
-        #       containing the guid - it may be safer than just depend on the form data in the session - but im not
-        #       sure about that since an attacker that will call /fso/form/[n]?edit_form_data=True would still have
-        #       no form data in the memory on the server.
+        #       Maybe we should add a UUID im the session data and submit a form by the edit button with a hidden input
+        #       field containing the guid - it may be safer than just depend on the form data in the session - but im
+        #       not sure about that since an attacker that will call /fso/form/[n]?edit_form_data=True would still have
+        #       no form data in the memory on the server for its session.
         if kwargs.get('edit_form_data', False):
             # Set 'clear_session_data' to False before we redirect to the form again
             form_sdata = self.get_fso_form_session_data(form, check_clear_session_data=False)
