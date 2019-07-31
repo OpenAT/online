@@ -70,6 +70,23 @@ class ResPartnerFSToken(models.Model):
     first_datetime_of_use = fields.Datetime(string="First Date and Time of Use", readonly=True)
     number_of_checks = fields.Integer(string="Number of checks", default=0, redonly=True)
 
+    # New fields for two factor authentication
+    # TODO: tfa_type: "enter_string" > Create web form to enter the tfa string and update fstoken_check()
+    tfa_type = fields.Selection(selection=[('approved_partner_email', 'Approved Partner E-Mail'),
+                                           ('enter_string', 'Enter String')],
+                                string="Two Factor Authentication Type")
+    tfa_string = fields.Char(string="Two Factor Authentication String",
+                             help='If "tfa_type" is "approved_partner_email" the "tfa_string" must contain '
+                                  'the main e-mail of the partner at the time the res.partner.fstoken record '
+                                  'is created!')
+    # Information for the webpage with the online-form where the user could enter the 'tfa_string'
+    # EXAMPLE: tfa_type = 'enter_string',
+    #          tfa_string = '5693', tfa_label = 'Please enter the last four digits of you bank account', tfa_help = ''
+    tfa_label = fields.Char(string="Two Factor Authentication Label",
+                                   help='The Label of the Input field')
+    tfa_help = fields.Html(string='Two Factor Authentication Help',
+                           help="Additional help text or information for the two factor authentication")
+
     # https://www.odoo.com/documentation/8.0/howtos/backend.html
     @api.constrains('name')
     def _check_fstoken_format(self):
@@ -78,6 +95,15 @@ class ResPartnerFSToken(models.Model):
                 raise ValidationError("FS Partner Token is too short (9 char min): %s" % record.name)
             if not record.name.isalnum():
                 raise ValidationError("FS Partner Token must be alphanumeric: %s" % record.name)
+
+    @api.constrains('tfa_type', 'tfa_string')
+    def _check_fstoken_tfa(self):
+        for record in self:
+            if record.tfa_type or record.tfa_string:
+                if not record.tfa_type:
+                    raise ValidationError("Two Factor Authentication 'tfa_string' is set but 'tfa_type' is missing!")
+                if not record.tfa_string:
+                    raise ValidationError("Two Factor Authentication 'tfa_type' is set but 'tfa_string' is missing!")
 
     # https://www.postgresql.org/docs/9.3/static/ddl-constraints.html
     _sql_constraints = [
@@ -125,5 +151,5 @@ class FSTokenWizard(models.TransientModel):
         if fstokens:
             fstokens.write({'expiration_date': self.expiration_date})
 
-        # TODO: I think this sould be return True !
+        # TODO: I think this should return True instead of a dict?
         return {}

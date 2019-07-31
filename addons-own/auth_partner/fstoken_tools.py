@@ -56,7 +56,7 @@ def fstoken_sanitize(fs_ptoken):
 
 
 def fstoken_check(fs_ptoken):
-    # Sanitize token
+    # Sanitize the token string
     token_record, errors = fstoken_sanitize(fs_ptoken)
     if errors:
         # Return empty token and some error message
@@ -77,6 +77,28 @@ def fstoken_check(fs_ptoken):
     if not partner:
         errors.append(_('The code has no partner assigned!'))
         return False, False, errors
+
+    # Two Factor Authentication
+    if token_record and token_record.tfa_type or token_record.tfa_string:
+
+        # Make sure both important tfa fields are filled
+        if not token_record.tfa_type or not token_record.tfa_string:
+            errors.append(_('Two Factor Authentication is enabled for the code but information is missing!'))
+            return False, False, errors
+
+        # tfa_type: approved_partner_email # TODO: Test this!!!
+        if token_record.tfa_type == 'approved_partner_email':
+            if token_record.tfa_string != token_record.partner_id.email:
+                errors.append(_('Two Factor Authentication: The partner e-mail has changed!'))
+                return False, False, errors
+            if not token_record.partner_id.main_personemail_id:
+                errors.append(_('Two Factor Authentication: The partner main email is missing!'))
+                return False, False, errors
+            if not token_record.partner_id.main_personemail_id.bestaetigt_am_um:
+                errors.append(_('Two Factor Authentication: The partner main email is not approved!'))
+                return False, False, errors
+
+        # TODO: tfa_type: enter_string
 
     # Check/Create the res.user for the token
     user = token_record.partner_id.user_ids[0] if token_record.partner_id.user_ids else None
