@@ -61,12 +61,12 @@ class FRSTGruppeState(models.AbstractModel):
     gueltig_bis = fields.Date("GueltigBis", required=True, default=lambda s: fields.date(2099, 12, 31))
 
     # Group approval information
-    bestaetigt_am_um = fields.Datetime("Bestaetigt")
+    bestaetigt_am_um = fields.Datetime("Bestaetigt", readonly=True)
     bestaetigt_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
                                                  ('phone_call', "Phone Call"),
                                                  ],
-                                        string="Bestaetigungs Typ")
-    bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft",
+                                        string="Bestaetigungs Typ", readonly=True)
+    bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft", readonly=True,
                                       help="E.g.: The link or the workflow process")
 
     @api.multi

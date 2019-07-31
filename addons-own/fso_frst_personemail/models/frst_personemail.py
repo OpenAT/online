@@ -119,6 +119,17 @@ class FRSTPersonEmail(models.Model):
                                        "It will be used in webforms or exports where only one e-mail is allowed."
                                        "It should match with the email field in res.partner!")
 
+    # E-Mail approval information
+    # ATTENTION: If bestaetigt_am_um is set the E-Mail counts as approved!
+    bestaetigt_am_um = fields.Datetime("Bestaetigt", readonly=True)
+    bestaetigt_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
+                                                 ('manually', "Manually Approved"),
+                                                 ],
+                                        string="Bestaetigungs Typ", readonly=True)
+    bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft", readonly=True,
+                                      help="E.g.: The link or the workflow process")
+
+
     # -------
     # METHODS
     # -------
