@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-16 14:17+0000\n"
-"PO-Revision-Date: 2019-04-16 14:17+0000\n"
+"POT-Creation-Date: 2019-08-01 16:38+0000\n"
+"PO-Revision-Date: 2019-08-01 16:38+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,26 @@ msgid "&times;"
 msgstr "&times;"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "A positive or negative non-decimal number"
+msgstr "A positive or negative non-decimal number"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg"
+msgstr "Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity."
+msgstr "BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity."
+
+#. module: fso_forms
+#: help:fson.form_field,css_classes:0
+msgid "Besides Bootstrap classes you can use special fso-form-widget-* classes e.g.: for image previews 'fso-form-widget-image' or image icons 'fso-form-widget-icon'!"
+msgstr "Besides Bootstrap classes you can use special fso-form-widget-* classes e.g.: for image previews 'fso-form-widget-image' or image icons 'fso-form-widget-icon'!"
+
+#. module: fso_forms
 #: field:fson.form,snippet_area_bottom:0
 msgid "Bottom Snippet Area"
 msgstr "Unterer Snippet-Bereich"
@@ -31,9 +51,44 @@ msgid "CSS classes"
 msgstr "CSS Klassen"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all"
+msgstr "Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!"
+msgstr "Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a \".\" and not a \",\""
+msgstr "Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a \".\" and not a \",\""
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Check if the string may be a credit card based on the Luhn algorithm"
+msgstr "Check if the string may be a credit card based on the Luhn algorithm"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself"
+msgstr "Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Check is the string has a valid German float number format like 124,56. A \",\" must be in the string for this validation!"
+msgstr "Check is the string has a valid German float number format like 124,56. A \",\" must be in the string for this validation!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and \"Now\""
+msgstr "Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and \"Now\""
+
+#. module: fso_forms
 #: field:fson.form,clear_session_data_after_submit:0
-msgid "Clear Session Data after Submit"
-msgstr "Form nach dem Senden leeren"
+msgid "Clear Form after Submit"
+msgstr "Clear Form after Submit"
 
 #. module: fso_forms
 #: field:fson.form_field,clearfix:0
@@ -44,6 +99,21 @@ msgstr "Clearfix"
 #: view:website:fso_forms.form
 msgid "Close"
 msgstr "Beenden"
+
+#. module: fso_forms
+#: field:fson.form_field,confirmation_email:0
+msgid "Confirmation Email"
+msgstr "Bestätigungs E-Mail"
+
+#. module: fso_forms
+#: field:fson.form,confirmation_email_template:0
+msgid "Confirmation Email Template"
+msgstr "Bestätigungs E-Mail Vorlage"
+
+#. module: fso_forms
+#: field:email.template,confirmation_email_template_fso_forms:0
+msgid "Confirmation email template fso forms"
+msgstr "Bestätigungs E-Mail Vorlage"
 
 #. module: fso_forms
 #: field:fson.form,create_uid:0
@@ -64,17 +134,22 @@ msgstr "Custom CSS"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
+msgid "Custom Frontend Validation Methods:"
+msgstr "Custom Frontend Validation Methods:"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
 msgid "Danger Zone"
 msgstr "Danger Zone"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:282
+#: code:addons/fso_forms/controllers/controller.py:394
 #, python-format
 msgid "Data was successfully submitted!"
 msgstr "Daten wurden erfolgreich übermittelt!"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:280
+#: code:addons/fso_forms/controllers/controller.py:397
 #, python-format
 msgid "Data was successfully updated!"
 msgstr "Daten wurden erfolgreich aktualisiert!"
@@ -86,12 +161,32 @@ msgid "Display Name"
 msgstr "Anzeigename"
 
 #. module: fso_forms
-#: help:fson.form_field,nodata:0
-msgid "Do not show record data in the website form if logged in."
-msgstr "Do not show record data in the website form if logged in."
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Displays a preview of the image for binary fields"
+msgstr "Displays a preview of the image for binary fields"
 
 #. module: fso_forms
-#: code:addons/fso_forms/models/fso_forms.py:55
+#: help:fson.form,email_only:0
+msgid "Do !NOT! create a record but only send an E-Mail to theinformation_email_receipients and the fields marked with"
+msgstr "Es wird kein Eintrag in der Datenbank erstellt sondern nur ein E-Mail versendet."
+
+#. module: fso_forms
+#: help:fson.form_field,readonly:0
+msgid "Do not allow changing the data of the field if logged in and a record exits already! WARNING: This has NO effect if no record exists of no user is logged in!"
+msgstr "Do not allow changing the data of the field if logged in and a record exits already! WARNING: This has NO effect if no record exists of no user is logged in!"
+
+#. module: fso_forms
+#: help:fson.form_field,nodata:0
+msgid "Do not show/pre-fill data in the website form if logged in."
+msgstr "Do not show/pre-fill data in the website form if logged in."
+
+#. module: fso_forms
+#: field:fson.form,email_only:0
+msgid "E-Mail Only"
+msgstr "Nur E-Mails versenden"
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fso_forms.py:102
 #, python-format
 msgid "Edit"
 msgstr "Editieren"
@@ -102,9 +197,44 @@ msgid "Edit Data Button"
 msgstr "Editieren Button"
 
 #. module: fso_forms
+#: field:fson.form,edit_existing_record_if_logged_in:0
+msgid "Edit existing record if logged in"
+msgstr "Bearbeite bestehenden Eintrag wenn angemeldet"
+
+#. module: fso_forms
+#: model:ir.model,name:fso_forms.model_email_template
+msgid "Email Templates"
+msgstr "E-Mail-Vorlagen"
+
+#. module: fso_forms
 #: help:fson.form,frontend_validation:0
 msgid "Enable JavaScript-Frontend-Form-Validation by jquery-validate!"
 msgstr "Aktiviere JavaScript-Frontend-Form-Validierung mittels jquery-validate!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Enter [Value] words or less."
+msgstr "Enter [Value] words or less."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Enter [Value] words or more."
+msgstr "Enter [Value] words or more."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Enter between [min max] words."
+msgstr "Enter between [min max] words."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Example Usage for combined rules:"
+msgstr "Example Usage for combined rules:"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Example Usage:"
+msgstr "Example Usage:"
 
 #. module: fso_forms
 #: model:res.groups,name:fso_forms.group_fso_forms_manager
@@ -144,9 +274,19 @@ msgid "Field"
 msgstr "Feld"
 
 #. module: fso_forms
+#: field:fson.form_field,field_model_name:0
+msgid "Field Model"
+msgstr "Field Model"
+
+#. module: fso_forms
 #: field:fson.form_field,style:0
 msgid "Field Style"
 msgstr "Feld Stil"
+
+#. module: fso_forms
+#: field:fson.form_field,field_ttype:0
+msgid "Field Type"
+msgstr "Field Type"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -160,6 +300,21 @@ msgid "File Name Field"
 msgstr "Feld für Dateinamen"
 
 #. module: fso_forms
+#: help:fson.form_field,mandatory:0
+msgid "For boolean fields mandatory means you have to choose 'yes'even if it is shown as a radio button!"
+msgstr "For boolean fields mandatory means you have to choose 'yes'even if it is shown as a radio button!"
+
+#. module: fso_forms
+#: field:fson.form_field,force_selection:0
+msgid "Force Selection"
+msgstr "Erzwinge Auswahl"
+
+#. module: fso_forms
+#: help:fson.form_field,force_selection:0
+msgid "Forces a selection for radio and selection styled fields"
+msgstr "Forces a selection for radio and selection styled fields"
+
+#. module: fso_forms
 #: field:fson.form_field,form_id:0
 msgid "Form"
 msgstr "Formular"
@@ -168,6 +323,16 @@ msgstr "Formular"
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Form Fields"
 msgstr "Formularfelder"
+
+#. module: fso_forms
+#: field:fson.form_field,form_model_name:0
+msgid "Form Model"
+msgstr "Form Model"
+
+#. module: fso_forms
+#: help:fson.form_field,form_model_name:0
+msgid "Form Model name"
+msgstr "Form Model Name"
 
 #. module: fso_forms
 #: field:fson.form,name:0
@@ -180,14 +345,35 @@ msgid "Form-Snippet-Areas"
 msgstr "Formular-Snippet-Bereiche"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]"
+msgstr "Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]"
+
+#. module: fso_forms
 #: model:ir.ui.menu,name:fso_forms.fso_forms_mainmenu
 msgid "Forms"
 msgstr "Formulare"
 
 #. module: fso_forms
 #: field:fson.form,frontend_validation:0
+#: field:fson.form_field,validation_rule:0
 msgid "Frontend Validation"
 msgstr "Frontend Validierung"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Frontend Validation Methods"
+msgstr "Frontend Validation Methods"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Help"
+msgstr "Hilfe"
+
+#. module: fso_forms
+#: field:fson.form_field,nodata:0
+msgid "Hide Data if logged in"
+msgstr "Hide Data if logged in"
 
 #. module: fso_forms
 #: field:fson.form,id:0
@@ -201,14 +387,21 @@ msgid "If set a button will appear on the Thank You page to go back to form to e
 msgstr "Aktiviert einen Button auf der Dankesseite der es ermöglicht zum Formular zurückzukehren und die Daten zu verändern.!"
 
 #. module: fso_forms
-#: help:fson.form,clear_session_data_after_submit:0
-msgid "If set the form will be empty after a successful submit!"
-msgstr "If set the form will be empty after a successful submit!"
+#: help:fson.form,edit_existing_record_if_logged_in:0
+msgid "If set and a user is logged in (e.g. by token) he can edit one existing record related to model linked to the form. If the current form model is not res.partner or res.user you can mark a res.partner or res.user many2one field of the form as the login field. The record in the form-model where the marked field matches the logged in user (or the users partner) can than be edited.\n"
+"Clear Session Data after Submit WILL NOT WORK if this is set and a user is logged in!"
+msgstr "If set and a user is logged in (e.g. by token) he can edit one existing record related to model linked to the form. If the current form model is not res.partner or res.user you can mark a res.partner or res.user many2one field of the form as the login field. The record in the form-model where the marked field matches the logged in user (or the users partner) can than be edited.\n"
+"Clear Session Data after Submit WILL NOT WORK if this is set and a user is logged in!"
 
 #. module: fso_forms
-#: help:fson.form,thank_you_page_after_submit:0
-msgid "If set the form will be empty if called after a successful submit without pressing the edit button on the thank you page!Clear Session Data after submitt has no effect then"
-msgstr "Aktiviert das ändern der Daten ausschließlich über den Button. Geht man über den Browser zurück oder öffent die Form erneut ist diese leer. Lösche Session Daten is ohne Effekt wenn dies gesetzt ist!"
+#: help:fson.form,clear_session_data_after_submit:0
+msgid "If set the form will be empty again after a successful submit!"
+msgstr "If set the form will be empty again after a successful submit!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Important Built In Frontend Validation Methods:"
+msgstr "Important Built In Frontend Validation Methods:"
 
 #. module: fso_forms
 #: field:fson.form_field,information:0
@@ -216,9 +409,34 @@ msgid "Information"
 msgstr "Information"
 
 #. module: fso_forms
+#: field:fson.form,information_email_receipients:0
+msgid "Information E-Mail Receipients"
+msgstr "Internes E-Mail: Empfänger"
+
+#. module: fso_forms
+#: field:fson.form,information_email_template:0
+msgid "Information Email Template"
+msgstr "Internes E-Mail: Vorlage"
+
+#. module: fso_forms
 #: help:fson.form_field,information:0
-msgid "Information Text. Snippet Area if no Field is not set!"
-msgstr "Informations Text oder Snippet Bereich wenn kein Feld gewählt wird!"
+msgid "Information Text or Snippet Area if no field is selected!"
+msgstr "Information Text or Snippet Area if no field is selected!"
+
+#. module: fso_forms
+#: field:res.partner,information_email_receipient_fso_form:0
+msgid "Information email receipient fso form"
+msgstr "Information email receipient fso form"
+
+#. module: fso_forms
+#: field:email.template,information_email_template_fso_forms:0
+msgid "Information email template fso forms"
+msgstr "Information email template fso forms"
+
+#. module: fso_forms
+#: help:fson.form_field,validation_rule:0
+msgid "JQuery Frontend Validation Settings"
+msgstr "JQuery Frontend Validation Settings"
 
 #. module: fso_forms
 #: field:fson.form_field,label:0
@@ -244,6 +462,21 @@ msgid "Last Updated on"
 msgstr "Aktualisiert am"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Letters, numbers, and underscores only"
+msgstr "Letters, numbers, and underscores only"
+
+#. module: fso_forms
+#: field:fson.form_field,login:0
+msgid "Login Record"
+msgstr "Login"
+
+#. module: fso_forms
+#: field:fson.form,logout_button_text:0
+msgid "Logout Button Text"
+msgstr "Logout Button Text"
+
+#. module: fso_forms
 #: field:fson.form_field,mandatory:0
 msgid "Mandatory"
 msgstr "Pflichtfeld"
@@ -254,15 +487,61 @@ msgid "Model"
 msgstr "Modell"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:201
+#: help:fson.form_field,field_model_name:0
+msgid "Model name"
+msgstr "Model name"
+
+#. module: fso_forms
+#: field:fson.form_field,no_text:0
+msgid "No Text"
+msgstr "Nein Text"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:237
 #, python-format
 msgid "No value for mandatory field %s"
 msgstr "Pflichtfeld %s wurde nicht ausgefüllt!"
 
 #. module: fso_forms
-#: field:fson.form_field,nodata:0
-msgid "NoData"
-msgstr "Nicht Vorausfüllen"
+#: code:addons/fso_forms/controllers/controller.py:232
+#, python-format
+msgid "No value selected for field %s"
+msgstr "Nichts ausgewählt für das Feld %s"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "No white space allowed"
+msgstr "No white space allowed"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Older \"accept\" file extension method"
+msgstr "Older \"accept\" file extension method"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Only digits are allowed (0-9)"
+msgstr "Only digits are allowed (0-9)"
+
+#. module: fso_forms
+#: help:fson.form_field,no_text:0
+msgid "Only for radio-styled boolean fields"
+msgstr "Only for radio-styled boolean fields"
+
+#. module: fso_forms
+#: help:fson.form_field,yes_text:0
+msgid "Only for radio-styled boolean fields!"
+msgstr "Only for radio-styled boolean fields!"
+
+#. module: fso_forms
+#: help:fson.form_field,login:0
+msgid "Only valid for many2one res.partner or res.user fields! If set and the logged user relates to the partner or is the user set in this field we try to load the corresponding record and it's data to prefil the form and update the existingrecord on form submit!"
+msgstr "Only valid for many2one res.partner or res.user fields! If set and the logged user relates to the partner or is the user set in this field we try to load the corresponding record and it's data to prefil the form and update the existingrecord on form submit!"
+
+#. module: fso_forms
+#: model:ir.model,name:fso_forms.model_res_partner
+msgid "Partner"
+msgstr "Partner"
 
 #. module: fso_forms
 #: field:fson.form_field,placeholder:0
@@ -275,19 +554,19 @@ msgid "Places a DIV box with .clearfix after this field"
 msgstr "Platziert eine DIV Box mit .clearfix nach diesem Feld. Dies ist wie ein erzwungener Umbruch!"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:211
+#: code:addons/fso_forms/controllers/controller.py:247
 #, python-format
 msgid "Please enter a valid date for field %s"
 msgstr "Bitte geben sie ein gültiges Datum für das Feld %s ein."
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:231
+#: code:addons/fso_forms/controllers/controller.py:268
 #, python-format
 msgid "Please enter a valid float for field %s"
 msgstr "Bitte geben Sie eine Gleitkommazahl für das Feld %s ein."
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:220
+#: code:addons/fso_forms/controllers/controller.py:256
 #, python-format
 msgid "Please enter a valid number for field %s"
 msgstr "Bitte geben Sie eine Nummer für das Feld %s ein."
@@ -303,9 +582,19 @@ msgid "Radio + SelectNone"
 msgstr "Radio + KeineAuswahl"
 
 #. module: fso_forms
+#: field:fson.form_field,readonly:0
+msgid "Readonly if logged in"
+msgstr "Schreibgeschützt wenn angemeldet"
+
+#. module: fso_forms
 #: field:fson.form,redirect_url:0
 msgid "Redirect URL"
 msgstr "Redirect URL"
+
+#. module: fso_forms
+#: help:fson.form,redirect_url_if_logged_in:0
+msgid "Redirect URL after form feedback if logged in! Do not set unless you really need to!If set the Thank You Page will not be called!"
+msgstr "Redirect URL after form feedback if logged in! Do not set unless you really need to!If set the Thank You Page will not be called!"
 
 #. module: fso_forms
 #: help:fson.form,redirect_url:0
@@ -313,9 +602,39 @@ msgid "Redirect URL after form feedback! Do not set unless you really need to!If
 msgstr "Redirect URL after form feedback! Do not set unless you really need to!If set the Thank You Page will not be called!"
 
 #. module: fso_forms
+#: field:fson.form,redirect_url_if_logged_in:0
+msgid "Redirect URL if logged in"
+msgstr "Redirect URL if logged in"
+
+#. module: fso_forms
+#: field:fson.form,redirect_url_if_logged_in_target:0
+msgid "Redirect URL if logged in target"
+msgstr "Redirect URL if logged in target"
+
+#. module: fso_forms
+#: field:fson.form,redirect_url_target:0
+msgid "Redirect URL target"
+msgstr "Redirect URL target"
+
+#. module: fso_forms
+#: field:fson.form,redirect_after_submit:0
+msgid "Redirect after successful submit!"
+msgstr "Redirect after successful submit!"
+
+#. module: fso_forms
+#: help:fson.form,redirect_after_submit:0
+msgid "Redirect after the successful submission of the form.If not set the user will stay on the form page"
+msgstr "Redirect after the successful submission of the form.If not set the user will stay on the form page"
+
+#. module: fso_forms
 #: selection:fson.form_field,style:0
 msgid "Selection"
 msgstr "Auswahl"
+
+#. module: fso_forms
+#: help:fson.form_field,confirmation_email:0
+msgid "Send a confirmation e-mail to this address"
+msgstr "Send a confirmation e-mail to this address"
 
 #. module: fso_forms
 #: field:fson.form,sequence:0
@@ -340,6 +659,21 @@ msgid "Show field in webpage"
 msgstr "Zeige Feld in der Webseite"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Simple add a semicolon \";\" seperated string of rules prefixed with \"data-rule-\"."
+msgstr "Simple add a semicolon \";\" seperated string of rules prefixed with \"data-rule-\"."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Special CSS widget classes"
+msgstr "Special CSS widget classes"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "String must be at least [number of characters] long"
+msgstr "String must be at least [number of characters] long"
+
+#. module: fso_forms
 #: help:fson.form,submission_url:0
 msgid "Subission URL for form data! Do not set unless you really need to!If set no record will be"
 msgstr "Subission URL for form data! Do not set unless you really need to!If set no record will be"
@@ -350,7 +684,17 @@ msgid "Submission URL"
 msgstr "Submission URL"
 
 #. module: fso_forms
-#: code:addons/fso_forms/models/fso_forms.py:30
+#: code:addons/fso_forms/controllers/controller.py:409
+#, python-format
+msgid "Submission failed!\n"
+"\n"
+"%s"
+msgstr "Submission failed!\n"
+"\n"
+"%s"
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fso_forms.py:44
 #, python-format
 msgid "Submit"
 msgstr "Senden"
@@ -376,9 +720,9 @@ msgid "Thank you page"
 msgstr "Dankesseite"
 
 #. module: fso_forms
-#: field:fson.form,thank_you_page_after_submit:0
-msgid "Thank you page after submit!"
-msgstr "Dankesseite nach erfolgreicher Übertragung!"
+#: help:fson.form_field,placeholder:0
+msgid "This is the placeholder text that will be shown inside of the input fields!"
+msgstr "This is the placeholder text that will be shown inside of the input fields!"
 
 #. module: fso_forms
 #: field:fson.form,snippet_area_top:0
@@ -386,17 +730,169 @@ msgid "Top Snippet Area"
 msgstr "Oberer Snippet-Bereich"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:285
-#, python-format
-msgid "Update of Record failed!\n"
-"\n"
-"%s"
-msgstr "Aktualisierung des Datensatzes fehlgeschlagen!\n"
-"\n"
-"%s"
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Use the string \"True\" for [Value] if not otherwise specified!"
+msgstr "Use the string \"True\" for [Value] if not otherwise specified!"
 
 #. module: fso_forms
-#: field:fson.form_field,validation_rule:0
-msgid "Validation Rule"
-msgstr "Validierungsregeln"
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Validates currencies with any given symbols"
+msgstr "Validates currencies with any given symbols"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!"
+msgstr "WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!"
+
+#. module: fso_forms
+#: view:website:fso_forms.form
+msgid "Yes"
+msgstr "Ja"
+
+#. module: fso_forms
+#: field:fson.form_field,yes_text:0
+msgid "Yes Text"
+msgstr "Ja Text"
+
+#. module: fso_forms
+#: view:website:fso_forms.thank_you_redirect
+msgid "You will be redirected shortly! If not please click"
+msgstr "You will be redirected shortly! If not please click"
+
+#. module: fso_forms
+#: selection:fson.form,redirect_url_if_logged_in_target:0
+#: selection:fson.form,redirect_url_target:0
+msgid "_blank"
+msgstr "_blank"
+
+#. module: fso_forms
+#: selection:fson.form,redirect_url_if_logged_in_target:0
+#: selection:fson.form,redirect_url_target:0
+msgid "_parent"
+msgstr "_parent"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "accept=True"
+msgstr "accept=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "alphanumeric=True"
+msgstr "alphanumeric=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "bic=True"
+msgstr "bic=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "creditcard=True"
+msgstr "creditcard=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "creditcardtypes=[mastercard,visa]"
+msgstr "creditcardtypes=[mastercard,visa]"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "currency=€,false"
+msgstr "currency=€,false"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "data-rule-dateDEBirthdate=True"
+msgstr "data-rule-dateDEBirthdate=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "data-rule-digits=True;data-rule-minlength=4"
+msgstr "data-rule-digits=True;data-rule-minlength=4"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "dateDEBirthdate=True"
+msgstr "dateDEBirthdate=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "digits=True"
+msgstr "digits=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "email=True"
+msgstr "email=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "extension=png,jpg"
+msgstr "extension=png,jpg"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "floatDE=True"
+msgstr "floatDE=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "floatDEmin=12.05"
+msgstr "floatDEmin=12.05"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "force_selection=True"
+msgstr "force_selection=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "fso-form-widget-image"
+msgstr "fso-form-widget-image"
+
+#. module: fso_forms
+#: view:website:fso_forms.thank_you_redirect
+msgid "here."
+msgstr "here."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "iban=True"
+msgstr "iban=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "integer=True"
+msgstr "integer=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "maxWords=[Number of Words]"
+msgstr "maxWords=[Number of Words]"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "minWords=[Number of Words]"
+msgstr "minWords=[Number of Words]"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "minlength=[number of characters]"
+msgstr "minlength=[number of characters]"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "nowhitespace=True"
+msgstr "nowhitespace=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "rangeWords=[Number-of-Words-min Number-of-Words-max]"
+msgstr "rangeWords=[Number-of-Words-min Number-of-Words-max]"
+
+#. module: fso_forms
+#: help:fson.form_field,field_ttype:0
+msgid "ttype"
+msgstr "ttype"
 

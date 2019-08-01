@@ -227,6 +227,11 @@ class FsoForms(http.Controller):
                     else:
                         f_value = field_data[f_name]
 
+                # Selection forced
+                if f.force_selection and f_name not in field_data:
+                    field_errors[f_name] = _("No value selected for field %s" % f_display_name)
+                    continue
+
                 # Mandatory
                 if f.mandatory and not f_value:
                     field_errors[f_name] = _("No value for mandatory field %s" % f_display_name)
@@ -367,10 +372,6 @@ class FsoForms(http.Controller):
         # HINT: This will either return a single record or an empty recordset (= form.model_id.model object)
         # HINT: The recordset user is always sudo() right now! :(
         #       TODO: add user fields to form for security restrictions
-        # TODO: If 'edit_existing_record_if_logged_in' is set in the form there is no way right now to create a new
-        #       record - which is just what we want since we expect one and only one record per form for this logged
-        #       in user. BUT if we once expand the generator for more than one record we need to find a mechanism
-        #       To allow this in the form - maybe a "Create new record" button
         record = self.get_fso_form_record(form)
 
         # HANDLE FORM SUBMISSION
@@ -408,11 +409,30 @@ class FsoForms(http.Controller):
                         errors.append(_('Submission failed!\n\n%s' % repr(e)))
                         pass
 
-                # Redirect to Thank you Page if set by the form
-                # HINT: This is the only page where you could edit the data again if not logged in by pressing the
-                #       edit button
-                if form.thank_you_page_after_submit and not warnings and not errors:
-                    # request.session['mikes_test'] = {'a': 1, 'b': {'c': 'form'}}
+                # Redirect to Thank you Page if set by the form or to the url selected
+                # HINT: The Thank You Page the only page where you could edit the data again if not logged in
+                #       by pressing the edit button
+                if form.redirect_after_submit and not warnings and not errors:
+                    # Thank you page
+                    redirect_url = "/fso/form/thanks/"+str(form.id)
+                    redirect_target = ""
+
+                    # Logged in
+                    if form.redirect_url_if_logged_in and request.website.user_id.id != request.uid:
+                        redirect_url = form.redirect_url_if_logged_in
+                        redirect_target = form.redirect_url_if_logged_in_target or ""
+
+                    # Not logged in
+                    elif form.redirect_url:
+                        redirect_url = form.redirect_url
+                        redirect_target = form.redirect_url_target or ""
+
+                    # If redirect_target is set we need to redirect by java script.
+                    if redirect_target in ['_parent', '_blank']:
+                        return http.request.render('fso_forms.thank_you_redirect',
+                                                   {'redirect_url': redirect_url,
+                                                    'redirect_target': redirect_target})
+
                     return request.redirect("/fso/form/thanks/"+str(form.id))
 
         # FINALLY RENDER THE FORM

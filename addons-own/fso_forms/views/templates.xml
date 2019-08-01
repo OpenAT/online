@@ -27,18 +27,45 @@
                         </div>
                         
                         <!-- EDIT FORM DATA BUTTON -->
-                        <div class="row fso_form_submit">
-                            <div class="col-lg-12">
-                                <a id="fso_form_edit_button" class="btn btn-primary btn-lg"
-                                    t-att-href="'/fso/form/thanks/'+str(form.id)+'?edit_form_data=True'">
-                                    <span t-field="form.thank_you_page_edit_data_button"/>
-                                </a>
+                        <t t-if="form.thank_you_page_edit_data_button">
+                            <div class="row fso_form_submit">
+                                <div class="col-lg-12">
+                                    <a id="fso_form_edit_button" class="btn btn-primary btn-lg"
+                                        t-att-href="'/fso/form/thanks/'+str(form.id)+'?edit_form_data=True'">
+                                        <span t-field="form.thank_you_page_edit_data_button"/>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        </t>
                         
                     </div>
                 </div>
             </t>
+        </template>
+
+        <!-- Website Template: thank_you_redirect -->
+        <template id="thank_you_redirect" name="FSON Forms Website Thank You Redirection Template" page="True">
+            <html>
+                <head>
+                    <t t-if="redirect_target == '_parent'">
+                        <script>
+                            window.top.location.href = "<t t-esc="redirect_url"/>";
+                        </script>
+                    </t>
+                    <t t-if="redirect_target == '_blank'">
+                        <script>
+                            window.open("<t t-esc="redirect_url"/>", "<t t-esc="redirect_target"/>");
+                        </script>
+                    </t>
+                </head>
+                <body>
+                    <p>You will be redirected shortly! If not please click
+                        <a t-att-href="redirect_url" t-att-target="redirect_target">
+                            here.
+                        </a>
+                    </p>
+                </body>
+            </html>
         </template>
 
 
@@ -125,7 +152,9 @@
                                                                        t-att-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"
                                                                        t-att-checked="True if record[f_name] else ''"
                                                                        t-att-disabled="f_readonly"
-                                                                       t-att-required="f_required"/>
+                                                                       t-att-required="f_required"
+                                                                       t-att="validation_rule"
+                                                                />
                                                             </t>
                                                             
                                                             <t t-raw="field.label"/>
@@ -145,6 +174,7 @@
                                                                            t-att-checked="True if not field.nodata and (record and record[f_name]) else True if kwargs.get(f_name, None) == 'True' else ''"
                                                                            t-att-disabled="f_readonly"
                                                                            t-att-required="f_required"
+                                                                           t-att="validation_rule"
                                                                     />
                                                                     <t t-if="field.yes_text"><t t-raw="field.yes_text"/></t>
                                                                     <t t-if="not field.yes_text">Yes</t>
@@ -160,6 +190,7 @@
                                                                            t-att-checked="True if not field.nodata and (record and not record[f_name]) else True if kwargs.get(f_name, None) == 'False' else ''"
                                                                            t-att-disabled="f_readonly"
                                                                            t-att-required="f_required"
+                                                                           t-att="validation_rule"
                                                                     />
                                                                     <t t-if="field.no_text"><t t-raw="field.no_text"/></t>
                                                                     <t t-if="not field.no_text">No</t>
@@ -329,7 +360,9 @@
                                                                         t-att-name="f_name"
                                                                         class="form-control"
                                                                         t-att-disabled="f_readonly"
-                                                                        t-att-required="f_required">
+                                                                        t-att-required="f_required"
+                                                                        t-att="validation_rule"
+                                                                >
                                                                     <!-- Default empty option -->
                                                                     <option value=""><t t-esc="field.placeholder"/></option>
                                                                     <!-- Selection Values as options -->

@@ -34,7 +34,7 @@
                                 <!-- ATTENTION: We pass the current model_id to the context of the inner tree view!
                                                 This is the only way without saving first that i found -->
                                 <field name="field_ids"
-                                       context="{'form_model_id': model_id}">
+                                       context="{'form_model_id': model_id, 'form_edit_existing_record_if_logged_in': edit_existing_record_if_logged_in}">
                                     <tree string="Fields" editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="show"/>
@@ -57,13 +57,15 @@
                                         <field name="no_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
                                         <field name="mandatory"/>
                                         <field name="nodata"/>
-                                        <field name="readonly"/>
-                                        <field name="login"/>
+                                        <field name="readonly" readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"/>
+                                        <field name="login" attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"/>
+                                        <!--<field name="login"/>-->
                                         <field name="confirmation_email" attrs="{'readonly': [('field_ttype','!=','char')]}"/>
                                         <field name="validation_rule"/>
                                         <field name="css_classes"/>
                                         <field name="clearfix"/>
                                         <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
+                                        <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
                                     </tree>
                                 </field>
                             </page>
@@ -75,7 +77,7 @@
                             </page>
                             <page string="Thank You Page">
                                 <group>
-                                    <field name="thank_you_page_after_submit"/>
+                                    <field name="redirect_after_submit"/>
                                     <field name="thank_you_page_edit_data_button"/>
                                     <field name="thank_you_page_snippets"/>
                                 </group>
@@ -85,8 +87,54 @@
                                     <field name="frontend_validation"/>
                                     <field name="submission_url"/>
                                     <field name="redirect_url"/>
+                                    <field name="redirect_url_target"/>
+                                    <field name="redirect_url_if_logged_in"/>
+                                    <field name="redirect_url_if_logged_in_target"/>
                                     <field name="custom_css"/>
                                 </group>
+                            </page>
+                            <page string="Help">
+                                <!--<group>-->
+                                <p><br/></p>
+
+                                <h1>Special CSS widget classes</h1>
+                                <p><code>fso-form-widget-image</code> Displays a preview of the image for binary fields</p>
+                                <p><br/></p>
+
+                                <h1>Frontend Validation Methods</h1>
+                                <p>Simple add a semicolon ";" seperated string of rules prefixed with "data-rule-".</p>
+                                <p>Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]</p>
+                                <p>Use the string "True" for [Value] if not otherwise specified!</p>
+                                <p>Example Usage: <code>data-rule-dateDEBirthdate=True </code></p>
+                                <p>Example Usage for combined rules: <code>data-rule-digits=True;data-rule-minlength=4</code></p>
+                                <p><br/></p>
+
+                                <h4>Custom Frontend Validation Methods:</h4>
+                                <p><code>dateDEBirthdate=True</code> Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and "Now"</p>
+                                <p><code>floatDE=True</code> Check is the string has a valid German float number format like 124,56. A "," must be in the string for this validation!</p>
+                                <p><code>floatDEmin=12.05</code> Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a "." and not a ","</p>
+                                <p><code>force_selection=True</code> WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!</p>
+                                <p><br/></p>
+
+                                <h4>Important Built In Frontend Validation Methods:</h4>
+                                <p><code>email=True</code> Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!</p>
+                                <p><code>digits=True</code> Only digits are allowed (0-9)</p>
+                                <p><code>minlength=[number of characters]</code> String must be at least [number of characters] long</p>
+                                <p><code>bic=True</code> BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.</p>
+                                <p><code>accept=True</code> Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg</p>
+                                <p><code>maxWords=[Number of Words]</code> Enter [Value] words or less.</p>
+                                <p><code>minWords=[Number of Words]</code> Enter [Value] words or more.</p>
+                                <p><code>rangeWords=[Number-of-Words-min Number-of-Words-max]</code> Enter between [min max] words.</p>
+                                <p><code>alphanumeric=True</code> Letters, numbers, and underscores only</p>
+                                <p><code>creditcard=True</code> Check if the string may be a credit card based on the Luhn algorithm</p>
+                                <p><code>creditcardtypes=[mastercard,visa]</code> Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all </p>
+                                <p><code>currency=€,false</code> Validates currencies with any given symbols </p>
+                                <p><code>extension=png,jpg</code> Older "accept" file extension method</p>
+                                <p><code>iban=True</code> Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself</p>
+                                <p><code>integer=True</code> A positive or negative non-decimal number</p>
+                                <p><code>nowhitespace=True</code> No white space allowed</p>
+                                <p><br/></p>
+                                <!--</group>-->
                             </page>
                         </notebook>
                         

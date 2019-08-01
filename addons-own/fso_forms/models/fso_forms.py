@@ -26,9 +26,21 @@ class FSONForm(models.Model):
     submission_url = fields.Char(string="Submission URL", default=False,
                                  help="Subission URL for form data! Do not set unless you really need to!"
                                       "If set no record will be")
+
     redirect_url = fields.Char(string="Redirect URL", default=False,
                                help="Redirect URL after form feedback! Do not set unless you really need to!"
                                     "If set the Thank You Page will not be called!")
+    redirect_url_target = fields.Selection(selection=[('_parent', '_parent'),
+                                                      ('_blank', '_blank')],
+                                           string="Redirect URL target")
+    redirect_url_if_logged_in = fields.Char(string="Redirect URL if logged in", default=False,
+                                            help="Redirect URL after form feedback if logged in! "
+                                                 "Do not set unless you really need to!"
+                                                 "If set the Thank You Page will not be called!")
+    redirect_url_if_logged_in_target = fields.Selection(selection=[('_parent', '_parent'),
+                                                                   ('_blank', '_blank')],
+                                                        string="Redirect URL if logged in target")
+
     submit_button_text = fields.Char(string="Submit Button Text", default=_('Submit'), required=True, translate=True)
     logout_button_text = fields.Char(string="Logout Button Text", translate=True)
 
@@ -80,10 +92,11 @@ class FSONForm(models.Model):
                                                     inverse_name="information_email_receipient_fso_form")
 
     # Thank you page after submit
-    thank_you_page_after_submit = fields.Boolean(string="Thank you page after submit!", default=True,
-                                                 help="If set the form will be empty if called after a successful "
-                                                      "submit without pressing the edit button on the thank you page!"
-                                                      "Clear Session Data after submit has no effect then")
+    # ATTENTION: The field should be called redirect_after_submit :(
+    redirect_after_submit = fields.Boolean(string="Redirect after successful submit!", default=True,
+                                           oldname="thank_you_page_after_submit",
+                                           help="Redirect after the successful submission of the form."
+                                                "If not set the user will stay on the form page")
     # Technically this will pop the "clear_session_data" key from the form session data if set
     # so on the next hit the session data is still there and will not be removed!
     thank_you_page_edit_data_button = fields.Char(string="Edit Data Button", default=_('Edit'), translate=True,
@@ -184,6 +197,8 @@ class FSONFormField(models.Model):
                                         ('radio_selectnone', 'Radio + SelectNone'),
                                         ('radio', 'Radio')],
                              string='Field Style')
+    force_selection = fields.Boolean(string="Force Selection", help="Forces a selection for radio and selection "
+                                                                    "styled fields")
     information = fields.Html(string='Information', help='Information Text or Snippet Area if no field is selected!',
                               translate=True)
 
