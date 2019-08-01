@@ -18,6 +18,9 @@
                         <field name="state"/>
                         <field name="main_address"/>
                         <field name="last_email_update"/>
+                        <field name="bestaetigt_am_um"/>
+                        <field name="bestaetigt_typ"/>
+                        <field name="bestaetigt_herkunft"/>
                         <!--<field name="last_forced_main_address_set"/>-->
                     </group>
                 </group>
@@ -55,6 +58,9 @@
                 <field name="email"/>
                 <field name="partner_id"/>
                 <field name="main_address"/>
+                <field name="bestaetigt_am_um"/>
+                <field name="bestaetigt_typ"/>
+                <!--<field name="bestaetigt_herkunft"/>                -->
                 <!--<field name="forced_main_address" string="Forced"/>-->
                 <field name="state"/>
             </tree>
@@ -69,6 +75,9 @@
             <search string="PersonEmail">
                 <field name="id"/>
                 <field name="email"/>
+                <field name="bestaetigt_am_um"/>
+                <field name="bestaetigt_typ"/>
+                <field name="bestaetigt_herkunft"/>
                 <!--<field name="forced_main_address"/>-->
             </search>
         </field>
