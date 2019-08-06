@@ -24,13 +24,13 @@ class ResPartner(models.Model):
     # ATTENTION: These fields are here because they may be useful even without fso_con_zmr
     donation_deduction_optout_web = fields.Boolean(string='Donation Deduction OptOut Web',
                                                    help="Donation Deduction OptOut set by Donor",
-                                                   track_visibility='onchange', index=True,)
+                                                   track_visibility='onchange')
     donation_deduction_disabled = fields.Boolean(string='Donation Deduction Disabled',
                                                  help="Donation Deduction processing disabled by System",
-                                                 track_visibility='onchange', index=True,)
+                                                 track_visibility='onchange')
 
     legal_terms_web = fields.Boolean(string='Accept Legal Terms Web')
-    birthdate_web = fields.Date(string='Birthdate Web', index=True,)
+    birthdate_web = fields.Date(string='Birthdate Web')
     anrede_individuell = fields.Char(string='Individuelle Anrede',
                                      help="Eine individuelle Anrede die für den Schriftverkehr verwendet wird.")
     name_zwei = fields.Char(string='Name Zwei',
