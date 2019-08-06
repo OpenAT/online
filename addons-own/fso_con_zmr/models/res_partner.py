@@ -38,15 +38,16 @@ class ResPartnerZMRGetBPK(models.Model):
                                       string="BPK Requests", oldname="BPKRequestIDS")
     # BPK forced request values
     # TODO: Make sure forced BPK fields are always all filled or none (now only done by attr in the form view)
-    bpk_forced_firstname = fields.Char(string="BPK Forced Firstname", index=True, oldname="BPKForcedFirstname")
-    bpk_forced_lastname = fields.Char(string="BPK Forced Lastname", index=True, oldname="BPKForcedLastname")
-    bpk_forced_birthdate = fields.Date(string="BPK Forced Birthdate", index=True, oldname="BPKForcedBirthdate")
+    bpk_forced_firstname = fields.Char(string="BPK Forced Firstname", oldname="BPKForcedFirstname")
+    bpk_forced_lastname = fields.Char(string="BPK Forced Lastname", oldname="BPKForcedLastname")
+    bpk_forced_birthdate = fields.Date(string="BPK Forced Birthdate", oldname="BPKForcedBirthdate")
     bpk_forced_zip = fields.Char(string="BPK Forced ZIP", oldname="BPKForcedZip")
     bpk_forced_street = fields.Char(string="BPK Forced Street")
 
     # A Cron jobs that starts every minute will process all partners with bpk_request_needed set.
     # HINT: Normally set at res.partner write() (or create()) if any BPK relevant data was set or has changed
     # HINT: Changed from readonly to writeable to allow users to manually force BPK requests
+    # ATTENTION: This was the only index used by the postgresql database
     bpk_request_needed = fields.Datetime(string="BPK Request needed", readonly=False, index=True,
                                          oldname="BPKRequestNeeded")
 
@@ -80,7 +81,7 @@ class ResPartnerZMRGetBPK(models.Model):
         ('error_max_tries', 'Error (max retries reached)'),     # Too many tries with unkown error (dr red)
         ('error', 'Error')],                                    # Not found with current partner data (dr red)
         string="BPK State", readonly=True,
-        track_visibility='onchange', index=True)
+        track_visibility='onchange')
 
     # HINT: Is computed by set_bpk_state()
     bpk_error_code = fields.Char(string="BPK-Error Code", readonly=True)
