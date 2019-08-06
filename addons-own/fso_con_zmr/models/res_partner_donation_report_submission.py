@@ -1563,10 +1563,16 @@ class DonationReportSubmission(models.Model):
         # Send warning e-mail if scheduled actions are not active
         logger.info("Check Scheduled-Actions on init (install or update)")
 
-        for xml_ref in ('ir_cron_scheduled_set_bpk', 'ir_cron_scheduled_set_bpk_state',
-                        'ir_cron_scheduled_set_donation_report_state', 'ir_cron_scheduled_donation_report_submission',
+        for xml_ref in ('ir_cron_scheduled_set_bpk',
+                        'ir_cron_scheduled_set_bpk_state',
+                        'ir_cron_scheduled_set_donation_report_state',
+                        'ir_cron_scheduled_donation_report_submission',
                         'ir_cron_scheduled_databox_check'):
-            action = self.env.ref('fso_con_zmr.'+xml_ref, raise_if_not_found=False)
+            try:
+                action = self.env.ref('fso_con_zmr.'+xml_ref, raise_if_not_found=False)
+            except ValueError:
+                logger.error('self.env.ref() raised a ValueError even if raise_if_not_found=False?!?')
+                action = None
             if not action or not action.active:
                 name = action.name if action else xml_ref
                 msg = "WARNING: Scheduled Action '%s' is disabled!" % name
@@ -1574,7 +1580,11 @@ class DonationReportSubmission(models.Model):
 
         # Recreate odoo scheduler task for autom. donation report submission if interval or type where changed by user
         logger.info("Check if the scheduled task for autom. donation report submission must be renewed.")
-        task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission', raise_if_not_found=False)
+        try:
+            task = self.env.ref('fso_con_zmr.ir_cron_scheduled_donation_report_submission', raise_if_not_found=False)
+        except ValueError:
+            logger.error('self.env.ref() raised a ValueError even if raise_if_not_found=False?!?')
+            task = None
         if task and (task.interval_number != 1 or task.interval_type != 'days'):
             logger.warning("fso_con_zmr check_scheduled_tasks(). Deleting cron task %s on install/update to "
                            "recreate it with correct values")

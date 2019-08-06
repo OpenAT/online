@@ -424,9 +424,10 @@ class CompanyAustrianZMRSettings(models.Model):
         # ATTENTION: self is still empty but the company exits in the 'res' recordset already
         res = super(CompanyAustrianZMRSettings, self).create(values)
 
-        if res:
-            # Update donation reports
-            res.update_donation_reports()
+        # HINT: If we create a new company no donation reports can exits for the new company
+
+        # HINT: We would need to rerun the BPK search if we create a new company with configured ZMR Access
+        #       Since this is done by the scheduler (cron) it is not necessary to do it here also.
 
         return res
 
