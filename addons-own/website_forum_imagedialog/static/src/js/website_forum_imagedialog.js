@@ -12,7 +12,7 @@
         var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
         var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
         var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
-        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
+//        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
 
         if (wfiStyleText) {
             $('.' + wfiClassName).attr('style', 'text-align:' + wfiStyleText[1] + ';');
@@ -20,9 +20,9 @@
             $('.' + wfiClassName).attr('style', 'margin-left:' + wfiStyleIndent[1] + ';');
         } else if (wfiStyleColor) {
             $('.' + wfiClassName).attr('style', 'color:#' + wfiStyleColor[1] + ';');
-        } else if (wfiStyleBG) {
+        } /*else if (wfiStyleBG) {
             $('.' + wfiClassName).attr('style', 'background-color:#' + wfiStyleBG[1] + ';');
-        }
+        }*/
     }
 
     // Check if in ask/edit question
@@ -86,39 +86,44 @@
                     for (var j = 0; j < wfi_content_children.length; j++) {
                         var wfiChildClassName = wfi_content_children[j].className;
                         var wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
-                        var wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
+//                        var wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
 
                         if (wfiStyleColor) {
                             wfi_content_children[j].style.color = hexToRGB(wfiStyleColor[1]);
-                        } else if (wfiStyleBG) {
+                        } /*else if (wfiStyleBG) {
                             wfi_content_children[j].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                        }
+                        }*/
 
                         if (wfi_content_children[j].children.length) {
-                            if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                                wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                            } else {
-
-                                if (wfi_content_children[j].children[0].children.length) {
-                                    if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                        wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                                        wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                                    } else {
-                                        wfi_content_children[j]
-                                    }
-
-                                } else if (wfi_content_children[j].children.length) {
-                                    var wfi_content_grandchildren = wfi_content_children[j].children;
-                                    for (var k = 0; k < wfi_content_grandchildren.length; k++) {
-                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                            wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
-                                            wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-
-                                        }
-                                    }
-                                }
+                            if (wfi_content_children[j].children[0].className.match(/wfi_style_color_(.*)/)) {
+                                wfiStyleColor = wfi_content_children[j].children[0].className.match(/wfi_style_color_(.*)/);
+                                wfi_content_children[j].children[0].style.color = hexToRGB(wfiStyleColor[1]);
                             }
+
+//                            if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+//                                wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+//                                wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+//                            } else {
+//
+//                                if (wfi_content_children[j].children[0].children.length) {
+//                                    if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+//                                        wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+//                                        wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+//                                    } else {
+//                                        wfi_content_children[j]
+//                                    }
+//
+//                                } else if (wfi_content_children[j].children.length) {
+//                                    var wfi_content_grandchildren = wfi_content_children[j].children;
+//                                    for (var k = 0; k < wfi_content_grandchildren.length; k++) {
+//                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
+//                                            wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
+//                                            wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+//
+//                                        }
+//                                    }
+//                                }
+//                            }
                         }
                     }
                 }
@@ -147,6 +152,7 @@
             // Helpers to check if something changed in a deeper level
             var innerChanged = false;
             var innerGrandChanged = false;
+            var changeOccured = false;
             // For Selection of content after change
             var body = ev.editor.document.getBody();
             var selection = ev.editor.getSelection();
@@ -166,13 +172,93 @@
                             var wfi_content_grandchildren = wfi_content_children[j].children;
                             for (var k = 0; k < wfi_content_grandchildren.length; k++) {
                                 if (wfi_content_grandchildren[k].style[0]) {
+                                    console.log('grandchildren')
                                     if (wfi_content_grandchildren[k].style.backgroundColor) {
-                                        wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
-                                        wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
+                                        console.log('grand child bg')
+                                        console.log(wfi_content_children)
+                                        console.log(wfi_content_grandchildren[k])
+                                        console.log(wfi_content_grandchildren[k].parentNode)
+//                                        if (wfi_content_grandchildren[k].children.length) {
+//                                                console.log('grandchild deep')
+                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                            console.log('grandchild deep bg')
+                                            console.log()
+                                            console.log(body.getChild(0).$.childNodes)
+                                            console.log(body.getChild(0).getChild(0).getChild(0))
+                                            console.log(body.getChild(0).getChild(0).getChild(0).$.innerHTML)
+                                            console.log(body.getChild(0).getChild(0).getChild(0).$.style.backgroundColor)
+                                            wfi_content_grandchildren[k].className = '';
+                                            wfi_content_grandchildren[k].style.backgroundColor = body.getChild(0).getChild(0).getChild(0).$.style.backgroundColor;
+                                            wfi_content_grandchildren[k].innerText = body.getChild(0).getChild(0).getChild(0).$.innerText;
+
+
+
+//                                            wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
+//                                            wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
+                                            changeOccured = true;
+                                        } else if (wfi_content_children[j].style.color) {
+                                            console.log('grand bg color check')
+//                                            if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
+//                                                console.log('grandchild deep')
+////                                                wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
+//                                                wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
+//                                            } else {
+                                                var color = wfi_content_grandchildren[k].style.backgroundColor.match(/rgb(.*)/);
+                                                wfi_content_grandchildren[k].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                                                innerGrandChanged = true;
+
+//                                            }
+                                        }
+                                    } else if (wfi_content_grandchildren[k].style.color && !changeOccured) {
+                                        console.log('grand child color')
+                                        if (wfi_content_grandchildren[k].children.length) {
+                                            if (wfi_content_grandchildren[k].children[0].className.indexOf('wfi_style_color_') > -1) {
+                                                console.log('grandchild deep color')
+
+                                                wfi_content_grandchildren[k].innerHTML = wfi_content_grandchildren[k].children[0].innerHTML;
+
+                                                if (wfi_content_grandchildren[k].children[0]) {
+                                                    wfi_content_grandchildren[k].children[0].className = '';
+                                                }
+                                                innerGrandChanged = true;
+                                            }
+                                        }
+
+                                        if (!innerGrandChanged) {
+                                            console.log('first color grandchild')
+                                            var color = wfi_content_grandchildren[k].style.color.match(/rgb(.*)/);
+                                            wfi_content_grandchildren[k].className = 'wfi_style_color_' + fullColorHex(color[1]);
+
+                                            innerGrandChanged = true;
+                                        }
+                                    }
+
+                                    if (changeOccured) {
+                                        var color;
+
+                                        if (wfi_content_grandchildren[k].style.color) {
+                                            color = wfi_content_grandchildren[k].style.color.match(/rgb(.*)/);
+                                            wfi_content_grandchildren[k].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                                        } else if (wfi_content_grandchildren[k].style.backgroundColor) {
+                                            color = wfi_content_grandchildren[k].style.backgroundColor.match(/rgb(.*)/);
+                                            wfi_content_grandchildren[k].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                                        }
+
                                         // select the current element
-                                        range.selectNodeContents( body.getChild(j) );
-                                        selection.selectRanges( [ range ] );
+                                        for (var n = 0; n < body.getChildCount(); n++) {
+                                            console.log(body.getChild(n).$.childNodes)
+                                            if (body.getChild(n).$.childNodes.length > 0)  {
+                                                var childNodes = body.getChild(n).$.childNodes;
+                                                for (var m = 0; m < childNodes.length; m++) {
+                                                    if (wfi_content_children[j].className === childNodes[m].className) {
+                                                        range.selectNodeContents( body.getChild(n).getChild(m) );
+                                                        selection.selectRanges( [ range ] );
+                                                    }
+                                                }
+                                            }
+                                        }
                                         innerGrandChanged = true;
+                                        changeOccured = false;
                                     }
                                 }
                             }
@@ -180,36 +266,66 @@
 
                         var child_style = wfi_content_children[j].style;
                         if (child_style[0] && !innerGrandChanged) {
-                            if (wfi_content_children[j].children.length){
+                            if (wfi_content_children[j].children.length) {
                                 if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
+                                    console.log('color grand')
                                     wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
-                                    // select the current element
-                                    range.selectNodeContents( body.getChild(j) );
-                                    selection.selectRanges( [ range ] );
-                                    if (wfi_content_children[j].children[0]) {
-                                        wfi_content_children[j].children[0].className = '';
-                                    }
+                                    changeOccured = true;
                                 }
                             }
 
-                            if (wfi_content_children[j].style.color) {
+                            if (wfi_content_children[j].style.color && !innerChanged) {
                                 var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
                                 wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
+
                                 innerChanged = true;
                             }
 
-                            if ((wfi_content_children[j].style.backgroundColor)) {
-                                if (!wfi_content_children[j].parentElement.style.color) {
+                            if (wfi_content_children[j].style.backgroundColor && !innerChanged) {
+                                console.log('child bg')
+                                if (wfi_content[i].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                    console.log('test')
                                     wfi_content[i].style.backgroundColor = wfi_content_children[j].style.backgroundColor;
                                     wfi_content[i].innerHTML = wfi_content_children[j].innerHTML;
-                                    // select the current element
-                                    range.selectNodeContents( body.getChild(i) );
-                                    selection.selectRanges( [ range ] );
-                                } else {
+                                    changeOccured = true;
+
+                                } else if (!wfi_content_children[j].className) {
+                                    console.log('else')
                                     var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
                                     wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+
                                     innerChanged = true;
                                 }
+                            }
+
+                            if (changeOccured) {
+                                console.log('change occured')
+                                // select the current element
+                                var color;
+                                if (wfi_content_children[j].style.color) {
+                                    color = wfi_content_children[j].style.color.match(/rgb(.*)/);
+                                    wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                                } else if (wfi_content_children[j].style.backgroundColor) {
+                                    color  = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
+                                    wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                                }
+
+                                for (var n = 0; n < body.getChildCount(); n++) {
+                                    if (body.getChild(n).$.childNodes.length > 0)  {
+                                        var childNodes = body.getChild(n).$.childNodes;
+                                        for (var m = 0; m < childNodes.length; m++) {
+                                            if (wfi_content_children[j].className === childNodes[m].className) {
+                                                range.selectNodeContents( body.getChild(n).getChild(m) );
+                                                selection.selectRanges( [ range ] );
+                                            }
+                                        }
+                                    }
+                                }
+                                if (wfi_content_children[j].children[0]) {
+                                    wfi_content_children[j].children[0].className = '';
+                                }
+                                innerChanged = true;
+                                changeOccured = false;
                             }
                         }
 
@@ -240,19 +356,38 @@
                     }
 
                     if (parent_style.color) {
+                        console.log('parent color')
                         if (wfi_content[i].children.length) {
                             wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
                             // select the current element
-                            range.selectNodeContents( body.getChild(i) );
-                            selection.selectRanges( [ range ] );
+                            var color = parent_style.color.match(/rgb(.*)/);
+                            wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                            for (var n = 0; n < body.getChildCount(); n++) {
+                                if (wfi_content[i].className === body.getChild(n).$.className) {
+                                    range.selectNodeContents( body.getChild(n) );
+                                    selection.selectRanges( [ range ] );
+                                }
+                            }
+
+                            innerChanged = true;
                         }
-                        var color = parent_style.color.match(/rgb(.*)/);
-                        wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
+
+                        if (!innerChanged) {
+                            var color = parent_style.color.match(/rgb(.*)/);
+                            wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                        }
                     }
 
                     if (parent_style.backgroundColor) {
+                        console.log('parent bg')
                         var color = parent_style.backgroundColor.match(/rgb(.*)/);
                         wfi_content[i].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+//                        for (var n = 0; n < body.getChildCount(); n++) {
+//                            if (wfi_content[i].className === body.getChild(n).$.className) {
+//                                range.selectNodeContents( body.getChild(n) );
+//                                selection.selectRanges( [ range ] );
+//                            }
+//                        }
                     }
 
                 } else if (!parent_style[0]) {
@@ -336,13 +471,13 @@
                     return;
                 }
 
-                element = get_selected_link(editor) || evt.data.element;
-                if (!(element.is('a') && is_editable_node(element))) {
-                    return;
-                }
-
-                editor.getSelection().selectElement(element);
-                link_dialog(editor);
+//                element = get_selected_link(editor) || evt.data.element;
+//                if (!(element.is('a') && is_editable_node(element))) {
+//                    return;
+//                }
+//
+//                editor.getSelection().selectElement(element);
+//                link_dialog(editor);
             }, null, null, 500);
 
 //            //noinspection JSValidateTypes
@@ -375,6 +510,14 @@
                 label: 'Image',
                 command: 'cimage',
                 toolbar: 'insert,10',
+            });
+
+            editor.addCommand( 'removeAnchor', new CKEDITOR.removeAnchorCommand() );
+            editor.ui.addButton('removeAnchor', {
+                label: 'Remove Anchor',
+                command: 'removeAnchor',
+                toolbar: 'insert,10',
+                icon: '/website_forum_imagedialog/static/src/icons/anchor_remove.png'
             });
 //
 //            editor.addCommand('unlink', {
@@ -498,8 +641,19 @@
             // Ensure no config file is loaded
             customConfig: '',
             // Disable ACF
-            allowedContent: true,
-            extraAllowedContent: 'span style div',
+            allowedContent: true,/*{
+                'p h1 li': {
+                    styles: 'text-align, margin-left'
+                },
+                a: {
+                    attributes: '!href'
+                },
+                'strong em u s sub sup br blockquote ol ul li': true,
+                span: {
+                    styles: 'color, background-color'
+                },
+            },*/
+//			extraAllowedContent: '*(*)',
             // Don't insert paragraphs around content in e.g. <li>
             autoParagraph: false,
             // Don't automatically add &nbsp; or <br> in empty block-level
@@ -522,7 +676,7 @@
                         "Indent", "Outdent", "Link", "Unlink", "Image"
                     ]},{
                     name: 'links', items: [
-                        "Anchor"
+                        "Anchor", "removeAnchor"
                     ]},{
                     name: 'basicstyles', items: [
                         "Underline", "Strike", "Subscript",
