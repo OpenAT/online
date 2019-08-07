@@ -678,18 +678,6 @@
                             </li>
                         </div>
 
-                        <!---->
-                        <!-- Snippet anchor -->
-                        <div data-snippet-option-id="anchor"
-                             data-selector=".snippet_block">
-                            <li>
-                                <a class="js_anchor"
-                                   title="Use anchors to go directly to a section of your page, appending #anchor to the URL">
-                                    Set anchor
-                                </a>
-                            </li>
-                        </div>
-                        <!---->
 
                         <!-- drop_in -->
                         <!-- ======= -->
