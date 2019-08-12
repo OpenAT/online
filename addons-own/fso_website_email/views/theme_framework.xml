@@ -242,7 +242,11 @@
     
     <!-- COMMON <body> -->
     <template id="theme_body_common">
-        
+
+        <!-- =============================================================== -->
+        <!-- MULTI MAILER TRACKING IMAGE (track email opened, always loaded) -->
+        <!-- =============================================================== -->
+        <div id="open_email_tracking" width="1" height="1" style="display:none !important; line-height:1px; font-size: 1px; height: 1px; margin: 0px; padding: 0px;">%tracker%</div>
         
         <!-- ============== -->
         <!-- EDITOR ENABLED -->
@@ -290,6 +294,8 @@
         <t t-if="load_theme_framework">
             <t t-call-assets="fso_website_email.theme_framework_assets" t-css="false"/>
         </t>
+
+
         
     </template>
 
