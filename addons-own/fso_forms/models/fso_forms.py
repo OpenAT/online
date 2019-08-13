@@ -127,6 +127,33 @@ class FSONForm(models.Model):
                 raise ValidationError("A field is only allowed once in a form! Duplicated fields: %s "
                                       "" % str(duplicated_fields))
 
+    @api.constrains('email_only', 'field_ids', 'confirmation_email_template', 'information_email_template',
+                    'information_email_receipients')
+    def constrain_emails(self):
+        for r in self:
+            if r.email_only:
+                if not (r.information_email_template or r.confirmation_email_template):
+                    raise ValidationError('E-Mail only forms require an e-mail template!')
+                if r.information_email_template.auto_delete or r.confirmation_email_template.auto_delete:
+                    raise ValidationError('E-Mail Template field "auto_delete" must be "False" for email only forms!')
+            if r.information_email_template:
+                if not r.information_email_receipients:
+                    raise ValidationError('Information e-mail template is set but information email receipients are '
+                                          'missing!')
+                if not r.information_email_template.subject:
+                    raise ValidationError('E-Mail subject is missing in information email template!')
+                if r.information_email_template.model_id.id != r.model_id.id:
+                    raise ValidationError('Information e-mail template model does not match the form model!')
+            if r.confirmation_email_template:
+                if not r.confirmation_email_template.subject:
+                    raise ValidationError('E-Mail subject is missing in confirmation email template!')
+                email_fields = [f for f in r.field_ids if f.confirmation_email]
+                if not email_fields or len(email_fields) != 1:
+                    raise ValidationError('Confirmation e-mail template is set but none or more than one field(s) '
+                                          'are marked es confirmation email receiver!')
+                if r.confirmation_email_template.model_id.id != r.model_id.id:
+                    raise ValidationError('Confirmation e-mail template model does not match the form model!')
+
     # Remove noupdate for view auth_partner_form.meinedaten on addon update
     def init(self, cr, context=None):
         # Get all xml_ids for views and templates where the update would be prevented on addon install/update

@@ -18,15 +18,25 @@
 
 from openerp import http
 from openerp.http import request
+from openerp import tools
 from openerp.tools.translate import _
 
 # import locale
 # import urllib2
 import base64
 import datetime
+from collections import namedtuple
 
 import logging
 _logger = logging.getLogger(__name__)
+
+# E-Mail rendering without a record for email_only forms
+try:
+    from openerp.addons.email_template.email_template import mako_template_env
+    from openerp.addons.email_template.email_template import format_tz
+except ImportError:
+    _logger.warning("Could not import 'mako_template_env' or 'format_tz'! "
+                    "E-mail rendering without a record will not work!")
 
 
 class FsoForms(http.Controller):
@@ -152,6 +162,10 @@ class FsoForms(http.Controller):
 
         # TODO: Replace sudo with the logged in user or by users set in the form to write the record
         form_model_obj = request.env[form_model_name].sudo()
+
+        # Return an empty recordset it this is an email only form!
+        if form.email_only:
+            return form_model_obj
 
         # Get the request user if the current user is not the website public user
         logged_in_user = False
@@ -302,7 +316,7 @@ class FsoForms(http.Controller):
                     else:
                         f_value = form_field_data[f_name]
 
-                # Skipp NODATA fields if empty or False
+                # SKIPP NODATA FIELDS IF EMPTY OR FALSE AND CONTINUE TO NEXT FIELD
                 # HINT: Fields with no pre-filled data (nodata) can only be included if there is a value in field_data
                 #       Otherwise we may clear the existing value by accident!
                 if f.nodata and not f_value:
@@ -354,6 +368,134 @@ class FsoForms(http.Controller):
                         kwargs.pop(f.field_id.name)
         return kwargs
 
+    def _get_session_information(self):
+        environ = request.httprequest.headers.environ
+        return {
+            'remote_addr': environ.get("REMOTE_ADDR"),
+            'http_user_agent': environ.get("HTTP_USER_AGENT"),
+            'http_accept_language': environ.get("HTTP_ACCEPT_LANGUAGE"),
+            'http_referer': environ.get("HTTP_REFERER"),
+        }
+
+    # Custom email template rendering without a record
+    def render_mako_template_string(self, template_string, template_values=None, user=None):
+        template_string = template_string if template_string else u''
+        template_values = template_values if template_values else dict()
+        assert isinstance(template_values, dict), "values must be a dictionary!"
+
+        # Load the mako template environment
+        # ----------------------------------
+        try:
+            template = mako_template_env.from_string(tools.ustr(template_string))
+        except Exception as e:
+            _logger.error("Could not render e-mail template! Initialization of mako template failed!\n%s" % repr(e))
+            return u''
+
+        # Prepare the template_vars
+        # -------------------------
+        req = request
+        pool, cr, uid, ctx = req.env['email.template'].pool, req.cr, req.uid, req.context
+        # HINT: This 1.) creates a named tuple object with all attributes from the dict and then
+        #            2.) assigns the values of the dict to the named_tuple arguments
+        #                *values.values() means we unpack the dict (e.g.: {'key1': '3'} will be key1='3')
+        # ATTENTION: A NamedTuple will genereate an ._fields just like a regular odoo record!
+        #            therefore you could use this in the mako template if you want to show all fields of the record!
+        tvalues_object = namedtuple("TemplateValueObject", template_values.keys())(*template_values.values())
+        # HINT: These variables should be available to all templates (specified in the addon email_template)
+        template_vars = {
+            'format_tz': lambda dt, tz=False, format=False, context=ctx: format_tz(pool, cr, uid, dt, tz, format,
+                                                                                   context),
+            'user': user if user else req.env.user,
+            'ctx': ctx,
+            'object': tvalues_object
+        }
+
+        # Render the mako template
+        # ------------------------
+        try:
+            output = template.render(template_vars)
+            output = u'' if (not output or output == u'False') else output
+        except Exception as e:
+            _logger.error('Could not render email template!\n%s' % repr(e))
+            return u''
+
+        return output
+
+    def send_mail(self, template=None, record=None, template_values=None, email_to=None, partner_receipient_ids=None):
+        assert template.subject, "Subject is missing in email template %s (ID: %s)" % (template.name, template.id)
+
+        # Prepare common email values
+        email_from = template.email_from if template.email_from else request.website.user_id.company_id.email
+        reply_to = template.reply_to if template.reply_to else False
+        recipient_ids = [(6, 0, partner_receipient_ids)] if partner_receipient_ids else False
+
+        # Send the email by the email composer wizard found in the addon mail
+        if record:
+            composer_context = {
+                'default_composition_mode': 'mass_mail',
+                'default_use_template': True,
+                'default_template_id': template.id,
+                'default_model': record._name,
+                'default_res_id': record.id,
+            }
+            composer_values = {
+                'email_from': email_from,
+                'reply_to': reply_to,
+                'email_to': email_to,
+                'partner_ids': recipient_ids,
+                'subject': template.subject,
+                'body': template.body_html,
+            }
+            composer_obj = request.env['mail.compose.message'].sudo()
+            composer_record = composer_obj.with_context(composer_context).create(composer_values)
+            composer_record.send_mail()
+
+        # Create the email manually
+        else:
+            body_html = self.render_mako_template_string(template_string=template.body_html,
+                                                         template_values=template_values)
+            subject = self.render_mako_template_string(template_string=template.subject,
+                                                       template_values=template_values)
+            email_values = {
+                'email_from': email_from,
+                'reply_to': reply_to,
+                'email_to': email_to,
+                'recipient_ids': recipient_ids,
+                'subject': subject,
+                'body': '',
+                'body_html': body_html,
+                'auto_delete': template.auto_delete,
+            }
+            request.env['mail.mail'].sudo().create(email_values)
+
+    def send_form_emails(self, form, form_values=None, record=None):
+        assert not (form_values and record), "Use a record or the form_values to render the email but not both!"
+        if not (form.confirmation_email_template or form.information_email_template):
+            _logger.warning("No email template selected!")
+            return False
+        if form.email_only and record:
+            _logger.error("E-Mail only selected but record is given!")
+            return False
+        if not form.email_only and not record:
+            _logger.error("No record given!")
+            return False
+
+        # Add the session information to the form_values
+        template_values = dict(form_values, **self._get_session_information())
+
+        # Internal information e-mail
+        if form.information_email_template:
+            self.send_mail(template=form.information_email_template, record=record, template_values=template_values,
+                           partner_receipient_ids=form.information_email_receipients.ids)
+
+        # Confirmation e-mail for the form user
+        if form.confirmation_email_template:
+            email_field = [f for f in form.field_ids if f.confirmation_email][0]
+            email_field_name = email_field.field_id.name
+            email_to = record[email_field_name] if record else template_values.get(email_field_name)
+            self.send_mail(template=form.confirmation_email_template, record=record, template_values=template_values,
+                           email_to=email_to)
+
     @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
     def fso_form(self, form_id=False, **kwargs):
         form_id = int(form_id)
@@ -374,6 +516,7 @@ class FsoForms(http.Controller):
         #       TODO: add user fields to form for security restrictions
         record = self.get_fso_form_record(form)
 
+        # ----------------------
         # HANDLE FORM SUBMISSION
         # ----------------------
         if kwargs and request.httprequest.method == 'POST':
@@ -384,30 +527,52 @@ class FsoForms(http.Controller):
             warnings += ['"%s": %s' % (kwargs.get(f, f), msg) for f, msg in form_field_errors.iteritems()]
 
             if not warnings and not errors:
-                # Create or Update the record
-                # HINT: User rights are handled by get_fso_form_record() ...  always sudo() right now :(
-                values = self._prepare_field_data(form=form, form_field_data=kwargs)
-                if values:
+                # Only send e-mails
+                # -----------------------
+                if form.email_only:
                     try:
-                        if not record:
-                            record = record.create(values)
-                            messages.append(_('Data was successfully submitted!'))
-                        else:
-                            record.write(values)
-                            messages.append(_('Data was successfully updated!'))
-                        # Update the session data
-                        # HINT: If clear_session_data_after_submit is set the form will be empty at the next hit/load!
-                        #       This has no effect if a user is logged in and 'edit_existing_record_if_logged_in' is
-                        #       also set! In that case get_fso_form_record() will overwrite the session data set here
-                        #       and set 'clear_session_data' to False in the method get_fso_form_record() !
-                        self.set_fso_form_session_data(form_id=form.id,
-                                                       form_uid=request.uid,
-                                                       form_record_id=record.id,
-                                                       form_model_id=form.model_id.id,
-                                                       clear_session_data=form.clear_session_data_after_submit)
+                        self.send_form_emails(form=form, form_values=kwargs)
                     except Exception as e:
                         errors.append(_('Submission failed!\n\n%s' % repr(e)))
                         pass
+
+                # Create or update a record
+                # -------------------------
+                else:
+                    # HINT: User rights are handled by get_fso_form_record() ...  always sudo() right now :(
+                    values = self._prepare_field_data(form=form, form_field_data=kwargs)
+                    if values:
+                        try:
+                            if not record:
+                                record = record.create(values)
+                                messages.append(_('Data was successfully submitted!'))
+                            else:
+                                record.write(values)
+                                messages.append(_('Data was successfully updated!'))
+                            # Update the session data
+                            # HINT: If clear_session_data_after_submit is set the form will be empty at the next
+                            #       hit/load! This has no effect if a user is logged in and
+                            #       'edit_existing_record_if_logged_in' is also set! In that case get_fso_form_record()
+                            #       will overwrite the session data set here and set 'clear_session_data' to False
+                            #       in the method get_fso_form_record() !
+                            self.set_fso_form_session_data(form_id=form.id,
+                                                           form_uid=request.uid,
+                                                           form_record_id=record.id,
+                                                           form_model_id=form.model_id.id,
+                                                           clear_session_data=form.clear_session_data_after_submit)
+                        except Exception as e:
+                            errors.append(_('Submission failed!\n\n%s' % repr(e)))
+                            pass
+
+                        # Send emails
+                        # WARNING: If the records got created or updated but the e-mail(s) could not be send we will
+                        #          continue without raising an exception!
+                        if record and not errors:
+                            try:
+                                self.send_form_emails(form=form, record=record)
+                            except Exception as e:
+                                _logger.error("fso_forms: Could not send e-mail(s)!\n%s" % repr(e))
+                                pass
 
                 # Redirect to Thank you Page if set by the form or to the url selected
                 # HINT: The Thank You Page the only page where you could edit the data again if not logged in

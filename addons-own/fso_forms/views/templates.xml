@@ -27,7 +27,7 @@
                         </div>
                         
                         <!-- EDIT FORM DATA BUTTON -->
-                        <t t-if="form.thank_you_page_edit_data_button">
+                        <t t-if="form.thank_you_page_edit_data_button and not form.email_only">
                             <div class="row fso_form_submit">
                                 <div class="col-lg-12">
                                     <a id="fso_form_edit_button" class="btn btn-primary btn-lg"
