@@ -204,7 +204,7 @@ class EmailTemplate(models.Model):
                 # Use premailer to:
                 #  - inline CSS and
                 #  - convert relative to absolute URLs
-                # HINT: This step must done before generatig multimailer links
+                # HINT: This step must done before generating multimailer links
                 # ATTENTION: This step will try a lot of requests.packages.urllib3.connectionpool connections
                 #            which may lead to long processing times.
                 email_body_prepared_premailer = PremailerWithTimeout(email_body_prepared,
@@ -253,8 +253,8 @@ class EmailTemplate(models.Model):
                         elif hasattr(r, 'cssRules'):
                             cycle_rules(r)
 
-                # Add !important to all CSS tags
-                # HINT: Only the media queries will be left over in the style tags
+                # Add !important to all media queries CSS in the header
+                # HINT: Only the media queries will be in style tags in the header (the rest is inlined)
                 for styletag in email_body_css_inline_soup.find_all('style'):
                     css = styletag.string
                     css_parsed = cssutils.parseString(css, validate=True)
