@@ -91,7 +91,7 @@
         <record id="pf_iban_verschluesselt" model="fso.print_field">
             <field name="sequence" eval="100"/>
             <field name="name">IBAN_Verschlüsselt</field>
-            <field name="fs_email_placeholder">%IBAN_Verschlüsselt%</field>
+            <field name="fs_email_placeholder">%IBAN_Verschluesselt%</field>
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
