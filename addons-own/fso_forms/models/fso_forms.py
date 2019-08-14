@@ -174,7 +174,7 @@ class FSONFormField(models.Model):
     _name = "fson.form_field"
     _order = 'sequence'
 
-    _allowed_field_types = ['boolean', 'char', 'selection', 'many2one', 'date', 'integer', 'float', 'binary']
+    _allowed_field_types = ['boolean', 'char', 'text', 'selection', 'many2one', 'date', 'integer', 'float', 'binary']
     _protected_fields = set(MAGIC_COLUMNS + ['parent_left', 'parent_right',
                                              'sosync_fs_id', 'sosync_write_date', 'sosync_sync_date'])
 

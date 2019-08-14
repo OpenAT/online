@@ -250,6 +250,21 @@
                                                             />
                                                         </t>
 
+                                                        <!-- TEXT FIELD -->
+                                                        <t t-if="f_type in ['text',]">
+                                                            <t t-set="f_textarea_value" t-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"/>
+                                                            <textarea
+                                                                   t-att-id="f_name"
+                                                                   t-att-name="f_name"
+                                                                   class="form-control"
+                                                                   rows="8"
+                                                                   t-att-placeholder="field.placeholder"
+                                                                   t-att-disabled="f_readonly"
+                                                                   t-att-required="f_required"
+                                                                   t-att="validation_rule"
+                                                            ><t t-esc="f_textarea_value"/></textarea>
+                                                        </t>
+
                                                         <!-- DATE FIELD -->
                                                         <t t-if="f_type in ['date',]">
                                                             <!-- TODO: Localization (right now forced to DE) check how it is done in website_sale -->
