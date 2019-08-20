@@ -104,6 +104,13 @@ class FSONForm(models.Model):
                                                        "back to form to edit the data again!")
     thank_you_page_snippets = fields.Html(string="Thank you page", translate=True)
 
+    website_url = fields.Char(compute="_cmp_website_url", string="Website URL")
+
+    @api.depends('name')
+    def _cmp_website_url(self):
+        for r in self:
+            r.website_url = '/fso/form/'+str(r.id)
+
     @api.constrains('model_id', 'field_ids')
     def constrain_model_id_field_ids(self):
         for r in self:

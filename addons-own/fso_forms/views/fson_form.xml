@@ -24,6 +24,7 @@
                             </group>
                             <group name="system_data">
                                 <!-- TODO: Show clickable form link -->
+                                <field name="website_url" invisible="0" widget="url" readonly="1"/>
                                 <field name="id" readonly="True"/>
                                 <field name="create_date" readonly="True"/>
                                 <field name="write_date" readonly="True"/>
