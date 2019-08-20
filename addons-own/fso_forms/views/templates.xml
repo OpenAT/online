@@ -105,7 +105,9 @@
                                             <!-- Get field css classes -->
                                             <t t-set="css_classes" t-value="field.css_classes"/>
 
+                                            <!-- ================== -->
                                             <!-- SNIPPET AREA FIELD -->
+                                            <!-- ================== -->
                                             <t t-if="not field.field_id">
                                                 <div t-att-class="css_classes if css_classes else 'col-lg-12'">
                                                     <div t-field="field.information" class="oe_structure fsoforms_field_snippet"/>
@@ -114,8 +116,10 @@
                                                     </t>
                                                 </div>
                                             </t>
-                                            
+
+                                            <!-- ============= -->
                                             <!-- REGULAR FIELD -->
+                                            <!-- ============= -->
                                             <t t-if="field.field_id">
                                                 
                                                 <!-- Get Regular Field Info -->
@@ -140,7 +144,7 @@
                                                     <!-- form group -->
                                                     <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
                                                         
-                                                        <!-- LABELS (AND BOOLEAN FIELDS) -->
+                                                        <!-- ALL FIELD TYPES: LABEL -->
                                                         <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if f_required and not f_readonly else '')"
                                                                t-att-for="f_name">
                                                             
@@ -159,10 +163,47 @@
                                                             
                                                             <t t-raw="field.label"/>
                                                         </label>
-                                                        
-                                                        
+
+                                                        <!-- ALL FIELD TYPES: MODAL BOX -->
+                                                        <t t-if="field.information">
+                                                            <!-- Modal Box Button-Link -->
+                                                            <href type="button"
+                                                                    class="btn-link information-modal-box-trigger"
+                                                                    data-toggle="modal"
+                                                                    t-att-data-target="'#information-'+f_name">
+                                                                <span class="glyphicon glyphicon-info-sign"/>
+                                                            </href>
+                                                            <!-- Modal Box -->
+                                                            <div class="modal fade"
+                                                                 t-att-id="'information-'+f_name"
+                                                                 role="dialog">
+                                                                <div class="modal-dialog">
+                                                                    <!-- Modal content-->
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <button type="button" class="close" data-dismiss="modal">
+                                                                                &amp;times;
+                                                                            </button>
+                                                                            <h4 class="modal-title">
+                                                                                <t t-raw="field.label"/>
+                                                                            </h4>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <t t-raw="field.information"/>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                                                Close
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+
                                                         <!-- BOOLEAN FIELD AS RADIO BUTTONS -->
                                                         <!-- TODO: CORRECT ERROR MESSAGE IF NO RADIO(VALUE) WAS SELECTED BY SERVER VALIDATION -->
+                                                        <!-- TODO: !!! RADIO BOX FIELDS FORCE SELECTION BEFORE SEND BY FRONTEND VALIDATION AND CORRECT ERROR MESSAGE IF PROCESSED BY CONTROlLER !!! -->
                                                         <t t-if="f_type == 'boolean' and field.style and field.style == 'radio'">
                                                             <!-- Checked / True-->
                                                             <div class="radio">
@@ -195,44 +236,6 @@
                                                                     <t t-if="field.no_text"><t t-raw="field.no_text"/></t>
                                                                     <t t-if="not field.no_text">No</t>
                                                                 </label>
-                                                            </div>
-                                                        </t>
-
-                                                        <!-- TODO: !!! RADIO BOX FIELDS FORCE SELECTION BEFORE SEND BY FRONTEND VALIDATION AND CORRECT ERROR MESSAGE IF PROCESSED BY CONTROlLER !!! -->
-                                                        
-                                                        <!-- MODAL BOX -->
-                                                        <t t-if="field.information">
-                                                            <!-- Modal Box Button-Link -->
-                                                            <href type="button"
-                                                                    class="btn-link information-modal-box-trigger"
-                                                                    data-toggle="modal"
-                                                                    t-att-data-target="'#information-'+f_name">
-                                                                <span class="glyphicon glyphicon-info-sign"/>
-                                                            </href>
-                                                            <!-- Modal Box -->
-                                                            <div class="modal fade"
-                                                                 t-att-id="'information-'+f_name"
-                                                                 role="dialog">
-                                                                <div class="modal-dialog">
-                                                                    <!-- Modal content-->
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <button type="button" class="close"
-                                                                                    data-dismiss="modal">&amp;times;</button>
-                                                                            <h4 class="modal-title">
-                                                                                <t t-raw="field.label"/>
-                                                                            </h4>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <t t-raw="field.information"/>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                                                Close
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </div>
                                                         </t>
 

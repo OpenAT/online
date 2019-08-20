@@ -368,6 +368,43 @@ class FsoForms(http.Controller):
                         kwargs.pop(f.field_id.name)
         return kwargs
 
+    def _prepare_kwargs_for_mail(self, form, **kwargs):
+        form_values = dict()
+        if not kwargs:
+            return form_values
+
+        for f in form.field_ids:
+            if f.field_id and f.field_id.name in kwargs:
+                f_name = f.field_id.name
+
+                # binary: Ignore binary fields
+                if f.field_id.ttype == 'binary':
+                    continue
+
+                # selection: Replace selection value with the selection name
+                elif f.field_id.ttype == 'selection':
+                    item_id = kwargs[f_name]
+                    try:
+                        item_name = dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection']
+                                         )[item_id]
+                        form_values[f_name] = item_name
+                    except:
+                        form_values[f_name] = kwargs[f_name]
+
+                # many2one: Replace the id with the name of the record
+                elif f.field_id.ttype == 'many2one':
+                    try:
+                        item_name = request.env[f.field_id.relation].search([('id', '=', kwargs[f_name])]).name
+                        form_values[f_name] = item_name
+                    except:
+                        form_values[f_name] = kwargs[f_name]
+
+                # Include all other fields
+                else:
+                    form_values[f_name] = kwargs[f_name]
+
+        return form_values
+
     def _get_session_information(self):
         environ = request.httprequest.headers.environ
         return {
@@ -531,7 +568,8 @@ class FsoForms(http.Controller):
                 # -----------------------
                 if form.email_only:
                     try:
-                        self.send_form_emails(form=form, form_values=kwargs)
+                        form_values = self._prepare_kwargs_for_mail(form=form, **kwargs)
+                        self.send_form_emails(form=form, form_values=form_values)
                     except Exception as e:
                         errors.append(_('Submission failed!\n\n%s' % repr(e)))
                         pass

@@ -53,19 +53,20 @@
                                                options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                                         <field name="label"/>
                                         <field name="placeholder" attrs="{'readonly': [('field_ttype','in',['boolean',])]}"/>
+                                        <field name="information"/>
                                         <field name="yes_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
                                         <field name="no_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
                                         <field name="mandatory"/>
                                         <field name="nodata"/>
                                         <field name="readonly" readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"/>
                                         <field name="login" attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"/>
-                                        <!--<field name="login"/>-->
                                         <field name="confirmation_email" attrs="{'readonly': [('field_ttype','!=','char')]}"/>
                                         <field name="validation_rule"/>
                                         <field name="css_classes"/>
                                         <field name="clearfix"/>
                                         <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
                                         <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
+                                        <!-- <button type="object" name="button_open_field_form_view" string="Edit" class="oe_link" /> -->
                                     </tree>
                                 </field>
                             </page>

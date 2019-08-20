@@ -340,3 +340,25 @@ class FSONFormField(models.Model):
     def oc_field_id_dynamic_domain(self):
         field_id_domain = self._field_id_domain()
         return {'domain': {'field_id': field_id_domain}}
+
+    # TODO: Open the form view in edit mode
+    @api.multi
+    def button_open_field_form_view(self):
+        # Open a form view
+        ctx = self.env.context
+        print ctx
+        active_id = ctx.get('active_id', False)
+        form_view = self.env.ref('fso_forms.fson_form_field_form')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Edit Form Field',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': form_view.id,
+            #'context': ctx,
+            # if you want to open the form in edit mode direclty
+            'flags': {'initial_mode': 'edit', 'action_buttons': True},
+            'target': 'new',
+        }
