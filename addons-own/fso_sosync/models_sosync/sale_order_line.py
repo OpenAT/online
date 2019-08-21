@@ -6,6 +6,8 @@ class SaleOrderLineSosync(models.Model):
     _name = "sale.order.line"
     _inherit = ["sale.order.line", "base.sosync"]
 
+    _sync_job_priority = 4000
+
     order_id = fields.Many2one(sosync="True")
     product_id = fields.Many2one(sosync="True")
     payment_interval_id = fields.Many2one(sosync="True")

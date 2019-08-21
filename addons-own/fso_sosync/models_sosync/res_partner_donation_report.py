@@ -6,6 +6,8 @@ class ResPartnerDonationReportSosync(models.Model):
     _name = "res.partner.donation_report"
     _inherit = ["res.partner.donation_report", "base.sosync"]
 
+    _sync_job_priority = 3000
+
     info = fields.Text(sosync="True")
     imported = fields.Boolean(sosync="True")                        # Mark "imported" e.g.: for initial data acquisition
 

@@ -35,6 +35,7 @@ class SosyncJobQueue(models.Model):
     """
     _name = 'sosync.job.queue'
 
+    # This is the default sort order of the model! Every search will use this order if order='' is not used!
     _order = 'job_priority DESC, job_date DESC'
 
     # CONSTANTS

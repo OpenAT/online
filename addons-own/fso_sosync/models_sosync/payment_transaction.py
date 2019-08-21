@@ -6,6 +6,8 @@ class PaymentTransactionSosync(models.Model):
     _name = "payment.transaction"
     _inherit = ["payment.transaction", "base.sosync"]
 
+    _sync_job_priority = 4000
+
     state = fields.Selection(sosync="True")
     frst_iban = fields.Char(sosync="True")
     frst_bic = fields.Char(sosync="True")

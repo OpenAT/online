@@ -6,6 +6,8 @@ class ResPartnerSosync(models.Model):
     _name = "res.partner.bpk"
     _inherit = ["res.partner.bpk", "base.sosync"]
 
+    _sync_job_priority = 2000
+
     # FIELDS
     # ------
     # NEW:
