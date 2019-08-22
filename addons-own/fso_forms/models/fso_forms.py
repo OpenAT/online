@@ -105,11 +105,17 @@ class FSONForm(models.Model):
     thank_you_page_snippets = fields.Html(string="Thank you page", translate=True)
 
     website_url = fields.Char(compute="_cmp_website_url", string="Website URL")
+    website_url_thanks = fields.Char(compute="_cmp_website_url_thanks", string="Website URL Thank you Page")
 
     @api.depends('name')
     def _cmp_website_url(self):
         for r in self:
             r.website_url = '/fso/form/'+str(r.id)
+
+    @api.depends('name')
+    def _cmp_website_url_thanks(self):
+        for r in self:
+            r.website_url_thanks = '/fso/form/thanks/'+str(r.id)
 
     @api.constrains('model_id', 'field_ids')
     def constrain_model_id_field_ids(self):

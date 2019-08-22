@@ -24,7 +24,7 @@
                             </group>
                             <group name="system_data">
                                 <!-- TODO: Show clickable form link -->
-                                <field name="website_url" invisible="0" widget="url" readonly="1"/>
+                                <field name="website_url" widget="url" readonly="1"/>
                                 <field name="id" readonly="True"/>
                                 <field name="create_date" readonly="True"/>
                                 <field name="write_date" readonly="True"/>
@@ -79,6 +79,7 @@
                             </page>
                             <page string="Thank You Page">
                                 <group>
+                                    <field name="website_url_thanks" widget="url" readonly="1"/>
                                     <field name="redirect_after_submit"/>
                                     <field name="thank_you_page_edit_data_button"/>
                                     <field name="thank_you_page_snippets"/>
