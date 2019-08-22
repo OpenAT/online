@@ -358,12 +358,11 @@ class sale_order(osv.Model):
                                          string='Has order lines with recurring transactions'),
     }
 
-    # Add the possibility of Custom E-Mail Templates Sales Order Confirmation E-Mails
-    # HINT: This integrates the website_sale_payment_fix addon
+    # Use a custom e-mail template from fso_base if it exists for the send quotation e-mail wizard.
     # HINT: action_quotation_send is already overwritten by addon "website_quote" and "portal_sale"!
     def action_quotation_send(self, cr, uid, ids, context=None,
-                              email_template_addon=None,
-                              email_template_name=None):
+                              email_template_addon='fso_base',
+                              email_template_name='email_template_webshop'):
         """ extend the interface of action_quotation_send to call it for a custom email template """
         action_dict = super(sale_order, self).action_quotation_send(cr, uid, ids, context=context)
         try:

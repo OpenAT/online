@@ -452,13 +452,15 @@
                         <option value="0">
                             Ship to the same address
                         </option>
-                        <t t-foreach="shippings" t-as="shipping">
-                            <!-- HINT: shippings_selector_attrs.get(shipping.id) is a dict {attr: value, attr: value } -->
-                            <option t-att-value="shipping.id"
-                                    t-att-selected="shipping.id == shipping_id"
-                                    t-att="shippings_selector_attrs.get(shipping.id)">
-                                <t t-esc="', '.join('\n'.join(shipping.name_get()[0][1].split(',')).split('\n')[1:])"/>
-                            </option>
+                        <t t-if="shippings">
+                            <t t-foreach="shippings" t-as="shipping">
+                                <!-- HINT: shippings_selector_attrs.get(shipping.id) is a dict {attr: value, attr: value } -->
+                                <option t-att-value="shipping.id"
+                                        t-att-selected="shipping.id == shipping_id"
+                                        t-att="shippings_selector_attrs.get(shipping.id)">
+                                    <t t-esc="', '.join('\n'.join(shipping.name_get()[0][1].split(',')).split('\n')[1:])"/>
+                                </option>
+                            </t>
                         </t>
                         <option value="-1"
                                 t-att-selected="error and len(error) > 0 and shipping_id == -1">
