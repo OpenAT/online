@@ -2,7 +2,6 @@
 import logging
 from copy import deepcopy
 from openerp import SUPERUSER_ID
-from openerp.http import request
 from openerp.addons.website_sale.models.payment import PaymentTransaction
 
 __author__ = 'mkarrer'
