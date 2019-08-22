@@ -100,11 +100,12 @@ def form_feedback(self, cr, uid, data, acquirer_name, context=None):
                 _logger.info('Sale order and payment transaction are still in state draft. Nothing to do!')
 
             # All other unexpected payment and sale order state combinations
-            # TODO: Maybe we should cancel the sale order if we got an unexpected state combination?!?
+            # HINT: This substitutes the old payment_fix addon and makes sure the cart is empty if something unexpected
+            #       happened
             else:
-                _logger.error('<%s> (TXID %s) unknown payment transaction state %s! Sale order %s (ID %s) in state %s. '
-                              'Trying to set the sale order state to "send" if "draft" to avoid further modifications '
-                              'and empty the shopping cart. Maybe one should cancel the sale order?',
+                _logger.error('<%s> (TXID %s) unknown payment transaction state %s and Sale order %s (ID %s) state %s. '
+                              'combination! Trying to set the sale order state to "send" if it is "draft" to avoid '
+                              'further modifications of the sale order and to empty the shopping cart.',
                               acquirer_name, tx.id, tx.state, tx.sale_order_id.name, tx.sale_order_id.id,
                               tx.sale_order_id.state)
                 # HINT: Check the long comment below to understand where this is taken from :)
