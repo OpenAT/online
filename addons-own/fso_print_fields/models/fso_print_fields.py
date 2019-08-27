@@ -32,6 +32,9 @@ class FsoPrintField(models.Model):
     exclude_in_email_theme_ids = fields.Many2many(string="Excluded in E-Mail Themes", comodel_name="ir.ui.view",
                                                   domain="[('fso_email_template','=',True)]")
 
+    # Info / help about the field
+    info = fields.Text(string="Information")
+
     @api.depends('fs_email_placeholder')
     def _compute_css_class(self):
         for r in self:
