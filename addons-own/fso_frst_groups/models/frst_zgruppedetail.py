@@ -51,3 +51,7 @@ class FRSTzGruppeDetail(models.Model):
                                                help="If this checkbox is set gueltig_von and gueltig_bis will be set "
                                                     "to the past date 09.09.1999 when the group is created to indicate "
                                                     "that an approval is needed before set the group to active.")
+    bestaetigung_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
+                                                   ('phone_call', "Phone Call"),
+                                                   ],
+                                        string="Approval Type", default='doubleoptin')

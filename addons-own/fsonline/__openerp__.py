@@ -76,6 +76,7 @@ Module tasks:
         'fso_website_email',
         #'fso_website_email_screenshot_async',
         'fso_mass_mail',
+        'fso_frst_groups_email',
     ],
     'data': [
         'data/user_studio.xml',

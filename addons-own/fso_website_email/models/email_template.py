@@ -366,14 +366,16 @@ class EmailTemplate(models.Model):
     @api.model
     def create(self, vals):
         res = super(EmailTemplate, self).create(vals)
-        res._update_fson_html_fields_and_screenshot_pending()
+        if all(f not in vals for f in ['fso_email_html', 'fso_email_html_parsed']):
+            res._update_fson_html_fields_and_screenshot_pending()
         return res
 
     @api.multi
     def write(self, vals):
         res = super(EmailTemplate, self).write(vals)
         if any(f in vals for f in ['fso_email_template', 'fso_template_view_id', 'body_html']):
-            self._update_fson_html_fields_and_screenshot_pending()
+            if all(f not in vals for f in ['fso_email_html', 'fso_email_html_parsed']):
+                self._update_fson_html_fields_and_screenshot_pending()
         return res
 
     @api.multi

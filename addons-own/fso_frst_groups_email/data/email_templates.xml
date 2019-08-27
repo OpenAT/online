@@ -1,0 +1,59 @@
+<openerp>
+    <!-- This are the default e-mail templates - they will be changed on every update or init! (TODO: delete them on init for recreation)
+    they should never be changed by a user but just replaced by creating new ones and selecting them in zGruppeDetail! -->
+    <data noupdate="0">
+
+        <!-- Custom Sale-Order-Payment-Status e-mail template for website_sale_donate and dadi payment providers -->
+        <record id="email_template_group_approval" model="email.template">
+            <field name="name">zGruppeDetail DEFAULT Approval E-Mail Template</field>
+            <!--<field name="email_from"></field>-->
+            <field name="subject">Please approve your subscription</field>
+            <!--<field name="partner_to"></field>-->
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <!--<field name="lang">${object.lang}</field>-->
+            <field name="user_signature" eval="False"/>
+            <field name="fso_email_template" eval="True"/>
+             <field name="fso_template_view_id" ref="fso_website_email.theme_dadi"/>
+            <field name="body_html">
+<![CDATA[
+
+<div style="font-family: Arial, Verdana, sans-serif; font-size: 14px;">
+
+    <h2>
+        Hello!<br />
+        Please approve your %GruppenBestaetigungsText% subscription by clicking on the link below!
+    </h2>
+    <p>
+        <br />
+        <a href="%GruppenBestaetigungsLink%">Approve my Subscription!</a>
+        <br />
+    </p>
+
+</div>
+
+]]>
+            </field>
+            <field name="fso_email_html_parsed">
+<![CDATA[
+
+<div style="font-family: Arial, Verdana, sans-serif; font-size: 14px;">
+
+    <h2>
+        Hello!<br />
+        Please approve your %GruppenBestaetigungsText% subscription by clicking on the link below!
+    </h2>
+    <p>
+        <br />
+        <a href="%GruppenBestaetigungsLink%">Approve my Subscription!</a>
+        <br />
+    </p>
+
+</div>
+
+]]>
+            </field>
+        </record>
+
+    </data>
+</openerp>

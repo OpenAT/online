@@ -256,6 +256,7 @@
                                                         <!-- TEXT FIELD -->
                                                         <t t-if="f_type in ['text',]">
                                                             <t t-set="f_textarea_value" t-value="kwargs.get(f_name) if (field.nodata or not record) else record[f_name]"/>
+                                                            <t t-set="f_textarea_value" t-value="f_textarea_value.strip() if f_textarea_value and f_textarea_value.strip() else ''"/>
                                                             <textarea
                                                                    t-att-id="f_name"
                                                                    t-att-name="f_name"
@@ -264,8 +265,7 @@
                                                                    t-att-placeholder="field.placeholder"
                                                                    t-att-disabled="f_readonly"
                                                                    t-att-required="f_required"
-                                                                   t-att="validation_rule"
-                                                            ><t t-esc="f_textarea_value"/></textarea>
+                                                                   t-att="validation_rule"><t t-esc="f_textarea_value"/></textarea>
                                                         </t>
 
                                                         <!-- DATE FIELD -->
@@ -364,7 +364,10 @@
                                                             <!-- Get options for many2one fields -->
                                                             <t t-if="f_type == 'many2one'">
                                                                 <!-- Loop through all records of the many2one field model -->
-                                                                <t t-foreach="request.env[field.field_id.relation].search([]) or []" t-as="m2o_field_record">
+                                                                <!-- TODO: There will be an error if the many2one field has no field 'name' -->
+                                                                <t t-set="m2o_records" t-value="request.env[field.field_id.relation].search([])"/>
+                                                                <t t-set="m2o_records_sorted" t-value="m2o_records.sorted(key=lambda r: r.name)"/>
+                                                                <t t-foreach="m2o_records_sorted" t-as="m2o_field_record">
                                                                     <t t-set="item_id" t-value="m2o_field_record.id"/>
                                                                     <t t-set="item_name" t-value="m2o_field_record.name"/>
                                                                     <!-- Add to options list -->
