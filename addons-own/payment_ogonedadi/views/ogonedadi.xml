@@ -3,7 +3,10 @@
     <data noupdate="1">
 
         <template id="ogonedadi_acquirer_button">
-            <form t-if="acquirer" t-att-action="tx_url" method="post">
+            <!-- Add target="_top" to make the form work in iframes also
+                 This is needed since most external PaymentProviders can not be opened inside iframes
+            -->
+            <form t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
 
                 <!-- seller -->
                 <input type='hidden' name='PSPID' t-att-value='tx_values["PSPID"]'/>

@@ -9,6 +9,7 @@
         </template>
 
         <template id="fsotransfer_acquirer_button">
+            <!-- target="_top" is not required since we do not redirect to an external payment provider page -->
             <form id="fsotransfer" t-if="acquirer" t-att-action="tx_url" method="post">
                 <t t-if="tx_values.get('return_url')">
                     <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>

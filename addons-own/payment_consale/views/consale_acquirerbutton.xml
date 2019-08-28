@@ -3,7 +3,8 @@
     <data noupdate="0">
         
         <template id="consale_acquirer_button">
-            <form id="consale" t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
+            <!-- target="_top" is not required since we do not redirect to an external payment provider page -->
+            <form id="consale" t-if="acquirer" t-att-action="tx_url" method="post">
                 
                 <t t-if="tx_values.get('return_url')">
                     <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>
