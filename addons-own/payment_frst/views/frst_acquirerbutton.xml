@@ -11,7 +11,7 @@
         </template>
 
         <template id="frst_acquirer_button">
-            <form id="frst" t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
+            <form id="frst" t-if="acquirer" t-att-action="tx_url" method="post">
                 <t t-if="tx_values.get('return_url')">
                     <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>
                 </t>

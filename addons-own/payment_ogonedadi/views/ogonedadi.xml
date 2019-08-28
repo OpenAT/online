@@ -3,7 +3,7 @@
     <data noupdate="1">
 
         <template id="ogonedadi_acquirer_button">
-            <form t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
+            <form t-if="acquirer" t-att-action="tx_url" method="post">
 
                 <!-- seller -->
                 <input type='hidden' name='PSPID' t-att-value='tx_values["PSPID"]'/>
