@@ -12,7 +12,7 @@ class WebsiteFsoBase(Website):
 
     # Overwrite original robots controller ('/robots.txt') to use our template and because of 'noupdate' in our xml!
     @http.route()
-    def robots(self):
+    def robots(self, **kwargs):
         logger.info("Rendering alternative robots.txt from fso_base_website!")
         cr, uid, context = request.cr, request.uid, request.context
 
