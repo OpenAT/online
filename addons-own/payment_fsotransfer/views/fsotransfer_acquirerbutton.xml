@@ -9,8 +9,12 @@
         </template>
 
         <template id="fsotransfer_acquirer_button">
-            <!-- target="_top" is not required since we do not redirect to an external payment provider page -->
-            <form id="fsotransfer" t-if="acquirer" t-att-action="tx_url" method="post">
+            <!-- target="_top" is ALWAYS NEEDED - Just make sure to set a appropriate
+                redirect_url_after_form_feedback! Can be a static page or a page with an fson iframe that will be opened with /shop/confirmation_static
+                e.g.:  http://demo.local.com/rnde_config/static/src/html/iframetest.html?fso_if3=%2Fshop%2Fconfirmation_static
+                ATTENTION: order_id=1234 is always and automatically added to redirect_url_after_form_feedback
+                -->
+            <form id="fsotransfer" t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
                 <t t-if="tx_values.get('return_url')">
                     <input type='hidden' name='return_url' t-att-value='tx_values["return_url"]'/>
                 </t>

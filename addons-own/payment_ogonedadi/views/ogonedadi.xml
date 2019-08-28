@@ -5,6 +5,11 @@
         <template id="ogonedadi_acquirer_button">
             <!-- Add target="_top" to make the form work in iframes also
                  This is needed since most external PaymentProviders can not be opened inside iframes
+
+                 Make sure to set a appropriate redirect_url_after_form_feedback! Can be a static page or a page with
+                 an fson iframe that will be opened with /shop/confirmation_static
+                 e.g.:  http://demo.local.com/rnde_config/static/src/html/iframetest.html?fso_if3=%2Fshop%2Fconfirmation_static
+                 ATTENTION: order_id=1234 is always and automatically added to the redirect_url_after_form_feedback
             -->
             <form t-if="acquirer" t-att-action="tx_url" method="post" target="_top">
 

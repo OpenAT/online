@@ -735,7 +735,8 @@ class website_sale_donate(website_sale):
                 child = etree.SubElement(button, "input")
                 child.set('name', "aq" + str(acquirer.id) + '_form_' + item)
                 child.set('type', 'hidden')
-                child.set('value', button.get(item))
+                # HINT: There may be no target attribute set in the acquirer button!
+                child.set('value', button.get(item) if button.get(item) else '')
 
             # Replace the form tag with a div tag
             button_new = etree.Element('div')
