@@ -24,6 +24,7 @@
                     <script type="text/javascript"><![CDATA[
                         /* Redirect if not in an iframe: */
                         if ( window.self == window.top ) {
+                           console.log('Redirect because not in an (i)frame! Widget-Domain: ]]><t t-raw="domain.name"/><![CDATA[ Redirect_url: ]]><t t-raw="redirect_url"/><![CDATA[ Request host: ]]><t t-raw="request.httprequest.host"/><![CDATA[ ');
                            window.location.replace("]]><t t-raw="redirect_url"/><![CDATA[");
                         }]]>
                     </script>

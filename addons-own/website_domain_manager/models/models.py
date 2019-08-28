@@ -36,6 +36,7 @@ class WebsiteDomainManager(models.Model):
     port = fields.Char(string='Port', help='Domain Port')
     # template = fields.Many2one(comodel_name='ir.ui.view', string="Domain Template", domain=_get_wdt_domain)
     domain_template_id = fields.Many2one(comodel_name='website.domain_templates', string="Domain Template")
-    redirect_url = fields.Char(string='Redirect URL', help='E.g.: https://www.test.at/de/shop')
+    redirect_url = fields.Char(string='Redirect URL if not in iframe',
+                               help='E.g.: https://www.test.at/de/shop')
 
     _sql_constraints = [('domain_uniq', 'unique (name)', 'The domain must be unique!')]
