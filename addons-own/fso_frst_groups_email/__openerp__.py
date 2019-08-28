@@ -40,5 +40,6 @@ Adds a "Thank You Page" controller and a default E-Mail Template for group appro
     'data': [
         'data/email_templates.xml',
         'views/frst_zgruppedetail.xml',
+        'views/templates.xml',
     ],
 }

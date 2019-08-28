@@ -30,8 +30,8 @@ class FRSTzGruppeDetailApprovalMail(models.Model):
                 assert r.bestaetigung_email.fso_email_template, _("Approval Email Template must be a "
                                                                   "fso_email_template!")
                 assert r.bestaetigung_email.fso_email_html_parsed and \
-                       'GruppenBestaetigungsLink' in r.bestaetigung_email.fso_email_html_parsed, _(
-                    "Print field %GruppenBestaetigungsLink% missing in 'fso_email_html_parsed'!")
+                       'GruppenBestaetigungFsonzGruppeDetailID' in r.bestaetigung_email.fso_email_html_parsed, _(
+                       "Print field GruppenBestaetigungFsonzGruppeDetailID missing in 'fso_email_html_parsed'!")
 
     @api.onchange('bestaetigung_erforderlich', 'bestaetigung_typ', 'bestaetigung_email')
     def onchange_bestaetigung_erforderlich(self):

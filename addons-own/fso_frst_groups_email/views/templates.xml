@@ -1,0 +1,30 @@
+<openerp>
+    <data>
+
+        <template id="frst_group_approve">
+            <t t-call="website.layout">
+                <t t-set="additional_title">Confirm Subscription</t>
+
+                <div id="wrap">
+                    <div class="container frst_group_approve">
+
+                        <!-- Thank you for group subscription -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <t t-if="zgruppedetail and zgruppedetail.bestaetigung_thanks">
+                                    <div t-field="zgruppedetail.bestaetigung_thanks" />
+                                </t>
+                                <t t-if="not zgruppedetail or (zgruppedetail and not zgruppedetail.bestaetigung_thanks)">
+                                    <h1>Your subscription was successfully confirmed!</h1>
+                                </t>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </t>
+        </template>
+
+    </data>
+</openerp>
