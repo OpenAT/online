@@ -2,7 +2,11 @@
 <openerp>
     <data>
 
-        <!-- Add target="_top" to make the form work in iframes also -->
+        <!-- Add target="_top" to make the form work in iframes also
+             This is needed since PaymentProvider pages can not be opened inside iframes
+             set the redirect_after_form_feedback url that will be opened when returning from the payment provider to
+             something appropriate
+        -->
         <record id="wsd_acquirer_form" model="ir.ui.view">
             <field name="name">Add target _top for payment_acquirer form</field>
             <field name="model">payment.acquirer</field>
