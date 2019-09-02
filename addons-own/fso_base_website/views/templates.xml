@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp><data noupdate="0">
-    
+
+
     <!-- !!! ATTENTION: OVERTAKE DEFAULT THEME STYLES OF ADDON WEBSITE !!! -->
     <!-- This was needed in order for leaflet to work -->
     <template id="fso_base_website.website_css" inherit_id="website.theme" name="fso_base_website_website_css">
@@ -9,9 +10,20 @@
         </xpath>
     </template>
 
+
     <!-- Load default java script libraries and css -->
     <template id="fso_base_website.assets_frontend" inherit_id="website.assets_frontend" name="fso_base_website_assets_frontend">
-        <xpath expr="." position="inside">
+
+        <xpath expr="//link[last()]" position="after">
+            <!-- ladda animated spinner for bootstrap
+                 https://github.com/msurguy/ladda-bootstrap
+                 http://msurguy.github.io/ladda-bootstrap/ -->
+            <link rel="stylesheet" href='/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/ladda-themeless.css' t-ignore="true"/>
+            <!-- Load custom css for smaller fixes -->
+            <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
+        </xpath>
+
+        <xpath expr="//script[last()]" position="after">
             <!-- Moment.js to validate and calculate with dates e.g.: for jquery validate custom methods -->
             <script type="text/javascript" src="/fso_base_website/static/lib/moment/moment-with-locales.js"/>
 
@@ -37,42 +49,37 @@
                  https://github.com/cowboy/jquery-throttle-debounce
                  http://benalman.com/projects/jquery-throttle-debounce-plugin -->
             <script type="text/javascript" src="/fso_base_website/static/lib/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js"/>
-
-            <!-- ladda animated spinner for bootstrap
-                 https://github.com/msurguy/ladda-bootstrap
-                 http://msurguy.github.io/ladda-bootstrap/ -->
-            <link rel="stylesheet" href='/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/ladda-themeless.css' t-ignore="true"/>
             <script type="text/javascript" src="/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/spin.js"/>
             <script type="text/javascript" src="/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/ladda.js"/>
-
-            <!-- Load custom css for smaller fixes -->
-            <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
 
             <!-- Browser form auto-completion fix for honeypot fields -->
             <!-- HINT: Disabled by now cause only used in website_crm_extended and there it is included anyway -->
             <!-- script type="text/javascript" src="addons-own/fso_base_website/static/src/js/no_auto_comp.js"/ -->
         </xpath>
+
     </template>
+
 
     <!-- Add custom Google Analytics Code -->
     <!-- Load default java script libraries and css -->
     <template id="fso_base_website.layout" inherit_id="website.layout" name="fso_base_website_layout">
         <xpath expr="//script[@t-if='website and website.google_analytics_key']" position="replace">
-                <t t-if="website and website.google_analytics_script">
-                    <t t-raw="website.google_analytics_script" />
-                </t>
-                <t t-if="website and not website.google_analytics_script">
-                    <script t-if="website and website.google_analytics_key">
-                        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            <t t-if="website and website.google_analytics_script">
+                <t t-raw="website.google_analytics_script" />
+            </t>
+            <t t-if="website and not website.google_analytics_script">
+                <script t-if="website and website.google_analytics_key">
+                    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-                        ga('create', _.str.trim('<t t-esc="website.google_analytics_key"/>'), 'auto');
-                        ga('send','pageview');
-                    </script>
-                </t>
+                    ga('create', _.str.trim('<t t-esc="website.google_analytics_key"/>'), 'auto');
+                    ga('send','pageview');
+                </script>
+            </t>
         </xpath>
     </template>
+
 
 </data></openerp>

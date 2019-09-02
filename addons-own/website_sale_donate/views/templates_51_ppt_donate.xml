@@ -36,7 +36,7 @@
                                     <!-- Main Product Page Content (Description Field and Checkoutbox) -->
                                     <div class="row">
                                         <!-- (Left) Left HTML Description Field -->
-                                        <div class="col-sm-7 col-md-7 col-lg-6">
+                                        <div class="col-sm-7 col-md-7 col-lg-6" id="product_desc_left">
                                             <div t-field="product.desc_short" class="oe_structure" id="product_desc_short"/>
                                         </div>
                                         <!-- (Right) CHECKOUTBOX (Add to Cart Box) -->

@@ -4,7 +4,7 @@
 
         <!-- SUBTEMPLATE: Checkout Pages Header -->
         <template id="wsd_checkout_pages_header" name="Checkout Pages Custom Header and Checkout-Step-Indicator">
-            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
+            <t t-set="one_page_checkout" t-value="website.one_page_checkout if website and website.one_page_checkout else one_page_checkout"/>
 
             <!-- Page Header and Checkout-Step-Indicator -->
             <div class="row wsd_checkout_pages_header">
@@ -14,7 +14,8 @@
                     <div class="navbar checkout_steps_navigation" role="navigation">
 
                         <!-- Checkout-Step-Indicator -->
-                        <t t-if="not one_page_checkout">
+                        <!-- HINT: opc_payment() always adds one_page_checkout=True therefore we check if we are on the payment_page also -->
+                        <t t-if="payment_page or not one_page_checkout">
                             <ul class="checkout_steps_indicator nav nav-tabs navbar-left">
                                 <li role="presentation" t-att-class="'cart active' if cart_page else 'cart'">
                                     <a href="/shop/cart"><span t-esc="website.cart_indicator"/></a>

@@ -4,7 +4,7 @@
 
     <!-- LOAD CSS FOR ODOO BACKEND -->
     <template id="assets_backend" name="fso_base assets_backend" inherit_id="web.assets_backend">
-        <xpath expr="." position="inside">
+        <xpath expr="//link[last()]" position="after">
             <link rel="stylesheet" href="/fso_base/static/src/css/backend_fso_theme.css"/>
             <link rel="stylesheet" href="/fso_base/static/src/css/backend.css"/>
             <link rel="stylesheet" href="/fso_base/static/src/css/addon_chatter.css"/>
