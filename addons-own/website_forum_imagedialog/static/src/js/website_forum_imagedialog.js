@@ -63,6 +63,7 @@
     loadStyleInCKEDITOR(editor);
     changeStyleInCKEDITOR(editor);
 
+
     //--------------------------------------
     // Apply Style in Editor when editing a Comment/Question
     //--------------------------------------
@@ -146,6 +147,13 @@
     // next change: moves content from span with color or background-color deletes content) after changing to often
     //--------------------------------------
     function changeStyleInCKEDITOR (editor) {
+        if ($('.btn.btn-primary.save').length) {
+            console.log('jquery click')
+            $('.btn.btn-primary.save').click(function() {
+                editor.fire('change');
+            });
+        }
+
         editor.on('change', function (ev) {
             // Elements which need a classname
             var wfi_content = ev.editor.document.$.body.children;
@@ -153,6 +161,7 @@
             var innerChanged = false;
             var innerGrandChanged = false;
             var changeOccured = false;
+            var iconHelper = ev.editor.document;
             // For Selection of content after change
             var body = ev.editor.document.getBody();
             var selection = ev.editor.getSelection();
@@ -163,7 +172,9 @@
             // 2.) in children/grandchildren loop replace innerHtml and style for child/grandchild
             // 3.) add classname with color/background-color value
             // 4.) if no children exist, add only classname (for text alignment) or classname with color/background-color value
+            computeIcon(wfi_content, iconHelper);
             for (var i = 0; i < wfi_content.length; i++) {
+//                console.log(wfi_content)
                 if (wfi_content[i].children.length) {
                     var wfi_content_children = wfi_content[i].children;
                     for (var j = 0; j < wfi_content_children.length; j++) {
@@ -171,45 +182,46 @@
                         if (wfi_content_children[j].children.length) {
                             var wfi_content_grandchildren = wfi_content_children[j].children;
                             for (var k = 0; k < wfi_content_grandchildren.length; k++) {
+                                if (wfi_content_grandchildren[k].children.length) {
+                                    var wfi_content_grandchildren_deep = wfi_content_grandchildren[k].children;
+                                    for (var l = 0; l < wfi_content_grandchildren_deep.length; l++) {
+                                        console.log(wfi_content_grandchildren_deep[l])
+                                        if (wfi_content_grandchildren_deep[l].children.length) {
+                                                console.log('grand deep deep')
+                                                wfi_content_grandchildren[k].children[0].style.backgroundColor = wfi_content_grandchildren[k].children[0].children[0].style.backgroundColor;
+                                                wfi_content_grandchildren[k].children[0].innerText = wfi_content_grandchildren[k].children[0].children[0].innerHTML;
+                                                changeOccured = true;
+                                        }
+
+                                        if (wfi_content_grandchildren_deep[l].style.backgroundColor && !wfi_content_grandchildren[k].style.color && !wfi_content_grandchildren_deep[l].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                            console.log('grand deep replace bg')
+                                            wfi_content_grandchildren[k].style.backgroundColor = wfi_content_grandchildren[k].children[0].style.backgroundColor;
+                                            wfi_content_grandchildren[k].innerText = wfi_content_grandchildren[k].children[0].innerHTML;
+                                            changeOccured = true;
+                                        } else if (wfi_content_grandchildren_deep[l].style.backgroundColor && !wfi_content_grandchildren_deep[l].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                            console.log('grand deep set bg')
+                                            var color = wfi_content_grandchildren_deep[l].style.backgroundColor.match(/rgb(.*)/);
+                                            wfi_content_grandchildren_deep[l].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                                        }
+                                    }
+                                }
+
                                 if (wfi_content_grandchildren[k].style[0]) {
                                     console.log('grandchildren')
-                                    if (wfi_content_grandchildren[k].style.backgroundColor) {
-                                        console.log('grand child bg')
-                                        console.log(wfi_content_children)
                                         console.log(wfi_content_grandchildren[k])
-                                        console.log(wfi_content_grandchildren[k].parentNode)
-//                                        if (wfi_content_grandchildren[k].children.length) {
-//                                                console.log('grandchild deep')
-                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                            console.log('grandchild deep bg')
-                                            console.log()
-                                            console.log(body.getChild(0).$.childNodes)
-                                            console.log(body.getChild(0).getChild(0).getChild(0))
-                                            console.log(body.getChild(0).getChild(0).getChild(0).$.innerHTML)
-                                            console.log(body.getChild(0).getChild(0).getChild(0).$.style.backgroundColor)
-                                            wfi_content_grandchildren[k].className = '';
-                                            wfi_content_grandchildren[k].style.backgroundColor = body.getChild(0).getChild(0).getChild(0).$.style.backgroundColor;
-                                            wfi_content_grandchildren[k].innerText = body.getChild(0).getChild(0).getChild(0).$.innerText;
 
+                                    if (wfi_content_grandchildren[k].className.match(/fa fa-(.*)/)) {
+                                        console.log('grandchild icon')
+                                        console.log(wfi_content_grandchildren[k])
+                                        innerGrandChanged = true;
+                                    }
 
-
-//                                            wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
-//                                            wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
-                                            changeOccured = true;
-                                        } else if (wfi_content_children[j].style.color) {
-                                            console.log('grand bg color check')
-//                                            if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-//                                                console.log('grandchild deep')
-////                                                wfi_content_children[j].style.backgroundColor = wfi_content_grandchildren[k].style.backgroundColor;
-//                                                wfi_content_children[j].innerHTML = wfi_content_grandchildren[k].innerHTML;
-//                                            } else {
-                                                var color = wfi_content_grandchildren[k].style.backgroundColor.match(/rgb(.*)/);
-                                                wfi_content_grandchildren[k].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                                innerGrandChanged = true;
-
-//                                            }
-                                        }
-                                    } else if (wfi_content_grandchildren[k].style.color && !changeOccured) {
+                                    if (wfi_content_grandchildren[k].style.backgroundColor && !wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                        console.log('grand bg color check')
+                                        var color = wfi_content_grandchildren[k].style.backgroundColor.match(/rgb(.*)/);
+                                        wfi_content_grandchildren[k].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
+                                        innerGrandChanged = true;
+                                    } else if (wfi_content_grandchildren[k].style.color && !wfi_content_grandchildren[k].className.match(/wfi_style_color_(.*)/)) {
                                         console.log('grand child color')
                                         if (wfi_content_grandchildren[k].children.length) {
                                             if (wfi_content_grandchildren[k].children[0].className.indexOf('wfi_style_color_') > -1) {
@@ -228,7 +240,6 @@
                                             console.log('first color grandchild')
                                             var color = wfi_content_grandchildren[k].style.color.match(/rgb(.*)/);
                                             wfi_content_grandchildren[k].className = 'wfi_style_color_' + fullColorHex(color[1]);
-
                                             innerGrandChanged = true;
                                         }
                                     }
@@ -246,7 +257,6 @@
 
                                         // select the current element
                                         for (var n = 0; n < body.getChildCount(); n++) {
-                                            console.log(body.getChild(n).$.childNodes)
                                             if (body.getChild(n).$.childNodes.length > 0)  {
                                                 var childNodes = body.getChild(n).$.childNodes;
                                                 for (var m = 0; m < childNodes.length; m++) {
@@ -266,34 +276,44 @@
 
                         var child_style = wfi_content_children[j].style;
                         if (child_style[0] && !innerGrandChanged) {
-                            if (wfi_content_children[j].children.length) {
-                                if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
-                                    console.log('color grand')
+                            console.log('child style')
+//                            if (wfi_content_children[j].children.length && !wfi_content_children[j].className.match(/wfi_style_color_(.*)/)) {
+//                                console.log('child style test')
+////                                if (wfi_content_children[j].children[0].className.indexOf('wfi_style_color_') > -1) {
+////                                    console.log('color grand')
+////                                    wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+//////                                    changeOccured = true;
+////                                }
+//                            }
+
+                            if (wfi_content_children[j].style.color && !wfi_content_children[j].className.match(/wfi_style_color_(.*)/)) {
+                                console.log('child color')
+                                if (wfi_content_children[j].children.length && !wfi_content_children[j].children[0].className.match(/fa fa-(.*)/)) {
+                                    console.log('reset color')
+                                    var color = child_style.color.match(/rgb(.*)/);
+                                    wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
                                     wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+
                                     changeOccured = true;
+                                } else if (!wfi_content_children[j].className) {
+                                    console.log('set color')
+                                    var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
+                                    wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                                    innerChanged = true;
                                 }
                             }
 
-                            if (wfi_content_children[j].style.color && !innerChanged) {
-                                var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
-                                wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-
-                                innerChanged = true;
-                            }
-
-                            if (wfi_content_children[j].style.backgroundColor && !innerChanged) {
+                            if (wfi_content_children[j].style.backgroundColor && !wfi_content[i].className.match(/wfi_style_bgcolor_(.*)/)) {
                                 console.log('child bg')
                                 if (wfi_content[i].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                    console.log('test')
+                                    console.log('reset bg')
                                     wfi_content[i].style.backgroundColor = wfi_content_children[j].style.backgroundColor;
                                     wfi_content[i].innerHTML = wfi_content_children[j].innerHTML;
-                                    changeOccured = true;
 
                                 } else if (!wfi_content_children[j].className) {
-                                    console.log('else')
+                                    console.log('set bg')
                                     var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
                                     wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-
                                     innerChanged = true;
                                 }
                             }
@@ -337,7 +357,7 @@
                 }
 
                 var parent_style = wfi_content[i].style;
-                if (parent_style[0] && !innerChanged) {
+                if (parent_style[0] && !wfi_content[i].className.match(/wfi_style_(.*)/)) {
                     if (wfi_content[i].className.match(/wfi_style_text_(.*)/)) {
                         if (wfi_content[i].className === 'wfi_style_text_' + parent_style.textAlign) {
                             wfi_content[i].className = '';
@@ -357,11 +377,11 @@
 
                     if (parent_style.color) {
                         console.log('parent color')
-                        if (wfi_content[i].children.length) {
-                            wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
-                            // select the current element
+                        if (wfi_content[i].children.length && !wfi_content[i].children[0].className.match(/fa fa-(.*)/)) {
+                            console.log('parent child color')
                             var color = parent_style.color.match(/rgb(.*)/);
                             wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
+                            wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
                             for (var n = 0; n < body.getChildCount(); n++) {
                                 if (wfi_content[i].className === body.getChild(n).$.className) {
                                     range.selectNodeContents( body.getChild(n) );
@@ -372,7 +392,8 @@
                             innerChanged = true;
                         }
 
-                        if (!innerChanged) {
+                        if (!wfi_content[i].className.match(/wfi_style_color_(.*)/)) {
+                            console.log('set parent color')
                             var color = parent_style.color.match(/rgb(.*)/);
                             wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
                         }
@@ -390,7 +411,8 @@
 //                        }
                     }
 
-                } else if (!parent_style[0]) {
+                } else if (!parent_style[0] && !wfi_content[i].className.match(/fa fa-(.*)/) && !(wfi_content[i].localName === 'img')) {
+                    console.log('no parent style or fa')
                     wfi_content[i].className = '';
                 }
 
@@ -398,6 +420,177 @@
             }
         });
     }
+
+    // Compute the Icon and set the color and create new elements for background color
+    function computeIcon(wfi_content, iconHelper) {
+        console.log('computeIcon')
+        var body = iconHelper.getBody();
+        for (var i = 0; i < wfi_content.length; i++) {
+            console.log('parent')
+            if (wfi_content[i].children.length) {
+                console.log('children')
+                var wfi_content_children = wfi_content[i].children;
+                for (var j = 0; j < wfi_content_children.length; j++) {
+                    if (wfi_content_children[j].children.length) {
+                        console.log('grandchildren')
+                        var wfi_content_grandchildren = wfi_content_children[j].children;
+                        for (var k = 0; k < wfi_content_grandchildren.length; k++) {
+                            if (wfi_content_grandchildren[k].children.length) {
+                                var wfi_content_grandchildren_deep = wfi_content_grandchildren[k].children;
+                                for (var l = 0; l < wfi_content_grandchildren_deep.length; l++) {
+                                    console.log('deep grandchildren')
+
+                                    // Set icon to uneditable (no Text in span tag allowed)
+                                    if (wfi_content_grandchildren_deep[l].className.match(/fa fa-(.*)/)) {
+                                        console.log('child grandchild deep')
+                                        setIconUneditable(wfi_content_grandchildren_deep[l]);
+                                    }
+
+                                    // Deletes Background Color from Icon and inserts new elements
+                                    if (wfi_content_grandchildren_deep[l].style.backgroundColor) {
+                                        console.log('icon child grandchild deep bg')
+                                        computeIconBackgroundColor(wfi_content_grandchildren_deep[l], iconHelper);
+                                    }
+                                }
+                            }
+                            if (wfi_content_children[j].className.match(/fa fa-(.*)/)) {
+                                console.log('icon child')
+                                if (wfi_content_grandchildren[k].style.color) {
+                                    console.log('iocn child color')
+                                    wfi_content_grandchildren[k].innerHTML = '<span class="' + wfi_content_children[j].className + '" contentEditable="false"></span> ';
+                                    wfi_content_children[j].className = '';
+                                    wfi_content_children[j].id = 'wfi_toRemove';
+                                } else if (wfi_content_grandchildren[k].style.backgroundColor) {
+                                    console.log('iocn child bg')
+                                    wfi_content_children[j].innerHTML = '<span class="' + wfi_content_children[j].className + '" contentEditable="false">';
+                                    wfi_content_children[j].className = '';
+                                    wfi_content_children[j].id = 'wfi_toRemove';
+                                }
+                            }
+
+                            // Set icon to uneditable (no Text in span tag allowed)
+                            if (wfi_content_grandchildren[k].className.match(/fa fa-(.*)/)) {
+                                console.log('child grandchild')
+                                setIconUneditable(wfi_content_grandchildren[k]);
+                            }
+
+                            // Deletes Background Color from Icon and inserts new elements
+                            if (wfi_content_grandchildren[k].style.backgroundColor) {
+                                console.log('icon child grandchild bg')
+                                computeIconBackgroundColor(wfi_content_grandchildren[k], iconHelper);
+                            }
+
+                        }
+
+                        // if icon exists before switch color or remove background color
+                        if (wfi_content_children[j].id === 'wfi_toRemove') {
+                            var element = iconHelper.getById('wfi_toRemove');
+                            if (wfi_content_children[j].children[0].style.color) {
+                                console.log('icon child color')
+                                var tmp = wfi_content_children[j].innerHTML;
+                                wfi_content_children[j].outerHTML = tmp;
+                            } else if (wfi_content_children[j].children[0].className.match(/fa fa-(.*)/)) {
+                                console.log('icon child bg')
+                                var tmpIcon = CKEDITOR.dom.element.createFromHtml(wfi_content_children[j].children[0].outerHTML);
+                                tmpIcon.replace(element);
+                            }
+                        }
+
+                    }
+
+                    // if icon exists before color or background color
+                    if (wfi_content[i].className.match(/fa fa-(.*)/)) {
+                        console.log('icon parent')
+                        if (wfi_content_children[j].style.color) {
+                            console.log('icon parent color')
+                            wfi_content_children[j].innerHTML = '<span class="' + wfi_content[i].className + '" contentEditable="false"></span> ';
+                            wfi_content[i].className = '';
+                            wfi_content[i].id = 'wfi_toRemove_ParentIcon';
+                        } else if (wfi_content_children[j].style.backgroundColor) {
+                            console.log('icon parent bg')
+                            wfi_content[i].innerHTML = '<span class="' + wfi_content[i].className + '" contentEditable="false">';
+                            wfi_content[i].className = '';
+                            wfi_content[i].id = 'wfi_toRemove_ParentIcon';
+                        }
+                    }
+
+                    // Set icon to uneditable (no Text in span tag allowed)
+                    if (wfi_content_children[j].className.match(/fa fa-(.*)/)) {
+                        console.log('parent child')
+                        setIconUneditable(wfi_content_children[j]);
+                    }
+
+                    // Deletes Background Color from Icon and inserts new elements
+                    if (wfi_content_children[j].style.backgroundColor) {
+                        console.log('icon grandchild bg')
+                        computeIconBackgroundColor(wfi_content_children[j], iconHelper);
+                    }
+                }
+
+                // if icon exists before switch color or remove background color
+                if (wfi_content[i].id === 'wfi_toRemove_ParentIcon') {
+                    var element = iconHelper.getById('wfi_toRemove_ParentIcon');
+                    if (wfi_content[i].children[0].style.color) {
+                        console.log('icon color')
+                        var tmp = wfi_content[i].innerHTML;
+                        wfi_content[i].outerHTML = tmp;
+                    } else if (wfi_content[i].children[0].className.match(/fa fa-(.*)/)) {
+                        console.log('icon bg')
+                        var tmpIcon = CKEDITOR.dom.element.createFromHtml(wfi_content[i].children[0].outerHTML);
+                        tmpIcon.replace(element);
+                    }
+                }
+            }
+
+            // Set icon to uneditable (no Text in span tag allowed)
+            if (wfi_content[i].className.match(/fa fa-(.*)/)) {
+                console.log('parent parent')
+                setIconUneditable(wfi_content[i]);
+            }
+
+            // Deletes Background Color from Icon and inserts new elements
+            if (wfi_content[i].style.backgroundColor) {
+                console.log('icon parent bg')
+                computeIconBackgroundColor(wfi_content[i], iconHelper);
+            }
+        }
+        console.log('-------------------------------------------')
+    };
+
+    // Set icon to uneditable (no Text in span tag allowed)
+    function setIconUneditable (wfi_content) {
+        console.log('setIconUneditable')
+        if (wfi_content.attributes.length >= 2) {
+            // Blocks the jump of the text after the icon
+            if (wfi_content.attributes[1].nodeValue === false) {}
+        } else {
+            var tmp = '<span class="' + wfi_content.className + '" contentEditable="false"></span> ';
+            wfi_content.outerHTML = tmp;
+        }
+    };
+
+    // Deletes Background Color from Icon and inserts new elements
+    function computeIconBackgroundColor (wfi_content, iconHelper) {
+        console.log('computeIconBackgroundColor')
+        var color = wfi_content.style.backgroundColor.match(/rgb(.*)/);
+        if (wfi_content.childNodes.length === 2) {
+            wfi_content.id = 'wfi_toReplace';
+            var element = iconHelper.getById('wfi_toReplace');
+            var tmpNode1 = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.className + '" style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[0].nodeValue + '</span>');
+            var tmpNodeIcon = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.childNodes[1].className + '" contentEditable="false"></span> ');
+            tmpNode1.replace(element);
+            tmpNodeIcon.insertAfter(tmpNode1);
+        } else if (wfi_content.childNodes.length === 3) {
+            wfi_content.id = 'wfi_toReplace';
+            var element = iconHelper.getById('wfi_toReplace');
+            var tmpNode1 = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.className + '" style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[0].nodeValue + '</span>');
+            var tmpNodeIcon = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.childNodes[1].className + '" contentEditable="false"></span> ');
+            var tmpNode2 = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.className + '" style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[2].nodeValue + '</span>');
+            tmpNode1.replace(element);
+            tmpNodeIcon.insertAfter(tmpNode1);
+            tmpNode2.insertAfter(tmpNodeIcon);
+        }
+    };
 
     function fullColorHex(rgb) {
         var color = rgb.replace(/[{()}]/g, '');
@@ -461,8 +654,15 @@
         init: function (editor) {
             editor.on('doubleclick', function (evt) {
                 var element = evt.data.element;
+                if (element.$.className.indexOf(' fa-') != -1) {
+                    element.removeAttribute('contentEditable');
+                }
+
                 if ((element.is('img') || element.$.className.indexOf(' fa-') != -1) && is_editable_node(element)) {
                     image_dialog(editor, element);
+                    if (element.$.className.indexOf(' fa-') != -1) {
+                        element.setAttribute('contentEditable', 'false');
+                    }
                     return;
                 }
                 var parent = new CKEDITOR.dom.element(element.$.parentNode);
@@ -494,6 +694,13 @@
             editor.addCommand('cimage', {
                 exec: function (editor) {
                     image_dialog(editor);
+                    $('.btn.btn-primary.save').click(function() {
+                        console.log('jquery')
+                        var wfi_content = editor.document.$.body.children;
+                        var iconHelper = editor.document;
+                        setTimeout(function() { computeIcon(wfi_content, iconHelper) }, 1000);
+
+                    });
                     return true;
                 },
                 canUndo: false,
