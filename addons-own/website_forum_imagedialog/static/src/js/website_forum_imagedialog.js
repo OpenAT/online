@@ -12,7 +12,7 @@
         var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
         var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
         var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
-//        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
+        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
 
         if (wfiStyleText) {
             $('.' + wfiClassName).attr('style', 'text-align:' + wfiStyleText[1] + ';');
@@ -20,9 +20,9 @@
             $('.' + wfiClassName).attr('style', 'margin-left:' + wfiStyleIndent[1] + ';');
         } else if (wfiStyleColor) {
             $('.' + wfiClassName).attr('style', 'color:#' + wfiStyleColor[1] + ';');
-        } /*else if (wfiStyleBG) {
+        } else if (wfiStyleBG) {
             $('.' + wfiClassName).attr('style', 'background-color:#' + wfiStyleBG[1] + ';');
-        }*/
+        }
     }
 
     // Check if in ask/edit question
@@ -55,10 +55,6 @@
         CKEDITOR.replace('content', _forum_config());
     }
 
-//    CKEDITOR.dtd.$removeEmpty.span = false;
-//    CKEDITOR.dtd.$removeEmpty.div = false;
-//    CKEDITOR.dtd.$removeEmpty.br = false;
-
     var editor = CKEDITOR.instances['content'];
     loadStyleInCKEDITOR(editor);
     changeStyleInCKEDITOR(editor);
@@ -75,25 +71,31 @@
                 var wfiClassName = wfi_content[i].className;
                 var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
                 var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
+                var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
+                var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
 
                 if (wfiStyleText) {
                     wfi_content[i].style.textAlign = wfiStyleText[1];
                 } else if (wfiStyleIndent) {
                     wfi_content[i].style.marginLeft = wfiStyleIndent[1];
+                } else if (wfiStyleColor) {
+                    wfi_content[i].style.color = hexToRGB(wfiStyleColor[1]);
+                } else if (wfiStyleBG) {
+                    wfi_content[i].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
                 }
 
                 if (wfi_content[i].children.length) {
                     var wfi_content_children = wfi_content[i].children;
                     for (var j = 0; j < wfi_content_children.length; j++) {
                         var wfiChildClassName = wfi_content_children[j].className;
-                        var wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
-//                        var wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
+                        wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
+                        wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
 
                         if (wfiStyleColor) {
                             wfi_content_children[j].style.color = hexToRGB(wfiStyleColor[1]);
-                        } /*else if (wfiStyleBG) {
+                        } else if (wfiStyleBG) {
                             wfi_content_children[j].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                        }*/
+                        }
 
                         if (wfi_content_children[j].children.length) {
                             if (wfi_content_children[j].children[0].className.match(/wfi_style_color_(.*)/)) {
@@ -101,30 +103,30 @@
                                 wfi_content_children[j].children[0].style.color = hexToRGB(wfiStyleColor[1]);
                             }
 
-//                            if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-//                                wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-//                                wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-//                            } else {
-//
-//                                if (wfi_content_children[j].children[0].children.length) {
-//                                    if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-//                                        wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-//                                        wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-//                                    } else {
-//                                        wfi_content_children[j]
-//                                    }
-//
-//                                } else if (wfi_content_children[j].children.length) {
-//                                    var wfi_content_grandchildren = wfi_content_children[j].children;
-//                                    for (var k = 0; k < wfi_content_grandchildren.length; k++) {
-//                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-//                                            wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
-//                                            wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-//
-//                                        }
-//                                    }
-//                                }
-//                            }
+                            if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                                wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                            } else {
+
+                                if (wfi_content_children[j].children[0].children.length) {
+                                    if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                        wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
+                                        wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+                                    } else {
+                                        wfi_content_children[j]
+                                    }
+
+                                } else if (wfi_content_children[j].children.length) {
+                                    var wfi_content_grandchildren = wfi_content_children[j].children;
+                                    for (var k = 0; k < wfi_content_grandchildren.length; k++) {
+                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                            wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
+                                            wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
+
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -147,13 +149,6 @@
     // next change: moves content from span with color or background-color deletes content) after changing to often
     //--------------------------------------
     function changeStyleInCKEDITOR (editor) {
-        if ($('.btn.btn-primary.save').length) {
-            console.log('jquery click')
-            $('.btn.btn-primary.save').click(function() {
-                editor.fire('change');
-            });
-        }
-
         editor.on('change', function (ev) {
             // Elements which need a classname
             var wfi_content = ev.editor.document.$.body.children;
@@ -174,7 +169,6 @@
             // 4.) if no children exist, add only classname (for text alignment) or classname with color/background-color value
             computeIcon(wfi_content, iconHelper);
             for (var i = 0; i < wfi_content.length; i++) {
-//                console.log(wfi_content)
                 if (wfi_content[i].children.length) {
                     var wfi_content_children = wfi_content[i].children;
                     for (var j = 0; j < wfi_content_children.length; j++) {
@@ -292,7 +286,10 @@
                                     console.log('reset color')
                                     var color = child_style.color.match(/rgb(.*)/);
                                     wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                                    wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+                                    if (!wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                        console.log('bg color')
+                                        wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
+                                    }
 
                                     changeOccured = true;
                                 } else if (!wfi_content_children[j].className) {
@@ -379,9 +376,12 @@
                         console.log('parent color')
                         if (wfi_content[i].children.length && !wfi_content[i].children[0].className.match(/fa fa-(.*)/)) {
                             console.log('parent child color')
+                            if (!wfi_content[i].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
+                                console.log('bg color')
+                                wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
+                            }
                             var color = parent_style.color.match(/rgb(.*)/);
                             wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                            wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
                             for (var n = 0; n < body.getChildCount(); n++) {
                                 if (wfi_content[i].className === body.getChild(n).$.className) {
                                     range.selectNodeContents( body.getChild(n) );
