@@ -3,28 +3,6 @@
     var website = openerp.website;
     var webEditor = website.editor;
 
-    //--------------------------------------
-    // Find the classnames of styled comments and apply the style to the elements
-    //--------------------------------------
-    var wfi_content = $('[class^="wfi_style_"]');
-    for (var i = 0; i < wfi_content.length; i++) {
-        var wfiClassName = wfi_content[i].className;
-        var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
-        var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
-        var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
-        var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
-
-        if (wfiStyleText) {
-            $('.' + wfiClassName).attr('style', 'text-align:' + wfiStyleText[1] + ';');
-        } else if (wfiStyleIndent) {
-            $('.' + wfiClassName).attr('style', 'margin-left:' + wfiStyleIndent[1] + ';');
-        } else if (wfiStyleColor) {
-            $('.' + wfiClassName).attr('style', 'color:#' + wfiStyleColor[1] + ';');
-        } else if (wfiStyleBG) {
-            $('.' + wfiClassName).attr('style', 'background-color:#' + wfiStyleBG[1] + ';');
-        }
-    }
-
     // Check if in ask/edit question
     if(!$('textarea.load_editor').length) {
 //        console.log('not in forum');
@@ -43,7 +21,6 @@
 
         var editor = CKEDITOR.instances['content'];
 
-        loadStyleInCKEDITOR(editor);
         changeStyleInCKEDITOR(editor);
 
     });
@@ -56,321 +33,17 @@
     }
 
     var editor = CKEDITOR.instances['content'];
-    loadStyleInCKEDITOR(editor);
     changeStyleInCKEDITOR(editor);
 
-
     //--------------------------------------
-    // Apply Style in Editor when editing a Comment/Question
-    //--------------------------------------
-    function loadStyleInCKEDITOR (editor) {
-        editor.on('contentDom', function (ev) {
-            var wfi_content = ev.editor.document.$.body.children;
-
-            for (var i = 0; i < wfi_content.length; i++) {
-                var wfiClassName = wfi_content[i].className;
-                var wfiStyleText = wfiClassName.match(/wfi_style_text_(.*)/);
-                var wfiStyleIndent = wfiClassName.match(/wfi_style_indent_(.*)/);
-                var wfiStyleColor = wfiClassName.match(/wfi_style_color_(.*)/);
-                var wfiStyleBG = wfiClassName.match(/wfi_style_bgcolor_(.*)/);
-
-                if (wfiStyleText) {
-                    wfi_content[i].style.textAlign = wfiStyleText[1];
-                } else if (wfiStyleIndent) {
-                    wfi_content[i].style.marginLeft = wfiStyleIndent[1];
-                } else if (wfiStyleColor) {
-                    wfi_content[i].style.color = hexToRGB(wfiStyleColor[1]);
-                } else if (wfiStyleBG) {
-                    wfi_content[i].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                }
-
-                if (wfi_content[i].children.length) {
-                    var wfi_content_children = wfi_content[i].children;
-                    for (var j = 0; j < wfi_content_children.length; j++) {
-                        var wfiChildClassName = wfi_content_children[j].className;
-                        wfiStyleColor = wfiChildClassName.match(/wfi_style_color_(.*)/);
-                        wfiStyleBG = wfiChildClassName.match(/wfi_style_bgcolor_(.*)/);
-
-                        if (wfiStyleColor) {
-                            wfi_content_children[j].style.color = hexToRGB(wfiStyleColor[1]);
-                        } else if (wfiStyleBG) {
-                            wfi_content_children[j].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                        }
-
-                        if (wfi_content_children[j].children.length) {
-                            if (wfi_content_children[j].children[0].className.match(/wfi_style_color_(.*)/)) {
-                                wfiStyleColor = wfi_content_children[j].children[0].className.match(/wfi_style_color_(.*)/);
-                                wfi_content_children[j].children[0].style.color = hexToRGB(wfiStyleColor[1]);
-                            }
-
-                            if (wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                wfiStyleBG = wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                                wfi_content_children[j].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                            } else {
-
-                                if (wfi_content_children[j].children[0].children.length) {
-                                    if (wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                        wfiStyleBG = wfi_content_children[j].children[0].children[0].className.match(/wfi_style_bgcolor_(.*)/);
-                                        wfi_content_children[j].children[0].children[0].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-                                    } else {
-                                        wfi_content_children[j]
-                                    }
-
-                                } else if (wfi_content_children[j].children.length) {
-                                    var wfi_content_grandchildren = wfi_content_children[j].children;
-                                    for (var k = 0; k < wfi_content_grandchildren.length; k++) {
-                                        if (wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                            wfiStyleBG = wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)
-                                            wfi_content_grandchildren[k].style.backgroundColor = hexToRGB(wfiStyleBG[1]);
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function hexToRGB (hex) {
-        r = parseInt(hex.substring(0,2), 16);
-        g = parseInt(hex.substring(2,4), 16);
-        b = parseInt(hex.substring(4,6), 16);
-
-        result = 'rgb('+r+','+g+','+b+')';
-        return result;
-    }
-
-    //--------------------------------------
-    // To Bypass XSS adding Classnames to the new Style (for color and text positioning)
-    // Also select content after color/background-color changed, because no correct behaviour (selection vanishes -->
-    // next change: moves content from span with color or background-color deletes content) after changing to often
+    // Detect changes in editor and compute the Icon to get the correct color or delete the background
     //--------------------------------------
     function changeStyleInCKEDITOR (editor) {
         editor.on('change', function (ev) {
-            // Elements which need a classname
             var wfi_content = ev.editor.document.$.body.children;
-            // Helpers to check if something changed in a deeper level
-            var innerChanged = false;
-            var innerGrandChanged = false;
-            var changeOccured = false;
             var iconHelper = ev.editor.document;
-            // For Selection of content after change
-            var body = ev.editor.document.getBody();
-            var selection = ev.editor.getSelection();
-            var range = ev.editor.createRange();
 
-            // Search elements and add classnames
-            // 1.) check if children exist, if children exist go to second loop and check if there are 'grandchildren'
-            // 2.) in children/grandchildren loop replace innerHtml and style for child/grandchild
-            // 3.) add classname with color/background-color value
-            // 4.) if no children exist, add only classname (for text alignment) or classname with color/background-color value
             computeIcon(wfi_content, iconHelper);
-            for (var i = 0; i < wfi_content.length; i++) {
-                if (wfi_content[i].children.length) {
-                    var wfi_content_children = wfi_content[i].children;
-                    for (var j = 0; j < wfi_content_children.length; j++) {
-
-                        if (wfi_content_children[j].children.length) {
-                            var wfi_content_grandchildren = wfi_content_children[j].children;
-                            for (var k = 0; k < wfi_content_grandchildren.length; k++) {
-                                if (wfi_content_grandchildren[k].children.length) {
-                                    var wfi_content_grandchildren_deep = wfi_content_grandchildren[k].children;
-                                    for (var l = 0; l < wfi_content_grandchildren_deep.length; l++) {
-                                        if (wfi_content_grandchildren_deep[l].children.length) {
-                                                wfi_content_grandchildren[k].children[0].style.backgroundColor = wfi_content_grandchildren[k].children[0].children[0].style.backgroundColor;
-                                                wfi_content_grandchildren[k].children[0].innerText = wfi_content_grandchildren[k].children[0].children[0].innerHTML;
-                                                changeOccured = true;
-                                        }
-
-                                        if (wfi_content_grandchildren_deep[l].style.backgroundColor && !wfi_content_grandchildren[k].style.color && !wfi_content_grandchildren_deep[l].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                            wfi_content_grandchildren[k].style.backgroundColor = wfi_content_grandchildren[k].children[0].style.backgroundColor;
-                                            wfi_content_grandchildren[k].innerText = wfi_content_grandchildren[k].children[0].innerHTML;
-                                            changeOccured = true;
-                                        } else if (wfi_content_grandchildren_deep[l].style.backgroundColor && !wfi_content_grandchildren_deep[l].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                            var color = wfi_content_grandchildren_deep[l].style.backgroundColor.match(/rgb(.*)/);
-                                            wfi_content_grandchildren_deep[l].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                        }
-                                    }
-                                }
-
-                                if (wfi_content_grandchildren[k].style[0]) {
-                                    if (wfi_content_grandchildren[k].style.backgroundColor && !wfi_content_grandchildren[k].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                        var color = wfi_content_grandchildren[k].style.backgroundColor.match(/rgb(.*)/);
-                                        wfi_content_grandchildren[k].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                        innerGrandChanged = true;
-                                    } else if (wfi_content_grandchildren[k].style.color && !wfi_content_grandchildren[k].className.match(/wfi_style_color_(.*)/)) {
-                                        if (wfi_content_grandchildren[k].children.length) {
-                                            if (wfi_content_grandchildren[k].children[0].className.indexOf('wfi_style_color_') > -1) {
-
-                                                wfi_content_grandchildren[k].innerHTML = wfi_content_grandchildren[k].children[0].innerHTML;
-
-                                                if (wfi_content_grandchildren[k].children[0]) {
-                                                    wfi_content_grandchildren[k].children[0].className = '';
-                                                }
-                                                innerGrandChanged = true;
-                                            }
-                                        }
-
-                                        if (!innerGrandChanged) {
-                                            var color = wfi_content_grandchildren[k].style.color.match(/rgb(.*)/);
-                                            wfi_content_grandchildren[k].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                                            innerGrandChanged = true;
-                                        }
-                                    }
-
-                                    if (changeOccured) {
-                                        var color;
-
-                                        if (wfi_content_grandchildren[k].style.color) {
-                                            color = wfi_content_grandchildren[k].style.color.match(/rgb(.*)/);
-                                            wfi_content_grandchildren[k].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                                        } else if (wfi_content_grandchildren[k].style.backgroundColor) {
-                                            color = wfi_content_grandchildren[k].style.backgroundColor.match(/rgb(.*)/);
-                                            wfi_content_grandchildren[k].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                        }
-
-                                        // select the current element
-                                        for (var n = 0; n < body.getChildCount(); n++) {
-                                            if (body.getChild(n).$.childNodes.length > 0)  {
-                                                var childNodes = body.getChild(n).$.childNodes;
-                                                for (var m = 0; m < childNodes.length; m++) {
-                                                    if (wfi_content_children[j].className === childNodes[m].className) {
-                                                        range.selectNodeContents( body.getChild(n).getChild(m) );
-                                                        selection.selectRanges( [ range ] );
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        innerGrandChanged = true;
-                                        changeOccured = false;
-                                    }
-                                }
-                            }
-                        }
-
-                        var child_style = wfi_content_children[j].style;
-                        if (child_style[0] && !innerGrandChanged) {
-                            if (wfi_content_children[j].style.color && !wfi_content_children[j].className.match(/wfi_style_color_(.*)/)) {
-                                if (wfi_content_children[j].children.length && !wfi_content_children[j].children[0].className.match(/fa fa-(.*)/)) {
-                                    var color = child_style.color.match(/rgb(.*)/);
-                                    wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                                    if (!wfi_content_children[j].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                        wfi_content_children[j].innerHTML = wfi_content_children[j].children[0].innerHTML;
-                                    }
-
-                                    changeOccured = true;
-                                } else if (!wfi_content_children[j].className) {
-                                    var color = wfi_content_children[j].style.color.match(/rgb(.*)/);
-                                    wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                                    innerChanged = true;
-                                }
-                            }
-
-                            if (wfi_content_children[j].style.backgroundColor && !wfi_content[i].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                if (wfi_content[i].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                    wfi_content[i].style.backgroundColor = wfi_content_children[j].style.backgroundColor;
-                                    wfi_content[i].innerHTML = wfi_content_children[j].innerHTML;
-
-                                } else if (!wfi_content_children[j].className) {
-                                    var color = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
-                                    wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                    innerChanged = true;
-                                }
-                            }
-
-                            if (changeOccured) {
-                                // select the current element
-                                var color;
-                                if (wfi_content_children[j].style.color) {
-                                    color = wfi_content_children[j].style.color.match(/rgb(.*)/);
-                                    wfi_content_children[j].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                                } else if (wfi_content_children[j].style.backgroundColor) {
-                                    color  = wfi_content_children[j].style.backgroundColor.match(/rgb(.*)/);
-                                    wfi_content_children[j].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                                }
-
-                                for (var n = 0; n < body.getChildCount(); n++) {
-                                    if (body.getChild(n).$.childNodes.length > 0)  {
-                                        var childNodes = body.getChild(n).$.childNodes;
-                                        for (var m = 0; m < childNodes.length; m++) {
-                                            if (wfi_content_children[j].className === childNodes[m].className) {
-                                                range.selectNodeContents( body.getChild(n).getChild(m) );
-                                                selection.selectRanges( [ range ] );
-                                            }
-                                        }
-                                    }
-                                }
-                                if (wfi_content_children[j].children[0]) {
-                                    wfi_content_children[j].children[0].className = '';
-                                }
-                                innerChanged = true;
-                                changeOccured = false;
-                            }
-                        }
-
-                        if (innerGrandChanged) {
-                            innerChanged = true;
-                        }
-                        innerGrandChanged = false;
-                    }
-                }
-
-                var parent_style = wfi_content[i].style;
-                if (parent_style[0] && !wfi_content[i].className.match(/wfi_style_(.*)/)) {
-                    if (wfi_content[i].className.match(/wfi_style_text_(.*)/)) {
-                        if (wfi_content[i].className === 'wfi_style_text_' + parent_style.textAlign) {
-                            wfi_content[i].className = '';
-                        } else if (wfi_content[i].className !== 'wfi_style_text_' + parent_style.textAlign) {
-                            wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
-                        }
-                    } else if (wfi_content[i].className.match(/wfi_style_indent_(.*)/)) {
-                        wfi_content[i].className = '';
-                        wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
-                    } else {
-                        if (parent_style.textAlign) {
-                            wfi_content[i].className = 'wfi_style_text_' + parent_style.textAlign;
-                        } else if (parent_style.marginLeft) {
-                            wfi_content[i].className = 'wfi_style_indent_' + parent_style.marginLeft;
-                        }
-                    }
-
-                    if (parent_style.color) {
-                        if (wfi_content[i].children.length && !wfi_content[i].children[0].className.match(/fa fa-(.*)/)) {
-                            if (!wfi_content[i].children[0].className.match(/wfi_style_bgcolor_(.*)/)) {
-                                wfi_content[i].innerHTML = wfi_content[i].children[0].innerHTML;
-                            }
-                            var color = parent_style.color.match(/rgb(.*)/);
-                            wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                            for (var n = 0; n < body.getChildCount(); n++) {
-                                if (wfi_content[i].className === body.getChild(n).$.className) {
-                                    range.selectNodeContents( body.getChild(n) );
-                                    selection.selectRanges( [ range ] );
-                                }
-                            }
-
-                            innerChanged = true;
-                        }
-
-                        if (!wfi_content[i].className.match(/wfi_style_color_(.*)/)) {
-                            var color = parent_style.color.match(/rgb(.*)/);
-                            wfi_content[i].className = 'wfi_style_color_' + fullColorHex(color[1]);
-                        }
-                    }
-
-                    if (parent_style.backgroundColor) {
-                        var color = parent_style.backgroundColor.match(/rgb(.*)/);
-                        wfi_content[i].className = 'wfi_style_bgcolor_' + fullColorHex(color[1]);
-                    }
-
-                } else if (!parent_style[0] && !wfi_content[i].className.match(/fa fa-(.*)/) && !(wfi_content[i].localName === 'img')) {
-                    wfi_content[i].className = '';
-                }
-
-                innerChanged = false;
-            }
         });
     }
 
@@ -429,7 +102,7 @@
                             if (wfi_content_children[j].children[0].style.color) {
                                 var tmp = wfi_content_children[j].innerHTML;
                                 wfi_content_children[j].outerHTML = tmp;
-                            } else if (wfi_content_children[j].children[0].className.match(/fa fa-(.*)/)) {
+                            } else if (wfi_content_children[j].children[0].style.backgroundColor) {
                                 var tmpIcon = CKEDITOR.dom.element.createFromHtml(wfi_content_children[j].children[0].outerHTML);
                                 tmpIcon.replace(element);
                             }
@@ -467,7 +140,7 @@
                     if (wfi_content[i].children[0].style.color) {
                         var tmp = wfi_content[i].innerHTML;
                         wfi_content[i].outerHTML = tmp;
-                    } else if (wfi_content[i].children[0].className.match(/fa fa-(.*)/)) {
+                    } else if (wfi_content[i].children[0].style.backgroundColor) {
                         var tmpIcon = CKEDITOR.dom.element.createFromHtml(wfi_content[i].children[0].outerHTML);
                         tmpIcon.replace(element);
                     }
@@ -500,19 +173,24 @@
     // Deletes Background Color from Icon and inserts new elements
     function computeIconBackgroundColor (wfi_content, iconHelper) {
         var color = wfi_content.style.backgroundColor.match(/rgb(.*)/);
-        if (wfi_content.childNodes.length === 2) {
+        if (wfi_content.childNodes.length === 1) {
             wfi_content.id = 'wfi_toReplace';
             var element = iconHelper.getById('wfi_toReplace');
-            var tmpNode1 = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.className + '" style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[0].nodeValue + '</span>');
+            var tmpNodeIcon = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.childNodes[0].className + '" contentEditable="false"></span> ');
+            tmpNodeIcon.replace(element);
+        } else if (wfi_content.childNodes.length === 2) {
+            wfi_content.id = 'wfi_toReplace';
+            var element = iconHelper.getById('wfi_toReplace');
+            var tmpNode1 = CKEDITOR.dom.element.createFromHtml('<span style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[0].nodeValue + '</span>');
             var tmpNodeIcon = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.childNodes[1].className + '" contentEditable="false"></span> ');
             tmpNode1.replace(element);
             tmpNodeIcon.insertAfter(tmpNode1);
         } else if (wfi_content.childNodes.length === 3) {
             wfi_content.id = 'wfi_toReplace';
             var element = iconHelper.getById('wfi_toReplace');
-            var tmpNode1 = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.className + '" style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[0].nodeValue + '</span>');
+            var tmpNode1 = CKEDITOR.dom.element.createFromHtml('<span style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[0].nodeValue + '</span>');
             var tmpNodeIcon = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.childNodes[1].className + '" contentEditable="false"></span> ');
-            var tmpNode2 = CKEDITOR.dom.element.createFromHtml('<span class="' + wfi_content.className + '" style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[2].nodeValue + '</span>');
+            var tmpNode2 = CKEDITOR.dom.element.createFromHtml('<span style="background-color:#' + fullColorHex(color[1]) + ';">' + wfi_content.childNodes[2].nodeValue + '</span>');
             tmpNode1.replace(element);
             tmpNodeIcon.insertAfter(tmpNode1);
             tmpNode2.insertAfter(tmpNodeIcon);
