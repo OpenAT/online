@@ -178,8 +178,11 @@ header, main, footer {
   display: table-row;
 }
 
+/* ATTENTION: The height can not be 100% anywhere or iframeresizer may just expand but never shrink the iframe!
+              Therefore we reset the height from 100% to auto!
+*/
 footer {
-  height: 100%;
+  height: auto;
   background: #eff8f8;
   background: rgba(200, 200, 200, 0.1);
 }

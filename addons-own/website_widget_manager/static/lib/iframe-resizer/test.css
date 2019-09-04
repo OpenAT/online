@@ -1,0 +1,243 @@
+body {
+    color: #5A4941;
+}
+
+#wsd_checkout_form .price_donate .input-group-addon,
+#wsd_checkout_form #price_donate,
+.btn-default,
+#products_grid_before .small_cart_header a,
+#products_grid_before .oe_cart.small_cart table td {
+    color: inherit
+}
+
+.row #wsd_checkout_form .row,
+#wsd_checkout_form .row,
+.product_price.mt16, .payment_interval_ids,
+#wsd_checkout_form .amount_title,
+#payment_method .col-lg-12:first-child {
+    max-width: none;
+}
+
+#products_grid_before {
+    background: white;
+}
+
+#wsd_checkout_form .amount_title,
+.checkout_title,
+.payment_title,
+#products_grid_before .small_cart_header {
+    background: #FFEFCF;
+}
+
+#wsd_checkout_form .amount_title {
+    margin-bottom: 0;
+    border: 0;
+}
+
+body .oe_website_sale h4 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.container #wsd_checkout_form .form-control:focus {
+    border-color: #666;
+}
+
+/*.js_product > .text-left > .row, .amount_title, .product_price, body .oe_website_sale h4.payment_interval_ids {*/
+.js_product > .text-left > .row,
+#wsd_checkout_form > .row,
+#products_grid_before {
+    box-shadow: 0 2px 10px 5px #EFEFEF;
+}
+
+.js_product > .text-left > .row {
+    overflow: hidden;
+}
+
+.js_product > .text-left > .row,
+#wsd_checkout_form > .row, #wsd_checkout_form .amount_title,
+#wsd_checkout_form input, .checkout_title, .payment_title {
+    border-radius: 5px;
+}
+
+#wsd_checkout_form .amount_title,
+.checkout_title,
+.payment_title {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.js_product > .text-left > .row,
+.row #wsd_checkout_form .row,
+#wsd_checkout_form .row {
+    margin: 20px 0;
+}
+
+#wsd_checkout_form .row .row,
+#payment_method .col-lg-12 {
+    box-shadow: none;
+    max-width: 80%;
+    margin: 0 auto
+}
+
+.js_product > .text-left > .row > .col-md-12:first-child,
+.js_product > .text-left > .row > .col-lg-12:first-child,
+#wsd_checkout_form > .row > .col-md-12:first-child,
+#wsd_checkout_form > .row > .col-lg-12:first-child {
+    padding: 0;
+}
+
+body .oe_website_sale h3 {
+    margin-top: 0;
+}
+
+#wsd_checkout_form label,
+#wsd_checkout_form label.text-danger {
+    color: #898989;
+}
+
+.js_sale #wsd_checkout_form a.btn-primary {
+    font-size: 20px;
+    float: right;
+    margin-top: 40px !important;
+}
+
+.js_sale a.btn-primary:hover {
+    background: #e4761e;
+}
+
+.container #wsd_checkout_form .form-control {
+    border-radius: 3px;
+}
+
+#wsd_checkout_form #payment_method label {
+    margin-bottom: 5px
+}
+
+#wsd_checkout_form .amount_title,
+.checkout_title,
+.payment_title {
+    padding: 10px 20px;
+}
+
+/* By mike remove !important and add body instead */
+body .product_price {
+    margin-top: 50px;
+}
+
+#wsd_checkout_form label.sr-only {
+    hyphens: auto;
+    font-size: 14px;
+    top: -20px;
+    text-align: center;
+    left: 0;
+}
+
+#wsd_checkout_form #price_donate {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#wsd_checkout_form .price_donate .input-group-addon {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.amount_title {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border: none;
+}
+
+.product_price {
+    padding-top: 40px !important;
+    position: relative;
+    z-index: 1111;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    background: white;
+}
+
+body .oe_website_sale h4.payment_interval_ids {
+    margin: 0;
+    padding: 20px 0;
+    background: white;
+    position: relative;
+    z-index: 9999999;
+}
+
+/* By Mike remove !important and add body instead */
+body table .oe_product section,
+body .js_sale a.btn-default,
+body .oe_product.oe_grid .oe_subdescription,
+body .quick_add_to_cart {
+    background: none;
+}
+
+.wsd-icon_container {
+    overflow: hidden;
+}
+
+.oe_product_image:after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    left: -1px;
+    background-image: url('https://care.711.at/wp-content/themes/floatwork_dev/images/img_overlay_news_white.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 4;
+}
+
+.checkout_title, .payment_title {
+    margin-top: 0;
+}
+
+/* By Mike remove !important and add body instead */
+body .oe_product_cart .front {
+    transform: rotateY(0deg);
+}
+
+/* By Mike remove !important and add body instead */
+body .oe_product_cart .back {
+    display: none;
+}
+
+#products_grid td {
+    border-spacing: 20px 40px;
+}
+
+.btn.btn-default.btn-xs.fa.fa-shopping-cart {
+    color: #E4761E;
+    text-align: left;
+}
+
+.oe_product.oe_grid section h5 strong {
+    font-weight: 600;
+    font-size: 22px;
+}
+
+body #products_grid.col-md-8 {
+    float: left;
+}
+
+/* By Mike remove !important and add html instead */
+html body #products_grid_before.col-md-4,
+html body #products_grid_before {
+    padding: 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.oe_website_sale .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+body[data-catid="7"] {
+    padding: 30px;
+}

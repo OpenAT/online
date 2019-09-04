@@ -1,0 +1,20 @@
+
+<!-- TEST 1:
+     NOT WORKING - Even without zoom the height will never get smaler! -->
+<div id="ef-container-234kjh" class="ef-234kjh" style="width: 100%; margin: 0px; padding: 0px; background: none;">
+    <iframe id="fso_if333" class="fso_iframe" src="https://spenden.rotenasen.de/fso/form/1?" scrolling="no"
+            frameborder="0" width="100%" height="0"
+            style="width: 100%; border: none; padding: 0px; margin: 0px; overflow: hidden;"></iframe>
+</div>
+iFrameResize({baseUrl: 'https://spenden.rotenasen.de', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: true, inPageAnchors: true, log: false}, '#fso_if333')
+
+
+<!-- TEST 2: removed (and therefore changed) the height calculation method
+      -->
+<div id="ef-container-234kjh" class="ef-234kjh" style="width: 100%; margin: 0px; padding: 0px; background: none;">
+    <iframe id="fso_if333" class="fso_iframe" src="https://spenden.rotenasen.de/fso/form/1?" scrolling="no"
+            frameborder="0" width="100%" height="0"
+            style="width: 100%; border: none; padding: 0px; margin: 0px; overflow: hidden;"></iframe>
+</div>
+iFrameResize({baseUrl: 'https://spenden.rotenasen.de', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: true, inPageAnchors: true, log: false}, '#fso_if333')
+
