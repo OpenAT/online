@@ -59,6 +59,7 @@
                                         <field name="no_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
                                         <field name="mandatory"/>
                                         <field name="nodata"/>
+                                        <field name="default"/>
                                         <field name="readonly" readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"/>
                                         <field name="login" attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"/>
                                         <field name="confirmation_email" attrs="{'readonly': [('field_ttype','!=','char')]}"/>

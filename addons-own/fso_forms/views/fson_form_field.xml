@@ -29,6 +29,7 @@
                         <field name="clearfix"/>
                         <field name="style"/>
                         <field name="information"/>
+                        <field name="default"/>
                     </group>
                 </form>
             </field>
@@ -51,6 +52,7 @@
                         <field name="mandatory"/>
                         <field name="nodata"/>
                         <field name="readonly"/>
+                        <field name="default"/>
                         <field name="login"/>
                         <field name="confirmation_email"/>
                         <field name="validation_rule"/>

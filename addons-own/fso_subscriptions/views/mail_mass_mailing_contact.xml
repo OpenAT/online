@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- Allow a form view for list contacts -->
+        <record model="ir.actions.act_window" id="mass_mailing.action_view_mass_mailing_contacts">
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- FORM VIEW -->
+        <record model="ir.ui.view" id="view_mail_mass_mailing_contact_form">
+            <field name="name">List Contact Form</field>
+            <field name="model">mail.mass_mailing.contact</field>
+            <field name="arch" type="xml">
+                <form string="List Contact">
+                    <sheet>
+                        <group name="basic_contact_data">
+                            <group name="basic">
+                                <!-- TODO: Firstname Lastname -->
+                                <field name="name"/>
+                                <field name="email"/>
+                                <field name="phone"/>
+                                <field name="mobile"/>
+                                <field name="street"/>
+                                <field name="street2"/>
+                                <field name="zip"/>
+                                <field name="city"/>
+                                <field name="state_id"/>
+                                <field name="country_id"/>
+                            </group>
+                            <group name="extra">
+                                <field name="list_id"/>
+                                <field name="partner_id"/>
+                                <field name="opt_out"/>
+                                <field name="bestaetigt_am_um"/>
+                                <field name="bestaetigt_typ"/>
+                                <field name="bestaetigt_herkunft"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Print Fields">
+                                <group name="print_fields_a">
+                                    <group name="person">
+                                        <field name="pf_vorname"/>
+                                        <field name="pf_name"/>
+                                        <field name="pf_anredelower"/>
+                                        <field name="pf_anredekurz"/>
+                                        <field name="pf_anredelang"/>
+                                        <field name="pf_anrede"/>
+                                        <field name="pf_titelnachname"/>
+                                        <field name="pf_email"/>
+                                        <field name="pf_geburtsdatum"/>
+                                    </group>
+                                    <group name="person_advanced">
+                                        <field name="pf_bpkvorname"/>
+                                        <field name="pf_bpknachname"/>
+                                        <field name="pf_bpkgeburtsdatum"/>
+                                        <field name="pf_bpkplz"/>
+                                        <field name="pf_personid"/>
+                                        <field name="pf_formularnummer"/>
+                                        <field name="pf_xguid"/>
+                                        <field name="pf_mandatsid"/>
+                                        <field name="pf_emaildatum"/>
+                                    </group>
+                                </group>
+                                <group name="print_fields_b">
+                                    <group name="person_financial">
+                                        <field name="pf_bank"/>
+                                        <field name="pf_iban_verschluesselt"/>
+                                        <field name="pf_iban"/>
+                                        <field name="pf_bic"/>
+                                        <field name="pf_jahresbeitrag"/>
+                                        <field name="pf_teilbeitrag"/>
+                                        <field name="pf_zahlungsintervall"/>
+                                        <field name="pf_naechstevorlageammonatjahr"/>
+                                        <field name="pf_naechstevorlageam"/>
+                                    </group>
+                                    <group name="person_other">
+                                        <field name="pf_wunschspendenbetrag"/>
+                                        <field name="pf_zahlungsreferenz"/>
+                                        <field name="pf_betragspendenquittung"/>
+                                        <field name="pf_jahr"/>
+                                        <field name="pf_patentier"/>
+                                        <field name="pf_namebeschenkter"/>
+                                        <field name="pf_nameschenker"/>
+                                        <field name="pf_patenkind"/>
+                                        <field name="pf_patenkindvorname"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="System">
+                                <group name="system_info">
+                                    <group name="system_basics">
+                                        <field name="create_date"/>
+                                        <field name="create_uid"/>
+                                        <field name="write_date"/>
+                                        <field name="write_uid"/>
+                                    </group>
+                                    <group name="system_advanced">
+                                        <field name="id" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

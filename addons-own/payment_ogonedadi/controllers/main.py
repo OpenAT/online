@@ -23,7 +23,6 @@ class OgonedadiController(http.Controller):
         '/payment/ogonedadi/cancel', '/payment/ogonedadi/test/cancel',
     ], type='http', auth='none', website=True)
     def ogonedadi_form_feedback(self, **post):
-        """ Ogone uses GET requests, at least for accept """
         _logger.info('Ogonedadi: entering form_feedback with post data: \n%s\n', pprint.pformat(post))  # debug
         cr, uid, context = request.cr, SUPERUSER_ID, request.context
 

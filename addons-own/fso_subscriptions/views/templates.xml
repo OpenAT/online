@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- Website Template: form -->
+        <template id="subscription" name="FSON Mailing List Subscription Website-Template" page="True">
+            <t t-call="website.layout">
+                <t t-set="title"><t t-esc="mlist.name"/></t>
+
+                <div id="wrap" t-att-class="'fso_subscription_wrap fso_subscription_wrap_'+str(mlist.id)">
+                    <div class="container fsosubscription_container">
+
+                        <!-- TOP SNIPPETS ON FORM PAGE -->
+                        <div class="row fso_subscription_top_row">
+                            <div class="col-lg-12">
+                                <div t-field="mlist.subscription_page_top" class="oe_structure fso_subscription_top"/>
+                            </div>
+                        </div>
+
+                        <div class="row fso_subscription_main_row">
+                            <div class="col-lg-7 fso_subscription_info">
+                                <div t-field="mlist.subscription_page" class="oe_structure fso_subscription_main"/>
+                            </div>
+                            <div class="col-lg-5 fso_subscription_box">
+                                <p>TODO: SUBSCRIPTION BOX WITH FORM, COUNTER AND GOALS </p>
+                                <t t-raw="form_html"/>
+                            </div>
+                        </div>
+
+                        <!-- BOTTOM SNIPPETS ON FORM PAGE -->
+                        <div class="row fso_subscription_bottom_row">
+                            <div class="col-lg-12">
+                                <div t-field="mlist.subscription_page_bottom" class="oe_structure fso_subscription_bottom"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</openerp>

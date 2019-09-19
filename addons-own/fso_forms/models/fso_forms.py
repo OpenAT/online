@@ -242,6 +242,8 @@ class FSONFormField(models.Model):
     information = fields.Html(string='Information', help='Information Text or Snippet Area if no field is selected!',
                               translate=True)
 
+    default = fields.Char(string="Default", help="For Many2one fields simply use the id or the XMLID of the record")
+
     # TODO: Add file type or mime type restrictions for binary fields
     #       HINT: check html  parameter 'accept' and 'type'
 

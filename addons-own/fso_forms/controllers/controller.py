@@ -162,57 +162,62 @@ class FsoForms(http.Controller):
 
         # TODO: Replace sudo with the logged in user or by users set in the form to write the record
         form_model_obj = request.env[form_model_name].sudo()
+        record = request.env[form_model_name].sudo()
 
         # Return an empty recordset it this is an email only form!
         if form.email_only:
             return form_model_obj
 
+        # TRY TO FIND THE RECORD BASED ON THE CURRENT SESSION
+        # ---------------------------------------------------
+        form_sdata = self.get_fso_form_session_data(form)
+        if form_sdata:
+            record = form_model_obj.sudo().browse([form_sdata['form_record_id']])
+
+        # TRY TO FIND A FORM-RELATED-RECORD BASED ON THE LOGGED IN USER AND THE LOGIN-MARKED-FIELD
+        # ----------------------------------------------------------------------------------------
         # Get the request user if the current user is not the website public user
         logged_in_user = False
         if request.website.user_id.id != request.uid:
             logged_in_user = request.env['res.users'].sudo().browse([request.uid])
 
-        # A) TRY TO FIND A FORM-RELATED-RECORD BASED ON THE LOGGED IN USER AND THE LOGIN-MARKED-FIELD
-        # -------------------------------------------------------------------------------------------
         # HINT: Only if 'edit_existing_record_if_logged_in' is set in the form!
         if logged_in_user and form.edit_existing_record_if_logged_in:
 
-            # HINT: You may inherit get_fso_form_records_by_user() to select or filter for a different record!
-            form_records_by_user = self.get_fso_form_records_by_user(form=form, user=logged_in_user)
+            # If the logged in user just created a record we simply return the record from the session!
+            if form_sdata and str(form_sdata['form_uid']) == str(logged_in_user.id) and record and len(record) == 1:
+                pass
 
-            # Return a record only if exactly ONE record was found
-            # Record found
-            if form_records_by_user and len(form_records_by_user) == 1:
-                record_by_user = form_records_by_user
+            # Try to find the record based on the logged in user
+            else:
+                # HINT: You may inherit get_fso_form_records_by_user() to select or filter for a different record!
+                form_records_by_user = self.get_fso_form_records_by_user(form=form, user=logged_in_user)
 
-                # Set/Update the session data based on the found record but without clear session data since
-                # 'edit_existing_record_if_logged_in' is set!
+                # Return a record only if exactly ONE record was found else we return an empty recordset
+                if form_records_by_user and len(form_records_by_user) == 1:
+                    record = form_records_by_user
+                else:
+                    record = request.env[form_model_name].sudo()
+
+            # Set/Update the session data based on the found record but without clear session data since
+            # 'edit_existing_record_if_logged_in' is set!
+            if len(record) == 1:
                 self.set_fso_form_session_data(form_id=form.id,
                                                form_uid=logged_in_user.id,
-                                               form_record_id=record_by_user.id,
+                                               form_record_id=record.id,
                                                form_model_id=form.model_id.id,
                                                clear_session_data=False)
 
-                # Return the record
-                return form_records_by_user
-
-            # Record was not found
-            else:
-                return form_model_obj
-
-        # B) TRY TO FIND THE RECORD BASED ON THE CURRENT SESSION
-        # ------------------------------------------------------
-        form_sdata = self.get_fso_form_session_data(form)
-        if not form_sdata:
-            return form_model_obj
-        record = form_model_obj.sudo().browse([form_sdata['form_record_id']])
-        # Record not found
+        # RETURN THE RECORD
+        # -----------------
+        # Clear Session Data if the record was not found or too many records are found an return an empty recordset
         if len(record) != 1:
             _logger.error('Fso form record stored in session data not found! Removing form data from session!')
             self.remove_fso_form_session_data(form.id)
             return form_model_obj
-        # Record found
-        return record
+        else:
+            # Record found
+            return record
 
     def validate_fields(self, form, field_data):
         field_errors = dict()
@@ -352,6 +357,11 @@ class FsoForms(http.Controller):
                 elif f_type == 'float':
                     if f_value:
                         values[f_name] = f_value.replace(',', ':').replace('.', '').replace(':', '.')
+
+                # Add MANY2ONE
+                if f_type == 'many2one':
+                    if f_value:
+                        values[f_name] = int(f_value)
 
                 # Add OTHER FIELD TYPES
                 else:
@@ -534,7 +544,7 @@ class FsoForms(http.Controller):
                            email_to=email_to)
 
     @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
-    def fso_form(self, form_id=False, **kwargs):
+    def fso_form(self, form_id=None, render_form_only=False, lazy=True, **kwargs):
         form_id = int(form_id)
         form = request.env['fson.form'].sudo().browse([form_id])
         if len(form) != 1:
@@ -640,19 +650,20 @@ class FsoForms(http.Controller):
 
         # FINALLY RENDER THE FORM
         # -----------------------
-        return http.request.render('fso_forms.form',
-                                   {'kwargs': self._prepare_kwargs_for_form(form, **kwargs),
-                                    # Form record
-                                    'form': form,
-                                    # Set error css-classes to the field-form-groups
-                                    'form_field_errors': form_field_errors,
-                                    # Record created by the form
-                                    'record': record,
-                                    # Messages
-                                    'errors': errors,
-                                    'warnings': warnings,
-                                    'messages': messages,
-                                    })
+        template_kwargs = {'kwargs': self._prepare_kwargs_for_form(form, **kwargs),
+                           'render_form_only': render_form_only,
+                           # Form record
+                           'form': form,
+                           # Set error css-classes to the field-form-groups
+                           'form_field_errors': form_field_errors,
+                           # Record created by the form
+                           'record': record,
+                           # Messages
+                           'errors': errors,
+                           'warnings': warnings,
+                           'messages': messages,
+                           }
+        return http.request.render('fso_forms.form', template_kwargs, lazy=lazy)
 
     @http.route(['/fso/form/thanks/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
     def fso_form_thanks(self, form_id=False, **kwargs):
