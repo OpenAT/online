@@ -16,8 +16,9 @@
                     <sheet>
                         <group name="basic_contact_data">
                             <group name="basic">
-                                <!-- TODO: Firstname Lastname -->
-                                <field name="name"/>
+                                <field name="firstname"/>
+                                <field name="lastname"/>
+                                <field name="name" readonly="True"/>
                                 <field name="email"/>
                                 <field name="phone"/>
                                 <field name="mobile"/>

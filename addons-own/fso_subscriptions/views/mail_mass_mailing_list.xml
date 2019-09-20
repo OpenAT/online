@@ -12,14 +12,46 @@
                     <group name="subscriptions">
                         <group name="subscription_basics">
                             <field name="list_type"/>
-                            <field name="subscription_form"/>
-                            <field name="subscription_goal"/>
+                            <field name="subscription_form"
+                                   readonly="1"/>
+                            <button name="create_subscription_form" type="object"
+                                    string="Create Subscription form"
+                                    colspan="2"
+                                    attrs="{'invisible': [('subscription_form', '!=', False)]}"
+                            />
+                            <field name="website_url" widget="url" readonly="1"
+                                   attrs="{'invisible': [('subscription_form', '=', False)]}"/>
+
                         </group>
                         <group name="subscription_settings">
                             <field name="bestaetigung_erforderlich"/>
                             <field name="bestaetigung_typ"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Webpage Settings">
+                            <group>
+                                <group>
+                                    <field name="goal"/>
+                                    <field name="goal_reached"/>
+                                    <field name="goal_text"/>
+                                    <field name="goal_text_after"/>
+                                    <field name="goal_bar"/>
+                                </group>
+                                <group>
+                                    <field name="page_top_classes"/>
+                                    <field name="page_left_classes"/>
+                                    <field name="page_right_classes"/>
+                                    <field name="page_bottom_classes"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Webpage Content">
+                            <field name="page_top"/>
+                            <field name="page_left"/>
+                            <field name="page_bottom"/>
+                        </page>
+                    </notebook>
                 </xpath>
             </field>
         </record>

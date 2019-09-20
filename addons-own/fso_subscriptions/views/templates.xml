@@ -2,7 +2,40 @@
 <openerp>
     <data noupdate="0">
 
-        <!-- Website Template: form -->
+        <!-- Load custom js and css -->
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="fso_subscriptions_assets_frontend">
+            <xpath expr="//script[last()]" position="after">
+                <!-- CSS -->
+                <link rel="stylesheet" href='/fso_subscriptions/static/src/css/fso_subscriptions.css'/>
+                <!-- JAVA SCRIPT -->
+                <!--<script type="text/javascript" src="/fso_subscriptions/static/src/js/fso_subscriptions.js"/>-->
+            </xpath>
+        </template>
+        
+        <!-- SUB-TEMPLATE: SUBSCRIPTION INFO -->
+        <template id="subscription_info" name="Subscription Info">
+
+            <t t-if="mlist.goal and (mlist.goal_text or mlist.goal_text_after)">
+                <div class="subscription_progress_bar_text">
+                    <p>
+                        <span class="subscription_goal_text" t-field="mlist.goal_text"/>
+                        <span class="subscription_goal" t-field="mlist.goal"/>
+                        <span class="subscription_goal_text_after"  t-field="mlist.goal_text_after"/>
+                   </p>
+                </div>
+            </t>
+
+            <t t-if="mlist.goal and mlist.goal_bar">
+                <div class="progress subscription_progress_bar">
+                    <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" t-att-aria-valuenow="mlist.goal_reached" aria-valuemin="0" aria-valuemax="100" t-att-style="'width: ' + str(mlist.goal_reached) + '%;'">
+                        <t t-esc="mlist.goal_reached"/>%
+                    </div>
+                </div>
+            </t>
+            
+        </template>        
+
+        <!-- Website Template: mass mailing list -->
         <template id="subscription" name="FSON Mailing List Subscription Website-Template" page="True">
             <t t-call="website.layout">
                 <t t-set="title"><t t-esc="mlist.name"/></t>
@@ -11,26 +44,38 @@
                     <div class="container fsosubscription_container">
 
                         <!-- TOP SNIPPETS ON FORM PAGE -->
-                        <div class="row fso_subscription_top_row">
-                            <div class="col-lg-12">
-                                <div t-field="mlist.subscription_page_top" class="oe_structure fso_subscription_top"/>
+                        <div id="fso_subscription_top_row" class="row">
+                            <div t-att-class="mlist.page_top_classes if mlist.page_top_classes else 'col-lg-12'">
+                                <div t-field="mlist.page_top" id="fso_subscription_top" class="oe_structure"/>
                             </div>
                         </div>
 
-                        <div class="row fso_subscription_main_row">
-                            <div class="col-lg-7 fso_subscription_info">
-                                <div t-field="mlist.subscription_page" class="oe_structure fso_subscription_main"/>
+                        <!-- LEFT AND RIGHT COLUMN FOR INFO TEXT AND SUBSCRIPTION FORM -->
+                        <div id="fso_subscription_main_row" class="row">
+
+                            <!-- LEFT -->
+                            <div id="fso_subscription_left" t-att-class="mlist.page_left_classes if mlist.page_left_classes else 'col-lg-7'">
+                                <div t-field="mlist.page_left" id="fso_subscription_main" class="oe_structure"/>
                             </div>
-                            <div class="col-lg-5 fso_subscription_box">
-                                <p>TODO: SUBSCRIPTION BOX WITH FORM, COUNTER AND GOALS </p>
-                                <t t-raw="form_html"/>
+
+                            <!-- RIGHT -->
+                            <div id="fso_subscription_right" t-att-class="mlist.page_right_classes if mlist.page_right_classes else 'col-lg-5'">
+                                <!-- SUBSCRIPTION INFOS -->
+                                <div id="subscription_info">
+                                    <t t-call="fso_subscriptions.subscription_info"/>
+                                </div>
+                                <!-- SUBSCRIPTION FORM -->
+                                <div id="subscription_form">
+                                    <t t-raw="form_html"/>
+                                </div>
                             </div>
+
                         </div>
 
                         <!-- BOTTOM SNIPPETS ON FORM PAGE -->
-                        <div class="row fso_subscription_bottom_row">
-                            <div class="col-lg-12">
-                                <div t-field="mlist.subscription_page_bottom" class="oe_structure fso_subscription_bottom"/>
+                        <div id="fso_subscription_bottom_row" class="row">
+                            <div t-att-class="mlist.page_bottom_classes if mlist.page_bottom_classes else 'col-lg-12'">
+                                <div t-field="mlist.page_bottom" id="fso_subscription_bottom" class="oe_structure"/>
                             </div>
                         </div>
 

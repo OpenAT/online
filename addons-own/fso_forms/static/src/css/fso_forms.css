@@ -1,5 +1,15 @@
 @charset "utf-8";
 
+/* class to hide fields e.g.: for fields with default values */
+.hide_it {
+    position: absolute;
+    left: -99999px;
+    top: -99999px;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
 
 /* FSO FORMS JQUERY VALIDATE */
 /* reset bootstrap setting for auth_partner_form */

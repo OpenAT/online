@@ -68,6 +68,7 @@ Features needed but solved by other addons:
     'auto_install': False,
     'depends': [
         'fso_mass_mail',
+        'mass_mail_contact_firstname',
         'fso_print_fields',
     ],
     'data': [

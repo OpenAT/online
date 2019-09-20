@@ -1,0 +1,24 @@
+@charset "utf-8";
+
+/* Remove right padding space for jquery validate icons */
+
+#subscription_form .has-feedback .form-control {
+    padding-right: 16px;
+}
+
+#fso_subscription_right {
+    border: 1px solid #cacaca;
+    margin-top: 2em;
+    padding-top: 2em;
+    padding-bottom: 1em;
+}
+
+#subscription_info {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.subscription_goal {
+    padding-left: 4px;
+    padding-right: 4px;
+}

@@ -16,6 +16,10 @@ class MailMassMailingContact(models.Model):
     #       add a class variable for the selection field e.g.: _bestaetigt_typ = [('doubleoptin', 'DoubleOptIn')]
     #       so we could "configure" this field by class if needed
 
+    # TODO: MAKE addon mass_mailing_partner WORK WITH FIRSTNAME LASTNAME (addon: mass_mail_contact_firstname)
+    # TODO: Proposal: Make sure the mass mail list contact fields are NOT changed on partner change and also will
+    #       NOT change the partner after creation! - Discuss in Team!!! (addon:  mass_mailing_partner)
+
     # contact
     phone = fields.Char(string="Phone")
     mobile = fields.Char(string="Mobile")

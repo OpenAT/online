@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- TREE VIEW -->
+        <record model="ir.ui.view" id="view_mail_mass_mailing_contact_tree">
+            <field name="name">mail.mass_mailing.contact.tree firstname lastname</field>
+            <field name="model">mail.mass_mailing.contact</field>
+            <field name="inherit_id" ref="mass_mailing.view_mail_mass_mailing_contact_tree"/>
+            <field name="arch" type="xml">
+                <field name="email" position="after">
+                    <field name="firstname"/>
+                    <field name="lastname"/>
+                </field>
+                <field name="name" position="attributes">
+                    <attribute name="readonly">True</attribute>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>
