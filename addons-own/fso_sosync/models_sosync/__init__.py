@@ -35,3 +35,7 @@ import frst_zgruppe
 import frst_zgruppedetail
 import frst_persongruppe
 import frst_personemailgruppe
+
+# FSO Subscription related
+import mail_mass_mailing_list
+import mail_mass_mailing_contact
