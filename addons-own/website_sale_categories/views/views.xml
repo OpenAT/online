@@ -95,12 +95,14 @@
                 <group string="Root Category (Start new shop)">
                     <field name="cat_root"/>
                     <field name="cat_root_id" readonly="1"/>
+                    <field name="cat_section_id" attrs="{'invisible': [('cat_root','=', False)]}"/>
                 </group>
                 <group string="Category Menu">
                     <field name="cat_hide"/>
                 </group>
                 <group string="Category Page">
                     <field name="grid_template"/>
+                    <field name="one_page_checkout"/>
                     <field name="cat_products_grid_ppg" placeholder="9"/>
                     <field name="cat_products_grid_ppr" placeholder="3"/>
                     <field name="cat_products_grid_before" placeholder="col-md-3"/>
@@ -137,6 +139,7 @@
                 <field name="parent_id"/>
                 <field name="cat_hide"/>
                 <field name="grid_template"/>
+                <field name="one_page_checkout"/>
                 <field name="redirect_url_after_form_feedback"/>
             </tree>
         </field>
@@ -153,6 +156,7 @@
                 <field name="parent_id"/>
                 <field name="cat_hide"/>
                 <field name="grid_template"/>
+                <field name="one_page_checkout"/>
                 <field name="redirect_url_after_form_feedback"/>
             </search>
         </field>
@@ -182,6 +186,6 @@
     </record>
     <!-- And we add the Action to a Menu with the shortcut menuitem -->
     <menuitem id="product_public_category_menu" action="product_public_category_action" parent="base.menu_config" sequence="10200"/>
-        
+
 
 </data></openerp>
