@@ -45,8 +45,8 @@ class PaymentAcquirerOgonedadi(osv.Model):
         'ogonedadi_pspid': fields.char('PSPID', required_if_provider='ogonedadi'),
         'ogonedadi_userid': fields.char('API User ID', required_if_provider='ogonedadi'),
         'ogonedadi_password': fields.char('API User Password', required_if_provider='ogonedadi'),
-        'ogonedadi_shakey_in': fields.char('SHA Key IN', size=32, required_if_provider='ogonedadi'),
-        'ogonedadi_shakey_out': fields.char('SHA Key OUT', size=32, required_if_provider='ogonedadi'),
+        'ogonedadi_shakey_in': fields.char('SHA Key IN', required_if_provider='ogonedadi'),
+        'ogonedadi_shakey_out': fields.char('SHA Key OUT', required_if_provider='ogonedadi'),
         # By Mike:
         'ogonedadi_pm': fields.char('Payment Method e.g. Credit Card (PM)'),
         'ogonedadi_brand': fields.char('Payment Method Type e.g. VISA (BRAND)'),
