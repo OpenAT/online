@@ -23,7 +23,6 @@
                                 <field name="information_email_template"/>
                             </group>
                             <group name="system_data">
-                                <!-- TODO: Show clickable form link -->
                                 <field name="website_url" widget="url" readonly="1"/>
                                 <field name="id" readonly="True"/>
                                 <field name="create_date" readonly="True"/>
@@ -82,7 +81,7 @@
                                 <group>
                                     <field name="website_url_thanks" widget="url" readonly="1"/>
                                     <field name="redirect_after_submit"/>
-                                    <field name="thank_you_page_edit_data_button"/>
+                                    <field name="thank_you_page_edit_data_button" attrs="{'readonly': [('email_only','=',True)]}"/>
                                     <field name="thank_you_page_snippets"/>
                                 </group>
                             </page>
@@ -94,6 +93,7 @@
                                     <field name="redirect_url_target"/>
                                     <field name="redirect_url_if_logged_in"/>
                                     <field name="redirect_url_if_logged_in_target"/>
+                                    <field name="thank_you_page_edit_redirect" attrs="{'readonly': ['|',('thank_you_page_edit_data_button','=',False),('email_only','=',True)]}"/>
                                     <field name="custom_css"/>
                                 </group>
                             </page>

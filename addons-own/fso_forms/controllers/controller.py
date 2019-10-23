@@ -131,7 +131,7 @@ class FsoForms(http.Controller):
         form_model_name = form.model_id.model
 
         # TODO: Replace sudo with the logged in user or by users set in the form to write the record
-        form_model_obj = request.env[form_model_name].sudo()
+        form_model_obj = request.env[form_model_name]
 
         if form_model_name == 'res.user':
             return user
@@ -160,9 +160,9 @@ class FsoForms(http.Controller):
         """
         form_model_name = form.model_id.model
 
-        # TODO: Replace sudo with the logged in user or by users set in the form to write the record
-        form_model_obj = request.env[form_model_name].sudo()
-        record = request.env[form_model_name].sudo()
+        # Get the form model and an empty record set
+        form_model_obj = request.env[form_model_name]
+        record = request.env[form_model_name]
 
         # Return an empty recordset it this is an email only form!
         if form.email_only:
@@ -172,7 +172,7 @@ class FsoForms(http.Controller):
         # ---------------------------------------------------
         form_sdata = self.get_fso_form_session_data(form)
         if form_sdata:
-            record = form_model_obj.sudo().browse([form_sdata['form_record_id']])
+            record = form_model_obj.browse([form_sdata['form_record_id']])
 
         # TRY TO FIND A FORM-RELATED-RECORD BASED ON THE LOGGED IN USER AND THE LOGIN-MARKED-FIELD
         # ----------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ class FsoForms(http.Controller):
                 if form_records_by_user and len(form_records_by_user) == 1:
                     record = form_records_by_user
                 else:
-                    record = request.env[form_model_name].sudo()
+                    record = request.env[form_model_name]
 
             # Set/Update the session data based on the found record but without clear session data since
             # 'edit_existing_record_if_logged_in' is set!
@@ -691,7 +691,10 @@ class FsoForms(http.Controller):
                                                form_sdata['form_record_id'],
                                                form_sdata['form_model_id'],
                                                clear_session_data=False)
-            return request.redirect("/fso/form/"+str(form.id))
+            redirect_url = "/fso/form/"+str(form.id)
+            if not form.email_only and form.thank_you_page_edit_redirect:
+                redirect_url = form.thank_you_page_edit_redirect
+            return request.redirect(redirect_url)
 
         # Render the thanks template
         return http.request.render('fso_forms.thanks',

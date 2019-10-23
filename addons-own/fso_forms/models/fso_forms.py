@@ -62,7 +62,7 @@ class FSONForm(models.Model):
                                                      help="If set the form will be empty again after a successful "
                                                           "submit!")
 
-    # Edit existing record if logged in TODO: add this to ghe form views
+    # Edit existing record if logged in
     edit_existing_record_if_logged_in = fields.Boolean(string="Edit existing record if logged in",
                                                        help="If set and a user is logged in (e.g. by token) he can edit"
                                                             " one existing record related to model linked to the form."
@@ -74,7 +74,6 @@ class FSONForm(models.Model):
                                                             "Clear Session Data after Submit WILL NOT WORK if this"
                                                             " is set and a user is logged in!")
 
-    # TODO: !!!! E-Mail Stuff - only Fields are prepared right now !!!!
     email_only = fields.Boolean(string="E-Mail Only", help="Do !NOT! create a record but only send an E-Mail to the"
                                                            "information_email_receipients and the fields marked with"
                                                            "")
@@ -92,7 +91,6 @@ class FSONForm(models.Model):
                                                     inverse_name="information_email_receipient_fso_form")
 
     # Thank you page after submit
-    # ATTENTION: The field should be called redirect_after_submit :(
     redirect_after_submit = fields.Boolean(string="Redirect after successful submit!", default=True,
                                            oldname="thank_you_page_after_submit",
                                            help="Redirect after the successful submission of the form."
@@ -102,6 +100,9 @@ class FSONForm(models.Model):
     thank_you_page_edit_data_button = fields.Char(string="Edit Data Button", default=_('Edit'), translate=True,
                                                   help="If set a button will appear on the Thank You page to go "
                                                        "back to form to edit the data again!")
+    thank_you_page_edit_redirect = fields.Char(string="Redirect URL after Edit on Thank You Page",
+                                               help="If set the Edit Button will redirect to this page instead of"
+                                                    "the regular form page!")
     thank_you_page_snippets = fields.Html(string="Thank you page", translate=True)
 
     website_url = fields.Char(compute="_cmp_website_url", string="Website URL")
