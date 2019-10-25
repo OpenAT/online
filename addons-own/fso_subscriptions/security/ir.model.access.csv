@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mass_mailing_list_websitegroup,fso_subscriptions websitegroup mm list access,model_mail_mass_mailing_list,base.group_public,1,0,0,0
+access_mass_mailing_contact_websitegroup,fso_subscriptions websitegroup mm list-contact access,model_mail_mass_mailing_contact,base.group_public,1,1,1,0
+access_frst_personemail_websitegroup,fso_subscriptions websitegroup personemail access,fso_frst_personemail.model_frst_personemail,base.group_public,1,0,0,0

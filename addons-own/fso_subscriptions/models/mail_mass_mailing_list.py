@@ -18,12 +18,13 @@ class MailMassMailingList(models.Model):
                                  default='email')
 
     # TODO: APPROVAL FOR LIST CONTACTS
-    # TODO: "Opt-Out" set and custom state for non approved list contacts if approval needed is set!
+    #       "Opt-Out" set and custom state for non approved list contacts if approval needed is set!
     # TODO: The approval fields should be added to an abstract model - to much code replication right now - we could
     #       add a class variable for the selection field e.g.: _bestaetigt_typ = [('doubleoptin', 'DoubleOptIn')]
     #       so we could "configure" this field by class if needed
-    # TODO: Double-Opt-In E-Mail Template Many2One to email.template
+    # TODO: Double-Opt-In E-Mail Template (Many2One to email.template)
     # TODO: Inverse Field(s) for many2one !!!
+
     bestaetigung_erforderlich = fields.Boolean("Approval needed",
                                                default=False,
                                                help="If this checkbox is set an E-Mail will be send to the"
@@ -34,7 +35,7 @@ class MailMassMailingList(models.Model):
                                         default='doubleoptin')
 
     # SUBSCRIPTION FORM
-    # TODO: Check all relevant settings of the subscription_form
+    # TODO: Check all relevant settings of the subscription_form (api.constrains)
     subscription_form = fields.Many2one(string="Subscription Form", comodel_name="fson.form",
                                         help="Set the subscription form for the model"
                                              "mail.mass_mailing.contact")
@@ -71,18 +72,32 @@ class MailMassMailingList(models.Model):
         for r in self:
             r.website_url = '/fso/subscription/'+str(r.id)
 
+    @api.constrains
+    def _constraint_partner_mandatory(self):
+        for r in self:
+            if r.list_type and not r.partner_mandatory:
+                raise AssertionError(_("If you select a list type 'partner mandatory' must be set!"))
+
+    @api.onchange
+    def _onchange_list_type(self):
+        for r in self:
+            if r.list_type:
+                r.partner_mandatory = True
+
     @api.multi
     def create_subscription_form(self):
         for r in self:
             if not r.subscription_form:
                 # Create the fso form
                 list_contact_model = self.env['ir.model'].search([('model', '=', 'mail.mass_mailing.contact')])
-                form_vals = {'name': 'Subscription form for mailing list %s (id %s)' % (r.name, r.id),
+                form_vals = {'name': _('Subscription form for mailing list %s (id %s)') % (r.name, r.id),
                              'model_id': list_contact_model.id,
-                             'submit_button_text': 'Subscribe',
-                             'clear_session_data_after_submit': False,
+                             'submit_button_text': _('Subscribe'),
+                             'clear_session_data_after_submit': True,
                              'edit_existing_record_if_logged_in': True,
                              'email_only': False,
+                             'thank_you_page_edit_data_button': False,
+                             'thank_you_page_edit_redirect': '/fso/subscription/%s' % r.id,
                              'submission_url': '/fso/subscription/%s' % r.id}
                 form = self.env['fson.form'].create(form_vals)
 

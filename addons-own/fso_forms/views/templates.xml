@@ -293,7 +293,7 @@
                                                t-att-id="f_name"
                                                t-att-name="f_name"
                                                class="form-control"
-                                               t-att-value="str(f_value.replace('.', ',') if f_value else '0,00'"
+                                               t-att-value="str(f_value).replace('.', ',') if f_value else '0,00'"
                                                t-att-placeholder="field.placeholder if field.placeholder else '0,00'"
                                                t-att-disabled="f_readonly"
                                                t-att-required="f_required"

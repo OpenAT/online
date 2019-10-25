@@ -29,6 +29,8 @@ $(document).ready(function () {
 
         submitHandler: function(form) {
             form.submit();
+            // Reenable the button for another submission try
+            //$("#fsoforms_submit_button").removeClass('submission-pending')
           },
         invalidHandler: function(event, validator) {
             console.log('Form is invalid!');
@@ -40,7 +42,12 @@ $(document).ready(function () {
     // Submit the form by java script on click or keyup
     $('#fsoforms_submit_button').on('click keyup', function () {
         if ($("#fsoforms_submit_button").hasClass('submission-pending')) {
-            // console.log('Submission Pending')
+            if ($("#fsoforms_submit_button").text() === 'Bitte warten!') {
+                location.reload(true);
+            }
+            else {
+                $("#fsoforms_submit_button").text('Bitte warten!')
+            }
         }
         else {
             // console.log('Submit Form');

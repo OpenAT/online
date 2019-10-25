@@ -9,14 +9,12 @@ logger = logging.getLogger(__name__)
 class MailMassMailingContact(models.Model):
     _inherit = "mail.mass_mailing.contact"
 
-    # TODO: Firstname Lastname
+    # DONE: Firstname Lastname
     # TODO: mass_mailing_partner > Do not change the list contact data if the partner changes - the goal is to keep
     #       the original values of the subscription (also much better for partner merges)
-    # TODO: The approval fields should be added to an abstract model - to much code replication right now - we could
+    # TODO: The approval fields should be added to an abstract model - too much code replication right now - we could
     #       add a class variable for the selection field e.g.: _bestaetigt_typ = [('doubleoptin', 'DoubleOptIn')]
     #       so we could "configure" this field by class if needed
-
-    # TODO: MAKE addon mass_mailing_partner WORK WITH FIRSTNAME LASTNAME (addon: mass_mail_contact_firstname)
     # TODO: Proposal: Make sure the mass mail list contact fields are NOT changed on partner change and also will
     #       NOT change the partner after creation! - Discuss in Team!!! (addon:  mass_mailing_partner)
 
@@ -84,4 +82,15 @@ class MailMassMailingContact(models.Model):
     pf_mandatsid = fields.Char("MandatsID")
     pf_emaildatum = fields.Char("Emaildatum")
 
-
+    @api.multi
+    def new_partner_vals(self):
+        partner_vals = super(MailMassMailingContact, self).new_partner_vals()
+        partner_vals.update({'phone': self.phone,
+                             'mobile': self.mobile,
+                             'street': self.street,
+                             'street2': self.street2,
+                             'zip': self.zip,
+                             'city': self.city,
+                             'state_id': self.state_id,
+                             'country_id': self.country_id})
+        return partner_vals

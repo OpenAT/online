@@ -68,14 +68,12 @@ Features needed but solved by other addons:
     'auto_install': False,
     'depends': [
         'fso_mass_mail',
-        'mass_mail_contact_firstname',
         'fso_print_fields',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/mail_mass_mailing_contact.xml',
         'views/mail_mass_mailing_list.xml',
         'views/templates.xml',
-        #'data/actions.xml',
-        #'views/email_editor.xml',
     ],
 }

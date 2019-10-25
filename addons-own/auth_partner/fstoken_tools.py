@@ -109,6 +109,10 @@ def fstoken_check(fs_ptoken):
         login = str(partner.id)
         if partner.email and not request.env['res.users'].sudo().search([('login', '=', partner.email)]):
             login = partner.email
+
+        # ATTENTION: The new user is NOT added to the base.group_portal group because this will unlock the account
+        #            menu in the website. However since the user does also not belong to base.group_user it should
+        #            still be very easy to distinguish between internal an website user!
         user = request.env['res.users'].sudo().create({
             'name': partner.name,
             'partner_id': partner.id,

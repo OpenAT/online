@@ -16,6 +16,9 @@
                     <sheet>
                         <group name="basic_contact_data">
                             <group name="basic">
+                                <field name="list_id"/>
+                                <field name="personemail_id"/>
+                                <field name="partner_id"/>
                                 <field name="firstname"/>
                                 <field name="lastname"/>
                                 <field name="name" readonly="True"/>
@@ -30,12 +33,12 @@
                                 <field name="country_id"/>
                             </group>
                             <group name="extra">
-                                <field name="list_id"/>
-                                <field name="partner_id"/>
                                 <field name="opt_out"/>
                                 <field name="bestaetigt_am_um"/>
                                 <field name="bestaetigt_typ"/>
                                 <field name="bestaetigt_herkunft"/>
+                                <field name="renewed_subscription_date"/>
+                                <field name="renewed_subscription_log"/>
                             </group>
                         </group>
                         <notebook>
@@ -104,6 +107,12 @@
                             </page>
                         </notebook>
                     </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
                 </form>
             </field>
         </record>

@@ -330,42 +330,46 @@ class FsoForms(http.Controller):
                 # Add BOOLEAN
                 if f_type == 'boolean':
                     values[f_name] = True if f_value else False
+                    continue
 
                 # Add DATE
-                elif f_type == 'date':
+                if f_type == 'date':
                     if f_value:
                         # TODO: Localization !!!
                         f_value = datetime.datetime.strptime(f_value.strip(), '%d.%m.%Y')
                     values[f_name] = f_value or False
+                    continue
 
                 # Add BINARY
-                elif f_type == 'binary':
+                if f_type == 'binary':
                     if f_value:
                         values[f_name] = base64.encodestring(f_value.read()) or False
                         if f.binary_name_field_id:
                             values[f.binary_name_field_id.name] = f_value.filename if values[f_name] else False
-
+                    continue
                     # ATTENTION: We do no longer empty binary fields by default.
                     #            (The same effect as nodata was set to True)
                     #else:
                         # values[f_name] = False
                         # if f.binary_name_field_id:
                         #     values[f.binary_name_field_id.name] = False
+                        # continue
 
                 # Add FLOAT
                 # TODO: Localization - !!! Right now we expect DE values from the forms !!!
-                elif f_type == 'float':
+                if f_type == 'float':
                     if f_value:
                         values[f_name] = f_value.replace(',', ':').replace('.', '').replace(':', '.')
+                    continue
 
                 # Add MANY2ONE
                 if f_type == 'many2one':
                     if f_value:
                         values[f_name] = int(f_value)
+                    continue
 
-                # Add OTHER FIELD TYPES
-                else:
-                    values[f_name] = f_value or False
+                # ALL OTHER FIELD TYPES
+                values[f_name] = f_value or False
 
         return values
 
@@ -610,6 +614,16 @@ class FsoForms(http.Controller):
                                                            clear_session_data=form.clear_session_data_after_submit)
                         except Exception as e:
                             errors.append(_('Submission failed!\n\n%s' % repr(e)))
+
+                            # Rollback cursor of record with exception!
+                            # ATTENTION: This is really important or unwanted records and side effects may be created!
+                            # HINT: Since we catch the Exception that would lead to an rollback and a backend gui
+                            #       message and never raise it we have to do this by our own!
+                            # TODO: Check if this leafs open cursors behind or if odoo cleans them up after the
+                            #       rollback!
+                            record.env.cr.rollback()
+
+                            _logger.error("FsoForms Exception: %s" % repr(e))
                             pass
 
                         # Send emails
