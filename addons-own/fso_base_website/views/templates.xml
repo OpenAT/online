@@ -21,6 +21,8 @@
             <link rel="stylesheet" href='/fso_base_website/static/lib/ladda-bootstrap-0.1.0/dist/ladda-themeless.css' t-ignore="true"/>
             <!-- Load custom css for smaller fixes -->
             <link rel="stylesheet" href='/fso_base_website/static/src/css/fso_base_website.css' t-ignore="true"/>
+            <!-- SNIPPETS CSS -->
+            <link rel="stylesheet" href='/fso_base_website/static/src/css/snippets.css' t-ignore="true"/>
         </xpath>
 
         <xpath expr="//script[last()]" position="after">

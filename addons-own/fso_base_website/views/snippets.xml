@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!--  NEW STRUCTURAL SNIPPET TO ALLOW GROUPING OF SNIPPETS -->
+        <template id="snippet_group_box" inherit_id="website.snippets" name="Style-Box">
+
+            <!-- SNIPPET: STRUCTURE GROUP -->
+            <xpath expr="//div[@id='snippet_structure']" position="inside">
+
+                <div>
+                    <!-- Snippet thumbnail -->
+                    <div class="oe_snippet_thumbnail">
+                        <img class="oe_snippet_thumbnail_img" src="/fso_base_website/static/src/icons/group_snippets.jpg"/>
+                        <span class="oe_snippet_thumbnail_title">Structure-Group</span>
+                    </div>
+                    <!-- Snippet content -->
+                    <div class="oe_snippet_body snippet_structure_group">
+                        <div class="snippet_structure_group_outer">
+                            <div class="snippet_structure_group_inner">
+                                <p>Structure Group</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </xpath>
+
+            <!-- SNIPPET: CONTENT GROUP -->
+            <xpath expr="//div[@id='snippet_content']" position="inside">
+
+                <div>
+                    <!-- Snippet thumbnail -->
+                    <div class="oe_snippet_thumbnail">
+                        <img class="oe_snippet_thumbnail_img" src="/fso_base_website/static/src/icons/group_snippets.jpg"/>
+                        <span class="oe_snippet_thumbnail_title">Content-Group</span>
+                    </div>
+                    <!-- Snippet content -->
+                    <div class="oe_snippet_body snippet_content_group">
+                        <div class="snippet_content_group_outer">
+                            <div class="snippet_content_group_inner">
+                                <p>Content Group</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </xpath>
+
+            <!-- SNIPPET OPTIONS AND PLACEMENT -->
+            <xpath expr="//div[@id='snippet_options']" position="inside">
+
+                <!-- SNIPPET: Structure Group: Placement and Options -->
+                <div data-snippet-option-id='snippet_structure_group'
+                    data-selector=".snippet_structure_group"
+                    data-selector-children=".oe_structure"
+                    data-selector-siblings="section">
+
+                </div>
+                <!-- Allow SECTION-Blocks (=Structure Snippets) inside the Structure-Group-Snippet -->
+                <div data-snippet-option-id='section_inside_snippet_structure_group'
+                    data-selector="section"
+                    data-selector-children=".snippet_structure_group_inner">
+                </div>
+
+                <!-- SNIPPET: Content Group: Placement and Options -->
+                <div data-snippet-option-id='snippet_content_group'
+                    data-selector=".snippet_content_group"
+                    data-selector-children=".content, [class*='col-md-']">
+
+                </div>
+                <!-- Allow content inside the Content-Group-Snippet -->
+                <div data-snippet-option-id='content_inside_snippet_content_group'
+                    data-selector="p, h1, h2, h3, h4, h5, h6, img, blockquote, .well, .panel, .oe_share, .o_image_floating"
+                    data-selector-children=".snippet_content_group_inner">
+                </div>
+
+                <!-- SNIPPET OPTIONS FOR GROUP SNIPPETS:  snippet_structure_group, snippet_content_group  -->
+                <div data-snippet-option-id='group_snippets_options_gso_bgcol'
+                    data-selector=".snippet_structure_group, .snippet_content_group">
+
+                    <li class="dropdown-submenu" name="gso_bgcol">
+                        <a tabindex="-1" href="#">Background</a>
+                        <ul class="dropdown-menu">
+                            <li data-value="gso_bgcol_grey"><a>Light Grey</a></li>
+                            <li data-value="gso_bgcol_red"><a>Light Red</a></li>
+                        </ul>
+                    </li>
+
+                </div>
+                <div data-snippet-option-id='group_snippets_options_gso_fgcol'
+                    data-selector=".snippet_structure_group, .snippet_content_group">
+
+                    <li class="dropdown-submenu" name="gso_fgcol">
+                        <a tabindex="-1" href="#">Foreground</a>
+                        <ul class="dropdown-menu">
+                            <li data-value="gso_fgcol_yellow"><a>Light Yellow</a></li>
+                            <li data-value="gso_fgcol_blue"><a>Light Blue</a></li>
+                        </ul>
+                    </li>
+
+                </div>
+                <div data-snippet-option-id='group_snippets_options_gso_minheight'
+                    data-selector=".snippet_structure_group, .snippet_content_group">
+
+                    <li class="dropdown-submenu" name="gso_minheight">
+                        <a tabindex="-1" href="#">Height (min.)</a>
+                        <ul class="dropdown-menu">
+                            <li data-value="gso_minheight_s"><a>Small</a></li>
+                            <li data-value="gso_minheight_m"><a>Medium</a></li>
+                            <li data-value="gso_minheight_l"><a>Large</a></li>
+                        </ul>
+                    </li>
+
+                </div>
+                <div data-snippet-option-id='group_snippets_options_gso_padding_inner'
+                    data-selector=".snippet_structure_group, .snippet_content_group">
+
+                    <li class="dropdown-submenu" name="gso_padding_inner">
+                        <a tabindex="-1" href="#">Padding Front</a>
+                        <ul class="dropdown-menu">
+                            <li data-value="gso_padding_inner_s"><a>Small</a></li>
+                            <li data-value="gso_padding_inner_m"><a>Medium</a></li>
+                            <li data-value="gso_padding_inner_l"><a>Large</a></li>
+                        </ul>
+                    </li>
+
+                </div>
+                <div data-snippet-option-id='group_snippets_options_gso_padding_outer'
+                    data-selector=".snippet_structure_group, .snippet_content_group">
+
+                    <li class="dropdown-submenu" name="gso_padding_outer">
+                        <a tabindex="-1" href="#">Padding Back</a>
+                        <ul class="dropdown-menu">
+                            <li data-value="gso_padding_outer_s"><a>Small</a></li>
+                            <li data-value="gso_padding_outer_m"><a>Medium</a></li>
+                            <li data-value="gso_padding_outer_l"><a>Large</a></li>
+                        </ul>
+                    </li>
+
+                </div>
+
+            </xpath>
+
+        </template>
+
+    </data>
+</openerp>
