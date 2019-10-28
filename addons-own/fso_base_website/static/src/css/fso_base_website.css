@@ -1,3 +1,29 @@
+/* TRY BETTER DROPPING AREA */
+.oe_structure .oe_drop_zone.oe_insert {
+    /*display: block;*/
+    height: 20px;
+    margin: 0;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+    /*width: 100%;*/
+    position: relative;
+    /*z-index: 1000;*/
+}
+.oe_structure .oe_drop_zone,
+.oe_structure .oe_drop_zone_style {
+    /*border: none;*/
+    background: rgba(153, 0, 255, 0.2);
+    -webkit-border-radius: 40px;
+    -moz-border-radius: 40px;
+    -ms-border-radius: 40px;
+    -o-border-radius: 40px;
+    border-radius: 40px;
+}
+
 /* Fix glyphicon path */
 @font-face {
     font-family: 'Glyphicons Halflings';
