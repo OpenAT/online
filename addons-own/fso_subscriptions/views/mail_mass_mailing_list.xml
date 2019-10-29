@@ -12,6 +12,7 @@
                     <group name="subscriptions">
                         <group name="subscription_basics">
                             <field name="list_type"/>
+                            <field name="website_published"/>
                             <field name="subscription_form"
                                    readonly="1"/>
                             <button name="create_subscription_form" type="object"
@@ -21,7 +22,10 @@
                             />
                             <field name="website_url" widget="url" readonly="1"
                                    attrs="{'invisible': [('subscription_form', '=', False)]}"/>
-
+                            <field name="website_url_form" widget="url" readonly="1"
+                                   attrs="{'invisible': [('subscription_form', '=', False)]}"/>
+                            <field name="website_url_form_thanks" widget="url" readonly="1"
+                                   attrs="{'invisible': [('subscription_form', '=', False)]}"/>‚
                         </group>
                         <group name="subscription_settings">
                             <field name="bestaetigung_erforderlich"/>
@@ -33,6 +37,9 @@
                             <group>
                                 <group>
                                     <field name="goal"/>
+                                    <field name="goal_increase_at"/>
+                                    <field name="goal_increase_step"/>
+                                    <field name="goal_dynamic"/>
                                     <field name="goal_reached"/>
                                     <field name="goal_text"/>
                                     <field name="goal_text_after"/>

@@ -10,13 +10,22 @@ logger = logging.getLogger(__name__)
 class MailMassMailingList(models.Model):
     _inherit = "mail.mass_mailing.list"
 
+    # Inverse field for list contacts (seems to be missing in original model)
+    contact_ids = fields.One2many(comodel_name='mail.mass_mailing.contact', inverse_name="list_id",
+                                  string="List Contacts")
+
     list_type = fields.Selection(string="Type", selection=[('email', "Email Subscription"),
                                                            ('frst_massmail', "Fundraising Studio Mailing"),
                                                            ('petition', "Petition"),
                                                            ('sms', 'SMS Subscription'),
-                                                           ('whatsapp', "WhatsApp Subscription")],
-                                 default='email')
+                                                           ('whatsapp', "WhatsApp Subscription"),
+                                                           ('none', "None")],
+                                 default='email', required=True)
 
+    website_published = fields.Boolean(string="View in Subscription Manager",
+                                       help="If set the list will show up in the subscription manager")
+
+    # TODO !!! MOVE APPROVAL TO SEPARATE ADDON !!!
     # TODO: APPROVAL FOR LIST CONTACTS
     #       "Opt-Out" set and custom state for non approved list contacts if approval needed is set!
     # TODO: The approval fields should be added to an abstract model - to much code replication right now - we could
@@ -24,7 +33,6 @@ class MailMassMailingList(models.Model):
     #       so we could "configure" this field by class if needed
     # TODO: Double-Opt-In E-Mail Template (Many2One to email.template)
     # TODO: Inverse Field(s) for many2one !!!
-
     bestaetigung_erforderlich = fields.Boolean("Approval needed",
                                                default=False,
                                                help="If this checkbox is set an E-Mail will be send to the"
@@ -42,6 +50,10 @@ class MailMassMailingList(models.Model):
 
     # WEBPAGE
     website_url = fields.Char(compute="_cmp_website_url", string="Website URL", readonly=True)
+    website_url_form = fields.Char(related="subscription_form.website_url",
+                                   string="Form Website URL", readonly=True)
+    website_url_form_thanks = fields.Char(related="subscription_form.website_url_thanks",
+                                          string="Form Thank You Page", readonly=True)
 
     page_top = fields.Html(string="Top Snippets", help="Top Container for Snippets ", translate=True)
     page_left = fields.Html(string="Left Snippets", help="Main Container for Snippets", translate=True)
@@ -54,17 +66,47 @@ class MailMassMailingList(models.Model):
 
     # GOALS AND INFORMATION
     goal = fields.Integer(string="Subscription Goal")
-    goal_reached = fields.Integer(compute="_cmp_goal_reached", string="Subscription reached",
+    goal_dynamic = fields.Integer(compute="_cmp_goal_reached", store=True,
+                                  string="Dynamic Subscription Goal")
+    goal_increase_at = fields.Integer(string="Increase Goal at %",
+                                      help="Increase the goal_dynamic with goal_increase_step at goal_reached")
+    goal_increase_step = fields.Integer(string="Increase Goal Step")
+    goal_reached = fields.Integer(compute="_cmp_goal_reached", store=True,
+                                  string="Subscription reached %",
                                   readonly=True, help="Subscriptions reached in %")
     goal_bar = fields.Boolean(string="Show Goal-Reached-Bar", default=True)
     goal_text = fields.Char(string="Goal Text", translate=True, default=_('Help us to reach'))
     goal_text_after = fields.Char(string="Goal Text After", translate=True, default=_('subscriptions!'))
 
+    @api.depends('goal', 'goal_increase_at', 'contact_ids')
     def _cmp_goal_reached(self):
         for r in self:
             if r.goal and r.contact_nbr:
-                percentage_reached = int(round(float(r.contact_nbr) / (float(r.goal) / 100)))
-                r.goal_reached = percentage_reached if percentage_reached <= 100 else 100
+
+                # Initialize dynamic goal
+                goal_dynamic = r.goal_dynamic if r.goal_dynamic else r.goal
+
+                # Number of subscriptions (int)
+                contact_nbr = r.contact_nbr
+
+                def pr(subscribers, goal):
+                    return int(round(float(subscribers) / (float(goal) / 100)))
+
+                # Compute percentage reached based on list subscriptions
+                percentage_reached = pr(contact_nbr, goal_dynamic)
+
+                # Compute new dynamic goal and percentage_reached
+                runs = 1
+                while r.goal_increase_step and percentage_reached >= r.goal_increase_at:
+                    goal_dynamic = goal_dynamic + r.goal_increase_step
+                    percentage_reached = pr(contact_nbr, goal_dynamic)
+                    runs = runs + 1
+                    if runs > 100:
+                        logger.error("goal_dynamic still not high enough after 100 increments!")
+                        break
+
+                r.goal_dynamic = goal_dynamic
+                r.goal_reached = percentage_reached
             else:
                 r.goal_reached = 0
 
@@ -72,17 +114,28 @@ class MailMassMailingList(models.Model):
         for r in self:
             r.website_url = '/fso/subscription/'+str(r.id)
 
-    @api.constrains
+    @api.constrains('list_type', 'partner_mandatory')
     def _constraint_partner_mandatory(self):
         for r in self:
-            if r.list_type and not r.partner_mandatory:
-                raise AssertionError(_("If you select a list type 'partner mandatory' must be set!"))
+            if r.list_type != 'none' and not r.partner_mandatory:
+                raise AssertionError(_("If you select a list type other than 'none', 'partner mandatory' must be set!"))
 
-    @api.onchange
-    def _onchange_list_type(self):
+    @api.constrains('goal', 'goal_dynamic', 'goal_increase_at', 'goal_increase_step')
+    def _constraint_goal(self):
         for r in self:
-            if r.list_type:
-                r.partner_mandatory = True
+            all_or_none_set = ['goal_increase_at', 'goal_increase_step']
+            if any(r[f] for f in all_or_none_set):
+                assert(all(r[f] for f in all_or_none_set)), _(
+                    "You must set all or none of %s") % all_or_none_set
+            if r.goal_increase_at and not (9 < r.goal_increase_at < 121):
+                raise AssertionError(_('goal_increase_at must be between 10 and 120'))
+            if r.goal_increase_step and r.goal_increase_step < 1:
+                raise AssertionError(_('goal_increase_step must be 1 or more'))
+            if r.goal and r.goal < 0:
+                raise AssertionError(_('goal can not be negative'))
+            if r.goal_dynamic:
+                if r.goal_dynamic < 0:
+                    raise AssertionError(_('goal_dynamic can not be negative'))
 
     @api.multi
     def create_subscription_form(self):

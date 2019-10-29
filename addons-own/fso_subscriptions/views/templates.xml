@@ -19,7 +19,7 @@
                 <div class="subscription_progress_bar_text">
                     <p>
                         <span class="subscription_goal_text" t-field="mlist.goal_text"/>
-                        <span class="subscription_goal" t-field="mlist.goal"/>
+                        <span class="subscription_goal" t-field="mlist.goal_dynamic"/>
                         <span class="subscription_goal_text_after"  t-field="mlist.goal_text_after"/>
                    </p>
                 </div>
@@ -84,6 +84,28 @@
             </t>
         </template>
 
+        <!-- Website Template: subscription manager -->
+        <template id="subscription_manager" name="FSON List Subscription Manager" page="True">
+            <t t-call="website.layout">
+                <t t-set="title">Subscription Manager</t>
+
+                <div id="wrap" class="fso_subscription_manager">
+                    <div class="container fso_subscription_manager_container">
+
+                        <t t-foreach="public_lists_types" t-as="list_type">
+                            <h1><t t-esc="list_type"/></h1>
+                            <t t-foreach="public_lists" t-as="plist">
+                                <t t-if="plist.list_type == list_type">
+                                    <p>List Name: <t t-esc="plist.name"/></p>
+                                    <p>Subscribed: <t t-esc="str(bool(plist in subscribed_public_lists))"/></p>
+                                </t>
+                            </t>
+                        </t>
+
+                    </div>‚
+                </div>
+            </t>
+        </template>
 
     </data>
 </openerp>
