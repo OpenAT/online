@@ -36,6 +36,12 @@ class MailMassMailingContact(models.Model):
                                         string="Bestaetigungs Typ", readonly=True)
     bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft", readonly=True,
                                       help="E.g.: The link or the workflow process")
+    state = fields.Selection(selection=[('approval_pending', 'Waiting for Approval'),
+                                        ('subscribed', 'Subscribed'),
+                                        ('approved', 'Approved'),
+                                        ('unsubscribed', 'Unsubscribed'),
+                                        ('expired', 'Expired')],
+                             string="State", readonly=True)
 
     # FRST print fields
     # HINT: Would be great if this could be done "automatically" but right now i could not find a way ...

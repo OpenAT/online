@@ -24,6 +24,8 @@ class MailMassMailingList(models.Model):
 
     website_published = fields.Boolean(string="View in Subscription Manager",
                                        help="If set the list will show up in the subscription manager")
+    system_list = fields.Boolean(string="System List", readonly=True,
+                                 help="System list are available to all installations and can not be removed!")
 
     # TODO !!! MOVE APPROVAL TO SEPARATE ADDON !!!
     # TODO: APPROVAL FOR LIST CONTACTS
