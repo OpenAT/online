@@ -102,6 +102,13 @@ def fstoken_check(fs_ptoken):
 
     # Check/Create the res.user for the token
     user = token_record.partner_id.user_ids[0] if token_record.partner_id.user_ids else None
+
+    # Append base.group_public to existing token website (public) user
+    if user and not user.has_group('base.group_user') and not user.has_group('base.group_public'):
+        _logger.info("Add user group base.group_public to user with id %s" % user.id)
+        user.sudo().write({'groups_id': [(4, request.env.ref('base.group_public').id)]})
+
+    # Create a new user
     if not user:
         # Create new User
         _logger.info('Create new res.user %s for valid fs_ptoken with id %s' % (partner.name, token_record.id))
