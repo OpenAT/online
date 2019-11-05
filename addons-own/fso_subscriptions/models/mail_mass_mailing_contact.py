@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.tools import SUPERUSER_ID
+from openerp.tools import SUPERUSER_ID, DEFAULT_SERVER_DATE_FORMAT
 
 import logging
 logger = logging.getLogger(__name__)
@@ -9,22 +9,24 @@ logger = logging.getLogger(__name__)
 class MailMassMailingContact(models.Model):
     _inherit = "mail.mass_mailing.contact"
 
-    # DONE: Firstname Lastname
-    # TODO: mass_mailing_partner > Do not change the list contact data if the partner changes - the goal is to keep
-    #       the original values of the subscription (also much better for partner merges)
-    # TODO: The approval fields should be added to an abstract model - too much code replication right now - we could
-    #       add a class variable for the selection field e.g.: _bestaetigt_typ = [('doubleoptin', 'DoubleOptIn')]
-    #       so we could "configure" this field by class if needed
-    # TODO: Proposal: Make sure the mass mail list contact fields are NOT changed on partner change and also will
-    #       NOT change the partner after creation! - Discuss in Team!!! (addon:  mass_mailing_partner)
-
-    # contact
+    # partner
+    # DONE: Firstname Lastname through separate addon
+    gender = fields.Selection(string='Gender', selection=[
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+    ])
+    anrede_individuell = fields.Char(string='Individuelle Anrede')
+    title_web = fields.Char(string='Title Web')
+    birthdate_web = fields.Date(string='Birthdate Web')
     phone = fields.Char(string="Phone")
     mobile = fields.Char(string="Mobile")
+    newsletter_web = fields.Boolean(string='Newsletter Web')
 
     # address
     street = fields.Char(string="Street")
     street2 = fields.Char(string="Street2")
+    street_number_web = fields.Char(string="Street Number Web")
     zip = fields.Char(string="Zip")
     city = fields.Char(string="City")
     state_id = fields.Many2one(string="State", comodel_name="res.country.state", ondelete='restrict')
@@ -41,7 +43,8 @@ class MailMassMailingContact(models.Model):
                                         ('approved', 'Approved'),
                                         ('unsubscribed', 'Unsubscribed'),
                                         ('expired', 'Expired')],
-                             string="State", readonly=True)
+                             string="State", readonly=True,
+                             compute='compute_state', store=True)
 
     # FRST print fields
     # HINT: Would be great if this could be done "automatically" but right now i could not find a way ...
@@ -91,12 +94,33 @@ class MailMassMailingContact(models.Model):
     @api.multi
     def new_partner_vals(self):
         partner_vals = super(MailMassMailingContact, self).new_partner_vals()
-        partner_vals.update({'phone': self.phone,
-                             'mobile': self.mobile,
-                             'street': self.street,
-                             'street2': self.street2,
-                             'zip': self.zip,
-                             'city': self.city,
-                             'state_id': self.state_id,
-                             'country_id': self.country_id})
+        partner_vals.update({
+            'gender': self.gender,
+            'anrede_individuell': self.anrede_individuell,
+            'title_web': self.title_web,
+            'birthdate_web': self.birthdate_web,
+            'newsletter_web': self.newsletter_web,
+            'phone': self.phone,
+            'mobile': self.mobile,
+            'street': self.street,
+            'street2': self.street2,
+            'street_number_web': self.street_number_web,
+            'zip': self.zip,
+            'city': self.city,
+            'state_id': self.state_id,
+            'country_id': self.country_id})
         return partner_vals
+
+    @api.depends('opt_out', 'list_id.bestaetigung_erforderlich', 'bestaetigt_am_um')
+    def compute_state(self):
+        for r in self:
+            if r.opt_out:
+                state = 'unsubscribed'
+            elif r.list_id.bestaetigung_erforderlich and not r.bestaetigt_am_um:
+                state = 'approval_pending'
+            else:
+                state = 'approved' if r.bestaetigt_am_um else 'subscribed'
+
+            # Write state
+            if r.state != state:
+                r.state = state

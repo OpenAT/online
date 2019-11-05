@@ -5,8 +5,7 @@ from openerp.http import request
 from openerp.addons.fso_forms.controllers.controller import FsoForms
 fso_forms_controller_obj = FsoForms()
 
-
-# TODO: Approval Process for list subscriptions
+# TODO: Approval Process for list subscriptions (will be done currently in FRST!)
 
 
 class FSOSubscriptions(http.Controller):
@@ -28,6 +27,36 @@ class FSOSubscriptions(http.Controller):
         if form_page and hasattr(form_page, 'location') and form_page.location:
             return form_page
 
+        # Check if a website user is logged in
+        user = request.env.user
+        public_website_user = request.website.user_id
+        website_partner = None
+        if user and public_website_user and user.id != public_website_user.id:
+            if not user.has_group('base.group_user'):
+                website_partner = user.partner_id
+        
+        # Populate the kwargs with data from the logged in website-user-partner
+        if website_partner and form_page and form_page.qcontext:
+            if not form_page.qcontext.get('record') and not form_page.qcontext.get('kwargs'):
+                form_page.qcontext['kwargs'].update({
+                    'email': website_partner.email,
+                    'firstname': website_partner.firstname,
+                    'lastname': website_partner.lastname,
+                    'gender': website_partner.gender,
+                    'anrede_individuell': website_partner.anrede_individuell,
+                    'title_web': website_partner.title_web,
+                    'birthdate_web': website_partner.birthdate_web,
+                    'phone': website_partner.phone,
+                    'mobile': website_partner.mobile,
+                    'street': website_partner.street,
+                    'street2': website_partner.street2,
+                    'street_number_web': website_partner.street_number_web,
+                    'zip': website_partner.zip,
+                    'city': website_partner.city,
+                    'state_id': website_partner.state_id.id,
+                    'country_id': website_partner.country_id.id,
+                })
+
         # Render the fso_forms page html code
         form_page_html = form_page.render() if form_page else ''
 
@@ -45,7 +74,7 @@ class FSOSubscriptions(http.Controller):
         user = request.env.user
         public_website_user = request.website.user_id
 
-        # Check if a user is logged and if not redirect to the startpage of the website
+        # Check if a user is logged-in and if not redirect to the startpage of the website
         if user.id == public_website_user.id:
             return request.redirect("/")
 

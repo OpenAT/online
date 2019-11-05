@@ -69,6 +69,7 @@ Features needed but solved by other addons:
     'depends': [
         'fso_mass_mail',
         'fso_print_fields',
+        'fso_forms',
     ],
     'data': [
         'security/ir.model.access.csv',

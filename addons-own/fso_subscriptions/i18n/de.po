@@ -1,0 +1,684 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_subscriptions
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-11-05 15:46+0000\n"
+"PO-Revision-Date: 2019-11-05 15:46+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_anrede:0
+msgid "Anrede"
+msgstr "Anrede"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_anredekurz:0
+msgid "AnredeKurz"
+msgstr "AnredeKurz"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_anredelang:0
+msgid "AnredeLang"
+msgstr "AnredeLang"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,bestaetigung_typ:0
+msgid "Approval Type"
+msgstr "Bestätigungstyp"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,bestaetigung_erforderlich:0
+msgid "Approval needed"
+msgstr "Bestätigung erforderlich"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,state:0
+msgid "Approved"
+msgstr "Bestätigt"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_bic:0
+msgid "BIC"
+msgstr "BIC"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_bpkgeburtsdatum:0
+msgid "BPKGeburtsdatum"
+msgstr "BPKGeburtsdatum"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_bpknachname:0
+msgid "BPKNachName"
+msgstr "BPKNachName"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_bpkplz:0
+msgid "BPKPLZ"
+msgstr "BPKPLZ"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_bpkvorname:0
+msgid "BPKVorname"
+msgstr "BPKVorname"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_bank:0
+msgid "Bank"
+msgstr "Bank"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,bestaetigt_am_um:0
+msgid "Bestaetigt"
+msgstr "Bestaetigt"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,bestaetigt_typ:0
+msgid "Bestaetigungs Typ"
+msgstr "Bestätigungs Typ"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,bestaetigt_herkunft:0
+msgid "Bestaetigungsherkunft"
+msgstr "Bestätigungsherkunft"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_betragspendenquittung:0
+msgid "BetragSpendenquittung"
+msgstr "BetragSpendenquittung"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,birthdate_web:0
+msgid "Birthdate Web"
+msgstr "Geburtstag"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_bottom_classes:0
+msgid "Bottom CSS Classes"
+msgstr "CSS Klassen Unten"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,page_bottom:0
+msgid "Bottom Container for Snippets"
+msgstr "Unterer Snippet Container"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_bottom:0
+msgid "Bottom Snippets"
+msgstr "Untere Snippets"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,city:0
+msgid "City"
+msgstr "Stadt"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,country_id:0
+msgid "Country"
+msgstr "Land"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.list:fso_subscriptions.view_mail_mass_mailing_list_form
+msgid "Create Subscription form"
+msgstr "Anmeldeformular erstellen"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,bestaetigt_typ:0
+#: selection:mail.mass_mailing.list,bestaetigung_typ:0
+msgid "DoubleOptIn"
+msgstr "DoubleOptIn"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_dynamic:0
+msgid "Dynamic Subscription Goal"
+msgstr "Dynamisches Anmeldeziel"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:164
+#, python-format
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.contact,bestaetigt_herkunft:0
+msgid "E.g.: The link or the workflow process"
+msgstr "z.B.: Die URL oder die Workflowprozess ID"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_email:0
+msgid "Email"
+msgstr "E-Mail"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "Email Subscription"
+msgstr "E-Mail Abonnement"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_emaildatum:0
+msgid "Emaildatum"
+msgstr "Emaildatum"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,state:0
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,gender:0
+msgid "Female"
+msgstr "Frau"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:154
+#, python-format
+msgid "Firstname"
+msgstr "Vorname"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,website_url_form_thanks:0
+msgid "Form Thank You Page"
+msgstr "Anmeldeformular Dankesseite"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,website_url_form:0
+msgid "Form Website URL"
+msgstr "Anmeldeformular URL"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_formularnummer:0
+msgid "Formularnummer"
+msgstr "Formularnummer"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "Fundraising Studio Mailing"
+msgstr "Fundraising Studio Massenversand"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_geburtsdatum:0
+msgid "Geburtsdatum"
+msgstr "Geburtsdatum"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,gender:0
+msgid "Gender"
+msgstr "Anrede"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_text:0
+msgid "Goal Text"
+msgstr "Text vor dem Ziel"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_text_after:0
+msgid "Goal Text After"
+msgstr "Text hinter dem Ziel"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:73
+#, python-format
+msgid "Help us to reach"
+msgstr "Hilf uns"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_iban:0
+msgid "IBAN"
+msgstr "IBAN"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_iban_verschluesselt:0
+msgid "IBAN_Verschluesselt"
+msgstr "IBAN_Verschluesselt"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,website_published:0
+msgid "If set the list will show up in the subscription manager"
+msgstr "If set the list will show up in the subscription manager"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,bestaetigung_erforderlich:0
+msgid "If this checkbox is set an E-Mail will be send to thesubscriber containing a link to confirm the subscription (Double-Opt-In)"
+msgstr "If this checkbox is set an E-Mail will be send to the subscriber containing a link to confirm the subscription (Double-Opt-In)"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:116
+#, python-format
+msgid "If you select a list type other than 'none', 'partner mandatory' must be set!"
+msgstr "If you select a list type other than 'none', 'partner mandatory' must be set!"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_increase_step:0
+msgid "Increase Goal Step"
+msgstr "Erhöhe das Ziel dynamisch um"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_increase_at:0
+msgid "Increase Goal at %"
+msgstr "Erhöhe das Ziel dynamisch ab %"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,goal_increase_at:0
+msgid "Increase the goal_dynamic with goal_increase_step at goal_reached"
+msgstr "Increase the goal_dynamic with goal_increase_step at goal_reached"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,anrede_individuell:0
+msgid "Individuelle Anrede"
+msgstr "Individuelle Anrede"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.contact:fso_subscriptions.view_mail_mass_mailing_contact_form
+msgid "Info"
+msgstr "Info"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_jahr:0
+msgid "Jahr"
+msgstr "Jahr"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_jahresbeitrag:0
+msgid "Jahresbeitrag"
+msgstr "Jahresbeitrag"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:159
+#, python-format
+msgid "Lastname"
+msgstr "Nachname"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_left_classes:0
+msgid "Left CSS Classes"
+msgstr "CSS Klassen Links"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_left:0
+msgid "Left Snippets"
+msgstr "Linke Snippets"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.contact:fso_subscriptions.view_mail_mass_mailing_contact_form
+msgid "List Contact"
+msgstr "Listeneintrag"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,contact_ids:0
+msgid "List Contacts"
+msgstr "Listeneinträge"
+
+#. module: fso_subscriptions
+#: view:website:fso_subscriptions.subscription_manager
+msgid "List Name:"
+msgstr "Listenname:"
+
+#. module: fso_subscriptions
+#: model:ir.model,name:fso_subscriptions.model_mail_mass_mailing_list
+msgid "Mailing List"
+msgstr "Liste"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,page_left:0
+msgid "Main Container for Snippets"
+msgstr "Hauptcontainer für Snippets"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,gender:0
+msgid "Male"
+msgstr "Herr"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_mandatsid:0
+msgid "MandatsID"
+msgstr "MandatsID"
+
+#. module: fso_subscriptions
+#: model:ir.model,name:fso_subscriptions.model_mail_mass_mailing_contact
+msgid "Mass Mailing Contact"
+msgstr "Massenmail Kontakt"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,mobile:0
+msgid "Mobile"
+msgstr "Mobil"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_name:0
+msgid "Nachname"
+msgstr "Nachname"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_naechstevorlageam:0
+msgid "NaechsteVorlageAm"
+msgstr "NaechsteVorlageAm"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_naechstevorlageammonatjahr:0
+msgid "NaechsteVorlageAmMonatJahr"
+msgstr "NaechsteVorlageAmMonatJahr"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_anredelower:0
+msgid "Name"
+msgstr "Name"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_namebeschenkter:0
+msgid "NameBeschenkter"
+msgstr "NameBeschenkter"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_nameschenker:0
+msgid "NameSchenker"
+msgstr "NameSchenker"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,newsletter_web:0
+msgid "Newsletter Web"
+msgstr "Newsletter Web"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "None"
+msgstr "Kein Typ"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,gender:0
+msgid "Other"
+msgstr "Andere"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:176
+#, python-format
+msgid "Partner"
+msgstr "Person"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_patenkind:0
+msgid "Patenkind"
+msgstr "Patenkind"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_patenkindvorname:0
+msgid "PatenkindVorname"
+msgstr "PatenkindVorname"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_patentier:0
+msgid "Patentier"
+msgstr "Patentier"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_personid:0
+msgid "PersonID"
+msgstr "PersonID"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "Petition"
+msgstr "Petition"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,phone:0
+msgid "Phone"
+msgstr "Phone"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.contact:fso_subscriptions.view_mail_mass_mailing_contact_form
+msgid "Print Fields"
+msgstr "Seriendruckfelder"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_right_classes:0
+msgid "Right CSS Classes"
+msgstr "CSS-Klassen Rechts"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "SMS Subscription"
+msgstr "SMS Abonement"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,subscription_form:0
+msgid "Set the subscription form for the modelmail.mass_mailing.contact"
+msgstr "Set the subscription form for the modelmail.mass_mailing.contact"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_bar:0
+msgid "Show Goal-Reached-Bar"
+msgstr "Zielbalken anzeigen"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,state:0
+#: field:mail.mass_mailing.contact,state_id:0
+msgid "State"
+msgstr "Status"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,street:0
+msgid "Street"
+msgstr "Straße"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,street_number_web:0
+msgid "Street Number Web"
+msgstr "Str. Nr."
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,street2:0
+msgid "Street2"
+msgstr "Straße 2"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:143
+#, python-format
+msgid "Subscribe"
+msgstr "Anmelden"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,state:0
+msgid "Subscribed"
+msgstr "Angemeldet"
+
+#. module: fso_subscriptions
+#: view:website:fso_subscriptions.subscription_manager
+msgid "Subscribed:"
+msgstr "Subscribed:"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,subscription_form:0
+msgid "Subscription Form"
+msgstr "Anmeldeformular"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal:0
+msgid "Subscription Goal"
+msgstr "Ziel"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:169
+#, python-format
+msgid "Subscription List"
+msgstr "Anmeldeliste"
+
+#. module: fso_subscriptions
+#: view:website:fso_subscriptions.subscription_manager
+msgid "Subscription Manager"
+msgstr "Subscription Manager"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:141
+#, python-format
+msgid "Subscription form for mailing list %s (id %s)"
+msgstr "Anmeldelistenformular für Liste %s (id %s)"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,goal_reached:0
+msgid "Subscription reached %"
+msgstr "Ziel erreicht in %"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,goal_reached:0
+msgid "Subscriptions reached in %"
+msgstr "Ziel erreicht in %"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.contact:fso_subscriptions.view_mail_mass_mailing_contact_form
+msgid "System"
+msgstr "System"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,system_list:0
+msgid "System List"
+msgstr "Systemliste"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,system_list:0
+msgid "System list are available to all installations and can not be removed!"
+msgstr "System list are available to all installations and must not be removed!"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_teilbeitrag:0
+msgid "Teilbeitrag"
+msgstr "Teilbeitrag"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_titelnachname:0
+msgid "TitelNachname"
+msgstr "TitelNachname"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,title_web:0
+msgid "Title Web"
+msgstr "Titel"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_top_classes:0
+msgid "Top CSS Classes"
+msgstr "CSS-Klassen Oben"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.list,page_top:0
+msgid "Top Container for Snippets "
+msgstr "Snippetcontainer oben "
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,page_top:0
+msgid "Top Snippets"
+msgstr "Oberer Snippets"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,list_type:0
+msgid "Type"
+msgstr "Typ"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,state:0
+msgid "Unsubscribed"
+msgstr "Abgemeldet (OptOut)"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,website_published:0
+msgid "View in Subscription Manager"
+msgstr "View in Subscription Manager"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_vorname:0
+msgid "Vorname"
+msgstr "Vorname"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.contact,state:0
+msgid "Waiting for Approval"
+msgstr "Warte auf Bestätigung"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.list:fso_subscriptions.view_mail_mass_mailing_list_form
+msgid "Webpage Content"
+msgstr "Webseiteninhalt"
+
+#. module: fso_subscriptions
+#: view:mail.mass_mailing.list:fso_subscriptions.view_mail_mass_mailing_list_form
+msgid "Webpage Settings"
+msgstr "Webseiteneinstellungen"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.list,website_url:0
+msgid "Website URL"
+msgstr "Anmeldelistenseite URL"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "WhatsApp Subscription"
+msgstr "WhatsApp Abonnement"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_wunschspendenbetrag:0
+msgid "WunschSpendenbetrag"
+msgstr "WunschSpendenbetrag"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:123
+#, python-format
+msgid "You must set all or none of %s"
+msgstr "You must set all or none of %s"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_zahlungsintervall:0
+msgid "Zahlungsintervall"
+msgstr "Zahlungsintervall"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_zahlungsreferenz:0
+msgid "Zahlungsreferenz"
+msgstr "Zahlungsreferenz"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,zip:0
+msgid "Zip"
+msgstr "PLZ"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:130
+#, python-format
+msgid "goal can not be negative"
+msgstr "Das Ziel darf nicht negativ sein"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:133
+#, python-format
+msgid "goal_dynamic can not be negative"
+msgstr "Das dynamische Ziel darf nicht negativ sein"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:126
+#, python-format
+msgid "goal_increase_at must be between 10 and 120"
+msgstr "goal_increase_at must be between 10 and 120"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:128
+#, python-format
+msgid "goal_increase_step must be 1 or more"
+msgstr "goal_increase_step must be 1 or more"
+
+#. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:74
+#, python-format
+msgid "subscriptions!"
+msgstr "zu erreichen!"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_xguid:0
+msgid "xGuid"
+msgstr "xGuid"
+

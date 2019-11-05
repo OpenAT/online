@@ -373,7 +373,7 @@ class FsoForms(http.Controller):
 
         return values
 
-    def _prepare_kwargs_for_form(self, form, **kwargs):
+    def _prepare_kwargs_for_form(self, form, record=None, **kwargs):
         # Remove binary fields (e.g. images) from kwargs before rendering the form
         if kwargs:
             for f in form.field_ids:
@@ -563,8 +563,6 @@ class FsoForms(http.Controller):
 
         # Get the form and session related record
         # HINT: This will either return a single record or an empty recordset (= form.model_id.model object)
-        # HINT: The recordset user is always sudo() right now! :(
-        #       TODO: add user fields to form for security restrictions
         record = self.get_fso_form_record(form)
 
         # ----------------------
@@ -664,7 +662,7 @@ class FsoForms(http.Controller):
 
         # FINALLY RENDER THE FORM
         # -----------------------
-        template_kwargs = {'kwargs': self._prepare_kwargs_for_form(form, **kwargs),
+        template_kwargs = {'kwargs': self._prepare_kwargs_for_form(form, record=record, **kwargs),
                            'render_form_only': render_form_only,
                            # Form record
                            'form': form,

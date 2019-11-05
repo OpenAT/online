@@ -27,16 +27,9 @@ class MailMassMailingList(models.Model):
     system_list = fields.Boolean(string="System List", readonly=True,
                                  help="System list are available to all installations and can not be removed!")
 
-    # TODO !!! MOVE APPROVAL TO SEPARATE ADDON !!!
-    # TODO: APPROVAL FOR LIST CONTACTS
-    #       "Opt-Out" set and custom state for non approved list contacts if approval needed is set!
-    # TODO: The approval fields should be added to an abstract model - to much code replication right now - we could
-    #       add a class variable for the selection field e.g.: _bestaetigt_typ = [('doubleoptin', 'DoubleOptIn')]
-    #       so we could "configure" this field by class if needed
-    # TODO: Double-Opt-In E-Mail Template (Many2One to email.template)
-    # TODO: Inverse Field(s) for many2one !!!
+    # APPROVAL
     bestaetigung_erforderlich = fields.Boolean("Approval needed",
-                                               default=False,
+                                               default=True,
                                                help="If this checkbox is set an E-Mail will be send to the"
                                                     "subscriber containing a link to confirm the subscription "
                                                     "(Double-Opt-In)")
@@ -148,7 +141,7 @@ class MailMassMailingList(models.Model):
                 form_vals = {'name': _('Subscription form for mailing list %s (id %s)') % (r.name, r.id),
                              'model_id': list_contact_model.id,
                              'submit_button_text': _('Subscribe'),
-                             'clear_session_data_after_submit': True,
+                             'clear_session_data_after_submit': False,
                              'edit_existing_record_if_logged_in': True,
                              'email_only': False,
                              'thank_you_page_edit_data_button': False,
@@ -158,25 +151,31 @@ class MailMassMailingList(models.Model):
 
                 # Create the fso form fields
                 f_fields = {'firstname': {'sequence': 1,
-                                          'label': 'Firstname',
+                                          'label': _('Firstname'),
                                           'mandatory': False,
                                           'css_classes': 'col-sm-12 col-md-12 col-lg-12',
                                           'clearfix': True},
                             'lastname': {'sequence': 2,
-                                         'label': 'Lastname',
+                                         'label': _('Lastname'),
                                          'mandatory': True,
                                          'css_classes': 'col-sm-12 col-md-12 col-lg-12',
                                          'clearfix': True},
                             'email': {'sequence': 3,
-                                      'label': 'E-Mail',
+                                      'label': _('E-Mail'),
                                       'mandatory': True,
                                       'css_classes': 'col-sm-12 col-md-12 col-lg-12',
                                       'clearfix': True},
-                            'list_id': {'sequence': 9999,
-                                        'label': 'Subscription List',
+                            'list_id': {'sequence': 9900,
+                                        'label': _('Subscription List'),
                                         'default': r.id,
                                         'mandatory': True,
                                         'css_classes': 'hide_it'},
+                            'partner_id': {'sequence': 9910,
+                                           'show': False,
+                                           'login': True,
+                                           'label': _('Partner'),
+                                           'mandatory': False,
+                                           'css_classes': 'hide_it'},
                             }
                 fields_obj = self.env['ir.model.fields']
                 form_field_obj = self.env['fson.form_field']

@@ -112,13 +112,14 @@ def fstoken_check(fs_ptoken):
 
         # ATTENTION: The new user is NOT added to the base.group_portal group because this will unlock the account
         #            menu in the website. However since the user does also not belong to base.group_user it should
-        #            still be very easy to distinguish between internal an website user!
+        #            still be very easy to distinguish between internal and website user!
         user = request.env['res.users'].sudo().create({
             'name': partner.name,
             'partner_id': partner.id,
             'email': partner.email,
             'login': login,
-            'groups_id': [(6, 0, [request.env.ref('base.group_partner_manager').id])],
+            'groups_id': [(6, 0, [request.env.ref('base.group_partner_manager').id,
+                                  request.env.ref('base.group_public').id])],
         })
         # Directly commit changes to db in case of login right after this helper function so that the user is already
         # in the database and therefore available for all environments/caches of odoo.

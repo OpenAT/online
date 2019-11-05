@@ -132,9 +132,7 @@ class MailMassMailingContact(models.Model):
                 #       that we can see every user that is not in 'base.group_user' as an external user.
                 user = self.env.user
                 public_website_user_id = self.sudo().env.ref('base.public_user', raise_if_not_found=True).id
-                if user.id not in (SUPERUSER_ID, public_website_user_id) \
-                        and user.has_group('base.group_public') \
-                        and not user.has_group('base.group_user'):
+                if user.id not in (SUPERUSER_ID, public_website_user_id) and not user.has_group('base.group_user'):
                     websiteuser_partner = user.partner_id
                 else:
                     websiteuser_partner = None
@@ -142,36 +140,45 @@ class MailMassMailingContact(models.Model):
                 # Case insensitive search domain for PartnerEmail
                 pe_domain = [('email', '=ilike', r.email)]
 
-                # Append logged in website-user to PersonEmail search domain
+                # Only search for PersonEmail records of the website-user
                 if websiteuser_partner:
                     pe_domain += [('partner_id', '=', websiteuser_partner.id)]
 
                 # Search case insensitive for PersonEmails with the email of this list contact
                 pe_records = self.env['frst.personemail'].sudo().search(pe_domain)
 
-                # All non-subscribed PersonEmails
+                # All matching non-subscribed PersonEmail records
                 pe_free = pe_records.filtered(
                     lambda pe: r.list_id.id not in pe.mapped('mass_mailing_contact_ids.list_id').ids
                 )
 
-                # Already subscribed PersonEmails
+                # All matching subscribed PersonEmail records
                 pe_subscribed = pe_records - pe_free
 
-                # A) Update log field for existing list contacts
-                # ----------------------------------------------
+                # Update exiting subscriptions
+                # ----------------------------
                 if pe_subscribed:
-                    # Update the log field of existing linked list contacts if create_vals are given
+                    # Get the subscriptions
+                    lc_subscribed = pe_subscribed.mapped('mass_mailing_contact_ids')
+
                     if create_vals:
-                        lc_subscribed = pe_subscribed.mapped('mass_mailing_contact_ids')
-                        lc_subscribed.append_renewed_subscription_log(create_vals)
-                    # Remove current list contact and move on to next record
+
+                        # Update records if a user is logged in
+                        if websiteuser_partner:
+                            lc_subscribed.write(create_vals)
+
+                        # Only update the renewed subscription fields for public users
+                        else:
+                            lc_subscribed.append_renewed_subscription_log(create_vals)
+
+                    # Stop here if no non subscribed PartnerEmails where found
                     if not pe_free:
                         recordset_to_return = recordset_to_return | lc_subscribed
                         r.sudo().unlink()
                         continue
 
-                # B) Link existing PersonEmail(s)
-                # --------------------------------
+                # Create new subscriptions for existing PersonEmail(s)
+                # -------------------------------------------------------
                 if pe_free:
                     # Link current list contact to first non linked PersonEmail
                     pe_free_first = pe_free[0]
@@ -180,26 +187,34 @@ class MailMassMailingContact(models.Model):
                     recordset_to_return = recordset_to_return | r
 
                     # Avoid mail.thread auto subscription for the public-website-user
+                    # TODO: Maybe this is inconsistent because we do not suppress mail.thread for pe_free_first
                     lc_obj_sudo = self.env['mail.mass_mailing.contact'].sudo()
                     if user.id == public_website_user_id:
                         lc_obj_sudo = lc_obj_sudo.with_context(mail_create_nolog=True)
 
                     # Create list contacts for all remaining non linked PersonEmails
                     for pe in pe_free - pe_free_first:
+
+                        # Prepare values
                         lc_vals = create_vals.copy()
                         lc_vals['email'] = r.email
                         lc_vals['list_id'] = r.list_id.id
                         lc_vals['personemail_id'] = pe.id
                         lc_vals['partner_id'] = pe.partner_id.id
+
+                        # Create new list contact
                         lc_new = lc_obj_sudo.create(lc_vals)
+
+                        # Add the record to the recordset that will be returned
                         recordset_to_return = recordset_to_return | lc_new
 
                     # Move on to the next list contact record
                     continue
 
-                # C) Link a newly created PersonEmail
-                # -----------------------------------
-                # C.1) Create new PersonEmail for logged in Website user (!!!but do not change the main email!!!)
+                # Create a new subscription for a new PersonEmail
+                # -----------------------------------------------
+                # a) Create a new PersonEmail for the existing logged-in Person and link it to the current record
+                # ATTENTION: We do not change the main email to avoid an email move!
                 if websiteuser_partner:
                     last_email_update = fields.datetime.now()
 
@@ -215,13 +230,17 @@ class MailMassMailingContact(models.Model):
                          'partner_id': websiteuser_partner.id,
                          'last_email_update': last_email_update})
 
-                    # Link the new personemail (r.write) and move on to the next list record
+                    # Update the list contact record
                     r.write({'personemail_id': pe.id,
                              'partner_id': websiteuser_partner.id})
+
+                    # Add the record to the recordset that will be returned
                     recordset_to_return = recordset_to_return | r
+
+                    # Move on to the next list contact record
                     continue
 
-                # C.2) Create a new Person with new PersonEmail to link
+                # b) Create a new PersonEmail and a new Person and link it to the current record
                 else:
                     # Get the values for the new partner
                     partner_vals = r.new_partner_vals()
@@ -239,18 +258,28 @@ class MailMassMailingContact(models.Model):
                         "Emails (%s, %s) do not match after partner creation!"
                         "" % (partner.main_personemail_id.email, r.email))
 
-                    # Update the list contact and move on to the next list contact record
+                    # Update the list contact record
                     r.write({'personemail_id': partner.main_personemail_id.id,
                              'partner_id': partner.id})
+
+                    # Add the record to the recordset that will be returned
                     recordset_to_return = recordset_to_return | r
+
+                    # Move on to the next list contact record
                     continue
 
         return recordset_to_return
 
     @api.model
     def create(self, vals):
-        # Avoid mail.thread auto subscription for the public-website-user
-        if self.env.user.id == self.sudo().env.ref('base.public_user', raise_if_not_found=True).id:
+        # Auto append partner_id
+        if vals.get('personemail_id') and not vals.get('partner_id'):
+            pe = self.env['frst.personemail'].sudo().browse([vals['personemail_id']])
+            if pe:
+                vals['partner_id'] = pe.partner_id.id
+
+        # Avoid mail.thread auto subscription for website-users since they have no access to mail.message
+        if not self.env.user.has_group('base.group_user'):
             self = self.with_context(mail_create_nolog=True)
 
         # Create the new record
@@ -273,6 +302,12 @@ class MailMassMailingContact(models.Model):
 
     @api.multi
     def write(self, vals):
+        # Auto append partner_id
+        if vals.get('personemail_id') and not vals.get('partner_id'):
+            pe = self.env['frst.personemail'].sudo().browse([vals['personemail_id']])
+            if pe:
+                vals['partner_id'] = pe.partner_id.id
+
         # Make sure no email change is happening if already linked to PersonEmail
         self._pre_update_check(vals)
 

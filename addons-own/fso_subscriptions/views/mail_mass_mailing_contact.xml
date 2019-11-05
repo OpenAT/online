@@ -13,6 +13,9 @@
             <field name="model">mail.mass_mailing.contact</field>
             <field name="arch" type="xml">
                 <form string="List Contact">
+                    <header>
+                        <field name="state" widget="statusbar" readonly="True" statusbar_visible="approval_pending,approved"/>
+                    </header>
                     <sheet>
                         <group name="basic_contact_data">
                             <group name="basic">
@@ -23,25 +26,38 @@
                                 <field name="lastname"/>
                                 <field name="name" readonly="True"/>
                                 <field name="email"/>
-                                <field name="phone"/>
-                                <field name="mobile"/>
-                                <field name="street"/>
-                                <field name="street2"/>
-                                <field name="zip"/>
-                                <field name="city"/>
-                                <field name="state_id"/>
-                                <field name="country_id"/>
                             </group>
                             <group name="extra">
                                 <field name="opt_out"/>
                                 <field name="bestaetigt_am_um"/>
                                 <field name="bestaetigt_typ"/>
                                 <field name="bestaetigt_herkunft"/>
-                                <field name="renewed_subscription_date"/>
-                                <field name="renewed_subscription_log"/>
                             </group>
                         </group>
                         <notebook>
+                            <page string="Info">
+                                <group name="info_group">
+                                    <group name="partner_data">
+                                        <field name="gender"/>
+                                        <field name="anrede_individuell"/>
+                                        <field name="title_web"/>
+                                        <field name="newsletter_web"/>
+                                        <field name="birthdate_web"/>
+                                        <field name="phone"/>
+                                        <field name="mobile"/>
+                                        <field name="street"/>
+                                        <field name="street2"/>
+                                        <field name="zip"/>
+                                        <field name="city"/>
+                                        <field name="state_id"/>
+                                        <field name="country_id"/>
+                                    </group>
+                                    <group name="renewed_info">
+                                        <field name="renewed_subscription_date"/>
+                                        <field name="renewed_subscription_log"/>
+                                    </group>
+                                </group>
+                            </page>
                             <page string="Print Fields">
                                 <group name="print_fields_a">
                                     <group name="person">

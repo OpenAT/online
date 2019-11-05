@@ -11,25 +11,34 @@ class MailMassMailingContactSosync(models.Model):
 
     list_id = fields.Many2one(sosync="True")
     partner_id = fields.Many2one(sosync="True")
+    personemail_id = fields.Many2one(sosync="True")
 
     # contact
+    email = fields.Char(sosync="True")
     firstname = fields.Char(sosync="True")
     lastname = fields.Char(sosync="True")
+    gender = fields.Selection(sosync="True")
+    anrede_individuell = fields.Char(sosync="True")
+    title_web = fields.Char(sosync="True")
+    birthdate_web = fields.Date(sosync="True")
     phone = fields.Char(sosync="True")
     mobile = fields.Char(sosync="True")
+    newsletter_web = fields.Boolean(sosync="True")
 
     # address
     street = fields.Char(sosync="True")
     street2 = fields.Char(sosync="True")
+    street_number_web = fields.Char(sosync="True")
     zip = fields.Char(sosync="True")
     city = fields.Char(sosync="True")
-    state_id = fields.Many2one(sosync="True")
+    state_id = fields.Many2one(sosync="True")       # Not used in FRST
     country_id = fields.Many2one(sosync="True")
 
     # List Contact approval information
     bestaetigt_am_um = fields.Datetime(sosync="True")
     bestaetigt_typ = fields.Selection(sosync="True")
     bestaetigt_herkunft = fields.Char(sosync="True")
+    state = fields.Selection(sosync="True")
 
     # FRST print fields
     # HINT: Would be great if this could be done "automatically" but right now i could not find a way ...
