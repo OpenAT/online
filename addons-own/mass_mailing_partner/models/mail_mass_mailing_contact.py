@@ -155,8 +155,8 @@ class MailMassMailingContact(models.Model):
                 # All matching subscribed PersonEmail records
                 pe_subscribed = pe_records - pe_free
 
-                # Update exiting subscriptions
-                # ----------------------------
+                # Update existing subscriptions
+                # -----------------------------
                 if pe_subscribed:
                     # Get the subscriptions
                     lc_subscribed = pe_subscribed.mapped('mass_mailing_contact_ids')
