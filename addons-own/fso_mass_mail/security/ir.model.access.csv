@@ -1,3 +1,4 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "website_access_mail_tracking_email_group_public","website mail_tracking_email group_public","mail_tracking.model_mail_tracking_email","base.group_public",1,1,1,0
 "website_access_mail_tracking_event_group_public","website mail_tracking_event group_public","mail_tracking.model_mail_tracking_event","base.group_public",1,1,1,0
+"website_access_mail_message_group_public","website mail_message group_public","mail.model_mail_message","base.group_public",1,1,1,0
