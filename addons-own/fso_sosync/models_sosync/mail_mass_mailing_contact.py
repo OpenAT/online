@@ -13,6 +13,8 @@ class MailMassMailingContactSosync(models.Model):
     partner_id = fields.Many2one(sosync="True")
     personemail_id = fields.Many2one(sosync="True")
 
+    origin = fields.Char(sosync="True")
+
     opt_out = fields.Boolean(sosync="True")
     renewed_subscription_log = fields.Text(sosync="True")
     renewed_subscription_date = fields.Datetime(sosync="True")

@@ -122,7 +122,8 @@ class FsoForms(http.Controller):
         Return all records of the form model (form.model_id.model) where the login-marked-field of the form model
         matches the given user or it's related partner!
 
-        Inherit this method if you need to choose a specific record out of the found records. (e.g. status=approved)
+        Inherit this method if you need to choose a specific record out of the found records. (e.g. status=approved or
+        list_id=x)
 
         :param form: The fso form record
         :param user: The logged in user record

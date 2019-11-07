@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 class MailMassMailingContact(models.Model):
     _inherit = "mail.mass_mailing.contact"
 
+    origin = fields.Char(string="Origin", help="Origin information like the web-link, the campaign or similar")
+
     # partner
     # DONE: Firstname Lastname through separate addon
     gender = fields.Selection(string='Gender', selection=[

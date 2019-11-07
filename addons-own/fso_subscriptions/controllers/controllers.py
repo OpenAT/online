@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-
 from openerp import http
 from openerp.http import request
-from openerp.addons.fso_forms.controllers.controller import FsoForms
-fso_forms_controller_obj = FsoForms()
+from fso_forms_controllers import FsoFormsSubscriptions as FsoForms
 
-# TODO: Approval Process for list subscriptions (will be done currently in FRST!)
+# ATTENTION: This is dangerous because it will not include any inheritance of the FsoForms class next to or after
+#            this addon - good enough for now...
+forms_class_object = FsoForms()
 
 
 class FSOSubscriptions(http.Controller):
@@ -20,8 +20,8 @@ class FSOSubscriptions(http.Controller):
             request.redirect('/')
 
         # Run the fso_forms controller first to check the data and create or update a record
-        form_page = fso_forms_controller_obj.fso_form(form_id=mlist.subscription_form.id,
-                                                      render_form_only=True, **kwargs)
+        form_page = forms_class_object.fso_form(form_id=mlist.subscription_form.id,
+                                                render_form_only=True, **kwargs)
 
         # Detect redirects from fso_forms
         if form_page and hasattr(form_page, 'location') and form_page.location:
@@ -68,6 +68,7 @@ class FSOSubscriptions(http.Controller):
                                                  'mlist': mlist})
         return mail_list_page
 
+    # TODO !!!
     @http.route(['/fso/subscription/manager'], type='http', auth="public", website=True)
     def subscription_manager(self, list_types=tuple(['email']), auto_unsubscribe_ids=None, **kwargs):
 

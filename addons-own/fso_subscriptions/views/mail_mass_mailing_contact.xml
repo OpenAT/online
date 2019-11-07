@@ -32,6 +32,7 @@
                                 <field name="bestaetigt_am_um"/>
                                 <field name="bestaetigt_typ"/>
                                 <field name="bestaetigt_herkunft"/>
+                                <field name="origin"/>
                             </group>
                         </group>
                         <notebook>

@@ -77,5 +77,6 @@ Features
         'views/views.xml',
         'data/actions.xml',
         #'views/email_editor.xml',
+        'security/ir.model.access.csv'
     ],
 }
