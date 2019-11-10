@@ -120,7 +120,9 @@ def fstoken_check(fs_ptoken):
         # ATTENTION: The new user is NOT added to the base.group_portal group because this will unlock the account
         #            menu in the website. However since the user does also not belong to base.group_user it should
         #            still be very easy to distinguish between internal and website user!
-        user = request.env['res.users'].sudo().create({
+        # HINT: Add 'no_reset_password' to the context to avoid the auto signup-/passwort-reset-email from the addon
+        #       auth_signup.
+        user = request.env['res.users'].with_context(no_reset_password=True).sudo().create({
             'name': partner.name,
             'partner_id': partner.id,
             'email': partner.email,

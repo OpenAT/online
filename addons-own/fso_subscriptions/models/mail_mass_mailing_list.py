@@ -142,7 +142,7 @@ class MailMassMailingList(models.Model):
                              'model_id': list_contact_model.id,
                              'submit_button_text': _('Subscribe'),
                              'clear_session_data_after_submit': True,
-                             'edit_existing_record_if_logged_in': True,
+                             'edit_existing_record_if_logged_in': False,
                              'email_only': False,
                              'thank_you_page_edit_data_button': False,
                              'thank_you_page_edit_redirect': '/fso/subscription/%s' % r.id,
