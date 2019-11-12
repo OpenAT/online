@@ -32,7 +32,7 @@ outdatedBrowserRework(
                 close: "Close"
             },
             de: {
-                outOfDate: "Ihr Browser ist nicht untertütz!",
+                outOfDate: "Ihr Browser ist nicht unterstütz!",
                 update: {
                     web: "Bitte verwenden Sie eine aktuelle Version von Google Chrome für das Editieren von E-Mail Vorlagen!",
                     googlePlay: "Please install Chrome from Google Play",
