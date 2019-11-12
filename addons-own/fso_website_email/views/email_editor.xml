@@ -105,6 +105,12 @@
 
     <!-- EDITOR -->
     <template id="email_editor" name="FSON Email Editor">
+
+        <!-- Browser unsupported warning
+             HINT: check fso_base_website. and fso_website_email.common_assets_editmode)-->
+        <!-- Container for Browser-Unsupported-Message-->
+        <div id="outdated"/>
+
         <!-- Load Editor Toolbar -->
         <t t-call="fso_website_email.editor_toolbar"/>
 
@@ -162,7 +168,7 @@
 
             </footer -->
         </div>
-        
+
     </template>
 
 

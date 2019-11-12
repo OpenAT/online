@@ -57,6 +57,12 @@
             <!-- Browser form auto-completion fix for honeypot fields -->
             <!-- HINT: Disabled by now cause only used in website_crm_extended and there it is included anyway -->
             <!-- script type="text/javascript" src="addons-own/fso_base_website/static/src/js/no_auto_comp.js"/ -->
+
+            <!-- Browser detection and deprecation warning
+                 ATTENTION: This is only used in the e-mail editor right now and is loaded there separately.
+                            Check fso_website_email for more information
+            -->
+            <!--<script type="text/javascript" src="/fso_base_website/static/lib/outdated-browser-rework-master/dist/outdated-browser-rework.min.js"/>-->
         </xpath>
 
     </template>

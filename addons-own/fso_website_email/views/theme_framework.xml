@@ -35,6 +35,12 @@
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_default_settings.js"/>
         <script type="text/javascript" src="/fso_website_email/static/src/js/ckeditor_print_field_plugin.js"/>
 
+        <!-- BROWSER WARNING -->
+        <!-- HINT: Content box is inserted in fso_website_email.email_editor -->
+        <script type="text/javascript" src="/fso_base_website/static/lib/outdated-browser-rework-master/dist/outdated-browser-rework.min.js"/>
+        <link type='text/css' href='/fso_website_email/static/src/css/outdated-browser-rework.css' rel='stylesheet' t-ignore="true"/>
+        <script type="text/javascript" src="/fso_website_email/static/src/js/outdated-browser-rework-config.js"/>
+
     </template>
     
     

@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="dist/style.css">
+		<script src="dist/outdated-browser-rework.min.js"></script>
+		<script>
+			// Since this is a demo page, we disable support for all browsers
+			outdatedBrowserRework({
+				fullscreen: false,
+				browserSupport: {
+					'Chrome': false,
+					'Edge': false,
+					'Safari': false,
+					'Mobile Safari': false,
+					'Firefox': false,
+					'Opera': false,
+					'IE': false
+				}
+			})
+		</script>
+		<style type="text/css">
+			p {
+				font-family: "Open Sans", "Segoe UI", sans-serif;
+				font-size: 24pt;
+			}			
+		</style>
+	</head>
+	<body>
+		<p>This page is a demonstration, showing what a user with an outdated browser will experience.</p>
+		<p>All browsers in this demo are marked not supported, so you'll see it even with new browsers!</p>
+		<div id="outdated"></div>
+	</body>	
+</html>

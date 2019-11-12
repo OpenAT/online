@@ -24,8 +24,6 @@
                    (4, ref('base.group_hr_manager')),
                    (4, ref('base.group_hr_attendance')),
                    (4, ref('base.group_hr_user')),
-                   (4, ref('im_livechat.group_im_livechat_manager')),
-                   (4, ref('lunch.group_lunch_manager')),
                    (4, ref('marketing.group_marketing_manager')),
                    (4, ref('project.group_project_manager')),
                    (4, ref('purchase.group_purchase_manager')),
