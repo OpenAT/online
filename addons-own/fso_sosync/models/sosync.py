@@ -236,9 +236,11 @@ class BaseSosync(models.AbstractModel):
         if 'sosync_write_date' not in vals:
             # Get sync-job-switch from context
             create_sync_job = context.get("create_sync_job", True)
-            # Enable sync-job-switch in context for all other models that may be called subsequently
-            if not create_sync_job:
-                context['create_sync_job'] = True
+
+            # TODO: Re-Enable sync-job-switch in context for all other models that may be called subsequently
+            #       since context is a frozendict we should first check if this is ok or not ...
+            # if not create_sync_job:
+            #     context['create_sync_job'] = True
 
             # Get fields that are watched by the sosyncer
             watched_fields = self._sosync_watched_fields(cr, user, values=vals, context=context)
@@ -260,63 +262,63 @@ class BaseSosync(models.AbstractModel):
 
         return super(BaseSosync, self)._write(cr, user, ids, vals, context=context)
 
-    # # REGULAR FIELDS
-    # # --------------
-    # @api.multi
-    # def write(self, values, **kwargs):
-    #     # CREATE SYNC JOBS
-    #     # ----------------
-    #     values = values or dict()
-    #
-    #     # Get value of _sync_job_priority if it is in vals and remove it from vals so that the record can be
-    #     # written (updated) correctly
-    #     job_priority = values.pop('_sync_job_priority', False)
-    #
-    #     # Get create_sync_job from context or set it to True
-    #     # HINT: create_sync_job is a switch in the context dict to suppress sync job generation
-    #     #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation!
-    #     # ATTENTION: "create_sync_job" is set to "True" in the context before any other method is called!
-    #     #            Therefore possible updates in other models can still create sync jobs which is the intended
-    #     #            and correct behaviour!
-    #     if not self.env.context:
-    #         create_sync_job = True
-    #     else:
-    #         create_sync_job = self.env.context.get("create_sync_job", True)
-    #
-    #     # Make sure sync jobs creation is enabled in the context again
-    #     # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
-    #     #            Therefore possible updates in other models can still create sync jobs which is the
-    #     #            intended and correct behaviour!
-    #     if not create_sync_job:
-    #         self = self.with_context(create_sync_job=True)
-    #
-    #     # Get all watched fields for this model based on the fields in values
-    #     watched_fields = self._sosync_watched_fields(values)
-    #     watched_fields_json = self._sosync_watched_fields_json(watched_fields)
-    #
-    #     # Update the record and add the new sosync_write_date and then create the sync jobs
-    #     if create_sync_job and watched_fields:
-    #
-    #         # Get the sosync_write_date string
-    #         sosync_write_date = self._sosync_write_date_now()
-    #
-    #         # Add sosync_write_date to the values for the records to update
-    #         values["sosync_write_date"] = sosync_write_date
-    #
-    #         # Update the records (including new value of 'sosync_write_date' field)
-    #         res = super(BaseSosync, self).write(values, **kwargs)
-    #
-    #         # Create the sync jobs for the records
-    #         self.create_sync_job(sosync_write_date=sosync_write_date,
-    #                              job_source_fields=watched_fields_json,
-    #                              job_priority=job_priority)
-    #
-    #     # Update record without sync job and sosync_write_date
-    #     else:
-    #         res = super(BaseSosync, self).write(values, **kwargs)
-    #
-    #     # Continue with write method
-    #     return res
+    # REGULAR FIELDS
+    # --------------
+    @api.multi
+    def write(self, values, **kwargs):
+        # CREATE SYNC JOBS
+        # ----------------
+        values = values or dict()
+
+        # Get value of _sync_job_priority if it is in vals and remove it from vals so that the record can be
+        # written (updated) correctly
+        job_priority = values.pop('_sync_job_priority', False)
+
+        # Get create_sync_job from context or set it to True
+        # HINT: create_sync_job is a switch in the context dict to suppress sync job generation
+        #       This is mandatory for all updates from the sosyncer service to avoid endless sync job generation!
+        # ATTENTION: "create_sync_job" is set to "True" in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the intended
+        #            and correct behaviour!
+        if not self.env.context:
+            create_sync_job = True
+        else:
+            create_sync_job = self.env.context.get("create_sync_job", True)
+
+        # Make sure sync jobs creation is enabled in the context again
+        # ATTENTION: "create_sync_job" is set to "True" again in the context before any other method is called!
+        #            Therefore possible updates in other models can still create sync jobs which is the
+        #            intended and correct behaviour!
+        if not create_sync_job:
+            self = self.with_context(create_sync_job=True)
+
+        # Get all watched fields for this model based on the fields in values
+        watched_fields = self._sosync_watched_fields(values)
+        watched_fields_json = self._sosync_watched_fields_json(watched_fields)
+
+        # Update the record and add the new sosync_write_date and then create the sync jobs
+        if create_sync_job and watched_fields:
+
+            # Get the sosync_write_date string
+            sosync_write_date = self._sosync_write_date_now()
+
+            # Add sosync_write_date to the values for the records to update
+            values["sosync_write_date"] = sosync_write_date
+
+            # Update the records (including new value of 'sosync_write_date' field)
+            res = super(BaseSosync, self).write(values, **kwargs)
+
+            # Create the sync jobs for the records
+            self.create_sync_job(sosync_write_date=sosync_write_date,
+                                 job_source_fields=watched_fields_json,
+                                 job_priority=job_priority)
+
+        # Update record without sync job and sosync_write_date
+        else:
+            res = super(BaseSosync, self).write(values, **kwargs)
+
+        # Continue with write method
+        return res
 
     @api.multi
     def _create_comodel_delete_sync_jobs(self, sosync_write_date=False, models_done=tuple()):
