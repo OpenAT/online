@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-@job(retry_pattern={1: 2, 3: 6, 5: 10})
+@job(default_channel='root.sosync', retry_pattern={1: 30, 2: 60, 3: 120, 4: 6 * 60 * 60})
 def connector_submit_sync_job(session, record_id):
     # Make sure two jobs don't submit the same sync_job
     try:

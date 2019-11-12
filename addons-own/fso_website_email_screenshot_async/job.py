@@ -7,7 +7,8 @@ from openerp.addons.connector.queue.job import job
 import logging
 logger = logging.getLogger(__name__)
 
-@job(retry_pattern={1: 5, 3: 10})
+
+@job(default_channel='root.screenshot', retry_pattern={1: 5, 3: 10})
 def render_screenshot(session, template_id):
 
     # Make sure two jobs don't render the same e-mail template screenshot
