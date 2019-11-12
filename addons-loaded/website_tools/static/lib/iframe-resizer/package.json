@@ -40,7 +40,7 @@
     "jasmine-core": "^2.3.4",
     "jasmine-jquery": "^2.1.0",
     "jit-grunt": "0.3.x",
-    "jquery": "^2.1.4",
+    "jquery": "^3.4.1",
     "karma": "^0.13.9",
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^0.5.1",
