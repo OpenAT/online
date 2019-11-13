@@ -28,7 +28,8 @@ class FSOSubscriptions(http.Controller):
             return form_page
 
         # Check if a website user is logged in
-        user = request.env.user
+        # ATTENTION: request.env.user MAY BE NULL BUT request.uid MAY BE SET ! ALWAYS USE request.uid !!!
+        user = request.env['res.users'].sudo().browse([request.uid])
         public_website_user = request.website.user_id
         website_partner = None
         if user and public_website_user and user.id != public_website_user.id:
@@ -73,7 +74,8 @@ class FSOSubscriptions(http.Controller):
     @http.route(['/fso/subscription/manager'], type='http', auth="public", website=True)
     def subscription_manager(self, list_types=tuple(['email']), auto_unsubscribe_ids=None, **kwargs):
 
-        user = request.env.user
+        # ATTENTION: request.env.user MAY BE NULL BUT request.uid MAY BE SET ! ALWAYS USE request.uid !!!
+        user = request.env['res.users'].sudo().browse([request.uid])
         public_website_user = request.website.user_id
 
         # Check if a user is logged-in and if not redirect to the startpage of the website
