@@ -292,7 +292,7 @@ class FsoForms(http.Controller):
 
         return field_errors
 
-    def _prepare_field_data(self, form=None, form_field_data=None):
+    def _prepare_field_data(self, form=None, form_field_data=None, record=None):
         form_field_data = form_field_data or {}
 
         # Transform the form field data if needed
@@ -302,8 +302,8 @@ class FsoForms(http.Controller):
         for f in form.field_ids:
             if f.field_id and f.show:
 
-                # ATTENTION: Skipp readonly fields if a user is logged in
-                if f.readonly and request.website.user_id.id != request.uid:
+                # ATTENTION: Skipp readonly fields if a user is logged in and a record was found
+                if f.readonly and request.website.user_id.id != request.uid and record:
                     continue
 
                 f_name = f.field_id.name
@@ -590,8 +590,8 @@ class FsoForms(http.Controller):
                 # Create or update a record
                 # -------------------------
                 else:
-                    # HINT: User rights are handled by get_fso_form_record() ...  always sudo() right now :(
-                    values = self._prepare_field_data(form=form, form_field_data=kwargs)
+                    # HINT: User rights are handled by get_fso_form_record()
+                    values = self._prepare_field_data(form=form, form_field_data=kwargs, record=record)
                     if values:
                         try:
                             if not record:
