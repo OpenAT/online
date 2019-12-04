@@ -1,0 +1,5 @@
+<openerp>
+  <data>
+    <function model="queue.job.function" name="set_fso_sosync_async_channel"/>
+  </data>
+</openerp>

@@ -9,9 +9,11 @@ def _set_screenshot_cron_state(cr, registry, active_state):
     if cron:
         cron.write({'active': active_state})
 
+
 # Deactivate cron job on install/update
 def post_init_hook(cr, registry):
     _set_screenshot_cron_state(cr, registry, active_state=False)
+
 
 # Reactivate cronjob if addon es uninstalled
 def uninstall_hook(cr, registry):

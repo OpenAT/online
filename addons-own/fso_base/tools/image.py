@@ -55,21 +55,39 @@ def resize_to_thumbnail(img, box=(440, 440), fit='mid'):
 
 # Get a screen-shot for the target URL
 # http://randomdotnext.com/selenium-phantomjs-on-aws-ec2-ubuntu-instance-headless-browser-automation/
-# TODO: Add Timeouts
 def screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=int()):
+
     # Import selenium
     try:
         from selenium import webdriver
     except ImportError:
-        logger.error(_('Could not import selenium for screen-shot generation of %s!') % url)
+        logger.error(_('Could not import webdriver from selenium for screen-shot generation of %s!') % url)
         return False
 
-    # Load PhantomJS()
+    # Setup driver for selenium
+    driver = None
+
+    # Try to load chromedriver
     try:
-        driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
-    except Exception as error:
-        logger.error(_('Could not load PhantomJS() for screen-shot generation of %s!\n\n%s\n') % (url, error))
-        return False
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        driver = webdriver.Chrome(chrome_options=options)
+    except Exception as e:
+        logger.error('Setup of chromedriver for selenium failed! %s' % repr(e))
+
+    # Driver fallback: Try to load PhantomJS()
+    if not driver:
+        try:
+            driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
+        except Exception as e:
+            logger.error('Setup of PhantomJS() for selenium failed! %s' % repr(e))
+            logger.error('Screenshot generation failed! No driver for selenium found!')
+            return False
+
+    # Set driver timeouts
+    driver.set_script_timeout(10)
+    driver.set_page_load_timeout(12)
+    driver.implicitly_wait(14)
 
     # Generate screen-shot
     try:
@@ -77,15 +95,19 @@ def screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=
         driver.get(url)
         image = driver.get_screenshot_as_png()
         image = base64.b64encode(image)
-    except Exception as error:
-        logger.warning('Could not generate screen-shot for url:\n\n%s\n' % error)
+    except Exception as e:
+        logger.error('Could not generate screen-shot! %s' % repr(e))
         return False
 
     # Resize Image
-    if tgt_width or tgt_height:
-        x = tgt_width or 320
-        y = tgt_height or 240
-        image = resize_to_thumbnail(image, box=(x, y), fit='top')
+    try:
+        if tgt_width or tgt_height:
+            x = tgt_width or 320
+            y = tgt_height or 240
+            image = resize_to_thumbnail(image, box=(x, y), fit='top')
+    except Exception as e:
+        logger.error('Could not resize screenshot! %s' % repr(e))
+        return False
 
     # Return Image
     return image

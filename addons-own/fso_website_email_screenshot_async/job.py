@@ -16,20 +16,24 @@ def render_screenshot(session, template_id):
         session.cr.execute(
             "SELECT id FROM email_template WHERE id = %s FOR UPDATE", (template_id,))
     except Exception as e:
-        msg = "Could not lock email.template (ID %s) for update! " \
+        msg = "Could not lock email.template record (ID %s) for screenshot generation! " \
               "Will rollback and close cursor!" % template_id
         logger.warning(msg)
         if session.cr is not None:
-            session.cr.rollback()
-            session.cr.close()
-        raise
+            try:
+                session.cr.rollback()
+                session.cr.close()
+            except Exception as er:
+                logger.error('Could not rollback and close cursor! %s' % repr(er))
+                pass
+        raise e
 
     # Make sure template still exists
     template = session.env['email.template'].browse(template_id)
     if not template.exists():
         return "email.template record (id=%s) no longer exists" % template_id
 
-    # Render the Screenshot
+    # Render the screenshot
     template.screenshot_update()
 
 

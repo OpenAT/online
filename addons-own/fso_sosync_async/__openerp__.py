@@ -45,7 +45,7 @@ The cron job is still there and activated for normal priority jobs and as a fall
         'fso_sosync',
     ],
     'data': [
-
+        'run_on_install_update.xml',
     ],
     #'post_init_hook': 'post_init_hook',
     #'uninstall_hook': 'uninstall_hook',

@@ -285,6 +285,7 @@ class EmailTemplate(models.Model):
         logger.info("START to generate screenshots for email.templates with ids %s !" % self.ids)
 
         # CHECK LANGUAGE SETTINGS OF CONTEXT AND USER!
+        # --------------------------------------------
         context = self.env.context
         context_lang = context.get('lang', False)
         user = self.env.user
@@ -292,7 +293,6 @@ class EmailTemplate(models.Model):
             logger.warning('screenshot_update() No language set in context! '
                            'Language of request user "%s" with id "%s" is "%s"' % (user.name, user.id, user.lang))
             if user.lang:
-
                 # Check if the users language is the same as the default website language!
                 website = self.env['website'].sudo().browse([1])[0]
                 website_default_lang = website.default_lang_id.code
@@ -301,24 +301,18 @@ class EmailTemplate(models.Model):
                                    'default website language "%s"' % (user.lang, website_default_lang))
 
                 # Update the context to the user lang
-                logger.warning('screenshot_update() switching context language to %s' % user.lang)
-                context_temp = dict(context)
-                context_temp.update({'lang': user.lang})
-                self_with_lang = self.with_context(context_temp)
+                logger.warning('screenshot_update() switching context language to user language %s' % user.lang)
+                self = self.with_context(lang=user.lang)
 
             else:
                 raise ValidationError("No language in context and no language for the user set!")
 
-        else:
-            self_with_lang = self
-
-        logger.info("Generating FSON email.template screenshots for lang %s and e-mail templates with ids: %s"
-                    "" % (self_with_lang.env.context.get('lang', False), self_with_lang.ids))
-
         # GENERATE THE SCREENSHOT
-        for r in self_with_lang:
+        # -----------------------
+        logger.info("Generating FSON email.template screenshots for lang %s and e-mail templates with ids: %s"
+                    "" % (self.env.context.get('lang', False), self.ids))
+        for r in self:
             logger.info("Generate screenshot for email.template with id %s !" % r.id)
-
             if not r.fso_email_html_parsed:
                 logger.error("E-Mail template (ID %s) field fso_email_html_parsed is empty! "
                              "Can not generate a screenshot!" % r.id)
@@ -333,24 +327,27 @@ class EmailTemplate(models.Model):
                                                           suffix=".html",
                                                           delete=True)
 
-            # Generate the screenshot and update the 'screenshot' field
+            # Update the e-mail template
             try:
+                # Write the html to the file
                 email_body_file.write(r.fso_email_html_parsed.encode(encoding='utf-8'))
+
+                # Generate the screenshot
                 logger.info('Named Temporary File %s for screenshot generation was updated!' % email_body_file.name)
-                screenshot_url = 'file://'+email_body_file.name
+                screenshot_url = 'file://' + email_body_file.name
                 screenshot_img = screenshot(screenshot_url,
                                             src_width=src_width, src_height=src_height,
                                             tgt_width=tgt_width, tgt_height=tgt_height)
-                r.write({'screenshot': screenshot_img or False, 'screenshot_pending': False})
-                logger.info("Screenshot for e-mail template (ID %s) for language %s successfully created"
-                            "" % (r.id, r.env.context.get('lang', False)))
+                assert screenshot_img, "Could not create screenshot_img!"
 
-            # Unset the screenshot
+                # Update the email template
+                r.write({'screenshot': screenshot_img, 'screenshot_pending': False})
+
             except Exception as e:
-                logger.error("Could not create screenshot for e-mail template (ID %s):\n%s" % (r.id, repr(e)))
-                r.write({'screenshot': False, 'screenshot_pending': False})
+                logger.error('Screenshot generation failed! %s' % repr(e))
+                raise e
 
-            # Make sure the temp file gets closed and deleted
+            # Make sure the temp file gets closed and deleted before any exception is raised
             finally:
                 logger.info('File %s for screenshot generation will be closed and deleted!' % email_body_file.name)
                 email_body_file.close()
@@ -358,7 +355,8 @@ class EmailTemplate(models.Model):
             if os.path.exists(email_body_file.name):
                 logger.error('File %s for screenshot generation could not be deleted!' % email_body_file.name)
 
-        return True
+            logger.info("Screenshot for e-mail template (ID %s) for language %s successfully created"
+                        "" % (r.id, r.env.context.get('lang', False)))
 
     # ------------
     # CRUD METHODS

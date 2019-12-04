@@ -14,9 +14,13 @@
         'fso_website_email',
     ],
     'data': [
+        # Correct channel and function if needed
+        'run_on_install_update.xml',
     ],
     'demo': [
     ],
+    # Will run only after first install
     'post_init_hook': 'post_init_hook',
+    # Run after uninstall
     'uninstall_hook': 'uninstall_hook',
 }
