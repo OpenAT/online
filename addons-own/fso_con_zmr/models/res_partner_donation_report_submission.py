@@ -7,6 +7,8 @@ from openerp.addons.fso_base.tools.email_tools import send_internal_email
 from openerp.addons.fso_base.tools.server_tools import is_production_server
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
+from requests.exceptions import Timeout
+
 import base64
 import datetime
 from lxml import etree
@@ -622,7 +624,16 @@ class DonationReportSubmission(models.Model):
                                         prvkey_pem=r.bpk_company_id.fa_prvkey_pem_path,
                                         http_header=http_header,
                                         request_data=request_data,
-                                        timeout=120)
+                                        timeout=60*8)
+            except Timeout as e:
+                logger.error(_("Donation report submission (ID %s) timeout exception!\n%s") % (r.id, repr(e)))
+                r.update_submission(state='unexpected_response',
+                                    response_error_type='unexpected_no_response',
+                                    response_error_code='timeout',
+                                    submission_datetime=submission_datetime,
+                                    submission_log=submission_log,
+                                    request_duration='480')
+                continue
             except Exception as e:
                 # ATTENTION: Maybe this should be an 'unexpected_response' error instead of 'error'
                 #            but i think that if there es an exception in 99.9% the file never reached FinanzOnline?

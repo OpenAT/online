@@ -17,7 +17,7 @@
                             attrs="{'invisible':[('state','not in',['prepared'])]}"
                             string="Submit to FinanzOnline!"/>
                     <button name="check_response" type="object" class="oe_highlight"
-                            attrs="{'invisible':[('state','not in',['submitted', 'unexpected_response'])]}"
+                            attrs="{'invisible':[('state','not in',['submitted', 'unexpected_response', 'error'])]}"
                             string="Check Answer from FinanzOnline DataBox!"/>
                     <button name="release_donation_reports" type="object"
                             attrs="{'invisible':[('state','not in',['response_nok','error'])]}"
