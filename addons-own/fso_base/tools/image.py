@@ -71,7 +71,10 @@ def screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=
     try:
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
-        driver = webdriver.Chrome(chrome_options=options)
+        if os.path.exists('/usr/lib/chromium-browser/chromedriver'):
+            driver = webdriver.Chrome(executable_path='/usr/lib/chromium-browser/chromedriver', chrome_options=options)
+        else:
+            driver = webdriver.Chrome(chrome_options=options)
     except Exception as e:
         logger.error('Setup of chromedriver for selenium failed! %s' % repr(e))
 
@@ -85,9 +88,9 @@ def screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=
             return False
 
     # Set driver timeouts
-    driver.set_script_timeout(10)
-    driver.set_page_load_timeout(12)
-    driver.implicitly_wait(14)
+    driver.set_script_timeout(16)
+    driver.set_page_load_timeout(17)
+    driver.implicitly_wait(19)
 
     # Generate screen-shot
     try:
@@ -98,6 +101,8 @@ def screenshot(url, src_width=1024, src_height=768, tgt_width=int(), tgt_height=
     except Exception as e:
         logger.error('Could not generate screen-shot! %s' % repr(e))
         return False
+    finally:
+        driver.quit()
 
     # Resize Image
     try:
