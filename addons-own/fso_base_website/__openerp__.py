@@ -27,7 +27,7 @@
 FS-Online fso_base_website
 ==========================
 Basic addon for all FS-Online website related addons
-
+ 
 ## Load default Java Script libraries and css
 Add java script libraries to assets_frontend:
 - jquery.validate.js

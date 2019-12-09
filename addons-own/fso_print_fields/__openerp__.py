@@ -24,7 +24,7 @@
     'name': "FS-Online fso_print_fields",
     'summary': """FS-Online print fields (Seriendruckfelder)""",
     'description': """
-
+ 
 Fundraising Studio Print Fields for E-Mail Templates or Document Templates
 
     """,

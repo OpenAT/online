@@ -26,7 +26,7 @@
     'description': """
 FS-Online fso_con_zmr
 =====================
-
+ 
 This addon determines the BPK number from FinanzOnline for partners and allows to submit donation reports.
 
     """,

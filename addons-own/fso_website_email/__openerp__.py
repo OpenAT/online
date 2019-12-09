@@ -27,14 +27,15 @@
 
 FS-Online fso_website_email
 ===========================
-
-!!! Make absolutely sure the users creating, editing AND sending E-Mails are set to the correct language DE_DE !!!
+ATTENTION: !!! Make absolutely sure the users creating, editing AND sending E-Mails are set to the correct language DE_DE !!!
 
 HINT: It is not tested yet if the language of the res.partner would also have any effect on mail sending !!!
 
 ATTENTION: The langauge settings of odoo, the website as well as the user that edits and sends e-mails is
            VERY IMPORTANT!!! Otherwise only e.g.: DE_DE is changed but the E-Mail will be send in EN_US !
            Make absolutely sure the users creating, editing AND sending E-Mails are set to the correct language DE_DE!
+
+ATTENTION: chromium and chromdriver must be installed on the target machine!           
 
 WYSIWYG Editor for FRST E-Mail (Templates) to generate email body html for FRST Multimailer (fso_email_html_parsed).
 It is also the base to use odoo mass Mailing for FRST E-Mails.

@@ -27,6 +27,8 @@
 
 FS-Online fs_online
 ===================
+ATTENTION: Please install the addon 'fso_sosync_async' to make sure e-mail templates are synced as fast as possible!
+
 REPLACES: 
 - website_base_setup
 - parts of base_config (others are in fso_base)
@@ -74,7 +76,7 @@ Module tasks:
         'auth_partner_form',
         'fso_con_zmr',
         'fso_website_email',
-        #'fso_website_email_screenshot_async',
+        'fso_website_email_screenshot_async',
         'fso_mass_mail',
         'fso_frst_groups_email',
         'fso_subscriptions',

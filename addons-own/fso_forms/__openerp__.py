@@ -32,6 +32,10 @@ New Controller:
 "/fso/form/<id>"
 "/fso/form/thanks/<id>"
 
+TODO:
+  - many2many fields
+  - Advanced security settings
+
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net",
