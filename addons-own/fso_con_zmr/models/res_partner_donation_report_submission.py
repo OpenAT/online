@@ -945,24 +945,24 @@ class DonationReportSubmission(models.Model):
         s = self
 
         # Check if we are in a correct state ('submitted' or 'unexpected_response')
-        if s.state not in ['submitted', 'unexpected_response']:
+        if s.state not in ['submitted', 'unexpected_response', 'error']:
             raise ValidationError(_("It is not possible to check FinanzOnline Databox response in state %s") % s.state)
 
-        # Try to get the last submission date
-        if not s.submission_datetime and s.state == 'unexpected_response':
-            # HINT: This is a hack to get the latest submission_datetime from the submission log
-            #       This is necessary because submission_datetime was not stored for empty responses earlier
-            # HINT: [-1] will get only the last result from findall
-            submission_datetime = ''.join(re.findall(
-                ur"(?u)(?<=Submission Request on )\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}", s.submission_log
-            )[-1])
-            submission_datetime = fields.datetime.strptime(submission_datetime, '%Y-%m-%d %H:%M:%S')
+        # Compute the "get files from databox" datetime range
+        if s.state in ('unexpected_response', 'error') or not s.submission_datetime:
+            # HINT: On errors get/check all files in the databox of the last 30 days!
+            submission_datetime = datetime.datetime.now() - datetime.timedelta(days=30)
+            ts_zust_von = submission_datetime
+            ts_zust_bis = submission_datetime - datetime.timedelta(seconds=5)
         else:
+            # HINT: It may take up to 7 days until we get an answer in the databox
             submission_datetime = fields.datetime.strptime(s.submission_datetime, fields.DATETIME_FORMAT)
+            ts_zust_von = submission_datetime - datetime.timedelta(hours=6)
+            ts_zust_bis = submission_datetime + datetime.timedelta(days=7)
 
         # Check if the Submission date of the donation report is not older than 31 days
         # HINT: Only documents that are 31 days or less can be listed and downloaded from the databox
-        download_deadline = submission_datetime + datetime.timedelta(days=30)
+        download_deadline = submission_datetime + datetime.timedelta(days=31)
         if fields.datetime.now() > download_deadline:
             error_msg = _("The answer protocol for submission with ID %s can only be downloaded from the FinanzOnline "
                           "Databox for 31 days via an webservice request!") % s.id
@@ -993,8 +993,7 @@ class DonationReportSubmission(models.Model):
             fo_databox_getdatabox = pj(soaprequest_templates, 'fo_databox_getdatabox.xml')
             if not os.path.exists(fo_databox_getdatabox):
                 raise ValidationError(_("Template fo_databox_getdatabox.xml not found at %s") % fo_databox_getdatabox)
-            ts_zust_von = submission_datetime - datetime.timedelta(hours=6)
-            ts_zust_bis = submission_datetime + datetime.timedelta(hours=160)
+
             req_body = render_template(template=fo_databox_getdatabox,
                                        session={'tid': s.bpk_company_id.fa_tid,
                                                 'benid': s.bpk_company_id.fa_benid,
