@@ -43,6 +43,9 @@ You could select the related zGruppeDetail in the mass mailing list!
         'fso_subscriptions',
     ],
     'data': [
+        'views/frst_zgruppedetail.xml',
         'views/mail_mass_mailing_list.xml',
+        'views/mail_mass_mailing_contact.xml',
+        'views/frst_personemailgruppe.xml',
     ],
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+        <!-- FORM VIEW -->
+        <record model="ir.ui.view" id="frst_personemailgruppe_form_list_contact">
+            <field name="name">fso_subscriptions_zgruppedetail add mailing list contacts to form view</field>
+            <field name="model">frst.personemailgruppe</field>
+            <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='gueltig_bis']" position="after">
+                    <field name="mass_mailing_list_contact_ids"/>
+                </xpath>
+            </field>
+        </record>
+
+</data></openerp>

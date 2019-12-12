@@ -148,6 +148,7 @@ class MailMassMailingContact(models.Model):
                 pe_records = self.env['frst.personemail'].sudo().search(pe_domain)
 
                 # All matching non-subscribed PersonEmail records
+                # ATTENTION: !!! .filtered would honor the domain on the field definition !!!
                 pe_free = pe_records.filtered(
                     lambda pe: r.list_id.id not in pe.mapped('mass_mailing_contact_ids.list_id').ids
                 )

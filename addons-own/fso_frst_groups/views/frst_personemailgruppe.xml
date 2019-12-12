@@ -15,11 +15,18 @@
                 </header>
                 <sheet>
                     <group>
-                        <field name="zgruppedetail_id"/>
-                        <field name="frst_personemail_id"/>
-                        <field name="steuerung_bit"/>
-                        <field name="gueltig_von"/>
-                        <field name="gueltig_bis"/>
+                        <group>
+                            <field name="zgruppedetail_id"/>
+                            <field name="frst_personemail_id"/>
+                            <field name="steuerung_bit"/>
+                            <field name="gueltig_von"/>
+                            <field name="gueltig_bis"/>
+                        </group>
+                        <group>
+                            <field name="bestaetigt_am_um"/>
+                            <field name="bestaetigt_typ"/>
+                            <field name="bestaetigt_herkunft"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

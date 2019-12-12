@@ -80,6 +80,7 @@ Module tasks:
         'fso_mass_mail',
         'fso_frst_groups_email',
         'fso_subscriptions',
+        'fso_subscriptions_zgruppedetail',
     ],
     'data': [
         'data/user_studio.xml',

@@ -9,9 +9,8 @@ class FrstPersonEmail(models.Model):
     _inherit = 'frst.personemail'
 
     mass_mailing_contact_ids = fields.One2many(
-        string="Mailing lists",
+        string="Mailing List Contacts",
         oldname="mass_mailing_contacts",
-        domain=[('opt_out', '=', False)],
         comodel_name='mail.mass_mailing.contact', inverse_name='personemail_id')
 
     mass_mailing_stats = fields.One2many(

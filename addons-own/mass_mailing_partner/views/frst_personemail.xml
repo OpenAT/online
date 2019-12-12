@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <record model="ir.ui.view" id="frst_personemail_form_extension">
+        <field name="name">frst_personemail_form mass_mailing_partner</field>
+        <field name="model">frst.personemail</field>
+        <field name="inherit_id" ref="fso_frst_personemail.frst_personemail_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@string='Aktiv']" position="after">
+                <group>
+                    <group>
+                        <field name="mass_mailing_contact_ids"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    
+</data></openerp>

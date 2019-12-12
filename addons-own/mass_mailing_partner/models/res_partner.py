@@ -15,7 +15,6 @@ class ResPartner(models.Model):
     mass_mailing_contact_ids = fields.One2many(
         string="Mailing lists",
         oldname="mass_mailing_contacts",
-        domain=[('opt_out', '=', False)],
         comodel_name='mail.mass_mailing.contact', inverse_name='partner_id')
 
     mass_mailing_stats = fields.One2many(

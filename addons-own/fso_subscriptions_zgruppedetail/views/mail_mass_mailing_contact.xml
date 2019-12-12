@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- FORM VIEW -->
+        <record model="ir.ui.view" id="view_mail_mass_mailing_contact_form_zgruppedetail">
+            <field name="name">fso_subscriptions_zgruppedetail add PersonEmailGruppe to form view</field>
+            <field name="model">mail.mass_mailing.contact</field>
+            <field name="inherit_id" ref="fso_subscriptions.view_mail_mass_mailing_contact_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='personemail_id']" position="after">
+                    <field name="personemailgruppe_id"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
