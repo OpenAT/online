@@ -53,7 +53,7 @@ class MailMassMailingContact(models.Model):
                                      domain=[('email', '!=', False)])
 
     # ATTENTION: partner_id is just like a related field (could be done by related field but did not work as expected)
-    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner', readonly=True)
+    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner', readonly=True, index=True)
 
     # Log additional subscriptions after the record was created
     renewed_subscription_log = fields.Text(string="Renewed Subscription Log", readonly=True)

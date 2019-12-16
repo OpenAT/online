@@ -64,6 +64,7 @@ Features
         'fso_website_email',                # New E-Mail editor and custom routes
         'mass_mailing_sending_queue',       # Prepare massmailing e-mails in background by cron Job
         'mail_connector_queue',             # Send E-Mails async by connector queue
+        'connector_job_no_user',            # Connector jobs need no user - only important if a user gets deleted on init or update of an addon
         'mail_tracking_mass_mailing',       # Status, Score, AVOID RESEND for mass mailings after e.g. domain change!
         'mass_mailing_statistic_extra',    # from, to and subject is available in the statistics table
         'mass_mailing_keep_archives',       # Option to keep send emails

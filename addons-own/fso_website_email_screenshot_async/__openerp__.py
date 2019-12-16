@@ -13,7 +13,8 @@
     'author': 'Michael Karrer',
     'website': 'https://github.com/OCA/connector',
     'depends': [
-        'connector',
+        #'connector',
+        'connector_job_no_user',
         'fso_website_email',
     ],
     'data': [

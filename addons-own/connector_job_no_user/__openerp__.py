@@ -21,33 +21,23 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_sosync_async",
-    'summary': """Immediate async sosync_job submission for high priority jobs""",
+    'name': "FS-Online connector_job_no_user",
+    'summary': """FS-Online connector_job_no_user""",
     'description': """
-
-FS-Online fso_sosync_async
-==========================
-Submits VERY high priority (>= 1.000.000) sync jobs by connector async queue instead of the cron job.
-
-The cron job is still there and activated for normal priority jobs and as a fallback! 
-
+    
+Allow Connector Jobs to exist without user to make it possible to delete (unlink) the related user!
 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
     'installable': True,
     'application': True,
     'auto_install': False,
     'depends': [
-        #'connector',
-        'connector_job_no_user',
-        'fso_sosync',
+        'connector',
     ],
     'data': [
-        'run_on_install_update.xml',
     ],
-    #'post_init_hook': 'post_init_hook',
-    #'uninstall_hook': 'uninstall_hook',
 }

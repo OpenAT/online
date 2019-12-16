@@ -38,7 +38,7 @@ class Altruja(models.Model):
 
     # Linking
     partner_id = fields.Many2one(comodel_name='res.partner', inverse_name="altruja_ids",
-                                 readonly=True)
+                                 readonly=True, index=True)
     sale_order_id = fields.Many2one(comodel_name='sale.order', inverse_name="altruja_ids",
                                     readonly=True)
     sale_order_line_id = fields.Many2one(comodel_name='sale.order.line', inverse_name="altruja_ids",

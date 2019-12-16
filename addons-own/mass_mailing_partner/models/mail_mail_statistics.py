@@ -11,7 +11,7 @@ class MailMailStatistics(models.Model):
     personemail_id = fields.Many2one(comodel_name='frst.personemail', string="Person Email (FRST)")
 
     # Related field did not work for updates - therefore i try it now as a regular field
-    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner', readonly=True)
+    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner', readonly=True, index=True)
 
     @api.model
     def personemail_id_from_obj(self, model, res_id):

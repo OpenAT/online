@@ -27,4 +27,4 @@ class FRSTPersonGruppe(models.Model):
                                        required=True, ondelete='cascade')
     partner_id = fields.Many2one(comodel_name="res.partner", inverse_name='persongruppe_ids',
                                  string="Person",
-                                 required=True, ondelete='cascade')
+                                 required=True, ondelete='cascade', index=True)
