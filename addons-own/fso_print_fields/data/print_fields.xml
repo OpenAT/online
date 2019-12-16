@@ -28,7 +28,7 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-        
+
         <record id="pf_anredekurz" model="fso.print_field">
             <field name="sequence" eval="4"/>
             <field name="name">AnredeKurz</field>
@@ -52,7 +52,31 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
-        
+
+
+        <record id="pf_anredetitel" model="fso.print_field">
+            <field name="sequence" eval="7"/>
+            <field name="name">Anredetitel</field>
+            <field name="fs_email_placeholder">%Anredetitel%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
+        </record>
+        <record id="pf_titel" model="fso.print_field">
+            <field name="sequence" eval="7"/>
+            <field name="name">Titel</field>
+            <field name="fs_email_placeholder">%Titel%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
+        </record>
+        <record id="pf_titelnachgestellt" model="fso.print_field">
+            <field name="sequence" eval="7"/>
+            <field name="name">TitelNachgestellt</field>
+            <field name="fs_email_placeholder">%TitelNachgestellt%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
+        </record>
+
+
         <record id="pf_titelnachname" model="fso.print_field">
             <field name="sequence" eval="7"/>
             <field name="name">TitelNachname</field>

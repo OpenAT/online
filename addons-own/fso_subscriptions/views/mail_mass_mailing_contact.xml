@@ -68,6 +68,9 @@
                                         <field name="pf_anredekurz"/>
                                         <field name="pf_anredelang"/>
                                         <field name="pf_anrede"/>
+                                        <field name="pf_anredetitel"/>
+                                        <field name="pf_titel"/>
+                                        <field name="pf_titelnachgestellt"/>
                                         <field name="pf_titelnachname"/>
                                         <field name="pf_email"/>
                                         <field name="pf_geburtsdatum"/>
