@@ -950,15 +950,18 @@ class DonationReportSubmission(models.Model):
 
         # Compute the "get files from databox" datetime range
         if s.state in ('unexpected_response', 'error') or not s.submission_datetime:
-            # HINT: On errors get/check all files in the databox of the last 30 days!
-            submission_datetime = datetime.datetime.now() - datetime.timedelta(days=30)
+            # HINT: On errors we would need to get/check all files in the databox of the last 30 days because 30 days
+            #       is the maximum that the files are kept in the databox. But the maximum timerange allowed to check
+            #       is 7 days. I love the "Finanzamt"
+            submission_datetime = datetime.datetime.now() - datetime.timedelta(days=7)
             ts_zust_von = submission_datetime
-            ts_zust_bis = submission_datetime - datetime.timedelta(seconds=5)
+            ts_zust_bis = datetime.datetime.now() - datetime.timedelta(seconds=2)
         else:
-            # HINT: It may take up to 7 days until we get an answer in the databox
+            # HINT: It may take up to 7 days until we get an answer in the databox but the maximum timerange allowed
+            #       to check is 7 days. I love the "Finanzamt"
             submission_datetime = fields.datetime.strptime(s.submission_datetime, fields.DATETIME_FORMAT)
             ts_zust_von = submission_datetime - datetime.timedelta(hours=6)
-            ts_zust_bis = submission_datetime + datetime.timedelta(days=7)
+            ts_zust_bis = submission_datetime + datetime.timedelta(days=6)
 
         # Check if the Submission date of the donation report is not older than 31 days
         # HINT: Only documents that are 31 days or less can be listed and downloaded from the databox
