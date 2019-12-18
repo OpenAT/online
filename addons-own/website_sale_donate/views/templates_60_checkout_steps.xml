@@ -17,6 +17,7 @@
                         <!-- HINT: opc_payment() always adds one_page_checkout=True therefore we check if we are on the payment_page also -->
                         <t t-if="payment_page or not one_page_checkout">
                             <ul class="checkout_steps_indicator nav nav-tabs navbar-left">
+
                                 <!-- CART -->
                                 <t t-if="not hide_cart_indicator">
                                     <li role="presentation" t-att-class="'cart active' if cart_page else 'cart'">

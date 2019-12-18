@@ -15,7 +15,19 @@ class ProductTemplate(models.Model):
     website_visible = fields.Boolean('Visible in Website (computed)', readonly=True,
                                      compute="compute_website_visible", store=True)
 
-    product_indicator_name = fields.Char(string='Steps Indicator Name', translate=True, default=_('Amount'))
+    # Shop Step/Page Indicator
+    hide_cart_indicator = fields.Boolean(string='Hide Cart Indicator')
+    hide_product_indicator = fields.Boolean(string='Hide Product Indicator')
+    hide_checkout_indicator = fields.Boolean(string='Hide Checkout Indicator')
+    hide_payment_indicator = fields.Boolean(string='Hide Payment Indicator')
+    hide_confirmation_indicator = fields.Boolean(string='Hide Confirmation Indicator')
+
+    cart_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
+    product_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
+    checkout_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
+    payment_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
+    confirmation_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
+    t_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
 
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):
