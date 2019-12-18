@@ -66,6 +66,8 @@ class ResPartnerSosync(models.Model):
     title_web = fields.Char(sosync="True")                          # Titel
     birthdate_web = fields.Date(sosync="True")                      # Geb. Datum # TODO: Check if timezone may make a day shift in odoo and then in fs
     #TODO im DEFFERED: company_name_web = fields.Char(sosync="True")                   # TODO: Folgebesprechung TODO MIKE: Check wo eingesetzt
+    #                  WAS ACTIVATED SINCE WE NEED IT FOR RNDE!
+    company_name_web = fields.Char(sosync="True")
 
     # TODO: Festlegen: Double-Opt-In workflow von FS oder direkt in FSO Wo?
     # TODO: Check current Double Opt in Workflow in FSO
