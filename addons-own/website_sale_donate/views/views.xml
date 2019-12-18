@@ -94,6 +94,8 @@
                                      src="/website_sale_donate/static/src/img/ppt_donate.png"
                                      style="margin-top:5px; margin-bottom:10px; max-width:98%;"/>
 
+                                <field name="product_indicator_name" />
+
                                 <field name="parallax_image_medium" widget="image" class="oe_avatar oe_left"/>
                                 <field name="parallax_speed" />
                                 <field name="hide_categories"/>

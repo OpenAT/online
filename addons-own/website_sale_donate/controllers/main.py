@@ -404,7 +404,6 @@ class website_sale_donate(website_sale):
         return super(website_sale_donate, self).cart_update_json(product_id, line_id,
                                                                  add_qty=add_qty, set_qty=set_qty, display=display)
 
-
     # Add Shipping and Billing Fields to values (= the qcontext for the checkout template)
     # HINT: The calculated values for the fields can be found in the qcontext dict in key 'checkout'
     def checkout_values(self, data=None):

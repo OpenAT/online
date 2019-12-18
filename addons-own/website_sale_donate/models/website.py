@@ -27,6 +27,9 @@ class Website(models.Model):
     # Small Cart
     small_cart_title = fields.Char(string='Small Cart Title', translate=True)
 
+    # PRODUCT-PAGE-INDICATOR FALLBACK
+    product_indicator = fields.Char(string='Indicator Product', translate=True, default=_('Donation'))
+
     # SHOP CHECKOUT
     # Checkout Form
     amount_title = fields.Char(string='Amount (Checkoutbox) Form-Title', translate=True)

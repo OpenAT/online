@@ -1,5 +1,6 @@
 # -*- coding: utf-'8' "-*-"
 from openerp import api, models, fields
+from openerp.tools.translate import _
 
 __author__ = 'Michael Karrer'
 
@@ -13,6 +14,8 @@ class ProductTemplate(models.Model):
     website_published_end = fields.Datetime('Website Published End')
     website_visible = fields.Boolean('Visible in Website (computed)', readonly=True,
                                      compute="compute_website_visible", store=True)
+
+    product_indicator_name = fields.Char(string='Steps Indicator Name', translate=True, default=_('Amount'))
 
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):

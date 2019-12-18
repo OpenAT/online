@@ -77,9 +77,11 @@ class product_template(osv.Model):
 
         # PRODUCT PAGE
         'product_page_template': fields.selection([('website_sale.product', 'Default Layout'),
-                                                   ('website_sale_donate.ppt_donate', 'Donation Layout'),
-                                                   ('website_sale_donate.ppt_opc', 'One-Page-Checkout Layout'),
-                                                   ('website_sale_donate.ppt_ahch', 'Simple Layout')],
+                                                   ('website_sale_donate.ppt_donate', 'Donation Standard with Steps'),
+                                                   ('website_sale_donate.ppt_opc', 'Donation One-Page-Checkout'),
+                                                   ('website_sale_donate.ppt_ahch', 'Donation Simple with Steps'),
+                                                   ('website_sale_donate.ppt_inline_donation',
+                                                    'Donation Inline with Steps')],
                                                   string="Product Page Template"),
         'parallax_image': fields.binary(string='Background Parallax Image'),
         'parallax_speed': fields.selection([('static', 'Static'), ('slow', 'Slow')], string='Parallax Speed'),

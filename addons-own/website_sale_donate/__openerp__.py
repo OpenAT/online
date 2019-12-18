@@ -117,6 +117,7 @@ To solve this we did:
         'views/templates_51_ppt_donate.xml',
         'views/templates_52_ppt_ahch.xml',
         'views/templates_53_ppt_opc.xml',
+        'views/templates_54_ppt_inline_donation.xml',
         'views/templates_60_checkout_steps.xml',
         'views/views.xml',
         'views/website.xml',

@@ -42,6 +42,9 @@
                         </group>
                         <notebook name="Donation Shop">
                             <page string="Donation Product">
+                                <group string="Product Indicator Fallback">
+                                    <field name="product_indicator"/>
+                                </group>
                                 <group string="Product Image">
                                     <div colspan="2" style="color:grey;margin-bottom:1em;">
                                         <small>
