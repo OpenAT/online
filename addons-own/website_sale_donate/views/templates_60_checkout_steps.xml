@@ -13,72 +13,95 @@
                     <!-- Checkout Step Indicator, Back Button and Login Button -->
                     <div class="navbar checkout_steps_navigation" role="navigation">
 
-                        <!-- Checkout-Step-Indicator -->
                         <!-- HINT: opc_payment() always adds one_page_checkout=True therefore we check if we are on the payment_page also -->
                         <t t-if="payment_page or not one_page_checkout">
+
+                            <!-- Check for a product with a custom step indicator setup -->
+                            <!-- HINT: Priority: product page > product in sale order > website config -->
+                            <t t-set="product_step_indicator" t-value="False"/>
+
+                            <!-- product_step_indicator from current product page -->
+                            <t t-if="product and product.step_indicator_setup">
+                                <t t-set="product_step_indicator" t-value="product"/>
+                            </t>
+
+                            <!-- product_step_indicator from sale order stored in the session -->
+                            <t t-if="not product_step_indicator">
+                                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                                <t t-if="not product and website_sale_order and len(website_sale_order.website_order_line) >= 1">
+                                    <t t-foreach="website_sale_order.website_order_line" t-as="so_line">
+                                        <t t-if="so_line.product_id and so_line.product_id.step_indicator_setup">
+                                            <t t-set="product_step_indicator" t-value="so_line.product_id.product_tmpl_id"/>
+                                        </t>
+                                    </t>
+                                </t>
+                            </t>
+
+                            <!-- Individual step indicator setup -->
+                            <t t-if="product_step_indicator">
+                                <t t-set="hide_cart_indicator" t-value="product_step_indicator.hide_cart_indicator"/>
+                                <t t-set="cart_indicator_name" t-value="product_step_indicator.cart_indicator_name"/>
+                                <t t-set="hide_product_indicator" t-value="product_step_indicator.hide_product_indicator"/>
+                                <t t-set="product_indicator_name" t-value="product_step_indicator.product_indicator_name"/>
+                                <t t-set="hide_checkout_indicator" t-value="product_step_indicator.hide_checkout_indicator"/>
+                                <t t-set="checkout_indicator_name" t-value="product_step_indicator.checkout_indicator_name"/>
+                                <t t-set="hide_payment_indicator" t-value="product_step_indicator.hide_payment_indicator"/>
+                                <t t-set="payment_indicator_name" t-value="product_step_indicator.payment_indicator_name"/>
+                                <t t-set="hide_confirmation_indicator" t-value="product_step_indicator.hide_confirmation_indicator"/>
+                                <t t-set="confirmation_indicator_name" t-value="product_step_indicator.confirmation_indicator_name"/>
+                            </t>
+
+                            <!-- Global step indicator settings -->
+                            <t t-if="not product_step_indicator">
+                                <t t-set="cart_indicator_name" t-value="website.cart_indicator"/>
+                                <t t-set="product_indicator_name" t-value="website.product_indicator"/>
+                                <t t-set="checkout_indicator_name" t-value="website.checkout_indicator"/>
+                                <t t-set="payment_indicator_name" t-value="website.payment_indicator"/>
+                                <t t-set="confirmation_indicator_name" t-value="website.confirmation_indicator"/>
+                            </t>
+
+                            <!-- STEP INDICATOR NAVIGATION -->
                             <ul class="checkout_steps_indicator nav nav-tabs navbar-left">
 
-                                <!-- CART -->
+                                <!-- Cart -->
                                 <t t-if="not hide_cart_indicator">
                                     <li role="presentation" t-att-class="'cart active' if cart_page else 'cart'">
-                                        <a href="/shop/cart"><span t-esc="website.cart_indicator"/></a>
+                                        <a href="/shop/cart"><span t-esc="cart_indicator_name"/></a>
                                     </li>
                                 </t>
 
-                                <!-- TODO: PRODUCT -->
-                                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
-                                <!-- If we are not on a product page (indicated by the variable 'product')
-                                     and we have no sales order with product lines we hide the product indicator -->
-                                <t t-if="not product and (not website_sale_order or not website_sale_order.website_order_line)">
-                                    <t t-set="hide_product_indicator" t-value="True"/>
-                                </t>
+                                <!-- Product / Donation Page -->
                                 <t t-if="not hide_product_indicator">
-                                    <t t-if="product">
-                                        <t t-set="product_page" t-value="True"/>
-                                        <t t-set="product_url" t-value="slug(product)"/>
-                                        <t t-set="product_indicator_name" t-value="product.product_indicator_name or website.product_indicator"/>
-                                    </t>
-                                    <t t-if="not product">
-                                        <t t-if="len(website_sale_order.website_order_line) > 1">
-                                            <t t-set="product_url" t-value="request.session.get('last_page', '#')"/>
-                                            <t t-set="product_indicator_name" t-value="website.product_indicator"/>
-                                        </t>
-                                        <t t-if="len(website_sale_order.website_order_line) == 1">
-                                            <t t-set="product_url" t-value="'/shop/product/' + slug(website_sale_order.website_order_line[0].product_id.product_tmpl_id)"/>
-                                            <t t-set="product_indicator_name" t-value="website_sale_order.website_order_line[0].product_id.product_indicator_name or website.product_indicator"/>
-                                        </t>
-                                    </t>
-
-                                    <!-- product indicator -->
-                                    <li role="presentation" t-att-class="'product active' if product_page else 'product'">
+                                    <t t-set="product_url" t-value="slug(product) if product else '/shop/product/'+str(product_step_indicator.id) if product_step_indicator else request.session.get('last_page', '#')"/>
+                                    <li role="presentation" t-att-class="'product active' if product else 'product'">
                                         <a t-att-href="product_url"><span t-esc="product_indicator_name"/></a>
                                     </li>
                                 </t>
 
-                                <!-- CHECKOUT -->
+                                <!-- Checkout -->
                                 <t t-if="not hide_checkout_indicator">
                                     <li role="presentation" t-att-class="'checkout active' if checkout_page else 'checkout'">
-                                        <a href="/shop/checkout"><span t-esc="website.checkout_indicator"/></a>
+                                        <a href="/shop/checkout"><span t-esc="checkout_indicator_name"/></a>
                                     </li>
                                 </t>
 
-                                <!-- PAYMENT -->
+                                <!-- Payment -->
                                 <t t-if="not hide_payment_indicator">
                                     <li role="presentation" t-att-class="'payment disabled active' if payment_page else 'payment disabled'">
-                                        <a href="#"><span t-esc="website.payment_indicator"/></a>
+                                        <a href="#"><span t-esc="payment_indicator_name"/></a>
                                     </li>
                                 </t>
 
-                                <!-- CONFIRMATION -->
+                                <!-- Confirmation -->
                                 <t t-if="not hide_confirmation_indicator">
                                     <li role="presentation" t-att-class="'confirmation disabled active' if confirmation_page else 'confirmation disabled'">
-                                        <a href="#"><span t-esc="website.confirmation_indicator"/></a>
+                                        <a href="#"><span t-esc="confirmation_indicator_name"/></a>
                                     </li>
                                 </t>
                             </ul>
                         </t>
 
-                        <!-- Back-to-Page and Login/Logout Button -->
+                        <!-- BACK-TO-PAGE AND LOGIN/LOGOUT BUTTON -->
                         <div class="checkout_steps_buttons nav navbar-right">
                             <t t-call="website_sale_donate.wsd_button_back_to_page">
                                 <t t-set="wsd_button_back_to_page" t-value="'btn btn-default navbar-btn'"/>

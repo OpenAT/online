@@ -168,7 +168,24 @@
                                     </p>
                                 </div>
                             </group>
-                            <group string="Übersichtsseiten (Artikellisten)">
+                            <group string="Step Indicator">
+                                <group colspan="2" name="step_indicator_setup">
+                                    <field name="step_indicator_setup"/>
+                                </group>
+                                <group colspan="2" name="step_indicator_setup_settings" attrs="{'invisible': [('step_indicator_setup','=', False)]}">
+                                    <field name="hide_cart_indicator"/>
+                                    <field name="cart_indicator_name"/>
+                                    <field name="hide_product_indicator"/>
+                                    <field name="product_indicator_name"/>
+                                    <field name="hide_checkout_indicator"/>
+                                    <field name="checkout_indicator_name"/>
+                                    <field name="hide_payment_indicator"/>
+                                    <field name="payment_indicator_name"/>
+                                    <field name="hide_confirmation_indicator"/>
+                                    <field name="confirmation_indicator_name"/>
+                                </group>
+                            </group>
+                            <group string="Übersichtsseiten (Produktkacheln)">
                                 <field name="website_sequence" string="Reihung"/>
                                 <field name="public_categ_ids" string="Angezeigt in den Kategorien" widget="many2many_tags"/>
                                 <field name="website_style_ids" string="Design (Extra CSS Klassen)" widget="many2many_tags"/>

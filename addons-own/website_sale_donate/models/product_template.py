@@ -15,19 +15,23 @@ class ProductTemplate(models.Model):
     website_visible = fields.Boolean('Visible in Website (computed)', readonly=True,
                                      compute="compute_website_visible", store=True)
 
-    # Shop Step/Page Indicator
-    hide_cart_indicator = fields.Boolean(string='Hide Cart Indicator')
-    hide_product_indicator = fields.Boolean(string='Hide Product Indicator')
-    hide_checkout_indicator = fields.Boolean(string='Hide Checkout Indicator')
-    hide_payment_indicator = fields.Boolean(string='Hide Payment Indicator')
-    hide_confirmation_indicator = fields.Boolean(string='Hide Confirmation Indicator')
+    # Shop Step/Page Indicator Setup
+    step_indicator_setup = fields.Boolean(string="Individual Step-Indicator Setup")
 
-    cart_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
-    product_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
-    checkout_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
-    payment_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
-    confirmation_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
-    t_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('Amount'))
+    hide_cart_indicator = fields.Boolean(string='Hide Cart Indicator')
+    cart_indicator_name = fields.Char(string='Cart Indicator Name', translate=True, default=_('Donation Cart'))
+
+    hide_product_indicator = fields.Boolean(string='Hide Product Indicator')
+    product_indicator_name = fields.Char(string='Product Indicator Name', translate=True, default=_('1. Donation Page'))
+
+    hide_checkout_indicator = fields.Boolean(string='Hide Checkout Indicator')
+    checkout_indicator_name = fields.Char(string='Checkout Indicator Name', translate=True, default=_('2. Checkout'))
+
+    hide_payment_indicator = fields.Boolean(string='Hide Payment Indicator')
+    payment_indicator_name = fields.Char(string='Payment Indicator Name', translate=True, default=_('3. Payment'))
+
+    hide_confirmation_indicator = fields.Boolean(string='Hide Confirmation Indicator')
+    confirmation_indicator_name = fields.Char(string='Confirmation Indicator Name', translate=True, default=_('4. Confirmation'))
 
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):

@@ -25,6 +25,7 @@
         </record>
 
         <!-- Extend the product form to include the website_sale_donate fields -->
+        <!-- ATTENTION: Another product form view is created in the addon fsonline - STUPID MIKE! -->
         <record model="ir.ui.view" id="product_template_form_view">
             <field name="name">product.template.product.website_donate.form</field>
             <field name="model">product.template</field>
@@ -86,6 +87,24 @@
                             <group string="Webshop: Product Listings" colspan="2">
                                 <field name="hide_price"/>
                                 <field name="do_not_link"/>
+                            </group>
+
+                            <group colspan="2" string="Webshop: Step Indicator">
+                                <group colspan="2" name="step_indicator_setup">
+                                    <field name="step_indicator_setup"/>
+                                </group>
+                                <group colspan="2" name="step_indicator_setup_settings" attrs="{'invisible': [('step_indicator_setup','=', False)]}">
+                                    <field name="hide_cart_indicator"/>
+                                    <field name="cart_indicator_name"/>
+                                    <field name="hide_product_indicator"/>
+                                    <field name="product_indicator_name"/>
+                                    <field name="hide_checkout_indicator"/>
+                                    <field name="checkout_indicator_name"/>
+                                    <field name="hide_payment_indicator"/>
+                                    <field name="payment_indicator_name"/>
+                                    <field name="hide_confirmation_indicator"/>
+                                    <field name="confirmation_indicator_name"/>
+                                </group>
                             </group>
 
                             <group string="Webshop: Product Page" colspan="2">
