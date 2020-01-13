@@ -185,6 +185,14 @@
                                     <field name="confirmation_indicator_name"/>
                                 </group>
                             </group>
+                            <group colspan="2" string="Custom Checkout Fields">
+                                <field name="checkout_form_id" readonly="1"/>
+                                <button name="create_checkout_fields_form" type="object"
+                                        string="Setup custom Checkout Fields"
+                                        colspan="2"
+                                        attrs="{'invisible': [('checkout_form_id', '!=', False)]}"
+                                />
+                            </group>
                             <group string="Übersichtsseiten (Produktkacheln)">
                                 <field name="website_sequence" string="Reihung"/>
                                 <field name="public_categ_ids" string="Angezeigt in den Kategorien" widget="many2many_tags"/>

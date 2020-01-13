@@ -6,12 +6,12 @@ from openerp.tools.translate import _
 from openerp.http import request
 from lxml import etree
 from urlparse import urlparse
-from datetime import timedelta
-from openerp import fields
-from openerp.addons.website.models.website import slug
+# from datetime import timedelta
+# from openerp import fields
+# from openerp.addons.website.models.website import slug
 
 import locale
-import re
+# import re
 
 # import copy
 # import requests
@@ -27,6 +27,68 @@ _logger = logging.getLogger(__name__)
 
 
 class website_sale_donate(website_sale):
+
+    # Sort countries and states by website language
+    # HINT: Sort by "language in context" for name field is not implemented in o8 fixed in o9 and up!
+    #       https://github.com/odoo/odoo/issues/5283
+    def _locale_sorted_country_and_states(self, countries_on_top=('AT', 'DE', 'CH')):
+        start_locale = locale.getlocale()
+
+        # Set locale by website language for correct unicode sorting by name of countries
+        try:
+            locale.setlocale(locale.LC_ALL, request.env.context.get("lang", "de_AT") + ".UTF-8")
+        except Exception as e:
+            logging.error("Could not set locale for country and state sorting by website lang!")
+            pass
+
+        # Sorted Countries (add Austria, Germany and Swiss to the top)
+        # HINT: It is NO Problem if they are twice in the list :)
+        countries_obj = request.env['res.country'].sudo()
+        countries = countries_obj.search([])
+        countries_sorted = sorted(countries, cmp=locale.strcoll, key=lambda c: c.name)
+        countries_sorted_ids = [c.id for c in countries_sorted]
+        # Add some countries on top of the list
+        # HINT: They may be twice in the list but this does not matter in the web form selection field!
+        countries_on_top_reversed = countries_on_top[::-1]
+        for country_code in countries_on_top_reversed:
+            country = countries_obj.search([('code', '=', country_code)])
+            if country:
+                countries_sorted_ids = [country.id] + countries_sorted_ids
+        countries = countries_obj.browse(countries_sorted_ids)
+
+        # Sorted States
+        states_obj = request.env['res.country.state']
+        states = states_obj.sudo().search([])
+        states_sorted = sorted(states, cmp=locale.strcoll, key=lambda s: s.name)
+        states = states_obj.sudo().browse([s.id for s in states_sorted])
+
+        # Revert to original locale
+        try:
+            locale.setlocale(locale.LC_ALL, start_locale)
+        except Exception as e:
+            logging.error("Could not revert to initial locale after country and state sorting by website lang!")
+            pass
+
+        return countries, states
+
+    # TODO: Get billing fields from product in sale.order or from website.billing_fields
+    # THIS IS STILL A PROBLEM ...
+    def _get_billing_fields(self, billing_fields = None):
+        # HINT: On OPC-Product pages the product is already added to the sale order!
+        #       On regular product pages the product with custom checkout fields will be added to the sale order
+        #       before we hit the checkout page
+        order = request.website.sale_get_order()
+        if order and order.website_order_line:
+            for line in order.website_order_line:
+                if line.product_id and line.product_id.checkout_form_id:
+                    billing_fields = line.product_id.checkout_form_id.field_ids
+
+        # Fallback to the standard website fields
+        if billing_fields is None:
+            billing_fields = request.env['website.checkout_billing_fields']
+            billing_fields = billing_fields.search([])
+
+        return billing_fields
 
     def _get_payment_interval_id(self, product):
         payment_interval_id = False
@@ -115,29 +177,6 @@ class website_sale_donate(website_sale):
             #            cart_update(raise_on_errors=False) and catch the exception!
             if cu_res and hasattr(cu_res, 'location') and 'warnings' in cu_res.location:
                 return cu_res
-
-        # Remove all other products from the so if there is an individual payment acquirer config for this product
-        if product.product_page_template == u'website_sale_donate.ppt_opc' and product.product_acquirer_lines_ids:
-                order = request.website.sale_get_order()
-                if order and order.website_order_line:
-                    so_lines = order.website_order_line
-                    if len(so_lines) > 1 or so_lines[0].product_id.id != product.id:
-                        # TODO: Swap Sale Orders instead of cleaning products from this one
-                        #       Even better would be to check if the current so works with the product acquirer config!
-                        # TODO: remove all products from SO except this one!
-                        for line in so_lines:
-                            if line.product_id.id != product.id:
-                                _logger.error("Remove sale order line %s because of individual product acquirer config"
-                                              % line.id)
-                                cu_res = self.cart_update(product_id=line.product_id.id, add_qty=-1, set_qty=0)
-                                # ATTENTION: Cart Update will always return an redirect no matter if there was an error
-                                #            or not! but in case of an error we would need to stop here and return the
-                                #            redirect! This is an ugly hack to fix this - it would be much better to
-                                #            add a new attrib to  cart_update(raise_on_errors=False) and catch the
-                                #            exception!
-                                if cu_res and hasattr(cu_res, 'location') and 'warnings' in cu_res.location:
-                                    return cu_res
-
         # -----------------
         # ONE PAGE CHECKOUT End
         # -----------------
@@ -162,14 +201,12 @@ class website_sale_donate(website_sale):
             _logger.warning("product(): self.checkout(one_page_checkout=True ...")
 
             # Render the checkout page
-            # -------------------------------------------------
             if request.httprequest.method == 'POST':
                 checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
             else:
                 checkoutpage = self.checkout(one_page_checkout=True)
 
-            # INDIVIDUAL ACQUIRER CONFIG FOR THIS PRODUCT START
-            # -------------------------------------------------
+            # Add individual acquirer config to the qcontext of the checkout page
             if product.product_acquirer_lines_ids:
                 _logger.info("One page checkout product %s (ID %s) with individual payment acquirer config!" %
                              (product.name, product.id))
@@ -188,8 +225,7 @@ class website_sale_donate(website_sale):
                         product_acquirers.append(acquirer_dict[line.acquirer_id.id])
                 checkoutpage.qcontext['acquirers'] = product_acquirers
 
-            # ADD THE CHECKOUTPAGE QCONTEXT TO THE PRODUCTPAGE
-            # ------------------------------------------------
+            # Add the updated checkoutpage qcontext to the productpage qcontext
             productpage.qcontext.update(checkoutpage.qcontext)
         # -----------------
         # ONE PAGE CHECKOUT End
@@ -357,17 +393,6 @@ class website_sale_donate(website_sale):
         order = request.website.sale_get_order()
         _logger.warning("cart_update(): sale order number %s" % order.name)
 
-        # Update fs_ptoken field of the sale.order.line if set in context for statistic evaluation in FRST
-        # ATTENTION: This was moved to sale_get_order() to handle user changes also!
-        # order_line_id = order_line.get('line_id') if order_line else False
-        # fs_ptoken = context.get('fs_ptoken', False)
-        # if order_line_id and fs_ptoken:
-        #     order_line_obj = request.registry['sale.order.line']
-        #     order_line_record = order_line_obj.browse(cr, SUPERUSER_ID, [order_line_id], context=context)
-        #     for r in order_line_record:
-        #         if not r.fs_ptoken:
-        #             order_line_obj.write(cr, SUPERUSER_ID, [order_line_id], {'fs_ptoken': fs_ptoken}, context=context)
-
         # EXIT A) Simple Checkout
         if product.simple_checkout or kw.get('simple_checkout'):
             kw.pop('simple_checkout', None)
@@ -409,66 +434,21 @@ class website_sale_donate(website_sale):
     def checkout_values(self, data=None):
         values = super(website_sale_donate, self).checkout_values(data=data)
 
-        # Sort countries and states in values
-        # -----------------------------------
-        # Add sorted countries and states
-        # HINT: Sort by "language in context" for name field is not implemented in o8 fixed in o9 and up!
-        #       https://github.com/odoo/odoo/issues/5283
-        start_locale = locale.getlocale()
-
-        # Try to set locale by website language for correct unicode sorting by name of countries
-        try:
-            locale.setlocale(locale.LC_ALL, request.env.context.get("lang", "de_AT") + ".UTF-8")
-        except Exception as e:
-            logging.error("Could not set locale for country and state sorting by website lang!")
-            pass
-
-        # Sorted Countries (add Austria, Germany and Swiss to the top)
-        # HINT: It is NO Problem if they are twice in the list :)
-        countries_obj = request.env['res.country'].sudo()
-        countries = countries_obj.search([])
-        countries_sorted = sorted(countries, cmp=locale.strcoll, key=lambda c: c.name)
-        countries_sorted_ids = [c.id for c in countries_sorted]
-
-        swiss = countries_obj.search([('code', '=', 'CH')])
-        if swiss:
-            countries_sorted_ids = [swiss.id] + countries_sorted_ids
-
-        germany = countries_obj.search([('code', '=', 'DE')])
-        if germany:
-            countries_sorted_ids = [germany.id] + countries_sorted_ids
-
-        austria = countries_obj.search([('code', '=', 'AT')])
-        if austria:
-            countries_sorted_ids = [austria.id] + countries_sorted_ids
-
-        countries = countries_obj.browse(countries_sorted_ids)
-        # Update values
+        # Update countries and states in values with countries and states sorted by website locale
+        countries, states = self._locale_sorted_country_and_states(countries_on_top=('AT', 'DE', 'CH'))
         if values.get('countries', False) and countries:
             values['countries'] = countries
-
-        # Sorted States
-        states_obj = request.env['res.country.state']
-        states = states_obj.sudo().search([])
-        states_sorted = sorted(states, cmp=locale.strcoll, key=lambda s: s.name)
-        states = states_obj.sudo().browse([s.id for s in states_sorted])
-        # Update values
         if values.get('states', False) and states:
             values['states'] = states
 
-        # Revert to original locale
-        try:
-            locale.setlocale(locale.LC_ALL, start_locale)
-        except Exception as e:
-            logging.error("Could not revert to initial locale after country and state sorting by website lang!")
-            pass
-
-        # Add Billing Fields to values dict
-        # ---------------------------------
-        billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([])
+        # Add billing fields to values
+        # ----------------------------
+        billing_fields_obj = request.env['website.checkout_billing_fields']
+        billing_fields = billing_fields_obj.search([])
         values['billing_fields'] = billing_fields
 
+        # Fix 'boolean' and 'date' field type values
+        # ------------------------------------------
         for field in billing_fields:
             f_name = field.res_partner_field_id.name
             f_type = field.res_partner_field_id.ttype

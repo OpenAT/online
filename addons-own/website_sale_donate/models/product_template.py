@@ -33,6 +33,10 @@ class ProductTemplate(models.Model):
     hide_confirmation_indicator = fields.Boolean(string='Hide Confirmation Indicator')
     confirmation_indicator_name = fields.Char(string='Confirmation Indicator Name', translate=True, default=_('4. Confirmation'))
 
+    # TODO: Custom Checkout Fields
+    checkout_form_id = fields.Many2one(string="Checkout Fields Form", comodel_name='fson.form',
+                                       help="Set custom checkout fields for this form")
+
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):
         for pt in self:
@@ -59,3 +63,78 @@ class ProductTemplate(models.Model):
             else:
                 vals['fs_workflow'] = 'product'
         return super(ProductTemplate, self).write(vals)
+
+    # TODO: Custom Checkout Fields Form Button Action
+    @api.multi
+    def create_checkout_fields_form(self):
+        for r in self:
+            if not r.checkout_form_id:
+                # Create the fso form
+                res_partner_model = self.env['ir.model'].search([('model', '=', 'res.partner')])
+
+                form_vals = {'name': _('Checkout fields form for product %s (id %s)') % (r.name, r.id),
+                             'model_id': res_partner_model.id,
+                             'submit_button_text': _('Continue'),
+                             'clear_session_data_after_submit': True,
+                             'edit_existing_record_if_logged_in': False,
+                             'email_only': False,
+                             'thank_you_page_edit_data_button': False,
+                             #'thank_you_page_edit_redirect': '/fso/subscription/%s' % r.id,
+                             #'submission_url': '/fso/subscription/%s' % r.id
+                             }
+
+                form = self.env['fson.form'].create(form_vals)
+
+                # Create the fso form fields
+                f_fields = {'firstname': {'sequence': 10,
+                                          'show': True,
+                                          'label': _('Firstname'),
+                                          'mandatory': False,
+                                          'css_classes': 'col-sm-6 col-md-6 col-lg-6',
+                                          'clearfix': False},
+                            'lastname': {'sequence': 20,
+                                         'show': True,
+                                         'label': _('Lastname'),
+                                         'mandatory': True,
+                                         'css_classes': 'col-sm-6 col-md-6 col-lg-6',
+                                         'clearfix': True},
+                            'email': {'sequence': 30,
+                                      'label': _('E-Mail'),
+                                      'show': True,
+                                      'mandatory': True,
+                                      'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                      'clearfix': True},
+                            'birthdate_web': {'sequence': 40,
+                                              'label': _('Birthdate'),
+                                              'show': True,
+                                              'mandatory': False,
+                                              'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                              'clearfix': True,
+                                              'information': """ Um ihre Spenden von der Steuer absetzten zu können 
+                                                                 ist die Angabe ihres Geburtsdatums erforderlich. """},
+                            'country_id': {'sequence': 50,
+                                           'label': _('Country'),
+                                           'show': True,
+                                           'mandatory': True,
+                                           'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                           'clearfix': True},
+                            'donation_deduction_optout_web': {'sequence': 60,
+                                                              'label': _('Meine Spenden nicht absetzen'),
+                                                              'show': True,
+                                                              'mandatory': False,
+                                                              'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                                              'clearfix': True,
+                                                              'information': """ Bitte anhaken wenn Sie nicht möchten 
+                                                                                 das Ihre Spenden automatisch abgesetzt 
+                                                                                 werden. """},
+                            }
+                fields_obj = self.env['ir.model.fields']
+                form_field_obj = self.env['fson.form_field']
+                for f, vals in f_fields.iteritems():
+                    vals['form_id'] = form.id
+                    vals['field_id'] = fields_obj.search([('model_id', '=', res_partner_model.id),
+                                                          ('name', '=', f)]).id
+                    form_field_obj.create(vals)
+
+                # Add this form to the record
+                r.write({'checkout_form_id': form.id})

@@ -253,30 +253,39 @@ class sale_order(osv.Model):
                 return False
 
         # Set the Quantity always to 1 or 0 if hide_quantity is set
-        # HINT: We have to use product.product NOT product.temaplate beacuse it could be a product variant
+        # HINT: We have to use product.product NOT product.template because it could be a product variant
         #       _cart_update always gets the product.product id !!! from the template!
-        if self.pool.get('product.product').browse(cr, SUPERUSER_ID, product_id, context=context).hide_quantity:
+        product = self.pool.get('product.product').browse(cr, SUPERUSER_ID, product_id, context=context)
+        if product.hide_quantity:
             if add_qty >= 0:
                 set_qty = 1
             else:
                 set_qty = 0
 
-        # Update context with price_donate and call super
+        # Update context with price_donate
         price_donate = kwargs.get('price_donate')
         if price_donate:
             context.update({'price_donate': price_donate})
+
+        # Update or create the sale order line
         cu = super(sale_order, self)._cart_update(cr, uid, ids,
                                                   product_id, line_id, add_qty, set_qty, context=context, **kwargs)
+
+        # Remove price_donate from the context again
         if context.get('price_donate'):
             context.pop('price_donate', None)
 
-        payment_interval_id = kwargs.get('payment_interval_id')
+        # Get the updated or created sale order line
         line_id = cu.get('line_id')
-        quantity = cu.get('quantity')
         sol_obj = self.pool.get('sale.order.line')
         sol = sol_obj.browse(cr, SUPERUSER_ID, line_id, context=context)
 
-        # sol.exists() is checked in case that so line was unlinked in inherited _cart_update
+        quantity = cu.get('quantity')
+        payment_interval_id = kwargs.get('payment_interval_id')
+
+        # Update the sale order line values:
+        # 'price_donate', 'payment_interval_id', 'zgruppedetail_ids', 'fs_product_type', TODO: ptoken?!?
+        # HINT: sol.exists() is checked in case that so line was unlinked in inherited _cart_update
         if quantity > 0 and sol.exists():
 
             # If we come from a product page price_donate may be in the kwargs and if so we write it to so line
@@ -298,13 +307,6 @@ class sale_order(osv.Model):
                              '' % (str(sol.price_donate), str(sol.price_unit)))
                 sol.price_unit = sol.price_donate
                 # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_unit': sol.price_donate, }, context=context)
-
-            # TODO: Hack: For no obvious reason functional fields do net get updated on sale.order.line writes ?!?
-            #             so we do it manually!
-            #       ANNTENTION: Hack sadly also not working therfore deactivated
-            # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_subtotal': sol_obj._amount_line(
-            # cr, SUPERUSER_ID, [line_id], None, None, context=context), 'price_reduce': sol_obj._get_price_reduce(
-            # cr, SUPERUSER_ID, [line_id], None, None, context=context), }, context=context)
 
             # If Payment Interval is found in kwargs write it to the so line
             # Todo: SECURITY Check if payment_interval_id: is an int and if it is available in product.payment_interval
@@ -330,6 +332,28 @@ class sale_order(osv.Model):
                 sol.fs_product_type = sol.product_id.fs_product_type
             else:
                 sol.fs_product_type = False
+
+            # TODO: Remove all other so lines where individual (per product) configurations of
+            #      'payment method', 'checkout fields' or 'steps indicator' will not match the current sale order line
+            order = sol.order_id
+            for l in order.website_order_line:
+                if l.exists() and l.id != sol.id:
+
+                    # Acquirer config mismatch
+                    if product.product_acquirer_lines_ids and l.product_id.product_acquirer_lines_ids:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from so (ID: %s) because '
+                                     'acquirer configs do not match' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
+                    # Checkout steps mismatch
+                    if product.step_indicator_setup and l.product_id.step_indicator_setup:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from so (ID: %s) because '
+                                     'checkout steps configs do not match' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
+                    # TODO: Checkout fields mismatch (billing fields)
 
         return cu
 

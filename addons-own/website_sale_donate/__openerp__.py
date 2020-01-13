@@ -22,7 +22,7 @@
 
 {
     'name': "FS-Online Spendenshop",
-    'version': '2.2',
+    'version': '2.6',
     'summary': """Shoperweiterungen für Fundraising Studio Community""",
     'sequence': 200,
     'description': """
@@ -101,6 +101,7 @@ To solve this we did:
         'website_blog',
         'auth_partner',
         #'fso_frst_groups', is included in fso_base
+        'fso_forms',
     ],
     'installable': True,
     'data': [
