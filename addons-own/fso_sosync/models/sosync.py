@@ -1,5 +1,6 @@
 # -*- coding: utf-'8' "-*-"
 from openerp import api, models, fields
+from openerp.tools import SUPERUSER_ID
 # Try to extend MAGIC_COLUMNS with sosync fields to make sure they will not be copied and so on :)
 # ATTENTION: This is a test! It is not clear if adding the sosync fields to the magic columns will have side effects!
 from openerp.models import MAGIC_COLUMNS
@@ -43,6 +44,76 @@ class BaseSosync(models.AbstractModel):
     # logger.warning("base.sosync MAGIC_COLUMNS before: %s" % MAGIC_COLUMNS)
     # MAGIC_COLUMNS += ['sosync_fs_id', 'sosync_write_date', 'sosync_sync_date']
     # logger.warning("base.sosync MAGIC_COLUMNS after: %s" % MAGIC_COLUMNS)
+
+    def init(self, cr, context=None):
+
+        ir_actions_server_obj = self.pool.get('ir.actions.server')
+        ir_values_obj = self.pool.get('ir.values')
+
+        model_name = self._name
+        model_id = self.pool.get('ir.model').search(cr, SUPERUSER_ID, [('model', '=', model_name)])[0]
+        # model_id_test = self.ref('model_'+model_name.replace('.', '_'))
+
+        server_action_name = 'Manually Create Sync Job'
+        more_menu_name = server_action_name
+
+        if model_name != 'base.sosync':
+            logger.info("base.sosync init: Create action in 'More' menu to manually create sync jobs for model %s"
+                        "" % self._name)
+            server_action = ir_actions_server_obj.search(cr, SUPERUSER_ID,
+                                                         [('name', '=', server_action_name),
+                                                          ('model_id', '=', model_id),
+                                                          ('state', '=', 'code')])
+            if server_action:
+                assert len(server_action) <= 1, "More than one server action found!"
+                logger.info("base.sosync init: Deleting server action %s for recreation!" % server_action)
+                # ir_actions_server_obj.unlink(cr, SUPERUSER_ID, server_action)
+                # server_action = False
+
+            # Create server_action
+            if not server_action:
+                logger.info("base.sosync init: create server action '%s'" % server_action_name)
+                server_action = ir_actions_server_obj.create(cr, SUPERUSER_ID,
+                                                             {'name': server_action_name,
+                                                              'model_id': model_id,
+                                                              'state': 'code',
+                                                              'code': """
+                    if context.get('active_model') == '%s':
+                    
+                        # Find ids
+                        ids = []
+                        
+                        #if context.get('active_domain'):
+                        #    ids = self.search(cr, uid, context['active_domain'], context=context)
+                        #elif context.get('active_ids'):
+                        #    ids = context['active_ids']
+                        
+                        if context.get('active_ids'):
+                            ids = context['active_ids']
+                    
+                        # Call button action action_set_bpk
+                        if ids:
+                            self.create_sync_job_manually(cr, uid, ids, context=context)                                                              
+                                                              """ % model_name})
+                server_action_id = server_action
+            else:
+                logger.info("base.sosync init: server action exists")
+                server_action_id = server_action[0]
+
+            # Create 'More' menu entry
+            more_menu = ir_values_obj.search(cr, SUPERUSER_ID,
+                                             [('name', '=', more_menu_name),
+                                              ('model', '=', model_name),
+                                              ('key2', '=', 'client_action_multi'),
+                                              ('value', '=', 'ir.actions.server,%s' % str(server_action_id))])
+            if not more_menu:
+                logger.info("base.sosync init: create ir.values entry '%s' for more menu" % more_menu_name)
+                ir_values_obj.create(cr, SUPERUSER_ID, {
+                    'name': more_menu_name,
+                    'model': model_name,
+                    'key2': 'client_action_multi',
+                    'value': 'ir.actions.server,%s' % str(server_action_id)
+                })
 
     # Extend the fields.get of openerp.Basemodel to include the sosync attribute for the java script
     # field manager for website forms to make it possible highlight sosynced watched fields in the backend
@@ -171,6 +242,18 @@ class BaseSosync(models.AbstractModel):
             logger.debug("Sosync SyncJob %s created for %s with id %s in queue!" % (job.id, model, record.id))
 
         return True
+
+    @api.multi
+    def create_sync_job_manually(self):
+        """
+        Manually create regular (job_source_type=False) sync jobs!
+        HINT: This will only work if the record has already a sosync_write_date!
+        :return:
+        """
+        for record in self:
+            if record.sosync_write_date:
+                record.create_sync_job(job_date=record.sosync_write_date,
+                                       job_source_type=False, job_source_fields='Manually created!')
 
     @api.model
     def create(self, values, **kwargs):
