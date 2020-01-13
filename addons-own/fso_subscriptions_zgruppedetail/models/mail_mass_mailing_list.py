@@ -12,8 +12,8 @@ class MailMassMailingList(models.Model):
 
     zgruppedetail_id = fields.Many2one(string="zGruppeDetail",
                                        comodel_name='frst.zgruppedetail',
-                                       domain=[('zgruppe_id.tabellentyp_id', '=', '100110'),
-                                               ('zgruppe_id.sosync_fs_id', '=', '30200'),
+                                       domain=['|', ('zgruppe_id.tabellentyp_id', '=', '100110'),
+                                                    ('zgruppe_id.sosync_fs_id', '=', '30200'),
                                                ('gui_anzeigen', '=', True)],
                                        help="Create PersonEmailGruppe records and vice versa for mailing list contacts "
                                             "of this mailing list for this zGruppeDetail")
