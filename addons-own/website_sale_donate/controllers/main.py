@@ -71,24 +71,20 @@ class website_sale_donate(website_sale):
 
         return countries, states
 
-    # TODO: Get billing fields from product in sale.order or from website.billing_fields
-    # THIS IS STILL A PROBLEM ...
-    def _get_billing_fields(self, billing_fields = None):
-        # HINT: On OPC-Product pages the product is already added to the sale order!
-        #       On regular product pages the product with custom checkout fields will be added to the sale order
-        #       before we hit the checkout page
-        order = request.website.sale_get_order()
-        if order and order.website_order_line:
-            for line in order.website_order_line:
-                if line.product_id and line.product_id.checkout_form_id:
-                    billing_fields = line.product_id.checkout_form_id.field_ids
+    # Get custom billing fields from product of current product page or from product in sale.order
+    def get_fso_forms_billing_fields(self, product=None):
+        fso_forms_billing_fields = None
 
-        # Fallback to the standard website fields
-        if billing_fields is None:
-            billing_fields = request.env['website.checkout_billing_fields']
-            billing_fields = billing_fields.search([])
+        if product:
+            fso_forms_billing_fields = product.checkout_form_id.field_ids if product.checkout_form_id else None
+        else:
+            order = request.website.sale_get_order()
+            if order and order.website_order_line:
+                for line in order.website_order_line:
+                    if line.product_id and line.product_id.checkout_form_id:
+                        fso_forms_billing_fields = line.product_id.checkout_form_id.field_ids
 
-        return billing_fields
+        return fso_forms_billing_fields
 
     def _get_payment_interval_id(self, product):
         payment_interval_id = False
@@ -158,6 +154,23 @@ class website_sale_donate(website_sale):
         # -----------------
         # ONE PAGE CHECKOUT Start
         # -----------------
+        # TODO: If this product has a custom billing field configuration we must add it right now to the sale order!
+        #       ATTENTION: This is because checkout_values() can only get the custom config from the sale order!
+        if (request.httprequest.method != 'POST' and product.checkout_form_id) \
+                and product.product_page_template == u'website_sale_donate.ppt_opc' \
+                and 'json_cart_update' not in request.session:
+            sale_order_id = request.session.sale_order_id
+            p_in_sale_order = None
+            if sale_order_id:
+                p_in_sale_order = request.registry['sale.order.line'].search(
+                    cr, SUPERUSER_ID,
+                    [('order_id', '=', sale_order_id),
+                     ('product_id', 'in', product.ids + product.product_variant_ids.ids)],
+                    context=context)
+            if not p_in_sale_order:
+                _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF CUSTOM BILLING FIELDS CONFIG!")
+                self.cart_update(product_id=product.id, set_qty=1)
+
         # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
         if request.httprequest.method == 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
@@ -202,9 +215,9 @@ class website_sale_donate(website_sale):
 
             # Render the checkout page
             if request.httprequest.method == 'POST':
-                checkoutpage = self.checkout(one_page_checkout=True, **kwargs)
+                checkoutpage = self.checkout(one_page_checkout=True, product=product, **kwargs)
             else:
-                checkoutpage = self.checkout(one_page_checkout=True)
+                checkoutpage = self.checkout(one_page_checkout=True, product=product,)
 
             # Add individual acquirer config to the qcontext of the checkout page
             if product.product_acquirer_lines_ids:
@@ -441,27 +454,31 @@ class website_sale_donate(website_sale):
         if values.get('states', False) and states:
             values['states'] = states
 
-        # Add billing fields to values
-        # ----------------------------
-        billing_fields_obj = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields_obj.search([])
-        values['billing_fields'] = billing_fields
+        # Add billing fields from the product linked fson.form (fso_forms)
+        fso_forms_billing_fields = self.get_fso_forms_billing_fields()
+        if fso_forms_billing_fields:
+            values['fso_forms_billing_fields'] = fso_forms_billing_fields
+            # TODO: prepare form data if any (values['checkout']) maybe by fso.form._prepare_field_data()?!?
+        # Add billing fields from the website
+        else:
+            billing_fields_obj = request.env['website.checkout_billing_fields']
+            billing_fields = billing_fields_obj.search([])
+            values['billing_fields'] = billing_fields
 
-        # Fix 'boolean' and 'date' field type values
-        # ------------------------------------------
-        for field in billing_fields:
-            f_name = field.res_partner_field_id.name
-            f_type = field.res_partner_field_id.ttype
-            # FIX: Set value to python True or False for all boolean fields (instead of true or false)
-            if f_type == 'boolean':
-                if values['checkout'].get(f_name) == 'True' or values['checkout'].get(f_name):
-                    values['checkout'][f_name] = True
-                else:
-                    values['checkout'][f_name] = False
-            # Fix for Date fields: convert '' to None
-            elif f_type == 'date':
-                values['checkout'][f_name] = values['checkout'].get(f_name).strip() if values['checkout'].get(f_name)\
-                    else None
+            # Fix website billing fields 'boolean' and 'date' field type values
+            for field in billing_fields:
+                f_name = field.res_partner_field_id.name
+                f_type = field.res_partner_field_id.ttype
+                # FIX: Set value to python True or False for all boolean fields (instead of true or false)
+                if f_type == 'boolean':
+                    if values['checkout'].get(f_name) == 'True' or values['checkout'].get(f_name):
+                        values['checkout'][f_name] = True
+                    else:
+                        values['checkout'][f_name] = False
+                # Fix for Date fields: convert '' to None
+                elif f_type == 'date':
+                    values['checkout'][f_name] = values['checkout'].get(f_name).strip() if values['checkout'].get(f_name)\
+                        else None
 
         # Add Shipping Fields to values dict
         # ----------------------------------
@@ -498,20 +515,26 @@ class website_sale_donate(website_sale):
 
     # Set mandatory billing and shipping fields
     def _get_mandatory_billing_fields(self):
-        billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
-                                                ('show', '=', True),
-                                                ('mandatory', '=', True)])
-        mandatory_bill = [field.res_partner_field_id.name for field in billing_fields]
-        return mandatory_bill
+        fso_forms_billing_fields = self.get_fso_forms_billing_fields()
+        if fso_forms_billing_fields:
+            return [field.field_id.name for field in fso_forms_billing_fields if field.mandatory]
+        else:
+            billing_fields = request.env['website.checkout_billing_fields']
+            billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
+                                                    ('show', '=', True),
+                                                    ('mandatory', '=', True)])
+            return [field.res_partner_field_id.name for field in billing_fields]
 
     def _get_optional_billing_fields(self):
-        billing_fields = request.env['website.checkout_billing_fields']
-        billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
-                                                ('show', '=', True),
-                                                ('mandatory', '=', False)])
-        optional_bill = [field.res_partner_field_id.name for field in billing_fields]
-        return optional_bill
+        fso_forms_billing_fields = self.get_fso_forms_billing_fields()
+        if fso_forms_billing_fields:
+            return [field.field_id.name for field in fso_forms_billing_fields if not field.mandatory]
+        else:
+            billing_fields = request.env['website.checkout_billing_fields']
+            billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
+                                                    ('show', '=', True),
+                                                    ('mandatory', '=', False)])
+            return [field.res_partner_field_id.name for field in billing_fields]
 
     def _get_mandatory_shipping_fields(self):
         shipping_fields = request.env['website.checkout_shipping_fields']
