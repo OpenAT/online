@@ -13,6 +13,7 @@
                             <group name="basic_form_data">
                                 <field name="name"/>
                                 <field name="model_id"/>
+                                <field name="create_as_user"/>
                                 <field name="submit_button_text"/>
                                 <field name="logout_button_text"/>
                                 <field name="clear_session_data_after_submit"/>

@@ -23,6 +23,9 @@ class FSONForm(models.Model):
     model_id = fields.Many2one(string="Model", comodel_name="ir.model", required=True)
     field_ids = fields.One2many(string="Fields", comodel_name="fson.form_field", inverse_name="form_id")
 
+    create_as_user = fields.Many2one(string="Create as user", comodel_name="res.users",
+                                     help="ALWAYS create new records with this user!")
+
     submission_url = fields.Char(string="Submission URL", default=False,
                                  help="Subission URL for form data! Do not set unless you really need to!"
                                       "If set no record will be")
@@ -118,55 +121,55 @@ class FSONForm(models.Model):
         for r in self:
             r.website_url_thanks = '/fso/form/thanks/'+str(r.id)
 
-    @api.constrains('model_id', 'field_ids')
-    def constrain_model_id_field_ids(self):
-        for r in self:
-            # Check all fields are fields of the current form_model
-            if any(f.field_id.model_id != r.model_id for f in r.field_ids if f.field_id):
-                raise ValidationError("Mismatch between some fields and current form model! "
-                                      "Please remove fields for other models!")
-            # Check that no field is marked as login field for res.partner or res.user forms
-            login_fields = [f for f in r.field_ids if f.login]
-            if r.model_id.model in ['res.partner', 'res.user'] and login_fields:
-                raise ValidationError('Login fields are not allowed for partner ("res.partner") or user ("res.user") '
-                                      'forms!')
-            # Check that only one field is marked as a login field
-            elif len([f for f in r.field_ids if f.login]) > 1:
-                raise ValidationError("Only one login field is allowed per form!")
-            # Check that fields are only used once!
-            field_ids = [f.field_id.id for f in r.field_ids if f.field_id]
-            if field_ids and len(field_ids) != len(set(field_ids)):
-                duplicated_fields = set([f.field_id.name for f in r.field_ids
-                                         if f.field_id and field_ids.count(f.field_id.id) > 1])
-                raise ValidationError("A field is only allowed once in a form! Duplicated fields: %s "
-                                      "" % str(duplicated_fields))
-
-    @api.constrains('email_only', 'field_ids', 'confirmation_email_template', 'information_email_template',
-                    'information_email_receipients')
-    def constrain_emails(self):
-        for r in self:
-            if r.email_only:
-                if not (r.information_email_template or r.confirmation_email_template):
-                    raise ValidationError('E-Mail only forms require an e-mail template!')
-                if r.information_email_template.auto_delete or r.confirmation_email_template.auto_delete:
-                    raise ValidationError('E-Mail Template field "auto_delete" must be "False" for email only forms!')
-            if r.information_email_template:
-                if not r.information_email_receipients:
-                    raise ValidationError('Information e-mail template is set but information email receipients are '
-                                          'missing!')
-                if not r.information_email_template.subject:
-                    raise ValidationError('E-Mail subject is missing in information email template!')
-                if r.information_email_template.model_id.id != r.model_id.id:
-                    raise ValidationError('Information e-mail template model does not match the form model!')
-            if r.confirmation_email_template:
-                if not r.confirmation_email_template.subject:
-                    raise ValidationError('E-Mail subject is missing in confirmation email template!')
-                email_fields = [f for f in r.field_ids if f.confirmation_email]
-                if not email_fields or len(email_fields) != 1:
-                    raise ValidationError('Confirmation e-mail template is set but none or more than one field(s) '
-                                          'are marked es confirmation email receiver!')
-                if r.confirmation_email_template.model_id.id != r.model_id.id:
-                    raise ValidationError('Confirmation e-mail template model does not match the form model!')
+    # @api.constrains('model_id', 'field_ids')
+    # def constrain_model_id_field_ids(self):
+    #     for r in self:
+    #         # Check all fields are fields of the current form_model
+    #         if any(f.field_id.model_id != r.model_id for f in r.field_ids if f.field_id):
+    #             raise ValidationError("Mismatch between some fields and current form model! "
+    #                                   "Please remove fields for other models!")
+    #         # Check that no field is marked as login field for res.partner or res.user forms
+    #         login_fields = [f for f in r.field_ids if f.login]
+    #         if r.model_id.model in ['res.partner', 'res.user'] and login_fields:
+    #             raise ValidationError('Login fields are not allowed for partner ("res.partner") or user ("res.user") '
+    #                                   'forms!')
+    #         # Check that only one field is marked as a login field
+    #         elif len([f for f in r.field_ids if f.login]) > 1:
+    #             raise ValidationError("Only one login field is allowed per form!")
+    #         # Check that fields are only used once!
+    #         field_ids = [f.field_id.id for f in r.field_ids if f.field_id]
+    #         if field_ids and len(field_ids) != len(set(field_ids)):
+    #             duplicated_fields = set([f.field_id.name for f in r.field_ids
+    #                                      if f.field_id and field_ids.count(f.field_id.id) > 1])
+    #             raise ValidationError("A field is only allowed once in a form! Duplicated fields: %s "
+    #                                   "" % str(duplicated_fields))
+    #
+    # @api.constrains('email_only', 'field_ids', 'confirmation_email_template', 'information_email_template',
+    #                 'information_email_receipients')
+    # def constrain_emails(self):
+    #     for r in self:
+    #         if r.email_only:
+    #             if not (r.information_email_template or r.confirmation_email_template):
+    #                 raise ValidationError('E-Mail only forms require an e-mail template!')
+    #             if r.information_email_template.auto_delete or r.confirmation_email_template.auto_delete:
+    #                 raise ValidationError('E-Mail Template field "auto_delete" must be "False" for email only forms!')
+    #         if r.information_email_template:
+    #             if not r.information_email_receipients:
+    #                 raise ValidationError('Information e-mail template is set but information email receipients are '
+    #                                       'missing!')
+    #             if not r.information_email_template.subject:
+    #                 raise ValidationError('E-Mail subject is missing in information email template!')
+    #             if r.information_email_template.model_id.id != r.model_id.id:
+    #                 raise ValidationError('Information e-mail template model does not match the form model!')
+    #         if r.confirmation_email_template:
+    #             if not r.confirmation_email_template.subject:
+    #                 raise ValidationError('E-Mail subject is missing in confirmation email template!')
+    #             email_fields = [f for f in r.field_ids if f.confirmation_email]
+    #             if not email_fields or len(email_fields) != 1:
+    #                 raise ValidationError('Confirmation e-mail template is set but none or more than one field(s) '
+    #                                       'are marked es confirmation email receiver!')
+    #             if r.confirmation_email_template.model_id.id != r.model_id.id:
+    #                 raise ValidationError('Confirmation e-mail template model does not match the form model!')
 
     # Remove noupdate for view auth_partner_form.meinedaten on addon update
     def init(self, cr, context=None):
@@ -248,44 +251,44 @@ class FSONFormField(models.Model):
     # TODO: Add file type or mime type restrictions for binary fields
     #       HINT: check html  parameter 'accept' and 'type'
 
-    @api.constrains('field_id', 'binary_name_field_id')
-    def constrain_field_id(self):
-        for r in self:
-            if r.field_id:
-                # Check readonly
-                if r.field_id.readonly and r.show:
-                    raise ValidationError('You can not add readonly fields that you show on the form!')
-                # Check protected fields
-                if r.field_id.name in self._protected_fields:
-                    raise ValidationError('Protected and system fields are not allowed!')
-                # Check field ttype
-                if r.field_id.ttype not in self._allowed_field_types:
-                    raise ValidationError('Field type %s is not supported in form fields!' % r.field_id.ttype)
-                # Check required fields
-                if r.field_id.required and (not r.mandatory or not r.show):
-                    raise ValueError('System-Required fields must have show and mandatory set to True in the form!')
-                # Check binary_name_field_id
-                if r.field_id.ttype != 'binary' and r.binary_name_field_id:
-                    raise ValueError('"File Name" field must be empty for non binary fields!')
-                # Check login field
-                if r.login:
-                    if r.field_ttype != 'many2one':
-                        raise ValueError('The login field must be of type "many2one"!')
-                    if r.field_id.relation not in ['res.partner', 'res.user']:
-                        raise ValueError('The login field must relate to the "res.partner" or "res.user" model!')
-            if r.binary_name_field_id:
-                # Check field_id
-                if not r.field_id or (r.field_id and r.field_id.ttype != 'binary'):
-                    raise ValueError('"File Name" field must be empty for non binary fields!')
-                # Check readonly
-                if r.binary_name_field_id.readonly:
-                    raise ValidationError('"File Name" field is readonly!')
-                # Check protected fields
-                if r.binary_name_field_id.name in self._protected_fields:
-                    raise ValidationError('"File Name" field can not be a protected or system field!')
-                # Check required fields
-                if r.binary_name_field_id.required and (not r.mandatory or not r.show):
-                    raise ValueError('Required fields must have show and mandatory set to True in the form!')
+    # @api.constrains('field_id', 'binary_name_field_id')
+    # def constrain_field_id(self):
+    #     for r in self:
+    #         if r.field_id:
+    #             # Check readonly
+    #             if r.field_id.readonly and r.show:
+    #                 raise ValidationError('You can not add readonly fields that you show on the form!')
+    #             # Check protected fields
+    #             if r.field_id.name in self._protected_fields:
+    #                 raise ValidationError('Protected and system fields are not allowed!')
+    #             # Check field ttype
+    #             if r.field_id.ttype not in self._allowed_field_types:
+    #                 raise ValidationError('Field type %s is not supported in form fields!' % r.field_id.ttype)
+    #             # Check required fields
+    #             if r.field_id.required and (not r.mandatory or not r.show):
+    #                 raise ValueError('System-Required fields must have show and mandatory set to True in the form!')
+    #             # Check binary_name_field_id
+    #             if r.field_id.ttype != 'binary' and r.binary_name_field_id:
+    #                 raise ValueError('"File Name" field must be empty for non binary fields!')
+    #             # Check login field
+    #             if r.login:
+    #                 if r.field_ttype != 'many2one':
+    #                     raise ValueError('The login field must be of type "many2one"!')
+    #                 if r.field_id.relation not in ['res.partner', 'res.user']:
+    #                     raise ValueError('The login field must relate to the "res.partner" or "res.user" model!')
+    #         if r.binary_name_field_id:
+    #             # Check field_id
+    #             if not r.field_id or (r.field_id and r.field_id.ttype != 'binary'):
+    #                 raise ValueError('"File Name" field must be empty for non binary fields!')
+    #             # Check readonly
+    #             if r.binary_name_field_id.readonly:
+    #                 raise ValidationError('"File Name" field is readonly!')
+    #             # Check protected fields
+    #             if r.binary_name_field_id.name in self._protected_fields:
+    #                 raise ValidationError('"File Name" field can not be a protected or system field!')
+    #             # Check required fields
+    #             if r.binary_name_field_id.required and (not r.mandatory or not r.show):
+    #                 raise ValueError('Required fields must have show and mandatory set to True in the form!')
 
     @api.onchange('show', 'mandatory', 'field_id', 'binary_name_field_id', 'login')
     def oc_show(self):
