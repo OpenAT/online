@@ -29,6 +29,7 @@ class FRSTPersonEmailGruppe(models.Model):
             peg_opt_out = True if peg.state in ('unsubscribed', 'expired') else False
             zgruppedetail = peg.zgruppedetail_id
 
+            # Find the mailing list where this zGruppeDetail is set
             mlist = mlists.filtered(lambda r: r.zgruppedetail_id == zgruppedetail)
             assert len(mlist) == 1, "More than one mailing list found for zGruppeDetail %s" % zgruppedetail.id
 
@@ -42,12 +43,16 @@ class FRSTPersonEmailGruppe(models.Model):
             # ----------------------------------------------------------------------------------------
             lc_skipp = lc.sudo().with_context(skipp_compute_person_email_gruppe=True)
 
-            # Create the mailing list contact
-            # -------------------------------
+            # Create a mailing list contact
+            # -----------------------------
             if not lc_skipp:
-                lc_skipp.create({'personemailgruppe_id': peg.id,
+                lc_skipp.create({'list_id': mlist.id,
+                                 'personemailgruppe_id': peg.id,
                                  'personemail_id': peg.frst_personemail_id.id,
-                                 'zgruppedetail_id': zgruppedetail.id,
+                                 #'zgruppedetail_id': zgruppedetail.id,
+                                 'firstname': peg.frst_personemail_id.partner_id.firstname,
+                                 'lastname': peg.frst_personemail_id.partner_id.lastname,
+                                 'email': peg.frst_personemail_id.email,
                                  'opt_out': peg_opt_out,
                                  'bestaetigt_am_um': peg.bestaetigt_am_um,
                                  'bestaetigt_typ': peg.bestaetigt_typ,
