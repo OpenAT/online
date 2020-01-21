@@ -593,26 +593,40 @@ class FsoForms(http.Controller):
                     # HINT: User rights are handled by get_fso_form_record()
                     values = self._prepare_field_data(form=form, form_field_data=kwargs, record=record)
                     if values:
-                        if not record:
-                            if form.create_as_user:
-                                record = record.sudo(form.create_as_user.id).create(values)
+                        try:
+                            if not record:
+                                if form.create_as_user:
+                                    record = record.sudo(form.create_as_user.id).create(values)
+                                else:
+                                    record = record.create(values)
+                                messages.append(_('Data was successfully submitted!'))
                             else:
-                                record = record.create(values)
-                            messages.append(_('Data was successfully submitted!'))
-                        else:
-                            record.write(values)
-                            messages.append(_('Data was successfully updated!'))
-                        # Update the session data
-                        # HINT: If clear_session_data_after_submit is set the form will be empty at the next
-                        #       hit/load! This has no effect if a user is logged in and
-                        #       'edit_existing_record_if_logged_in' is also set! In that case get_fso_form_record()
-                        #       will overwrite the session data set here and set 'clear_session_data' to False
-                        #       in the method get_fso_form_record() !
-                        self.set_fso_form_session_data(form_id=form.id,
-                                                       form_uid=request.uid,
-                                                       form_record_id=record.id,
-                                                       form_model_id=form.model_id.id,
-                                                       clear_session_data=form.clear_session_data_after_submit)
+                                record.write(values)
+                                messages.append(_('Data was successfully updated!'))
+                            # Update the session data
+                            # HINT: If clear_session_data_after_submit is set the form will be empty at the next
+                            #       hit/load! This has no effect if a user is logged in and
+                            #       'edit_existing_record_if_logged_in' is also set! In that case get_fso_form_record()
+                            #       will overwrite the session data set here and set 'clear_session_data' to False
+                            #       in the method get_fso_form_record() !
+                            self.set_fso_form_session_data(form_id=form.id,
+                                                           form_uid=request.uid,
+                                                           form_record_id=record.id,
+                                                           form_model_id=form.model_id.id,
+                                                           clear_session_data=form.clear_session_data_after_submit)
+                        except Exception as e:
+                            errors.append(_('Submission failed!\n\n%s' % repr(e)))
+
+                            # Rollback cursor of record with exception!
+                            # ATTENTION: This is really important or unwanted records and side effects may be created!
+                            # HINT: Since we catch the Exception that would lead to an rollback and a backend gui
+                            #       message and never raise it we have to do this by our own!
+                            # TODO: Check if this leafs open cursors behind or if odoo cleans them up after the
+                            #       rollback!
+                            record.env.cr.rollback()
+
+                            _logger.error("FsoForms Exception: %s" % repr(e))
+                            pass
 
                         # Send emails
                         # WARNING: If the records got created or updated but the e-mail(s) could not be send we will
