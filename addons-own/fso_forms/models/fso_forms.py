@@ -23,6 +23,9 @@ class FSONForm(models.Model):
     model_id = fields.Many2one(string="Model", comodel_name="ir.model", required=True)
     field_ids = fields.One2many(string="Fields", comodel_name="fson.form_field", inverse_name="form_id")
 
+    create_as_user = fields.Many2one(string="Create as user", comodel_name="res.users",
+                                     help="ALWAYS create new records with this user!")
+
     submission_url = fields.Char(string="Submission URL", default=False,
                                  help="Subission URL for form data! Do not set unless you really need to!"
                                       "If set no record will be")

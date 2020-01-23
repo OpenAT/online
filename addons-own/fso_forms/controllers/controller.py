@@ -595,7 +595,10 @@ class FsoForms(http.Controller):
                     if values:
                         try:
                             if not record:
-                                record = record.create(values)
+                                if form.create_as_user:
+                                    record = record.sudo(form.create_as_user.id).create(values)
+                                else:
+                                    record = record.create(values)
                                 messages.append(_('Data was successfully submitted!'))
                             else:
                                 record.write(values)
