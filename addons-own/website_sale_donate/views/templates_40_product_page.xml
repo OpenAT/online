@@ -21,7 +21,14 @@
             <xpath expr="//span[@itemprop='price']" position="before">
                 <!-- Arbitrary price Input Field -->
                 <t t-if="product.price_donate">
-                    <div t-att-class="'arbitrary_price form-inline' if product.price_suggested_ids else 'arbitrary_price'">
+
+                    <!-- TODO: Render a custom template for the arbitrary price and the price suggestion buttons -->
+                    <t t-if="product.donation_input_template">
+                        <t t-call="#{ product.donation_input_template }"/>
+                    </t>
+                    <t t-if="not product.donation_input_template">
+                        <div t-att-class="'arbitrary_price form-inline' if product.price_suggested_ids else 'arbitrary_price'">
+
                         <!-- Suggested-Donation-Buttons -->
                         <t t-foreach="product.price_suggested_ids" t-as="ps_button">
                             <t t-set="ps_button_classes" t-value="' '+ps_button.css_classes if ps_button.css_classes else ''"/>
@@ -37,6 +44,7 @@
                                 </input>
                             </span>
                         </t>
+
                         <!-- Arbitrary price Input -->
                         <div class="form-group price_donate">
                             <div class="input-group input-group-lg">
@@ -52,7 +60,10 @@
                             </div>
                             <label id="price_donate-error" class="error" for="price_donate" style="font-size: 12px; display: none;"/>
                         </div>
+
                     </div>
+                    </t>
+
                 </t>
 
                 <!-- Simplecheckout: redirect directly to checkout instead of cart if simple_checkout is set -->

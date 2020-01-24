@@ -13,6 +13,7 @@
             </xpath>
             <xpath expr="//link[last()]" position="after">
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css'/>
+                <link rel="stylesheet" href='/website_sale_donate/static/src/css/donation_buttons.css'/>
             </xpath>
         </template>
 
@@ -51,6 +52,18 @@
                     <t t-if="not website.button_back_to_page">Back</t>
                     <t t-if="website.button_back_to_page"><span t-field="website.button_back_to_page"/></t>
                 </a>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE: Payment-Provider Auto Submit Form -->
+        <template id="wsd_pp_auto_submit_form" name="Payment Provider Auto-Submit-Form">
+            <!-- REDIRECT TO PAYMENT PROVIDER Auto-Submit-Form: Finally redirect to payment-provider if all data is correct -->
+            <t t-if="acquirer_auto_submit">
+                <t t-if="website.payment_redirection_message"><div t-raw="website.payment_redirection_message"/></t>
+                <div t-raw="acquirer_auto_submit.button"
+                     id="wsd_pp_auto_submit_form"
+                     class="js_auto_submit_form"
+                />
             </t>
         </template>
 

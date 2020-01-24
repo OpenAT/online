@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- SUBTEMPLATE Display Invoice Address Data based on Billing or Shipping Fields -->
+        <template id="wsd_fields_display" name="wsd_fields_display">
+            <t t-if="address_obj and fields_to_render">
+                <!-- Loop through the fields -->
+                <t t-foreach="fields_to_render or []" t-as="f">
+                    <t t-if="f.show">
+                        <t t-set="f_name" t-value="f.res_partner_field_id.name"/>
+                        <t t-set="f_type" t-value="f.res_partner_field_id.ttype"/>
+                        <t t-set="css_classes" t-value="f.css_classes"/>
+
+                        <t t-if="f_type == 'char' or f_name in ['country_id', 'state_id']">
+                            <!-- Get Field Value -->
+                            <t t-set="f_value" t-value="getattr(address_obj, f_name, '')"/>
+                            <!-- Overwrite with Country Name -->
+                            <t t-if="f_name == 'country_id'">
+                                <t t-set="f_value" t-value="address_obj.country_id.name"/>
+                            </t>
+                            <!-- Overwrite with State Name -->
+                            <t t-if="f_name == 'state_id'">
+                                <t t-set="f_value" t-value="address_obj.state_id.name"/>
+                            </t>
+                            <!-- Render the Field -->
+                            <span t-att-class="f_name" t-esc="f_value"/>
+                            <!-- CLEARFIX DIV -->
+                            <t t-if="f.clearfix">
+                                <div t-att-class="'clearfix ' + f_name"/>
+                            </t>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE ONE-PAGE-CHECKOUT: Delivery-Option and Payment-Method Selection -->
+        <!-- ATTENTION: This is used in templates_62_checkout.xml also for OPC checkouts ! -->
+        <template id="wsd_opc_payment" name="Payment One-Page-Checkout">
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+            <t t-set="one_page_checkout" t-value="website.one_page_checkout or one_page_checkout"/>
+
+            <!-- DELIVERY Option Selection -->
+            <div t-if="deliveries"
+                 t-att-class="'row wsd_opc_delivery hidden' if website.hide_delivery_methods else 'row wsd_opc_delivery'"
+                 t-att-id="'delivery_carrier' if not one_page_checkout else ''">
+                <!-- Header: Delivery -->
+                <div class="col-lg-12">
+                    <h3 class="delivery_title">
+                        <t t-if="website.delivery_title"><span t-field="website.delivery_title"/></t>
+                        <t t-if="not website.delivery_title">Delivery</t>
+                    </h3>
+                </div>
+                <div class="col-lg-12">
+                    <ul class="list-unstyled">
+                        <li t-foreach="deliveries" t-as="delivery">
+                            <t t-if="delivery.available">
+                                <label>
+                                    <input t-att-value="delivery.id" type="radio" name="delivery_type"
+                                        t-att-checked="order.carrier_id and order.carrier_id.id == delivery.id and 'checked' or False"/>
+                                    <span t-field="delivery.name"/>
+                                    <span class="badge" t-field="delivery.price"
+                                        t-field-options='{
+                                            "widget": "monetary",
+                                            "from_currency": "delivery.product_id.company_id.currency_id",
+                                            "display_currency": "website_sale_order.currency_id"
+                                        }'/>
+                                    <div t-field="delivery.website_description" class="text-muted"/>
+                                </label>
+                            </t>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAYMENT Method Selection -->
+            <div class="row js_payment wsd_opc_payment" t-if="acquirers" id="payment_method">
+                <!-- Header: Payment -->
+                <div class="col-lg-12">
+                    <h3 class="payment_title">
+                        <t t-if="website.payment_title"><span t-field="website.payment_title"/></t>
+                        <t t-if="not website.payment_title">Payment</t>
+                    </h3>
+                </div>
+                <div class="col-lg-12">
+
+                    <!-- Payment Page Errors -->
+                    <t t-foreach="errors" t-as="error">
+                        <div class="alert alert-danger" t-if="error">
+                            <h4>
+                                <t t-esc="error[0]"/>
+                            </h4>
+                            <t t-esc="error[1]"/>
+                        </div>
+                    </t>
+
+                    <!-- Acquirer-Selection: input elements and images (icons) -->
+                    <!-- http://getbootstrap.com/components/#btn-groups -->
+                    <!-- http://getbootstrap.com/javascript/#buttons -->
+                    <!-- http://getbootstrap.com/components/#nav-tabs -->
+                    <!-- http://stackoverflow.com/questions/34677186/html-form-with-bootstrap-togglabe-tabs-by-radio-buttons -->
+
+                    <!-- Get valid acquirer_id for default selection -->
+                    <t t-set="acquirer_id" t-value="acquirer or acquirer_id"/>
+                    <t t-set="first_valid_acquirer_id" t-value="False"/>
+                    <t t-foreach="acquirers or []" t-as="acquirer">
+                        <t t-if="acquirer.button and ((website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)))">
+                            <!-- Set default acquirer if set and valid -->
+                            <t t-if="website.acquirer_default and str(website.acquirer_default.id) == str(acquirer.id)">
+                                <t t-set="first_valid_acquirer_id" t-value="acquirer.id"/>
+                            </t>
+                            <!-- Overwrite default acquirer with acquirer from post -->
+                            <t t-if="(not first_valid_acquirer_id) or str(acquirer.id) == str(acquirer_id)">
+                                <t t-set="first_valid_acquirer_id" t-value="acquirer.id"/>
+                            </t>
+                        </t>
+                    </t>
+                    <t t-set="acquirer_id" t-value="first_valid_acquirer_id"/>
+
+                    <!-- Acquirer-Selection (Payment Method) Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <t t-foreach="acquirers or []" t-as="acquirer">
+                            <!-- Only show correct acquirers for recurring payments if set -->
+                            <t t-if="acquirer.button and ( (website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)) )">
+                                <li role="presentation"
+                                    t-att-class="'active' if str(acquirer.id) == str(acquirer_id) else ''"
+                                    t-att-data-recurring-transactions="'True' if acquirer.recurring_transactions else 'False'">
+                                    <a t-att-href="'#aq' + str(acquirer.id)" t-att-aria-controls="'aq' + str(acquirer.id)" role="tab" data-toggle="tab">
+                                        <!-- Hidden Input Radio Tag -->
+                                        <input type="radio" name="acquirer" class="tab-acquirer-input hidden" autocomplete="off"
+                                               t-att-data-input-id="'aq' + str(acquirer.id)"
+                                               t-att-value="acquirer.id"
+                                               t-att-checked="str(acquirer.id) == str(acquirer_id)"
+                                        />
+                                        <!-- Acquirer Icon or Default Image -->
+                                        <span class="tab-acquirer-image">
+                                            <t t-if="not acquirer.acquirer_icon">
+                                                <span>
+                                                    <img t-if="not acquirer.acquirer_icon" class="media-object"
+                                                         t-att-title="acquirer.name"
+                                                         t-att-src="'/payment_%s/static/src/img/%s_icon.png' % (acquirer.provider, acquirer.provider)"/>
+                                                </span>
+                                            </t>
+                                            <t t-if="acquirer.acquirer_icon">
+                                                <span t-field="acquirer.acquirer_icon"
+                                                      t-field-options='{"widget": "image", "class": "media-object"}'/>
+                                            </t>
+                                        </span>
+                                        <!-- Acquirer Name -->
+                                        <span class="tab-acquirer-name" t-field="acquirer.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </t>
+                    </ul>
+
+                    <!-- Acquirer-Selection Tab Content -->
+                    <div class="tab-content tab-equal-heights">
+                        <t t-foreach="acquirers or []" t-as="acquirer">
+                            <!-- Only show correct acquirers (payment methods) -->
+                            <t t-if="acquirer.button and ((website_sale_order and (website_sale_order.has_recurring and acquirer.recurring_transactions)) or (website_sale_order and (not website_sale_order.has_recurring)))">
+                                <div role="tabpanel"
+                                     t-att-class="'tab-pane fade in active' if str(acquirer.id) == str(acquirer_id) else 'tab-pane fade'"
+                                     t-att-id="'aq' + str(acquirer.id)"
+                                     t-att-data-id="acquirer.id"
+                                     t-att-data-recurring-transactions="'True' if acquirer.recurring_transactions else 'False'">
+
+                                    <!-- Check for product page overwrites -->
+                                    <t t-set="product_overwrite" t-value="False"/>
+                                    <t t-if="product and product.product_acquirer_lines_ids">
+                                        <t t-foreach="product.product_acquirer_lines_ids" t-as="pac_line">
+                                            <t t-if="pac_line.acquirer_pre_msg and pac_line.acquirer_id.id == acquirer.id">
+                                                <t t-set="product_overwrite" t-value="True"/>
+                                                <div t-field="pac_line.acquirer_pre_msg" class="acquirer_pre_msg"/>
+                                            </t>
+                                        </t>
+
+                                    </t>
+
+                                    <t t-if="not product_overwrite">
+                                        <div t-field="acquirer.pre_msg" class="acquirer_pre_msg"/>
+                                    </t>
+
+                                    <t t-if="one_page_checkout">
+                                        <div t-raw="acquirer.button_opc"/>
+                                    </t>
+                                    <t t-if="not one_page_checkout">
+                                        <div class="acquirer_button_not_opc" t-att-data-id="acquirer.id" t-raw="acquirer.button"/>
+                                    </t>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+
+            </div>
+
+        </template>
+
+        <!-- ============= -->
+        <!-- PAYMENT PAGE  -->
+        <!-- ============= -->
+
+        <!-- INHERIT PAYMENT -->
+        <template id="wsd_payment" inherit_id="website_sale.payment" name="WSD Payment Page">
+
+
+            <!-- DISABLE original payment page elements -->
+            <xpath expr="//div[@class='container oe_website_sale']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+
+            <!-- Custom Payment Page -->
+            <xpath expr="//div[@id='wrap']" position="inside">
+                <div class="container oe_website_sale">
+
+                    <!-- Payment-Provider Auto-Submit-Form -->
+                    <t t-if="acquirer_auto_submit">
+                        <div class="container">
+                            <div class="row one-page-checkout ppt_opc-checkout">
+                                <div class="col-md-12">
+                                    <t t-call="website_sale_donate.wsd_pp_auto_submit_form"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-if="not acquirer_auto_submit">
+                        <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
+                        <t t-call="website_sale_donate.wsd_checkout_pages_header">
+                            <t t-set="payment_page" t-value="True"/>
+                        </t>
+
+                        <!-- Content -->
+                        <div class="row wsd_payment_page_content">
+
+                            <!-- Left Column -->
+                            <div class="col-sm-8">
+                                <!-- Small Cart -->
+                                <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+                                <t t-call="website_sale_donate.small_cart_header">
+                                    <!-- Always Show Small-Cart Header -->
+                                    <t t-set="show_small_cart_header" t-value="True"/>
+                                </t>
+                                <t t-call="website_sale_donate.small_cart">
+                                    <t t-set="disable_changing_products" t-value="True"/>
+                                    <t t-set="show_download_links" t-value="True"/>
+                                </t>
+
+                                <!-- Acquirer (Payment-Method) and Delivery-Method Form -->
+                                <form action="/shop/payment"
+                                      class="payment_opc_acquirer_form"
+                                      method="POST">
+
+                                    <!-- Acquirer and Delivery -->
+                                    <t t-call="website_sale_donate.wsd_opc_payment">
+                                        <t t-set="one_page_checkout" t-value="True"/>
+                                    </t>
+
+                                    <!-- Submit Button -->
+                                    <a id="button_paynow" class="btn btn-primary btn-xl mt16 a-submit" href="#">
+                                        <t t-if="website.payment_page_submit_button">
+                                            <span t-field="website.payment_page_submit_button"/>
+                                        </t>
+                                        <t t-if="not website.payment_page_submit_button">
+                                            <span>Pay Now!</span>
+                                        </t>
+                                    </a>
+
+                                </form>
+
+
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-sm-3 col-sm-offset-1">
+                                <!-- Billing Address -->
+                                <div class="payment_billing_address">
+                                    <h4>Bill To:</h4>
+                                    <!--<div t-field="order.partner_invoice_id"-->
+                                         <!--t-field-options='{-->
+                                         <!--"widget": "contact",-->
+                                         <!--"fields": ["address", "name", "phone", "email"]-->
+                                         <!--}'/>-->
+                                    <div class="row billing_address">
+                                        <div class="col-sm-12">
+                                            <t t-call="website_sale_donate.wsd_fields_display">
+                                                <t t-set="address_obj" t-value="order.partner_invoice_id"/>
+                                                <t t-set="fields_to_render" t-value="billing_fields"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div>
+                                      <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
+                                    </div>
+                                </div>
+                                <!-- Shipping Address -->
+                                <t t-if="not website.hide_shipping_address">
+                                    <div class="payment_shipping_address">
+                                        <h4>Ship To:</h4>
+                                        <t t-if="website_sale_order and (website_sale_order.partner_shipping_id and website_sale_order.partner_shipping_id.id != website_sale_order.partner_invoice_id.id)">
+                                              <!--<div t-field="order.partner_shipping_id"-->
+                                                   <!--t-field-options='{-->
+                                                   <!--"widget": "contact",-->
+                                                   <!--"fields": ["address", "name", "phone"]-->
+                                                   <!--}'/>-->
+                                            <div class="row shipping_address">
+                                                <div class="col-sm-12">
+                                                    <t t-call="website_sale_donate.wsd_fields_display">
+                                                        <t t-set="address_obj" t-value="order.partner_shipping_id"/>
+                                                        <t t-set="fields_to_render" t-value="shipping_fields"/>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <address t-if="website_sale_order and (website_sale_order.partner_shipping_id.id == website_sale_order.partner_invoice_id.id)">Ship to the same address</address>
+                                        <div>
+                                          <a href="/shop/checkout"><span class="fa fa-arrow-right"/> Change Address</a>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Snippet-Dropping-Area -->
+                        <div class="row wsd_payment_page_bottom">
+                            <div class="col-md-12">
+                                <div t-field="website.payment_page_bottom"/>
+                            </div>
+                        </div>
+                    </t>
+
+                </div>
+            </xpath>
+
+        </template>
+
+        
+    </data>
+</openerp>

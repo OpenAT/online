@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <template id="dit_advanced" name="Donation Input Template: Advanced Layout">
+
+        <!-- Donation buttons loop -->
+        <t t-foreach="product.price_suggested_ids" t-as="d_button">
+
+            <t t-set="d_button_id" t-value="'donation_button_' + str(d_button.id)"/>
+            <t t-set="d_button_classes" t-value="d_button.css_classes if d_button.css_classes else ''"/>
+                <div t-att-class="'form-group has-feedback donation_button_group ' + d_button_id + ' ' + d_button_classes + (' arbitrary_price_form_group' if d_button.arbitrary_price else '')">
+
+                    <!-- Donation button -->
+                    <t t-if="not d_button.arbitrary_price">
+                        <t t-if="d_button.name">
+                            <button type="button"
+                                    t-att-class="'price_donate_suggested btn btn-default donation_button ' + d_button_id"
+                                    t-att-data-price="d_button.amount" >
+                                <t t-raw="d_button.name"/>
+                            </button>
+                        </t>
+                        <t t-if="not d_button.name">
+                            <div t-field="d_button.snippets" type="button" href="#"
+                                    t-att-class="'price_donate_suggested btn btn-default oe_structure donation_button_snippets donation_button ' + d_button_id"
+                                    t-att-data-price="d_button.amount"/>
+                        </t>
+                    </t>
+
+                    <!-- Arbitrary price input -->
+                    <!-- TODO: Text options or at least a label to show e.g.: "Your Amount" -->
+                    <!-- TODO: Java Script must also work with buttons above :) -->
+                    <t t-if="d_button.arbitrary_price">
+                        <div class="input-group arbitrary_price_input_group">
+                            <input type="number"
+                                   class="form-control data-rule-ignore arbitrary_price_input"
+                                   name="price_donate"
+                                   id="price_donate"
+                                   t-att-min="product.price_donate_min or '1'"
+                                   t-att-value="d_button.amount or price_donate or product.price"/>
+                            <!-- Show currency -->
+                            <span class="input-group-addon arbitrary_price_currency"
+                                  t-esc="user_id.partner_id.property_product_pricelist.currency_id.name"/>
+                        </div>
+                        <!-- Arbitrary price error message -->
+                        <label id="price_donate-error" class="error" for="price_donate" style="font-size: 12px; display: none;"/>
+                    </t>
+
+                </div>
+
+                <!-- CLEARFIX DIV -->
+                <t t-if="d_button.clearfix">
+                    <div t-att-class="'clearfix clearfix-' + d_button_id"/>
+                </t>
+        </t>
+
+    </template>
+
+    </data>
+</openerp>

@@ -176,6 +176,7 @@ class product_template_onchange(osv.osv):
         if self.price_donate:
             self.hide_quantity = True
 
+
 # Extra fields for the created invoices
 class account_invoice(osv.Model):
     _inherit = 'account.invoice'

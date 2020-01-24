@@ -143,12 +143,15 @@
                                 <field name="amount_title"/>
                                 <field name="price_donate"/>
                                 <field name="price_donate_min" attrs="{'invisible': [('price_donate','=', False)]}"/>
+                                <field name="donation_input_template" string="Spendenbuttons Template"/>
                                 <field name="price_suggested_ids" attrs="{'invisible': [('price_donate','=', False)]}">
                                     <tree string="Suggested Donation-Values" default_order="sequence" editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="name"/>
                                         <field name="amount"/>
                                         <field name="css_classes"/>
+                                        <field name="clearfix"/>
+                                        <field name="arbitrary_price"/>
                                     </tree>
                                 </field>
                                 <!-- Deprecated and therefore disabled - only left here for reference -->

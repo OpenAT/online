@@ -360,7 +360,7 @@
                                             <t t-foreach="options" t-as="option">
                                                 <!-- Create Option List -->
                                                 <option t-att-value="option['item_id']"
-                                                        t-att-selected="True if f_value == str(option['item_id']) else ''">
+                                                        t-att-selected="'True' if str(f_value) == str(option['item_id']) else ''">
                                                     <t t-esc="option['item_name']"/>
                                                 </option>
                                             </t>

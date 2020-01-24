@@ -109,17 +109,26 @@ To solve this we did:
         #'data/email_template_data.xml', # moved to fso_base
         'security/ir.model.access.csv',
         'views/payment_acquirer.xml',
+
         'views/templates.xml',
         'views/templates_10_small_cart.xml',
         'views/templates_20_crowdfunding.xml',
         'views/templates_30_product_listings.xml',
+        'views/templates_35_price_donate_and_donation_buttons.xml',
         'views/templates_40_product_page.xml',
+
         'views/templates_50_ppt_subtemplates.xml',
         'views/templates_51_ppt_donate.xml',
         'views/templates_52_ppt_ahch.xml',
         'views/templates_53_ppt_opc.xml',
         'views/templates_54_ppt_inline_donation.xml',
-        'views/templates_60_checkout_steps.xml',
+
+        'views/templates_60_step_indicator.xml',
+        'views/templates_61_cart.xml',
+        'views/templates_62_checkout.xml',
+        'views/templates_63_payment.xml',
+        'views/templates_64_thanks.xml',
+
         'views/views.xml',
         'views/website.xml',
         #'views/fsonline_menu.xml', # Moved to fsonline addon

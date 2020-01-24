@@ -33,9 +33,15 @@ class ProductTemplate(models.Model):
     hide_confirmation_indicator = fields.Boolean(string='Hide Confirmation Indicator')
     confirmation_indicator_name = fields.Char(string='Confirmation Indicator Name', translate=True, default=_('4. Confirmation'))
 
-    # TODO: Custom Checkout Fields
+    # Custom Checkout Fields by product
     checkout_form_id = fields.Many2one(string="Checkout Fields Form", comodel_name='fson.form',
                                        help="Set custom checkout fields for this form")
+
+    # Custom donation input template (arbitrary price and donation buttons in checkout box)
+    # HINT: dit stands for donation input template
+    donation_input_template = fields.Selection(string="Donation Input Template",
+                                               selection=[('website_sale_donate.dit_advanced', 'Advanced'),
+                                                          ('website_sale_donate.dit_large', 'Large (TODO)')])
 
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):
@@ -64,7 +70,8 @@ class ProductTemplate(models.Model):
                 vals['fs_workflow'] = 'product'
         return super(ProductTemplate, self).write(vals)
 
-    # TODO: Custom Checkout Fields Form Button Action
+    # Custom Checkout Fields Form Button Action
+    # TODO: Add frontend validations
     @api.multi
     def create_checkout_fields_form(self):
         for r in self:

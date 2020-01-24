@@ -22,6 +22,7 @@ import locale
 # import the base controller class to inherit from
 from openerp.addons.website_sale.controllers.main import website_sale
 from openerp.addons.website_sale.controllers.main import QueryURL
+from openerp.addons.fso_forms.controllers.controller import FsoForms
 
 _logger = logging.getLogger(__name__)
 
@@ -458,14 +459,22 @@ class website_sale_donate(website_sale):
         fso_forms_billing_fields = self.get_fso_forms_billing_fields()
         if fso_forms_billing_fields:
             values['fso_forms_billing_fields'] = fso_forms_billing_fields
+
             # TODO: prepare form data if any (values['checkout']) maybe by fso.form._prepare_field_data()?!?
+            # Parse form data to match odoo field types
+            if values.get('checkout') and data:
+                fso_forms_obj = FsoForms()
+                parsed_form_values = fso_forms_obj._prepare_field_data(form=fso_forms_billing_fields[0].form_id,
+                                                                       form_field_data=data)
+                values['checkout'].update(parsed_form_values)
+
         # Add billing fields from the website
         else:
             billing_fields_obj = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields_obj.search([])
             values['billing_fields'] = billing_fields
 
-            # Fix website billing fields 'boolean' and 'date' field type values
+            # Fix website billing fields 'boolean' and 'date' field type values in the 'checkout' dict!
             for field in billing_fields:
                 f_name = field.res_partner_field_id.name
                 f_type = field.res_partner_field_id.ttype

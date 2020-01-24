@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- ============= -->
+        <!-- SHOPPING CART -->
+        <!-- ============= -->
+
+        <!-- INHERIT SUB-TEMPLATE total: Hide Tax if 0 -->
+        <template id="wsd_total" inherit_id="website_sale.total">
+            <xpath expr="//tr[@id='order_total_taxes']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order and website_sale_order.amount_tax else 'text-muted hidden'</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT SUB-TEMPLATE cart_delivery: Hide Delivery if 0 -->
+        <template id="wsd_total_delivery" inherit_id="website_sale_delivery.cart_delivery">
+            <xpath expr="//tr[@id='order_delivery']" position="attributes">
+                <attribute name="class"></attribute>
+                <attribute name="t-att-class">'text-muted' if website_sale_order and website_sale_order.amount_delivery else 'text-muted hidden'</attribute>
+            </xpath>
+        </template>
+
+        <!-- INHERIT SHOPPING CART -->
+        <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
+
+            <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
+            <xpath expr="//ul[@class='wizard pull-right']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//h1[@class='mb32']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//h1[@class='mb32']" position="after">
+                <t t-call="website_sale_donate.wsd_checkout_pages_header">
+                    <t t-set="cart_page" t-value="True"/>
+                </t>
+            </xpath>
+
+            <!-- Bottom Snippet-Dropping-Area (below cart) -->
+            <xpath expr="//div[@class='container oe_website_sale']/div[@class='row'][1]" position="after">
+                <div class="row wsd_cart_page_bottom">
+                    <div class="col-md-12">
+                        <div t-field="website.cart_page_bottom"/>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- SHOPPING CART ADJUSTMENTS -->
+            <!-- Add category to shopping cart products -->
+            <xpath expr="//a[@t-attf-href='/shop/product/#{ slug(line.product_id.product_tmpl_id) }']" position="replace">
+                <t t-set="line_cat" t-value="str(line.cat_id.id if line.cat_id else line.cat_root_id.id if line.cat_root_id else False)"/>
+                <a t-att-href="'' if line.product_id.do_not_link else '/shop/product/'+slug(line.product_id.product_tmpl_id)+('?category='+line_cat if line_cat else '')">
+                    <span t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                </a>
+            </xpath>
+
+            <!-- Add payment interval as text under the product price -->
+            <xpath expr="//table[@id='cart_products']//td[@name='price']" position="inside">
+                <t t-if="line.payment_interval_id">
+                    <div class="small text-muted text-right">(<t t-esc="line.payment_interval_id.name"/>)</div>
+                </t>
+            </xpath>
+
+            <!-- Do not show Sales order line text in shopping cart! (Because of two bugs: Bug 1: False if none Bug2: english language) -->
+            <xpath expr="//table[@id='cart_products']//div[@class='text-muted']" position="replace">
+                    <div class="hidden"> </div>
+            </xpath>
+
+            <!-- Hide list price in shopping cart if price_donate -->
+            <xpath expr="//td[@name='price']//del[@class='text-danger']" position="attributes">
+                <attribute name="t-if">not line.product_id.price_donate</attribute>
+            </xpath>
+
+            <!-- Hide price if 0 and show word free instead -->
+            <xpath expr="//td[@name='price']//span[@t-field]" position="attributes">
+                <attribute name="style"/>
+                <attribute name="t-att-style">'white-space: nowrap;' if line.discounted_price != 0 else 'display: none;'</attribute>
+            </xpath>
+            <xpath expr="//td[@name='price']//span[@t-field]" position="after">
+                <span t-if="line.discounted_price == 0" class="line_discounted_price_free">free</span>
+            </xpath>
+
+            <!-- Change the product quantity controls (oe_website_spinner) -->
+            <xpath expr="//table[@id='cart_products']//div[@class='input-group oe_website_spinner']" position="replace">
+                <!-- Product Quantity Selector -->
+                <div class="cart_controls">
+                    <div class="input-group oe_website_spinner pull-left">
+                        <span class="input-group-addon">
+                            <a t-attf-href="#"
+                               t-att-class="'mb8 js_add_cart_json disabled' if line.product_id.hide_quantity else 'mb8 js_add_cart_json'"
+                               data-no-instant="">
+                                <i class="fa fa-minus"></i>
+                            </a>
+                        </span>
+
+                        <input type="text"
+                               class="js_quantity form-control"
+                               t-att-disabled="line.product_id.hide_quantity"
+                               t-att-data-line-id="line.id"
+                               t-att-data-product-id="line.product_id.id"
+                               t-att-value="int(line.product_uom_qty)"/>
+
+                        <span class="input-group-addon">
+                            <a t-attf-href="#"
+                               t-att-class="'mb8 float_left disabled' if line.product_id.hide_quantity else 'mb8 float_left js_add_cart_json'"
+                               data-no-instant="">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </span>
+
+                    </div>
+                    <!-- Remove Product Button -->
+                    <a href="#" class="remove_product"
+                       t-att-data-line-id="line.id">
+                        <span class="glyphicon glyphicon-remove"/>
+                    </a>
+                </div>
+            </xpath>
+
+            <!-- Replace Continue-to-Checkout Button -->
+            <xpath expr="//a[@href='/shop/checkout']" position="attributes">
+                <attribute name="t-if">False</attribute>
+            </xpath>
+            <xpath expr="//a[@href='/shop/checkout']" position="after">
+                <a t-if="not optional_products and website_sale_order and website_sale_order.website_order_line"
+                   class="btn btn-primary pull-right" href="/shop/checkout">
+                    <t t-if="website.button_cart_to_data">
+                       <span t-field="website.button_cart_to_data"/>
+                    </t>
+                    <t t-if="not website.button_cart_to_data">
+                       Continue
+                    </t>
+                    &amp;nbsp;<span class="glyphicon glyphicon-chevron-right"/>
+                </a>
+            </xpath>
+        </template>
+
+        <!-- INHERIT CONTINUE SHOPPING OPTION: OPTION: Better Back Button -->
+        <template id="wsd_continue_shopping" inherit_id="website_sale.continue_shopping" customize_show="True" active="True" name="Back_to_Shop Button">
+            <xpath expr="//a[@href='/shop']" position="replace">
+                <!-- Back-to-Page Button -->
+                <t t-call="website_sale_donate.wsd_button_back_to_page">
+                    <t t-set="wsd_button_back_to_page" t-value="'btn btn-default'"/>
+                </t>
+            </xpath>
+        </template>
+
+
+        
+    </data>
+</openerp>

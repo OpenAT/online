@@ -5,6 +5,7 @@ from openerp import http
 from openerp.http import request
 from openerp.addons.website_sale.controllers.main import website_sale
 
+
 class website_sale_login(website_sale):
     # Return True if there is an res.user with the email given
     def userid_by_email(self, email=None):
