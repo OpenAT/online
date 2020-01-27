@@ -28,6 +28,7 @@ class PaymentAcquirer(models.Model):
     product_acquirer_lines_ids = fields.One2many(comodel_name='product.acquirer_lines',
                                                  inverse_name='acquirer_id', string='Product Acquirer Lines')
 
+
 # Product Template
 class ProductTemplate(models.Model):
     _inherit = 'product.template'

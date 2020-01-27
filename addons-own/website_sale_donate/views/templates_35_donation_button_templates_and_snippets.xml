@@ -2,7 +2,11 @@
 <openerp>
     <data>
 
+    <!-- ADVANCED DONATION BUTTON LAYOUT -->
     <template id="dit_advanced" name="Donation Input Template: Advanced Layout">
+
+        <!-- START CLEARFIX DIV -->
+        <div class="clearfix clearfix-donation-buttons-start"/>
 
         <!-- Donation buttons loop -->
         <t t-foreach="product.price_suggested_ids" t-as="d_button">
@@ -11,25 +15,33 @@
             <t t-set="d_button_classes" t-value="d_button.css_classes if d_button.css_classes else ''"/>
                 <div t-att-class="'form-group has-feedback donation_button_group ' + d_button_id + ' ' + d_button_classes + (' arbitrary_price_form_group' if d_button.arbitrary_price else '')">
 
+                    <!-- Compute the active button -->
+                    <t t-if="price_donate">
+                        <t t-set="d_button_active" t-value="True if price_donate == d_button.amount else False"/>
+                    </t>
+                    <t t-if="not price_donate">
+                        <t t-set="d_button_active" t-value="True if d_button.amount == product.list_price else False"/>
+                    </t>
+
                     <!-- Donation button -->
                     <t t-if="not d_button.arbitrary_price">
+                        <!-- Regular button -->
                         <t t-if="d_button.name">
                             <button type="button"
-                                    t-att-class="'price_donate_suggested btn btn-default donation_button ' + d_button_id"
+                                    t-att-class="'price_donate_suggested btn donation_button ' + d_button_id + (' btn-primary' if d_button_active else ' btn-default')"
                                     t-att-data-price="d_button.amount" >
                                 <t t-raw="d_button.name"/>
                             </button>
                         </t>
+                        <!-- Snippet Area button -->
                         <t t-if="not d_button.name">
                             <div t-field="d_button.snippets" type="button" href="#"
-                                    t-att-class="'price_donate_suggested btn btn-default oe_structure donation_button_snippets donation_button ' + d_button_id"
+                                    t-att-class="'price_donate_suggested btn btn-link oe_structure donation_button_snippets donation_button ' + d_button_id + (' donation_button_active' if d_button_active else ''"
                                     t-att-data-price="d_button.amount"/>
                         </t>
                     </t>
 
                     <!-- Arbitrary price input -->
-                    <!-- TODO: Text options or at least a label to show e.g.: "Your Amount" -->
-                    <!-- TODO: Java Script must also work with buttons above :) -->
                     <t t-if="d_button.arbitrary_price">
                         <div class="input-group arbitrary_price_input_group">
                             <input type="number"
@@ -37,7 +49,8 @@
                                    name="price_donate"
                                    id="price_donate"
                                    t-att-min="product.price_donate_min or '1'"
-                                   t-att-value="d_button.amount or price_donate or product.price"/>
+                                   t-att-placeholder="d_button.name if d_button.name else ''"
+                                   t-att-value="price_donate if price_donate else ('' if d_button.name else d_button.amount or product.price)"/>
                             <!-- Show currency -->
                             <span class="input-group-addon arbitrary_price_currency"
                                   t-esc="user_id.partner_id.property_product_pricelist.currency_id.name"/>
@@ -48,11 +61,14 @@
 
                 </div>
 
-                <!-- CLEARFIX DIV -->
+                <!-- NEWLINE / CLEARFIX DIV -->
                 <t t-if="d_button.clearfix">
                     <div t-att-class="'clearfix clearfix-' + d_button_id"/>
                 </t>
         </t>
+
+        <!-- FINAL CLEARFIX DIV -->
+        <!--<div class="clearfix clearfix-donation-buttons-end"/>-->
 
     </template>
 

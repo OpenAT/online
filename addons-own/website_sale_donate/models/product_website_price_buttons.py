@@ -24,14 +24,22 @@ class product_website_price_buttons(models.Model):
     clearfix = fields.Boolean(string="Linebreak")
     arbitrary_price = fields.Boolean(string="Arbitrary Price")
 
-    # ATTENTION: Will not work here - maybe it would work in product.template
-    # @api.onchange('arbitrary_price')
-    # def onchange_arbitrary_price(self):
-    #     for r in self:
-    #         if r.arbitrary_price:
-    #             for button in r.product_id.price_suggested_ids:
-    #                 if r.id != button.id and button.arbitrary_price:
-    #                     button.arbitrary_price = False
+    @api.onchange('arbitrary_price')
+    def onchange_arbitrary_price(self):
+        for r in self:
+            if r.arbitrary_price:
+                # If a 'name' is set for the arbitrary price this will be shown as a placeholder in the input
+                # therefore we clear the amount since it will not be used anyway
+                if r.name and r.amount:
+                    r.amount = r.product_id.list_price
+                # Loop through all the buttons linked to one product
+                for button in r.product_id.price_suggested_ids:
+                    # Change stuff for the 'other' buttons of this product
+                    if r.id != button.id:
+                        # Make sure only one line donate button has 'arbitrary_price' set!
+                        # ATTENTION: TODO: Will not work in the view because of the 'nested' tree in the product form!!!
+                        if button.arbitrary_price:
+                            button.arbitrary_price = False
 
     @api.constrains('arbitrary_price')
     def constrain_arbitrary_price(self):

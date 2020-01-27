@@ -114,7 +114,7 @@ To solve this we did:
         'views/templates_10_small_cart.xml',
         'views/templates_20_crowdfunding.xml',
         'views/templates_30_product_listings.xml',
-        'views/templates_35_price_donate_and_donation_buttons.xml',
+        'views/templates_35_donation_button_templates_and_snippets.xml',
         'views/templates_40_product_page.xml',
 
         'views/templates_50_ppt_subtemplates.xml',

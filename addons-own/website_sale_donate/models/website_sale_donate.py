@@ -334,27 +334,39 @@ class sale_order(osv.Model):
             else:
                 sol.fs_product_type = False
 
-            # TODO: Remove all other so lines where individual (per product) configurations of
-            #      'payment method', 'checkout fields' or 'steps indicator' will not match the current sale order line
+            # Remove all other sale order lines where individual (per product) configurations of
+            # 'payment method', 'checkout fields' or 'steps indicator' do not match the current sale order line
             order = sol.order_id
             for l in order.website_order_line:
                 if l.exists() and l.id != sol.id:
 
                     # Acquirer config mismatch
-                    if product.product_acquirer_lines_ids and l.product_id.product_acquirer_lines_ids:
-                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from so (ID: %s) because '
-                                     'acquirer configs do not match' % (l.id, order.id))
-                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
-                        continue
+                    if product.product_acquirer_lines_ids != l.product_id.product_acquirer_lines_ids:
+                        product_acquirer_ids = [] if not product.product_acquirer_lines_ids \
+                            else product.product_acquirer_lines_ids.ids
+                        sol_acquirer_ids = [] if not l.product_id.product_acquirer_lines_ids \
+                            else l.product_id.product_acquirer_lines_ids.ids
+                        # HINT: s ^ t = new set with elements in either s or t but not both
+                        if bool(set(product_acquirer_ids) ^ set(sol_acquirer_ids)):
+                            _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                         'acquirer configurations do not match' % (l.id, order.id))
+                            sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                            continue
 
                     # Checkout steps mismatch
                     if product.step_indicator_setup and l.product_id.step_indicator_setup:
-                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from so (ID: %s) because '
-                                     'checkout steps configs do not match' % (l.id, order.id))
+                        if any(product[sf] != l.product_id[sf] for sf in product._step_config_fields):
+                            _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                         'checkout steps configurations do not match' % (l.id, order.id))
+                            sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                            continue
+
+                    # Checkout fields mismatch (billing fields)
+                    if product.checkout_form_id != l.product_id.checkout_form_id:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'checkout fields configurations do not match' % (l.id, order.id))
                         sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
                         continue
-
-                    # TODO: Checkout fields mismatch (billing fields)
 
         return cu
 

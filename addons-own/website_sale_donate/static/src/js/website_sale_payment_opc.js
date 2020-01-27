@@ -3,9 +3,18 @@ $(document).ready(function () {
     // Set Suggested Price by Buttons
     var $price_donate = $("#price_donate");
     var $price_suggested = $(".price_donate_suggested");
+    var $price_suggested_donation_button = $price_suggested.filter('.donation_button');
     $price_suggested.on("click", function (ev1) {
         $price_donate.val( $(this).data("price") );
+
+        // ACTIVE BUTTON FOR THE NEW DONATION BUTTON LAYOUTS
+        $price_suggested_donation_button.removeClass('btn-primary').addClass('btn-default');
+        if ($(this).hasClass('donation_button')) {
+            $(this).removeClass('btn-default').addClass('btn-primary');
+        }
+
     });
+
 
     // Click radio input of the selected payment interval on first load of the page
     $("input[name='payment_interval_id'][checked]").ready(function () {

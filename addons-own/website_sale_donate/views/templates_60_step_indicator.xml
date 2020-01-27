@@ -81,7 +81,12 @@
                                 <!-- Checkout -->
                                 <t t-if="not hide_checkout_indicator">
                                     <li role="presentation" t-att-class="'checkout active' if checkout_page else 'checkout'">
-                                        <a href="/shop/checkout"><span t-esc="checkout_indicator_name"/></a>
+                                        <t t-if="website_sale_order and website_sale_order.website_order_line">
+                                            <a href="/shop/checkout"><span t-esc="checkout_indicator_name"/></a>
+                                        </t>
+                                        <t t-if="not website_sale_order or not website_sale_order.website_order_line">
+                                            <a href="#"><span t-esc="checkout_indicator_name"/></a>
+                                        </t>
                                     </li>
                                 </t>
 

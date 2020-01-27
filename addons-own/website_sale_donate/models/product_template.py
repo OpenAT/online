@@ -10,6 +10,12 @@ __author__ = 'Michael Karrer'
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
+    _step_config_fields = ['hide_cart_indicator', 'cart_indicator_name',
+                           'hide_product_indicator', 'product_indicator_name',
+                           'hide_checkout_indicator', 'checkout_indicator_name',
+                           'hide_payment_indicator', 'payment_indicator_name',
+                           'hide_confirmation_indicator', 'confirmation_indicator_name']
+
     website_published_start = fields.Datetime('Website Published Start')
     website_published_end = fields.Datetime('Website Published End')
     website_visible = fields.Boolean('Visible in Website (computed)', readonly=True,
@@ -35,13 +41,14 @@ class ProductTemplate(models.Model):
 
     # Custom Checkout Fields by product
     checkout_form_id = fields.Many2one(string="Checkout Fields Form", comodel_name='fson.form',
+                                       domain="[('product_template_ids', '!=', False)]",
                                        help="Set custom checkout fields for this form")
 
     # Custom donation input template (arbitrary price and donation buttons in checkout box)
     # HINT: dit stands for donation input template
     donation_input_template = fields.Selection(string="Donation Input Template",
                                                selection=[('website_sale_donate.dit_advanced', 'Advanced'),
-                                                          ('website_sale_donate.dit_large', 'Large (TODO)')])
+                                                          ])
 
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):
