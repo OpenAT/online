@@ -3,16 +3,20 @@ $(document).ready(function () {
     // Set Suggested Price by Buttons
     var $price_donate = $("#price_donate");
     var $price_suggested = $(".price_donate_suggested");
-    var $price_suggested_donation_button = $price_suggested.filter('.donation_button');
+    var $price_suggested_donation_buttons = $('.donation_button:not(.donation_button_snippets)');
+
     $price_suggested.on("click", function (ev1) {
         $price_donate.val( $(this).data("price") );
 
         // ACTIVE BUTTON FOR THE NEW DONATION BUTTON LAYOUTS
-        $price_suggested_donation_button.removeClass('btn-primary').addClass('btn-default');
-        if ($(this).hasClass('donation_button')) {
+        $price_suggested_donation_buttons.removeClass('btn-primary').addClass('btn-default');
+        if ($(this).hasClass('donation_button') && ! $(this).hasClass('donation_button_snippets')) {
             $(this).removeClass('btn-default').addClass('btn-primary');
         }
 
+    });
+    $price_donate.on("keypress", function (ev1) {
+        $price_suggested_donation_buttons.removeClass('btn-primary').addClass('btn-default');
     });
 
 

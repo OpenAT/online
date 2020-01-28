@@ -82,7 +82,7 @@
         <template id="checkoutbox" name="Checkout Box">
             <t t-set="show_download_link" t-value="True"/>
 
-            <div t-att-class="box_outer_class if box_outer_class else 'panel panel-default'">
+            <div t-att-class="('dit_'+product.donation_input_template+' ' if product and product.donation_input_template else '') + (box_outer_class if box_outer_class else 'panel panel-default')">
                 <div t-att-class="box_inner_class if box_inner_class else 'panel-body text-center'">
 
                     <!-- Product Name -->

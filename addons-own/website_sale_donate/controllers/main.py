@@ -446,6 +446,11 @@ class website_sale_donate(website_sale):
     # Add Shipping and Billing Fields to values (= the qcontext for the checkout template)
     # HINT: The calculated values for the fields can be found in the qcontext dict in key 'checkout'
     def checkout_values(self, data=None):
+        # Add geoip to session if not there
+        if 'geoip' not in request.session:
+            request.session['geoip'] = {}
+
+        # Call super
         values = super(website_sale_donate, self).checkout_values(data=data)
 
         # Update countries and states in values with countries and states sorted by website locale
