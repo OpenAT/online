@@ -188,17 +188,17 @@ msgstr "Hintergrund"
 #. module: fso_base_website
 #: view:website:website.snippets
 msgid "Content Group"
-msgstr "Content Gruppe"
+msgstr "Inhaltsgruppe"
 
 #. module: fso_base_website
 #: view:website:website.snippets
 msgid "Content-Group"
-msgstr "Content-Gruppe"
+msgstr "Inhalt-Gruppe"
 
 #. module: fso_base_website
 #: view:website:website.snippets
 msgid "Foreground"
-msgstr "Verdergund"
+msgstr "Vordergrund"
 
 #. module: fso_base_website
 #: view:website:fso_base_website.website_form
