@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-06 12:59+0000\n"
-"PO-Revision-Date: 2018-02-06 12:59+0000\n"
+"POT-Creation-Date: 2020-01-30 10:03+0000\n"
+"PO-Revision-Date: 2020-01-30 10:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,56 +16,189 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey_user_input
-msgid "Answers"
-msgstr "Antworten"
+#: view:website:website.layout
+msgid "\"\n"
+"                height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"/></noscript>\n"
+"                <!-- End Google Tag Manager (noscript) -->"
+msgstr "\"\n"
+"                height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"/></noscript>\n"
+"                <!-- End Google Tag Manager (noscript) -->"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_crm_oppor
-msgid "Bearbeitete Anfragen"
-msgstr "Bearbeitete Anfragen"
+#: view:website:fso_base_website.robots_txt_template
+msgid "# -------------\n"
+"# FSON Defaults\n"
+"# -------------\n"
+"User-agent: *\n"
+"Disallow: /certifications\n"
+"Disallow: /payment\n"
+"Disallow: /website_popup\n"
+"Disallow: /shop/confirmation_static\n"
+"Disallow: /shop/ogonepayment.html\n"
+"Disallow: /shop/confirm_order\n"
+"Disallow: /shop/confirmation\n"
+"Disallow: /shop/ogonepayment\n"
+"Disallow: /shop/checkout\n"
+"Disallow: /shop/payment\n"
+"Disallow: /shop/cart\n"
+"Disallow: /crm/contactus\n"
+"Disallow: /web/register\n"
+"Disallow: /web/reset_password\n"
+"Disallow: /web/login\n"
+"Disallow: /event/get_country_event_list\n"
+"Disallow: /forum/get_tags\n"
+"Disallow: /aswidget\n"
+"Disallow: /as_widget\n"
+"Disallow: /members\n"
+"Disallow: /groups\n"
+"Disallow: /register\n"
+"Disallow: /partners/country\n"
+"Disallow: /jobs/country\n"
+"Disallow: /certifications\n"
+"\n"
+"# Multilanguage:\n"
+"Disallow: /*/payment\n"
+"Disallow: /*/website_popup\n"
+"Disallow: /*/shop/confirmation_static\n"
+"Disallow: /*/shop/ogonepayment.html\n"
+"Disallow: /*/shop/confirm_order\n"
+"Disallow: /*/shop/confirmation\n"
+"Disallow: /*/shop/ogonepayment\n"
+"Disallow: /*/shop/checkout\n"
+"Disallow: /*/shop/payment\n"
+"Disallow: /*/shop/cart\n"
+"Disallow: /*/crm/contactus\n"
+"Disallow: /*/web/register\n"
+"Disallow: /*/web/reset_password\n"
+"Disallow: /*/web/login\n"
+"Disallow: /*/event/get_country_event_list\n"
+"Disallow: /*/forum/get_tags\n"
+"Disallow: /*/aswidget\n"
+"Disallow: /*/as_widget\n"
+"Disallow: /*/members\n"
+"Disallow: /*/groups\n"
+"Disallow: /*/register\n"
+"Disallow: /*/partners/country\n"
+"Disallow: /*/jobs/country\n"
+"\n"
+"#\n"
+"Sitemap:"
+msgstr "# -------------\n"
+"# FSON Defaults\n"
+"# -------------\n"
+"User-agent: *\n"
+"Disallow: /certifications\n"
+"Disallow: /payment\n"
+"Disallow: /website_popup\n"
+"Disallow: /shop/confirmation_static\n"
+"Disallow: /shop/ogonepayment.html\n"
+"Disallow: /shop/confirm_order\n"
+"Disallow: /shop/confirmation\n"
+"Disallow: /shop/ogonepayment\n"
+"Disallow: /shop/checkout\n"
+"Disallow: /shop/payment\n"
+"Disallow: /shop/cart\n"
+"Disallow: /crm/contactus\n"
+"Disallow: /web/register\n"
+"Disallow: /web/reset_password\n"
+"Disallow: /web/login\n"
+"Disallow: /event/get_country_event_list\n"
+"Disallow: /forum/get_tags\n"
+"Disallow: /aswidget\n"
+"Disallow: /as_widget\n"
+"Disallow: /members\n"
+"Disallow: /groups\n"
+"Disallow: /register\n"
+"Disallow: /partners/country\n"
+"Disallow: /jobs/country\n"
+"Disallow: /certifications\n"
+"\n"
+"# Multilanguage:\n"
+"Disallow: /*/payment\n"
+"Disallow: /*/website_popup\n"
+"Disallow: /*/shop/confirmation_static\n"
+"Disallow: /*/shop/ogonepayment.html\n"
+"Disallow: /*/shop/confirm_order\n"
+"Disallow: /*/shop/confirmation\n"
+"Disallow: /*/shop/ogonepayment\n"
+"Disallow: /*/shop/checkout\n"
+"Disallow: /*/shop/payment\n"
+"Disallow: /*/shop/cart\n"
+"Disallow: /*/crm/contactus\n"
+"Disallow: /*/web/register\n"
+"Disallow: /*/web/reset_password\n"
+"Disallow: /*/web/login\n"
+"Disallow: /*/event/get_country_event_list\n"
+"Disallow: /*/forum/get_tags\n"
+"Disallow: /*/aswidget\n"
+"Disallow: /*/as_widget\n"
+"Disallow: /*/members\n"
+"Disallow: /*/groups\n"
+"Disallow: /*/register\n"
+"Disallow: /*/partners/country\n"
+"Disallow: /*/jobs/country\n"
+"\n"
+"#\n"
+"Sitemap:"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_blog
-msgid "Blog"
-msgstr "Blog"
+#: view:website:website.layout
+msgid "');</script>\n"
+"                <!-- End Google Tag Manager -->"
+msgstr "');</script>\n"
+"                <!-- End Google Tag Manager -->"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_blog_blogs
-msgid "Blogs"
-msgstr "Blogs"
+#: view:website:website.layout
+msgid "<!-- Google Tag Manager (noscript) -->\n"
+"                <noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id="
+msgstr "<!-- Google Tag Manager (noscript) -->\n"
+"                <noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id="
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_crm
-msgid "CRM"
-msgstr "CRM"
+#: view:website:website.layout
+msgid "<!-- Google Tag Manager -->\n"
+"                <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n"
+"                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n"
+"                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n"
+"                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n"
+"                })(window,document,'script','dataLayer','"
+msgstr "<!-- Google Tag Manager -->\n"
+"                <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n"
+"                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n"
+"                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n"
+"                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n"
+"                })(window,document,'script','dataLayer','"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_doc
-msgid "Documentation"
-msgstr "Dokumentation"
+#: view:website:fso_base_website.website_form
+msgid "ATTENTION: If the Google Tag Manager Key is set the Google Analytics Script or Google Analytics Key below will not be used or loaded to avoid double tracking"
+msgstr "ACHTUNG: Wenn ein Google Tag Manager Key eingetragen ist wird das Google Analytics Script oder der Google Analytics Key nicht verwendet um eine doppelte Erfassung zu vermeiden."
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_website_domains
-#: model:ir.ui.menu,name:fso_base_website.website_domains_menu
-msgid "Domain Manager"
-msgstr "Domain Manager"
+#: help:website,robots_txt:0
+msgid "Add custom instructions to the top of the robots.txt file!"
+msgstr "Eigene Regeln bitte am Anfang der robots.txt hinzufügen!"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.domain_templates_menu
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_domain_templates
-msgid "Domain Templates"
-msgstr "Domain Templates"
+#: view:website:website.snippets
+msgid "Background"
+msgstr "Hintergrund"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_forum
-msgid "Forum"
-msgstr "Hilfeforum"
+#: view:website:website.snippets
+msgid "Content Group"
+msgstr "Content Gruppe"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_forum_forums
-msgid "Forums"
-msgstr "Forenverzeichnis"
+#: view:website:website.snippets
+msgid "Content-Group"
+msgstr "Content-Gruppe"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Foreground"
+msgstr "Verdergund"
 
 #. module: fso_base_website
 #: view:website:fso_base_website.website_form
@@ -78,15 +211,54 @@ msgid "Google Analytics Script"
 msgstr "Google Analytics Script"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey_label_form
-msgid "Labels"
-msgstr "Überschriften"
+#: view:website:fso_base_website.website_form
+msgid "Google Tag Manager"
+msgstr "Google Tag Manager"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_landing_pages_manager
-#: model:ir.ui.menu,name:fso_base_website.widget_manager_lp_menu
-msgid "LandingPage Manager"
-msgstr "LandingPage Manager"
+#: field:website,google_tag_manager_key:0
+msgid "Google Tag Manager Key"
+msgstr "Google Tag Manager Key"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Height (min.)"
+msgstr "Höhe (min.)"
+
+#. module: fso_base_website
+#: help:website,google_tag_manager_key:0
+msgid "If a google tag manager key is set the google analytics scripts will NOT be loaded!"
+msgstr "Wenn der Google Tag Manager Key gesetzt ist wird das Google Analytics Script nicht geladen!"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Large"
+msgstr "Groß"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Light Blue"
+msgstr "Hellblau"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Light Grey"
+msgstr "Hellgray"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Light Red"
+msgstr "Hellrot"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Light Yellow"
+msgstr "Hellgelb"
+
+#. module: fso_base_website
+#: view:website:website.snippets
+msgid "Medium"
+msgstr "Mittel"
 
 #. module: fso_base_website
 #: view:website:fso_base_website.website_form
@@ -94,21 +266,14 @@ msgid "Name"
 msgstr "Bezeichnung"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_crm_leads
-msgid "Neue Anfragen"
-msgstr "Neue Anfragen"
+#: view:website:website.snippets
+msgid "Padding Back"
+msgstr "Padding Hinten"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey_page_form
-msgid "Pages"
-msgstr "Seiten"
-
-#. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_blog_posts
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_doc_posts
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_forum_posts
-msgid "Posts"
-msgstr "Beiträge"
+#: view:website:website.snippets
+msgid "Padding Front"
+msgstr "Padding Vorne"
 
 #. module: fso_base_website
 #: field:website,PublicPartnerNoSubscribe:0
@@ -121,19 +286,14 @@ msgid "Public Partner: Timezone"
 msgstr "Zeitzone des Öffentlichen Benutzers"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey_question_form
-msgid "Questions"
-msgstr "Fragestellungen"
-
-#. module: fso_base_website
 #: view:website:fso_base_website.website_form
 msgid "Search Engines"
 msgstr "Suchmaschinen"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_settings
-msgid "Settings"
-msgstr "Einstellungen"
+#: view:website:website.snippets
+msgid "Small"
+msgstr "Sehr klein"
 
 #. module: fso_base_website
 #: view:website:fso_base_website.website_form
@@ -141,19 +301,14 @@ msgid "Social Media Accounts"
 msgstr "Social Media Konten"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey
-msgid "Survey"
-msgstr "Umfrage"
+#: view:website:website.snippets
+msgid "Structure Group"
+msgstr "Strukturgruppe"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey_user_input_line
-msgid "Survey User Input lines"
-msgstr "Teilnehmer Eingabezeilen"
-
-#. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_survey_surveys
-msgid "Surveys"
-msgstr "Umfragen"
+#: view:website:website.snippets
+msgid "Structure-Group"
+msgstr "Struktur-Gruppe"
 
 #. module: fso_base_website
 #: view:website:fso_base_website.website_form
@@ -174,16 +329,6 @@ msgstr "TIP: Diese Einstellung verhindert, dass der Kontakt (Benutzer/Spender) a
 "                                     keine generischen Informations E-Mails erhällt. Wesentliche E-Mails wie das Danke E-Mail werden jedoch dennoch zugestellt."
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_doc_toc
-msgid "Table of Content"
-msgstr "Inhaltsverzeichnis"
-
-#. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_blog_tags
-msgid "Tags"
-msgstr "Schlagwörter"
-
-#. module: fso_base_website
 #: view:website:fso_base_website.website_form
 msgid "The default is Enabled."
 msgstr "Im Standard aktiviert."
@@ -192,6 +337,11 @@ msgstr "Im Standard aktiviert."
 #: help:website,PublicPartnerTimezone:0
 msgid "The partner's timezone, used to output proper date and time values inside printed reports. It is important to set a value for this field. You should use the same timezone that is otherwise used to pick and render date and time values: your computer's timezone."
 msgstr "Die Zeitzone des Kontaktes bestimmt das Datums und Zeitformat für das Backend, die Webseite sowie für PDF-Reports. Daher ist es sehr wichtig die Zeitzone für jeden Kontakt korrekt zu setzen."
+
+#. module: fso_base_website
+#: view:website:fso_base_website.website_form
+msgid "This text will be added to the top of the robots.txt file!"
+msgstr "Dieser Text wird am Anfang der robots.txt Datei hinzugefügt!"
 
 #. module: fso_base_website
 #: view:website:website.robots
@@ -301,15 +451,8 @@ msgstr "User-agent: *\n"
 "                    Sitemap:"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web
-msgid "Webseite"
-msgstr "Webseite"
-
-#. module: fso_base_website
 #: model:ir.actions.act_window,name:fso_base_website.website_action
 #: model:ir.model,name:fso_base_website.model_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_website_menu
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_website
 #: model:ir.ui.menu,name:fso_base_website.website_menu
 #: view:website:fso_base_website.website_form
 msgid "Website"
@@ -332,23 +475,17 @@ msgid "Websites"
 msgstr "Webseiten"
 
 #. module: fso_base_website
-#: model:ir.ui.menu,name:fso_base_website.menu_fsonline_web_widget_manager
-#: model:ir.ui.menu,name:fso_base_website.widget_manager_menu
-msgid "Widget Manager"
-msgstr "Widget Manager"
-
-#. module: fso_base_website
 #: view:website:fso_base_website.website_form
-#: field:website,RobotsArch:0
 msgid "robots.txt"
 msgstr "robots.txt"
 
 #. module: fso_base_website
-#: field:website,RobotsViewId:0
-msgid "robots.txt id"
-msgstr "robots.txt id"
+#: field:website,robots_txt:0
+msgid "robots.txt Extras"
+msgstr "robots.txt Extras"
 
 #. module: fso_base_website
+#: view:website:fso_base_website.robots_txt_template
 #: view:website:website.robots
 msgid "sitemap.xml"
 msgstr "sitemap.xml"
