@@ -27,6 +27,12 @@
 FS-Online fso_base_website
 ==========================
 Basic addon for all FS-Online website related addons
+
+## Google Tag Manager
+Set the Google Tag Manager key to load the Tag Manager scripts.
+
+## Custom Google Analytic Scrip
+Use a custom Google Analytic Script (only used if Google Tag Manager Key is not set) 
  
 ## Load default Java Script libraries and css
 Add java script libraries to assets_frontend:

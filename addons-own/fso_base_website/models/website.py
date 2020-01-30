@@ -60,3 +60,8 @@ Disallow: /*/forum
 
     google_analytics_script = fields.Text(string="Google Analytics Script")
 
+    google_tag_manager_key = fields.Char(string="Google Tag Manager Key",
+                                         help="If a google tag manager key is set the google analytics scripts will "
+                                              "NOT be loaded!")
+    
+
