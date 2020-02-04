@@ -21,7 +21,7 @@
 ##############################################################################
 
 {
-    'name': "website_sale_donate_google_tag_manager FS-Online Spendenshop Google Tag Manager tracking",
+    'name': "website_sale_donate_google_tag_manager FS-Online Spendenshop Google Tag Manager Tracking",
     'version': '1.0',
     'summary': """Create events for the google tag manager enhanced ecommerce tracking""",
     'sequence': 200,
@@ -30,17 +30,19 @@
 Create and send custom events for the google tag manager enhanced ecommerce tracking!
 https://developers.google.com/tag-manager/enhanced-ecommerce
 
-HINT: Some google tracking code is already prepared in the addon website_sale > website_sale_tracking.js
+HINT: Some google tracking code is already prepared in the addon website_sale > website_sale_tracking.js but this seems 
+      unfinished from odoo.
 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'depends': [
+        #'fso_base_website',
         'website_sale_donate',
     ],
     'installable': True,
     'data': [
-        '/views/templates.xml',
+        'views/templates.xml',
     ],
 }
