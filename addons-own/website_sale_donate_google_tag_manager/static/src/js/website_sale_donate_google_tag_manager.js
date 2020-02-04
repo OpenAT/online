@@ -1,4 +1,7 @@
 // BEST TUTORIAL: https://www.simoahava.com/analytics/enhanced-ecommerce-guide-for-google-tag-manager
+// TODO: This code is not yet optimized for the one page checkout! Missing:
+//       - Ensure order of checkout steps submission
+//       - purchase will not be fired for payment mehtod bankeinzug because it will not open the auto redirect form!
 $(document).ready(function () {
 
     function get_odoo_product_details_for_gtm (odoo_product_html) {
