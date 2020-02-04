@@ -45,5 +45,5 @@ class WebsiteSaleDonateGTM(website_sale_donate):
         if sale_order_id:
             order = request.env['sale.order'].sudo().browse(sale_order_id)
             gtm_data = self.order_2_gtm(order)
-            logger.info('gtm_date %s' % gtm_data)
+            logger.info('gtm_data %s' % gtm_data)
         return gtm_data
