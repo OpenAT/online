@@ -1400,8 +1400,8 @@ class DonationReportSubmission(models.Model):
                 ('submission_env', '=', 'P'),
             ], limit=1)
 
-            # SKIPP AUTOMATIC SUBMISSION IF "NOW" IS OUTSIDE OF THE MELDEZEITRAUM
-            # -------------------------------------------------------------------
+            # SKIPP/STOP AUTOMATIC SUBMISSION FOR THIS FISCAL YEAR IF "NOW" IS OUTSIDE OF THE MELDEZEITRAUM
+            # ---------------------------------------------------------------------------------------------
             # HINT: Only fiscal years with meldezeitraum_start and meldezeitraum_end where searched for
             start = datetime.datetime.strptime(y.meldezeitraum_start, DEFAULT_SERVER_DATETIME_FORMAT)
             end = datetime.datetime.strptime(y.meldezeitraum_end, DEFAULT_SERVER_DATETIME_FORMAT)
@@ -1435,6 +1435,36 @@ class DonationReportSubmission(models.Model):
                 if report_exists:
                     send_internal_email(odoo_env_obj=self.env, subject=msg_error)
 
+            # WARN IF UNSUBMITTED MANUAL SUBMISSIONS EXISTS
+            # ---------------------------------------------
+            manual_not_send = self.sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
+                ('state', 'in', ['new', 'prepared', 'error']),
+                ('manual', '=', True),
+                ('submission_env', '=', 'P'),
+            ])
+            if manual_not_send:
+                manual_msg = ("scheduled_submission() WARNING! Unsubmitted MANUAL donation report submission found! "
+                              "(%s)" % manual_not_send.ids)
+                logger.warning(manual_msg)
+                send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
+
+            # ALWAYS (RE)SUBMIT NON-MANUAL EXISTING SUBMISSIONS IN STATE ERROR
+            # ----------------------------------------------------------------
+            # TODO: Maybe we should also retry manual submission in state error?!?
+            logger.info("Submitt donation report submissions in state error!")
+            existing_error = self.sudo().search([
+                ('meldungs_jahr', '=', y.meldungs_jahr),
+                ('bpk_company_id', '=', y.company_id.id),
+                ('state', 'in', ['error']),
+                ('manual', '=', False),
+                ('submission_env', '=', 'P'),
+            ])
+            for s in existing_error:
+                if prepare(s):
+                    submit(s)
+
             # A) CHECK FOR EXISTING SUBMISSIONS NEWER THAN drg_last (Last donation report generation in FRST)
             # -----------------------------------------------------------------------------------------------
             # HINT: Will also jump to B) if drg_last_count = 0 which means that no reports where generated in the last
@@ -1451,15 +1481,14 @@ class DonationReportSubmission(models.Model):
                     ('create_date', '>', y.drg_last),
                 ])
 
-                # SKIPP AUTOMATIC SUBMISSION IF NEWER SUBMISSIONS EXISTS
+                # NEWER SUBMISSION EXISTS! !!! SKIPP AUTOMATIC SUBMISSION FOR THIS INTERVAL !!!
                 if newer_than_drg_last:
                     logger.info("scheduled_submission() Submissions newer than last donation report generation in FRST "
                                 "found for meldejahr %s (ID %s). Submission ids: %s. Skipping automatic submission!"
                                 "" % (y.meldungs_jahr, y.id, newer_than_drg_last.ids))
                     continue
 
-                # NO EXISTING SUBMISSION FOUND SINCE LAST DONATION REPORT GENERATION IN FRST:
-                # CHECK REPORT COUNT TO MAKE SURE ALL REPORTS ARE SYNCED
+                # Warn if the there may be unsynced donation reports
                 else:
                     new_reports = self.env['res.partner.donation_report'].sudo().search([
                         ('meldungs_jahr', '=', y.meldungs_jahr),
@@ -1468,28 +1497,15 @@ class DonationReportSubmission(models.Model):
                         ('create_date', '>=', y.drg_last),
                     ])
 
-                    # Check if new submissions in FS-Online match the count from Fundraising Studio
-                    # HINT: Auto submission scheduled task must be run once a day!
+                    # Warn new donation reports in FS-Online do not match the count from Fundraising Studio in the
+                    # fiscal year
                     if not new_reports or len(new_reports) < y.drg_last_count:
-
-                        # WAIT FOR 24 HOURS IF NEW DONATION REPORTS ARE LESS THAN DRG_LAST_COUNT!
-                        if now < (drg_last + datetime.timedelta(hours=24)):
-                            manual_msg = ("scheduled_submission() WARNING! There may be unsynced donation reports! "
-                                          "Waiting max. 24 hours since drg_last for sync to finish! Skipping "
-                                          "meldejahr %s until next scheduler run (ID %s)" % (y.meldungs_jahr, y.id))
-                            logger.warning(manual_msg)
-                            send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
-                            continue
-
-                        # CONTINUE WITH AUTOMATIC SUBMISSION IF STILL TO FEW DONATION REPORTS EXISTS AFTER 24 HOURS
-                        # Send a warning and go on with the auto submission
-                        else:
-                            manual_msg = ("scheduled_submission() WARNING! There may be unsynced donation reports! "
-                                          "New reports found in FSON: %s Number of reports created in FRST: %s"
-                                          "Existing donation reports will be submitted!"
-                                          "" % (len(new_reports), y.drg_last_count))
-                            logger.warning(manual_msg)
-                            send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
+                        manual_msg = ("scheduled_submission() WARNING! There may be unsynced donation reports! "
+                                      "New reports found in FSON: %s Number of reports created in FRST: %s"
+                                      "Existing donation reports will be submitted!"
+                                      "" % (len(new_reports), y.drg_last_count))
+                        logger.warning(manual_msg)
+                        send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
 
             # B) CHECK INTERVAL RANGE IF INFORMATION OF LAST DONATION REPORT GENERATION IS MISSING OR NO REPS GENERATED
             # ---------------------------------------------------------------------------------------------------------
@@ -1504,7 +1520,7 @@ class DonationReportSubmission(models.Model):
                     ('submission_datetime', '!=', False),
                 ], limit=1, order='submission_datetime DESC')
 
-                # SKIPP AUTOMATIC SUBMISSION IF SUBMISSION(S) EXISTS ALREADY FOR THIS INTERVAL
+                # NEWER SUBMISSION EXISTS! !!! SKIPP AUTOMATIC SUBMISSION FOR THIS INTERVAL !!!
                 if last_submitted:
                     # Check if the interval values are correctly set at the fiscal year
                     if not y.drg_interval_number or not y.drg_interval_type or y.drg_interval_type != 'days':
@@ -1522,27 +1538,16 @@ class DonationReportSubmission(models.Model):
                                     "in interval range set at the fiscal year!")
                         continue
 
-            # CHECK AND WARN FOR UNSUBMITTED MANUAL DONATION REPORT SUBMISSIONS
-            # -----------------------------------------------------------------
-            manual_not_send = self.sudo().search([
-                ('meldungs_jahr', '=', y.meldungs_jahr),
-                ('bpk_company_id', '=', y.company_id.id),
-                ('state', 'in', ['new', 'prepared', 'error']),
-                ('manual', '=', True),
-                ('submission_env', '=', 'P'),
-            ])
-            if manual_not_send:
-                manual_msg = ("scheduled_submission() WARNING! Unsubmitted MANUAL donation report submission found! "
-                              "(%s)" % manual_not_send.ids)
-                logger.warning(manual_msg)
-                send_internal_email(odoo_env_obj=self.env, subject=manual_msg)
-
-            # SUBMIT NON-MANUAL EXISTING SUBMISSIONS
-            # --------------------------------------
+            # SUBMIT "NEW" AND "PREPARED" NON-MANUAL EXISTING SUBMISSIONS
+            # -----------------------------------------------------------
+            # TODO: Maybe we can send these submissions also before the
+            #      'CHECK FOR EXISTING SUBMISSIONS NEWER THAN drg_last'
+            # HINT: Submissions in state 'error' are already submitted above without the
+            #       'CHECK FOR EXISTING SUBMISSIONS NEWER THAN drg_last'
             existing = self.sudo().search([
                 ('meldungs_jahr', '=', y.meldungs_jahr),
                 ('bpk_company_id', '=', y.company_id.id),
-                ('state', 'in', ['new', 'prepared', 'error']),
+                ('state', 'in', ['new', 'prepared']),
                 ('manual', '=', False),
                 ('submission_env', '=', 'P'),
             ])
