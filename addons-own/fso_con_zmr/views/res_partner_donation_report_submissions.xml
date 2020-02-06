@@ -134,12 +134,13 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Donation Report Submissions"
-                  default_order="submission_datetime DESC, write_date DESC"
+                  default_order="submission_datetime DESC"
                   colors="
-                  red: state in ['error', 'response_nok', 'response_twok', 'unexpected_response'];
-                  orange: state == 'submitted';
-                  green: state == 'response_ok';
-                  blue: state == 'prepared';">
+                  grey: line_state == 'empty';
+                  red: line_state == 'error';
+                  blue: line_state == 'prepared';
+                  orange: line_state == 'submitted';
+                  green: line_state == 'done';">
                 <field name="name"/>
                 <field name="submission_env"/>
                 <field name="meldungs_jahr"/>
@@ -148,10 +149,11 @@
                 <field name="manual"/>
                 <field name="force_submission"/>
                 <field name="state"/>
+                <field name="reports_count"/>
+                <field name="line_state" invisible="1"/>
             </tree>
         </field>
     </record>
-
 
     <record model="ir.ui.view" id="res_partner_donation_report_submission_search">
         <field name="name">res_partner_donation_report_submission_search</field>
@@ -169,6 +171,26 @@
                 <field name="force_submission"/>
                 <field name="state"/>
                 <field name="submission_env"/>
+                <group string="Filter by">
+                    <filter string="Production-Env"
+                            domain="[('submission_env','=','P')]"/>
+                    <filter string="Test-Env"
+                            domain="[('submission_env','=','T')]"/>
+                </group>
+                <group string="Group by">
+                    <filter string="State"
+                            context="{'group_by':'state'}"/>
+                    <filter string="Meldungsjahr"
+                            context="{'group_by':'meldungs_jahr'}"/>
+                    <filter string="Company"
+                            context="{'group_by':'bpk_company_id'}"/>
+                    <filter string="Submission-Datetime"
+                            context="{'group_by':'submission_datetime'}"/>
+                    <filter string="Manual/Regular"
+                            context="{'group_by':'manual'}"/>
+                    <filter string="Forced-Submissions"
+                            context="{'group_by':'force_submission'}"/>
+                </group>
             </search>
         </field>
     </record>

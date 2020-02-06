@@ -179,7 +179,8 @@ class DonationReportSubmission(models.Model):
     # --------
     response_http_code = fields.Char(string="Response HTTP Code", readonly=True)
     response_content = fields.Text(string="Response Content (raw)", readonly=True)
-    response_content_parsed = fields.Text(string="Response Content (prettyprint)", readonly=True)
+    response_content_parsed = fields.Text(string="Response Content (prettyprint)", readonly=True,
+                                          track_visibility='onchange')
 
     response_error_type = fields.Selection(string="Response Error Type", readonly=True, track_visibility='onchange',
         selection=[
@@ -210,6 +211,18 @@ class DonationReportSubmission(models.Model):
                                 help="Response File from FinanzOnline DataBox")
     response_file_pretty = fields.Text(string="Response File (pretty)", readonly=True,
                                        help="Response File from FinanzOnline DataBox")
+
+    line_state = fields.Selection(string="Computed Tree View Line Color",
+                                  compute="compute_line_state_reports_count", compute_sudo=True, readonly=True,
+                                  selection=[('empty', 'Empty'),
+                                             ('error', 'Error'),
+                                             ('prepared', 'Prepared for Submission'),
+                                             ('submitted', 'Submitted to ZMR'),
+                                             ('done', 'Processed by ZMR'),
+                                             ])
+
+    reports_count = fields.Integer(string="Reports",
+                                   compute="compute_line_state_reports_count", compute_sudo=True, readonly=True)
 
     # ---------------
     # COMPUTED FIELDS
@@ -245,6 +258,25 @@ class DonationReportSubmission(models.Model):
             else:
                 r.submission_content_file = False
                 r.submission_content_filename = False
+
+    @api.depends('state', 'donation_report_ids')
+    def compute_line_state_reports_count(self):
+        for r in self:
+            # line_state
+            if not r.donation_report_ids:
+                r.line_state = 'empty'
+            elif r.state in ['error', 'response_nok', 'unexpected_response']:
+                r.line_state = 'error'
+            elif r.state == 'prepared':
+                r.line_state = 'prepared'
+            elif r.state == 'submitted':
+                r.line_state = 'submitted'
+            elif r.state in ('response_ok', 'response_twok'):
+                r.line_state = 'done'
+            else:
+                r.line_state = False
+            # reports_count
+            r.reports_count = len(r.donation_report_ids) if r.donation_report_ids else 0
 
     def compute_force_submission(self):
         for r in self:
@@ -1433,7 +1465,7 @@ class DonationReportSubmission(models.Model):
                         ('meldungs_jahr', '=', y.meldungs_jahr),
                         ('bpk_company_id', '=', y.company_id.id),
                         ('submission_env', '=', 'P'),
-                        ('create_date', '>', y.drg_last),
+                        ('create_date', '>=', y.drg_last),
                     ])
 
                     # Check if new submissions in FS-Online match the count from Fundraising Studio
@@ -1442,9 +1474,11 @@ class DonationReportSubmission(models.Model):
 
                         # WAIT FOR 24 HOURS IF NEW DONATION REPORTS ARE LESS THAN DRG_LAST_COUNT!
                         if now < (drg_last + datetime.timedelta(hours=24)):
-                            logger.info("scheduled_submission() WARNING! There may be unsynced donation reports! "
-                                        "Waiting for 24 hours since drg_last for sync to finish! Skipping this "
-                                        "meldejahr for next run %s (ID %s)" % (y.meldungs_jahr, y.id))
+                            manual_msg = ("scheduled_submission() WARNING! There may be unsynced donation reports! "
+                                          "Waiting max. 24 hours since drg_last for sync to finish! Skipping "
+                                          "meldejahr %s until next scheduler run (ID %s)" % (y.meldungs_jahr, y.id))
+                            logger.warning(manual_msg)
+                            send_internal_email(odoo_env_obj=self.env, subject=manual_msg, body=manual_msg)
                             continue
 
                         # CONTINUE WITH AUTOMATIC SUBMISSION IF STILL TO FEW DONATION REPORTS EXISTS AFTER 24 HOURS
