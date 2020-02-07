@@ -1,7 +1,7 @@
 // BEST TUTORIAL: https://www.simoahava.com/analytics/enhanced-ecommerce-guide-for-google-tag-manager
-// TODO: This code is not yet optimized for the one page checkout! Missing:
-//       - Ensure order of checkout steps submission
-//       - purchase will not be fired for payment mehtod bankeinzug because it will not open the auto redirect form!
+// ATTENTION: This code is not yet optimized for one page checkout and will work only for the multi step/page checkout
+// TODO FOR OPC: - Ensure order of checkout steps submission
+//               - purchase will not be fired for payment mehtod bankeinzug because it will not open any auto redirect form
 $(document).ready(function () {
 
     function get_odoo_product_details_for_gtm (odoo_product_html) {
@@ -148,13 +148,14 @@ $(document).ready(function () {
     });
 
     // PURCHASE (This is the final redirect to the payment provider)
+    // For auto submit payment-acquirer-forms e.g. on one-page-checkout product pages
     $(".js_auto_submit_form form").submit( function () {
         console.log('.js_auto_submit_form = final redirect to the payment provider!');
         openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
             if (gtm_sale_order_data && gtm_sale_order_data.products) {
                 console.log('Push GTM Data Layer Event "fsonline.purchase"', gtm_sale_order_data);
                 dataLayer.push({
-                    event: 'fsonline.purchase',
+                    'event': 'fsonline.purchase',
                     'ecommerce': {
                         'purchase': {
                             'actionField': gtm_sale_order_data.order_data,
@@ -165,13 +166,14 @@ $(document).ready(function () {
             }
         });
     });
+    // For the regular payment page "pay-now" button
     $("form.payment_opc_acquirer_form").submit( function () {
         console.log('form.payment_opc_acquirer_form submission!');
         openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
             if (gtm_sale_order_data && gtm_sale_order_data.products) {
                 console.log('Push GTM Data Layer Event "fsonline.purchase"', gtm_sale_order_data);
                 dataLayer.push({
-                    event: 'fsonline.purchase',
+                    'event': 'fsonline.purchase',
                     'ecommerce': {
                         'purchase': {
                             'actionField': gtm_sale_order_data.order_data,
