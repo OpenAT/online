@@ -21,52 +21,28 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_base_website",
-    'summary': """FS-Online fso_base_website""",
+    'name': "website_sale_donate_google_tag_manager FS-Online Spendenshop Google Tag Manager Tracking",
+    'version': '1.0',
+    'summary': """Create events for the google tag manager enhanced ecommerce tracking""",
+    'sequence': 200,
     'description': """
-FS-Online fso_base_website
-==========================
-Basic addon for all FS-Online website related addons
 
-## Google Tag Manager
-Set the Google Tag Manager key to load the Tag Manager scripts.
+Create and send custom events for the google tag manager enhanced ecommerce tracking!
+https://developers.google.com/tag-manager/enhanced-ecommerce
 
-## Custom Google Analytic Scrip
-Use a custom Google Analytic Script (only used if Google Tag Manager Key is not set) 
- 
-## Load default Java Script libraries and css
-Add java script libraries to assets_frontend:
-- jquery.validate.js
-    - additional-methods.js
-    - methods_de.js
-    - messages_de.js
-    - additional-methods-fso.js
-    - jquery-validate-defaults.js
-- moment-with-locales.min.js
-
-## robots.txt
-Better default robots.txt view
-- Update robots.txt view with better default settings and noupdate = 1
-- Show robots.txt view arch field in website settings
+HINT: Some google tracking code is already prepared in the addon website_sale > website_sale_tracking.js but this seems 
+      unfinished from odoo.
 
     """,
     'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
     'depends': [
-        'fso_base',
-        'website',
-        'website_domain_manager',
-        'website_widget_manager',
+        #'fso_base_website',
+        'website_sale_donate',
     ],
     'installable': True,
     'data': [
-        'data/robots_txt.xml',
-        'views/res_config.xml',
         'views/templates.xml',
-        'views/website.xml',
-        'views/snippets.xml',
-        # 'views/fsonline_menu.xml', # Moved to fsonline addon
     ],
 }

@@ -44,9 +44,17 @@
                     </group>
                     <notebook name="Website">
                         <page string="Search Engines">
+                            <group string="Google Tag Manager">
+                                <field name="google_tag_manager_key"/>
+                                <div style="color:grey;" colspan="2" attrs="{'invisible':[('google_tag_manager_key','=',False)]}">
+                                    <small>
+                                        ATTENTION: If the Google Tag Manager Key is set the Google Analytics Script or Google Analytics Key below will not be used or loaded to avoid double tracking <issues class=""></issues>
+                                    </small>
+                                </div>
+                            </group>
                             <group string="Google Analytics">
-                                <field name="google_analytics_key"/>
-                                <field name="google_analytics_script"/>
+                                <field name="google_analytics_key" attrs="{'readonly':[('google_tag_manager_key','!=',False)]}"/>
+                                <field name="google_analytics_script" attrs="{'readonly':[('google_tag_manager_key','!=',False)]}"/>
                             </group>
                             <group string="robots.txt">
                                 <!--<label for="robots_view_id"/>-->
