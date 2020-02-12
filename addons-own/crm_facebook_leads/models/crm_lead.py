@@ -10,7 +10,7 @@ class CrmLead(models.Model):
 
     fb_lead_id = fields.Char('Lead ID')
     fb_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.fb_page_id', store=True,
-                                       string='Page', readonly=True)
+                                 string='Page', readonly=True)
     fb_form_id = fields.Many2one('crm.facebook.form', string='Form')
 
     _sql_constraints = [

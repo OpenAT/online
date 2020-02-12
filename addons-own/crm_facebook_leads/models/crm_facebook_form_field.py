@@ -3,26 +3,26 @@
 from openerp import api, models, fields
 from facebeook_lead_to_odoo_lead import facebook_lead_to_odoo_lead_map
 
+
 class CrmFacebookFormField(models.Model):
     _name = 'crm.facebook.form.field'
 
     crm_form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', string='Form')
     fb_label = fields.Char(readonly=True)
     crm_field = fields.Many2one('ir.model.fields',
-                                 domain=[('model', '=', 'crm.lead'),
-                                         # ('store', '=', True),
-                                         ('ttype', 'in', ('char',
-                                                          'date',
-                                                          'datetime',
-                                                          'float',
-                                                          'html',
-                                                          'integer',
-                                                          'monetary',
-                                                          'many2one',
-                                                          'selection',
-                                                          'phone',
-                                                          'text'))],
-                                 required=False)
+                                domain=[('model', '=', 'crm.lead'),
+                                        ('ttype', 'in', ('char',
+                                                         'date',
+                                                         'datetime',
+                                                         'float',
+                                                         'html',
+                                                         'integer',
+                                                         'monetary',
+                                                         'many2one',
+                                                         'selection',
+                                                         'phone',
+                                                         'text'))],
+                                required=False)
     fb_field_id = fields.Char(required=True, readonly=True)
     fb_field_key = fields.Char(required=True, readonly=True)
 

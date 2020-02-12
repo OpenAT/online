@@ -23,7 +23,7 @@ class CrmFacebookPage(models.Model):
         for fb_form in r['data']:
             # Search inactive forms too, so archived forms are not created over and over again
             crm_form_rec = crm_facebook_form_obj.search([('fb_form_id', '=', fb_form['id']),
-                                                        '|', ('active', '=', True), ('active', '=', False)])
+                                                         '|', ('active', '=', True), ('active', '=', False)])
             if not crm_form_rec:
                 self.env['crm.facebook.form'].create({
                     'name': fb_form['name'],
