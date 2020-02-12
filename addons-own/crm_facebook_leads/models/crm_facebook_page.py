@@ -4,6 +4,9 @@ from openerp import api, models, fields
 from facebook_graph_api import facebook_graph_api_url
 import requests
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class CrmFacebookPage(models.Model):
     _name = 'crm.facebook.page'

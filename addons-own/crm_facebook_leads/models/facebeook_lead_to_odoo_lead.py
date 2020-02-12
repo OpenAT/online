@@ -37,6 +37,8 @@ ID_... - Government-issued ID (various types, e.g. ID_AR_DNO,
 
 facebook_lead_to_odoo_lead_map = {
     'FULL_NAME': 'partner_name',
+    'FIRSTNAME': 'firstname',
+    'LASTNAME': 'lsatname',
     'EMAIL': 'email_from',
     'PHONE': 'phone',
     'STREET_ADDRESS': 'street',
