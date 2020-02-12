@@ -8,7 +8,7 @@
     'description': """
     """,
 
-    'author': "DataDialog",
+    'author': "BADEP, DataDialog",
     'website': "https://www.datadialog.net",
 
     # Categories can be used to filter modules in modules listing
@@ -16,6 +16,7 @@
     # for the full list
     'category': 'Lead Automation',
     'version': '0.0.1',
+    'license': 'AGPL-3',
     'depends': [
         'crm',
         'utm',
