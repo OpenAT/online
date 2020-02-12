@@ -23,7 +23,7 @@ class CrmFacebookFormField(models.Model):
                                                           'phone',
                                                           'text'))],
                                  required=False)
-    facebook_field_id = fields.Char(required=True, readonly=True)
+    fb_field_id = fields.Char(required=True, readonly=True)
     facebook_field_key = fields.Char(required=True, readonly=True)
 
     _sql_constraints = [

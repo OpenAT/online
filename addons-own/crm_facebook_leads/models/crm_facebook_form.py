@@ -39,7 +39,7 @@ class CrmFacebookForm(models.Model):
                 self.env['crm.facebook.form.field'].create({
                     'crm_form_id': self.id,
                     'fb_label': question['label'],
-                    'facebook_field_id': question['id'],
+                    'fb_field_id': question['id'],
                     'facebook_field_key': question['key']
                 })
 
