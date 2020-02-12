@@ -9,7 +9,7 @@
                 <form string="Facebook form field">
                     <group>
                         <group>
-                            <field name="form_id"/>
+                            <field name="crm_form_id"/>
                             <field name="label"/>
                             <field name="facebook_field_id"/>
                             <field name="facebook_field_key"/>
@@ -25,7 +25,7 @@
             <field name="model">crm.facebook.form.field</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="form_id"/>
+                    <field name="crm_form_id"/>
                     <field name="label"/>
                     <field name="facebook_field_id"/>
                     <field name="facebook_field_key"/>

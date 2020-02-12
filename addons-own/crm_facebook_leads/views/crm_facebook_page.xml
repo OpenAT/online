@@ -14,9 +14,9 @@
                         <field name="page_access_token" password="1" class="oe_edit_only"/>
                     </group>
                     <group colspan="2">
-                        <field name="form_ids">
+                        <field name="crm_form_ids">
                             <tree editable="0" readonly="1">
-                                <field name="facebook_form_id"/>
+                                <field name="fb_form_id"/>
                                 <field name="name"/>
                                 <field name="state"/>
                                 <field name="section_id"/>

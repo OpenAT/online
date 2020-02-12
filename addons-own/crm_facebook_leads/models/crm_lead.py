@@ -9,9 +9,9 @@ class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
     facebook_lead_id = fields.Char('Lead ID')
-    facebook_page_id = fields.Many2one('crm.facebook.page', related='facebook_form_id.page_id', store=True,
+    facebook_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.page_id', store=True,
                                        string='Page', readonly=True)
-    facebook_form_id = fields.Many2one('crm.facebook.form', string='Form')
+    fb_form_id = fields.Many2one('crm.facebook.form', string='Form')
 
     _sql_constraints = [
         ('facebook_lead_unique', 'unique(facebook_lead_id)', 'This Facebook lead already exists!')
@@ -23,7 +23,7 @@ class CrmLead(models.Model):
             forms = self.env['crm.facebook.form'].search([('page_id', '=', page.id),
                                                           ('state', '=', 'active')])
             for form in forms:
-                r = requests.get(facebook_graph_api_url + form.facebook_form_id + "/leads",
+                r = requests.get(facebook_graph_api_url + form.fb_form_id + "/leads",
                                  params={'access_token': form.page_access_token}).json()
                 if r.get('data'):
                     for lead in r['data']:
@@ -62,7 +62,7 @@ class CrmLead(models.Model):
                                 'campaign_id': form.campaign_id and form.campaign_id.id,
                                 'source_id': form.source_id and form.source_id.id,
                                 'medium_id': form.medium_id and form.medium_id.id,
-                                'facebook_form_id': form.id,
+                                'fb_form_id': form.id,
                                 'date_open': lead['created_time'].split('+')[0].replace('T', ' ')
                             })
                             lead = self.create(vals)

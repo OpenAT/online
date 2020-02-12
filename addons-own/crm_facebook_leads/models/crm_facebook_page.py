@@ -11,7 +11,7 @@ class CrmFacebookPage(models.Model):
     name = fields.Char(required=True, string="Facebook Page Name")
     page_id = fields.Char(required=True, string="Facebook Page ID")
     page_access_token = fields.Char(required=True, string='Page Access Token')
-    form_ids = fields.One2many('crm.facebook.form', 'page_id', string='Lead Forms')
+    crm_form_ids = fields.One2many('crm.facebook.form', 'page_id', string='Lead Forms')
 
     @api.multi
     def get_forms(self):
@@ -22,12 +22,12 @@ class CrmFacebookPage(models.Model):
 
         for fb_form in r['data']:
             # Search inactive forms too, so archived forms are not created over and over again
-            crm_form_rec = crm_facebook_form_obj.search([('facebook_form_id', '=', fb_form['id']),
-                                                     '|', ('active', '=', True), ('active', '=', False)])
+            crm_form_rec = crm_facebook_form_obj.search([('fb_form_id', '=', fb_form['id']),
+                                                        '|', ('active', '=', True), ('active', '=', False)])
             if not crm_form_rec:
                 self.env['crm.facebook.form'].create({
                     'name': fb_form['name'],
-                    'facebook_form_id': fb_form['id'],
+                    'fb_form_id': fb_form['id'],
                     'page_id': self.id,
                     'state': 'to_review'
                 }).get_fields()

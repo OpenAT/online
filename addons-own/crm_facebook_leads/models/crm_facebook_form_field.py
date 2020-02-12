@@ -6,7 +6,7 @@ from facebeook_lead_to_odoo_lead import facebook_lead_to_odoo_lead_map
 class CrmFacebookFormField(models.Model):
     _name = 'crm.facebook.form.field'
 
-    form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', string='Form')
+    crm_form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', string='Form')
     label = fields.Char(readonly=True)
     odoo_field = fields.Many2one('ir.model.fields',
                                  domain=[('model', '=', 'crm.lead'),
@@ -27,7 +27,7 @@ class CrmFacebookFormField(models.Model):
     facebook_field_key = fields.Char(required=True, readonly=True)
 
     _sql_constraints = [
-        ('field_unique', 'unique(form_id, odoo_field, facebook_field_key)', 'Mapping must be unique per form')
+        ('field_unique', 'unique(crm_form_id, odoo_field, facebook_field_key)', 'Mapping must be unique per form')
     ]
 
     @api.model
