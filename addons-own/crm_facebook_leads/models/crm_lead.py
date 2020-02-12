@@ -8,13 +8,13 @@ from facebook_graph_api import facebook_graph_api_url
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
-    facebook_lead_id = fields.Char('Lead ID')
+    fb_lead_id = fields.Char('Lead ID')
     fb_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.fb_page_id', store=True,
                                        string='Page', readonly=True)
     fb_form_id = fields.Many2one('crm.facebook.form', string='Form')
 
     _sql_constraints = [
-        ('facebook_lead_unique', 'unique(facebook_lead_id)', 'This Facebook lead already exists!')
+        ('facebook_lead_unique', 'unique(fb_lead_id)', 'This Facebook lead already exists!')
     ]
 
     @api.model
@@ -27,7 +27,7 @@ class CrmLead(models.Model):
                                  params={'access_token': form.fb_page_access_token}).json()
                 if r.get('data'):
                     for lead in r['data']:
-                        if not self.search([('facebook_lead_id', '=', lead.get('id')), '|', ('active', '=', True),
+                        if not self.search([('fb_lead_id', '=', lead.get('id')), '|', ('active', '=', True),
                                             ('active', '=', False)]):
                             vals = {}
                             notes = []
@@ -56,7 +56,7 @@ class CrmLead(models.Model):
                             if not vals.get('name'):
                                 vals.update({'name': form.name + " - " + lead['id']})
                             vals.update({
-                                'facebook_lead_id': lead['id'],
+                                'fb_lead_id': lead['id'],
                                 'description': "\n".join(notes),
                                 'section_id': form.section_id and form.section_id.id,
                                 'campaign_id': form.campaign_id and form.campaign_id.id,
