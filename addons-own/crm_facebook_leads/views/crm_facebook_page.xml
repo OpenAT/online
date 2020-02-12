@@ -11,7 +11,7 @@
                     <group colspan="2">
                         <field name="page_id"/>
                         <field name="name"/>
-                        <field name="page_access_token" password="1" class="oe_edit_only"/>
+                        <field name="fb_page_access_token" password="1" class="oe_edit_only"/>
                     </group>
                     <group colspan="2">
                         <field name="crm_form_ids">

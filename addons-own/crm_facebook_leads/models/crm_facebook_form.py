@@ -10,7 +10,7 @@ class CrmFacebookForm(models.Model):
 
     name = fields.Char(required=True, readonly=True)
     fb_form_id = fields.Char(required=True, readonly=True, string='Form ID')
-    page_access_token = fields.Char(required=True, related='page_id.page_access_token', string='Page Access Token')
+    fb_page_access_token = fields.Char(required=True, related='page_id.fb_page_access_token', string='Page Access Token')
     page_id = fields.Many2one('crm.facebook.page', readonly=True, ondelete='cascade', string='Facebook Page')
     mappings = fields.One2many('crm.facebook.form.field', 'crm_form_id')
     state = fields.Selection(selection=[('to_review', 'To review'),
@@ -33,7 +33,7 @@ class CrmFacebookForm(models.Model):
     def get_fields(self):
         self.mappings.unlink()
         r = requests.get(facebook_graph_api_url + self.fb_form_id,
-                         params={'access_token': self.page_access_token, 'fields': 'questions'}).json()
+                         params={'access_token': self.fb_page_access_token, 'fields': 'questions'}).json()
         if r.get('questions'):
             for question in r.get('questions'):
                 self.env['crm.facebook.form.field'].create({

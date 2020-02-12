@@ -19,7 +19,7 @@
                         <group>
                             <field name="page_id"/>
                             <field name="fb_form_id"/>
-                            <field name="page_access_token" invisible="1"/>
+                            <field name="fb_page_access_token" invisible="1"/>
                         </group>
                         <group string="Tracking Info">
                             <field name="campaign_id"/>

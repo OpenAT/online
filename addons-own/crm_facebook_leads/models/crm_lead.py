@@ -24,7 +24,7 @@ class CrmLead(models.Model):
                                                           ('state', '=', 'active')])
             for form in forms:
                 r = requests.get(facebook_graph_api_url + form.fb_form_id + "/leads",
-                                 params={'access_token': form.page_access_token}).json()
+                                 params={'access_token': form.fb_page_access_token}).json()
                 if r.get('data'):
                     for lead in r['data']:
                         if not self.search([('facebook_lead_id', '=', lead.get('id')), '|', ('active', '=', True),
