@@ -67,5 +67,26 @@
             </t>
         </template>
 
+    <!-- TOD: INHERIT website.layout:  Set data attributes for the products in the cart and for the current product if on a product page (=product is set as a variable) -->
+    <template id="website_sale_donate_product_data" inherit_id="website.layout" name="Set shopping cart or product data attributes to website body">
+        <xpath expr="//body" position="attributes">
+
+            <t t-set="body_sale_order_data" t-value="website.sale_get_order()"/>
+
+
+            <!-- OLD STUFF JUST AS AN EXAMPLE -->
+            <attribute name="t-att-data-rootcatid"> category.cat_root_id.id if category else 'False' </attribute>
+            <!--<attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>-->
+            <!--<attribute name="t-att-data-rootcatid"> (category.cat_root_id.id if category else False) or (website.sale_get_order().cat_root_id.id if (website and website.sale_get_order()) else False) or 'False' </attribute>-->
+
+            <!-- SEEMS THERE IS A PROBLEM WITH THE NEW PAYMENT STUFF AFTER BIG ODOO UPDATE TEMPORARYLY DISABLED
+            <attribute name="t-att-data-sale-order-rootcatid"> website.sale_get_order().cat_root_id.id if (website and website.sale_get_order()) else 'False' </attribute>
+            -->
+
+            <attribute name="t-att-data-last-visited-rootcatid"> request.session.get('last_visited_rootcatid', 'False') </attribute>
+            <attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>
+        </xpath>
+    </template>
+
     </data>
 </openerp>

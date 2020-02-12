@@ -435,8 +435,7 @@
                 </t>
 
                 <!-- Billing and Shipping -->
-                <div class="row">
-
+                <div class="row" id="wsd_checkout_form_inside_row">
 
                     <!-- Header: "Your Data" -->
                     <t t-if="website.checkout_title">

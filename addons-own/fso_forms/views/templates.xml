@@ -323,9 +323,10 @@
                                     <!-- Get options for selection fields -->
                                     <t t-if="f_type == 'selection'">
                                         <!-- Loop through all selection values -->
-                                        <t t-foreach="request.env[form.model_id.model]._columns[f_name].selection or []" t-as="selection_item">
+                                        <!-- field.form_id.model_id -->
+                                        <t t-foreach="request.env[field.form_id.model_id.model]._columns[f_name].selection or []" t-as="selection_item">
                                             <t t-set="item_id" t-value="selection_item[0]"/>
-                                            <t t-set="item_name" t-value="dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection'])[item_id]"/>
+                                            <t t-set="item_name" t-value="dict(request.env[field.form_id.model_id.model].fields_get([f_name])[f_name]['selection'])[item_id]"/>
                                             <!-- Add to options list -->
                                             <t t-set="options" t-value="options + [{'item_id': item_id, 'item_name': item_name}]"/>
                                         </t>

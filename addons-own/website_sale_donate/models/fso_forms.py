@@ -18,11 +18,9 @@ class FSONForm(models.Model):
     @api.constrains('product_template_ids', 'field_ids')
     def contrains_product_template_ids(self):
         for r in self:
-            if len(r.product_template_ids) > 1:
-                raise ValidationError("You can only link one product to this form")
 
             # Add additional checks for products that are linked to fso_subscriptions (product.template)
-            if len(r.product_template_ids) == 1:
+            if r.product_template_ids:
 
                 # Check the form model
                 if r.model_id.model != 'res.partner':
