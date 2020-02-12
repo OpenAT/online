@@ -7,7 +7,7 @@ class CrmFacebookFormField(models.Model):
     _name = 'crm.facebook.form.field'
 
     crm_form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', string='Form')
-    label = fields.Char(readonly=True)
+    fb_label = fields.Char(readonly=True)
     odoo_field = fields.Many2one('ir.model.fields',
                                  domain=[('model', '=', 'crm.lead'),
                                          # ('store', '=', True),

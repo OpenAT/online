@@ -30,7 +30,7 @@
                     <group colspan="2" string="Mappings">
                         <field name="mappings">
                             <tree editable="bottom">
-                                <field name="label"/>
+                                <field name="fb_label"/>
                                 <field name="facebook_field_id"/>
                                 <field name="facebook_field_key"/>
                                 <field name="odoo_field"/>

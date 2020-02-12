@@ -38,7 +38,7 @@ class CrmFacebookForm(models.Model):
             for question in r.get('questions'):
                 self.env['crm.facebook.form.field'].create({
                     'crm_form_id': self.id,
-                    'label': question['label'],
+                    'fb_label': question['label'],
                     'facebook_field_id': question['id'],
                     'facebook_field_key': question['key']
                 })
