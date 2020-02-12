@@ -12,7 +12,7 @@
                             <field name="crm_form_id"/>
                             <field name="fb_label"/>
                             <field name="fb_field_id"/>
-                            <field name="facebook_field_key"/>
+                            <field name="fb_field_key"/>
                             <field name="odoo_field"/>
                         </group>
                     </group>
@@ -28,7 +28,7 @@
                     <field name="crm_form_id"/>
                     <field name="fb_label"/>
                     <field name="fb_field_id"/>
-                    <field name="facebook_field_key"/>
+                    <field name="fb_field_key"/>
                     <field name="odoo_field"/>
                 </tree>
             </field>
@@ -41,7 +41,7 @@
             <field name="arch" type="xml">
                 <search string="Facebook form fields">
                     <field name="fb_label"/>
-                    <field name="facebook_field_key"/>
+                    <field name="fb_field_key"/>
                     <field name="odoo_field"/>
                 </search>
             </field>

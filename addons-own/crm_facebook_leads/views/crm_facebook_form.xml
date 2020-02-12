@@ -32,7 +32,7 @@
                             <tree editable="bottom">
                                 <field name="fb_label"/>
                                 <field name="fb_field_id"/>
-                                <field name="facebook_field_key"/>
+                                <field name="fb_field_key"/>
                                 <field name="odoo_field"/>
                             </tree>
                         </field>

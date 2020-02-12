@@ -33,9 +33,9 @@ class CrmLead(models.Model):
                             notes = []
                             for field_data in lead['field_data']:
                                 if field_data['name'] in form.mappings.filtered(
-                                        lambda m: m.odoo_field.id).mapped('facebook_field_key'):
+                                        lambda m: m.odoo_field.id).mapped('fb_field_key'):
                                     odoo_field = form.mappings.filtered(
-                                        lambda m: m.facebook_field_key == field_data['name']).odoo_field
+                                        lambda m: m.fb_field_key == field_data['name']).odoo_field
                                     if odoo_field.ttype == 'many2one':
                                         related_value = self.env[odoo_field.relation].search(
                                             [('display_name', '=', field_data['values'][0])])

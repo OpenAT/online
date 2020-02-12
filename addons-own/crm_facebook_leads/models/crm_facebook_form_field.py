@@ -24,18 +24,18 @@ class CrmFacebookFormField(models.Model):
                                                           'text'))],
                                  required=False)
     fb_field_id = fields.Char(required=True, readonly=True)
-    facebook_field_key = fields.Char(required=True, readonly=True)
+    fb_field_key = fields.Char(required=True, readonly=True)
 
     _sql_constraints = [
-        ('field_unique', 'unique(crm_form_id, odoo_field, facebook_field_key)', 'Mapping must be unique per form')
+        ('field_unique', 'unique(crm_form_id, odoo_field, fb_field_key)', 'Mapping must be unique per form')
     ]
 
     @api.model
     def create(self, values):
         # Auto-map Odoo crm.lead.fields to standard facebook fields
-        if 'odoo_field' not in values and 'facebook_field_key' in values:
+        if 'odoo_field' not in values and 'fb_field_key' in values:
             ir_fields_obj = self.env['ir.model.fields'].sudo()
-            odoo_field_name = facebook_lead_to_odoo_lead_map.get(values['facebook_field_key'])
+            odoo_field_name = facebook_lead_to_odoo_lead_map.get(values['fb_field_key'])
             odoo_field_rec = ir_fields_obj.search([('model', '=', 'crm.lead'), ('name', '=', odoo_field_name)])
 
             if odoo_field_rec:
