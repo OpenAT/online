@@ -45,14 +45,16 @@ class CrmFacebookForm(models.Model):
 
     @api.multi
     def write(self, values):
-        # If the form is deactivated, set its state to archived
-        if 'state' not in values and 'active' in values and not values['active']:
-            values['state'] = 'archived'
+        # Set the form state according to active, if not already provided
+        if 'state' not in values:
+            if 'active' in values and not values['active']:
+                values['state'] = 'archived'
+            else:
+                values['state'] = 'to_review'
 
-        # If the form is activated again, set its state to to_review
-        if 'state' not in values and 'active' in values and values['active']:
-            values['state'] = 'to_review'
-
-        # TODO: MKA: also set active depending on state
+        # Set form active depending on form state, if not already provided
+        if 'active' not in values:
+            values['active'] = ('state' in values
+                                and values['state'] in ['to_review', 'active'])
 
         return super(CrmFacebookForm, self).write(values)
