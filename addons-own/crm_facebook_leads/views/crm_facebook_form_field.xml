@@ -13,7 +13,7 @@
                             <field name="fb_label"/>
                             <field name="fb_field_id"/>
                             <field name="fb_field_key"/>
-                            <field name="odoo_field"/>
+                            <field name="crm_field"/>
                         </group>
                     </group>
                 </form>
@@ -29,7 +29,7 @@
                     <field name="fb_label"/>
                     <field name="fb_field_id"/>
                     <field name="fb_field_key"/>
-                    <field name="odoo_field"/>
+                    <field name="crm_field"/>
                 </tree>
             </field>
         </record>
@@ -42,7 +42,7 @@
                 <search string="Facebook form fields">
                     <field name="fb_label"/>
                     <field name="fb_field_key"/>
-                    <field name="odoo_field"/>
+                    <field name="crm_field"/>
                 </search>
             </field>
         </record>

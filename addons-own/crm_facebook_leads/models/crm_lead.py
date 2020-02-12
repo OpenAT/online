@@ -33,24 +33,24 @@ class CrmLead(models.Model):
                             notes = []
                             for field_data in lead['field_data']:
                                 if field_data['name'] in form.mappings.filtered(
-                                        lambda m: m.odoo_field.id).mapped('fb_field_key'):
-                                    odoo_field = form.mappings.filtered(
-                                        lambda m: m.fb_field_key == field_data['name']).odoo_field
-                                    if odoo_field.ttype == 'many2one':
-                                        related_value = self.env[odoo_field.relation].search(
+                                        lambda m: m.crm_field.id).mapped('fb_field_key'):
+                                    crm_field = form.mappings.filtered(
+                                        lambda m: m.fb_field_key == field_data['name']).crm_field
+                                    if crm_field.ttype == 'many2one':
+                                        related_value = self.env[crm_field.relation].search(
                                             [('display_name', '=', field_data['values'][0])])
-                                        vals.update({odoo_field.name: related_value and related_value.id})
-                                    elif odoo_field.ttype in ('float', 'monetary'):
-                                        vals.update({odoo_field.name: float(field_data['values'][0])})
-                                    elif odoo_field.ttype == 'integer':
-                                        vals.update({odoo_field.name: int(field_data['values'][0])})
-                                    elif odoo_field.ttype in ('date', 'datetime'):
+                                        vals.update({crm_field.name: related_value and related_value.id})
+                                    elif crm_field.ttype in ('float', 'monetary'):
+                                        vals.update({crm_field.name: float(field_data['values'][0])})
+                                    elif crm_field.ttype == 'integer':
+                                        vals.update({crm_field.name: int(field_data['values'][0])})
+                                    elif crm_field.ttype in ('date', 'datetime'):
                                         vals.update(
-                                            {odoo_field.name: field_data['values'][0].split('+')[0].replace('T', ' ')})
-                                    elif odoo_field.ttype == 'selection':
-                                        vals.update({odoo_field.name: field_data['values'][0]})
+                                            {crm_field.name: field_data['values'][0].split('+')[0].replace('T', ' ')})
+                                    elif crm_field.ttype == 'selection':
+                                        vals.update({crm_field.name: field_data['values'][0]})
                                     else:
-                                        vals.update({odoo_field.name: ", ".join(field_data['values'])})
+                                        vals.update({crm_field.name: ", ".join(field_data['values'])})
                                 else:
                                     notes.append(field_data['name'] + ": " + ", ".join(field_data['values']))
                             if not vals.get('name'):

@@ -33,7 +33,7 @@
                                 <field name="fb_label"/>
                                 <field name="fb_field_id"/>
                                 <field name="fb_field_key"/>
-                                <field name="odoo_field"/>
+                                <field name="crm_field"/>
                             </tree>
                         </field>
                     </group>
