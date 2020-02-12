@@ -9,7 +9,7 @@ class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
     facebook_lead_id = fields.Char('Lead ID')
-    facebook_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.page_id', store=True,
+    fb_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.fb_page_id', store=True,
                                        string='Page', readonly=True)
     fb_form_id = fields.Many2one('crm.facebook.form', string='Form')
 
@@ -20,7 +20,7 @@ class CrmLead(models.Model):
     @api.model
     def get_facebook_leads(self):
         for page in self.env['crm.facebook.page'].search([]):
-            forms = self.env['crm.facebook.form'].search([('page_id', '=', page.id),
+            forms = self.env['crm.facebook.form'].search([('crm_page_id', '=', page.id),
                                                           ('state', '=', 'active')])
             for form in forms:
                 r = requests.get(facebook_graph_api_url + form.fb_form_id + "/leads",

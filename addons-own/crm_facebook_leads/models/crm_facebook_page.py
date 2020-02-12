@@ -9,13 +9,13 @@ class CrmFacebookPage(models.Model):
     _name = 'crm.facebook.page'
 
     name = fields.Char(required=True, string="Facebook Page Name")
-    page_id = fields.Char(required=True, string="Facebook Page ID")
+    fb_page_id = fields.Char(required=True, string="Facebook Page ID")
     fb_page_access_token = fields.Char(required=True, string='Page Access Token')
-    crm_form_ids = fields.One2many('crm.facebook.form', 'page_id', string='Lead Forms')
+    crm_form_ids = fields.One2many('crm.facebook.form', 'crm_page_id', string='Lead Forms')
 
     @api.multi
     def get_forms(self):
-        r = requests.get(facebook_graph_api_url + self.page_id + "/leadgen_forms",
+        r = requests.get(facebook_graph_api_url + self.fb_page_id + "/leadgen_forms",
                          params={'access_token': self.fb_page_access_token}).json()
 
         crm_facebook_form_obj = self.env['crm.facebook.form'].sudo()
@@ -28,7 +28,7 @@ class CrmFacebookPage(models.Model):
                 self.env['crm.facebook.form'].create({
                     'name': fb_form['name'],
                     'fb_form_id': fb_form['id'],
-                    'page_id': self.id,
+                    'crm_page_id': self.id,
                     'state': 'to_review'
                 }).get_fields()
             else:

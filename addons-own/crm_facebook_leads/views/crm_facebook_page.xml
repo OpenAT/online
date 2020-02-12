@@ -9,7 +9,7 @@
                 <form string="Facebook Page">
                     <button name="get_forms" type="object" string="Get Forms"/>
                     <group colspan="2">
-                        <field name="page_id"/>
+                        <field name="fb_page_id"/>
                         <field name="name"/>
                         <field name="fb_page_access_token" password="1" class="oe_edit_only"/>
                     </group>
@@ -35,7 +35,7 @@
             <field name="model">crm.facebook.page</field>
             <field name="arch" type="xml">
                 <tree string="Facebook Page">
-                    <field name="page_id"/>
+                    <field name="fb_page_id"/>
                     <field name="name"/>
                 </tree>
             </field>
@@ -48,7 +48,7 @@
             <field name="arch" type="xml">
                 <search string="Facebook pages">
                     <field name="name"/>
-                    <field name="page_id"/>
+                    <field name="fb_page_id"/>
                 </search>
             </field>
         </record>

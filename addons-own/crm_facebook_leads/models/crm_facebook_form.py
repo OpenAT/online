@@ -10,8 +10,8 @@ class CrmFacebookForm(models.Model):
 
     name = fields.Char(required=True, readonly=True)
     fb_form_id = fields.Char(required=True, readonly=True, string='Form ID')
-    fb_page_access_token = fields.Char(required=True, related='page_id.fb_page_access_token', string='Page Access Token')
-    page_id = fields.Many2one('crm.facebook.page', readonly=True, ondelete='cascade', string='Facebook Page')
+    fb_page_access_token = fields.Char(required=True, related='crm_page_id.fb_page_access_token', string='Page Access Token')
+    crm_page_id = fields.Many2one('crm.facebook.page', readonly=True, ondelete='cascade', string='Facebook Page')
     mappings = fields.One2many('crm.facebook.form.field', 'crm_form_id')
     state = fields.Selection(selection=[('to_review', 'To review'),
                                         ('active', 'Active'),

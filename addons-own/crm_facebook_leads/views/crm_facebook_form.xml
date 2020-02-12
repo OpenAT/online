@@ -17,7 +17,7 @@
                             <field name="section_id"/>
                         </group>
                         <group>
-                            <field name="page_id"/>
+                            <field name="crm_page_id"/>
                             <field name="fb_form_id"/>
                             <field name="fb_page_access_token" invisible="1"/>
                         </group>
@@ -48,7 +48,7 @@
                 <tree>
                     <field name="name"/>
                     <field name="fb_form_id"/>
-                    <field name="page_id"/>
+                    <field name="crm_page_id"/>
                     <field name="section_id"/>
                     <field name="state"/>
                 </tree>
@@ -63,7 +63,7 @@
                 <search string="Facebook forms">
                     <field name="name"/>
                     <field name="fb_form_id"/>
-                    <field name="page_id"/>
+                    <field name="crm_page_id"/>
                 </search>
             </field>
         </record>
