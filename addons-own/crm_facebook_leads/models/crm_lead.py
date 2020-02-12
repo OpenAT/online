@@ -8,10 +8,10 @@ from facebook_graph_api import facebook_graph_api_url
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
-    fb_lead_id = fields.Char('Lead ID')
-    fb_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.fb_page_id', store=True,
-                                 string='Page', readonly=True)
-    fb_form_id = fields.Many2one('crm.facebook.form', string='Form')
+    fb_lead_id = fields.Char('Facebook Lead ID')
+    crm_page_id = fields.Many2one('crm.facebook.page', related='crm_form_id.crm_page_id', store=True,
+                                  string='Page', readonly=True)
+    crm_form_id = fields.Many2one('crm.facebook.form', string='Form')
 
     _sql_constraints = [
         ('facebook_lead_unique', 'unique(fb_lead_id)', 'This Facebook lead already exists!')
@@ -62,7 +62,8 @@ class CrmLead(models.Model):
                                 'campaign_id': form.campaign_id and form.campaign_id.id,
                                 'source_id': form.source_id and form.source_id.id,
                                 'medium_id': form.medium_id and form.medium_id.id,
-                                'fb_form_id': form.id,
+                                'crm_page_id': page.id,
+                                'crm_form_id': form.id,
                                 'date_open': lead['created_time'].split('+')[0].replace('T', ' ')
                             })
                             lead = self.create(vals)

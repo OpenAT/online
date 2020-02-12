@@ -41,7 +41,8 @@ class CrmFacebookForm(models.Model):
                     'crm_form_id': self.id,
                     'fb_label': question['label'],
                     'fb_field_id': question['id'],
-                    'fb_field_key': question['key']
+                    'fb_field_key': question['key'],
+                    'fb_field_type': question.get('type', False)
                 })
 
     @api.multi
