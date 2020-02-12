@@ -1,0 +1,58 @@
+# -*- coding: utf-8 -*-
+
+from openerp import api, models, fields
+import requests
+from facebook_graph_api import facebook_graph_api_url
+
+
+class CrmFacebookForm(models.Model):
+    _name = 'crm.facebook.form'
+
+    name = fields.Char(required=True, readonly=True)
+    facebook_form_id = fields.Char(required=True, readonly=True, string='Form ID')
+    page_access_token = fields.Char(required=True, related='page_id.page_access_token', string='Page Access Token')
+    page_id = fields.Many2one('crm.facebook.page', readonly=True, ondelete='cascade', string='Facebook Page')
+    mappings = fields.One2many('crm.facebook.form.field', 'form_id')
+    state = fields.Selection(selection=[('to_review', 'To review'),
+                                        ('active', 'Active'),
+                                        ('archived', 'Archived')],
+                             string='State', required=True, index=True)
+    active = fields.Boolean(default=True)
+
+    # team_id does not exist in o8, use crm.case.section instead
+    section_id = fields.Many2one('crm.case.section', domain=['|',
+                                                             ('use_leads', '=', True),
+                                                             ('use_opportunities', '=', True)],
+                                 string="Sales Team")
+
+    campaign_id = fields.Many2one('utm.campaign', string='Campaign')
+    source_id = fields.Many2one('utm.source', string='Source')
+    medium_id = fields.Many2one('utm.medium', string='Medium')
+
+    @api.multi
+    def get_fields(self):
+        self.mappings.unlink()
+        r = requests.get(facebook_graph_api_url + self.facebook_form_id,
+                         params={'access_token': self.page_access_token, 'fields': 'questions'}).json()
+        if r.get('questions'):
+            for question in r.get('questions'):
+                self.env['crm.facebook.form.field'].create({
+                    'form_id': self.id,
+                    'label': question['label'],
+                    'facebook_field_id': question['id'],
+                    'facebook_field_key': question['key']
+                })
+
+    @api.multi
+    def write(self, values):
+        # If the form is deactivated, set its state to archived
+        if 'state' not in values and 'active' in values and not values['active']:
+            values['state'] = 'archived'
+
+        # If the form is activated again, set its state to to_review
+        if 'state' not in values and 'active' in values and values['active']:
+            values['state'] = 'to_review'
+
+        # TODO: MKA: also set active depending on state
+
+        return super(CrmFacebookForm, self).write(values)

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="crm_facebook_form_form" model="ir.ui.view">
+            <field name="name">crm.facebook.form.form</field>
+            <field name="model">crm.facebook.form</field>
+            <field name="arch" type="xml">
+                <form string="Facebook form">
+                    <header>
+                        <button name="get_fields" type="object" string="Get Fields"/>
+                        <field name="state" widget="statusbar" clickable="True"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="section_id"/>
+                        </group>
+                        <group>
+                            <field name="page_id"/>
+                            <field name="facebook_form_id"/>
+                            <field name="page_access_token" invisible="1"/>
+                        </group>
+                        <group string="Tracking Info">
+                            <field name="campaign_id"/>
+                            <field name="medium_id"/>
+                            <field name="source_id"/>
+                        </group>
+                    </group>
+                    <group colspan="2" string="Mappings">
+                        <field name="mappings">
+                            <tree editable="bottom">
+                                <field name="label"/>
+                                <field name="facebook_field_id"/>
+                                <field name="facebook_field_key"/>
+                                <field name="odoo_field"/>
+                            </tree>
+                        </field>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="crm_facebook_form_tree" model="ir.ui.view">
+            <field name="name">crm.facebook.form.tree</field>
+            <field name="model">crm.facebook.form</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="facebook_form_id"/>
+                    <field name="page_id"/>
+                    <field name="section_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="crm_facebook_form_search" model="ir.ui.view">
+            <field name="name">crm_facebook_form_search</field>
+            <field name="model">crm.facebook.form</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Facebook forms">
+                    <field name="name"/>
+                    <field name="facebook_form_id"/>
+                    <field name="page_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_crm_facebook_form">
+            <field name="name">Facebook Forms</field>
+            <field name="res_model">crm.facebook.form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="crm_facebook_form_tree"/>
+            <field name="help" type="html">
+                <p></p>
+            </field>
+        </record>
+
+        <menuitem
+                id="menu_crm_facebook_form"
+                name="Facebook Forms"
+                parent="base.menu_config"
+                sequence="101"
+                action="action_crm_facebook_form"/>
+
+    </data>
+</openerp>
