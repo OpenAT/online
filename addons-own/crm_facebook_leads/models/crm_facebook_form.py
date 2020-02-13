@@ -2,7 +2,7 @@
 
 from openerp import api, models, fields
 import requests
-from facebook_graph_api import facebook_graph_api_url
+from static_data import facebook_graph_api_url
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,39 +12,71 @@ class CrmFacebookForm(models.Model):
     _name = 'crm.facebook.form'
 
     name = fields.Char(required=True, readonly=True)
-    active = fields.Boolean(default=True)
-
-    # TODO: New state error and state as computed field (maybe)
-    # TODO: Add status "error" to forms and a new field "activated" (Datetime) that will be set when the state
-    #       changes from to_review to active and cleared when the state changes to 'to_review' or to 'error'
+    active = fields.Boolean(string='Active', default=True)
     state = fields.Selection(selection=[('to_review', 'To review'),
                                         ('active', 'Active'),
                                         ('error', 'Error'),
                                         ('archived', 'Archived')],
-                             string='State', required=True, index=True)
+                             string='State', required=True, index=True, track_visibility='onchange',
+                             compute='compute_state', store=True, readonly=True)
+    activated = fields.Datetime(string='Approved/Activated at', readonly=True, track_visibility='onchange')
 
-    crm_page_id = fields.Many2one('crm.facebook.page', readonly=True, ondelete='cascade', string='Facebook Page')
     fb_form_id = fields.Char(required=True, readonly=True, string='Form ID')
-    mappings = fields.One2many('crm.facebook.form.field', 'crm_form_id')
+    crm_page_id = fields.Many2one(comodel_name='crm.facebook.page', string='Facebook Page',
+                                  required=True, readonly=True, ondelete='cascade', index=True)
+    mappings = fields.One2many(comodel_name='crm.facebook.form.field', inverse_name='crm_form_id',
+                               track_visibility='onchange')
 
-    # team_id does not exist in o8, use crm.case.section instead
-    section_id = fields.Many2one('crm.case.section', domain=['|',
-                                                             ('use_leads', '=', True),
-                                                             ('use_opportunities', '=', True)],
+    # Sales team / leads section
+    section_id = fields.Many2one(comodel_name='crm.case.section',
+                                 domain=['|',
+                                         ('use_leads', '=', True),
+                                         ('use_opportunities', '=', True)],
                                  string="Sales Team")
-    # UTM
-    campaign_id = fields.Many2one('utm.campaign', string='Campaign')
-    source_id = fields.Many2one('utm.source', string='Source')
-    medium_id = fields.Many2one('utm.medium', string='Medium')
 
-    # Linked Leads
+    # UTM tracking
+    campaign_id = fields.Many2one(comodel_name='utm.campaign', string='Campaign', index=True)
+    source_id = fields.Many2one(comodel_name='utm.source', string='Source', index=True)
+    medium_id = fields.Many2one(comodel_name='utm.medium', string='Medium', index=True)
+
+    # Created crm.leads
     crm_lead_ids = fields.One2many(comodel_name='crm.lead', inverse_name='crm_form_id', readonly=True)
 
+    # HINT: If the fb_page_access_token field is changed this method is triggered also!
+    @api.depends('active', 'activated', 'crm_page_id', 'fb_form_id')
+    def compute_state(self):
+        for r in self:
+            if not r.active:
+                r.state = 'archived'
+            elif not r.fb_form_id or not r.crm_page_id or not r.crm_page_id.fb_page_access_token:
+                r.state = 'error'
+            elif r.activated:
+                r.state = 'active'
+            else:
+                r.state = 'to_review'
+
     @api.multi
-    def get_fields(self):
+    def button_activate(self):
+        self.write({'activated': fields.datetime.now()})
+
+    @api.multi
+    def button_deactivate(self):
+        self.write({'activated': False})
+
+    @api.multi
+    def button_archive(self):
+        self.write({'active': False})
+
+    @api.multi
+    def button_unarchive(self):
+        self.write({'active': True, 'activated': False})
+
+    @api.multi
+    def import_facebook_lead_fields(self):
         self.mappings.unlink()
         r = requests.get(facebook_graph_api_url + self.fb_form_id,
-                         params={'access_token': self.crm_page_id.fb_page_access_token, 'fields': 'questions'}).json()
+                         params={'access_token': self.crm_page_id.fb_page_access_token,
+                                 'fields': 'questions'}).json()
         if r.get('questions'):
             for question in r.get('questions'):
                 self.env['crm.facebook.form.field'].create({
@@ -56,31 +88,21 @@ class CrmFacebookForm(models.Model):
                 })
 
     @api.multi
-    def write(self, values):
-        # Set the form state according to active, if not already provided
-        if 'state' not in values:
-            if 'active' in values and not values['active']:
-                values['state'] = 'archived'
-            else:
-                values['state'] = 'to_review'
-
-        # Set form active depending on form state, if not already provided
-        if 'active' not in values:
-            values['active'] = ('state' in values
-                                and values['state'] in ['to_review', 'active'])
-
-        return super(CrmFacebookForm, self).write(values)
-
-    @api.multi
     def facebook_data_to_lead_data(self, facebook_lead_data=None):
-        assert self.ensure_one(), "facebook_to_lead_data() supports only one record!"
-        assert isinstance(facebook_lead_data, dict), "facebook_lead_data must be a dict!"
+        assert isinstance(facebook_lead_data, dict), "facebook_lead_data must be a dictionary!"
+        self.ensure_one()
         crm_form = self
 
-        # Basic crm.lead lead data
+        # Basic crm.lead data
+        date_open = fields.datetime.now()
+        if facebook_lead_data.get('created_time'):
+            try:
+                date_open = facebook_lead_data['created_time'].split('+')[0].replace('T', ' ')
+            except Exception as e:
+                logger.error("Could not convert facebook lead create time! %s" % repr(e))
         vals = {
             'fb_lead_id': facebook_lead_data['id'],
-            'date_open': facebook_lead_data['created_time'].split('+')[0].replace('T', ' '),
+            'date_open': date_open,
             'description': '',
             'section_id': crm_form.section_id and crm_form.section_id.id,
             'campaign_id': crm_form.campaign_id and crm_form.campaign_id.id,
@@ -91,6 +113,7 @@ class CrmFacebookForm(models.Model):
         }
 
         # Loop through facebook form fields (questions)
+        # TODO: Currently we only support facebook questions with a single answer/value
         for question in facebook_lead_data['field_data']:
             question_fb_field_key = question.get('name')
             question_val = question['values'][0]
@@ -98,15 +121,13 @@ class CrmFacebookForm(models.Model):
             # Check if the facebook field is mapped to a crm.lead field
             crm_facebook_form_field = crm_form.mappings.filtered(lambda f: f.fb_field_key == question_fb_field_key)
 
+            # Try to convert question data to valid odoo field data for mapped fields
             odoo_field_name = False
             odoo_field_value = False
-            # Known (mapped) Fields
             if crm_facebook_form_field:
                 odoo_field = crm_facebook_form_field.crm_field
                 odoo_field_name = odoo_field.name
                 odoo_field_type = odoo_field.ttype
-
-                # Try to find convert question data to valid odoo field data
                 try:
                     if odoo_field_type == 'many2one':
                         rec = self.env[odoo_field.relation].search([('display_name', '=', question_val)], limit=1)
@@ -118,7 +139,7 @@ class CrmFacebookForm(models.Model):
                     elif odoo_field_type in ('date', 'datetime'):
                         odoo_field_value = question_val.split('+')[0].replace('T', ' ')
                     elif odoo_field_type == 'selection':
-                        # TODO: Check if question_val is a valid selection!
+                        # TODO: Check if question_val is a valid selection value!
                         odoo_field_value = question_val
                 except Exception as e:
                     logger.error("Could not convert facebook question data to valid odoo field data! %s" % repr(e))

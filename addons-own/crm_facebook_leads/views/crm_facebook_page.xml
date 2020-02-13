@@ -7,7 +7,7 @@
             <field name="model">crm.facebook.page</field>
             <field name="arch" type="xml">
                 <form string="Facebook Page">
-                    <button name="get_forms" type="object" string="Get Forms"/>
+                    <button name="import_facebook_forms" type="object" string="Import Facebook Forms"/>
                     <group colspan="2">
                         <field name="fb_page_id"/>
                         <field name="name"/>

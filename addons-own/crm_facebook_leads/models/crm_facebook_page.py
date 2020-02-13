@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from openerp import api, models, fields
-from facebook_graph_api import facebook_graph_api_url
+from static_data import facebook_graph_api_url
 import requests
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,23 +18,34 @@ class CrmFacebookPage(models.Model):
     crm_form_ids = fields.One2many('crm.facebook.form', 'crm_page_id', string='Lead Forms')
 
     @api.multi
-    def get_forms(self):
-        r = requests.get(facebook_graph_api_url + self.fb_page_id + "/leadgen_forms",
-                         params={'access_token': self.fb_page_access_token}).json()
+    def import_facebook_forms(self):
+        crm_facebook_form_obj = self.env['crm.facebook.form']
 
-        crm_facebook_form_obj = self.env['crm.facebook.form'].sudo()
+        for r in self:
+            facebook_forms = requests.get(facebook_graph_api_url + self.fb_page_id + "/leadgen_forms",
+                                          params={'access_token': self.fb_page_access_token}).json()
+            for fb_form in facebook_forms['data']:
+                # HINT: Search for inactive forms too, so archived forms are not created over and over again
+                crm_form_rec = crm_facebook_form_obj.search([('fb_form_id', '=', fb_form['id']),
+                                                             '|', ('active', '=', True), ('active', '=', False)])
+                if not crm_form_rec:
+                    crm_facebook_form_obj.create({
+                        'name': fb_form.get('name') or fb_form['id'],
+                        'fb_form_id': fb_form['id'],
+                        'crm_page_id': r.id,
+                    }).import_facebook_lead_fields()
+                else:
+                    if fb_form['status'].lower() != 'active':
+                        crm_form_rec.write({'active': False})
 
-        for fb_form in r['data']:
-            # Search inactive forms too, so archived forms are not created over and over again
-            crm_form_rec = crm_facebook_form_obj.search([('fb_form_id', '=', fb_form['id']),
-                                                         '|', ('active', '=', True), ('active', '=', False)])
-            if not crm_form_rec:
-                self.env['crm.facebook.form'].create({
-                    'name': fb_form['name'],
-                    'fb_form_id': fb_form['id'],
-                    'crm_page_id': self.id,
-                    'state': 'to_review'
-                }).get_fields()
-            else:
-                if fb_form['status'].lower() != 'active':
-                    crm_form_rec.write({'active': False})
+    @api.multi
+    def write(self, vals):
+        records = super(CrmFacebookPage, self).write(vals)
+
+        # Recompute the state of all existing forms if the page access token field gets changed!
+        if records and 'fb_page_access_token' in vals:
+            for r in records:
+                if r.crm_form_ids:
+                    r.crm_form_ids.compute_state()
+
+        return records

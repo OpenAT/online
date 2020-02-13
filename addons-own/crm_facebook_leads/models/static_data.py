@@ -35,13 +35,15 @@ ID_... - Government-issued ID (various types, e.g. ID_AR_DNO,
 
 """
 
-facebook_lead_to_odoo_lead_map = {
+facebook_field_type_to_odoo_field_name = {
     'FULL_NAME': 'partner_name',
     'FIRSTNAME': 'firstname',
-    'LASTNAME': 'lsatname',
+    'LASTNAME': 'lastname',
     'EMAIL': 'email_from',
     'PHONE': 'phone',
     'STREET_ADDRESS': 'street',
     'CITY': 'city',
     'POST_CODE': 'zip',
 }
+
+facebook_graph_api_url = "https://graph.facebook.com/v6.0/"
