@@ -45,3 +45,6 @@ class CrmFacebookFormField(models.Model):
 
         record = super(CrmFacebookFormField, self).create(values)
         return record
+
+# TODO: Avoid write() and unlink() if any leads are linked to the form
+

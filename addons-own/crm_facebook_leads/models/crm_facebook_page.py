@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class CrmFacebookPage(models.Model):
     _name = 'crm.facebook.page'
+    _inherit = ['mail.thread']
 
     name = fields.Char(required=True, string="Facebook Page Name")
     fb_page_id = fields.Char(required=True, string="Facebook Page ID")
