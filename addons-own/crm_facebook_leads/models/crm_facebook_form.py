@@ -131,7 +131,8 @@ class CrmFacebookForm(models.Model):
                 odoo_field_type = odoo_field.ttype
                 try:
                     if odoo_field_type == 'many2one':
-                        rec = self.env[odoo_field.relation].search([('display_name', '=', question_val)], limit=1)
+                        # TODO: !!! Handling for country_id and state_id !!!
+                        rec = self.env[odoo_field.relation].search([('name', '=', question_val)], limit=1)
                         odoo_field_value = rec.id if rec else False
                     elif odoo_field_type in ('float', 'monetary'):
                         odoo_field_value = float(question_val)
@@ -142,6 +143,8 @@ class CrmFacebookForm(models.Model):
                     elif odoo_field_type == 'selection':
                         # TODO: Check if question_val is a valid selection value!
                         odoo_field_value = question_val
+                    elif odoo_field_type in ('char', 'text'):
+                        odoo_field_value = question_val
                 except Exception as e:
                     logger.error("Could not convert facebook question data to valid odoo field data! %s" % repr(e))
 
@@ -151,7 +154,19 @@ class CrmFacebookForm(models.Model):
             else:
                 vals['description'] += question_fb_field_key + ': ' + question_val + '\n'
 
-    @api.model
+        # Always add the name field for the crm.lead
+        if not vals.get('name'):
+            if vals.get('partner_name'):
+                vals['name'] = vals.get('partner_name')
+            elif vals.get('firstname') or vals.get('lastname'):
+                vals['name'] = (vals['firstname'] + ' ') if vals.get('firstname') else '' + vals.get('lastname', '')
+            else:
+                vals['name'] = 'facebook_lead_' + vals['fb_lead_id']
+
+        # Return the values
+        return vals
+
+    @api.multi
     def import_facebook_leads(self):
         # Get all active forms if no specific forms are selected
         if not self:
@@ -168,14 +183,16 @@ class CrmFacebookForm(models.Model):
             # Get leads data from facebook for this form
             # TODO: Pagination
             fb_request_url = facebook_graph_api_url + crm_form.fb_form_id + "/leads"
-            leads = requests.get(fb_request_url, params={'access_token': crm_form.fb_page_access_token}).json()
-            if not leads.get('data'):
+            answer = requests.get(fb_request_url,
+                                  params={'access_token': crm_form.crm_page_id.fb_page_access_token}).json()
+            if not answer.get('data'):
                 logger.warning("Received no leads data for form with ID %s" % crm_form.id)
                 continue
+            leads = answer['data']
             logger.info('Got %s leads from facebook' % len(leads))
 
             # Only import new leads
-            new_leads = [ld for ld in leads['data'] if ld['id'] not in imported_fb_lead_ids]
+            new_leads = [ld for ld in leads if ld['id'] not in imported_fb_lead_ids]
             logger.info('Importing %s new leads from facebook' % len(new_leads))
 
             # Convert the facebook lead data to crm.leads records

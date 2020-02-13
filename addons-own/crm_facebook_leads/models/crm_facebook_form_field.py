@@ -9,6 +9,9 @@ class CrmFacebookFormField(models.Model):
 
     crm_form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', string='Form')
     fb_label = fields.Char(readonly=True)
+    fb_field_id = fields.Char(required=True, readonly=True)
+    fb_field_key = fields.Char(required=True, readonly=True)
+    fb_field_type = fields.Char(readonly=True)
     crm_field = fields.Many2one('ir.model.fields',
                                 domain=[('model', '=', 'crm.lead'),
                                         ('ttype', 'in', ('char',
@@ -23,9 +26,6 @@ class CrmFacebookFormField(models.Model):
                                                          'phone',
                                                          'text'))],
                                 required=False)
-    fb_field_id = fields.Char(required=True, readonly=True)
-    fb_field_key = fields.Char(required=True, readonly=True)
-    fb_field_type = fields.Char(readonly=True)
 
     _sql_constraints = [
         ('field_unique', 'unique(crm_form_id, crm_field, fb_field_key)', 'Mapping must be unique per form')
