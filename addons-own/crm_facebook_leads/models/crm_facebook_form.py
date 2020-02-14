@@ -166,6 +166,23 @@ class CrmFacebookForm(models.Model):
         # Return the values
         return vals
 
+    def import_facebook_paginated_leads(self, crm_form, leads, imported_fb_lead_ids):
+        logger.info('Got %s leads from facebook' % len(leads))
+
+        # Only import new leads
+        new_leads = [ld for ld in leads if ld['id'] not in imported_fb_lead_ids]
+        logger.info('Importing %s new leads from facebook' % len(new_leads))
+
+        # Convert the facebook lead data to crm.leads records
+        for lead in new_leads:
+            crm_lead_values = crm_form.facebook_data_to_lead_data(lead)
+            crm_lead = self.env['crm.lead'].create(crm_lead_values)
+            if crm_lead:
+                logger.info("Facebook lead (fb_lead_id: %s) successfully imported as crm.lead %s)"
+                            "" % (crm_lead.fb_lead_id, crm_lead.id))
+            else:
+                logger.error("Crm lead import failed!")
+
     @api.multi
     def import_facebook_leads(self):
         # Get all active forms if no specific forms are selected
@@ -176,33 +193,28 @@ class CrmFacebookForm(models.Model):
         logger.info("Import facebook leads for %s active forms" % len(crm_forms_active))
 
         for crm_form in crm_forms_active:
-
             # List of facebook lead ids of already imported leads
             imported_fb_lead_ids = crm_form.crm_lead_ids.mapped('fb_lead_id')
 
             # Get leads data from facebook for this form
-            # TODO: Pagination
             fb_request_url = facebook_graph_api_url + crm_form.fb_form_id + "/leads"
             answer = requests.get(fb_request_url,
                                   params={'access_token': crm_form.crm_page_id.fb_page_access_token}).json()
+
             if not answer.get('data'):
                 logger.warning("Received no leads data for form with ID %s" % crm_form.id)
                 continue
-            leads = answer['data']
-            logger.info('Got %s leads from facebook' % len(leads))
 
-            # Only import new leads
-            new_leads = [ld for ld in leads if ld['id'] not in imported_fb_lead_ids]
-            logger.info('Importing %s new leads from facebook' % len(new_leads))
+            while answer.get('data'):
+                self.import_facebook_paginated_leads(crm_form=crm_form,
+                                                     leads=answer['data'],
+                                                     imported_fb_lead_ids=imported_fb_lead_ids)
 
-            # Convert the facebook lead data to crm.leads records
-            for lead in new_leads:
-                crm_lead_values = crm_form.facebook_data_to_lead_data(lead)
-                crm_lead = self.env['crm.lead'].create(crm_lead_values)
-                if crm_lead:
-                    logger.info("Facebook lead (fb_lead_id: %s) successfully imported as crm.lead %s)"
-                                "" % (crm_lead.fb_lead_id, crm_lead.id))
+                # Request next page, if there is one, otherwise break the loop
+                paging = answer['paging']
+                if paging.get('next'):
+                    answer = requests.get(paging['next']).json()
                 else:
-                    logger.error("Crm lead import failed!")
+                    break
 
     # TODO: Avoid unlink() if crm.leads are linked to this form
