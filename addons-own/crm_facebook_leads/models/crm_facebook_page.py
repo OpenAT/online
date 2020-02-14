@@ -41,12 +41,12 @@ class CrmFacebookPage(models.Model):
 
     @api.multi
     def write(self, vals):
-        records = super(CrmFacebookPage, self).write(vals)
+        res = super(CrmFacebookPage, self).write(vals)
 
         # Recompute the state of all existing forms if the page access token field gets changed!
-        if records and 'fb_page_access_token' in vals:
-            for r in records:
+        if res and 'fb_page_access_token' in vals:
+            for r in self:
                 if r.crm_form_ids:
                     r.crm_form_ids.compute_state()
 
-        return records
+        return res
