@@ -25,39 +25,41 @@
 
                         <field name="state" widget="statusbar" statusbar_visible="to_review,active" clickable="False"/>
                     </header>
-                    <group>
+                    <sheet string="Facebook form">
                         <group>
-                            <field name="name"/>
-                            <field name="active" invisible="1"/>
-                            <field name="activated"/>
+                            <group>
+                                <field name="name"/>
+                                <field name="active" invisible="1"/>
+                                <field name="activated"/>
+                            </group>
+                            <group>
+                                <field name="crm_page_id"/>
+                                <field name="fb_form_id"/>
+                            </group>
+                            <group string="Tracking Info">
+                                <field name="section_id"/>
+                                <field name="campaign_id"/>
+                                <field name="medium_id"/>
+                                <field name="source_id"/>
+                            </group>
                         </group>
-                        <group>
-                            <field name="crm_page_id"/>
-                            <field name="fb_form_id"/>
+                        <group colspan="2" string="Mappings">
+                            <field name="mappings">
+                                <tree editable="bottom" colors="green:crm_field != False;">
+                                    <field name="fb_label"/>
+                                    <field name="fb_field_id"/>
+                                    <field name="fb_field_key"/>
+                                    <field name="fb_field_type"/>
+                                    <field name="crm_field"/>
+                                </tree>
+                            </field>
                         </group>
-                        <group string="Tracking Info">
-                            <field name="section_id"/>
-                            <field name="campaign_id"/>
-                            <field name="medium_id"/>
-                            <field name="source_id"/>
-                        </group>
-                    </group>
-                    <group colspan="2" string="Mappings">
-                        <field name="mappings">
-                            <tree editable="bottom" colors="green:crm_field != False;">
-                                <field name="fb_label"/>
-                                <field name="fb_field_id"/>
-                                <field name="fb_field_key"/>
-                                <field name="fb_field_type"/>
-                                <field name="crm_field"/>
-                            </tree>
-                        </field>
-                    </group>
+                    </sheet>
+                    <div class="oe_chatter" style="margin-top: 4em;padding-top: 1em;border-top: 1px #ded3d3 solid;background: #f3f3f3;">
+                        <field name="message_follower_ids" widget="mail_followers" help="Follow this form to get status updates." groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
-                <div class="oe_chatter" style="margin-top: 4em;padding-top: 1em;border-top: 1px #ded3d3 solid;background: #f3f3f3;">
-                    <field name="message_follower_ids" widget="mail_followers" help="Follow this form to get status updates." groups="base.group_user"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
             </field>
         </record>
 
