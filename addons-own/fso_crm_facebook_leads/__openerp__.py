@@ -4,17 +4,16 @@
 
     'summary': """
         Adds the fso menu and and additional fields specific to Fundraising Studio to crm_facebook_leads
-        
-        - FSO Menu entries
-        - New Fields for zGruppeDetail
-        - Automatically convert a Lead to an Opportunity to create an res.partner
-          - Transfer zGruppeDetail(s) to the newly created res.partner
-        - MAYBE TODO?: Wait with the lead to opportunity conversion until a Double-Opt-In E-Mail was sent and the Link was clicked?
-        - MAYBE TODO?: Make it possible to select the CD's Folder in the leads form
-        
     """,
 
     'description': """
+Features:
+    - FSO Menu entries
+    - New Fields for zGruppeDetail
+    - Automatically convert a Lead to an Opportunity to create an res.partner (Maybe controllable by a setting on the Form?)
+      - Transfer zGruppeDetail(s) to the newly created res.partner
+    - MAYBE TODO?: Wait with the lead to opportunity conversion until a Double-Opt-In E-Mail was sent and the Link was clicked?
+    - MAYBE TODO?: Make it possible to select the CD's Folder in the leads form
     """,
 
     'author': "DataDialog",
