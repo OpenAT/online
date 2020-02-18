@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+<data>
+
+    <record id="crm_facebook_form_form_frst" model="ir.ui.view">
+        <field name="name">crm_facebook_form_form_frst</field>
+        <field name="model">crm.facebook.form</field>
+        <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[@string='Tracking Info']" position="before">
+                <group string="Fundraising Studio">
+                    <field name="force_create_partner"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</data>
+</openerp>

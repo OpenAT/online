@@ -3,34 +3,32 @@
     <data>
 
         <!-- CUSTOM CRM.LEAD WINDOW ACTION -->
-        <record id="fso_all_leads_window_action" model="ir.actions.act_window" >
-            <field name="name">Leads</field>
+        <record id="fso_new_leads_window_action" model="ir.actions.act_window" >
+            <field name="name">New Leads</field>
             <field name="res_model">crm.lead</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <!-- TODO: Create a custom search view! (Maybe also a tree and search view) -->
             <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
-            <!--<field name="domain">['|', ('type','=','lead'), ('type','=',False)]</field>-->
-            <!--<field name="context">{-->
-            <!--        'default_type':'lead',-->
-            <!--        'stage_type':'lead',-->
-            <!--        'needaction_menu_ref': 'crm.menu_crm_opportunities',-->
-            <!--        'search_default_unassigned':1,-->
-            <!--    }-->
-            <!--</field>-->
+            <field name="domain">['|', ('type','=','lead'), ('type','=',False)]</field>
+            <field name="context">{
+                    'default_type':'lead',
+                    'stage_type':'lead',
+                    'needaction_menu_ref': 'crm.menu_crm_opportunities',
+                }
+            </field>
         </record>
         <record id="fso_all_leads_view_action_tree" model="ir.actions.act_window.view">
             <field name="sequence" eval="10"/>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="crm.crm_case_tree_view_oppor"/>
-            <field name="act_window_id" ref="fso_all_leads_window_action"/>
+            <field name="view_id" ref="crm.crm_case_tree_view_leads"/>
+            <field name="act_window_id" ref="fso_new_leads_window_action"/>
         </record>
         <record id="fso_all_leads_view_action_form" model="ir.actions.act_window.view">
             <field name="sequence" eval="20"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="crm.crm_case_form_view_oppor"/>
-            <field name="act_window_id" ref="fso_all_leads_window_action"/>
+            <field name="view_id" ref="crm.crm_case_form_view_leads"/>
+            <field name="act_window_id" ref="fso_new_leads_window_action"/>
         </record>
 
 
@@ -98,8 +96,9 @@
         <!-- ============ -->
         <menuitem id="menu_channels" name="Channels" sequence="3" groups="base.group_user"/>
             <menuitem id="menu_channels_leads" name="Leads" sequence="1000" parent="menu_channels"/>
-                <menuitem id="menu_channels_leads_leads" name="Leads" sequence="1000" parent="menu_channels_leads" action="fso_all_leads_window_action"/>
-            <menuitem id="menu_channels_social_media" name="Social Media" sequence="1000" parent="menu_channels"/>
+                <menuitem id="menu_channels_leads_leads" name="New" sequence="1010" parent="menu_channels_leads" action="fso_new_leads_window_action"/>
+                <menuitem id="menu_channels_leads_oppor" name="Approved" sequence="1020" parent="menu_channels_leads" action="crm.crm_case_category_act_oppor11"/>
+            <menuitem id="menu_channels_social_media" name="Social Media" sequence="2000" parent="menu_channels"/>
         
         
         <!-- =========== -->

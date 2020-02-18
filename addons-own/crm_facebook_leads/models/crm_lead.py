@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from openerp import api, models, fields
-import requests
-from static_data import facebook_graph_api_url
 
 import logging
 logger = logging.getLogger(__name__)
