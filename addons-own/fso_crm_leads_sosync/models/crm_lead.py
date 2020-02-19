@@ -4,6 +4,7 @@ from openerp import models, fields
 
 
 class CrmLeadSosync(models.Model):
+    _name = 'crm.lead'
     _inherit = ['crm.lead', 'base.sosync']
 
     active = fields.Boolean(sosync="True")
