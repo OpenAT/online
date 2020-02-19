@@ -30,8 +30,8 @@ class CrmFacebookFormField(models.Model):
         ('field_unique', 'unique(crm_form_id, crm_field, fb_field_key)', 'Mapping must be unique per form')
     ]
 
-    @staticmethod
-    def facebook_field_type_to_odoo_field_name():
+    @api.model
+    def facebook_field_type_to_odoo_field_name(self):
         # HINT: 'partner_' fields are for the company! 'contact_' fields for the person in crm.lead
         return {
             'FULL_NAME': 'contact_name',
@@ -57,7 +57,7 @@ class CrmFacebookFormField(models.Model):
         if 'crm_field' not in values and 'fb_field_type' in values:
             ir_fields_obj = self.env['ir.model.fields']
 
-            crm_field_name = self.facebook_field_type_to_odoo_field_name.get(values['fb_field_type'])
+            crm_field_name = self.facebook_field_type_to_odoo_field_name().get(values['fb_field_type'])
             crm_field_rec = ir_fields_obj.search([('model', '=', 'crm.lead'), ('name', '=', crm_field_name)])
             if crm_field_rec:
                 values['crm_field'] = crm_field_rec.id
