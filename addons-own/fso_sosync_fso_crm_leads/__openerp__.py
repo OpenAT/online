@@ -21,12 +21,12 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_crm_leads_sosync",
+    'name': "FS-Online fso_sosync_fso_crm_leads",
     'summary': """Enable CRM Leads synchronization via Sosync""",
     'description': """
 
-FS-Online fso_crm_leads_sosync
-==============================
+FS-Online fso_sosync_fso_crm_leads
+==================================
 Specifies sosync tracked fields for model crm.lead
 
     """,
