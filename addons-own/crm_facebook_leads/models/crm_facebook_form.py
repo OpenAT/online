@@ -88,6 +88,19 @@ class CrmFacebookForm(models.Model):
                     'fb_field_type': question.get('type', False)
                 })
 
+    @staticmethod
+    def parse_date(string_val):
+        # TODO: Eventually replace with date parsing library
+        if '/' in string_val and 'T' not in string_val:
+            us_date_parts = string_val.split('/')
+            return us_date_parts[2] + '-' + us_date_parts[0] + '-' + us_date_parts[1]
+        elif '/' in string_val and 'T' in string_val:
+            us_date_all_parts = string_val.split('T')
+            us_date_parts = us_date_all_parts[0].split('/')
+            return us_date_parts[2] + '-' + us_date_parts[0] + '-' + us_date_parts[1] + ' ' + us_date_all_parts[1]
+        else:
+            return string_val.split('+')[0].replace('T', ' ')
+
     @api.multi
     def facebook_data_to_lead_data(self, facebook_lead_data=None):
         assert isinstance(facebook_lead_data, dict), "facebook_lead_data must be a dictionary!"
@@ -139,7 +152,7 @@ class CrmFacebookForm(models.Model):
                     elif odoo_field_type == 'integer':
                         odoo_field_value = int(question_val)
                     elif odoo_field_type in ('date', 'datetime'):
-                        odoo_field_value = question_val.split('+')[0].replace('T', ' ')
+                        odoo_field_value = CrmFacebookForm.parse_date(question_val)
                     elif odoo_field_type == 'selection':
                         # TODO: Check if question_val is a valid selection value!
                         odoo_field_value = question_val
