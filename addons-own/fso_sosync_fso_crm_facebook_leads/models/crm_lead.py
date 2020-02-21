@@ -17,7 +17,6 @@ class CrmLeadSosync(models.Model):
     contact_anrede_individuell = fields.Char(sosync="True")
     contact_birthdate_web = fields.Date(sosync="True")
     contact_newsletter_web = fields.Boolean(sosync="True")
-    contact_street_number_web = fields.Char(sosync="True")
     contact_title_web = fields.Char(sosync="True")
     title = fields.Many2one(sosync="True")
     title_action = fields.Char(sosync="True")
@@ -34,6 +33,7 @@ class CrmLeadSosync(models.Model):
     city = fields.Char(sosync="True")
     street = fields.Char(sosync="True")
     street2 = fields.Char(sosync="True")
+    contact_street_number_web = fields.Char(sosync="True")
 
     description = fields.Text(sosync="True")
 
