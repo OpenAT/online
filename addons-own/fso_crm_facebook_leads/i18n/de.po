@@ -1,0 +1,42 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_crm_facebook_leads
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-02-21 09:16+0000\n"
+"PO-Revision-Date: 2020-02-21 09:16+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_crm_facebook_leads
+#: model:ir.ui.menu,name:fso_crm_facebook_leads.menu_channels_social_media_fb_forms
+msgid "Facebook Lead-Forms"
+msgstr "Facebook Lead Formulare"
+
+#. module: fso_crm_facebook_leads
+#: model:ir.ui.menu,name:fso_crm_facebook_leads.menu_channels_social_media_fb_pages
+msgid "Facebook Pages"
+msgstr "Facebook Seiten"
+
+#. module: fso_crm_facebook_leads
+#: field:crm.facebook.form,force_create_partner:0
+msgid "Force Create Partner"
+msgstr "Automatische Partnererstellung"
+
+#. module: fso_crm_facebook_leads
+#: help:crm.facebook.form,force_create_partner:0
+msgid "If enabled leads will be created in state 'opportunity' and therefore create a partner and link to the lead! This is useful for Fundraising Studio where a partner is needed to create the lead as an'Aktion'"
+msgstr "Bei Aktivierung werden die Leads automatisch vom Typ 'opportunity' erzeugt und eine neue Person wird erstellt! Dies ist für das Fundraising Studio gedacht da hier eine Person erforderlich ist um die Aktion aufbauen zu können."
+
+#. module: fso_crm_facebook_leads
+#: model:ir.model,name:fso_crm_facebook_leads.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "Interessent / Chance"
+
