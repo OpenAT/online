@@ -36,7 +36,6 @@ class CrmFacebookFormField(models.Model):
         return {
             'FULL_NAME': 'contact_name',
             'COMPANY_NAME': 'partner_name',
-            'TITLE': 'title',
             'EMAIL': 'email_from',
             'PHONE': 'phone',
             'STREET_ADDRESS': 'street',

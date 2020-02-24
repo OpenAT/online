@@ -144,8 +144,10 @@ class CrmFacebookForm(models.Model):
                 odoo_field_type = odoo_field.ttype
                 try:
                     if odoo_field_type == 'many2one':
-                        # TODO: !!! Handling for country_id and state_id !!!
-                        rec = self.env[odoo_field.relation].search([('name', '=', question_val)], limit=1)
+                        domain = [('name', '=', question_val)]
+                        if odoo_field.relation == 'res.country':
+                            domain = [('code', '=', question_val)]
+                        rec = self.env[odoo_field.relation].search(domain, limit=1)
                         odoo_field_value = rec.id if rec else False
                     elif odoo_field_type in ('float', 'monetary'):
                         odoo_field_value = float(question_val)
@@ -154,7 +156,7 @@ class CrmFacebookForm(models.Model):
                     elif odoo_field_type in ('date', 'datetime'):
                         odoo_field_value = CrmFacebookForm.parse_date(question_val)
                     elif odoo_field_type == 'selection':
-                        # TODO: Check if question_val is a valid selection value!
+                        # TODO: Check if question_val is a valid selection value! IF not add it to the comments!
                         odoo_field_value = question_val
                     elif odoo_field_type in ('char', 'text'):
                         odoo_field_value = question_val
