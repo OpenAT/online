@@ -1,22 +1,4 @@
-[submodule "addons-thirdparty/aeroolib"]
-	path = addons-thirdparty/aeroolib
-	url = https://github.com/aeroo/aeroolib.git
-	branch = master
-[submodule "addons-thirdparty/aeroo_reports"]
-	path = addons-thirdparty/aeroo_reports
-	url = https://github.com/aeroo/aeroo_reports.git
-	branch = master
 [submodule "odoo"]
 	path = odoo
 	url = https://github.com/OCA/OCB.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/server-tools"]
-	branch = 12.0
-[submodule "addons-thirdparty/oca/web"]
-	branch = 12.0
-[submodule "addons-thirdparty/oca/partner-contact"]
-	branch = 12.0
-[submodule "addons-thirdparty/oca/project-service"]
-	branch = 12.0
-[submodule "addons-thirdparty/oca/website"]
 	branch = 12.0
