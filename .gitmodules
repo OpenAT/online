@@ -1,19 +1,3 @@
-[submodule "addons-thirdparty/server-tools"]
-	path = addons-thirdparty/oca/server-tools
-	url = https://github.com/OCA/server-tools.git
-	branch = 8.0
-[submodule "addons-thirdparty/web"]
-	path = addons-thirdparty/oca/web
-	url = https://github.com/OCA/web.git
-	branch = 8.0
-[submodule "addons-thirdparty/partner-contact"]
-	path = addons-thirdparty/oca/partner-contact
-	url = https://github.com/OCA/partner-contact.git
-	branch = 8.0
-[submodule "addons-thirdparty/project-service"]
-	path = addons-thirdparty/oca/project-service
-	url = https://github.com/OCA/project-service.git
-	branch = 8.0
 [submodule "addons-thirdparty/aeroolib"]
 	path = addons-thirdparty/aeroolib
 	url = https://github.com/aeroo/aeroolib.git
@@ -22,89 +6,9 @@
 	path = addons-thirdparty/aeroo_reports
 	url = https://github.com/aeroo/aeroo_reports.git
 	branch = master
-[submodule "addons-thirdparty/opensur"]
-	path = addons-thirdparty/opensur
-	url = https://github.com/OpenSur/Odoo_addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/ascone-addons"]
-	path = addons-thirdparty/ascone-addons
-	url = https://github.com/acsone/acsone-addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/website"]
-	path = addons-thirdparty/oca/website
-	url = https://github.com/OCA/website.git
-	branch = 8.0
-[submodule "addons-thirdparty/oca/social"]
-	path = addons-thirdparty/oca/social
-	url = https://github.com/OCA/social.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/sale-workflow"]
-	path = addons-thirdparty/oca/sale-workflow
-	url = https://github.com/OCA/sale-workflow.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/account-closing"]
-	path = addons-thirdparty/oca/account-closing
-	url = https://github.com/OCA/account-closing.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/hr"]
-	path = addons-thirdparty/oca/hr
-	url = https://github.com/OCA/hr.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/project"]
-	path = addons-thirdparty/oca/project
-	url = https://github.com/OCA/project.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/margin-analysis"]
-	path = addons-thirdparty/oca/margin-analysis
-	url = https://github.com/OCA/margin-analysis.git
-	branch = 12.0
 [submodule "odoo"]
 	path = odoo
 	url = https://github.com/OCA/OCB.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/reporting-engine"]
-	path = addons-thirdparty/oca/reporting-engine
-	url = https://github.com/OCA/reporting-engine.git
-	branch = 12.0
-[submodule "addons-thirdparty/serpentcs"]
-	path = addons-thirdparty/serpentcs
-	url = https://github.com/JayVora-SerpentCS/SerpentCS_Contributions-v8.git
-	branch = 12.0
-[submodule "addons-thirdparty/llc/mail-addons"]
-	path = addons-thirdparty/llc/mail-addons
-	url = https://github.com/it-projects-llc/mail-addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/llc/misc-addons"]
-	path = addons-thirdparty/llc/misc-addons
-	url = https://github.com/it-projects-llc/misc-addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/llc/website-addons"]
-	path = addons-thirdparty/llc/website-addons
-	url = https://github.com/it-projects-llc/website-addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/llc/sale-workflow"]
-	path = addons-thirdparty/llc/sale-workflow
-	url = https://github.com/it-projects-llc/sale-workflow.git
-	branch = 12.0
-[submodule "addons-thirdparty/llc/access-addons"]
-	path = addons-thirdparty/llc/access-addons
-	url = https://github.com/it-projects-llc/access-addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/llc/odoo-saas-tools"]
-	path = addons-thirdparty/llc/odoo-saas-tools
-	url = https://github.com/it-projects-llc/odoo-saas-tools.git
-	branch = 12.0
-[submodule "addons-thirdparty/smile"]
-	path = addons-thirdparty/smile
-	url = https://github.com/Smile-SA/odoo_addons.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/connector"]
-	path = addons-thirdparty/oca/connector
-	url = https://github.com/OCA/connector.git
-	branch = 12.0
-[submodule "addons-thirdparty/oca/crm"]
-	path = addons-thirdparty/oca/crm
-	url = https://github.com/OCA/crm.git
 	branch = 12.0
 [submodule "addons-thirdparty/oca/server-tools"]
 	branch = 12.0
