@@ -2,3 +2,219 @@
 	path = odoo
 	url = https://github.com/OCA/OCB.git
 	branch = 12.0
+[submodule "addons-thirdparty/oca/purchase-workflow"]
+	path = addons-thirdparty/oca/purchase-workflow
+	url = https://github.com/OCA/purchase-workflow.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/product-attribute"]
+	path = addons-thirdparty/oca/product-attribute
+	url = https://github.com/OCA/product-attribute.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/web"]
+	path = addons-thirdparty/oca/web
+	url = https://github.com/OCA/web.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-financial-reporting"]
+	path = addons-thirdparty/oca/account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/sale-workflow"]
+	path = addons-thirdparty/oca/sale-workflow
+	url = https://github.com/OCA/sale-workflow.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/hr"]
+	path = addons-thirdparty/oca/hr
+	url = https://github.com/OCA/hr.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/partner-contact"]
+	path = addons-thirdparty/oca/partner-contact
+	url = https://github.com/OCA/partner-contact.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/server-auth"]
+	path = addons-thirdparty/oca/server-auth
+	url = https://github.com/OCA/server-auth.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/website"]
+	path = addons-thirdparty/oca/website
+	url = https://github.com/OCA/website.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-analytic"]
+	path = addons-thirdparty/oca/account-analytic
+	url = https://github.com/OCA/account-analytic.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/social"]
+	path = addons-thirdparty/oca/social
+	url = https://github.com/OCA/social.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-payment"]
+	path = addons-thirdparty/oca/account-payment
+	url = https://github.com/OCA/account-payment.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/bank-payment"]
+	path = addons-thirdparty/oca/bank-payment
+	url = https://github.com/OCA/bank-payment.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/bank-statement-import"]
+	path = addons-thirdparty/oca/bank-statement-import
+	url = https://github.com/OCA/bank-statement-import.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-reconcile"]
+	path = addons-thirdparty/oca/account-reconcile
+	url = https://github.com/OCA/account-reconcile.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/contract"]
+	path = addons-thirdparty/oca/contract
+	url = https://github.com/OCA/contract.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/project"]
+	path = addons-thirdparty/oca/project
+	url = https://github.com/OCA/project.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-invoicing"]
+	path = addons-thirdparty/oca/account-invoicing
+	url = https://github.com/OCA/account-invoicing.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/server-ux"]
+	path = addons-thirdparty/oca/server-ux
+	url = https://github.com/OCA/server-ux.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-financial-tools"]
+	path = addons-thirdparty/oca/account-financial-tools
+	url = https://github.com/OCA/account-financial-tools.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/crm"]
+	path = addons-thirdparty/oca/crm
+	url = https://github.com/OCA/crm.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/server-tools"]
+	path = addons-thirdparty/oca/server-tools
+	url = https://github.com/OCA/server-tools.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/reporting-engine"]
+	path = addons-thirdparty/oca/reporting-engine
+	url = https://github.com/OCA/reporting-engine.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-fiscal-rule"]
+	path = addons-thirdparty/oca/account-fiscal-rule
+	url = https://github.com/OCA/account-fiscal-rule.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/timesheet"]
+	path = addons-thirdparty/oca/timesheet
+	url = https://github.com/OCA/timesheet.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/mis-builder"]
+	path = addons-thirdparty/oca/mis-builder
+	url = https://github.com/OCA/mis-builder.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/community-data-files"]
+	path = addons-thirdparty/oca/community-data-files
+	url = https://github.com/OCA/community-data-files.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/sale-reporting"]
+	path = addons-thirdparty/oca/sale-reporting
+	url = https://github.com/OCA/sale-reporting.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/queue"]
+	path = addons-thirdparty/oca/queue
+	url = https://github.com/OCA/queue.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/e-commerce"]
+	path = addons-thirdparty/oca/e-commerce
+	url = https://github.com/OCA/e-commerce.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/geospatial"]
+	path = addons-thirdparty/oca/geospatial
+	url = https://github.com/OCA/geospatial.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-invoice-reporting"]
+	path = addons-thirdparty/oca/account-invoice-reporting
+	url = https://github.com/OCA/account-invoice-reporting.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/search-engine"]
+	path = addons-thirdparty/oca/search-engine
+	url = https://github.com/OCA/search-engine.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/knowledge"]
+	path = addons-thirdparty/oca/knowledge
+	url = https://github.com/OCA/knowledge.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/server-backend"]
+	path = addons-thirdparty/oca/server-backend
+	url = https://github.com/OCA/server-backend.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/rest-framework"]
+	path = addons-thirdparty/oca/rest-framework
+	url = https://github.com/OCA/rest-framework.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/storage"]
+	path = addons-thirdparty/oca/storage
+	url = https://github.com/OCA/storage.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/event"]
+	path = addons-thirdparty/oca/event
+	url = https://github.com/OCA/event.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/connector"]
+	path = addons-thirdparty/oca/connector
+	url = https://github.com/OCA/connector.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/data-protection"]
+	path = addons-thirdparty/oca/data-protection
+	url = https://github.com/OCA/data-protection.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/l10n-germany"]
+	path = addons-thirdparty/oca/l10n-germany
+	url = https://github.com/OCA/l10n-germany.git
+	branch = 12.0
+[submodule "addons-thirdparty/smile/odoo_addons"]
+	path = addons-thirdparty/smile/odoo_addons
+	url = https://github.com/Smile-SA/odoo_addons.git
+	branch = 12.0
+[submodule "addons-thirdparty/openworx/backend_theme"]
+	path = addons-thirdparty/openworx/backend_theme
+	url = https://github.com/Openworx/backend_theme.git
+	branch = 12.0
+[submodule "addons-thirdparty/ascone/alfodoo"]
+	path = addons-thirdparty/ascone/alfodoo
+	url = https://github.com/acsone/alfodoo.git
+	branch = 12.0
+[submodule "addons-thirdparty/thinkwelltwd/care_center"]
+	path = addons-thirdparty/thinkwelltwd/care_center
+	url = https://github.com/thinkwelltwd/care_center.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_web"]
+	path = addons-thirdparty/mukit/muk_web
+	url = https://github.com/muk-it/muk_web.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_dms"]
+	path = addons-thirdparty/mukit/muk_dms
+	url = https://github.com/muk-it/muk_dms.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_base"]
+	path = addons-thirdparty/mukit/muk_base
+	url = https://github.com/muk-it/muk_base.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_misc"]
+	path = addons-thirdparty/mukit/muk_misc
+	url = https://github.com/muk-it/muk_misc.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_website"]
+	path = addons-thirdparty/mukit/muk_website
+	url = https://github.com/muk-it/muk_website.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_bundles"]
+	path = addons-thirdparty/mukit/muk_bundles
+	url = https://github.com/muk-it/muk_bundles.git
+	branch = 12.0
+[submodule "addons-thirdparty/mukit/muk_docs"]
+	path = addons-thirdparty/mukit/muk_docs
+	url = https://github.com/muk-it/muk_docs.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/account-budgeting"]
+	path = addons-thirdparty/oca/account-budgeting
+	url = https://github.com/OCA/account-budgeting.git
+	branch = 12.0
+[submodule "addons-thirdparty/oca/server-brand"]
+	path = addons-thirdparty/oca/server-brand
+	url = https://github.com/OCA/server-brand.git
+	branch = 12.0

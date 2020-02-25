@@ -8,9 +8,9 @@ from os.path import join as pj
 if __name__ == "__main__":
     script_path = os.path.dirname(sys.argv[0])
     base_path = os.path.dirname(script_path)  # cd..
-    target_path = pj(script_path, 'openerp/addons')
+    target_path = pj(script_path, 'odoo/addons')
 
-    odoo_root_addons_path = pj(base_path, 'odoo/openerp/addons')
+    odoo_root_addons_path = pj(base_path, 'odoo/odoo/addons')
     odoo_addons_path = pj(base_path, 'odoo/addons')
     loaded_addons_path = pj(base_path, 'addons-loaded')
 
@@ -36,35 +36,35 @@ if __name__ == "__main__":
                 # Store the relative path to the addon
                 rel_addon_paths.append(os.path.relpath(addon_abspath, target_path))
 
-    print "rel_addon_paths: %s" % rel_addon_paths
+    print("rel_addon_paths: %s" % rel_addon_paths)
 
     # Remove existing addon-symlinks
-    print "Removing existing symlinks"
+    print("Removing existing symlinks")
     del_symlinks = [os.remove(pj(target_path, f))
                     for f in os.listdir(target_path)
                     if os.path.isdir(pj(target_path, f)) and os.path.islink(pj(target_path, f))]
 
     # Create new addon-symlinks
-    print "\nCreating symlinks for addons"
+    print("\nCreating symlinks for addons")
     os.chdir(target_path)
     for addon in rel_addon_paths:
         try:
             os.symlink(addon, os.path.basename(addon))
         except Exception as e:
-            print "Error creating symlink %s \n%s" % (addon, e)
+            print("Error creating symlink %s \n%s" % (addon, e))
             pass
 
-    print "\nCreate symlinks for files and folders in odoo/openerp/* (excluding odoo/openerp/addons and .pyc files)"
-    openerp_folder = pj(base_path, 'odoo/openerp')
-    os.chdir(pj(base_path, 'devel/openerp'))
+    print("\nCreate symlinks for files and folders in odoo/openerp/* (excluding odoo/openerp/addons and .pyc files)")
+    openerp_folder = pj(base_path, 'odoo/odoo')
+    os.chdir(pj(base_path, 'devel/odoo'))
     for f in os.listdir(openerp_folder):
         if f != 'addons' and os.path.splitext(f)[1] != '.pyc':
             # Get the absolute path for the file
             abspath = pj(openerp_folder, f)
-            relpath = os.path.relpath(abspath, pj(script_path, 'openerp'))
+            relpath = os.path.relpath(abspath, pj(script_path, 'odoo'))
             try:
                 os.symlink(relpath, os.path.basename(relpath))
             except Exception as e:
-                print "Error creating symlink %s \n%s" % (relpath, e)
+                print("Error creating symlink %s \n%s" % (relpath, e))
                 pass
             #print "ln -s %s %s" % (relpath, os.path.basename(relpath))

@@ -1,1 +1,0 @@
-../../odoo/openerp/fields.py

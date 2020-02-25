@@ -1,0 +1,50 @@
+# OCA REPOS for odoo 12.0
+git submodule add -b 12.0 https://github.com/OCA/purchase-workflow.git
+
+git submodule add -b 12.0 https://github.com/OCA/product-attribute.git
+git submodule add -b 12.0 https://github.com/OCA/web.git
+git submodule add -b 12.0 https://github.com/OCA/account-financial-reporting.git
+git submodule add -b 12.0 https://github.com/OCA/sale-workflow.git
+git submodule add -b 12.0 https://github.com/OCA/hr.git
+git submodule add -b 12.0 https://github.com/OCA/partner-contact.git
+git submodule add -b 12.0 https://github.com/OCA/server-auth.git
+git submodule add -b 12.0 https://github.com/OCA/website.git
+git submodule add -b 12.0 https://github.com/OCA/account-analytic.git
+git submodule add -b 12.0 https://github.com/OCA/social.git
+git submodule add -b 12.0 https://github.com/OCA/account-payment.git
+git submodule add -b 12.0 https://github.com/OCA/bank-payment.git
+git submodule add -b 12.0 https://github.com/OCA/bank-statement-import.git
+git submodule add -b 12.0 https://github.com/OCA/account-reconcile.git
+git submodule add -b 12.0 https://github.com/OCA/contract.git
+git submodule add -b 12.0 https://github.com/OCA/project.git
+git submodule add -b 12.0 https://github.com/OCA/account-invoicing.git
+git submodule add -b 12.0 https://github.com/OCA/server-ux.git
+git submodule add -b 12.0 https://github.com/OCA/account-financial-tools.git
+git submodule add -b 12.0 https://github.com/OCA/crm.git
+git submodule add -b 12.0 https://github.com/OCA/server-tools.git
+git submodule add -b 12.0 https://github.com/OCA/reporting-engine.git
+git submodule add -b 12.0 https://github.com/OCA/account-fiscal-rule.git
+git submodule add -b 12.0 https://github.com/OCA/timesheet.git
+git submodule add -b 12.0 https://github.com/OCA/mis-builder.git
+git submodule add -b 12.0 https://github.com/OCA/community-data-files.git
+git submodule add -b 12.0 https://github.com/OCA/sale-reporting.git
+git submodule add -b 12.0 https://github.com/OCA/queue.git
+git submodule add -b 12.0 https://github.com/OCA/e-commerce.git
+git submodule add -b 12.0 https://github.com/OCA/geospatial.git
+git submodule add -b 12.0 https://github.com/OCA/account-invoice-reporting.git
+git submodule add -b 12.0 https://github.com/OCA/search-engine.git
+git submodule add -b 12.0 https://github.com/OCA/knowledge.git
+git submodule add -b 12.0 https://github.com/OCA/server-backend.git
+git submodule add -b 12.0 https://github.com/OCA/rest-framework.git
+git submodule add -b 12.0 https://github.com/OCA/account-reconcile.git
+git submodule add -b 12.0 https://github.com/OCA/storage.git
+git submodule add -b 12.0 https://github.com/OCA/event.git
+git submodule add -b 12.0 https://github.com/OCA/connector.git
+git submodule add -b 12.0 https://github.com/OCA/data-protection.git
+git submodule add -b 12.0 https://github.com/OCA/l10n-germany.git
+
+# SMILE addons
+git submodule add -b 12.0 https://github.com/Smile-SA/odoo_addons.git
+
+
+# ADDED all Addons from oca/project, OCA/HR, OCA/
