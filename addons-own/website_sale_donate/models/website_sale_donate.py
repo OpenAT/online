@@ -334,8 +334,8 @@ class sale_order(osv.Model):
             else:
                 sol.fs_product_type = False
 
-            # Remove all other sale order lines where individual (per product) configurations of
-            # 'payment method', 'checkout fields' or 'steps indicator' do not match the current sale order line
+            # REMOVE ALL OTHER SALE ORDER LINES WHERE INDIVIDUAL (PER PRODUCT) CONFIGURATIONS DO NOT MATCH
+            # 'PAYMENT METHOD', 'CHECKOUT FIELDS' OR 'STEPS INDICATOR' WITH THE CURRENT SALE ORDER LINE
             order = sol.order_id
             for l in order.website_order_line:
                 if l.exists() and l.id != sol.id:
