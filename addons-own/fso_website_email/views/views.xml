@@ -12,6 +12,8 @@
                     <group name="fson_email">
                         <field name="fso_email_template"/>
                         <field name="fso_template_view_id"/>
+                        <field name="preheader_text"/>
+                        <field name="no_java_script"/>
                         <field name="screenshot" widget="image"/>
                         <field name="fso_email_html"/>
                         <field name="fso_email_html_parsed"/>
@@ -31,6 +33,8 @@
                     <group name="fson_email">
                         <field name="fso_email_template"/>
                         <field name="fso_template_view_id"/>
+                        <field name="preheader_text"/>
+                        <field name="no_java_script"/>
                         <field name="screenshot" widget="image"/>
                         <field name="fso_email_html"/>
                         <field name="fso_email_html_parsed"/>
