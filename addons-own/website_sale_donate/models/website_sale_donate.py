@@ -355,7 +355,7 @@ class sale_order(osv.Model):
 
                     # Checkout steps mismatch
                     if product.step_indicator_setup and l.product_id.step_indicator_setup:
-                        if any(product[sf] != l.product_id[sf] for sf in product._step_config_fields):
+                        if any(product[sf] != l.product_id[sf] for sf in product.product_tmpl_id._step_config_fields):
                             _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
                                          'checkout steps configurations do not match' % (l.id, order.id))
                             sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
