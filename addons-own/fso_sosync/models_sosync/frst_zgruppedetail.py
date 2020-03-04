@@ -18,3 +18,5 @@ class FRSTzGruppeDetailSosync(models.Model):
     bestaetigung_email = fields.Many2one(sosync="True")
     bestaetigung_text = fields.Char(sosync="True")
     bestaetigung_thanks = fields.Html(sosync="True")
+
+    gui_anzeige_profil = fields.Boolean(sosync="True")
