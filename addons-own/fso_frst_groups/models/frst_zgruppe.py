@@ -30,17 +30,17 @@ class FRSTzGruppe(models.Model):
                                       help="Select model where Groups in this folder apply",
                                       required=True)
 
-    gruppe_kurz = fields.Char("GruppeKurz", required=True,
+    gruppe_kurz = fields.Char(string="GruppeKurz", required=True,
                               help="Interne Bezeichnung")
-    gruppe_lang = fields.Char("GruppeLang", required=True,
+    gruppe_lang = fields.Char(string="GruppeLang", required=True,
                               help="Anzeige fuer den Kunden und im GUI")
     gui_anzeigen = fields.Boolean("GuiAnzeigen")
 
     zgruppedetail_ids = fields.One2many(comodel_name="frst.zgruppedetail", inverse_name='zgruppe_id',
                                         string="zGruppeDetail IDS")
 
-    ja_gui_anzeige = fields.Char(name="JaGuiAnzeige", required=True,
+    ja_gui_anzeige = fields.Char(string="JaGuiAnzeige", required=True,
                                  help="Display text for 'yes'")
 
-    nein_gui_anzeige = fields.Char(name="NeinGuiAnzeige", required=True,
+    nein_gui_anzeige = fields.Char(string="NeinGuiAnzeige", required=True,
                                    help="Display text for 'no'")
