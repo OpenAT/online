@@ -14,6 +14,8 @@
                         <field name="gruppe_kurz"/>
                         <field name="gruppe_lang"/>
                         <field name="gui_anzeigen"/>
+                        <field name="ja_gui_anzeige"/>
+                        <field name="nein_gui_anzeige"/>
                     </group>
                     <group string="zGruppeDetail">
                         <field name="zgruppedetail_ids"/>
@@ -34,6 +36,8 @@
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
                 <field name="gui_anzeigen"/>
+                <field name="ja_gui_anzeige"/>
+                <field name="nein_gui_anzeige"/>
                 <field name="zgruppedetail_ids"/>
             </tree>
         </field>
@@ -50,6 +54,8 @@
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
                 <field name="gui_anzeigen"/>
+                <field name="ja_gui_anzeige"/>
+                <field name="nein_gui_anzeige"/>
             </search>
         </field>
     </record>

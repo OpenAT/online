@@ -38,3 +38,9 @@ class FRSTzGruppe(models.Model):
 
     zgruppedetail_ids = fields.One2many(comodel_name="frst.zgruppedetail", inverse_name='zgruppe_id',
                                         string="zGruppeDetail IDS")
+
+    ja_gui_anzeige = fields.Char(name="JaGuiAnzeige", required=True,
+                                 help="Display text for 'yes'")
+
+    nein_gui_anzeige = fields.Char(name="NeinGuiAnzeige", required=True,
+                                   help="Display text for 'no'")
