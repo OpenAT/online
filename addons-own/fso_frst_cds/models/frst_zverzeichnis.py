@@ -24,9 +24,9 @@ class FRSTzVerzeichnis(models.Model):
     child_ids = fields.One2many(comodel_name='frst.zverzeichnis', inverse_name='parent_id', string="Child IDS")
 
     verzeichnistyp_id = fields.Boolean(string="Ist ein Ordner", help="VerzeichnistypID", track_visibility='onchange')
-    bezeichnungstyp_id = fields.Selection(string="Typ", selection=[('kampagne', 'Kampagne'),
-                                                                   ('aktion', 'Aktion'),
-                                                                   ('zielgruppe', 'Zielgruppe')],
+    bezeichnungstyp_id = fields.Selection(string="Typ", selection=[('KA', 'Kampagne'),
+                                                                   ('Aktion', 'Aktion'),
+                                                                   ('ZG', 'Zielgruppe')],
                                           help="CDS Ordner sollten immer Aktion oder Kampagne sein, CDS Files "
                                                "sollten immer Zielgruppe sein",
                                           track_visibility='onchange')
