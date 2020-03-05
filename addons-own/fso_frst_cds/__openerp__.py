@@ -37,9 +37,8 @@ FS-Online Fundraising Studio CDS
         'fso_base',
     ],
     'data': [
-        #'security/security_groups.xml',
-        #'security/ir.model.access.csv',
-        #
+        'security/frst_cds_security.xml',
+        'security/ir.model.access.csv',
         'views/frst_zverzeichnis.xml',
     ],
 }
