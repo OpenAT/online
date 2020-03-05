@@ -1,3 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_frst_zverzeichnis_all,access_frst_zverzeichnis_all,model_frst_zverzeichnis,,1,0,0,0
-access_frst_zverzeichnis_manager,access_frst_zverzeichnis_manager,model_frst_zverzeichnis,fso_frst_groups.group_fs_group_manager,1,1,1,1
+access_frst_zverzeichnis_manager,access_frst_zverzeichnis_manager,model_frst_zverzeichnis,fso_frst_groups.group_fs_cds_manager,1,1,1,1
