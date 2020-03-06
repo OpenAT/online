@@ -49,13 +49,13 @@ class FRSTzVerzeichnis(models.Model):
                                             help="VerantwortlichBenutzer")
     fibukontonummer = fields.Char(string="FibuKontonummer", readonly=True, help="FibuKontonummer")
     cdsdokument = fields.Char(string="CDSDokument", readonly=True, help="CDSDokument")
-    xbankverbindungidfuereinzugsvertraege = fields.Integer(string="xBankverbindungIDFürEinzugsverträge", readonly=True,
-                                                          help="xBankverbindungIDFürEinzugsverträge")
+    xbankverbindungidfuereinzugsvertraege = fields.Integer(string="xBankverbindungIDFuerEinzugsvertraege", readonly=True,
+                                                          help="xBankverbindungIDFuerEinzugsvertraege")
 
     # DEPRECATED
     uebersteigendebeitraegeprojahraufspendenzverzeichnisid = fields.Integer(
-        string="ÜbersteigendeBeiträgeproJahraufSpendenzVerzeichnisID", readonly=True,
-        help="DEPRECATED ÜbersteigendeBeiträgeproJahraufSpendenzVerzeichnisID")
+        string="UebersteigendeBeitraegeproJahraufSpendenzVerzeichnisID", readonly=True,
+        help="DEPRECATED UebersteigendeBeitraegeproJahraufSpendenzVerzeichnisID")
     verwendungalszmarketingid = fields.Boolean(string="VerwendungAlszMarketingID", readonly=True,
                                                help="DEPRECATED LAUT PETRA VerwendungAlszMarketingID")
     sorterinhierarchie = fields.Integer(string="SorterinHierarchie", readonly=True,
