@@ -15,6 +15,52 @@
                 </group>
             </xpath>
 
+            <xpath expr="//page[@string='Mappings']" position="after">
+                <page string="Hilfe">
+                    <h1>Mapping Hilfe</h1>
+                    <p><br/></p>
+                    <p>
+                        Wir erstellen eine weitestgehend automatische Feldzuweisung aufgrund des Facebook-Feld-Typs.
+                        Da die Feldnamen der Facebook-Lead-Formulare jedoch völlig frei wählbar sind und keinem
+                        eindeutigem Schema folgen ist eine manuelle Überprüfung und gegebennenfalls eine Anpassung
+                        der Zuweisung der Facbebook-Leads-Formularfelder zu den Fundraising Studio Systemfeldern
+                        zwingend erforderlich!
+                    </p>
+                    <p>
+                        Nachdem Sie die Zuweisung kontrolliert haben können Sie den automatischen Import der Leads
+                        aktivieren indem Sie das Formular mit dem Button "Geprüft/Aktiviert" freigeben.
+                    </p>
+                    <p>
+                        Folgende Systemfelder stehen für Sie zum Mapping Ihrer Facebook-Leads-Formularfelder zur
+                        Verfügung.
+                    </p>
+                    <h3>Personfelder</h3>
+                    <p>
+                        ACHTUNG: Es müssen mindestens die Felder <code>[contact_name] First name </code> und
+                        <code>[email_from] Email </code> gemapped sein!
+                    </p>
+                    <p><code>[contact_name] First name</code> Vorname (oder Vollständiger Name der Person falls Sie im Facebook Formular nur ein Feld für Vor- und Nachname verwenden)</p>
+                    <p><code>[contact_lastname] Last name</code> Nachname</p>
+                    <p><code>[email_from] Email</code> E-Mail der Person</p>
+                    <p><code>[phone] Phone</code> Telefonnummer </p>
+                    <p><code>[mobile] Mobil</code> Handynummer </p>
+                    <p><code>[street] Street</code> Straße</p>
+                    <p><code>[city] City</code> Stadt</p>
+                    <p><code>[zip] Zip</code> Postleitzahl</p>
+                    <p><code>[state_id] State</code> Bundesland</p>
+                    <p><code>[country_id] Country</code> Land (Wert muss im Iso Format gesendet werden z.B.: AT)</p>
+                    <p><code>[function] Function</code> Berufliche Position</p>
+                    <p><br/></p>
+                    <h3>Spezielle Felder</h3>
+                    <p><code>[contact_birthdate_web] Birthdate Web</code> Geburtsdatum</p>
+                    <p><code>[contact_street_number_web] Street Number Web</code> Str. Nummer</p>
+                    <p><code>[contact_anrede_individuell] Individuelle Anrede</code> Individuelle Anrede</p>
+                    <p><code>[contact_title_web]</code> Titel (z.B.: Dr., Ing., ...)</p>
+                    <p><code>[contact_newsletter_web]</code> Einwilligung Newsletter zu erhalten (Checkbox, Ja/Nein)</p>
+                    <p><br/></p>
+                </page>
+            </xpath>
+
         </field>
     </record>
 

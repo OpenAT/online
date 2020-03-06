@@ -6,6 +6,10 @@ from openerp import api, models, fields
 class CrmFacebookFormField(models.Model):
     _inherit = 'crm.facebook.form.field'
 
+    # TODO: map contact_name to partner "name" field if contact_lastname is not used!!! on lead partner creation!
+    # TODO: Choose a zGruppeDetail for the subscriptions! and Make sure PersonGruppe or PersonEmailGruppe will be set!
+    # TODO: Choose the correct CDS Folder where the FRST Aktionen should be linked
+
     @api.model
     def facebook_field_type_to_odoo_field_name(self):
 

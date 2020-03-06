@@ -43,17 +43,22 @@
                                 <field name="source_id"/>
                             </group>
                         </group>
-                        <group colspan="2" string="Mappings">
-                            <field name="mappings">
-                                <tree editable="bottom" colors="green:crm_field != False;">
-                                    <field name="fb_label"/>
-                                    <field name="fb_field_id"/>
-                                    <field name="fb_field_key"/>
-                                    <field name="fb_field_type"/>
-                                    <field name="crm_field"/>
-                                </tree>
-                            </field>
-                        </group>
+                        <notebook>
+                            <page string="Mappings">
+                                <group colspan="2" string="Mappings">
+                                    <field name="mappings">
+                                        <tree editable="bottom" colors="green:crm_field != False;">
+                                            <field name="fb_label"/>
+                                            <field name="fb_field_id"/>
+                                            <field name="fb_field_key"/>
+                                            <field name="fb_field_type"/>
+                                            <field name="crm_field"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+
                     </sheet>
                     <div class="oe_chatter" style="margin-top: 4em;padding-top: 1em;border-top: 1px #ded3d3 solid;background: #f3f3f3;">
                         <field name="message_follower_ids" widget="mail_followers" help="Follow this form to get status updates." groups="base.group_user"/>

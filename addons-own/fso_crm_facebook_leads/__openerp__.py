@@ -30,7 +30,7 @@ Features to be considered/discussed:
         'fso_crm_extra_fields',
     ],
     'data': [
-        # 'views/crm_facebook_form.xml',
+        'views/crm_facebook_form.xml',
         'views/fsonline_menu.xml',
     ]
 }
