@@ -111,8 +111,9 @@ TODO (must be done manually right now):
         'website_blog_layouts',
         'cam_hr_overtime_calendar_log',
         'web_menu_xmlid',
-        'fso_frst_groups',
-        'fso_frst_cds',
+        #'fso_frst_groups',
+        #'fso_frst_cds',
+        'fso_frst_groups_frst_cds',
     ],
     'data': [
         'data/setup.xml',

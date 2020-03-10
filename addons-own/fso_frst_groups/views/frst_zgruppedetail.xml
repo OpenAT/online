@@ -63,6 +63,12 @@
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
                 <field name="bestaetigung_erforderlich"/>
+                <field name="bestaetigung_typ"/>
+                <group string="Group by">
+                    <filter string="Folder" context="{'group_by':'zgruppe_id'}"/>
+                    <filter string="Approval-Needed" context="{'group_by':'bestaetigung_erforderlich'}"/>
+                    <filter string="Approval-Type" context="{'group_by':'bestaetigung_typ'}"/>
+                </group>
             </search>
         </field>
     </record>

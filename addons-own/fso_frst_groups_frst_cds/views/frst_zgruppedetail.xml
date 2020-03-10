@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_form">
+        <field name="name">frst_zgruppedetail_form</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bestaetigung_typ']" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_tree">
+        <field name="name">frst_zgruppedetail_tree</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_tree"/>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bestaetigung_typ']" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_search">
+        <field name="name">frst_zgruppedetail_search</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_search"/>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bestaetigung_typ']" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </xpath>
+            <xpath expr="//filter[@string='Approval-Type']" position="after">
+                <filter string="CDS-File" context="{'group_by':'frst_zverzeichnis_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>

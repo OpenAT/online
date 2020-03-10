@@ -66,11 +66,8 @@ class FRSTzVerzeichnis(models.Model):
     @api.constrains("parent_id", "verzeichnistyp_id")
     def constraint_parent_id(self):
         for r in self:
-            # REGEL: Nicht file auf file und nicht ordner auf file
+            # REGEL: Nicht "file auf file" und nicht "ordner auf file"
             if r.parent_id:
                 # Only link to parent folders
                 assert r.parent_id.verzeichnistyp_id, _(
                     "You can only move CDS files and CDS folder into CDS folders (but not into CDS files)!")
-
-
-    # TODO: Prevent deletion in odoo ?!?
