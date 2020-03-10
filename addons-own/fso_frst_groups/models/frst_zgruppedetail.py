@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
-from datetime import timedelta
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
 import logging
 logger = logging.getLogger(__name__)
 
@@ -59,3 +59,37 @@ class FRSTzGruppeDetail(models.Model):
     gui_anzeige_profil = fields.Boolean(string="GuiAnzeigeProfil",
                                         help="Show this group in the person profile view.",
                                         default=True)
+    geltungsbereich = fields.Selection(string="Geltungsbereich",
+                                       selection=[('local', 'Local Group'),
+                                                  ('system', 'System Group')],
+                                       default='system')
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('geltungsbereich') == 'local':
+            assert self.env.user.has_group('base.sosync'), _("You can not create a system group!")
+
+        return super(FRSTzGruppeDetail, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if self and vals and not self.env.user.has_group('base.sosync'):
+            # Do not change the group folder (because of the tabellentyp_id)
+            assert 'zgruppe_id' not in vals, _("You can not change the group folder (zgruppe_id). Please delete and "
+                                               "recreate the group!")
+            # Do not change the "geltungsbereich"
+            assert 'geltungsbereich' not in vals, _("You can not change the 'geltungsbereich'. Please delete and "
+                                                    "recreate the group!")
+            # Do not change system groups at all
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not change system groups!')
+
+        return super(FRSTzGruppeDetail, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        if not self.env.user.has_group('base.sosync'):
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not delete system groups!')
+
+        return super(FRSTzGruppeDetail, self).unlink()

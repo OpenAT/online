@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
-from datetime import timedelta
+from openerp.tools.translate import _
+from openerp.exceptions import ValidationError
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -44,3 +45,31 @@ class FRSTzGruppe(models.Model):
 
     nein_gui_anzeige = fields.Char(string="NeinGuiAnzeige", required=True,
                                    help="Display text for 'no'")
+
+    geltungsbereich = fields.Selection(string="Geltungsbereich",
+                                       selection=[('local', 'Local Group'),
+                                                  ('system', 'System Group')],
+                                       default='system')
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('geltungsbereich') == 'local':
+            assert self.env.user.has_group('base.sosync'), _("You can not create a system group folder!")
+
+        return super(FRSTzGruppe, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if self and vals and not self.env.user.has_group('base.sosync'):
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not change a system group folder')
+
+        return super(FRSTzGruppe, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        if not self.env.user.has_group('base.sosync'):
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not delete system group folders')
+
+        return super(FRSTzGruppe, self).unlink()
