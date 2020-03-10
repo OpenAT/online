@@ -21,17 +21,12 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_sosync_fso_frst_cds",
-    'summary': """FS-Online model for CDS""",
+    'name': "FS-Online fso_subscription_fso_frst_cds",
+    'summary': """FS-Online Subscription tied into Fundraising Studio Campaigns""",
     'description': """
 
-FS-Online fso_sosync_fso_frst_cds
-=================================
-- frst.zverzeichnis enabled in sosync
-
-Additional Information
-----------------------
-Tracks field of frst.zverzeichnis in sosync.
+    Extends mail.mass_mailing.list with
+    - frst_zverzeichnis_id   
 
     """,
     'author': "Datadialog - Martin Kaip",
@@ -42,9 +37,10 @@ Tracks field of frst.zverzeichnis in sosync.
     'application': True,
     'auto_install': False,
     'depends': [
-        'fso_frst_cds',
-        'fso_sosync',
+        'fso_subscriptions',
+        #'fso_frst_cds',    # No need to add here because fso_subscriptions -> fso_forms -> fso_base_website -> fso_base -> fso_frst_groups_frst_cds -> fso_frst_cds
     ],
-    'data': [],
-    'qweb': [],
+    'data': [
+        'views/mail_mass_mailing_list.xml'
+    ],
 }

@@ -116,6 +116,7 @@ TODO (must be done manually right now):
         'fso_frst_groups_frst_cds',
     ],
     'data': [
+        #
         'data/setup.xml',
         'data/project_task_stages.xml',
         'data/email_templates.xml',

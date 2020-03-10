@@ -31,19 +31,19 @@ class FRSTzGruppe(models.Model):
                                       help="Select model where Groups in this folder apply",
                                       required=True)
 
-    gruppe_kurz = fields.Char(string="GruppeKurz", required=True,
-                              help="Interne Bezeichnung")
-    gruppe_lang = fields.Char(string="GruppeLang", required=True,
-                              help="Anzeige fuer den Kunden und im GUI")
-    gui_anzeigen = fields.Boolean("GuiAnzeigen")
+    gruppe_kurz = fields.Char(string="GruppeKurz", required=True, help="Interne Bezeichnung")
+    gruppe_lang = fields.Char(string="GruppeLang", required=True, help="Anzeige fuer den Kunden und im GUI")
+    gui_anzeigen = fields.Boolean(string="GuiAnzeigen")
 
     zgruppedetail_ids = fields.One2many(comodel_name="frst.zgruppedetail", inverse_name='zgruppe_id',
                                         string="zGruppeDetail IDS")
 
     ja_gui_anzeige = fields.Char(string="JaGuiAnzeige", required=True,
+                                 default="not_yet_synced_odoo_default",
                                  help="Display text for 'yes'")
 
     nein_gui_anzeige = fields.Char(string="NeinGuiAnzeige", required=True,
+                                   default="not_yet_synced_odoo_default",
                                    help="Display text for 'no'")
 
     geltungsbereich = fields.Selection(string="Geltungsbereich",
@@ -53,7 +53,7 @@ class FRSTzGruppe(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('geltungsbereich') == 'local':
+        if vals.get('geltungsbereich') != 'local':
             assert self.env.user.has_group('base.sosync'), _("You can not create a system group folder!")
 
         return super(FRSTzGruppe, self).create(vals)

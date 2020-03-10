@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
+    # TODO: Add a zVerzeichnis field to copy the setting from the form at creation time to the crm.lead!
+
     @api.model
     def create(self, vals):
         lead = super(CrmLead, self).create(vals)

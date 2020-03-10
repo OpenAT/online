@@ -22,19 +22,21 @@
 
 {
     'name': "FS-Online fso_frst_cds",
-    'summary': """FS-Online Fundrasing Studio CDS (zVerzeichnis) implementation!""",
+    'summary': """
+FS-Online Fundrasing Studio CDS zVerzeichnis implementation!
+    """,
     'description': """
 FS-Online Fundraising Studio CDS
     """,
     'author': "Datadialog - Michael Karrer, Martin Kaip",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '1.0',
     'installable': True,
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_base',
+        'mail',
     ],
     'data': [
         'security/frst_cds_security.xml',

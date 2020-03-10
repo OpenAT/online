@@ -66,7 +66,7 @@ class FRSTzGruppeDetail(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('geltungsbereich') == 'local':
+        if vals.get('geltungsbereich') != 'local':
             assert self.env.user.has_group('base.sosync'), _("You can not create a system group!")
 
         return super(FRSTzGruppeDetail, self).create(vals)

@@ -39,3 +39,6 @@ import frst_personemailgruppe
 # FSO Subscription related
 import mail_mass_mailing_list
 import mail_mass_mailing_contact
+
+# FRST CDS
+import frst_zverzeichnis
