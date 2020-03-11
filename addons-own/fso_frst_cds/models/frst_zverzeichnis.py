@@ -13,9 +13,9 @@ class FRSTzVerzeichnis(models.Model):
     _inherit = ['mail.thread']
     _rec_name = "verzeichnisname"
 
-    verzeichnisname = fields.Char(string="Name", help="VerzeichnisName", track_visibility='onchange')
-    verzeichnislang = fields.Char(string="Beschreibung", help="VerzeichnisLang")
-    verzeichniskuerzel = fields.Char(string="Kuerzel", help="Kuerzel HINT: Not used in most instances")
+    verzeichnisname = fields.Char(string="Name", required=True, help="VerzeichnisName", track_visibility='onchange')
+    verzeichnislang = fields.Char(string="Beschreibung", required=True, help="VerzeichnisLang")
+    verzeichniskuerzel = fields.Char(string="Kuerzel", required=True, help="Kuerzel HINT: Not used in most instances")
     bemerkung = fields.Text(string="Bemerkung", help="Bemerkung")
 
     parent_id = fields.Many2one(comodel_name="frst.zverzeichnis", inverse_name='child_ids', string="Parent",
