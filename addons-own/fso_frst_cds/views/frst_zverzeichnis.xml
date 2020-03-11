@@ -117,7 +117,7 @@
         <field name="name">FRST CDS</field>
         <field name="res_model">frst.zverzeichnis</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="view_type">tree</field>
+        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
         <field name="search_view_id" ref="frst_zverzeichnis_search"/>
