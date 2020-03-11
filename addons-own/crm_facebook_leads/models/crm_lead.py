@@ -11,12 +11,11 @@ class CrmLead(models.Model):
 
     fb_lead_id = fields.Char('Facebook Lead ID', readonly=True, track_visibility='onchange')
     crm_form_id = fields.Many2one('crm.facebook.form', string='Form',
-                                  ondelete='set null', readonly=True, index=True, track_visibility='onchange')
+                                  readonly=True, track_visibility='onchange')
     crm_page_id = fields.Many2one('crm.facebook.page', string='Page',
                                   related='crm_form_id.crm_page_id', store=True,
-                                  ondelete='set null', readonly=True, index=True)
+                                  readonly=True,)
 
     _sql_constraints = [
         ('facebook_lead_unique', 'unique(fb_lead_id)', 'This Facebook lead already exists!')
     ]
-

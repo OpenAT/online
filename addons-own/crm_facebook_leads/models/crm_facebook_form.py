@@ -23,9 +23,11 @@ class CrmFacebookForm(models.Model):
     activated = fields.Datetime(string='Approved/Activated at', readonly=True, track_visibility='onchange')
 
     fb_form_id = fields.Char(required=True, readonly=True, string='Form ID')
-    crm_page_id = fields.Many2one(comodel_name='crm.facebook.page', string='Facebook Page',
-                                  required=True, readonly=True, ondelete='cascade', index=True)
-    mappings = fields.One2many(comodel_name='crm.facebook.form.field', inverse_name='crm_form_id',
+    crm_page_id = fields.Many2one(string='Facebook Page',
+                                  comodel_name='crm.facebook.page', inverse_name='crm_form_ids',
+                                  required=True, readonly=True)
+    mappings = fields.One2many(string="Form Field Mapping",
+                               comodel_name='crm.facebook.form.field', inverse_name='crm_form_id',
                                track_visibility='onchange')
 
     # Sales team / leads section
@@ -231,5 +233,3 @@ class CrmFacebookForm(models.Model):
                     answer = requests.get(paging['next']).json()
                 else:
                     break
-
-    # TODO: Avoid unlink() if crm.leads are linked to this form

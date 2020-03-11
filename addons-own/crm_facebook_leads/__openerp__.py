@@ -28,5 +28,6 @@
         'views/crm_facebook_page.xml',
         'views/crm_facebook_form.xml',
         'views/crm_facebook_form_field.xml',
+        'views/crm_lead.xml',
     ]
 }

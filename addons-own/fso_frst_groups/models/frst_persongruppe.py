@@ -24,7 +24,7 @@ class FRSTPersonGruppe(models.Model):
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_persongruppe_ids',
                                        string="zGruppeDetail",
                                        domain=[('zgruppe_id.tabellentyp_id', '=', '100100')],
-                                       required=True, ondelete='cascade')
+                                       required=True, ondelete='cascade', index=True)
     partner_id = fields.Many2one(comodel_name="res.partner", inverse_name='persongruppe_ids',
                                  string="Person",
                                  required=True, ondelete='cascade', index=True)

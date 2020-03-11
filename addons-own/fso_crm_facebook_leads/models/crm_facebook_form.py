@@ -20,6 +20,7 @@ class FSOCrmFacebookForm(models.Model):
     # HINT: "tabellentyp_id = 100110" means e-mail which in fact stands for PersonEmailGruppe stuff
     zgruppedetail_id = fields.Many2one(string="Fundraising Studio Group",
                                        comodel_name="frst.zgruppedetail", inverse_name='crm_fb_form_ids',
+                                       ondelete="set null", index=True,
                                        domain=[('zgruppe_id', '!=', False),
                                                ('zgruppe_id.tabellentyp_id', '=', '100110')],
                                        help="Fundraising Studio E-Mail Group")
@@ -27,6 +28,7 @@ class FSOCrmFacebookForm(models.Model):
     # HINT: "verzeichnistyp_id = False" means the CDS record is not a folder but a file
     frst_zverzeichnis_id = fields.Many2one(string="Fundraising Studio CDS",
                                            comodel_name="frst.zverzeichnis", inverse_name='crm_fb_form_ids',
+                                           ondelete="set null", index=True,
                                            domain=[('verzeichnistyp_id', '=', False)],
                                            readonly=True,
                                            help="Fundraising Studio CDS List/File. Right now this must match the "
@@ -59,3 +61,11 @@ class FSOCrmFacebookForm(models.Model):
             if r.zgruppedetail_id or r.frst_zverzeichnis_id:
                 assert r.force_create_partner, _("force_create_partner must be checked if a Fundraising Studio Group "
                                                  "or the CDS is set!")
+
+    # Add the frst_zverzeichnis_id to the lead creation values
+    @api.multi
+    def facebook_data_to_lead_data(self, facebook_lead_data=None):
+        res = super(FSOCrmFacebookForm, self).facebook_data_to_lead_data(facebook_lead_data=facebook_lead_data)
+        if res and self.frst_zverzeichnis_id:
+            res['frst_zverzeichnis_id'] = self.frst_zverzeichnis_id.id
+        return res

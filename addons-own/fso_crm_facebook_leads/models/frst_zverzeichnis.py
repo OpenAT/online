@@ -13,3 +13,9 @@ class FRSTzVerzeichnis(models.Model):
                                       readonly=True,
                                       help="Facebook Leads Forms that may use this CDS leave in the crm.lead "
                                            "creation process")
+
+    crm_lead_ids = fields.One2many(string="Leads",
+                                   comodel_name="crm.lead", inverse_name='frst_zverzeichnis_id',
+                                   readonly=True,
+                                   help="Facebook Leads Forms that may use this CDS leave in the crm.lead "
+                                        "creation process")

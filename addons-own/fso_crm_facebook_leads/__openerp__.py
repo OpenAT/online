@@ -32,5 +32,6 @@ Features to be considered/discussed:
     'data': [
         'views/crm_facebook_form.xml',
         'views/fsonline_menu.xml',
+        'views/crm_lead.xml',
     ]
 }

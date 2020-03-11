@@ -22,10 +22,10 @@ class FRSTPersonEmailGruppe(models.Model):
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_personemailgruppe_ids',
                                        string="zGruppeDetail",
                                        domain=[('zgruppe_id.tabellentyp_id', '=', '100110')],
-                                       required=True, ondelete='cascade')
+                                       required=True, ondelete='cascade', index=True)
     frst_personemail_id = fields.Many2one(comodel_name="frst.personemail", inverse_name='personemailgruppe_ids',
                                           string="FRST PersonEmail",
-                                          required=True, ondelete='cascade')
+                                          required=True, ondelete='cascade', index=True)
 
     # Override method from abstract model 'frst.checkboxbridgemodel' to use the 'main_personemail_id' field
     @api.model
