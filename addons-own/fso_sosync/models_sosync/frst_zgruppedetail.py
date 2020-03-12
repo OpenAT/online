@@ -7,6 +7,8 @@ class FRSTzGruppeDetailSosync(models.Model):
     _inherit = ["frst.zgruppedetail", "base.sosync"]
 
     zgruppe_id = fields.Many2one(sosync="True")
+    frst_zverzeichnis_id = fields.Many2one(sosync="True")
+
     gruppe_kurz = fields.Char(sosync="True")
     gruppe_lang = fields.Char(sosync="True")
     gui_anzeigen = fields.Boolean(sosync="True")
