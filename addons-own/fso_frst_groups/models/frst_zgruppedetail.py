@@ -11,11 +11,16 @@ class FRSTzGruppeDetail(models.Model):
     _name = "frst.zgruppedetail"
     _rec_name = "gruppe_lang"
 
-    # TODO: Display name method (gruppe_kurz + gruppe_lang)
-
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
                                  string="zGruppeID",
                                  required=True, ondelete="cascade")
+    geltungsbereich = fields.Selection(string="Geltungsbereich",
+                                       selection=[('local', 'Local Group'),
+                                                  ('system', 'System Group')],
+                                       default='system')
+    gui_anzeige_profil = fields.Boolean(string="GuiAnzeigeProfil",
+                                        help="Show this group in the person profile view.",
+                                        default=True)
 
     gruppe_kurz = fields.Char(string="GruppeKurz", required=True)
     gruppe_lang = fields.Char(string="GruppeLang", required=True)
@@ -27,8 +32,10 @@ class FRSTzGruppeDetail(models.Model):
     #            But these fields ARE IN USE by the specific groups-for-models models like "frst.persongruppe"!
     #            The fields are inherited through the abstract class "frst.gruppestate"
     #
-    gueltig_von = fields.Date(string="GueltigVon", required=True)   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
-    gueltig_bis = fields.Date(string="GueltigBis", required=True)   # Not used
+    gueltig_von = fields.Date(string="GueltigVon", required=True,
+                              default=lambda s: fields.Datetime.now())   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
+    gueltig_bis = fields.Date(string="GueltigBis", required=True,
+                              default=lambda s: fields.date(2099, 12, 31))   # Not used
 
     # PersonGruppe
     frst_persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='zgruppedetail_id',
@@ -55,14 +62,6 @@ class FRSTzGruppeDetail(models.Model):
                                                    ('phone_call', "Phone Call"),
                                                    ],
                                         string="Approval Type", default='doubleoptin')
-
-    gui_anzeige_profil = fields.Boolean(string="GuiAnzeigeProfil",
-                                        help="Show this group in the person profile view.",
-                                        default=True)
-    geltungsbereich = fields.Selection(string="Geltungsbereich",
-                                       selection=[('local', 'Local Group'),
-                                                  ('system', 'System Group')],
-                                       default='system')
 
     @api.model
     def create(self, vals):

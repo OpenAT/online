@@ -8,7 +8,7 @@
         <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='gueltig_bis']" position="after">
+            <xpath expr="//field[@name='geltungsbereich']" position="after">
                 <field name="frst_zverzeichnis_id"/>
             </xpath>
         </field>
@@ -20,7 +20,7 @@
         <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_tree"/>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='gueltig_bis']" position="after">
+            <xpath expr="//field[@name='geltungsbereich']" position="after">
                 <field name="frst_zverzeichnis_id"/>
             </xpath>
         </field>

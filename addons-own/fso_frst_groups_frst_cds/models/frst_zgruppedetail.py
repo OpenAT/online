@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class FRSTzGruppeDetail(models.Model):
     _inherit = "frst.zgruppedetail"
 
-    frst_zverzeichnis_id = fields.Many2one(string="CDS File",
+    frst_zverzeichnis_id = fields.Many2one(string="CDS Entry",
                                            comodel_name='frst.zverzeichnis', inverse_name="frst_zgruppedetail_ids",
                                            ondelete='set null', index=True,
                                            help="This is just a helper that may be used in the creation of FRST actions"

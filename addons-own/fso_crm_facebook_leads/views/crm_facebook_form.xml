@@ -12,8 +12,10 @@
             <xpath expr="//group[@string='Tracking Info']" position="before">
                 <group string="Fundraising Studio">
                     <field name="force_create_partner"/>
-                    <field name="zgruppedetail_id" />
-                    <field name="frst_zverzeichnis_id" invisible="[('zgruppedetail_id','=',False)]"/>
+                    <field name="zgruppedetail_id"
+                           context="{'default_gruppe_kurz': name, 'default_gruppe_lang': name}"
+                    />
+                    <field name="frst_zverzeichnis_id" invisible="0"/>
                 </group>
             </xpath>
 

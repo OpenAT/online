@@ -2,6 +2,7 @@
 
 from openerp import api, models, fields
 from openerp.tools.translate import _
+from openerp.exceptions import ValidationError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,8 +30,8 @@ class FSOCrmFacebookForm(models.Model):
     frst_zverzeichnis_id = fields.Many2one(string="Fundraising Studio CDS",
                                            comodel_name="frst.zverzeichnis", inverse_name='crm_fb_form_ids',
                                            ondelete="set null", index=True,
+                                           readonly=False,
                                            domain=[('verzeichnistyp_id', '=', False)],
-                                           readonly=True,
                                            help="Fundraising Studio CDS List/File. Right now this must match the "
                                                 "Fundraising Studio Group CDS setting but this may change in the "
                                                 "future")
@@ -48,19 +49,18 @@ class FSOCrmFacebookForm(models.Model):
     @api.constrains('zgruppedetail_id', 'frst_zverzeichnis_id', 'frst_zverzeichnis_id')
     def forms_constrains(self):
         for r in self:
-            # ATTENTION: This link may be removed at any time to allow setting a different cds leave for the leads than
-            #            the group or set the cds leave without any group set! (Is set in onchange also)
-            if r.frst_zverzeichnis_id:
-                assert r.frst_zverzeichnis_id == r.zgruppedetail_id.frst_zverzeichnis_id, _(
-                    "The CDS setting in the Fundraising Studio Group must match the CDS setting of this form!")
-            else:
-                assert not r.frst_zverzeichnis_id, _(
-                    "CDS must be unset if no Fundraising Studio Group is set!")
+            if r.zgruppedetail_id and r.zgruppedetail_id.frst_zverzeichnis_id != r.frst_zverzeichnis_id:
+                raise ValidationError(
+                    _("The CDS setting in the Fundraising Studio Group must match the CDS setting of this form!"))
+            elif not r.zgruppedetail_id and r.frst_zverzeichnis_id:
+                raise ValidationError(
+                    _("Please remove the CDS setting! "
+                      "It will be set automatically if a group with a CDS setting is selected."))
 
             # Make sure force create partner is set!
-            if r.zgruppedetail_id or r.frst_zverzeichnis_id:
-                assert r.force_create_partner, _("force_create_partner must be checked if a Fundraising Studio Group "
-                                                 "or the CDS is set!")
+            if (r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
+                raise ValidationError(
+                    _("force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"))
 
     # Add the frst_zverzeichnis_id to the lead creation values
     @api.multi

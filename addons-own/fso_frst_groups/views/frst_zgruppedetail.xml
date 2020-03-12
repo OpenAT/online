@@ -10,14 +10,20 @@
             <form string="zGruppeDetail">
                 <sheet>
                     <group>
-                        <field name="zgruppe_id"/>
-                        <field name="gruppe_kurz"/>
-                        <field name="gruppe_lang"/>
-                        <field name="gui_anzeigen"/>
-                        <field name="gueltig_von"/>
-                        <field name="gueltig_bis"/>
-                        <field name="bestaetigung_erforderlich"/>
-                        <field name="bestaetigung_typ"/>
+                        <group>
+                            <field name="zgruppe_id"/>
+                            <field name="geltungsbereich"/>
+                            <field name="gruppe_kurz"/>
+                            <field name="gruppe_lang"/>
+                            <field name="gui_anzeigen"/>
+                            <field name="gui_anzeige_profil"/>
+                        </group>
+                        <group>
+                            <field name="gueltig_von"/>
+                            <field name="gueltig_bis"/>
+                            <field name="bestaetigung_erforderlich"/>
+                            <field name="bestaetigung_typ"/>
+                        </group>
                     </group>
                     <group string="PersonGruppe">
                         <field name="frst_persongruppe_ids"/>
@@ -29,6 +35,7 @@
             </form>
         </field>
     </record>
+
     <!-- TREE/LIST VIEW -->
     <record model="ir.ui.view" id="frst_zgruppedetail_tree">
         <field name="name">frst_zgruppedetail_tree</field>
@@ -38,6 +45,7 @@
             <tree string="zGruppeDetail">
                 <field name="id"/>
                 <field name="zgruppe_id"/>
+                <field name="geltungsbereich"/>
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
                 <field name="gui_anzeigen"/>
@@ -48,6 +56,7 @@
             </tree>
         </field>
     </record>
+
     <!-- SEARCH VIEW -->
     <record model="ir.ui.view" id="frst_zgruppedetail_search">
         <field name="name">frst_zgruppedetail_search</field>
@@ -57,6 +66,8 @@
             <search string="zGruppeDetail">
                 <field name="id"/>
                 <field name="zgruppe_id"/>
+                <field name="geltungsbereich"/>
+                <field name="gui_anzeige_profil"/>
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
                 <field name="gui_anzeigen"/>
@@ -65,6 +76,7 @@
                 <field name="bestaetigung_erforderlich"/>
                 <field name="bestaetigung_typ"/>
                 <group string="Group by">
+                    <filter string="Geltungsbereich" context="{'group_by':'geltungsbereich'}"/>
                     <filter string="Folder" context="{'group_by':'zgruppe_id'}"/>
                     <filter string="Approval-Needed" context="{'group_by':'bestaetigung_erforderlich'}"/>
                     <filter string="Approval-Type" context="{'group_by':'bestaetigung_typ'}"/>
