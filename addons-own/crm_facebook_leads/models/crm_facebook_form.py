@@ -3,6 +3,11 @@
 from openerp import api, models, fields
 import requests
 from static_data import facebook_graph_api_url
+try:
+    import dateutil
+    from dateutil.parser import parse
+except:
+    dateutil = False
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +27,10 @@ class CrmFacebookForm(models.Model):
                              compute='compute_state', store=True, readonly=True)
     activated = fields.Datetime(string='Approved/Activated at', readonly=True, track_visibility='onchange')
 
-    fb_form_id = fields.Char(required=True, readonly=True, string='Form ID')
+    fb_form_id = fields.Char(string='Facebook Form ID', required=True, readonly=True)
+    fb_form_locale = fields.Char(string="Facebook Form Locale", readonly=True)
+    fb_form_status = fields.Char(string="Facebook Form Status", readonly=True)
+
     crm_page_id = fields.Many2one(string='Facebook Page',
                                   comodel_name='crm.facebook.page', inverse_name='crm_form_ids',
                                   required=True, readonly=True)
@@ -44,6 +52,11 @@ class CrmFacebookForm(models.Model):
 
     # Created crm.leads
     crm_lead_ids = fields.One2many(comodel_name='crm.lead', inverse_name='crm_form_id', readonly=True)
+
+    # SQL CONSTRAINTS
+    _sql_constraints = [
+        ('fb_form_id_unique', 'unique(fb_form_id)', 'Facebook Form ID must be unique per form')
+    ]
 
     # HINT: If the fb_page_access_token field is changed this method is triggered also!
     @api.depends('active', 'activated', 'crm_page_id', 'fb_form_id')
@@ -90,18 +103,24 @@ class CrmFacebookForm(models.Model):
                     'fb_field_type': question.get('type', False)
                 })
 
+    # TODO: We Could add the facebook form locale information to this process!
     @staticmethod
-    def parse_date(string_val):
-        # TODO: Eventually replace with date parsing library
-        if '/' in string_val and 'T' not in string_val:
-            us_date_parts = string_val.split('/')
-            return us_date_parts[2] + '-' + us_date_parts[0] + '-' + us_date_parts[1]
-        elif '/' in string_val and 'T' in string_val:
-            us_date_all_parts = string_val.split('T')
-            us_date_parts = us_date_all_parts[0].split('/')
-            return us_date_parts[2] + '-' + us_date_parts[0] + '-' + us_date_parts[1] + ' ' + us_date_all_parts[1]
-        else:
-            return string_val.split('+')[0].replace('T', ' ')
+    def parse_date(string_val, date_type=None):
+        assert date_type in ('date', 'datetime'), "type must be 'date' or 'datetime'"
+
+        if not dateutil:
+            logger.error("Facebook Leads Import: dateutil library is not available!")
+            return False
+
+        try:
+            parsed_dt = parse(string_val)
+            if date_type == 'date':
+                parsed_dt = parsed_dt.date()
+            return parsed_dt
+        except Exception as e:
+            logger.error("Facebook Leads Import: Could not convert string %s to datetime!\n%s"
+                         "" % (string_val, repr(e)))
+            return False
 
     @api.multi
     def facebook_data_to_lead_data(self, facebook_lead_data=None):
@@ -141,25 +160,34 @@ class CrmFacebookForm(models.Model):
             odoo_field_name = False
             odoo_field_value = False
             if crm_facebook_form_field:
+
                 odoo_field = crm_facebook_form_field.crm_field
                 odoo_field_name = odoo_field.name
                 odoo_field_type = odoo_field.ttype
+
                 try:
+                    # Many2One
                     if odoo_field_type == 'many2one':
                         domain = [('name', '=', question_val)]
                         if odoo_field.relation == 'res.country':
                             domain = [('code', '=', question_val)]
                         rec = self.env[odoo_field.relation].search(domain, limit=1)
                         odoo_field_value = rec.id if rec else False
+                    # Float
                     elif odoo_field_type in ('float', 'monetary'):
                         odoo_field_value = float(question_val)
+                    # Int
                     elif odoo_field_type == 'integer':
                         odoo_field_value = int(question_val)
+                    # Date
                     elif odoo_field_type in ('date', 'datetime'):
-                        odoo_field_value = CrmFacebookForm.parse_date(question_val)
+                        # TODO: We could add the facebook form locale information to the parsing method!
+                        odoo_field_value = CrmFacebookForm.parse_date(question_val, date_type=odoo_field_type)
+                    # Selection
                     elif odoo_field_type == 'selection':
-                        # TODO: Check if question_val is a valid selection value! IF not add it to the comments!
+                        # TODO: Check if question_val is a valid selection value! If not add it to the comments!
                         odoo_field_value = question_val
+                    # Char
                     elif odoo_field_type in ('char', 'text'):
                         odoo_field_value = question_val
                 except Exception as e:
@@ -215,6 +243,7 @@ class CrmFacebookForm(models.Model):
 
             # Get leads data from facebook for this form
             fb_request_url = facebook_graph_api_url + crm_form.fb_form_id + "/leads"
+            logger.info("Import facebook leads from request url: %s" % fb_request_url)
             answer = requests.get(fb_request_url,
                                   params={'access_token': crm_form.crm_page_id.fb_page_access_token}).json()
 

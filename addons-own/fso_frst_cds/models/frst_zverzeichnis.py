@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
 import logging
@@ -71,3 +72,14 @@ class FRSTzVerzeichnis(models.Model):
                 # Only link to parent folders
                 assert r.parent_id.verzeichnistyp_id, _(
                     "You can only move CDS files and CDS folder into CDS folders (but not into CDS files)!")
+
+    @api.multi
+    def unlink(self):
+
+        # ATTENTION: We do not know if there are any records related to this CDS record in FRST.
+        #            Therefore only the sosyncer (=FRST) can delete a CDS record but not any user in FSON!
+        if not self.env.user.has_group('base.sosync'):
+            raise ValidationError('You can not delete CDS records directly in FS-Online!\n'
+                                  'Please delete them in Fundraising Studio!')
+
+        return super(FRSTzVerzeichnis, self).unlink()

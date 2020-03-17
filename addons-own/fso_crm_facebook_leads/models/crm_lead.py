@@ -9,7 +9,7 @@ class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
     # zVerzeichnis field to copy the setting from the form at creation time to the crm.lead!
-    # TODO: Copy this from fbform -> zgruppedetail to crm.lead at lead creation
+    # HINT: Copy this from fbform -> zgruppedetail to crm.lead at lead creation: Done in facebook_data_to_lead_data()
     frst_zverzeichnis_id = fields.Many2one(string="Fundraising Studio CDS",
                                            comodel_name="frst.zverzeichnis", inverse_name='crm_lead_ids',
                                            domain=[('verzeichnistyp_id', '=', False)],
@@ -44,7 +44,7 @@ class CrmLead(models.Model):
 
                 wizard.action_apply()
 
-            # TODO: Create a FRST group subscription ("PersonEmailGruppe") if set in the form
+            # Create a FRST group subscription ("PersonEmailGruppe") if set in the form
             if lead.crm_form_id.zgruppedetail_id:
                 p_personemail = lead.partner_id.main_personemail_id
                 lead_email = lead.email_from

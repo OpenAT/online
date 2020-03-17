@@ -35,6 +35,8 @@
                             <group>
                                 <field name="crm_page_id"/>
                                 <field name="fb_form_id"/>
+                                <field name="fb_form_locale"/>
+                                <field name="fb_form_status"/>
                             </group>
                             <group string="Tracking Info">
                                 <field name="section_id"/>

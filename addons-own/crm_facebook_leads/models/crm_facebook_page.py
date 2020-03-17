@@ -18,6 +18,11 @@ class CrmFacebookPage(models.Model):
     fb_page_access_token = fields.Char(required=True, string='Page Access Token')
     crm_form_ids = fields.One2many('crm.facebook.form', 'crm_page_id', string='Lead Forms')
 
+    # SQL CONSTRAINTS
+    _sql_constraints = [
+        ('fb_fb_page_id', 'unique(fb_page_id)', 'Facebook page id must be unique')
+    ]
+
     @api.multi
     def import_facebook_forms(self):
         crm_facebook_form_obj = self.env['crm.facebook.form']
@@ -33,6 +38,8 @@ class CrmFacebookPage(models.Model):
                     crm_facebook_form_obj.create({
                         'name': fb_form.get('name') or fb_form['id'],
                         'fb_form_id': fb_form['id'],
+                        'fb_form_locale': fb_form.get('locale'),
+                        'fb_form_status': fb_form.get('status'),
                         'crm_page_id': r.id,
                     }).import_facebook_lead_fields()
                 else:
