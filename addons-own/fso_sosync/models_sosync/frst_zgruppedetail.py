@@ -22,3 +22,5 @@ class FRSTzGruppeDetailSosync(models.Model):
     bestaetigung_thanks = fields.Html(sosync="True")
 
     gui_anzeige_profil = fields.Boolean(sosync="True")
+
+    geltungsbereich = fields.Selection(sosync="True")

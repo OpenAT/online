@@ -17,12 +17,31 @@
                            domain="[('zgruppe_id.sosync_fs_id', 'in', (30200, 30100))]"
                     />
                     <field name="frst_zverzeichnis_id" invisible="0"/>
+                    <div colspan="2" class="backend-help oe_edit_only">
+                        <p>
+                            Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet!<br/>
+                            <br/>
+                            Wenn Sie ein Facebook Formular für eine Unterschriftsliste (Petition) konfigurieren möchte
+                            dann muss sich die oben gewählte Gruppe im Gruppenordner "Unterschriftslisten" befinden
+                            und einen CDS-Eintrag gesetzt haben damit die Verarbeitung der Leads korrekt funktioniert.<br/>
+                            <br/>
+                            Bitte legen Sie für jede neue Petition auch eine neue lokale Gruppe an um die Petitionsteilnehmer
+                            zu und ihre Anmeldebestätigungen zu verwalten. Sie können natürlich auch mehrere Formulare für
+                            die selbe Petition verwenden. Dazu wählen Sie einfach in jedem Formular die selbe Gruppe.<br/>
+                            <br/>
+                            Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in
+                            Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den
+                            CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in
+                            FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten
+                            CDS-Eintrag auswählen.
+                        </p>
+                    </div>
                 </group>
             </xpath>
 
             <xpath expr="//page[@string='Mappings']" position="after">
                 <page string="Hilfe">
-                    <h1>Mapping Hilfe</h1>
+                    <h1>Hilfe</h1>
                     <p><br/></p>
                     <p>
                         Wir erstellen eine weitestgehend automatische Feldzuweisung aufgrund des Facebook-Feld-Typs.
@@ -44,25 +63,114 @@
                         ACHTUNG: Es müssen mindestens die Felder <code>[contact_name] First name </code> und
                         <code>[email_from] Email </code> gemapped sein!
                     </p>
-                    <p><code>[contact_name] First name</code> Vorname (oder Vollständiger Name der Person falls Sie im Facebook Formular nur ein Feld für Vor- und Nachname verwenden)</p>
-                    <p><code>[contact_lastname] Last name</code> Nachname</p>
-                    <p><code>[email_from] Email</code> E-Mail der Person</p>
-                    <p><code>[phone] Phone</code> Telefonnummer </p>
-                    <p><code>[mobile] Mobil</code> Handynummer </p>
-                    <p><code>[street] Street</code> Straße</p>
-                    <p><code>[city] City</code> Stadt</p>
-                    <p><code>[zip] Zip</code> Postleitzahl</p>
-                    <p><code>[state_id] State</code> Bundesland</p>
-                    <p><code>[country_id] Country</code> Land (Wert muss im Iso Format gesendet werden z.B.: AT)</p>
-                    <p><code>[function] Function</code> Berufliche Position</p>
-                    <p><br/></p>
-                    <h3>Spezielle Felder</h3>
-                    <p><code>[contact_birthdate_web] Birthdate Web</code> Geburtsdatum</p>
-                    <p><code>[contact_street_number_web] Street Number Web</code> Str. Nummer</p>
-                    <p><code>[contact_anrede_individuell] Individuelle Anrede</code> Individuelle Anrede</p>
-                    <p><code>[contact_title_web]</code> Titel (z.B.: Dr., Ing., ...)</p>
-                    <p><code>[contact_newsletter_web]</code> Einwilligung Newsletter zu erhalten (Checkbox, Ja/Nein)</p>
-                    <p><br/></p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Feldname</th>
+                                <th>Feldbez.</th>
+                                <th>Bez. in FRST</th>
+                                <th>Bemerkung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>contact_name</code></td>
+                                <td>First name</td>
+                                <td>Vorname</td>
+                                <td>Vollständiger Name der Person falls Sie im Facebook Formular nur ein Feld für Vor- und Nachname verwenden</td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_lastname</code></td>
+                                <td>Last name</td>
+                                <td>Nachname</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>email_from</code></td>
+                                <td>Email</td>
+                                <td>E-Mail der Person</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>phone</code></td>
+                                <td>Phone</td>
+                                <td>Telefonnummer</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>mobile</code></td>
+                                <td>Mobil</td>
+                                <td>Handynummer</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>street</code></td>
+                                <td>Street</td>
+                                <td>Straße</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>city</code></td>
+                                <td>City</td>
+                                <td>Stadt</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>zip</code></td>
+                                <td>Zip</td>
+                                <td>Postleitzahl</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>state_id</code></td>
+                                <td>State</td>
+                                <td>Bundesland</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>country_id</code></td>
+                                <td>Country</td>
+                                <td>Land</td>
+                                <td>Wert muss im Iso Format gesendet werden z.B.: AT</td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_birthdate_web</code></td>
+                                <td>Birthdate Web</td>
+                                <td>Geburtsdatum</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_street_number_web</code></td>
+                                <td>Street Number Web</td>
+                                <td>Str. Nummer</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_anrede_individuell</code></td>
+                                <td>Individuelle Anrede</td>
+                                <td>Individuelle Anrede</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_title_web</code></td>
+                                <td>Title</td>
+                                <td>Titel</td>
+                                <td>z.B.: Dr., Ing., ...</td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_newsletter_web</code></td>
+                                <td>Newsletter</td>
+                                <td>Einwilligung Newsletter zu erhalten</td>
+                                <td>Muss eine Checkbox sein (0/1)</td>
+                            </tr>
+                            <tr>
+                                <td><code>Todo</code></td>
+                                <td>TODO</td>
+                                <td>Anrede</td>
+                                <td>Muss erst noch besprochen werden da hier nur drei werte in FRST zulässig sind</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </page>
             </xpath>
 

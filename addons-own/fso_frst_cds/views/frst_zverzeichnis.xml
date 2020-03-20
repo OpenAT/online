@@ -10,6 +10,19 @@
             <form string="zGruppe">
                 <sheet>
                     <group>
+                        <div colspan="2" class="backend-help oe_edit_only">
+                            <p>
+                                Sie können in FS-Online direkt einen neuen CDS-Eintrag erstellen.
+                                Die Erstellung eines CDS-Eintrages ist z.B. erforderlich wenn eine neue lokale Gruppe
+                                für eine Petition erstellt wird.<br/>
+                                <br/>
+                                Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in
+                                Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den
+                                CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in
+                                FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten
+                                CDS-Eintrag auswählen.
+                            </p>
+                        </div>
                         <group string="Important">
                             <field name="verzeichnisname" required="True"/>
                             <field name="verzeichnislang"/>

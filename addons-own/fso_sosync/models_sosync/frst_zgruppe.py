@@ -12,3 +12,5 @@ class FRSTzGruppeSosync(models.Model):
     gui_anzeigen = fields.Boolean(sosync="True")
     ja_gui_anzeige = fields.Char(sosync="True")
     nein_gui_anzeige = fields.Char(sosync="True")
+
+    geltungsbereich = fields.Selection(sosync="True")

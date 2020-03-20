@@ -11,23 +11,25 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="zgruppe_id"/>
-                            <field name="geltungsbereich"/>
                             <field name="gruppe_kurz"/>
                             <field name="gruppe_lang"/>
+                            <field name="zgruppe_id"/>
+                            <field name="geltungsbereich"/>
                         </group>
                         <group>
                             <field name="gueltig_von"/>
                             <field name="gueltig_bis"/>
-                            <field name="bestaetigung_erforderlich"/>
-                            <field name="bestaetigung_typ"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Extras">
-                            <group>
+                            <group string="GUI Anzeige">
                                 <field name="gui_anzeigen"/>
                                 <field name="gui_anzeige_profil"/>
+                            </group>
+                            <group string="Subscription Approval Settings">
+                                <field name="bestaetigung_erforderlich"/>
+                                <field name="bestaetigung_typ"/>
                             </group>
                         </page>
                         <page string="Subscribers">
@@ -39,7 +41,6 @@
                             </group>
                         </page>
                     </notebook>
-
                 </sheet>
             </form>
         </field>

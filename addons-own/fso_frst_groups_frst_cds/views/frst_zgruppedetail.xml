@@ -9,7 +9,22 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='geltungsbereich']" position="after">
+
                 <field name="frst_zverzeichnis_id"/>
+                <div colspan="2" class="backend-help oe_edit_only">
+                    <p>
+                        Wenn Sie hier einen CDS-Eintrag wählen können Aktionen die bei der Anmeldung
+                        an diese Gruppe erstellt werden (z.B.: Aktion Unterschrift) automatisch diesem CDS Eintrag
+                        zugeordnet werden.<br/>
+                        <br/>
+                        Sie können auch einen neuen CDS-Eintrag erstellen. Dies ist meist nützlich wenn eine neue lokale
+                        Gruppe erstellt wird.<br/>
+                        <br/>
+                        Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in
+                        Fundraising Studio gesetzt werden können! Falls Sie diese also benötigen müssen sie vor der Anlage
+                        einer lokalen Gruppe in FS-Online den CDS-Eintrag in Fundraising Studio vorbereiten.
+                    </p>
+                </div>
             </xpath>
         </field>
     </record>
