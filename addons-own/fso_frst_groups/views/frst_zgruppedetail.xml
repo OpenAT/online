@@ -15,8 +15,6 @@
                             <field name="geltungsbereich"/>
                             <field name="gruppe_kurz"/>
                             <field name="gruppe_lang"/>
-                            <field name="gui_anzeigen"/>
-                            <field name="gui_anzeige_profil"/>
                         </group>
                         <group>
                             <field name="gueltig_von"/>
@@ -25,12 +23,23 @@
                             <field name="bestaetigung_typ"/>
                         </group>
                     </group>
-                    <group string="PersonGruppe">
-                        <field name="frst_persongruppe_ids"/>
-                    </group>
-                    <group string="PersonEmailGruppe">
-                        <field name="frst_personemailgruppe_ids"/>
-                    </group>
+                    <notebook>
+                        <page string="Extras">
+                            <group>
+                                <field name="gui_anzeigen"/>
+                                <field name="gui_anzeige_profil"/>
+                            </group>
+                        </page>
+                        <page string="Subscribers">
+                            <group string="PersonGruppe">
+                                <field name="frst_persongruppe_ids"/>
+                            </group>
+                            <group string="PersonEmailGruppe">
+                                <field name="frst_personemailgruppe_ids"/>
+                            </group>
+                        </page>
+                    </notebook>
+
                 </sheet>
             </form>
         </field>

@@ -282,7 +282,7 @@ msgstr "Anzeige der Gruppe auf der Oberflaeche"
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_channels_leads_oppor
 msgid "Approved"
-msgstr "Bestätigt"
+msgstr "Verarbeitet"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fso_organizer_msg_archive

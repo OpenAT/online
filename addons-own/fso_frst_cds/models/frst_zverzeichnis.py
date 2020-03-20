@@ -19,12 +19,15 @@ class FRSTzVerzeichnis(models.Model):
     verzeichniskuerzel = fields.Char(string="Kuerzel", required=True, help="Kuerzel HINT: Not used in most instances")
     bemerkung = fields.Text(string="Bemerkung", help="Bemerkung")
 
-    parent_id = fields.Many2one(comodel_name="frst.zverzeichnis", inverse_name='child_ids', string="Parent",
-                                help="zVerzeichnisIDParent, If True this is a CDS folder (and not a CDS file)",
+    parent_id = fields.Many2one(comodel_name="frst.zverzeichnis", inverse_name='child_ids', string="Folder",
+                                domain="[('verzeichnistyp_id','=',True)]",
+                                help="zVerzeichnisIDParent",
                                 track_visibility='onchange')
     child_ids = fields.One2many(comodel_name='frst.zverzeichnis', inverse_name='parent_id', string="Child IDS")
 
-    verzeichnistyp_id = fields.Boolean(string="Ist ein Ordner", help="VerzeichnistypID", track_visibility='onchange')
+    verzeichnistyp_id = fields.Boolean(string="Ist ein Ordner",
+                                       help="VerzeichnistypID, If set this is a foler",
+                                       track_visibility='onchange')
     bezeichnungstyp_id = fields.Selection(string="Typ", selection=[('KA', 'Kampagne'),
                                                                    ('Aktion', 'Aktion'),
                                                                    ('ZG', 'Zielgruppe')],

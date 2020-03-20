@@ -24,16 +24,15 @@
     'name': "FS-Online fso_sosync_fso_crm_facebook_leads",
     'summary': """Enable CRM Leads synchronization via Sosync""",
     'description': """
-
 FS-Online fso_sosync_fso_crm_facebook_leads
-==================================
+===========================================
 Specifies sosync tracked fields for model crm.lead
 
     """,
     'author': "Datadialog",
     'website': "http://www.datadialog.net",
     'category': 'Uncategorized',
-    'version': '1.0',
+    'version': '0.5',
     'installable': True,
     'application': False,
     'auto_install': False,

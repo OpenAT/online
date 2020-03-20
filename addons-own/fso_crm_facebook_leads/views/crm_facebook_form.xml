@@ -13,7 +13,8 @@
                 <group string="Fundraising Studio">
                     <field name="force_create_partner"/>
                     <field name="zgruppedetail_id"
-                           context="{'default_gruppe_kurz': name, 'default_gruppe_lang': name}"
+                           context="{'default_gruppe_kurz': name, 'default_gruppe_lang': name, 'default_geltungsbereich': 'local'}"
+                           domain="[('zgruppe_id.sosync_fs_id', 'in', (30200, 30100))]"
                     />
                     <field name="frst_zverzeichnis_id" invisible="0"/>
                 </group>
