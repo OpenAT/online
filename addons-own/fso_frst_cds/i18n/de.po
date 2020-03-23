@@ -1,0 +1,362 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_frst_cds
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 08:50+0000\n"
+"PO-Revision-Date: 2020-03-23 08:50+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,organisationseinheit:0
+msgid " DEPRACTED LAUT PETRA Organisationseinheit"
+msgstr " DEPRACTED LAUT PETRA Organisationseinheit"
+
+#. module: fso_frst_cds
+#: selection:frst.zverzeichnis,bezeichnungstyp_id:0
+msgid "Aktion"
+msgstr "Aktion"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,anlagedatum:0
+msgid "Anlagedatum"
+msgstr "Anlagedatum"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,anlagedatum:0
+msgid "Anlagedatum HINT: Copy 'create_date' on record-creation-in-odoo to this field"
+msgstr "Anlagedatum HINT: Copy 'create_date' on record-creation-in-odoo to this field"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+#: field:frst.zverzeichnis,bemerkung:0
+#: help:frst.zverzeichnis,bemerkung:0
+msgid "Bemerkung"
+msgstr "Bemerkung"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,verzeichnislang:0
+msgid "Beschreibung"
+msgstr "Beschreibung"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+msgid "Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in\n"
+"                                Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den\n"
+"                                CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in\n"
+"                                FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten\n"
+"                                CDS-Eintrag auswählen."
+msgstr "Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in\n"
+"                                Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den\n"
+"                                CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in\n"
+"                                FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten\n"
+"                                CDS-Eintrag auswählen."
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,bezeichnungstyp_id:0
+msgid "CDS Ordner sollten immer Aktion oder Kampagne sein, CDS Files sollten immer Zielgruppe sein"
+msgstr "CDS Ordner sollten immer Aktion oder Kampagne sein, CDS Files sollten immer Zielgruppe sein"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,cdsdokument:0
+#: help:frst.zverzeichnis,cdsdokument:0
+msgid "CDSDokument"
+msgstr "CDSDokument"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,child_ids:0
+msgid "Child IDS"
+msgstr "Child IDS"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,verwendungalszmarketingid:0
+msgid "DEPRECATED LAUT PETRA VerwendungAlszMarketingID"
+msgstr "DEPRECATED LAUT PETRA VerwendungAlszMarketingID"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,sorterinhierarchie:0
+msgid "DEPRECATED LAUT SEBI SorterinHierarchie"
+msgstr "DEPRECATED LAUT SEBI SorterinHierarchie"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,uebersteigendebeitraegeprojahraufspendenzverzeichnisid:0
+msgid "DEPRECATED UebersteigendeBeitraegeproJahraufSpendenzVerzeichnisID"
+msgstr "DEPRECATED UebersteigendeBeitraegeproJahraufSpendenzVerzeichnisID"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr "Dateum der letzten Nachricht die auf dem Datensatz gepostet wurde."
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: fso_frst_cds
+#: model:ir.model,name:fso_frst_cds.model_frst_zverzeichnis
+msgid "Email Thread"
+msgstr "E-Mail Thread"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,endedatum:0
+#: help:frst.zverzeichnis,endedatum:0
+msgid "Endedatum"
+msgstr "Endedatum"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+msgid "Extras"
+msgstr "Extras"
+
+#. module: fso_frst_cds
+#: model:ir.actions.act_window,name:fso_frst_cds.frst_zverzeichnis_action
+#: model:ir.ui.menu,name:fso_frst_cds.frst_zverzeichnis_menu
+msgid "FRST CDS"
+msgstr "FRST CDS"
+
+#. module: fso_frst_cds
+#: model:res.groups,name:fso_frst_cds.group_fs_cds_manager
+msgid "FRST CDS Manager"
+msgstr "FRST CDS Manager"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,fibukontonummer:0
+#: help:frst.zverzeichnis,fibukontonummer:0
+msgid "FibuKontonummer"
+msgstr "FibuKontonummer"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,message_follower_ids:0
+msgid "Followers"
+msgstr "Followers"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
+msgid "Group By..."
+msgstr "Gruppiere nach ..."
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Chatter Übersicht. Diese Übersicht in HTMl verfasst um sie in Kanban-Views verwenden zu können"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr "If checked new messages require your attention."
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+msgid "Important"
+msgstr "Wichtig"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,message_is_follower:0
+msgid "Is a Follower"
+msgstr "Is a Follower"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,verzeichnistyp_id:0
+msgid "Ist ein Ordner"
+msgstr "Ist ein Ordner"
+
+#. module: fso_frst_cds
+#: selection:frst.zverzeichnis,bezeichnungstyp_id:0
+msgid "Kampagne"
+msgstr "Kampagne"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,verzeichniskuerzel:0
+msgid "Kuerzel"
+msgstr "Kürzel"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,verzeichniskuerzel:0
+msgid "Kuerzel HINT: Not used in most instances"
+msgstr "Kürzel (meist nicht verwendet)"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,message_last_post:0
+msgid "Last Message Date"
+msgstr "Last Message Date"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,__last_update:0
+msgid "Last Modified on"
+msgstr "Geändert am"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,write_uid:0
+msgid "Last Updated by"
+msgstr "Aktualisiert von"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,write_date:0
+msgid "Last Updated on"
+msgstr "Aktualisiert am"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
+msgid "Liste"
+msgstr "Liste"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,message_ids:0
+msgid "Messages"
+msgstr "Messages"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,message_ids:0
+msgid "Messages and communication history"
+msgstr "Messages and communication history"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,verzeichnisname:0
+msgid "Name"
+msgstr "Name"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
+#: field:frst.zverzeichnis,parent_id:0
+msgid "Ordner"
+msgstr "Ordner"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,organisationseinheit:0
+msgid "Organisationseinheit"
+msgstr "Organisationseinheit"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
+msgid "Parent"
+msgstr "Ordner"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+msgid "Sie können in FS-Online direkt einen neuen CDS-Eintrag erstellen.\n"
+"                                Die Erstellung eines CDS-Eintrages ist z.B. erforderlich wenn eine neue lokale Gruppe\n"
+"                                für eine Petition erstellt wird."
+msgstr "Sie können in FS-Online direkt einen neuen CDS-Eintrag erstellen.\n"
+"                                Die Erstellung eines CDS-Eintrages ist z.B. erforderlich wenn eine neue lokale Gruppe\n"
+"                                für eine Petition erstellt wird."
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,sorterinhierarchie:0
+msgid "SorterinHierarchie"
+msgstr "SorterinHierarchie"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,startdatum:0
+#: help:frst.zverzeichnis,startdatum:0
+msgid "Startdatum"
+msgstr "Startdatum"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,message_summary:0
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+msgid "System"
+msgstr "System"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
+#: field:frst.zverzeichnis,bezeichnungstyp_id:0
+msgid "Typ"
+msgstr "Typ"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,uebersteigendebeitraegeprojahraufspendenzverzeichnisid:0
+msgid "UebersteigendeBeitraegeproJahraufSpendenzVerzeichnisID"
+msgstr "UebersteigendeBeitraegeproJahraufSpendenzVerzeichnisID"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,message_unread:0
+msgid "Unread Messages"
+msgstr "Unread Messages"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,verantwortlicher_benutzer:0
+msgid "Verantw. Benutzer"
+msgstr "Verantw. Benutzer"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,verantwortlicher_benutzer:0
+msgid "VerantwortlichBenutzer"
+msgstr "VerantwortlichBenutzer"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,verwendungalszmarketingid:0
+msgid "VerwendungAlszMarketingID"
+msgstr "VerwendungAlszMarketingID"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,verzeichnislang:0
+msgid "VerzeichnisLang"
+msgstr "VerzeichnisLang"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,verzeichnisname:0
+msgid "VerzeichnisName"
+msgstr "VerzeichnisName"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,verzeichnistyp_id:0
+msgid "VerzeichnistypID, If set this is a folder"
+msgstr "VerzeichnistypID, If set this is a folder"
+
+#. module: fso_frst_cds
+#: code:addons/fso_frst_cds/models/frst_zverzeichnis.py:76
+#, python-format
+msgid "You can only move CDS files and CDS folder into CDS folders (but not into CDS files)!"
+msgstr "Sie können CDS-Einträge nur in CDS Ordner verschieben!"
+
+#. module: fso_frst_cds
+#: selection:frst.zverzeichnis,bezeichnungstyp_id:0
+msgid "Zielgruppe"
+msgstr "Zielgruppe"
+
+#. module: fso_frst_cds
+#: field:frst.zverzeichnis,xbankverbindungidfuereinzugsvertraege:0
+#: help:frst.zverzeichnis,xbankverbindungidfuereinzugsvertraege:0
+msgid "xBankverbindungIDFuerEinzugsvertraege"
+msgstr "xBankverbindungIDFuerEinzugsvertraege"
+
+#. module: fso_frst_cds
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_form
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
+#: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_tree
+msgid "zGruppe"
+msgstr "zGruppe"
+
+#. module: fso_frst_cds
+#: help:frst.zverzeichnis,parent_id:0
+msgid "zVerzeichnisIDParent, Folder in which this CDS record belongs"
+msgstr "zVerzeichnisIDParent, Ordner für CDS Einträge"
+
