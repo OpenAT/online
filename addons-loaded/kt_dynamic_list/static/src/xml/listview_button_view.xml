@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates t-name="selectcolumns">
+   <t t-extend="ListView.buttons">
+       <t t-jquery="t[t-if='widget.is_action_enabled(\'create\')']" t-operation="before">
+            <div class="btn-group hidden-xs o_dropdown">
+                <button id="select_columns" class="oe_select_columns btn-primary btn btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span/> Select Column(s) <span class="caret"/>
+                </button>
+                <ul id="showcb" class="dropdown-menu o_group_by_menu oe_dropdown_menu" role="menu" style="max-height:250px; overflow:auto;">
+                </ul>
+            </div>
+       </t>
+   </t>
+
+   <t t-name="ColumnSelectionDropDown">
+       <li>
+            <a>
+                <button id="apply" class="btn btn-primary btn-sm o_add_group o_select_group oe_dropdown_btn" type="button"
+                        style="display: block;">
+                    Apply
+                </button>
+            </a>
+       </li>
+       <li class="divider" style="display: list-item;"/>
+       <t t-foreach="columns" t-as="column">
+           <li class="item_column">
+               <a>
+                   <div class="o_checkbox"  style="vertical-align:middle;">
+                       <input type="checkbox" t-att-data-name="column.field_name" t-att-checked="column.invisible ? undefined : 'checked'"/>
+                       <span></span>
+                   </div>
+                   <t t-esc="column.label" />
+               </a>
+           </li>
+       </t>
+   </t>
+</templates>

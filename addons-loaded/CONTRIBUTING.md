@@ -1,0 +1,1 @@
+../addons-thirdparty/oca/queue/CONTRIBUTING.md
