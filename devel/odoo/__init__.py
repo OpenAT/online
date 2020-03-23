@@ -1,0 +1,1 @@
+../../odoo/odoo/__init__.py
