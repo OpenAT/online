@@ -13,7 +13,7 @@
                 <group string="Fundraising Studio">
                     <field name="force_create_partner"/>
                     <field name="zgruppedetail_id"
-                           context="{'default_gruppe_kurz': name, 'default_gruppe_lang': name, 'default_geltungsbereich': 'local'}"
+                           context="{'default_gui_anzeigen': True, 'default_gruppe_kurz': name, 'default_gruppe_lang': name, 'default_geltungsbereich': 'local'}"
                            domain="[('zgruppe_id.sosync_fs_id', 'in', (30200, 30100))]"
                     />
                     <field name="frst_zverzeichnis_id" invisible="0"/>
@@ -77,7 +77,7 @@
                                 <td><code>contact_name</code></td>
                                 <td>First name</td>
                                 <td>Vorname</td>
-                                <td>Vollständiger Name der Person falls Sie im Facebook Formular nur ein Feld für Vor- und Nachname verwenden</td>
+                                <td></td>
                             </tr>
                             <tr>
                                 <td><code>contact_lastname</code></td>
@@ -162,12 +162,6 @@
                                 <td>Newsletter</td>
                                 <td>Einwilligung Newsletter zu erhalten</td>
                                 <td>Muss eine Checkbox sein (0/1)</td>
-                            </tr>
-                            <tr>
-                                <td><code>Todo</code></td>
-                                <td>TODO</td>
-                                <td>Anrede</td>
-                                <td>Muss erst noch besprochen werden da hier nur drei werte in FRST zulässig sind</td>
                             </tr>
                         </tbody>
                     </table>

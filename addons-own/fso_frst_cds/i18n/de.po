@@ -353,7 +353,7 @@ msgstr "xBankverbindungIDFuerEinzugsvertraege"
 #: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_search
 #: view:frst.zverzeichnis:fso_frst_cds.frst_zverzeichnis_tree
 msgid "zGruppe"
-msgstr "zGruppe"
+msgstr "Gruppenordner"
 
 #. module: fso_frst_cds
 #: help:frst.zverzeichnis,parent_id:0

@@ -17,16 +17,14 @@
                             <field name="geltungsbereich"/>
                         </group>
                         <group>
+                            <field name="gui_anzeigen"/>
+                            <field name="gui_anzeige_profil"/>
                             <field name="gueltig_von"/>
                             <field name="gueltig_bis"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Extras">
-                            <group string="GUI Anzeige">
-                                <field name="gui_anzeigen"/>
-                                <field name="gui_anzeige_profil"/>
-                            </group>
                             <group string="Subscription Approval Settings">
                                 <field name="bestaetigung_erforderlich"/>
                                 <field name="bestaetigung_typ"/>

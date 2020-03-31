@@ -1,0 +1,532 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_frst_groups
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-31 17:43+0000\n"
+"PO-Revision-Date: 2020-03-31 17:43+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Adresse"
+msgstr "Adresse"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Aktion"
+msgstr "Aktion"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppe,gruppe_lang:0
+msgid "Anzeige fuer den Kunden und im GUI"
+msgstr "Anzeige für den Kunden und im GUI"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,bestaetigung_typ:0
+msgid "Approval Type"
+msgstr "Bestätigungstyp"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,bestaetigung_erforderlich:0
+msgid "Approval needed"
+msgstr "Bestätigung erforderlich"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
+msgid "Approval-Needed"
+msgstr "Bestätigung-erforderlich"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
+msgid "Approval-Type"
+msgstr "Bestätigungstyp"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,state:0
+#: selection:frst.personemailgruppe,state:0
+#: selection:frst.persongruppe,state:0
+msgid "Approved"
+msgstr "Bestätigt"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,bestaetigt_am_um:0
+#: field:frst.personemailgruppe,bestaetigt_am_um:0
+#: field:frst.persongruppe,bestaetigt_am_um:0
+msgid "Bestaetigt"
+msgstr "Bestätigt"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,bestaetigt_typ:0
+#: field:frst.personemailgruppe,bestaetigt_typ:0
+#: field:frst.persongruppe,bestaetigt_typ:0
+msgid "Bestaetigungs Typ"
+msgstr "Bestätigungstyp"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,bestaetigt_herkunft:0
+#: field:frst.personemailgruppe,bestaetigt_herkunft:0
+#: field:frst.persongruppe,bestaetigt_herkunft:0
+msgid "Bestaetigungsherkunft"
+msgstr "Bestaetigungsherkunft"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_form
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_form
+msgid "Compute State"
+msgstr "Berechne Status"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,create_uid:0
+#: field:frst.persongruppe,create_uid:0
+#: field:frst.zgruppe,create_uid:0
+#: field:frst.zgruppedetail,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,create_date:0
+#: field:frst.persongruppe,create_date:0
+#: field:frst.zgruppe,create_date:0
+#: field:frst.zgruppedetail,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: fso_frst_groups
+#: field:frst.checkboxbridgemodel,display_name:0
+#: field:frst.checkboxmodel,display_name:0
+#: field:frst.gruppestate,display_name:0
+#: field:frst.persongruppe,display_name:0
+#: field:frst.zgruppe,display_name:0
+#: field:frst.zgruppedetail,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppe,nein_gui_anzeige:0
+msgid "Display text for 'no'"
+msgstr "Anzeigetext für 'Nein'"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppe,ja_gui_anzeige:0
+msgid "Display text for 'yes'"
+msgstr "Anzeigetext für 'Ja'"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,bestaetigt_typ:0
+#: selection:frst.personemailgruppe,bestaetigt_typ:0
+#: selection:frst.persongruppe,bestaetigt_typ:0
+#: selection:frst.zgruppedetail,bestaetigung_typ:0
+msgid "DoubleOptIn"
+msgstr "DoubleOptIn"
+
+#. module: fso_frst_groups
+#: help:frst.gruppestate,bestaetigt_herkunft:0
+#: help:frst.personemailgruppe,bestaetigt_herkunft:0
+#: help:frst.persongruppe,bestaetigt_herkunft:0
+msgid "E.g.: The link or the workflow process"
+msgstr "Zum Beispiel der Link zum Workflow Schritt"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Email"
+msgstr "E-Mail"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,state:0
+#: selection:frst.personemailgruppe,state:0
+#: selection:frst.persongruppe,state:0
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+msgid "Extras"
+msgstr "Extras"
+
+#. module: fso_frst_groups
+#: model:res.groups,name:fso_frst_groups.group_fs_group_manager
+msgid "FRST Groups Manager"
+msgstr "FRST Gruppen Manager"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,frst_personemail_id:0
+msgid "FRST PersonEmail"
+msgstr "FRST PersonEmail"
+
+#. module: fso_frst_groups
+#: field:frst.personemail,personemailgruppe_ids:0
+msgid "FRST PersonEmailGruppe IDS"
+msgstr "Gruppenzuweisungen für E-Mails"
+
+#. module: fso_frst_groups
+#: field:res.partner,persongruppe_ids:0
+msgid "FRST PersonGruppe IDS"
+msgstr "Gruppenzuweisungen für Personen"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
+msgid "Folder"
+msgstr "Gruppenordner"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+msgid "GUI Anzeige"
+msgstr "Aktiv"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,geltungsbereich:0
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
+#: field:frst.zgruppedetail,geltungsbereich:0
+msgid "Geltungsbereich"
+msgstr "Geltungsbereich"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
+msgid "Group by"
+msgstr "Gruppierung ..."
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,gruppe_kurz:0
+#: field:frst.zgruppedetail,gruppe_kurz:0
+msgid "GruppeKurz"
+msgstr "Gruppe Kurz"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,gruppe_lang:0
+#: field:frst.zgruppedetail,gruppe_lang:0
+msgid "GruppeLang"
+msgstr "Gruppe Lang"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
+msgid "Gruppen"
+msgstr "Gruppen"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
+msgid "Gruppenordner"
+msgstr "Gruppenordner"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,gueltig_bis:0
+#: field:frst.personemailgruppe,gueltig_bis:0
+#: field:frst.persongruppe,gueltig_bis:0
+#: field:frst.zgruppedetail,gueltig_bis:0
+msgid "GueltigBis"
+msgstr "Gueltig Bis"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,gueltig_von:0
+#: field:frst.personemailgruppe,gueltig_von:0
+#: field:frst.persongruppe,gueltig_von:0
+#: field:frst.zgruppedetail,gueltig_von:0
+msgid "GueltigVon"
+msgstr "Gueltig Von"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,gui_anzeige_profil:0
+msgid "GuiAnzeigeProfil"
+msgstr "Anzeigen im Personenfenster"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,gui_anzeigen:0
+#: field:frst.zgruppedetail,gui_anzeigen:0
+msgid "GuiAnzeigen"
+msgstr "Aktiv"
+
+#. module: fso_frst_groups
+#: field:frst.checkboxbridgemodel,id:0
+#: field:frst.checkboxmodel,id:0
+#: field:frst.gruppestate,id:0
+#: field:frst.personemailgruppe,id:0
+#: field:frst.persongruppe,id:0
+#: field:frst.zgruppe,id:0
+#: field:frst.zgruppedetail,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: fso_frst_groups
+#: help:frst.gruppestate,steuerung_bit:0
+#: help:frst.personemailgruppe,steuerung_bit:0
+#: help:frst.persongruppe,steuerung_bit:0
+msgid "If not set: Person is explicitly excluded/unsubscribed from this group!"
+msgstr "If not set: Person is explicitly excluded/unsubscribed from this group!"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppedetail,gui_anzeigen:0
+msgid "If set this group is available for this instance"
+msgstr "If set this group is available for this instance"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppedetail,bestaetigung_erforderlich:0
+msgid "If this checkbox is set gueltig_von and gueltig_bis will be set to the past date 09.09.1999 when the group is created to indicate that an approval is needed before set the group to active."
+msgstr "If this checkbox is set gueltig_von and gueltig_bis will be set to the past date 09.09.1999 when the group is created to indicate that an approval is needed before set the group to active."
+
+#. module: fso_frst_groups
+#: help:frst.zgruppe,gruppe_kurz:0
+msgid "Interne Bezeichnung"
+msgstr "Interne Bezeichnung"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,ja_gui_anzeige:0
+msgid "JaGuiAnzeige"
+msgstr "JaGuiAnzeige"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Kommunikation"
+msgstr "Kommunikation"
+
+#. module: fso_frst_groups
+#: field:frst.checkboxbridgemodel,__last_update:0
+#: field:frst.checkboxmodel,__last_update:0
+#: field:frst.gruppestate,__last_update:0
+#: field:frst.personemailgruppe,__last_update:0
+#: field:frst.persongruppe,__last_update:0
+#: field:frst.zgruppe,__last_update:0
+#: field:frst.zgruppedetail,__last_update:0
+msgid "Last Modified on"
+msgstr "Geändert am"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,write_uid:0
+#: field:frst.persongruppe,write_uid:0
+#: field:frst.zgruppe,write_uid:0
+#: field:frst.zgruppedetail,write_uid:0
+msgid "Last Updated by"
+msgstr "Aktualisiert von"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,write_date:0
+#: field:frst.persongruppe,write_date:0
+#: field:frst.zgruppe,write_date:0
+#: field:frst.zgruppedetail,write_date:0
+msgid "Last Updated on"
+msgstr "Aktualisiert am"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,geltungsbereich:0
+#: selection:frst.zgruppedetail,geltungsbereich:0
+msgid "Local Group"
+msgstr "Lokale Gruppe"
+
+#. module: fso_frst_groups
+#: field:res.partner,main_email_personemailgruppe_ids:0
+msgid "Main Email Groups"
+msgstr "Hauptemail Gruppen"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,nein_gui_anzeige:0
+msgid "NeinGuiAnzeige"
+msgstr "NeinGuiAnzeige"
+
+#. module: fso_frst_groups
+#: model:ir.model,name:fso_frst_groups.model_res_partner
+msgid "Partner"
+msgstr "Person"
+
+#. module: fso_frst_groups
+#: field:frst.persongruppe,partner_id:0
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Person"
+msgstr "Person"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_form
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_tree
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+#: model:ir.actions.act_window,name:fso_frst_groups.frst_personemailgruppe_action
+#: model:ir.ui.menu,name:fso_frst_groups.frst_personemailgruppe_menu
+msgid "PersonEmailGruppe"
+msgstr "Gruppenzuweisung E-Mail"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,frst_personemailgruppe_ids:0
+msgid "PersonEmailGruppe IDS"
+msgstr "Gruppenzuweisungen E-Mail"
+
+#. module: fso_frst_groups
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_form
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_tree
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+#: model:ir.actions.act_window,name:fso_frst_groups.frst_persongruppe_action
+#: model:ir.ui.menu,name:fso_frst_groups.frst_persongruppe_menu
+msgid "PersonGruppe"
+msgstr "Gruppenzuweisung Person"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,frst_persongruppe_ids:0
+msgid "PersonGruppe IDS"
+msgstr "Gruppenzuweisungen Person"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,bestaetigt_typ:0
+#: selection:frst.personemailgruppe,bestaetigt_typ:0
+#: selection:frst.persongruppe,bestaetigt_typ:0
+#: selection:frst.zgruppedetail,bestaetigung_typ:0
+msgid "Phone Call"
+msgstr "Telefonat"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_form
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_form
+msgid "Recompute State for all Groups"
+msgstr "Status für alle Gruppen neu Berechnen"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppe,tabellentyp_id:0
+msgid "Select model where Groups in this folder apply"
+msgstr "Wähle das Model/den Typ für alle Gruppen in diesem Gruppenordner"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppedetail,gui_anzeige_profil:0
+msgid "Show this group in the person profile view."
+msgstr "Zeige diese Gruppe im Personenfenster"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,state:0
+#: field:frst.personemailgruppe,state:0
+#: field:frst.persongruppe,state:0
+msgid "State"
+msgstr "Status"
+
+#. module: fso_frst_groups
+#: field:frst.gruppestate,steuerung_bit:0
+#: field:frst.personemailgruppe,steuerung_bit:0
+#: field:frst.persongruppe,steuerung_bit:0
+msgid "Steuerung Bit"
+msgstr "Steuerung Bit"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,state:0
+#: selection:frst.personemailgruppe,state:0
+#: selection:frst.persongruppe,state:0
+msgid "Subscribed"
+msgstr "Angemeldet"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+msgid "Subscribers"
+msgstr "Anmeldungen"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+msgid "Subscription Approval Settings"
+msgstr "Einstellungen für die Anmeldungsbestätigung"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,display_name:0
+msgid "Subscription Name"
+msgstr "Anzeigename"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,geltungsbereich:0
+#: selection:frst.zgruppedetail,geltungsbereich:0
+msgid "System Group"
+msgstr "Systemgruppe"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,tabellentyp_id:0
+msgid "TabellentypID"
+msgstr "Model/Typ"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Telefon"
+msgstr "Telefon"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,state:0
+#: selection:frst.personemailgruppe,state:0
+#: selection:frst.persongruppe,state:0
+msgid "Unsubscribed"
+msgstr "Abgemeldet"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "Vertrag"
+msgstr "Vertrag"
+
+#. module: fso_frst_groups
+#: selection:frst.gruppestate,state:0
+#: selection:frst.personemailgruppe,state:0
+#: selection:frst.persongruppe,state:0
+msgid "Waiting for Approval"
+msgstr "Warte auf Bestätigung"
+
+#. module: fso_frst_groups
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:80
+#, python-format
+msgid "You can not change the 'geltungsbereich'. Please delete and recreate the group!"
+msgstr "Du kannst den 'geltungsbereich' nicht verändern. Bitte lösche die Gruppe und lege sie neu an falls erforderlich!"
+
+#. module: fso_frst_groups
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:77
+#, python-format
+msgid "You can not change the group folder (zgruppe_id). Please delete and recreate the group!"
+msgstr "Du kannst den Gruppenordner nicht ändern (zgruppe_id). Bitte lösche die Gruppe und lege sie neu an falls erforderlich!"
+
+#. module: fso_frst_groups
+#: code:addons/fso_frst_groups/models/frst_zgruppe.py:57
+#, python-format
+msgid "You can not create a system group folder!"
+msgstr "Du kannst einen Systemgruppenordner nicht löschen!"
+
+#. module: fso_frst_groups
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:69
+#, python-format
+msgid "You can not create a system group!"
+msgstr "Du kannst eine Systemgruppe nicht löschen!"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "zEvent"
+msgstr "zEvent"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_search
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_tree
+#: model:ir.actions.act_window,name:fso_frst_groups.frst_zgruppe_action
+#: model:ir.ui.menu,name:fso_frst_groups.frst_zgruppe_menu
+msgid "zGruppe"
+msgstr "Gruppenordner (zGruppe)"
+
+#. module: fso_frst_groups
+#: field:frst.personemailgruppe,zgruppedetail_id:0
+#: field:frst.persongruppe,zgruppedetail_id:0
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_tree
+#: model:ir.actions.act_window,name:fso_frst_groups.frst_zgruppedetail_action
+#: model:ir.ui.menu,name:fso_frst_groups.frst_zgruppedetail_menu
+msgid "zGruppeDetail"
+msgstr "Gruppe (zGruppeDetail)"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppe,zgruppedetail_ids:0
+msgid "zGruppeDetail IDS"
+msgstr "Gruppen"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,zgruppe_id:0
+msgid "zGruppeID"
+msgstr "Gruppenordner"
+
+#. module: fso_frst_groups
+#: selection:frst.zgruppe,tabellentyp_id:0
+msgid "zVerzeichnis"
+msgstr "CDS Eintrag"
+

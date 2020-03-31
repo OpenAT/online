@@ -10,19 +10,19 @@
             <form string="Gruppenordner">
                 <sheet>
                     <group>
-                        <field name="tabellentyp_id"/>
-                        <field name="geltungsbereich"/>
-                        <field name="gruppe_kurz"/>
-                        <field name="gruppe_lang"/>
+                        <group>
+                            <field name="gruppe_kurz"/>
+                            <field name="gruppe_lang"/>
+                            <field name="tabellentyp_id"/>
+                            <field name="geltungsbereich"/>
+                        </group>
+                        <group>
+                            <field name="gui_anzeigen"/>
+                            <field name="ja_gui_anzeige"/>
+                            <field name="nein_gui_anzeige"/>
+                        </group>
                     </group>
                     <notebook>
-                        <page string="Extras">
-                            <group>
-                                <field name="gui_anzeigen"/>
-                                <field name="ja_gui_anzeige"/>
-                                <field name="nein_gui_anzeige"/>
-                            </group>
-                        </page>
                         <page string="Gruppen">
                             <group string="zGruppeDetail">
                                 <field name="zgruppedetail_ids"/>
@@ -42,14 +42,14 @@
         <field name="arch" type="xml">
             <tree string="zGruppe">
                 <field name="id"/>
-                <field name="geltungsbereich"/>
-                <field name="tabellentyp_id"/>
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
-                <field name="gui_anzeigen"/>
-                <field name="ja_gui_anzeige"/>
-                <field name="nein_gui_anzeige"/>
-                <field name="zgruppedetail_ids"/>
+                <field name="tabellentyp_id"/>
+                <field name="geltungsbereich"/>
+                <field name="gui_anzeigen" />
+                <field name="ja_gui_anzeige" string="Ja GUI"/>
+                <field name="nein_gui_anzeige" string=" Nein GUI"/>
+                <field name="zgruppedetail_ids" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -61,14 +61,15 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="zGruppe">
+                <field name="gruppe_kurz"/>
+                <field name="gruppe_lang"/>
                 <field name="id"/>
                 <field name="tabellentyp_id"/>
                 <field name="geltungsbereich"/>
-                <field name="gruppe_kurz"/>
-                <field name="gruppe_lang"/>
                 <field name="gui_anzeigen"/>
                 <field name="ja_gui_anzeige"/>
                 <field name="nein_gui_anzeige"/>
+                <field name="zgruppedetail_ids"/>
             </search>
         </field>
     </record>
