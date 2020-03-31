@@ -10,18 +10,19 @@ class CrmLead(models.Model):
 
     # zVerzeichnis field to copy the setting from the form at creation time to the crm.lead!
     # HINT: Copy this from fbform -> zgruppedetail to crm.lead at lead creation: Done in facebook_data_to_lead_data()
-    frst_zverzeichnis_id = fields.Many2one(string="Fundraising Studio CDS",
+    frst_zverzeichnis_id = fields.Many2one(string="CDS Origin",
                                            comodel_name="frst.zverzeichnis", inverse_name='crm_lead_ids',
                                            domain=[('verzeichnistyp_id', '=', False)],
-                                           readonly=True,
-                                           help="Fundraising Studio CDS List/File. "
+                                           readonly=True, ondelete='set null', index=True,
+                                           help="Ursprungsaktion / Herkunft / zMarketingID \n"
+                                                "Fundraising Studio CDS List/File. "
                                                 "This will be copied at lead creation from the setting of the "
                                                 "zGruppeDetail set in the facebook lead form")
 
-    # If a facebook leads creates a FRST Group Subscription we link the subscription to the lead
+    # If a facebook leads creates a FRST Group Subscription we link the subscription to the crm.lead
     personemailgruppe_id = fields.Many2one(string="PersonEmailGruppe",
                                            comodel_name='frst.personemailgruppe', inverse_name="crm_lead_ids",
-                                           readonly=True)
+                                           readonly=True, ondelete='set null', index=True)
 
     @api.model
     def create(self, vals):
@@ -61,6 +62,7 @@ class CrmLead(models.Model):
                     peg_vals = {
                         'zgruppedetail_id': lead.crm_form_id.zgruppedetail_id.id,
                         'frst_personemail_id': p_personemail.id,
+                        'frst_zverzeichnis_id': lead.frst_zverzeichnis_id.id if lead.frst_zverzeichnis_id else False,
                         'crm_lead_ids': [(4, lead.id, False)]}
                     peg = self.env['frst.personemailgruppe'].create(peg_vals)
                     logger.info("Created subscription (PersonEmailGruppe (id %s)) for facebook crm.lead (id %s)"

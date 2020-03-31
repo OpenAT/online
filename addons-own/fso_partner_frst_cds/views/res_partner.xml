@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend res.partner form to include frst_cds field -->
+    <record model="ir.ui.view" id="frst_cds_res_partner_form_view">
+        <field name="name">frst_cds_res_partner_form_view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend res.partner tree to include frst_cds field -->
+    <record model="ir.ui.view" id="frst_cds_res_partner_tree_view">
+        <field name="name">frst_cds_res_partner_tree_view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Extend res.partner search to include frst_cds field -->
+    <record model="ir.ui.view" id="frst_cds_res_partner_search_view">
+        <field name="name">frst_cds_res_partner_search_view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </field>
+        </field>
+    </record>
+
+</data></openerp>

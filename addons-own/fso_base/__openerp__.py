@@ -82,7 +82,9 @@ TODO (must be done manually right now):
         'website_hr_recruitment', 'website_mail', 'website_mail_group', 'website_membership', 'website_partner',
         'website_payment', 'website_project', 'website_quote', 'website_report', 'website_sale',
         'website_sale_delivery', 'website_twitter', 'base_iban',
-        # Default Third Party Addons
+        # ---
+        # Default Third-Party addons
+        # ---
         'dbfilter_from_header',
         'disable_openerp_online',
         'base_location',
@@ -99,7 +101,9 @@ TODO (must be done manually right now):
         'smile_web_export',
         #'smile_web_search_range', # DISABLED because of JS View errors in Backend
         #'smile_web_search_timedelta', Disabled because of ParseError: "External ID not found in the system: web.assets_backend" while parsing None:5, near <data inherit_id="web.assets_backend">
+        # ---
         # Default addons-own (not FS-Online specific)
+        # ---
         'mail_follower_control',
         'mail_global_bcc',
         'partner_firstname_lastname',
@@ -111,9 +115,8 @@ TODO (must be done manually right now):
         'website_blog_layouts',
         'cam_hr_overtime_calendar_log',
         'web_menu_xmlid',
-        #'fso_frst_groups',
-        #'fso_frst_cds',
         'fso_frst_groups_frst_cds',
+        'fso_partner_frst_cds',
     ],
     'data': [
         #

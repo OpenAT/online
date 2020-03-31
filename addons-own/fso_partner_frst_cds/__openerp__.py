@@ -21,21 +21,14 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_frst_groups_frst_cds",
-    'summary': """FS-Online Fundrasing Studio Group System CDS extension""",
+    'name': "FS-Online fso_partner_frst_cds",
+    'summary': """FS-Online Partner CDS Origin""",
     'description': """
-FS-Online Fundraising Studio Group System CDS Link.
-Will add a relation between frst.zgruppedetail and frst.zverzeichnis
+This implements the zMartketingID field of partner that is available in Fundraising Studio.
 
-The use case for setting a CDS list (file) on a FRST Group (zGruppeDetail) is to use this as a hint for any
-Fundraising Studio "Aktion" that may be created because a FRST Group is assigned (e.g.: Personemailgruppe) or changed
-(e.g.: Status changed to 'confirmed' or 'OptOut')
-
-This is part of the "customization" project with it's goal to solve more customer requirements without coding but with
-settings in the program by our stuff or even the customer itself.
-
+With this field we can track the origin (Ursprungsaktion) of the partner.
     """,
-    'author': "Datadialog - Michael Karrer, Martin Kaip",
+    'author': "Datadialog - Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
@@ -43,12 +36,10 @@ settings in the program by our stuff or even the customer itself.
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_frst_groups',
+        'base',
         'fso_frst_cds',
     ],
     'data': [
-        'views/frst_zgruppedetail.xml'
-        'views/frst_personemailgruppe.xml'
-        'views/frst_persongruppe.xml'
+        'views/res_partner.xml'
     ],
 }
