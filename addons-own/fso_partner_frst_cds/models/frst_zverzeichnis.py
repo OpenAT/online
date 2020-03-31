@@ -9,5 +9,5 @@ class FRSTzVerzeichnis(models.Model):
     _inherit = "frst.zverzeichnis"
 
     partner_ids = fields.One2many(string="FRST Groups",
-                                  comodel_name='frst.zgruppedetail', inverse_name='frst_zverzeichnis_id',
+                                  comodel_name='res.partner', inverse_name='frst_zverzeichnis_id',
                                   readonly=True)

@@ -47,8 +47,8 @@ settings in the program by our stuff or even the customer itself.
         'fso_frst_cds',
     ],
     'data': [
-        'views/frst_zgruppedetail.xml'
-        'views/frst_personemailgruppe.xml'
-        'views/frst_persongruppe.xml'
+        'views/frst_zgruppedetail.xml',
+        'views/frst_personemailgruppe.xml',
+        'views/frst_persongruppe.xml',
     ],
 }
