@@ -7,7 +7,7 @@
         <field name="model">frst.persongruppe</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_persongruppe_form"/>
         <field name="arch" type="xml">
-            <field name="gueltig_bis" position="after">
+            <field name="gueltig_von" position="before">
                 <field name="frst_zverzeichnis_id"/>
             </field>
         </field>
@@ -19,7 +19,7 @@
         <field name="model">frst.persongruppe</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_persongruppe_tree"/>
         <field name="arch" type="xml">
-            <field name="gueltig_bis" position="after">
+            <field name="gueltig_von" position="before">
                 <field name="frst_zverzeichnis_id"/>
             </field>
         </field>
@@ -31,7 +31,7 @@
         <field name="model">frst.persongruppe</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_persongruppe_search"/>
         <field name="arch" type="xml">
-            <field name="gueltig_bis" position="after">
+            <field name="gueltig_von" position="before">
                 <field name="frst_zverzeichnis_id"/>
             </field>
         </field>

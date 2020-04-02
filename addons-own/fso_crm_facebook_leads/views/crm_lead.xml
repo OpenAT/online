@@ -22,10 +22,12 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm_facebook_leads.crm_case_form_view_oppor"/>
         <field name="arch" type="xml">
+
             <xpath expr="//field[@name='crm_page_id']" position="after">
                 <field name="frst_zverzeichnis_id"/>
                 <field name="personemailgruppe_id"/>
             </xpath>
+
         </field>
     </record>
 
