@@ -7,8 +7,10 @@
         <field name="model">frst.zgruppedetail</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='bestaetigung_typ']" position="before">
-                <field name="subscription_email"/>
+            <xpath expr="//group[@name='subscription_settings']" position="before">
+                <group string="New Subscription E-Mail">
+                    <field name="subscription_email"/>
+                </group>
             </xpath>
             <xpath expr="//field[@name='bestaetigung_typ']" position="after">
                 <field name="bestaetigung_email"/>

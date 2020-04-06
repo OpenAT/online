@@ -11,7 +11,6 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="gruppe_kurz"/>
                             <field name="gruppe_lang"/>
                             <field name="zgruppe_id"/>
                             <field name="geltungsbereich"/>
@@ -25,17 +24,22 @@
                     </group>
                     <notebook>
                         <page string="Extras">
-                            <group string="Subscription Approval Settings">
+                            <group name="subscription_settings" string="Subscription Approval Settings">
                                 <field name="bestaetigung_erforderlich"/>
                                 <field name="bestaetigung_typ"/>
                             </group>
                         </page>
-                        <page string="Subscribers">
+                        <page name="subscribers" string="Subscribers">
                             <group string="PersonGruppe">
                                 <field name="frst_persongruppe_ids"/>
                             </group>
                             <group string="PersonEmailGruppe">
                                 <field name="frst_personemailgruppe_ids"/>
+                            </group>
+                        </page>
+                        <page name='system' string="System">
+                            <group>
+                                <field name="gruppe_kurz"/>
                             </group>
                         </page>
                     </notebook>

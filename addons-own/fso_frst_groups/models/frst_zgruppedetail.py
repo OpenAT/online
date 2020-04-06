@@ -63,6 +63,14 @@ class FRSTzGruppeDetail(models.Model):
                                                    ],
                                         string="Approval Type", default='doubleoptin')
 
+    @api.onchange('gruppe_lang', 'geltungsbereich')
+    def onchange_gruppe_lang_geltungsbereich(self):
+        for r in self:
+            if r.gruppe_lang and not r.gruppe_kurz:
+                r.gruppe_kurz = r.gruppe_lang
+            if r.geltungsbereich == 'local':
+                r.gui_anzeigen = True
+
     @api.model
     def create(self, vals):
         if vals.get('geltungsbereich') != 'local':
