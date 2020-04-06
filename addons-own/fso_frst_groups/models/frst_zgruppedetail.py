@@ -53,5 +53,6 @@ class FRSTzGruppeDetail(models.Model):
                                                     "that an approval is needed before set the group to active.")
     bestaetigung_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
                                                    ('phone_call', "Phone Call"),
+                                                   ('workflow', "Fundraising Studio Workflow"),
                                                    ],
                                         string="Approval Type", default='doubleoptin')
