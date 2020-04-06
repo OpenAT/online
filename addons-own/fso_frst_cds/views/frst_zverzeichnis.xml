@@ -65,7 +65,7 @@
         <field name="field_parent">child_ids</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="zGruppe" toolbar="1">
+            <tree string="zGruppe">
                 <field name="id"/>
                 <field name="verzeichnisname"/>
                 <field name="verzeichnislang"/>
@@ -117,9 +117,10 @@
         <field name="name">FRST CDS</field>
         <field name="res_model">frst.zverzeichnis</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="view_type">tree</field>
+        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="context">{}</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_group_parent_id':True}</field>
         <field name="search_view_id" ref="frst_zverzeichnis_search"/>
     </record>
     <record id="frst_zverzeichnis_tree_viewaction" model="ir.actions.act_window.view">
