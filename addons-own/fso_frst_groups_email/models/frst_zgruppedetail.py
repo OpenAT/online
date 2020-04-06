@@ -32,24 +32,25 @@ class FRSTzGruppeDetailApprovalMail(models.Model):
                                                       "the subscription")
 
     bestaetigung_text = fields.Char(string="Approval-Link Print Field Text", help="""
-        This text will be used for the print field %GruppenBestaetigungsText%. Leave empty if you dont need any text 
-        there!
-        \n\n
-        EXAMPLE:\n
-        <a href="/frst/group/approve?group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%">
-           Please click here to confirm your %GruppenBestaetigungsText% subscription!
-        </a>
-        IMPORTANT: The confirmation of the subscription (PersonEmailGruppe) will be done by a generic Fundraising 
-        Studio Workflow based on the multimail link tracking. The workflow will track the link if 
-        %GruppenBestaetigungFsonzGruppeDetailID% is in it. Therefore it is NOT necessary to use '/frst/group/approve'
-        as the target of the Link. You could use ANY URL you like! Just make sure 
-        group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID% is added as an URL parameter!
+This text will be used for the print field %GruppenBestaetigungsText%. Leave empty if you dont need any text 
+there!
+\n\n
+EXAMPLE:\n
+<a href="/frst/group/approve?group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%">
+   Please click here to confirm your %GruppenBestaetigungsText% subscription!
+</a>\n
+\n
+IMPORTANT: The confirmation of the subscription (PersonEmailGruppe) will be done by a generic Fundraising 
+Studio Workflow based on the multimail link tracking. The workflow will track the link if the URL parameter
+'group_approve_fson_zgruppedetail_id=...' is in it.\n 
+Therefore it is NOT necessary to use '/frst/group/approve' as the target of the Link. You could use ANY URL you like! 
+Just make sure 'group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%' is added!
         """)
     bestaetigung_thanks = fields.Html(string="Approval Thank You Page HTML",
                                       help="""
-        If set this will be the html on the thank you page after a click on the 
-        'approval link' if the approval link points to the FS-Online Thank You 
-        Page. Leave empty if you do not use the FS-Online Subscription Thank You Page!
+If set this will be the html on the thank you page after a click on the 
+'approval link' if the approval link points to the FS-Online Thank You 
+Page. Leave empty if you do not use the FS-Online Subscription Thank You Page!
         """)
 
     @api.constrains('bestaetigung_erforderlich', 'bestaetigung_typ', 'bestaetigung_email')
@@ -62,21 +63,23 @@ class FRSTzGruppeDetailApprovalMail(models.Model):
                 assert r.bestaetigung_email.fso_email_template, _("Approval Email Template must be a "
                                                                   "fso_email_template!")
                 assert r.bestaetigung_email.fso_email_html_parsed and \
-                       'GruppenBestaetigungFsonzGruppeDetailID' in r.bestaetigung_email.fso_email_html_parsed, _('''
-        Print field %GruppenBestaetigungFsonzGruppeDetailID% missing in the selected DOI E-Mail template! 
-        Without this print field appended to the DOI Link (href) the related generic DOI workflow in FRST 
-        will not work! Add this print field as an URL parameter to the approval link! \n
-        \n
-        EXAMPLE URL:\n
-        <a href="/frst/group/approve?group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%">
-            Please click here to confirm your %GruppenBestaetigungsText% subscription!
-        </a>\n
-        \n
-        IMPORTANT: The confirmation of the subscription (PersonEmailGruppe) will be done by a generic Fundraising 
-        Studio Workflow based on the multimail link tracking. The workflow will track the link if 
-        %GruppenBestaetigungFsonzGruppeDetailID% is in it. Therefore it is NOT necessary to use '/frst/group/approve'
-        as the target of the Link. You could use ANY URL you like! Just make sure 
-        group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID% is added as an URL parameter!       
+                       'GruppenBestaetigungFsonzGruppeDetailID' in r.bestaetigung_email.fso_email_html_parsed and \
+                       'group_approve_fson_zgruppedetail_id' in r.bestaetigung_email.fso_email_html_parsed, _('''
+URL parameter 'group_approve_fson_zgruppedetail_id=...' or print field %GruppenBestaetigungFsonzGruppeDetailID% 
+missing in the selected DOI E-Mail template!\n
+Without this URL parameter and print field appended to the DOI Link (href) the generic DOI workflow in 
+Fundraising Studio will not work! Please add the URL parameter and print field in your e-mail template! \n
+\n
+EXAMPLE LINK:\n
+<a href="/frst/group/approve?group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%">
+    Please click here to confirm your %GruppenBestaetigungsText% subscription!
+</a>\n
+\n
+IMPORTANT: The confirmation of the subscription (PersonEmailGruppe) will be done by a generic Fundraising 
+Studio Workflow based on the multimail link tracking. The workflow will track the link if the URL parameter
+'group_approve_fson_zgruppedetail_id=...' is in it. Therefore it is NOT necessary to use '/frst/group/approve'
+as the target of the Link. You could use ANY URL you like! Just make sure 
+'group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%' is added as an URL parameter!       
                     ''')
 
     @api.onchange('bestaetigung_erforderlich', 'bestaetigung_typ', 'bestaetigung_email')
