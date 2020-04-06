@@ -15,9 +15,12 @@ class FRSTzGruppeDetailSosync(models.Model):
     gueltig_von = fields.Date(sosync="True")
     gueltig_bis = fields.Date(sosync="True")
 
+    subscription_email = fields.Many2one(sosync="True")
+
     bestaetigung_erforderlich = fields.Boolean(sosync="True")
     bestaetigung_typ = fields.Selection(sosync="True")
     bestaetigung_email = fields.Many2one(sosync="True")
+    bestaetigung_success_email = fields.Many2one(sosync="True")
     bestaetigung_text = fields.Char(sosync="True")
     bestaetigung_thanks = fields.Html(sosync="True")
 
