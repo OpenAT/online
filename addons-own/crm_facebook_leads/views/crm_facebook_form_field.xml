@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="crm_facebook_form_field_form" model="ir.ui.view">
+            <field name="name">crm.facebook.form.field.form</field>
+            <field name="model">crm.facebook.form.field</field>
+            <field name="arch" type="xml">
+                <form string="Facebook form field">
+                    <sheet string="Facebook form field">
+                        <group>
+                            <group>
+                                <field name="crm_form_id"/>
+                                <field name="fb_label"/>
+                                <field name="fb_field_id"/>
+                                <field name="fb_field_key"/>
+                                <field name="crm_field"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="crm_facebook_form_field_tree" model="ir.ui.view">
+            <field name="name">crm.facebook.form.field.tree</field>
+            <field name="model">crm.facebook.form.field</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="crm_form_id"/>
+                    <field name="fb_label"/>
+                    <field name="fb_field_id"/>
+                    <field name="fb_field_key"/>
+                    <field name="crm_field"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="crm_facebook_form_field_search" model="ir.ui.view">
+            <field name="name">crm_facebook_form_field_search</field>
+            <field name="model">crm.facebook.form.field</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Facebook form fields">
+                    <field name="fb_label"/>
+                    <field name="fb_field_key"/>
+                    <field name="crm_field"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_crm_facebook_form_field">
+            <field name="name">Facebook Form Fields</field>
+            <field name="res_model">crm.facebook.form.field</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="crm_facebook_form_field_tree"/>
+            <field name="help" type="html">
+                <p></p>
+            </field>
+        </record>
+
+        <menuitem
+                id="menu_crm_facebook_form_field"
+                name="Facebook Form Fields"
+                parent="base.menu_config"
+                sequence="101"
+                action="action_crm_facebook_form_field"/>
+
+    </data>
+</openerp>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
-from datetime import timedelta
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
 import logging
 logger = logging.getLogger(__name__)
 
@@ -11,14 +11,19 @@ class FRSTzGruppeDetail(models.Model):
     _name = "frst.zgruppedetail"
     _rec_name = "gruppe_lang"
 
-    # TODO: Display name method (gruppe_kurz + gruppe_lang)
-
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
                                  string="zGruppeID",
                                  required=True, ondelete="cascade")
+    geltungsbereich = fields.Selection(string="Geltungsbereich",
+                                       selection=[('local', 'Local Group'),
+                                                  ('system', 'System Group')],
+                                       default='system')
+    gui_anzeige_profil = fields.Boolean(string="GuiAnzeigeProfil",
+                                        help="Show this group in the person profile view.",
+                                        default=True)
 
-    gruppe_kurz = fields.Char("GruppeKurz", required=True)
-    gruppe_lang = fields.Char("GruppeLang", required=True)
+    gruppe_kurz = fields.Char(string="GruppeKurz", required=True)
+    gruppe_lang = fields.Char(string="GruppeLang", required=True)
     gui_anzeigen = fields.Boolean("GuiAnzeigen",
                                   help="If set this group is available for this instance")
 
@@ -27,8 +32,10 @@ class FRSTzGruppeDetail(models.Model):
     #            But these fields ARE IN USE by the specific groups-for-models models like "frst.persongruppe"!
     #            The fields are inherited through the abstract class "frst.gruppestate"
     #
-    gueltig_von = fields.Date("GueltigVon", required=True)   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
-    gueltig_bis = fields.Date("GueltigBis", required=True)   # Not used
+    gueltig_von = fields.Date(string="GueltigVon", required=True,
+                              default=lambda s: fields.Datetime.now())   # Not used -> Wird in Sicht integriert als Anlagedatum. Ist derzeit nicht als Anlagedatum gedacht!
+    gueltig_bis = fields.Date(string="GueltigBis", required=True,
+                              default=lambda s: fields.date(2099, 12, 31))   # Not used
 
     # PersonGruppe
     frst_persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='zgruppedetail_id',
@@ -46,7 +53,7 @@ class FRSTzGruppeDetail(models.Model):
     #                                       "the past date 09.09.1999 when the group is created to indicate that "
     #                                       "an approval is needed before set the group to active.")
 
-    bestaetigung_erforderlich = fields.Boolean("Approval needed",
+    bestaetigung_erforderlich = fields.Boolean(string="Approval needed",
                                                default=False,
                                                help="If this checkbox is set gueltig_von and gueltig_bis will be set "
                                                     "to the past date 09.09.1999 when the group is created to indicate "
@@ -56,3 +63,41 @@ class FRSTzGruppeDetail(models.Model):
                                                    ('workflow', "Fundraising Studio Workflow"),
                                                    ],
                                         string="Approval Type", default='doubleoptin')
+
+    @api.onchange('gruppe_lang', 'geltungsbereich')
+    def onchange_gruppe_lang_geltungsbereich(self):
+        for r in self:
+            if r.gruppe_lang and not r.gruppe_kurz:
+                r.gruppe_kurz = r.gruppe_lang
+            if r.geltungsbereich == 'local':
+                r.gui_anzeigen = True
+
+    @api.model
+    def create(self, vals):
+        if vals.get('geltungsbereich') != 'local':
+            assert self.env.user.has_group('base.sosync'), _("You can not create a system group!")
+
+        return super(FRSTzGruppeDetail, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if self and vals and not self.env.user.has_group('base.sosync'):
+            # Do not change the group folder (because of the tabellentyp_id)
+            assert 'zgruppe_id' not in vals, _("You can not change the group folder (zgruppe_id). Please delete and "
+                                               "recreate the group!")
+            # Do not change the "geltungsbereich"
+            assert 'geltungsbereich' not in vals, _("You can not change the 'geltungsbereich'. Please delete and "
+                                                    "recreate the group!")
+            # Do not change system groups at all
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not change system groups!')
+
+        return super(FRSTzGruppeDetail, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        if not self.env.user.has_group('base.sosync'):
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not delete system groups!')
+
+        return super(FRSTzGruppeDetail, self).unlink()

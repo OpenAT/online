@@ -7,21 +7,33 @@
         <field name="model">frst.zgruppe</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="zGruppe">
+            <form string="Gruppenordner">
                 <sheet>
                     <group>
-                        <field name="tabellentyp_id"/>
-                        <field name="gruppe_kurz"/>
-                        <field name="gruppe_lang"/>
-                        <field name="gui_anzeigen"/>
+                        <group>
+                            <field name="gruppe_kurz"/>
+                            <field name="gruppe_lang"/>
+                            <field name="tabellentyp_id"/>
+                            <field name="geltungsbereich"/>
+                        </group>
+                        <group>
+                            <field name="gui_anzeigen"/>
+                            <field name="ja_gui_anzeige"/>
+                            <field name="nein_gui_anzeige"/>
+                        </group>
                     </group>
-                    <group string="zGruppeDetail">
-                        <field name="zgruppedetail_ids"/>
-                    </group>
+                    <notebook>
+                        <page string="Gruppen">
+                            <group string="zGruppeDetail">
+                                <field name="zgruppedetail_ids"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
+
     <!-- TREE/LIST VIEW -->
     <record model="ir.ui.view" id="frst_zgruppe_tree">
         <field name="name">frst_zgruppe_tree</field>
@@ -30,14 +42,18 @@
         <field name="arch" type="xml">
             <tree string="zGruppe">
                 <field name="id"/>
-                <field name="tabellentyp_id"/>
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
-                <field name="gui_anzeigen"/>
-                <field name="zgruppedetail_ids"/>
+                <field name="tabellentyp_id"/>
+                <field name="geltungsbereich"/>
+                <field name="gui_anzeigen" />
+                <field name="ja_gui_anzeige" string="Ja GUI"/>
+                <field name="nein_gui_anzeige" string=" Nein GUI"/>
+                <field name="zgruppedetail_ids" invisible="1"/>
             </tree>
         </field>
     </record>
+
     <!-- SEARCH VIEW -->
     <record model="ir.ui.view" id="frst_zgruppe_search">
         <field name="name">frst_zgruppe_search</field>
@@ -45,14 +61,19 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="zGruppe">
-                <field name="id"/>
-                <field name="tabellentyp_id"/>
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
+                <field name="id"/>
+                <field name="tabellentyp_id"/>
+                <field name="geltungsbereich"/>
                 <field name="gui_anzeigen"/>
+                <field name="ja_gui_anzeige"/>
+                <field name="nein_gui_anzeige"/>
+                <field name="zgruppedetail_ids"/>
             </search>
         </field>
     </record>
+
     <!-- ACTIONS -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->

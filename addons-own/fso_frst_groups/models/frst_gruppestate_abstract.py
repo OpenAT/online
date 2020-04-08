@@ -63,9 +63,10 @@ class FRSTGruppeState(models.AbstractModel):
     # Group approval information
     bestaetigt_am_um = fields.Datetime("Bestaetigt", readonly=True)
     bestaetigt_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
-                                                 ('phone_call', "Phone Call"),
+                                                 ('phone_call', 'Phone Call'),
+                                                 ('workflow', 'Fundraising Studio Workflow'),
                                                  ],
-                                        string="Bestaetigungs Typ", readonly=True)
+                                      string="Bestaetigungs Typ", readonly=True)
     bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft", readonly=True,
                                       help="E.g.: The link or the workflow process")
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+		<record id="crm_facebook_leads_cron" model="ir.cron">
+			<field name="name">Import Facebook Leads</field>
+			<field name="active" eval="False"/>
+			<field name="priority" eval="5"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model" eval="'crm.facebook.form'"/>
+            <field name="function" eval="'import_facebook_leads'"/>
+            <field name="args" eval="'()'"/>
+		</record>
+    </data>
+</openerp>

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
-from datetime import timedelta
+from openerp.tools.translate import _
+from openerp.exceptions import ValidationError
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -30,11 +31,45 @@ class FRSTzGruppe(models.Model):
                                       help="Select model where Groups in this folder apply",
                                       required=True)
 
-    gruppe_kurz = fields.Char("GruppeKurz", required=True,
-                              help="Interne Bezeichnung")
-    gruppe_lang = fields.Char("GruppeLang", required=True,
-                              help="Anzeige fuer den Kunden und im GUI")
-    gui_anzeigen = fields.Boolean("GuiAnzeigen")
+    gruppe_kurz = fields.Char(string="GruppeKurz", required=True, help="Interne Bezeichnung")
+    gruppe_lang = fields.Char(string="GruppeLang", required=True, help="Anzeige fuer den Kunden und im GUI")
+    gui_anzeigen = fields.Boolean(string="GuiAnzeigen")
 
     zgruppedetail_ids = fields.One2many(comodel_name="frst.zgruppedetail", inverse_name='zgruppe_id',
                                         string="zGruppeDetail IDS")
+
+    ja_gui_anzeige = fields.Char(string="JaGuiAnzeige", required=True,
+                                 default="not_yet_synced_odoo_default",
+                                 help="Display text for 'yes'")
+
+    nein_gui_anzeige = fields.Char(string="NeinGuiAnzeige", required=True,
+                                   default="not_yet_synced_odoo_default",
+                                   help="Display text for 'no'")
+
+    geltungsbereich = fields.Selection(string="Geltungsbereich",
+                                       selection=[('local', 'Local Group'),
+                                                  ('system', 'System Group')],
+                                       default='system')
+
+    @api.model
+    def create(self, vals):
+        if vals.get('geltungsbereich') != 'local':
+            assert self.env.user.has_group('base.sosync'), _("You can not create a system group folder!")
+
+        return super(FRSTzGruppe, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if self and vals and not self.env.user.has_group('base.sosync'):
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not change a system group folder')
+
+        return super(FRSTzGruppe, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        if not self.env.user.has_group('base.sosync'):
+            if any(r.geltungsbereich != 'local' for r in self):
+                raise ValidationError('You can not delete system group folders')
+
+        return super(FRSTzGruppe, self).unlink()

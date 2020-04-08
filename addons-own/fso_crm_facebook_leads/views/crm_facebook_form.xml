@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+<data>
+
+    <record id="crm_facebook_form_form_frst" model="ir.ui.view">
+        <field name="name">crm_facebook_form_form_frst</field>
+        <field name="model">crm.facebook.form</field>
+        <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[@string='Tracking Info']" position="before">
+                <group string="Fundraising Studio">
+                    <field name="force_create_partner"/>
+                    <field name="zgruppedetail_id"
+                           context="{'default_gui_anzeigen': True, 'default_gruppe_kurz': name, 'default_gruppe_lang': name, 'default_geltungsbereich': 'local'}"
+                           domain="[('zgruppe_id.sosync_fs_id', 'in', (30200, 30100))]"
+                    />
+                    <field name="frst_zverzeichnis_id" invisible="0"/>
+                    <div colspan="2" class="backend-help oe_edit_only">
+                        <p>
+                            Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet!<br/>
+                            <br/>
+                            Wenn Sie ein Facebook Formular für eine Unterschriftsliste (Petition) konfigurieren möchte
+                            dann muss sich die oben gewählte Gruppe im Gruppenordner "Unterschriftslisten" befinden
+                            und einen CDS-Eintrag gesetzt haben damit die Verarbeitung der Leads korrekt funktioniert.<br/>
+                            <br/>
+                            Bitte legen Sie für jede neue Petition auch eine neue lokale Gruppe an um die Petitionsteilnehmer
+                            zu und ihre Anmeldebestätigungen zu verwalten. Sie können natürlich auch mehrere Formulare für
+                            die selbe Petition verwenden. Dazu wählen Sie einfach in jedem Formular die selbe Gruppe.<br/>
+                            <br/>
+                            Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in
+                            Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den
+                            CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in
+                            FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten
+                            CDS-Eintrag auswählen.
+                        </p>
+                    </div>
+                </group>
+            </xpath>
+
+            <xpath expr="//page[@string='Mappings']" position="after">
+                <page string="Hilfe">
+                    <h1>Hilfe</h1>
+                    <p><br/></p>
+                    <p>
+                        Wir erstellen eine weitestgehend automatische Feldzuweisung aufgrund des Facebook-Feld-Typs.
+                        Da die Feldnamen der Facebook-Lead-Formulare jedoch völlig frei wählbar sind und keinem
+                        eindeutigem Schema folgen ist eine manuelle Überprüfung und gegebennenfalls eine Anpassung
+                        der Zuweisung der Facbebook-Leads-Formularfelder zu den Fundraising Studio Systemfeldern
+                        zwingend erforderlich!
+                    </p>
+                    <p>
+                        Nachdem Sie die Zuweisung kontrolliert haben können Sie den automatischen Import der Leads
+                        aktivieren indem Sie das Formular mit dem Button "Geprüft/Aktiviert" freigeben.
+                    </p>
+                    <p>
+                        Folgende Systemfelder stehen für Sie zum Mapping Ihrer Facebook-Leads-Formularfelder zur
+                        Verfügung.
+                    </p>
+                    <h3>Personfelder</h3>
+                    <p>
+                        ACHTUNG: Es müssen mindestens die Felder <code>[contact_name] First name </code> und
+                        <code>[email_from] Email </code> gemapped sein!
+                    </p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Feldname</th>
+                                <th>Feldbez.</th>
+                                <th>Bez. in FRST</th>
+                                <th>Bemerkung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>contact_name</code></td>
+                                <td>First name</td>
+                                <td>Vorname</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_lastname</code></td>
+                                <td>Last name</td>
+                                <td>Nachname</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>email_from</code></td>
+                                <td>Email</td>
+                                <td>E-Mail der Person</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>phone</code></td>
+                                <td>Phone</td>
+                                <td>Telefonnummer</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>mobile</code></td>
+                                <td>Mobil</td>
+                                <td>Handynummer</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>street</code></td>
+                                <td>Street</td>
+                                <td>Straße</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>city</code></td>
+                                <td>City</td>
+                                <td>Stadt</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>zip</code></td>
+                                <td>Zip</td>
+                                <td>Postleitzahl</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>state_id</code></td>
+                                <td>State</td>
+                                <td>Bundesland</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>country_id</code></td>
+                                <td>Country</td>
+                                <td>Land</td>
+                                <td>Wert muss im Iso Format gesendet werden z.B.: AT</td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_birthdate_web</code></td>
+                                <td>Birthdate Web</td>
+                                <td>Geburtsdatum</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_street_number_web</code></td>
+                                <td>Street Number Web</td>
+                                <td>Str. Nummer</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_anrede_individuell</code></td>
+                                <td>Individuelle Anrede</td>
+                                <td>Individuelle Anrede</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_title_web</code></td>
+                                <td>Title</td>
+                                <td>Titel</td>
+                                <td>z.B.: Dr., Ing., ...</td>
+                            </tr>
+                            <tr>
+                                <td><code>contact_newsletter_web</code></td>
+                                <td>Newsletter</td>
+                                <td>Einwilligung Newsletter zu erhalten</td>
+                                <td>Muss eine Checkbox sein (0/1)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</data>
+</openerp>
