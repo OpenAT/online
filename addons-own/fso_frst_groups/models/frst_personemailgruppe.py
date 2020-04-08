@@ -21,7 +21,7 @@ class FRSTPersonEmailGruppe(models.Model):
             'newsletter_web': 30104,
         }
 
-    display_name = fields.Char('Subscription Name', compute='_compute_display_name', readonly=True, store=True,)
+    display_name = fields.Char('Subscription Name', compute='_compute_display_name', readonly=True, store=False)
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_personemailgruppe_ids',
                                        string="zGruppeDetail",
                                        domain=[('zgruppe_id.tabellentyp_id', '=', '100110')],
