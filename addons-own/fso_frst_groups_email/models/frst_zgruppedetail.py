@@ -19,11 +19,13 @@ class FRSTzGruppeDetailApprovalMail(models.Model):
                                               "'subscribed.', 'approval_pending' or 'approved'. Leave this empty "
                                               "if you do not want an E-Mail for every new subscription or if you want "
                                               "the approval E-Mail only!")
+
     bestaetigung_email = fields.Many2one(string="DOI Approval E-Mail Template",
                                          comodel_name='email.template',
                                          inverse_name="frst_groups_bestaetigung_emails",
                                          domain="[('fso_email_template', '=', True)]",
                                          help="Double Opt In E-Mail")
+
     bestaetigung_success_email = fields.Many2one(string="DOI Success E-Mail Template",
                                                  comodel_name='email.template',
                                                  inverse_name="frst_groups_bestaetigung_success_email",
