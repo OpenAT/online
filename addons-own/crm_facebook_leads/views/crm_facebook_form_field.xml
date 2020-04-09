@@ -14,7 +14,8 @@
                                 <field name="fb_label"/>
                                 <field name="fb_field_id"/>
                                 <field name="fb_field_key"/>
-                                <field name="crm_field"/>
+                                <field name="crm_field"
+                                       options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                             </group>
                         </group>
                     </sheet>

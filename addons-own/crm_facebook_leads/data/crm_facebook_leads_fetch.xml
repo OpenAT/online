@@ -3,7 +3,7 @@
 
     <data noupdate="0">
 		<record id="crm_facebook_leads_cron" model="ir.cron">
-			<field name="name">Import Facebook Leads</field>
+			<field name="name">FACEBOOK: Import Facebook Leads</field>
 			<field name="active" eval="False"/>
 			<field name="priority" eval="5"/>
             <field name="interval_number">5</field>

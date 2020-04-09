@@ -199,6 +199,13 @@ class CrmFacebookForm(models.Model):
             else:
                 vals['description'] += question_fb_field_key + ': ' + question_val + '\n'
 
+        # Use Email for 'contact_lastname' if the fields 'contact_name' and 'contact_lastname' and 'partner_name' are
+        # not mapped!
+        if not crm_form.mappings.filtered(lambda f: f.crm_field.name in ('contact_name', 'contact_lastname')):
+            logger.warning("No fields are mapped for the partner name! Trying to use the e-mail as the lastname!")
+            if vals.get('email_from') and 'contact_name' not in vals and 'contact_lastname' not in vals:
+                vals['contact_lastname'] = vals.get('email_from')
+
         # Always add the name field for the crm.lead
         if not vals.get('name'):
             if vals.get('partner_name'):
@@ -273,5 +280,5 @@ class CrmFacebookForm(models.Model):
                     break
 
     @api.multi
-    def scheduled_import_facebook_leads(self, raise_exception=False):
-        self.import_facebook_leads(raise_exception=raise_exception)
+    def scheduled_import_facebook_leads(self):
+        self.import_facebook_leads(raise_exception=False)
