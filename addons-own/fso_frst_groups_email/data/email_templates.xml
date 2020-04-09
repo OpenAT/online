@@ -5,7 +5,7 @@
 
         <!-- Custom Sale-Order-Payment-Status e-mail template for website_sale_donate and dadi payment providers -->
         <record id="email_template_group_approval" model="email.template">
-            <field name="name">zGruppeDetail DEFAULT Approval E-Mail Template</field>
+            <field name="name">Default DOI Double-Opt-In Email</field>
             <!--<field name="email_from"></field>-->
             <field name="subject">Please approve your subscription</field>
             <!--<field name="partner_to"></field>-->
