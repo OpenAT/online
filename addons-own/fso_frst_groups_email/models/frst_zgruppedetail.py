@@ -84,12 +84,3 @@ as the target of the Link. You could use ANY URL you like! Just make sure
 'group_approve_fson_zgruppedetail_id=%GruppenBestaetigungFsonzGruppeDetailID%' is added as an URL parameter!       
                     ''')
 
-    @api.onchange('bestaetigung_erforderlich', 'bestaetigung_typ', 'bestaetigung_email')
-    def onchange_bestaetigung_erforderlich(self):
-        for r in self:
-            if r.bestaetigung_erforderlich and r.bestaetigung_typ == 'doubleoptin':
-                if not r.bestaetigung_email:
-                    default_approval_mail = self.env.ref('fso_frst_groups_email.email_template_group_approval',
-                                                         raise_if_not_found=False)
-                    if default_approval_mail:
-                        r.bestaetigung_email = default_approval_mail.id
