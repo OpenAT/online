@@ -33,6 +33,7 @@
                    (4, ref('base.group_no_one')),
                    (4, ref('fso_frst_groups.group_fs_group_manager')),
                    (4, ref('auth_partner.group_fstoken_manager')),
+                   (4, ref('fso_frst_cds.group_fs_cds_manager')),
                    ]"/>
         </record>
         
