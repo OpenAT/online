@@ -11,21 +11,25 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="gruppe_kurz"/>
                             <field name="gruppe_lang"/>
                             <field name="tabellentyp_id"/>
                             <field name="geltungsbereich"/>
                         </group>
                         <group>
                             <field name="gui_anzeigen"/>
-                            <field name="ja_gui_anzeige"/>
-                            <field name="nein_gui_anzeige"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Gruppen">
                             <group string="zGruppeDetail">
                                 <field name="zgruppedetail_ids"/>
+                            </group>
+                        </page>
+                        <page string="System">
+                            <group>
+                                <field name="gruppe_kurz"/>
+                                <field name="ja_gui_anzeige"/>
+                                <field name="nein_gui_anzeige"/>
                             </group>
                         </page>
                     </notebook>
