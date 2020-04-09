@@ -211,7 +211,8 @@ class CrmFacebookForm(models.Model):
         # Return the values
         return vals
 
-    def import_facebook_paginated_leads(self, crm_form, leads, imported_fb_lead_ids):
+    @api.multi
+    def import_facebook_paginated_leads(self, crm_form, leads, imported_fb_lead_ids, raise_exception=True):
         logger.info('Got %s leads from facebook' % len(leads))
 
         # Only import new leads
@@ -220,16 +221,23 @@ class CrmFacebookForm(models.Model):
 
         # Convert the facebook lead data to crm.leads records
         for lead in new_leads:
-            crm_lead_values = crm_form.facebook_data_to_lead_data(lead)
-            crm_lead = self.env['crm.lead'].create(crm_lead_values)
-            if crm_lead:
-                logger.info("Facebook lead (fb_lead_id: %s) successfully imported as crm.lead %s)"
-                            "" % (crm_lead.fb_lead_id, crm_lead.id))
-            else:
-                logger.error("Crm lead import failed!")
+            try:
+                crm_lead_values = crm_form.facebook_data_to_lead_data(lead)
+                crm_lead = self.env['crm.lead'].create(crm_lead_values)
+                if crm_lead:
+                    logger.info("Facebook lead (fb_lead_id: %s) successfully imported as crm.lead %s)"
+                                "" % (crm_lead.fb_lead_id, crm_lead.id))
+                else:
+                    logger.error("Crm lead import failed!")
+            except Exception as e:
+                logger.error("Could not import lead %s because of %s!" % (lead, repr(e)))
+                if raise_exception:
+                    raise e
+                else:
+                    pass
 
     @api.multi
-    def import_facebook_leads(self):
+    def import_facebook_leads(self, raise_exception=True):
         # Get all active forms if no specific forms are selected
         if not self:
             crm_forms_active = self.env['crm.facebook.form'].search([('state', '=', 'active')])
@@ -254,7 +262,8 @@ class CrmFacebookForm(models.Model):
             while answer.get('data'):
                 self.import_facebook_paginated_leads(crm_form=crm_form,
                                                      leads=answer['data'],
-                                                     imported_fb_lead_ids=imported_fb_lead_ids)
+                                                     imported_fb_lead_ids=imported_fb_lead_ids,
+                                                     raise_exception=raise_exception)
 
                 # Request next page, if there is one, otherwise break the loop
                 paging = answer['paging']
@@ -262,3 +271,7 @@ class CrmFacebookForm(models.Model):
                     answer = requests.get(paging['next']).json()
                 else:
                     break
+
+    @api.multi
+    def scheduled_import_facebook_leads(self, raise_exception=False):
+        self.import_facebook_leads(raise_exception=raise_exception)

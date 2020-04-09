@@ -14,7 +14,6 @@
                     <field name="force_create_partner"/>
                     <field name="zgruppedetail_id"
                            context="{'default_gui_anzeigen': True, 'default_gruppe_kurz': name, 'default_gruppe_lang': name, 'default_geltungsbereich': 'local'}"
-                           domain="[('zgruppe_id.sosync_fs_id', 'in', (30200, 30100))]"
                     />
                     <field name="frst_zverzeichnis_id" invisible="0"/>
                     <div colspan="2" class="backend-help oe_edit_only">

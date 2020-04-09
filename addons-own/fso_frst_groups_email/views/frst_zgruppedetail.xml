@@ -8,7 +8,8 @@
         <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='subscription_settings']" position="before">
-                <group string="New Subscription E-Mail">
+                <!-- Not implemented by sebi in the generic workflow right now - therefore we hide this to avoid confusion - show it again when the workflow is done! -->
+                <group string="New Subscription E-Mail" invisible="1">
                     <field name="subscription_email"/>
                 </group>
             </xpath>
