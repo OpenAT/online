@@ -280,6 +280,6 @@ class CrmFacebookForm(models.Model):
                 else:
                     break
 
-    @api.multi
+    @api.model
     def scheduled_import_facebook_leads(self):
         self.import_facebook_leads(raise_exception=False)
