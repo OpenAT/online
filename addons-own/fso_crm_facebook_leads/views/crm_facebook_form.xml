@@ -18,14 +18,19 @@
                     <field name="frst_zverzeichnis_id" invisible="0"/>
                     <div colspan="2" class="backend-help oe_edit_only">
                         <p>
-                            Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet!<br/>
+                            Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet! Sie können jedoch
+                            einen von der Gruppe abweichenden CDS-Eintrag wählen wenn Sie die selbe Gruppe für mehrere
+                            Leads-Formulare verwenden möchten aber dennoch eine getrennte Auswertung pro Formular benötigen.<br/>
+                            <br/>
+                            Der eingestellte CDS-Eintrag wird bei der Person und bei der Gruppenanmeldung
+                            (Subscription/Gruppenzuweisung/PersonEmailGruppe) im Feld Ursprungsaktion eingetragen.<br/>
                             <br/>
                             Wenn Sie ein Facebook Formular für eine Unterschriftsliste (Petition) konfigurieren möchte
                             dann muss sich die oben gewählte Gruppe im Gruppenordner "Unterschriftslisten" befinden
                             und einen CDS-Eintrag gesetzt haben damit die Verarbeitung der Leads korrekt funktioniert.<br/>
                             <br/>
                             Bitte legen Sie für jede neue Petition auch eine neue lokale Gruppe an um die Petitionsteilnehmer
-                            zu und ihre Anmeldebestätigungen zu verwalten. Sie können natürlich auch mehrere Formulare für
+                            und ihre Anmeldebestätigungen zu verwalten. Sie können natürlich auch mehrere Formulare für
                             die selbe Petition verwenden. Dazu wählen Sie einfach in jedem Formular die selbe Gruppe.<br/>
                             <br/>
                             Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in

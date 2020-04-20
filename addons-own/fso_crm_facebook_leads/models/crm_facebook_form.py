@@ -39,24 +39,16 @@ class FSOCrmFacebookForm(models.Model):
     @api.onchange('zgruppedetail_id', 'frst_zverzeichnis_id', 'frst_zverzeichnis_id')
     def forms_onchange(self):
         for r in self:
+            # Make sure a new partner will be created on lead creation if a group or cds is set
             if r.zgruppedetail_id or r.frst_zverzeichnis_id:
                 r.force_create_partner = True
-            # Sync the cds leave setting from the group if set
-            # ATTENTION: This link may be removed at any time to allow setting a different cds leave for the leads than
-            #            the group or set the cds leave without any group set!
-            r.frst_zverzeichnis_id = r.zgruppedetail_id.frst_zverzeichnis_id if r.zgruppedetail_id else False
+            # Sync the FRST cds setting from the group if not set already
+            if not r.frst_zverzeichnis_id and r.zgruppedetail_id and r.zgruppedetail_id.frst_zverzeichnis_id:
+                r.frst_zverzeichnis_id = r.zgruppedetail_id.frst_zverzeichnis_id
 
     @api.constrains('zgruppedetail_id', 'frst_zverzeichnis_id', 'frst_zverzeichnis_id')
     def forms_constrains(self):
         for r in self:
-            if r.zgruppedetail_id and r.zgruppedetail_id.frst_zverzeichnis_id != r.frst_zverzeichnis_id:
-                raise ValidationError(
-                    _("The CDS setting in the Fundraising Studio Group must match the CDS setting of this form!"))
-            elif not r.zgruppedetail_id and r.frst_zverzeichnis_id:
-                raise ValidationError(
-                    _("Please remove the CDS setting! "
-                      "It will be set automatically if a group with a CDS setting is selected."))
-
             # Make sure force create partner is set!
             if (r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
                 raise ValidationError(
