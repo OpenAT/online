@@ -221,11 +221,11 @@ class CrmFacebookForm(models.Model):
 
     @api.multi
     def import_facebook_paginated_leads(self, crm_form, leads, imported_fb_lead_ids, raise_exception=True):
-        logger.info('Got %s leads from facebook' % len(leads))
+        logger.info('Got %s paginated leads from facebook for form %s' % (len(leads), crm_form.id))
 
         # Only import new leads
         new_leads = [ld for ld in leads if ld['id'] not in imported_fb_lead_ids]
-        logger.info('Importing %s new leads from facebook' % len(new_leads))
+        logger.info('Importing %s new paginated leads from facebook for form %s' % (len(new_leads), crm_form.id))
 
         # Convert the facebook lead data to crm.leads records
         for lead in new_leads:

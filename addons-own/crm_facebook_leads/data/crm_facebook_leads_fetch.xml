@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 
-    <data noupdate="0">
+    <data noupdate="1">
 		<record id="crm_facebook_leads_cron" model="ir.cron">
 			<field name="name">FACEBOOK: Import Facebook Leads</field>
 			<field name="active" eval="False"/>
