@@ -46,7 +46,7 @@
         <field name="arch" type="xml">
             <tree string="zGruppe">
                 <field name="id"/>
-                <field name="gruppe_kurz"/>
+                <field name="gruppe_kurz" invisible="1"/>
                 <field name="gruppe_lang"/>
                 <field name="tabellentyp_id"/>
                 <field name="geltungsbereich"/>

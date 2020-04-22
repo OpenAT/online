@@ -7,7 +7,7 @@
         <field name="model">frst.persongruppe</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="PersonGruppe">
+            <form string="Gruppenzuweisung auf Person">
                 <header>
                     <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
                     <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
@@ -45,6 +45,8 @@
                 <field name="bestaetigt_am_um"/>
                 <field name="bestaetigt_typ"/>
                 <field name="state"/>
+                <field name="create_date"/>
+                <field name="write_date" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -65,6 +67,17 @@
                 <field name="bestaetigt_typ"/>
                 <field name="bestaetigt_herkunft"/>
                 <field name="state"/>
+                <field name="create_date"/>
+                <field name="write_date"/>
+                <group expand="1" string="Group By...">
+                    <filter name="group_state" string="State" domain="[]" context="{'group_by':'state'}"/>
+                    <filter name="group_create_date" string="Anlagedatum" domain="[]" context="{'group_by':'create_date'}"/>
+                    <filter name="group_write_date" string="Aendertungsdatum" domain="[]" context="{'group_by':'write_date'}"/>
+                    <filter name="group_zgruppedetail_id" string="FRST-Group" domain="[]" context="{'group_by':'zgruppedetail_id'}"/>
+                    <filter name="group_partner_id" string="Person" domain="[]" context="{'group_by':'partner_id'}"/>
+                    <filter name="group_bestaetigt_typ" string="Approval-Type" domain="[]" context="{'group_by':'bestaetigt_typ'}"/>
+                    <filter name="group_bestaetigt_herkunft" string="Approval-Origin" domain="[]" context="{'group_by':'bestaetigt_herkunft'}"/>
+                </group>
             </search>
         </field>
     </record>

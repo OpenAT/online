@@ -7,10 +7,12 @@
             <field name="model">frst.zgruppedetail</field>
             <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[@string='PersonEmailGruppe']" position="after">
-                    <group string="MassMailingListContacts">
-                        <field name="mass_mailing_list_ids"/>
-                    </group>
+                <xpath expr="//page[@name='system']" position="before">
+                    <page name="mass_mailing" string="Mass Mailing">
+                        <group string="MassMailingListContacts">
+                            <field name="mass_mailing_list_ids"/>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>

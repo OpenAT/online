@@ -40,10 +40,14 @@ class FRSTzGruppeDetail(models.Model):
     # PersonGruppe
     frst_persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='zgruppedetail_id',
                                             string="PersonGruppe IDS")
+    frst_persongruppe_count = fields.Integer(string="Person Subscribers",
+                                             compute="cmp_frst_persongruppe_count")
 
     # PersonEmailGruppe
     frst_personemailgruppe_ids = fields.One2many(comodel_name="frst.personemailgruppe", inverse_name='zgruppedetail_id',
                                                  string="PersonEmailGruppe IDS")
+    frst_personemailgruppe_count = fields.Integer(string="E-Mail Subscribers",
+                                                  compute="cmp_frst_personemailgruppe_count")
 
     # NEW SETTING FOR GROUPS / CHECKBOXES THAT MUST BE VALIDATE BY BY SOME SORT OF APPROVAL
     # HINT: This field is checked on group creation in abstract class frst.gruppestate > create()
@@ -71,6 +75,16 @@ class FRSTzGruppeDetail(models.Model):
                 r.gruppe_kurz = r.gruppe_lang
             if r.geltungsbereich == 'local':
                 r.gui_anzeigen = True
+
+    @api.multi
+    def cmp_frst_persongruppe_count(self):
+        for r in self:
+            r.frst_persongruppe_count = len(self.frst_persongruppe_ids) or 0
+
+    @api.multi
+    def cmp_frst_personemailgruppe_count(self):
+        for r in self:
+            r.frst_personemailgruppe_count = len(self.frst_personemailgruppe_ids) or 0
 
     @api.model
     def create(self, vals):

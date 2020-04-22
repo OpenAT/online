@@ -7,7 +7,7 @@
         <field name="model">frst.personemailgruppe</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="PersonEmailGruppe">
+            <form string="Gruppenzuweisung auf E-Mail">
                 <header>
                     <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
                     <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
@@ -45,7 +45,11 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="bestaetigt_am_um"/>
+                <field name="bestaetigt_typ"/>
                 <field name="state"/>
+                <field name="create_date"/>
+                <field name="write_date" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -62,10 +66,37 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="bestaetigt_am_um"/>
+                <field name="bestaetigt_typ"/>
+                <field name="bestaetigt_herkunft"/>
                 <field name="state"/>
+                <field name="create_date"/>
+                <field name="write_date"/>
+                <group expand="1" string="Group By...">
+                    <filter name="group_state" string="State" domain="[]" context="{'group_by':'state'}"/>
+                    <filter name="group_create_date" string="Anlagedatum" domain="[]" context="{'group_by':'create_date'}"/>
+                    <filter name="group_write_date" string="Aendertungsdatum" domain="[]" context="{'group_by':'write_date'}"/>
+                    <filter name="group_zgruppedetail_id" string="FRST-Group" domain="[]" context="{'group_by':'zgruppedetail_id'}"/>
+                    <filter name="group_frst_personemail_id" string="E-Mail" domain="[]" context="{'group_by':'frst_personemail_id'}"/>
+                    <filter name="group_bestaetigt_typ" string="Approval-Type" domain="[]" context="{'group_by':'bestaetigt_typ'}"/>
+                    <filter name="group_bestaetigt_herkunft" string="Approval-Origin" domain="[]" context="{'group_by':'bestaetigt_herkunft'}"/>
+                </group>
             </search>
         </field>
     </record>
+
+    <!-- Graph View -->
+    <record id="frst_personemailgruppe_graph" model="ir.ui.view">
+        <field name="name">frst_personemailgruppe_graph</field>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="arch" type="xml">
+            <graph string="Subscription Analysis" type="pivot" stacked="True">
+                <field name="state" type="row"/>
+                <field name="gueltig_von" interval="month" type="col"/>
+            </graph>
+        </field>
+    </record>
+
     <!-- ACTIONS -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
@@ -87,6 +118,12 @@
         <field name="sequence" eval="20"/>
         <field name="view_mode">form</field>
         <field name="view_id" ref="frst_personemailgruppe_form"/>
+        <field name="act_window_id" ref="frst_personemailgruppe_action"/>
+    </record>
+    <record id="frst_personemailgruppe_graph_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="30"/>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="frst_personemailgruppe_graph"/>
         <field name="act_window_id" ref="frst_personemailgruppe_action"/>
     </record>
     <!-- And we add the Action to a Menu with the shortcut menuitem -->
