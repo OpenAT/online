@@ -72,8 +72,29 @@
                 <field name="state"/>
                 <field name="create_date"/>
                 <field name="write_date"/>
-                <group expand="1" string="Group By...">
+                <group expand="1" string="Status Filter" name="status_filters">
+                    <filter name="filter_active" string="Aktiv"
+                            domain="[('state', 'in', ['subscribed', 'approved'])]"/>
+                    <filter name="filter_inactive" string="Inaktiv"
+                            domain="[('state', 'in', ['approval_pending', 'unsubscribed', 'expired'])]"/>
+                    <filter name="filter_approval_pending" string="Warte-auf-Bestaetigung"
+                            domain="[('state', '=', 'approval_pending')]"/>
+                    <filter name="filter_unsubscribed" string="Opt-Out"
+                            domain="[('state', '=', 'unsubscribed')]"/>
+                    <filter name="filter_expired" string="Abgelaufen"
+                            domain="[('state', '=', 'expired')]"/>
+                </group>
+                <group expand="1" string="Zeit Filter" name="time_filters">
+                    <filter name="filter_gueltig_von_2000" string="Gueltig-von-ab-2000"
+                            domain="[('gueltig_von', '>=', '01.01.2000')]"/>
+                    <filter name="filter_gueltig_von_2015" string="Gueltig-von-ab-2015"
+                            domain="[('gueltig_von', '>=', '01.01.2015')]"/>
+                    <filter name="filter_gueltig_von_2020" string="Gueltig-von-ab-2020"
+                            domain="[('gueltig_von', '>=', '01.01.2020')]"/>
+                </group>
+                <group expand="1" string="Group By..." name="group_by">
                     <filter name="group_state" string="State" domain="[]" context="{'group_by':'state'}"/>
+                    <filter name="group_gueltig_von" string="Gueltig-von" domain="[]" context="{'group_by':'gueltig_von'}"/>
                     <filter name="group_create_date" string="Anlagedatum" domain="[]" context="{'group_by':'create_date'}"/>
                     <filter name="group_write_date" string="Aendertungsdatum" domain="[]" context="{'group_by':'write_date'}"/>
                     <filter name="group_zgruppedetail_id" string="FRST-Group" domain="[]" context="{'group_by':'zgruppedetail_id'}"/>
@@ -90,9 +111,8 @@
         <field name="name">frst_personemailgruppe_graph</field>
         <field name="model">frst.personemailgruppe</field>
         <field name="arch" type="xml">
-            <graph string="Subscription Analysis" type="pivot" stacked="True">
-                <field name="state" type="row"/>
-                <field name="gueltig_von" interval="month" type="col"/>
+            <graph string="Subscription Analysis" type="pivot">
+                <field name="gueltig_von" interval="month" type="row"/>
             </graph>
         </field>
     </record>

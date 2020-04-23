@@ -13,7 +13,7 @@
                         <field name="frst_personemailgruppe_ids" invisible="1"/>
                         <button class="oe_inline oe_stat_button"
                                 type="action"
-                                context="{'default_zgruppedetail_id': active_id, 'search_default_zgruppedetail_id': active_id, 'search_default_group_state': 1}"
+                                context="{'default_zgruppedetail_id': active_id, 'search_default_zgruppedetail_id': active_id}"
                                 name="%(fso_frst_groups.frst_personemailgruppe_action)d"
                                 icon="fa-envelope-o"
                                 attrs="{'invisible':[('frst_personemailgruppe_ids','=',[])]}">

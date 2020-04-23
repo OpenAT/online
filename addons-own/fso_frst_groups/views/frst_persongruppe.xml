@@ -71,6 +71,7 @@
                 <field name="write_date"/>
                 <group expand="1" string="Group By...">
                     <filter name="group_state" string="State" domain="[]" context="{'group_by':'state'}"/>
+                    <filter name="group_gueltig_von" string="Gueltig-von" domain="[]" context="{'group_by':'gueltig_von'}"/>
                     <filter name="group_create_date" string="Anlagedatum" domain="[]" context="{'group_by':'create_date'}"/>
                     <filter name="group_write_date" string="Aendertungsdatum" domain="[]" context="{'group_by':'write_date'}"/>
                     <filter name="group_zgruppedetail_id" string="FRST-Group" domain="[]" context="{'group_by':'zgruppedetail_id'}"/>
