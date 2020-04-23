@@ -63,7 +63,9 @@ class CrmLead(models.Model):
                         'zgruppedetail_id': lead.crm_form_id.zgruppedetail_id.id,
                         'frst_personemail_id': p_personemail.id,
                         'frst_zverzeichnis_id': lead.frst_zverzeichnis_id.id if lead.frst_zverzeichnis_id else False,
-                        'crm_lead_ids': [(4, lead.id, False)]}
+                        'crm_lead_ids': [(4, lead.id, False)],
+                        'fb_form_id': lead.crm_form_id.id
+                    }
                     peg = self.env['frst.personemailgruppe'].create(peg_vals)
                     logger.info("Created subscription (PersonEmailGruppe (id %s)) for facebook crm.lead (id %s)"
                                 "" % (peg.id, lead.id))

@@ -1,0 +1,7 @@
+<openerp>
+  <data>
+
+    <function model="frst.personemailgruppe" name="update_fb_form_id"/>
+
+  </data>
+</openerp>

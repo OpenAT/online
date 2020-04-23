@@ -3,6 +3,8 @@
 <openerp>
 <data>
 
+    <!-- LEADS -->
+    <!-- Form -->
     <record id="crm_case_form_view_leads" model="ir.ui.view">
         <field name="name">Facebook Lead import extensions</field>
         <field name="model">crm.lead</field>
@@ -17,7 +19,46 @@
 
         </field>
     </record>
+    <!-- Tree -->
+    <record id="crm_case_tree_view_leads" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
 
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="fb_lead_id" invisible="1"/>
+                <field name="crm_form_id" invisible="1"/>
+                <field name="crm_page_id" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Search -->
+    <record id="crm_case_search_view_leads" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+                <field name="crm_page_id"/>
+            </xpath>
+
+            <xpath expr="//group[@string='Group By']" position="after">
+                <group expand="1" string="Group By" name="group_by_facebook">
+                    <filter string="Facebook Form" context="{'group_by':'crm_form_id'}"/>
+                    <filter string="Facebook Page" context="{'group_by':'crm_page_id'}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- OPPORTUNITIES -->
+    <!-- Form -->
     <record id="crm_case_form_view_oppor" model="ir.ui.view">
         <field name="name">Facebook Lead import extensions</field>
         <field name="model">crm.lead</field>
@@ -32,6 +73,55 @@
 
         </field>
     </record>
+    <!-- Tree -->
+    <record id="crm_case_tree_view_oppor" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="fb_lead_id" invisible="1"/>
+                <field name="crm_form_id" invisible="1"/>
+                <field name="crm_page_id" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Search -->
+    <record id="crm_case_search_view_oppor" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+                <field name="crm_page_id"/>
+            </xpath>
+
+            <xpath expr="//group[@string='Group By']" position="after">
+                <group expand="1" string="Group By" colspan="16" name="group_by_facebook">
+                    <filter string="Facebook Form" context="{'group_by':'crm_form_id'}"/>
+                    <filter string="Facebook Page" context="{'group_by':'crm_page_id'}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- CRM Lead Graph View for facebook forms -->
+    <record model="ir.ui.view" id="crm_case_graph_view_leads_facebook_form">
+        <field name="name">Facebook Leads</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <graph string="Facebook Leads" type="pivot">
+                <field name="date_open" interval="day" type="row"/>
+            </graph>
+        </field>
+    </record>
+
 
 </data>
 </openerp>

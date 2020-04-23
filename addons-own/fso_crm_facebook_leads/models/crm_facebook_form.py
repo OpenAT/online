@@ -25,6 +25,7 @@ class FSOCrmFacebookForm(models.Model):
                                        domain=[('zgruppe_id', '!=', False),
                                                ('zgruppe_id.tabellentyp_id', '=', '100110')],
                                        help="Fundraising Studio E-Mail Group")
+    personemailgruppe_count = fields.Integer(string="Subscriptions", compute="cmp_personemailgruppe_count")
 
     # HINT: "verzeichnistyp_id = False" means the CDS record is not a folder but a file
     frst_zverzeichnis_id = fields.Many2one(string="Fundraising Studio CDS",
@@ -53,6 +54,31 @@ class FSOCrmFacebookForm(models.Model):
             if (r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
                 raise ValidationError(
                     _("force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"))
+
+    @api.multi
+    def cmp_personemailgruppe_count(self):
+        for r in self:
+            pegs = r.crm_lead_ids.mapped('personemailgruppe_id')
+            r.personemailgruppe_count = len(pegs)
+
+    @api.multi
+    def button_open_personemailgruppe_graph(self):
+        assert self.ensure_one(), "Please select one form only!"
+
+        graph_view_id = self.env.ref('fso_frst_groups.frst_personemailgruppe_graph').id
+        tree_view_id = self.env.ref('fso_frst_groups.frst_personemailgruppe_tree').id
+
+        return {
+            'domain': [('fb_form_id', '=', self.id), ('crm_lead_ids', 'in', self.crm_lead_ids.ids)],
+            'name': 'Subscriptions for Form: "%s"' % self.name,
+            'view_type': 'form',
+            'view_mode': 'graph,tree',
+            'res_model': 'frst.personemailgruppe',
+            'view_id': False,
+            'views': [(graph_view_id, 'graph'), (tree_view_id, 'tree')],
+            'context': "{}",
+            'type': 'ir.actions.act_window'
+        }
 
     # Add the frst_zverzeichnis_id to the lead creation values
     @api.multi

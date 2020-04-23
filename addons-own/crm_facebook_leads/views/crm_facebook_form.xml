@@ -26,6 +26,25 @@
                         <field name="state" widget="statusbar" statusbar_visible="to_review,active" clickable="False"/>
                     </header>
                     <sheet string="Facebook form">
+
+                        <!-- BUTTON BOX -->
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <field name="crm_lead_ids" invisible="1"/>
+                            <!--<button class="oe_inline oe_stat_button"-->
+                            <!--        type="action"-->
+                            <!--        context="{'default_crm_form_id': active_id, 'search_default_crm_form_id': active_id, 'view_mode': 'tree'}"-->
+                            <!--        name="%(crm.crm_case_category_act_oppor11)d"-->
+                            <!--        icon="fa-tags"-->
+                            <!--        attrs="{'invisible':[('crm_lead_ids','=',[])]}">-->
+                            <!--    <field name="crm_lead_ids_count"-->
+                            <!--           widget="statinfo"-->
+                            <!--           string="Leads"/>-->
+                            <!--</button>-->
+                            <button name="button_open_lead_graph"  type="object" icon="fa-tags" class="oe_inline oe_stat_button">
+                                <field name="crm_lead_ids_count" widget="statinfo" string="Leads"/>
+                            </button>
+                        </div>
+
                         <group>
                             <group>
                                 <field name="name"/>
@@ -46,7 +65,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Mappings">
+                            <page string="Mappings" name="mappings">
                                 <group colspan="2" string="Mappings">
                                     <field name="mappings">
                                         <tree editable="bottom" colors="green:crm_field != False;">
@@ -58,6 +77,12 @@
                                                    options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True, 'no_edit': True,}"/>
                                         </tree>
                                     </field>
+                                </group>
+                            </page>
+                            <page string="Leads" name="page_leads">
+                                <button name="button_open_lead_graph"  type="object" class="oe_inline" string="Open Lead Statistic"/>
+                                <group name="group_leads">
+                                    <field name="crm_lead_ids"/>
                                 </group>
                             </page>
                         </notebook>

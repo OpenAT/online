@@ -9,6 +9,13 @@
         <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_form"/>
         <field name="arch" type="xml">
 
+            <!-- BUTTON TO OPEN RELATED SUBSCRIPTIONS (PersonEmailGruppe) -->
+            <xpath expr="//button[@name='button_open_lead_graph']" position="after">
+                <button name="button_open_personemailgruppe_graph"  type="object" icon="fa-envelope-o" class="oe_inline oe_stat_button">
+                    <field name="personemailgruppe_count" widget="statinfo" string="Subscriptions"/>
+                </button>
+            </xpath>
+
             <xpath expr="//group[@string='Tracking Info']" position="before">
                 <group string="Fundraising Studio">
                     <field name="force_create_partner"/>

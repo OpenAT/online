@@ -52,6 +52,7 @@ class CrmFacebookForm(models.Model):
 
     # Created crm.leads
     crm_lead_ids = fields.One2many(comodel_name='crm.lead', inverse_name='crm_form_id', readonly=True)
+    crm_lead_ids_count = fields.Integer(string="Lead Count", compute="cmp_crm_lead_ids_count")
 
     # SQL CONSTRAINTS
     _sql_constraints = [
@@ -72,6 +73,11 @@ class CrmFacebookForm(models.Model):
                 r.state = 'to_review'
 
     @api.multi
+    def cmp_crm_lead_ids_count(self):
+        for r in self:
+            r.crm_lead_ids_count = len(r.crm_lead_ids)
+
+    @api.multi
     def button_activate(self):
         self.write({'activated': fields.datetime.now()})
 
@@ -86,6 +92,26 @@ class CrmFacebookForm(models.Model):
     @api.multi
     def button_unarchive(self):
         self.write({'active': True, 'activated': False})
+
+    @api.multi
+    def button_open_lead_graph(self):
+        assert self.ensure_one(), "Please select one form only!"
+
+        graph_view_id = self.env.ref('crm_facebook_leads.crm_case_graph_view_leads_facebook_form').id
+        tree_view_id = self.env.ref('crm.crm_case_tree_view_oppor').id
+        form_view_id = self.env.ref('crm.crm_case_form_view_oppor').id
+
+        return {
+            'domain': [('crm_form_id', '=', self.id)],
+            'name': 'Facebook Leads for Form: "%s"' % self.name,
+            'view_type': 'form',
+            'view_mode': 'graph,tree,form',
+            'res_model': 'crm.lead',
+            'view_id': False,
+            'views': [(graph_view_id, 'graph'), (tree_view_id, 'tree'), (form_view_id, 'form')],
+            'context': "{}",
+            'type': 'ir.actions.act_window'
+        }
 
     @api.multi
     def import_facebook_lead_fields(self):
