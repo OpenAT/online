@@ -47,7 +47,7 @@ class FSOCrmFacebookForm(models.Model):
             if not r.frst_zverzeichnis_id and r.zgruppedetail_id and r.zgruppedetail_id.frst_zverzeichnis_id:
                 r.frst_zverzeichnis_id = r.zgruppedetail_id.frst_zverzeichnis_id
 
-    @api.constrains('zgruppedetail_id', 'frst_zverzeichnis_id', 'frst_zverzeichnis_id')
+    @api.constrains('zgruppedetail_id', 'frst_zverzeichnis_id', 'force_create_partner', 'state', 'activated')
     def forms_constrains(self):
         for r in self:
             # Make sure force create partner is set!
