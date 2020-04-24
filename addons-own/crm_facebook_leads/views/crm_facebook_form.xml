@@ -82,7 +82,7 @@
                             <page string="Leads" name="page_leads">
                                 <button name="button_open_lead_graph"  type="object" class="oe_inline" string="Open Lead Statistic"/>
                                 <group name="group_leads">
-                                    <field name="crm_lead_ids"/>
+                                    <field name="crm_lead_ids" context="{'tree_view_ref':'crm_facebook_leads.crm_lead_tree_view_facebook'}"/>
                                 </group>
                             </page>
                         </notebook>
@@ -106,6 +106,7 @@
                     <field name="crm_page_id"/>
                     <field name="section_id"/>
                     <field name="state"/>
+                    <field name="crm_lead_ids_count" string="Leads"/>
                 </tree>
             </field>
         </record>

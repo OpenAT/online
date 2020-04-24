@@ -16,7 +16,7 @@ class ResPartner(models.Model):
     company_name_web = fields.Char(string='Company Name Web')
     street_number_web = fields.Char(string='Street Number Web')
     post_office_box_web = fields.Char(string='Post Office Box Web')
-    newsletter_web = fields.Boolean(string='Newsletter Web')
+    newsletter_web = fields.Boolean(string='Newsletter Web', track_visibility='onchange')
     donation_receipt_web = fields.Boolean(string='Donation Receipt Web')
 
     # HINT: SPAK Spendenabsetzbarkeit - Felder zum deaktivieren der automatischen Spendenabsetzung
@@ -30,15 +30,15 @@ class ResPartner(models.Model):
                                                  track_visibility='onchange')
 
     legal_terms_web = fields.Boolean(string='Accept Legal Terms Web')
-    birthdate_web = fields.Date(string='Birthdate Web')
+    birthdate_web = fields.Date(string='Birthdate Web', track_visibility='onchange')
     anrede_individuell = fields.Char(string='Individuelle Anrede',
                                      help="Eine individuelle Anrede die für den Schriftverkehr verwendet wird.")
     name_zwei = fields.Char(string='Name Zwei',
                             help="Name zweite Zeile für Fundraising Studio")
 
     # Just enable the index
-    firstname = fields.Char(index=True)
-    lastname = fields.Char(index=True)
+    firstname = fields.Char(index=True, track_visibility='onchange')
+    lastname = fields.Char(index=True, track_visibility='onchange')
 
     # DISABLED FOR NOW: Extend the gender field for all FS options
     # ATTENTION: Makes for web no sense therefore disabled!

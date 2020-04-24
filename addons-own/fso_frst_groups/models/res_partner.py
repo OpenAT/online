@@ -11,10 +11,12 @@ class ResPartner(models.Model):
     _bridge_model_fields = ('persongruppe_ids', 'main_email_personemailgruppe_ids')
 
     persongruppe_ids = fields.One2many(comodel_name="frst.persongruppe", inverse_name='partner_id',
+                                       track_visibility='onchange',
                                        string="FRST PersonGruppe IDS")
 
     # Main e-mail groups (related field)
     main_email_personemailgruppe_ids = fields.One2many(related='main_personemail_id.personemailgruppe_ids',
+                                                       track_visibility='onchange',
                                                        string="Main Email Groups", readonly=True)
 
     @api.model

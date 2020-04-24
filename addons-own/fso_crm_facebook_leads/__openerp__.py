@@ -34,6 +34,7 @@ Features to be considered/discussed:
         'views/fsonline_menu.xml',
         'views/crm_lead.xml',
         'views/frst_personemailgruppe.xml',
+        'data/actions.xml',
         'data/run_on_install_update.xml',
     ]
 }

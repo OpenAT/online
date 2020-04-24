@@ -54,6 +54,10 @@ class FSOCrmFacebookForm(models.Model):
             if (r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
                 raise ValidationError(
                     _("force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"))
+            # Make sure the fields 'zgruppedetail_id' and 'frst_zverzeichnis_id' are set for the state 'active'
+            if r.state == 'active' and (not r.zgruppedetail_id or not r.frst_zverzeichnis_id):
+                raise ValidationError(
+                    _("You must set a Group and a CDS-Record before you can approve/enable the form!"))
 
     @api.multi
     def cmp_personemailgruppe_count(self):
@@ -85,5 +89,6 @@ class FSOCrmFacebookForm(models.Model):
     def facebook_data_to_lead_data(self, facebook_lead_data=None):
         res = super(FSOCrmFacebookForm, self).facebook_data_to_lead_data(facebook_lead_data=facebook_lead_data)
         if res and self.frst_zverzeichnis_id:
+            logger.info("Adding 'frst_zverzeichnis_id' of the facebook form to the create-lead values!")
             res['frst_zverzeichnis_id'] = self.frst_zverzeichnis_id.id
         return res

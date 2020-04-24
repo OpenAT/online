@@ -69,6 +69,26 @@
                 <field name="state"/>
                 <field name="create_date"/>
                 <field name="write_date"/>
+                <group expand="1" string="Status Filter" name="status_filters">
+                    <filter name="filter_active" string="Aktiv"
+                            domain="[('state', 'in', ['subscribed', 'approved'])]"/>
+                    <filter name="filter_inactive" string="Inaktiv"
+                            domain="[('state', 'in', ['approval_pending', 'unsubscribed', 'expired'])]"/>
+                    <filter name="filter_approval_pending" string="Warte-auf-Bestaetigung"
+                            domain="[('state', '=', 'approval_pending')]"/>
+                    <filter name="filter_unsubscribed" string="Opt-Out"
+                            domain="[('state', '=', 'unsubscribed')]"/>
+                    <filter name="filter_expired" string="Abgelaufen"
+                            domain="[('state', '=', 'expired')]"/>
+                </group>
+                <group expand="1" string="Zeit Filter" name="time_filters">
+                    <filter name="filter_gueltig_von_2000" string="Gueltig-von-ab-2000"
+                            domain="[('gueltig_von', '>=', '01.01.2000')]"/>
+                    <filter name="filter_gueltig_von_2015" string="Gueltig-von-ab-2015"
+                            domain="[('gueltig_von', '>=', '01.01.2015')]"/>
+                    <filter name="filter_gueltig_von_2020" string="Gueltig-von-ab-2020"
+                            domain="[('gueltig_von', '>=', '01.01.2020')]"/>
+                </group>
                 <group expand="1" string="Group By...">
                     <filter name="group_state" string="State" domain="[]" context="{'group_by':'state'}"/>
                     <filter name="group_gueltig_von" string="Gueltig-von" domain="[]" context="{'group_by':'gueltig_von'}"/>
@@ -82,6 +102,26 @@
             </search>
         </field>
     </record>
+    <!-- GRAPH VIEW -->
+    <!--<record id="frst_persongruppe_graph" model="ir.ui.view">-->
+    <!--    <field name="name">frst_persongruppe_graph</field>-->
+    <!--    <field name="model">frst.persongruppe</field>-->
+    <!--    <field name="arch" type="xml">-->
+    <!--        <graph string="Subscription Analysis" type="pivot">-->
+    <!--            <field name="gueltig_von" interval="month" type="row"/>-->
+    <!--        </graph>-->
+    <!--    </field>-->
+    <!--</record>-->
+    <record id="frst_persongruppe_graph" model="ir.ui.view">
+        <field name="name">frst_persongruppe_graph</field>
+        <field name="model">frst.persongruppe</field>
+        <field name="arch" type="xml">
+            <graph string="Subscription Analysis" type="line">
+                <field name="gueltig_von" interval="month" type="row"/>
+            </graph>
+        </field>
+    </record>
+
     <!-- ACTIONS -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
@@ -103,6 +143,12 @@
         <field name="sequence" eval="20"/>
         <field name="view_mode">form</field>
         <field name="view_id" ref="frst_persongruppe_form"/>
+        <field name="act_window_id" ref="frst_persongruppe_action"/>
+    </record>
+    <record id="frst_persongruppe_graph_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="30"/>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="frst_persongruppe_graph"/>
         <field name="act_window_id" ref="frst_persongruppe_action"/>
     </record>
     <!-- And we add the Action to a Menu with the shortcut menuitem -->

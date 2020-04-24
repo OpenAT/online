@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import openerp
 from openerp import api, models, fields
 import requests
 from static_data import facebook_graph_api_url
@@ -98,7 +99,7 @@ class CrmFacebookForm(models.Model):
         assert self.ensure_one(), "Please select one form only!"
 
         graph_view_id = self.env.ref('crm_facebook_leads.crm_case_graph_view_leads_facebook_form').id
-        tree_view_id = self.env.ref('crm.crm_case_tree_view_oppor').id
+        tree_view_id = self.env.ref('crm_facebook_leads.crm_lead_tree_view_facebook').id
         form_view_id = self.env.ref('crm.crm_case_form_view_oppor').id
 
         return {
@@ -255,20 +256,29 @@ class CrmFacebookForm(models.Model):
 
         # Convert the facebook lead data to crm.leads records
         for lead in new_leads:
-            try:
+
+            # Create a new environment to avoid side effects if lead creation fails and no exception should be raised
+            if not raise_exception:
+                # You don't need clear caches because they are cleared when the "with" finishes
+                with openerp.api.Environment.manage():
+                    # This will close your cr when the "with" finishes
+                    with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                        new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                        try:
+                            new_form = crm_form.with_env(new_env)
+                            crm_lead_values = new_form.facebook_data_to_lead_data(lead)
+                            crm_lead = new_form.env['crm.lead'].create(crm_lead_values)
+                            logger.info("Lead with id %s was successfully created!" % crm_lead.id)
+                        except Exception as e:
+                            logger.error("Could not import lead %s because of %s!" % (lead, repr(e)))
+                            logger.warning("Exception is suppress! Rollback cursor and continue with next lead!")
+                            if new_form.env.cr is not None:
+                                new_form.env.cr.rollback()
+                            pass
+            else:
                 crm_lead_values = crm_form.facebook_data_to_lead_data(lead)
                 crm_lead = self.env['crm.lead'].create(crm_lead_values)
-                if crm_lead:
-                    logger.info("Facebook lead (fb_lead_id: %s) successfully imported as crm.lead %s)"
-                                "" % (crm_lead.fb_lead_id, crm_lead.id))
-                else:
-                    logger.error("Crm lead import failed!")
-            except Exception as e:
-                logger.error("Could not import lead %s because of %s!" % (lead, repr(e)))
-                if raise_exception:
-                    raise e
-                else:
-                    pass
+                logger.info("Lead with id %s was successfully created!" % crm_lead.id)
 
     @api.multi
     def import_facebook_leads(self, raise_exception=True):

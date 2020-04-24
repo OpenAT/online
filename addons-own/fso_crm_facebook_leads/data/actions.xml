@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="action_update_fb_form_id" model="ir.actions.server">
+            <field name="name">Update fb_form_id</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="fso_crm_facebook_leads.model_frst_personemailgruppe" />
+            <field name="code">self.update_fb_form_id(cr, uid, context)</field>
+        </record>
+
+        <record id="action_update_fb_form_id_value" model="ir.values">
+            <field name="name">Update fb_form_id</field>
+            <field name="key">action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="model">frst.personemailgruppe</field>
+            <field name="value" eval="'ir.actions.server,%d' % ref('fso_crm_facebook_leads.action_update_fb_form_id')" />
+        </record>
+
+    </data>
+</openerp>

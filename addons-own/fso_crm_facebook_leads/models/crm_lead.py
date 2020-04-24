@@ -14,6 +14,7 @@ class CrmLead(models.Model):
                                            comodel_name="frst.zverzeichnis", inverse_name='crm_lead_ids',
                                            domain=[('verzeichnistyp_id', '=', False)],
                                            readonly=True, ondelete='set null', index=True,
+                                           track_visibility='onchange',
                                            help="Ursprungsaktion / Herkunft / zMarketingID \n"
                                                 "Fundraising Studio CDS List/File. "
                                                 "This will be copied at lead creation from the setting of the "
@@ -22,13 +23,14 @@ class CrmLead(models.Model):
     # If a facebook leads creates a FRST Group Subscription we link the subscription to the crm.lead
     personemailgruppe_id = fields.Many2one(string="PersonEmailGruppe",
                                            comodel_name='frst.personemailgruppe', inverse_name="crm_lead_ids",
-                                           readonly=True, ondelete='set null', index=True)
+                                           readonly=True, ondelete='set null', index=True,
+                                           track_visibility='onchange')
 
     @api.model
     def create(self, vals):
         lead = super(CrmLead, self).create(vals)
 
-        # Special handling for crm.leads that represents imported facebook leads
+        # SPECIAL HANDLING FOR CRM.LEADS THAT REPRESENTS IMPORTED FACEBOOK LEADS
         if lead and lead.crm_form_id:
 
             # Convert the lead directly to an opportunity by wizard to create a new res.partner
@@ -71,3 +73,20 @@ class CrmLead(models.Model):
                                 "" % (peg.id, lead.id))
 
         return lead
+
+    @api.model
+    def _lead_create_contact(self, lead, name, is_company, parent_id=False):
+        """Add default_frst_zverzeichnis_id (CDS Ursprungsaktion) to the partner created from the lead."""
+        partner_id = super(CrmLead, self)._lead_create_contact(lead, name, is_company, parent_id)
+
+        if partner_id and lead.frst_zverzeichnis_id:
+            logger.info("Add frst_zverzeichnis_id to the partner created from the lead!")
+            partner = self.env["res.partner"].browse(partner_id)
+
+            # Write fields with values first
+            # ATTENTION: This was copied from 'crm_lead_firstname' but there .update() was used instead of .write() ?!?
+            partner.write({
+                'frst_zverzeichnis_id': lead.frst_zverzeichnis_id.id,
+            })
+
+        return partner_id

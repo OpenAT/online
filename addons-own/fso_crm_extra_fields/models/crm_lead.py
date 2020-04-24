@@ -23,6 +23,7 @@ class CrmLead(models.Model):
         partner_id = super(CrmLead, self)._lead_create_contact(lead, name, is_company, parent_id)
 
         if not is_company and partner_id:
+            logger.info("Add fields from addon fso_crm_extra_fields to the partner created from the lead!")
             partner = self.env["res.partner"].browse(partner_id)
 
             # Write fields with values first

@@ -12,4 +12,5 @@ class ResPartner(models.Model):
                                            comodel_name='frst.zverzeichnis', inverse_name="partner_ids",
                                            domain=[('verzeichnistyp_id', '=', False)],
                                            readonly=True, ondelete='set null', index=True,
+                                           track_visibility='onchange',
                                            help="Ursprungsaktion / zMarketingID / Herkunft",)

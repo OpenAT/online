@@ -107,11 +107,20 @@
     </record>
 
     <!-- Graph View -->
+    <!--<record id="frst_personemailgruppe_graph" model="ir.ui.view">-->
+    <!--    <field name="name">frst_personemailgruppe_graph</field>-->
+    <!--    <field name="model">frst.personemailgruppe</field>-->
+    <!--    <field name="arch" type="xml">-->
+    <!--        <graph string="Subscription Analysis" type="pivot">-->
+    <!--            <field name="gueltig_von" interval="month" type="row"/>-->
+    <!--        </graph>-->
+    <!--    </field>-->
+    <!--</record>-->
     <record id="frst_personemailgruppe_graph" model="ir.ui.view">
         <field name="name">frst_personemailgruppe_graph</field>
         <field name="model">frst.personemailgruppe</field>
         <field name="arch" type="xml">
-            <graph string="Subscription Analysis" type="pivot">
+            <graph string="Subscription Analysis" type="line">
                 <field name="gueltig_von" interval="month" type="row"/>
             </graph>
         </field>

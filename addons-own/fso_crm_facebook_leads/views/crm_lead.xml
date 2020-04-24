@@ -17,6 +17,20 @@
         </field>
     </record>
 
+    <record id="crm_lead_tree_view_facebook" model="ir.ui.view">
+        <field name="name">FSO Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_facebook_leads.crm_lead_tree_view_facebook"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='crm_form_id']" position="after">
+                <field name="frst_zverzeichnis_id"/>
+                <field name="personemailgruppe_id"/>
+            </xpath>
+
+        </field>
+    </record>
+
     <record id="crm_case_form_view_oppor" model="ir.ui.view">
         <field name="name">FSO Facebook Lead import extensions</field>
         <field name="model">crm.lead</field>
@@ -26,6 +40,28 @@
             <xpath expr="//field[@name='crm_page_id']" position="after">
                 <field name="frst_zverzeichnis_id"/>
                 <field name="personemailgruppe_id"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="crm_case_search_view_oppor" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="frst_zverzeichnis_id"/>
+                <field name="personemailgruppe_id"/>
+            </xpath>
+
+            <xpath expr="//group[@string='Group By']" position="after">
+                <group expand="1" string="Group By" colspan="16" name="group_by_facebook_fso">
+                    <filter string="CDS-Ursprungsaktion" context="{'group_by':'frst_zverzeichnis_id'}"/>
+                    <filter string="Gruppe" context="{'group_by':'personemailgruppe_id'}"/>
+                </group>
             </xpath>
 
         </field>

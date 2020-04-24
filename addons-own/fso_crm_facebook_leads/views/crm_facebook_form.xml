@@ -20,9 +20,12 @@
                 <group string="Fundraising Studio">
                     <field name="force_create_partner"/>
                     <field name="zgruppedetail_id"
+                           options="{'no_quick_create': True}"
                            context="{'default_gui_anzeigen': True, 'default_gruppe_kurz': name, 'default_gruppe_lang': name, 'default_geltungsbereich': 'local'}"
                     />
-                    <field name="frst_zverzeichnis_id" invisible="0"/>
+                    <field name="frst_zverzeichnis_id"
+                           invisible="0"
+                           options="{'no_quick_create': True}"/>
                     <div colspan="2" class="backend-help oe_edit_only">
                         <p>
                             Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet! Sie können jedoch
@@ -179,6 +182,17 @@
                 </page>
             </xpath>
 
+        </field>
+    </record>
+
+    <record id="crm_facebook_form_tree" model="ir.ui.view">
+        <field name="name">crm_facebook_form_tree</field>
+        <field name="model">crm.facebook.form</field>
+        <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='crm_lead_ids_count']" position="after">
+                <field name="personemailgruppe_count"/>
+            </xpath>
         </field>
     </record>
 

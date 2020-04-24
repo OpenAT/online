@@ -501,7 +501,7 @@ msgstr "zEvent"
 #: model:ir.actions.act_window,name:fso_frst_groups.frst_zgruppe_action
 #: model:ir.ui.menu,name:fso_frst_groups.frst_zgruppe_menu
 msgid "zGruppe"
-msgstr "Gruppenordner (zGruppe)"
+msgstr "Gruppenordner"
 
 #. module: fso_frst_groups
 #: field:frst.personemailgruppe,zgruppedetail_id:0
@@ -513,7 +513,7 @@ msgstr "Gruppenordner (zGruppe)"
 #: model:ir.actions.act_window,name:fso_frst_groups.frst_zgruppedetail_action
 #: model:ir.ui.menu,name:fso_frst_groups.frst_zgruppedetail_menu
 msgid "zGruppeDetail"
-msgstr "Gruppe (zGruppeDetail)"
+msgstr "Gruppen"
 
 #. module: fso_frst_groups
 #: field:frst.zgruppe,zgruppedetail_ids:0
