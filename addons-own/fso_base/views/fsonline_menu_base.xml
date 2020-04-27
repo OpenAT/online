@@ -43,6 +43,7 @@
                 <menuitem id="menu_fsonline_partner_partner" action="base.action_partner_form" parent="menu_fsonline_organizer" name="Partner" sequence="2010"/>
                 <menuitem id="menu_fsonline_notes" action="note.action_note_note" parent="menu_fsonline_organizer" name="Notes" sequence="2020"/>
                 <menuitem id="menu_fsonline_calender" action="calendar.action_calendar_event" parent="menu_fsonline_organizer" name="Calendar" sequence="2030"/>
+                <menuitem id="menu_fsonline_holiday_calender" action="cam_hr.action_cam_hr_urlaubskalender" parent="menu_fsonline_organizer" name="Urlaubskalendar" sequence="2040"/>
     
             <!-- DASHBOARD -->
             <menuitem id="menu_fsonline_dashboard" parent="menu_fsonline" name="Dashboards" sequence="2500"/>
