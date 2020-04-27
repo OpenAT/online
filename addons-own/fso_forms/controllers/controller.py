@@ -474,6 +474,8 @@ class FsoForms(http.Controller):
         return output
 
     def send_mail(self, template=None, record=None, template_values=None, email_to=None, partner_receipient_ids=None):
+        # HINT: template_values is for e-mail only forms and not used if a record is given!
+        assert not (template_values and record), "Use a record or template_values to send the email but not both!"
         assert template.subject, "Subject is missing in email template %s (ID: %s)" % (template.name, template.id)
 
         # Prepare common email values
@@ -532,8 +534,9 @@ class FsoForms(http.Controller):
             _logger.error("No record given!")
             return False
 
-        # Add the session information to the form_values
-        template_values = dict(form_values, **self._get_session_information())
+        # Add session information to template_values if no record is given
+        # HINT: template_values is for e-mail only forms and not used if a record is given!
+        template_values = dict(form_values, **self._get_session_information()) if form_values else None
 
         # Internal information e-mail
         if form.information_email_template:
