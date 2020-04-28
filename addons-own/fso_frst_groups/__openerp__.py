@@ -38,6 +38,7 @@ TODO: There is some unicode error in addon fso_frst_groups on init - find and fi
     'auto_install': False,
     'depends': [
         'fso_frst_personemail',
+        'fso_merge',
     ],
     'data': [
         'security/fs_groups_security.xml',
