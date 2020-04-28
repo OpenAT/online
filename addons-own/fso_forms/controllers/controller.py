@@ -601,6 +601,8 @@ class FsoForms(http.Controller):
                                 if form.create_as_user:
                                     record = record.sudo(form.create_as_user.id).create(values)
                                 else:
+                                    # TODO: Check why we can't create that record as the public user with mail_thread
+                                    #       enabled for the record model!!!
                                     record = record.create(values)
                                 messages.append(_('Data was successfully submitted!'))
                             else:
