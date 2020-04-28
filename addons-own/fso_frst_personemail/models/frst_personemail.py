@@ -79,6 +79,8 @@ class FRSTPersonEmail(models.Model):
     _name = "frst.personemail"
     _rec_name = "email"
 
+    _inherit = ['fso.merge']
+
     email = fields.Char(string="E-Mail", required=True,
                         help="This field should normally NEVER change after record creation. The only exception"
                              "to this rule would be a quick typo fix after manual creation in FRST GUI.")

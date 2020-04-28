@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 # PersonEmailGruppe: FRST groups for email addresses
 class FRSTPersonEmailGruppe(models.Model):
     _name = "frst.personemailgruppe"
-    _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel"]
+    _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel", "fso.merge"]
     _rec_name = 'display_name'
     _description = 'group subscriptions for emails'
 
