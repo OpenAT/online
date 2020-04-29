@@ -97,10 +97,11 @@ class FSOMergeAbstract(models.AbstractModel):
                 update_fk_rel_query = self._query_update_fk_rel_table(
                     keep_id=rec_to_keep.id, remove_id=rec_to_remove.id, table=fk_table, fk_column=fk_column,
                     other_column=other_columns[0])
-                logger.info("FSO MERGE: Foreign key update for odoo-rel-table:\n%s" % update_fk_rel_query)
+                logger.info("FSO MERGE: Foreign key update for odoo-rel-table:\n%s"
+                            "" % update_fk_rel_query.strip())
                 cr.execute(update_fk_rel_query)
 
-            # UPDATE FOR REGULAR ODOO TABLES
+            # UPDATE FOR REGULAR ODOO MODEL-TABLES
             else:
                 try:
                     # This will create a savepoint that i guess will be rolled back to by the orm if the stuff inside
@@ -108,7 +109,8 @@ class FSOMergeAbstract(models.AbstractModel):
                     with mute_logger('openerp.sql_db'), cr.savepoint():
                         update_fk_query = self._query_update_fk(
                             keep_id=rec_to_keep.id, remove_id=rec_to_remove.id, table=fk_table, fk_column=fk_column)
-                        logger.info("FSO MERGE: Foreign key update for regular-odoo-table:\n%s" % update_fk_query)
+                        logger.info("FSO MERGE: Foreign key update for regular-odoo-table:\n%s"
+                                    "" % update_fk_query.strip())
                         cr.execute(update_fk_query)
 
                         # ATTENTION: There is no handling if the model has a relation to itself e.g. parent and child
@@ -120,7 +122,7 @@ class FSOMergeAbstract(models.AbstractModel):
                         table=fk_table, fk_column=fk_column, remove_id=rec_to_remove.id)
                     logger.error("FSO MERGE: Update failed for regular table records! Keeping record linked to "
                                  "nonexistent record is useless, better delete it:"
-                                 "\n%s" % delete_records_linked_to_fk_query)
+                                 "\n%s" % delete_records_linked_to_fk_query.strip())
                     cr.execute(delete_records_linked_to_fk_query)
 
     @api.model
@@ -148,7 +150,10 @@ class FSOMergeAbstract(models.AbstractModel):
         cr = self.env.cr
 
         # Get the update model object as SUPERUSER
-        update_model_obj = self.env[model_to_update].sudo()
+        try:
+            update_model_obj = self.env[model_to_update].sudo()
+        except KeyError:
+            update_model_obj = None
         if update_model_obj is None:
             return
 
@@ -194,31 +199,35 @@ class FSOMergeAbstract(models.AbstractModel):
                 model_to_update=ref_mod[0], mtu_fn_rel_model=ref_mod[1], mtu_fn_rel_id=ref_mod[2],
                 rel_model=self._name, rel_rec_keep_id=rec_to_keep.id, rel_rec_remove_id=rec_to_remove.id)
 
-        # UPDATE THE RECORD-ID IN 'ir.model.fields'
+        # UPDATE THE RECORD-ID IN 'ir.model.fields' OF TYPE 'reference'
+        logger.info("FSO MERGE: Update values of 'reference' fields found in 'ir.model.fields'")
         irmf_obj = self.env['ir.model.fields'].sudo()
-        irmf_records = irmf_obj.search([('ttype', '=', 'reference')])
 
-        for irmf_rec in irmf_records:
-            logger.info("FSO MERGE: Update related field values found in 'ir.model.fields'")
+        # Search in all 'reference' fields for the current model and record-to-remove-id
+        irmf_rel_fields = irmf_obj.search([('ttype', '=', 'reference')])
+        logger.info("FSO MERGE: Found %s fields of type 'reference'" % len(irmf_rel_fields))
+
+        for irmf_field in irmf_rel_fields:
             try:
-                target_model_obj = self.env[irmf_rec.model].sudo()
-                target_model_field = target_model_obj._fields[irmf_rec.name]
+                target_model_obj = self.env[irmf_field.model].sudo()
+                target_model_field = target_model_obj._fields[irmf_field.name]
             except KeyError:
                 # Unknown model or field => skip
                 continue
 
             # Skipp computed fields
-            if target_model_field.compute is not None:
+            if target_model_field.compute is not None or isinstance(target_model_field.column, fields.fields.function):
                 continue
 
             # Update the rel field
-            target_model_field_name = irmf_rec.name
-            target_model_field_search_value = '%s,%d' % (self._name, rec_to_remove.id)
-            target_model_records_to_update = target_model_obj.search([(
-                target_model_field_name, '=', target_model_field_search_value)])
-            logger.info("FSO MERGE: Update field '%s' in model '%s' for records: %s"
-                        "" % (target_model_field_name, target_model_obj._name, target_model_records_to_update.ids))
-            target_model_records_to_update.write({target_model_field_name: rec_to_keep.id})
+            domain = [(irmf_field.name, '=', '%s,%d' % (self._name, rec_to_remove.id))]
+            target_model_records_to_update = target_model_obj.search(domain)
+            if target_model_records_to_update:
+                logger.info("FSO MERGE: Found %s records for reference-field '%s' in the model '%s' by domain: '%s'"
+                            "" % (len(target_model_records_to_update), irmf_field.name, target_model_obj._name, domain))
+                logger.info("FSO MERGE: Update found records in target model from id %s to id %s"
+                            "" % (rec_to_remove.id, rec_to_keep.id))
+                target_model_records_to_update.write({irmf_field.name: rec_to_keep.id})
 
     @api.model
     def _fso_merge_validate(self, rec_to_remove=None, rec_to_keep=None):
@@ -259,7 +268,7 @@ class FSOMergeAbstract(models.AbstractModel):
     @api.model
     def fso_merge(self, remove_id=None, keep_id=None):
         logger.info('FSO MERGE: Started merge for model %s with record-to-keep id %s and record-to-merge id %s'
-                    '' % (self.model, keep_id, remove_id))
+                    '' % (self._name, keep_id, remove_id))
         assert remove_id != keep_id, 'remove_id %s and keep_id %s must be different!' % (remove_id, keep_id)
 
         # Model information
