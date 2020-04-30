@@ -305,3 +305,6 @@ class FSOMergeAbstract(models.AbstractModel):
         self._fso_merge_empty_write(rec_to_keep=rec_to_keep)
 
         logger.info("FSO MERGE: Done!")
+
+        # For XMLRPC Calls only :)
+        return True
