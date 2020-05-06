@@ -44,14 +44,33 @@ class TestFRSTPersonEmail(common.TransactionCase):
         self.assertEqual(self.partner_max1.main_personemail_id.email, self.partner_max1.email)
         self.assertIs(len(self.partner_max1.frst_personemail_ids), 2)
 
-    def test_04_merge_personemail(self):
+    def test_04_merge_personemails_of_two_different_partners(self):
         """ Test the merging of two PersonEmail from different persons """
         personemail_obj = self.env['frst.personemail']
-        logger.info("TRY TO MERGE PERSONEMAIL (remove_id) %s OF PERSON MAX2 %s "
+        logger.info("TEST 04: MERGE PERSONEMAIL (remove_id) %s OF PERSON MAX2 %s "
                     "INTO PERSONEMAIL (keep_id) %s OF PERSON MAX1 %s"
                     "" % (self.partner_max2.main_personemail_id.id, self.partner_max2.id,
                           self.partner_max1.main_personemail_id.id, self.partner_max1.id))
         personemail_obj.fso_merge(remove_id=self.partner_max2.main_personemail_id.id,
                                   keep_id=self.partner_max1.main_personemail_id.id)
-        self.assertIsNone(self.partner_max2.main_personemail_id)
-        self.assertIsNone(self.partner_max2.frst_personemail_ids)
+        self.assertFalse(self.partner_max2.main_personemail_id)
+        self.assertFalse(self.partner_max2.frst_personemail_ids)
+
+    def test_05_merge_personemails_of_two_different_partners_reactivate_pe(self):
+        """
+        Test the merging of two PersonEmail from different persons and make sure the person where the
+        PersonEmail gets removed will reactivate the remaining PersonEmail as the main e-mail
+        """
+        # Create another PersonEmail for max2 and reactivate the original personemail
+        self.partner_max2.write({'email': 'max2_email2@test.com'})
+        self.partner_max2.write({'email': 'max@test.com'})
+        # Merge the PersonEmails
+        personemail_obj = self.env['frst.personemail']
+        logger.info("TEST 05: MERGE PERSONEMAIL (remove_id) %s OF PERSON MAX2 %s "
+                    "INTO PERSONEMAIL (keep_id) %s OF PERSON MAX1 %s AND CHECK MAX2 MAIN EMAIL"
+                    "" % (self.partner_max2.main_personemail_id.id, self.partner_max2.id,
+                          self.partner_max1.main_personemail_id.id, self.partner_max1.id))
+        personemail_obj.fso_merge(remove_id=self.partner_max2.main_personemail_id.id,
+                                  keep_id=self.partner_max1.main_personemail_id.id)
+        # Check if the main email of max 2 is max2_email2@test.com
+        self.assertEqual(self.partner_max2.main_personemail_id.email, 'max2_email2@test.com')

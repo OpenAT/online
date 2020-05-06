@@ -51,6 +51,17 @@ class FRSTzGruppe(models.Model):
                                                   ('system', 'System Group')],
                                        default='system')
 
+    # ATTENTION: Diese Felder sind nur in FRST vorhanden und werden beim FSRT-Merge beruecksichtigt:
+    #
+    # TODO: Nur eine zGruppeDetail im Gruppenordner darf einem Datensatz zugeordnet werden (z.B. Person)
+    # TODO: Mehrfache Zuweisung der selben zGruppeDetail im Gruppenordner auf einen Datensatz ist nicht erlaubt
+    #       Beispiel einer Mehrfachzuordnung: kommt nur für Statistikgruppen vor die auch ablaufen können
+    #       z.B.: 'Großpender' im Jahr 2018 aber nicht 2019 dann wieder 2020
+    #       ACHTUNG: Der default Wert ist 'True' da im Regelfall eine mehrfache Zuordnung nicht sinnig ist
+    # TODO: Nur eine zGruppeDetail im Gruppenordner darf gueltig sein
+    #       INFO: Ist nur sinnhaft für 'Status' oder 'Statistikgruppen' z.B.: 'Daten sind aktuell', 'inaktiv', ...
+
+
     @api.model
     def create(self, vals):
         if vals.get('geltungsbereich') != 'local':

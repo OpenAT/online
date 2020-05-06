@@ -233,11 +233,7 @@ class FSOMergeAbstract(models.AbstractModel):
     def _fso_merge_validate(self, rec_to_remove=None, rec_to_keep=None):
         assert rec_to_remove.ensure_one(), "Record-to-remove was not found!"
         assert rec_to_keep.ensure_one(), "Record-to-keep was not found!"
-
-        # TODO: Move this in personemail
-        # assert pe_remove.email.strip().lower() == pe_keep.email.strip().lower(), \
-        #     "E-Mails must match of PersonEmail to keep (%s, %s) and PersonEmail to remove (%s, %s)!" \
-        #     "" % (pe_keep.email, pe_keep.id, pe_remove.email, pe_remove.id)
+        return True
 
     @api.model
     def _fso_merge_pre(self, rec_to_remove=None, rec_to_keep=None):
@@ -286,9 +282,17 @@ class FSOMergeAbstract(models.AbstractModel):
         # Do stuff prior to the merge
         self._fso_merge_pre(rec_to_remove=rec_to_remove, rec_to_keep=rec_to_keep)
 
-        # Merge the records
+        # Merge foreign keys in the database by sql (without the orm)
         self._fso_merge_update_foreign_keys(rec_to_remove=rec_to_remove, rec_to_keep=rec_to_keep)
+        rec_to_keep.env.invalidate_all()
+        rec_to_remove.env.invalidate_all()
+        self.env.invalidate_all()
+
+        # Merge old style 'two fields' references by sql and the 'one field' 'reference' type fields by the orm
         self._fso_merge_update_reference_fields(rec_to_remove=rec_to_remove, rec_to_keep=rec_to_keep)
+        rec_to_keep.env.invalidate_all()
+        rec_to_remove.env.invalidate_all()
+        self.env.invalidate_all()
 
         # Do stuff after the merge
         self._fso_merge_post(rec_to_remove=rec_to_remove, rec_to_keep=rec_to_keep)

@@ -44,11 +44,11 @@ TODO: There is some unicode error in addon fso_frst_groups on init - find and fi
         'security/fs_groups_security.xml',
         'security/ir.model.access.csv',
         #
-        'views/frst_zgruppe.xml',
-        'views/frst_zgruppedetail.xml',
-        #
         'views/frst_persongruppe.xml',
         'views/frst_personemailgruppe.xml',
+        #
+        'views/frst_zgruppe.xml',
+        'views/frst_zgruppedetail.xml',
         #
         'views/res_partner.xml',
         #

@@ -75,6 +75,10 @@ class FRSTPersonEmail(models.Model):
     This implies that on every e-mail change the person must validate that the person has access to the changed
     e-mail address before further e-mails can be send! As long as this validation is not done the last validated
     e-mail address would still be used as long as the new e-mail address is validated.
+
+    TODO: Maybe we should not check the for an malformated email string - makes things way more complicated
+          and may lead to unexpected side effects. Correctly formated email should be enforced by the webform
+          or by the frst import?
     """
     _name = "frst.personemail"
     _rec_name = "email"
@@ -144,19 +148,9 @@ class FRSTPersonEmail(models.Model):
     def compute_state(self):
         """ Will only update the 'state' field of frst.personemail """
         for r in self:
-
-            # Check if 'email' seems valid
-            if not r.email or not is_valid_email(r.email):
-                if r.state != 'inactive':
-                    r.write({'state': 'inactive'})
-                continue
-
-            # Check if now() is inside 'gueltig_von' and 'gueltig_bis'
-            gueltig_von = fields.datetime.strptime(r.gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
-            gueltig_bis = fields.datetime.strptime(r.gueltig_bis, DEFAULT_SERVER_DATE_FORMAT)
-            state = 'active' if gueltig_von <= fields.datetime.now() <= gueltig_bis else 'inactive'
-            if r.state != state:
-                r.write({'state': state})
+            comp_state = self._compute_state(gueltig_von=r.gueltig_von, gueltig_bis=r.gueltig_bis, email=r.email)
+            if r.state != comp_state:
+                r.write({'state': comp_state})
 
     # Compute a main_email address and set its field 'main_address' AND update field email of res.partner
     # ATTENTION: 'main_address' will only be set if an email seems valid!
@@ -187,19 +181,9 @@ class FRSTPersonEmail(models.Model):
 
             # Update main_email and related res.partner email field
             if active_main_email:
-
-                # Set active_main_email as new main_address if it isnt already the main address
+                # Set active_main_email as new main_address
                 if not active_main_email.main_address:
                     active_main_email.write({'main_address': True})
-
-                # TODO: THIS IS A FIX FOR FSO MERGE - MAYBE WITH UNKNOWN SIDE EFFECTS ...
-                wrong_partners = active_main_email.partner_main_email_ids.filtered(
-                    lambda p: p.id != active_main_email.partner_id.id
-                )
-                if wrong_partners:
-                    logger.error('More than one Partner for partner_main_email_ids! %s' % wrong_partners.ids)
-                    wrong_partners.write({'main_personemail_id': False})
-                # TODO: Maybe we should recompute the mainemail for the wrong partners too?
 
             # Unset 'main_address' for all other email addresses
             p_emails_main = p_emails.filtered(lambda m: m.main_address)
@@ -295,24 +279,90 @@ class FRSTPersonEmail(models.Model):
 
         return values
 
+
+
+
+
+
+
+
+    # -------
+    # NEW TRY
+    # -------
+    @staticmethod
+    def _compute_state(gueltig_von='', gueltig_bis='', email=''):
+        if not is_valid_email(email):
+            return 'inactive'
+
+        gueltig_von = fields.datetime.strptime(gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
+        gueltig_bis = fields.datetime.strptime(gueltig_bis, DEFAULT_SERVER_DATE_FORMAT)
+        return 'active' if gueltig_von <= fields.datetime.now() <= gueltig_bis else 'inactive'
+
+    @api.model
+    def latest_active(self, partner):
+        assert partner.ensure_one(), 'Needs exactly one partner!'
+        return self.search(
+            [('partner_id', '=', partner.id),
+             ('state', '=', 'active')],
+            order='last_email_update desc, create_date desc',
+            limit=1,
+        )
+
+    @api.model
+    def _compute_main_address(self, partner=None, email='', last_email_update=''):
+        if not email or not is_valid_email(email):
+            return False
+
+        if not partner.frst_personemail_ids:
+            return True
+
+        latest_active_pe = self.latest_active(partner)
+        if not latest_active_pe:
+            return True
+
+        return False if latest_active_pe.last_email_update > last_email_update else True
+
+
+
+
+
     @api.model
     def create(self, values):
 
-        # Compute 'last_email_update' and 'gueltig_bis' values
-        values = self.compute_last_email_update_gueltig_bis(values)
+        partner = self.env['res.partner'].browse([values['partner_id']])
 
-        # Create record in the current environment (memory only right now i guess)
-        # ATTENTION: self is still empty but the new record exits in the 'res' recordset already
+        # last_email_update
+        if 'last_email_update' not in values:
+            values['last_email_update'] = fields.datetime.now()
+
+        # gueltig_bis
+        if 'gueltig_bis' not in values:
+            if is_valid_email(values['email']):
+                values['gueltig_bis'] = '2099-12-31'
+            else:
+                values['gueltig_bis'] = fields.datetime.now() - timedelta(days=1)
+
+        # state
+        if 'state' not in values:
+            values['state'] = self._compute_state(gueltig_von=values.get('gueltig_von', fields.datetime.now()),
+                                                  gueltig_bis=values['gueltig_bis'],
+                                                  email=values['email'])
+
+        # main_address
+        if 'main_address' not in values and values['state'] == 'active':
+            values['main_address'] = self._compute_main_address(
+                partner=partner,
+                email=values['email'],
+                last_email_update=values['last_email_update']
+            )
+
+        # replace res.partner partner_main_email_ids
+        if values['main_address']:
+            values['partner_main_email_ids'] = [(6, '', [partner.id])]
+
         res = super(FRSTPersonEmail, self).create(values)
 
         if res:
-            # Compute the 'state'
-            res.compute_state()
-
-            # Compute the 'main_address'
-            # ATTENTION: Run compute_main_address() after compute_state() since it depends on it!
-            res.compute_main_address()
-
             # Compute the field 'email' in res.partner
             # ATTENTION: Run compute_partner_email() after the compute_main_address() since it depends on it!
             res.compute_partner_email()
@@ -348,21 +398,12 @@ class FRSTPersonEmail(models.Model):
 
         # Find all partner and partneremails before we delete any of them
         partner = self.mapped('partner_id')
-
-        # HINT: This is a fix for fso_merge to catch if the 'main_personemail_id' was changed by sql and therefore
-        #       'main_personemail_id' of the partner points to a a PersonEmail of an other partner!
-        partner = partner | self.mapped('partner_main_email_ids')
-
         partneremails = partner.mapped('frst_personemail_ids')
-
-        # HINT: This is a fix for fso_merge to catch if the 'main_personemail_id' was changed by sql and therefore
-        #       'main_personemail_id' of the partner points to a a PersonEmail of an other partner!
-        partneremails = partneremails | partner.mapped('main_personemail_id')
-
         remaining_partneremails = partneremails - self
 
-        partner_with_partneremails_after_unlink = remaining_partneremails.mapped('partner_id')
-        partner_without_personmail_after_unlink = partner - partner_with_partneremails_after_unlink
+        partners_with_partneremails_after_unlink = remaining_partneremails.mapped('partner_id')
+
+        partner_without_personmail_after_unlink = partner - partners_with_partneremails_after_unlink
 
         # ATTENTION: After super 'self' still holds all the records BUT it is marked as deleted! res is just a boolean!
         res = super(FRSTPersonEmail, self).unlink()
@@ -370,9 +411,8 @@ class FRSTPersonEmail(models.Model):
         if res:
             # Update remaining PersonEmails
             if remaining_partneremails:
-                # Attention: We do not compute the state since the state could not be changed just by removing PEs
-
-                # Compute the main email address 'main_address'
+                # Compute the 'main_address'
+                # HINT: Compute the 'main_address' after the state since it depends on it!
                 remaining_partneremails.compute_main_address()
 
                 # Compute the field 'email' in res.partner
@@ -383,24 +423,3 @@ class FRSTPersonEmail(models.Model):
                 partner_without_personmail_after_unlink.write({'email': False})
 
         return res
-
-    # ---------
-    # FSO MERGE
-    # ---------
-    @api.model
-    def _fso_merge_validate(self, rec_to_remove=None, rec_to_keep=None):
-        res = super(FRSTPersonEmail, self)._fso_merge_validate(rec_to_remove=rec_to_remove, rec_to_keep=rec_to_keep)
-
-        logger.info("FSO MERGE FOR PERSONEMAIL: _fso_merge_validate() that the emails are the same!")
-        assert rec_to_remove.email.strip().lower() == rec_to_keep.email.strip().lower(), \
-                 "E-Mails must match of PersonEmail to keep (%s, %s) and PersonEmail to remove (%s, %s)!" \
-                 "" % (rec_to_keep.email, rec_to_keep.id, rec_to_remove.email, rec_to_remove.id)
-
-        return res
-
-    @api.model
-    def _fso_merge_empty_write(self, rec_to_keep=None):
-        logger.info("FSO MERGE FOR PERSONEMAIL: Write 'email' %s to record-to-keep with id '%s' after merge to update "
-                    "main email of the partner!"
-                    % (rec_to_keep.email, rec_to_keep.id))
-        return rec_to_keep.write({'email': rec_to_keep.email})
