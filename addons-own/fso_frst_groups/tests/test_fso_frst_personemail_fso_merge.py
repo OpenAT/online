@@ -82,8 +82,8 @@ class TestFRSTPersonEmail(common.TransactionCase):
     def test_01_merge_personemails_with_different_groups_of_two_different_partners(self):
         """ Test the merging of two PersonEmails-with-groups from different persons"""
         personemail_obj = self.env['frst.personemail']
-        logger.info("TEST 04: MERGE PERSONEMAIL (remove_id) %s OF PERSON MAX2 %s "
-                    "INTO PERSONEMAIL (keep_id) %s OF PERSON MAX1 %s"
+        logger.info("TEST 01: MERGE PERSONEMAIL (remove_id) %s OF PERSON MAX2 %s "
+                    "INTO PERSONEMAIL (keep_id) %s OF PERSON MAX1 %s AND CHECK SUBSCRIPTIONS AFTER MERGE"
                     "" % (self.partner_max2.main_personemail_id.id, self.partner_max2.id,
                           self.partner_max1.main_personemail_id.id, self.partner_max1.id))
         personemail_obj.fso_merge(remove_id=self.partner_max2.main_personemail_id.id,
