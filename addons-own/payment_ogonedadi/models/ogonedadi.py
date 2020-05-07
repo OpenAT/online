@@ -315,13 +315,13 @@ class PaymentTxOgonedadi(osv.Model):
         status = int(data.get('STATUS', '0'))
         if status in self._ogonedadi_valid_tx_status:
             tx_write_data['state'] = 'done'
-            return tx.write(tx_write_data)
+            res = tx.write(tx_write_data)
         elif status in self._ogonedadi_cancel_tx_status:
             tx_write_data['state'] = 'cancel'
-            return tx.write(tx_write_data)
+            res = tx.write(tx_write_data)
         elif status in self._ogonedadi_pending_tx_status:
             tx_write_data['state'] = 'pending'
-            return tx.write(tx_write_data)
+            res = tx.write(tx_write_data)
         else:
             error = 'Ogonedadi: feedback error: %(error_str)s\n\n%(error_code)s: %(error_msg)s' % {
                 'error_str': data_upper.get('NCERROR'),
@@ -331,7 +331,26 @@ class PaymentTxOgonedadi(osv.Model):
             _logger.info(error)
             tx_write_data['state'] = 'error'
             tx_write_data['state_message'] = error
-            return tx.write(tx_write_data)
+            res = tx.write(tx_write_data)
+
+        # ATTENTION: Link the last payment transaction where we got an answer to the sales order field 'payment_tx_id'
+        #            This is needed because sometimes we get concurrent writes when the pay now button is pressed
+        #            multiple times which leads to multiply payment transaction for the same sale order in no
+        #            particular order.
+        if tx and tx.sale_order_id and tx.sale_order_id.payment_tx_id:
+            if tx.id != tx.sale_order_id.payment_tx_id.id:
+                _logger.error("Payment transaction (ID %s) with feedback-from-payment-provider is not currently "
+                              "linked to the sales order field 'payment_tx_id' on linked sale order with id %s! "
+                              "Try to change sale_order.payment_tx_id.id from %s to %s!"
+                              "" % (tx.id, tx.sale_order_id.id, tx.sale_order_id.payment_tx_id.id, tx.id))
+                try:
+                    tx.sale_order_id.write({'payment_tx_id': tx.id})
+                except Exception as e:
+                    _logger.error("Could not change the payment_tx_id to %s for sale order with id %s!\n%s"
+                                  "" % (tx.id, tx.sale_order_id.id, repr(e)))
+                    pass
+
+        return res
 
     # --------------------------------------------------
     # S2S RELATED METHODS
@@ -527,4 +546,4 @@ class PaymentTxOgonedadi(osv.Model):
         if not tx_done and tries == 0:
             raise Exception('Cannot get transaction status...')
 
-        return tx_st
+        return tx_status

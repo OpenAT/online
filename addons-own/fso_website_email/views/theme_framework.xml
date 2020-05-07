@@ -249,6 +249,13 @@
     <!-- COMMON <body> -->
     <template id="theme_body_common">
 
+        <!-- ====================== -->
+        <!-- PREMAILER/PREVIEW TEXT -->
+        <!-- ====================== -->
+        <t t-if="record and record.preheader_text">
+            <div t-esc="record.preheader_text" id="preheader" width="1" height="1" style="display:none !important; line-height:1px; font-size: 1px; height: 1px; margin: 0px; padding: 0px;"/>
+        </t>
+
         <!-- =============================================================== -->
         <!-- MULTI MAILER TRACKING IMAGE (track email opened, always loaded) -->
         <!-- =============================================================== -->

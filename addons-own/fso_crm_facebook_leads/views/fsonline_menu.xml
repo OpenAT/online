@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_channels_social_media_fb_pages" name="Facebook Pages" sequence="6000" parent="fso_base.menu_channels_social_media" action="crm_facebook_leads.action_crm_facebook_page"/>
+        <menuitem id="menu_channels_social_media_fb_forms" name="Facebook Lead-Forms" sequence="6100" parent="fso_base.menu_channels_social_media" action="crm_facebook_leads.action_crm_facebook_form"/>
+
+    </data>
+</openerp>

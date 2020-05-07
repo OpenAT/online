@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-13 08:48+0000\n"
-"PO-Revision-Date: 2018-08-13 08:48+0000\n"
+"POT-Creation-Date: 2020-03-31 18:26+0000\n"
+"PO-Revision-Date: 2020-03-31 18:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -30,34 +30,14 @@ msgid "Abweichende Betragsüberschrift"
 msgstr "Abweichende Betragsüberschrift"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_access
-msgid "Access"
-msgstr "Zugang"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Acquirers"
 msgstr "Zahlungsanbieter"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_timesheet
-msgid "Alle Stundenzettel"
-msgstr "Alle Stundenzettel"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Angezeigt in den Kategorien"
 msgstr "Angezeigt in den Kategorien"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_user_input
-msgid "Answers"
-msgstr "Antworten"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_archive
-msgid "Archiv"
-msgstr "Archiv"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -70,11 +50,6 @@ msgid "Artikelübersichtsseiten"
 msgstr "Artikelübersichtsseiten"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project_task
-msgid "Aufgaben"
-msgstr "Aufgaben"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Auswählbare Zahlungsintervalle"
 msgstr "Auswählbare Zahlungsintervalle"
@@ -83,11 +58,6 @@ msgstr "Auswählbare Zahlungsintervalle"
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_bpk
 msgid "BPK Abfragen"
 msgstr "BPK Abfragen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm_oppor
-msgid "Bearbeitete Anfragen"
-msgstr "Bearbeitete Anfragen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -131,16 +101,6 @@ msgid "Bild ausblenden"
 msgstr "Bild ausblenden"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog
-msgid "Blog"
-msgstr "Blog"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_blogs
-msgid "Blogs"
-msgstr "Blogs"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Buchhaltung"
 msgstr "Buchhaltung"
@@ -156,40 +116,9 @@ msgid "Button Text"
 msgstr "Button Text"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm
-msgid "CRM"
-msgstr "CRM"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_calender
-msgid "Calendar"
-msgstr "Kalender"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_channels_mm_campaigns
 #: model:ir.ui.menu,name:fsonline.menu_channels_track_utm_campaign
 msgid "Campaigns"
 msgstr "Kampagnen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_channels
-msgid "Channels"
-msgstr "Kanäle"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_companies
-msgid "Companies"
-msgstr "Unternehmen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_frst_fs_group_depricated
-msgid "DEPRICATED FSGroups"
-msgstr "DEPRICATED FSGroups"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_dashboard
-msgid "Dashboards"
-msgstr "Anzeigetafeln"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -217,11 +146,6 @@ msgstr "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Web
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Digitale Inhalte"
 msgstr "Digitale Inhalte"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc
-msgid "Documentation"
-msgstr "Dokumentation"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_domains
@@ -267,6 +191,16 @@ msgid "E-Mail"
 msgstr "E-Mail"
 
 #. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_statistics
+msgid "E-Mail Statistic"
+msgstr "E-Mail Statistic"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_channels_mm_templates
+msgid "E-Mail Templates"
+msgstr "E-Mail Templates"
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_send
 msgid "E-Mails"
 msgstr "E-Mails"
@@ -297,39 +231,14 @@ msgid "FS Gruppen"
 msgstr "FS Gruppen"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_fstoken_menu
-msgid "FS Login Token"
-msgstr "Temp. Anmeldeschlüssel"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
 msgid "FS Typ"
 msgstr "FS Typ"
 
 #. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "FS Workflow (veraltet)"
-msgstr "FS Workflow (veraltet)"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline
-msgid "FS-Online"
-msgstr "FS-Online"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_submission
 msgid "FinanzOnline Uebertrag."
 msgstr "FinanzOnline Uebertrag."
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum
-msgid "Forum"
-msgstr "Hilfeforum"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum_forums
-msgid "Forums"
-msgstr "Forenverzeichnis"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
@@ -347,19 +256,9 @@ msgid "Fundraising Studio Typ"
 msgstr "Fundraising Studio Typ"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_frst_settings
-msgid "Fundrasing Studio"
-msgstr "Fundrasing Studio"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Globalen Footer Ausblenden"
 msgstr "Globalen Footer Ausblenden"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_groups_menu
-msgid "Groups"
-msgstr "Gruppen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -372,11 +271,6 @@ msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spend
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Hintergrungdbewegung beim Scrollen"
 msgstr "Hintergrungdbewegung beim Scrollen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_inbox
-msgid "Inbox"
-msgstr "Posteingang"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -394,11 +288,6 @@ msgid "Interner Code"
 msgstr "Interner Code"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer_calender
-msgid "Kalender"
-msgstr "Kalender"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Kategorienavigation ausblenden"
 msgstr "Kategorienavigation ausblenden"
@@ -407,16 +296,6 @@ msgstr "Kategorienavigation ausblenden"
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Keine Verlinkung zur Spendenseite"
 msgstr "Keine Verlinkung zur Spendenseite"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer_partner
-msgid "Kontakte"
-msgstr "Kontakte"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project_analytic
-msgid "Kostenstellen"
-msgstr "Kostenstellen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -432,11 +311,6 @@ msgstr "Kurztext (Kurzbeschreibung)"
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Kurztext ausblenden"
 msgstr "Kurztext ausblenden"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_label_form
-msgid "Labels"
-msgstr "Überschriften"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -466,9 +340,9 @@ msgid "List of Variants"
 msgstr "Variantenliste"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_channels_mm_statistics
-msgid "Mail Statistics"
-msgstr "Statistik der E-Mail Nachrichten"
+#: model:ir.ui.menu,name:fsonline.menu_channels_track_mm_campaigns
+msgid "Mailing Campaigns"
+msgstr "Mailing Campaigns"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_lists
@@ -484,16 +358,6 @@ msgstr "E-Mail Versendungen"
 #: model:ir.ui.menu,name:fsonline.menu_channels_track_utm_action
 msgid "Medium"
 msgstr "Medium"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_mytimesheet
-msgid "Mein Stundenzettel"
-msgstr "Mein Stundenzettel"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_dashboard_my_dashboard
-msgid "Meine Dashboards"
-msgstr "Meine Dashboards"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_meinedaten
@@ -513,46 +377,10 @@ msgid "Mindestbetrag"
 msgstr "Mindestbetrag"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg
-msgid "Nachrichten"
-msgstr "Nachrichten"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_crm_leads
-msgid "Neue Anfragen"
-msgstr "Neue Anfragen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_notes
-msgid "Notes"
-msgstr "Notizen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer_notes
-msgid "Notizen"
-msgstr "Notizen"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_order
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_order
 msgid "Orders"
 msgstr "Aufträge"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_organizer
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_organizer
-msgid "Organizer"
-msgstr "Termine und Notizen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_page_form
-msgid "Pages"
-msgstr "Seiten"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_partner_partner
-msgid "Partner"
-msgstr "Kontakte"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -573,24 +401,17 @@ msgstr "PersonEmail"
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_frst_setting_personemailgruppe
 msgid "PersonEmailGruppe"
-msgstr "PersonEmailGruppe"
+msgstr "Gruppenzuweisung E-Mail"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_frst_setting_persongruppe
 msgid "PersonGruppe"
-msgstr "PersonGruppe"
+msgstr "Gruppenzuweisung Person"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_partner
 msgid "Personen"
 msgstr "Personen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_posts
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc_posts
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_forum_posts
-msgid "Posts"
-msgstr "Beiträge"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_frst_settings_print_field_groups
@@ -603,30 +424,9 @@ msgid "Print Fields"
 msgstr "Seriendruckfelder"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer
-msgid "Project"
-msgstr "Projekt"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_project_project
-msgid "Projekte"
-msgstr "Projekte"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_question_form
-msgid "Questions"
-msgstr "Fragestellungen"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Reihung"
 msgstr "Reihung"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_scheduledactions
-msgid "Scheduled Actions"
-msgstr "Geplante Vorgänge"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -637,17 +437,6 @@ msgstr "Seiteneinstellungen"
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Seitenhintergrung"
 msgstr "Seitenhintergrung"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_channels_mm_queue
-msgid "Sending Queue"
-msgstr "Vorbereitung u. Zustellung"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_settings
-msgid "Settings"
-msgstr "Einstellungen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
@@ -752,40 +541,9 @@ msgid "Suggested Donation-Values"
 msgstr "Vorgeschlagene Spendenbeträge"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey
-msgid "Survey"
-msgstr "Umfrage"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_user_input_line
-msgid "Survey User Input lines"
-msgstr "Teilnehmer Eingabezeilen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_survey_surveys
-msgid "Surveys"
-msgstr "Umfragen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_system
 #: view:product.template:fsonline.fso_product_template_form
 msgid "System"
 msgstr "System"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_ir_config_menu
-msgid "System Parameters"
-msgstr "Systemparameter"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_doc_toc
-msgid "Table of Content"
-msgstr "Inhaltsverzeichnis"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_blog_tags
-msgid "Tags"
-msgstr "Schlagwörter"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -793,24 +551,9 @@ msgid "Text ausblenden"
 msgstr "Text ausblenden"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_msg_todo
-msgid "ToDo"
-msgstr "ToDo"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_track
 msgid "Tracking"
 msgstr "Tracking"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime_leavereq
-msgid "Urlaubsanspruch erfassen"
-msgstr "Urlaubsanspruch erfassen"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_users_menu
-msgid "Users"
-msgstr "Benutzer"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -879,9 +622,7 @@ msgstr "Webseitenvorlage"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_settings
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_settings_website
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_website
 msgid "Website"
 msgstr "Webseite"
 
@@ -901,11 +642,6 @@ msgstr "Webvorlage"
 #: model:ir.ui.menu,name:fsonline.widget_manager_menu
 msgid "Widget Manager"
 msgstr "Widget Manager"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_fiscalyear
-msgid "Wirtschaftsjahre"
-msgstr "Wirtschaftsjahre"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -928,11 +664,6 @@ msgid "Zahlungsmethoden"
 msgstr "Zahlungsmethoden"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_fso_organizer_hrtime
-msgid "Zeiterfassung"
-msgstr "Zeiterfassung"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Zielbalken ausblenden"
 msgstr "Zielbalken ausblenden"
@@ -945,12 +676,12 @@ msgstr "Zugehörige Spenden und Artikel"
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppe
 msgid "zGruppe"
-msgstr "zGruppe"
+msgstr "Gruppenordner (zGruppe)"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppedetail
 msgid "zGruppeDetail"
-msgstr "zGruppeDetail"
+msgstr "Gruppe (zGruppeDetail)"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form

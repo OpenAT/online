@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+<data>
+
+    <!-- LEADS -->
+    <!-- Form -->
+    <record id="crm_case_form_view_leads" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='referred']" position="after">
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+                <field name="crm_page_id"/>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Tree -->
+    <record id="crm_case_tree_view_leads" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="fb_lead_id" invisible="1"/>
+                <field name="crm_form_id" invisible="1"/>
+                <field name="crm_page_id" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Search -->
+    <record id="crm_case_search_view_leads" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+                <field name="crm_page_id"/>
+            </xpath>
+
+            <xpath expr="//group[@string='Group By']" position="after">
+                <group expand="1" string="Group By" name="group_by_facebook">
+                    <filter string="Facebook Form" context="{'group_by':'crm_form_id'}"/>
+                    <filter string="Facebook Page" context="{'group_by':'crm_page_id'}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- OPPORTUNITIES -->
+    <!-- Form -->
+    <record id="crm_case_form_view_oppor" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='referred']" position="after">
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+                <field name="crm_page_id"/>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Tree -->
+    <record id="crm_case_tree_view_oppor" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="fb_lead_id" invisible="1"/>
+                <field name="crm_form_id" invisible="1"/>
+                <field name="crm_page_id" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Search -->
+    <record id="crm_case_search_view_oppor" model="ir.ui.view">
+        <field name="name">Facebook Lead import extensions</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+                <field name="crm_page_id"/>
+            </xpath>
+
+            <xpath expr="//group[@string='Group By']" position="after">
+                <group expand="1" string="Group By" colspan="16" name="group_by_facebook">
+                    <filter string="Facebook Form" context="{'group_by':'crm_form_id'}"/>
+                    <filter string="Facebook Page" context="{'group_by':'crm_page_id'}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+    <!-- Graph -->
+    <record model="ir.ui.view" id="crm_case_graph_view_leads_facebook_form">
+        <field name="name">Facebook Leads</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <graph string="Facebook Leads" type="line">
+                <field name="date_open" interval="day" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================= -->
+    <!-- CUSTOM LEAD VIEWS AND ACTIONS -->
+    <!-- ============================= -->
+    <record model="ir.ui.view" id="crm_lead_tree_view_facebook">
+        <field name="name">Leads List</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <tree string="Leads" fonts="bold:message_unread==True" colors="gray:probability == 100;red:date_deadline and (date_deadline &lt; current_date)">
+                <field name="create_date"/>
+                <field name="name" string="Lead"/>
+                <field name="email_from"/>
+                <field name="contact_name"/>
+                <field name="partner_id" string="Name"/>
+                <field name="mobile"/>
+                <field name="zip"/>
+                <field name="city"/>
+                <field name="country_id"/>
+                <field name="fb_lead_id"/>
+                <field name="crm_form_id"/>
+
+                <field name="phone" invisible="1"/>
+                <field name="function" invisible="1"/>
+                <field name="date_deadline" invisible="1"/>
+                <field name="date_action" invisible="1"/>
+                <field name="title_action" invisible="1"/>
+                <field name="medium_id" invisible="1"/>
+                <field name="campaign_id" invisible="1"/>
+                <field name="source_id" invisible="1"/>
+                <field name="stage_id" invisible="1"/>
+                <field name="planned_revenue" sum="Expected Revenues" invisible="1"/>
+                <field name="probability" avg="Avg. of Probability" invisible="1"/>
+                <field name="section_id" groups="base.group_multi_salesteams" invisible="1"/>
+                <field name="user_id" invisible="1"/>
+                <field name="referred" invisible="1"/>
+                <field name="priority" invisible="1"/>
+                <field name="message_unread" invisible="1"/>
+                <field name="probability" invisible="1"/>
+                <field name="write_date" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="crm_lead_facebook_action" model="ir.actions.act_window" >
+        <field name="name">Facebook Leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">graph,tree,form</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+    </record>
+    <record id="crm_lead_graph_view_facebook_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="crm_case_graph_view_leads_facebook_form"/>
+        <field name="act_window_id" ref="crm_lead_facebook_action"/>
+    </record>
+    <record id="crm_lead_tree_view_facebook_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="crm_lead_tree_view_facebook"/>
+        <field name="act_window_id" ref="crm_lead_facebook_action"/>
+    </record>
+    <record id="crm_lead_form_view_facebook_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="30"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="crm.crm_case_form_view_oppor"/>
+        <field name="act_window_id" ref="crm_lead_facebook_action"/>
+    </record>
+</data>
+</openerp>

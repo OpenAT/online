@@ -118,7 +118,7 @@ class FRSTPersonEmailGruppe(models.Model):
 
         # Delete related mail list contacts first
         for peg in self:
-            if peg.mass_mailing_list_contact_ids():
+            if peg.mass_mailing_list_contact_ids:
                 peg.mass_mailing_list_contact_ids.unlink()
 
         res = super(FRSTPersonEmailGruppe, self).unlink()

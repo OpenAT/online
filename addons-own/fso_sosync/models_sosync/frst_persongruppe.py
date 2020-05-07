@@ -17,3 +17,6 @@ class FRSTPersonGruppeSosync(models.Model):
     bestaetigt_am_um = fields.Datetime(sosync="True")
     bestaetigt_typ = fields.Selection(sosync="True")
     bestaetigt_herkunft = fields.Char(sosync="True")
+
+    # CDS Link
+    frst_zverzeichnis_id = fields.Many2one(sosync="True")

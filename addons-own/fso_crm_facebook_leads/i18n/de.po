@@ -1,0 +1,512 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_crm_facebook_leads
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 08:53+0000\n"
+"PO-Revision-Date: 2020-03-23 08:53+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "ACHTUNG: Es müssen mindestens die Felder"
+msgstr "ACHTUNG: Es müssen mindestens die Felder"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Anrede"
+msgstr "Anrede"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Bemerkung"
+msgstr "Bemerkung"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Bez. in FRST"
+msgstr "Bez. in FRST"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Birthdate Web"
+msgstr "Geburtsdatum Web"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in\n"
+"                            Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den\n"
+"                            CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in\n"
+"                            FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten\n"
+"                            CDS-Eintrag auswählen."
+msgstr "Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in\n"
+"                            Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den\n"
+"                            CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in\n"
+"                            FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten\n"
+"                            CDS-Eintrag auswählen."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Bitte legen Sie für jede neue Petition auch eine neue lokale Gruppe an um die Petitionsteilnehmer\n"
+"                            zu und ihre Anmeldebestätigungen zu verwalten. Sie können natürlich auch mehrere Formulare für\n"
+"                            die selbe Petition verwenden. Dazu wählen Sie einfach in jedem Formular die selbe Gruppe."
+msgstr "Bitte legen Sie für jede neue Petition auch eine neue lokale Gruppe an um die Petitionsteilnehmer\n"
+"                            zu und ihre Anmeldebestätigungen zu verwalten. Sie können natürlich auch mehrere Formulare für\n"
+"                            die selbe Petition verwenden. Dazu wählen Sie einfach in jedem Formular die selbe Gruppe."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Bundesland"
+msgstr "Bundesland"
+
+#. module: fso_crm_facebook_leads
+#: field:frst.personemailgruppe,crm_lead_ids:0
+msgid "CRM Leads"
+msgstr "CRM Leads"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "City"
+msgstr "Stadt"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Country"
+msgstr "Land"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "E-Mail der Person"
+msgstr "E-Mail der Person"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Einwilligung Newsletter zu erhalten"
+msgstr "Einwilligung Newsletter zu erhalten"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Email"
+msgstr "E-Mail"
+
+#. module: fso_crm_facebook_leads
+#: model:ir.model,name:fso_crm_facebook_leads.model_crm_facebook_form
+#: model:ir.model,name:fso_crm_facebook_leads.model_frst_zverzeichnis
+msgid "Email Thread"
+msgstr "E-Mail Thread"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet!"
+msgstr "Es wird hier automatisch der CDS-Eintrag der oben gewählten Gruppe verwendet!"
+
+#. module: fso_crm_facebook_leads
+#: field:frst.zgruppedetail,crm_fb_form_ids:0
+#: field:frst.zverzeichnis,crm_fb_form_ids:0
+msgid "Facebook Lead Forms"
+msgstr "Facebook Lead Formulare"
+
+#. module: fso_crm_facebook_leads
+#: model:ir.ui.menu,name:fso_crm_facebook_leads.menu_channels_social_media_fb_forms
+msgid "Facebook Lead-Forms"
+msgstr "Facebook Lead Formulare"
+
+#. module: fso_crm_facebook_leads
+#: help:frst.zverzeichnis,crm_fb_form_ids:0
+#: help:frst.zverzeichnis,crm_lead_ids:0
+msgid "Facebook Leads Forms that may use this CDS leave in the crm.lead creation process"
+msgstr "Der CDS Eintrag bei dem Facebook Lead Formular wird in die importierten Leads für die Auswertung übertragen"
+
+#. module: fso_crm_facebook_leads
+#: help:frst.zgruppedetail,crm_fb_form_ids:0
+msgid "Facebook Leads Forms that may use this group in the crm.lead creation process"
+msgstr "Bie dem Import der Leads wird diese Gruppe für die Verwaltung von Anmeldungen (Unterschriften) verwendet. Unterschriften werden autom. beim Import erstellt."
+
+#. module: fso_crm_facebook_leads
+#: model:ir.ui.menu,name:fso_crm_facebook_leads.menu_channels_social_media_fb_pages
+msgid "Facebook Pages"
+msgstr "Facebook Seiten"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Feldbez."
+msgstr "Feldbez."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Feldname"
+msgstr "Feldname"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "First name"
+msgstr "Vorname"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Folgende Systemfelder stehen für Sie zum Mapping Ihrer Facebook-Leads-Formularfelder zur\n"
+"                        Verfügung."
+msgstr "Folgende Systemfelder stehen für Sie zum Mapping Ihrer Facebook-Leads-Formularfelder zur\n"
+"                        Verfügung."
+
+#. module: fso_crm_facebook_leads
+#: field:crm.facebook.form,force_create_partner:0
+msgid "Force Create Partner"
+msgstr "Automatische Partnererstellung"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Fundraising Studio"
+msgstr "Fundraising Studio"
+
+#. module: fso_crm_facebook_leads
+#: field:crm.facebook.form,frst_zverzeichnis_id:0
+#: field:crm.lead,frst_zverzeichnis_id:0
+msgid "Fundraising Studio CDS"
+msgstr "Fundraising Studio CDS"
+
+#. module: fso_crm_facebook_leads
+#: help:crm.facebook.form,frst_zverzeichnis_id:0
+msgid "Fundraising Studio CDS List/File. Right now this must match the Fundraising Studio Group CDS setting but this may change in the future"
+msgstr "Fundraising Studio CDS List/File. Right now this must match the Fundraising Studio Group CDS setting but this may change in the future"
+
+#. module: fso_crm_facebook_leads
+#: help:crm.lead,frst_zverzeichnis_id:0
+msgid "Fundraising Studio CDS List/File. This will be copied at lead creation from the setting of the zGruppeDetail set in the facebook lead form"
+msgstr "Fundraising Studio CDS Liste/Datei/Eintrag. Wird bei beim Lead Import in den neu erstellten Lead zwecks Auswertung und Verarbeitung kopiert."
+
+#. module: fso_crm_facebook_leads
+#: help:crm.facebook.form,zgruppedetail_id:0
+msgid "Fundraising Studio E-Mail Group"
+msgstr "Fundraising Studio E-Mail Gruppe"
+
+#. module: fso_crm_facebook_leads
+#: field:crm.facebook.form,zgruppedetail_id:0
+msgid "Fundraising Studio Group"
+msgstr "Fundraising Studio Gruppe"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Geburtsdatum"
+msgstr "Geburtsdatum"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Handynummer"
+msgstr "Handynummer"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Hilfe"
+msgstr "Hilfe"
+
+#. module: fso_crm_facebook_leads
+#: help:crm.facebook.form,force_create_partner:0
+msgid "If enabled leads will be created in state 'opportunity' and therefore create a partner and link to the lead! This is useful for Fundraising Studio where a partner is needed to create the lead as an'Aktion'"
+msgstr "Bei Aktivierung werden die Leads automatisch vom Typ 'opportunity' erzeugt und eine neue Person wird erstellt! Dies ist für das Fundraising Studio gedacht da hier eine Person erforderlich ist um die Aktion aufbauen zu können."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Individuelle Anrede"
+msgstr "Individuelle Anrede"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Land"
+msgstr "Land"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Last name"
+msgstr "Nachname"
+
+#. module: fso_crm_facebook_leads
+#: model:ir.model,name:fso_crm_facebook_leads.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "Lead/Opportunity"
+
+#. module: fso_crm_facebook_leads
+#: field:frst.zverzeichnis,crm_lead_ids:0
+msgid "Leads"
+msgstr "Leads"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Mobil"
+msgstr "Mobiltelefon"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Muss eine Checkbox sein (0/1)"
+msgstr "Muss eine Checkbox sein (0/1)"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Muss erst noch besprochen werden da hier nur drei werte in FRST zulässig sind"
+msgstr "Muss erst noch besprochen werden da hier nur drei werte in FRST zulässig sind"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Nachdem Sie die Zuweisung kontrolliert haben können Sie den automatischen Import der Leads\n"
+"                        aktivieren indem Sie das Formular mit dem Button \"Geprüft/Aktiviert\" freigeben."
+msgstr "Nachdem Sie die Zuweisung kontrolliert haben können Sie den automatischen Import der Leads\n"
+"                        aktivieren indem Sie das Formular mit dem Button \"Geprüft/Aktiviert\" freigeben."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Nachname"
+msgstr "Nachname"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#. module: fso_crm_facebook_leads
+#: field:crm.lead,personemailgruppe_id:0
+msgid "PersonEmailGruppe"
+msgstr "PersonEmailGruppe"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Personfelder"
+msgstr "Personfelder"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Phone"
+msgstr "Telefon"
+
+#. module: fso_crm_facebook_leads
+#: code:addons/fso_crm_facebook_leads/models/crm_facebook_form.py:57
+#, python-format
+msgid "Please remove the CDS setting! It will be set automatically if a group with a CDS setting is selected."
+msgstr "Bitte den CDS Eintrag entfernen! Der CDS Eintrag wird automatisch von der Gruppe übernommen und darf nicht von der Gruppe abweichen!"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Postleitzahl"
+msgstr "Postleitzahl"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Stadt"
+msgstr "Stadt"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "State"
+msgstr "Bundesland/Region"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Str. Nummer"
+msgstr "Str. Nummer"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Straße"
+msgstr "Straße"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Street"
+msgstr "Straße"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Street Number Web"
+msgstr "Str. Nummer Web"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "TODO"
+msgstr "TODO"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Telefonnummer"
+msgstr "Telefonnummer"
+
+#. module: fso_crm_facebook_leads
+#: code:addons/fso_crm_facebook_leads/models/crm_facebook_form.py:54
+#, python-format
+msgid "The CDS setting in the Fundraising Studio Group must match the CDS setting of this form!"
+msgstr "The CDS setting in the Fundraising Studio Group must match the CDS setting of this form!"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Titel"
+msgstr "Titel"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Title"
+msgstr "Titel"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Todo"
+msgstr "Todo"
+
+#. module: fso_crm_facebook_leads
+#: help:frst.personemailgruppe,crm_lead_ids:0
+msgid "Used for crm.leads created by facebook lead imports"
+msgstr "Used for crm.leads created by facebook lead imports"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Vollständiger Name der Person falls Sie im Facebook Formular nur ein Feld für Vor- und Nachname verwenden"
+msgstr "Vollständiger Name der Person falls Sie im Facebook Formular nur ein Feld für Vor- und Nachname verwenden"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Vorname"
+msgstr "Vorname"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Wenn Sie ein Facebook Formular für eine Unterschriftsliste (Petition) konfigurieren möchte\n"
+"                            dann muss sich die oben gewählte Gruppe im Gruppenordner \"Unterschriftslisten\" befinden\n"
+"                            und einen CDS-Eintrag gesetzt haben damit die Verarbeitung der Leads korrekt funktioniert."
+msgstr "Wenn Sie ein Facebook Formular für eine Unterschriftsliste (Petition) konfigurieren möchte\n"
+"                            dann muss sich die oben gewählte Gruppe im Gruppenordner \"Unterschriftslisten\" befinden\n"
+"                            und einen CDS-Eintrag gesetzt haben damit die Verarbeitung der Leads korrekt funktioniert."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Wert muss im Iso Format gesendet werden z.B.: AT"
+msgstr "Wert muss im Iso Format gesendet werden z.B.: AT"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Wir erstellen eine weitestgehend automatische Feldzuweisung aufgrund des Facebook-Feld-Typs.\n"
+"                        Da die Feldnamen der Facebook-Lead-Formulare jedoch völlig frei wählbar sind und keinem\n"
+"                        eindeutigem Schema folgen ist eine manuelle Überprüfung und gegebennenfalls eine Anpassung\n"
+"                        der Zuweisung der Facbebook-Leads-Formularfelder zu den Fundraising Studio Systemfeldern\n"
+"                        zwingend erforderlich!"
+msgstr "Wir erstellen eine weitestgehend automatische Feldzuweisung aufgrund des Facebook-Feld-Typs.\n"
+"                        Da die Feldnamen der Facebook-Lead-Formulare jedoch völlig frei wählbar sind und keinem\n"
+"                        eindeutigem Schema folgen ist eine manuelle Überprüfung und gegebennenfalls eine Anpassung\n"
+"                        der Zuweisung der Facbebook-Leads-Formularfelder zu den Fundraising Studio Systemfeldern\n"
+"                        zwingend erforderlich!"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "Zip"
+msgstr "PLZ"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "[contact_name] First name"
+msgstr "[contact_name] Vorname"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "[email_from] Email"
+msgstr "[email_from] Email"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "city"
+msgstr "city"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_anrede_individuell"
+msgstr "contact_anrede_individuell"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_birthdate_web"
+msgstr "contact_birthdate_web"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_lastname"
+msgstr "contact_lastname"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_name"
+msgstr "contact_name"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_newsletter_web"
+msgstr "contact_newsletter_web"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_street_number_web"
+msgstr "contact_street_number_web"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "contact_title_web"
+msgstr "contact_title_web"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "country_id"
+msgstr "country_id"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "email_from"
+msgstr "email_from"
+
+#. module: fso_crm_facebook_leads
+#: code:addons/fso_crm_facebook_leads/models/crm_facebook_form.py:63
+#, python-format
+msgid "force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"
+msgstr "force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "gemapped sein!"
+msgstr "gemapped sein!"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "mobile"
+msgstr "mobile"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "phone"
+msgstr "phone"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "state_id"
+msgstr "state_id"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "street"
+msgstr "street"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "und"
+msgstr "und"
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "z.B.: Dr., Ing., ..."
+msgstr "z.B.: Dr., Ing., ..."
+
+#. module: fso_crm_facebook_leads
+#: view:crm.facebook.form:fso_crm_facebook_leads.crm_facebook_form_form_frst
+msgid "zip"
+msgstr "zip"
+

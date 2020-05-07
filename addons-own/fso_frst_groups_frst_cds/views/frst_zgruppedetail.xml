@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_form">
+        <field name="name">frst_zgruppedetail_form</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='geltungsbereich']" position="after">
+
+                <field name="frst_zverzeichnis_id"/>
+                <div colspan="2" class="backend-help oe_edit_only">
+                    <p>
+                        Wenn Sie hier einen CDS-Eintrag wählen können Aktionen die bei der Anmeldung
+                        an diese Gruppe erstellt werden (z.B.: Aktion Unterschrift) automatisch diesem CDS Eintrag
+                        zugeordnet werden.<br/>
+                        <br/>
+                        Sie können auch einen neuen CDS-Eintrag erstellen. Dies ist meist nützlich wenn eine neue lokale
+                        Gruppe erstellt wird.<br/>
+                        <br/>
+                        Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in
+                        Fundraising Studio gesetzt werden können! Falls Sie diese also benötigen müssen sie vor der Anlage
+                        einer lokalen Gruppe in FS-Online den CDS-Eintrag in Fundraising Studio vorbereiten.
+                    </p>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_tree">
+        <field name="name">frst_zgruppedetail_tree</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_tree"/>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='geltungsbereich']" position="after">
+                <field name="frst_zverzeichnis_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <!--<record model="ir.ui.view" id="frst_zgruppedetail_search">-->
+    <!--    <field name="name">frst_zgruppedetail_search</field>-->
+    <!--    <field name="model">frst.zgruppedetail</field>-->
+    <!--    <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_search"/>-->
+    <!--    <field name="type">search</field>-->
+    <!--    <field name="arch" type="xml">-->
+
+    <!--        <xpath expr="//field[@name='gueltig_bis']" position="after">-->
+    <!--            <field name="frst_zverzeichnis_id"/>-->
+    <!--        </xpath>-->
+
+    <!--        <xpath expr="//group[@string='Group by']" position="inside">-->
+    <!--            <filter string="CDS-File" context="{'group_by':'frst_zverzeichnis_id'}"/>-->
+    <!--        </xpath>-->
+
+    <!--    </field>-->
+    <!--</record>-->
+
+</data></openerp>

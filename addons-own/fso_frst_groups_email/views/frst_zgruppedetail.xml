@@ -7,8 +7,15 @@
         <field name="model">frst.zgruppedetail</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//group[@name='subscription_settings']" position="before">
+                <!-- Not implemented by sebi in the generic workflow right now - therefore we hide this to avoid confusion - show it again when the workflow is done! -->
+                <group string="New Subscription E-Mail" invisible="1">
+                    <field name="subscription_email"/>
+                </group>
+            </xpath>
             <xpath expr="//field[@name='bestaetigung_typ']" position="after">
                 <field name="bestaetigung_email"/>
+                <field name="bestaetigung_success_email"/>
                 <field name="bestaetigung_text"/>
                 <field name="bestaetigung_thanks"/>
             </xpath>
@@ -21,8 +28,12 @@
         <field name="model">frst.zgruppedetail</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_tree"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='bestaetigung_typ']" position="before">
+                <field name="subscription_email"/>
+            </xpath>
             <xpath expr="//field[@name='bestaetigung_typ']" position="after">
                 <field name="bestaetigung_email"/>
+                <field name="bestaetigung_success_email"/>
             </xpath>
         </field>
     </record>

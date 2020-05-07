@@ -100,6 +100,12 @@ class EmailTemplate(models.Model):
                                            #default=lambda self: self.env.ref('fso_website_email.theme_dadi'), # will not work on install :(
                                            )
 
+    preheader_text = fields.Char(string="Preheader Text", help="First hidden text DIV in your E-Mail that may be "
+                                                               "displayed in some Mail Clients like Outlook")
+    no_java_script = fields.Boolean(string="Remove Java Script", default=True,
+                                    help="Remove Java Script in output fields 'fso_email_html' and "
+                                         "'fso_email_html_parsed'")
+
     # COMPUTED IN 'create' AND 'write' METHODS
     # ----------------------------------------
     # Compute e-mail HTML-code based on the theme (ir.ui.view) and this e-mail template
@@ -173,6 +179,12 @@ class EmailTemplate(models.Model):
 
                 # Convert html content to a beautiful soup object
                 email_body_soup = BeautifulSoup(email_body, "lxml")
+
+                # TODO: Remove any java script tags if "no_java_script" is set in the email.template
+                if rec.no_java_script:
+                    email_body_soup_java_script_tags = email_body_soup.find_all("script")
+                    for jst in email_body_soup_java_script_tags:
+                        jst.decompose()
 
                 # Replace print fields in e-mail body html with correct code for Fundraising Studio
                 # HINT: http://beautiful-soup-4.readthedocs.io/en/latest/#output

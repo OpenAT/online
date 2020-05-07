@@ -1,6 +1,10 @@
 <openerp>
   <data>
+    <!--  Update the module list -->
+    <!--<function model="ir.module.module" name="update_list"/>-->
+
     <!-- Set lastname for all system user to work with firstname lastname addon and for sosync v2 -->
     <function model="res.partner" name="update_system_user_names_for_firstname_lastname_addon"/>
+
   </data>
 </openerp>

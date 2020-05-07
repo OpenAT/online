@@ -9,26 +9,71 @@
         <field name="arch" type="xml">
             <form string="zGruppeDetail">
                 <sheet>
+                    <div class="oe_right oe_button_box" name="buttons">
+                        <field name="frst_personemailgruppe_ids" invisible="1"/>
+                        <button class="oe_inline oe_stat_button"
+                                type="action"
+                                context="{'default_zgruppedetail_id': active_id, 'search_default_zgruppedetail_id': active_id}"
+                                name="%(fso_frst_groups.frst_personemailgruppe_action)d"
+                                icon="fa-envelope-o"
+                                attrs="{'invisible':[('frst_personemailgruppe_ids','=',[])]}">
+                            <field name="frst_personemailgruppe_count"
+                                   widget="statinfo"
+                                   string="Subscriptions"/>
+                        </button>
+                        <field name="frst_persongruppe_ids" invisible="1"/>
+                        <button class="oe_inline oe_stat_button"
+                                type="action"
+                                context="{'default_zgruppedetail_id': active_id, 'search_default_zgruppedetail_id': active_id}"
+                                name="%(fso_frst_groups.frst_persongruppe_action)d"
+                                icon="fa-user"
+                                attrs="{'invisible':[('frst_persongruppe_ids','=',[])]}">
+                            <field name="frst_persongruppe_count"
+                                   widget="statinfo"
+                                   string="Subscriptions"/>
+                        </button>
+                    </div>
                     <group>
-                        <field name="zgruppe_id"/>
-                        <field name="gruppe_kurz"/>
-                        <field name="gruppe_lang"/>
-                        <field name="gui_anzeigen"/>
-                        <field name="gueltig_von"/>
-                        <field name="gueltig_bis"/>
-                        <field name="bestaetigung_erforderlich"/>
-                        <field name="bestaetigung_typ"/>
+                        <group>
+                            <field name="gruppe_lang"/>
+                            <field name="zgruppe_id"
+                                   domain="['|', '|', ('gruppe_lang', 'ilike', 'email'), ('gruppe_lang', 'ilike', 'newsletter'), ('gruppe_lang', 'ilike', 'petition')]"
+                                   options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                            <field name="geltungsbereich"/>
+                        </group>
+                        <group>
+                            <field name="gui_anzeigen"/>
+                            <field name="gui_anzeige_profil"/>
+                            <field name="gueltig_von"/>
+                            <field name="gueltig_bis"/>
+                        </group>
                     </group>
-                    <group string="PersonGruppe">
-                        <field name="frst_persongruppe_ids"/>
-                    </group>
-                    <group string="PersonEmailGruppe">
-                        <field name="frst_personemailgruppe_ids"/>
-                    </group>
+                    <notebook>
+                        <page string="Extras">
+                            <group name="subscription_settings" string="Subscription Approval Settings" invisible="0">
+                                <field name="bestaetigung_erforderlich"/>
+                                <field name="bestaetigung_typ"/>
+                            </group>
+                        </page>
+                        <!--<page name="subscribers" string="Subscribers">-->
+                        <!--    <group string="PersonGruppe">-->
+                        <!--        <field name="frst_persongruppe_ids"/>-->
+                        <!--    </group>-->
+                        <!--    <group string="PersonEmailGruppe">-->
+                        <!--        <field name="frst_personemailgruppe_ids"/>-->
+                        <!--    </group>-->
+                        <!--</page>-->
+                        <page name='system' string="System">
+                            <group>
+                                <field name="gruppe_kurz"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
+
     <!-- TREE/LIST VIEW -->
     <record model="ir.ui.view" id="frst_zgruppedetail_tree">
         <field name="name">frst_zgruppedetail_tree</field>
@@ -37,9 +82,10 @@
         <field name="arch" type="xml">
             <tree string="zGruppeDetail">
                 <field name="id"/>
-                <field name="zgruppe_id"/>
-                <field name="gruppe_kurz"/>
+                <field name="gruppe_kurz" invisible="1"/>
                 <field name="gruppe_lang"/>
+                <field name="zgruppe_id"/>
+                <field name="geltungsbereich"/>
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
@@ -48,6 +94,7 @@
             </tree>
         </field>
     </record>
+
     <!-- SEARCH VIEW -->
     <record model="ir.ui.view" id="frst_zgruppedetail_search">
         <field name="name">frst_zgruppedetail_search</field>
@@ -56,13 +103,24 @@
         <field name="arch" type="xml">
             <search string="zGruppeDetail">
                 <field name="id"/>
+                <field name="gruppe_kurz" invisible="1"/>
+                <field name="gruppe_lang"/>
                 <field name="zgruppe_id"/>
+                <field name="geltungsbereich"/>
+                <field name="gui_anzeige_profil"/>
                 <field name="gruppe_kurz"/>
                 <field name="gruppe_lang"/>
                 <field name="gui_anzeigen"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
                 <field name="bestaetigung_erforderlich"/>
+                <field name="bestaetigung_typ"/>
+                <group string="Group by">
+                    <filter string="Geltungsbereich" context="{'group_by':'geltungsbereich'}"/>
+                    <filter string="Folder" context="{'group_by':'zgruppe_id'}"/>
+                    <filter string="Approval-Needed" context="{'group_by':'bestaetigung_erforderlich'}"/>
+                    <filter string="Approval-Type" context="{'group_by':'bestaetigung_typ'}"/>
+                </group>
             </search>
         </field>
     </record>

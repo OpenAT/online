@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_zverzeichnis_form">
+        <field name="name">frst_zverzeichnis_form</field>
+        <field name="model">frst.zverzeichnis</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="zGruppe">
+                <sheet>
+                    <group>
+                        <div colspan="2" class="backend-help oe_edit_only">
+                            <p>
+                                Sie können in FS-Online direkt einen neuen CDS-Eintrag erstellen.
+                                Die Erstellung eines CDS-Eintrages ist z.B. erforderlich wenn eine neue lokale Gruppe
+                                für eine Petition erstellt wird.<br/>
+                                <br/>
+                                Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in
+                                Fundraising Studio gesetzt werden können! Falls Sie diese Einstellungen benötigen müssen Sie den
+                                CDS-Eintrag in Fundraising Studio erstellen bevor Sie die lokale Gruppe für die Petition in
+                                FS-Online erstellen! Sie können dann bei der Gruppenerstellung einfach den vorbereiteten
+                                CDS-Eintrag auswählen.
+                            </p>
+                        </div>
+                        <group string="Important">
+                            <field name="verzeichnisname" required="True"/>
+                            <field name="verzeichnislang"/>
+                            <field name="verzeichniskuerzel"/>
+                            <field name="verzeichnistyp_id"/>
+                            <field name="bezeichnungstyp_id"/>
+                            <field name="parent_id"/>
+                        </group>
+                        <group string="Extras">
+                            <field name="anlagedatum"/>
+                            <field name="startdatum"/>
+                            <field name="endedatum"/>
+                            <field name="verantwortlicher_benutzer"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Bemerkung">
+                            <group>
+                                <field name="bemerkung"/>
+                            </group>
+                        </page>
+                        <page string="Extras">
+                            <group>
+                                <field name="fibukontonummer"/>
+                                <field name="uebersteigendebeitraegeprojahraufspendenzverzeichnisid"/>
+                                <field name="cdsdokument"/>
+                                <field name="xbankverbindungidfuereinzugsvertraege"/>
+                            </group>
+                        </page>
+                        <page string="System">
+                            <group>
+                                <field name="id" readonly="True"/>
+                                <field name="create_date" readonly="True"/>
+                                <field name="create_uid" readonly="True"/>
+                                <field name="write_date" readonly="True"/>
+                                <field name="write_uid" readonly="True"/>
+                                <field name="child_ids" readonly="True"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="frst_zverzeichnis_tree">
+        <field name="name">frst_zverzeichnis_tree</field>
+        <field name="model">frst.zverzeichnis</field>
+        <field name="field_parent">child_ids</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="zGruppe" toolbar="1">
+                <field name="id"/>
+                <field name="verzeichnisname"/>
+                <field name="verzeichnislang"/>
+                <field name="verzeichniskuerzel"/>
+                <field name="verzeichnistyp_id"/>
+                <field name="bezeichnungstyp_id"/>
+                <field name="parent_id"/>
+                <field name="startdatum"/>
+                <field name="endedatum"/>
+                <field name="anlagedatum" invisible="1"/>
+                <field name="bemerkung" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="frst_zverzeichnis_search">
+        <field name="name">frst_zverzeichnis_search</field>
+        <field name="model">frst.zverzeichnis</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="zGruppe">
+                <field name="id"/>
+                <field name="verzeichnisname"/>
+                <field name="verzeichnislang"/>
+                <field name="verzeichniskuerzel"/>
+                <field name="verzeichnistyp_id"/>
+                <field name="bezeichnungstyp_id"/>
+                <field name="parent_id"/>
+                <field name="startdatum"/>
+                <field name="endedatum"/>
+                <field name="anlagedatum"/>
+                <field name="bemerkung"/>
+                <separator/>
+                <filter domain="[('verzeichnistyp_id','=',True)]" name="is_cds_folder" string="Ordner"/>
+                <filter domain="[('verzeichnistyp_id','=',False)]" name="is_cds_file"  string="Liste"/>
+                <separator/>
+                <group expand="1" string="Group By...">
+                    <filter name="group_parent_id" string="Parent" context="{'group_by':'parent_id'}"/>
+                    <filter name="group_bezeichnungstyp_id" string="Typ" context="{'group_by':'bezeichnungstyp_id'}"/>
+                    <filter name="group_anlagedatum" string="Typ" context="{'group_by':'anlagedatum'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="frst_zverzeichnis_action" model="ir.actions.act_window" >
+        <field name="name">FRST CDS</field>
+        <field name="res_model">frst.zverzeichnis</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="frst_zverzeichnis_search"/>
+    </record>
+    <record id="frst_zverzeichnis_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="frst_zverzeichnis_tree"/>
+        <field name="act_window_id" ref="frst_zverzeichnis_action"/>
+    </record>
+    <record id="frst_zverzeichnis_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="frst_zverzeichnis_form"/>
+        <field name="act_window_id" ref="frst_zverzeichnis_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="frst_zverzeichnis_menu" action="frst_zverzeichnis_action" parent="base.menu_config" sequence="1270"/>
+    
+</data></openerp>

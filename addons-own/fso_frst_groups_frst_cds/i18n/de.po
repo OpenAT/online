@@ -1,0 +1,62 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_frst_groups_frst_cds
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 08:51+0000\n"
+"PO-Revision-Date: 2020-03-23 08:51+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_frst_groups_frst_cds
+#: view:frst.zgruppedetail:fso_frst_groups_frst_cds.frst_zgruppedetail_form
+msgid "Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in\n"
+"                        Fundraising Studio gesetzt werden können! Falls Sie diese also benötigen müssen sie vor der Anlage\n"
+"                        einer lokalen Gruppe in FS-Online den CDS-Eintrag in Fundraising Studio vorbereiten."
+msgstr "Bitte beachten Sie das eventuelle Workfloweinstellungen für CDS-Einträge weiterhin nur in\n"
+"                        Fundraising Studio gesetzt werden können! Falls Sie diese also benötigen müssen sie vor der Anlage\n"
+"                        einer lokalen Gruppe in FS-Online den CDS-Eintrag in Fundraising Studio vorbereiten."
+
+#. module: fso_frst_groups_frst_cds
+#: field:frst.zgruppedetail,frst_zverzeichnis_id:0
+msgid "CDS Entry"
+msgstr "CDS Eintrag"
+
+#. module: fso_frst_groups_frst_cds
+#: model:ir.model,name:fso_frst_groups_frst_cds.model_frst_zverzeichnis
+msgid "Email Thread"
+msgstr "E-Mail Thread"
+
+#. module: fso_frst_groups_frst_cds
+#: field:frst.zverzeichnis,frst_zgruppedetail_ids:0
+msgid "FRST Groups"
+msgstr "FRST Gruppe"
+
+#. module: fso_frst_groups_frst_cds
+#: view:frst.zgruppedetail:fso_frst_groups_frst_cds.frst_zgruppedetail_form
+msgid "Sie können auch einen neuen CDS-Eintrag erstellen. Dies ist meist nützlich wenn eine neue lokale\n"
+"                        Gruppe erstellt wird."
+msgstr "Sie können auch einen neuen CDS-Eintrag erstellen. Dies ist meist nützlich wenn eine neue lokale\n"
+"                        Gruppe erstellt wird."
+
+#. module: fso_frst_groups_frst_cds
+#: help:frst.zgruppedetail,frst_zverzeichnis_id:0
+msgid "This is just a helper that may be used in the creation of FRST actions that may be created in Fundraising Studio because this group gets subscribed or the  subscription is changed (e.g. 'approved' or 'OptOut'"
+msgstr "Der CDS Eintrag bei der Gruppe kann bei der Anlage von Aktionen verwendet werden. Z.B.: Bei der Anlage von Aktion-Unterschrift."
+
+#. module: fso_frst_groups_frst_cds
+#: view:frst.zgruppedetail:fso_frst_groups_frst_cds.frst_zgruppedetail_form
+msgid "Wenn Sie hier einen CDS-Eintrag wählen können Aktionen die bei der Anmeldung\n"
+"                        an diese Gruppe erstellt werden (z.B.: Aktion Unterschrift) automatisch diesem CDS Eintrag\n"
+"                        zugeordnet werden."
+msgstr "Wenn Sie hier einen CDS-Eintrag wählen können Aktionen die bei der Anmeldung\n"
+"                        an diese Gruppe erstellt werden (z.B.: Aktion Unterschrift) automatisch diesem CDS Eintrag\n"
+"                        zugeordnet werden."
+

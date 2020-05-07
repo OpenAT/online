@@ -86,3 +86,6 @@ class ResPartnerSosync(models.Model):
     bpk_forced_birthdate = fields.Date(sosync="True")
     bpk_forced_zip = fields.Char(sosync="True")
     bpk_forced_street = fields.Char(sosync="True")
+
+    # CDS Origin
+    frst_zverzeichnis_id = fields.Many2one(sosync="True")

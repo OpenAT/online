@@ -35,6 +35,7 @@ FS-Online Fundraising Studio PersonEmail implementation
     'auto_install': False,
     'depends': [
         'mail',
+        'fso_merge',
     ],
     'data': [
         'security/ir.model.access.csv',

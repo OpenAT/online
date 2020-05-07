@@ -1,0 +1,388 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* crm_facebook_leads
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-02-21 09:04+0000\n"
+"PO-Revision-Date: 2020-02-21 09:04+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: crm_facebook_leads
+#: model:ir.actions.act_window,help:crm_facebook_leads.action_crm_facebook_form
+#: model:ir.actions.act_window,help:crm_facebook_leads.action_crm_facebook_form_field
+#: model:ir.actions.act_window,help:crm_facebook_leads.action_crm_facebook_page
+msgid "<p/>\n"
+"            "
+msgstr "<p/>\n"
+"            "
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,active:0
+#: selection:crm.facebook.form,state:0
+msgid "Active"
+msgstr "Aktiv"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Approve/Activate"
+msgstr "Geprüft/Aktiviert"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,activated:0
+msgid "Approved/Activated at"
+msgstr "Geprüft/Aktiviert am"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Archive"
+msgstr "Archivieren"
+
+#. module: crm_facebook_leads
+#: selection:crm.facebook.form,state:0
+msgid "Archived"
+msgstr "Archiviert"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,campaign_id:0
+msgid "Campaign"
+msgstr "Kampagne"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,create_uid:0
+#: field:crm.facebook.form.field,create_uid:0
+#: field:crm.facebook.page,create_uid:0
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,create_date:0
+#: field:crm.facebook.form.field,create_date:0
+#: field:crm.facebook.page,create_date:0
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form.field,crm_field:0
+msgid "Crm field"
+msgstr "CRM Feld"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,crm_lead_ids:0
+msgid "Crm lead ids"
+msgstr "CRM Lead IDS"
+
+#. module: crm_facebook_leads
+#: help:crm.facebook.form,message_last_post:0
+#: help:crm.facebook.page,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr "Datum der aktuellsten Nachricht für diesen Datensatz."
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Deactivate"
+msgstr "Deaktivieren"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,display_name:0
+#: field:crm.facebook.form.field,display_name:0
+#: field:crm.facebook.page,display_name:0
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: crm_facebook_leads
+#: selection:crm.facebook.form,state:0
+msgid "Error"
+msgstr "Fehler"
+
+#. module: crm_facebook_leads
+#: model:ir.actions.act_window,name:crm_facebook_leads.action_crm_facebook_form_field
+#: model:ir.ui.menu,name:crm_facebook_leads.menu_crm_facebook_form_field
+msgid "Facebook Form Fields"
+msgstr "Facebook Lead Formularfelder"
+
+#. module: crm_facebook_leads
+#: model:ir.actions.act_window,name:crm_facebook_leads.action_crm_facebook_form
+#: model:ir.ui.menu,name:crm_facebook_leads.menu_crm_facebook_form
+msgid "Facebook Forms"
+msgstr "Facebook Lead Formulare"
+
+#. module: crm_facebook_leads
+#: field:crm.lead,fb_lead_id:0
+msgid "Facebook Lead ID"
+msgstr "Facebook Lead ID"
+
+#. module: crm_facebook_leads
+#: model:res.groups,name:crm_facebook_leads.group_crm_facebook_leads_manager
+msgid "Facebook Leads Manager"
+msgstr "Facebook Leads Manager"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,crm_page_id:0
+#: view:crm.facebook.page:crm_facebook_leads.crm_facebook_page_form
+#: view:crm.facebook.page:crm_facebook_leads.crm_facebook_page_tree
+msgid "Facebook Page"
+msgstr "Facebook Seite"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.page,fb_page_id:0
+msgid "Facebook Page ID"
+msgstr "Facebook Seiten-ID"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.page,name:0
+msgid "Facebook Page Name"
+msgstr "Facebook Seitenname"
+
+#. module: crm_facebook_leads
+#: model:ir.actions.act_window,name:crm_facebook_leads.action_crm_facebook_page
+#: model:ir.ui.menu,name:crm_facebook_leads.menu_crm_facebook_page
+msgid "Facebook Pages"
+msgstr "Facebook Seiten"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Facebook form"
+msgstr "Facebook Lead Formular"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form.field:crm_facebook_leads.crm_facebook_form_field_form
+msgid "Facebook form field"
+msgstr "Facebook Formularfeld"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form.field:crm_facebook_leads.crm_facebook_form_field_search
+msgid "Facebook form fields"
+msgstr "Facebook Formularfelder"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_search
+msgid "Facebook forms"
+msgstr "Facebook Formulare"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.page:crm_facebook_leads.crm_facebook_page_search
+msgid "Facebook pages"
+msgstr "Facebook Seiten"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form.field,fb_field_id:0
+msgid "Fb field id"
+msgstr "Fb Feld-ID"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form.field,fb_field_key:0
+msgid "Fb field key"
+msgstr "Fb Feldschlüssel"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form.field,fb_field_type:0
+msgid "Fb field type"
+msgstr "Fb Feldtyp"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form.field,fb_label:0
+msgid "Fb label"
+msgstr "Fb Feldlabel"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Follow this form to get status updates."
+msgstr "Folgen Sie dieser Form um Statusupdates zu erhalten."
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.page:crm_facebook_leads.crm_facebook_page_form
+msgid "Follow this page to get status updates."
+msgstr "Folgen Sie dieser Seite um Statusupdates zu erhalten."
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,message_follower_ids:0
+#: field:crm.facebook.page,message_follower_ids:0
+msgid "Followers"
+msgstr "Followers"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form.field,crm_form_id:0
+#: field:crm.lead,crm_form_id:0
+msgid "Form"
+msgstr "Form"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,fb_form_id:0
+msgid "Form ID"
+msgstr "Form-ID"
+
+#. module: crm_facebook_leads
+#: help:crm.facebook.form,message_summary:0
+#: help:crm.facebook.page,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,id:0
+#: field:crm.facebook.form.field,id:0
+#: field:crm.facebook.page,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: crm_facebook_leads
+#: help:crm.facebook.form,message_unread:0
+#: help:crm.facebook.page,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr "If checked new messages require your attention."
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.page:crm_facebook_leads.crm_facebook_page_form
+msgid "Import Facebook Forms"
+msgstr "Importiere Facebook Formulare"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Import Facebook Leads"
+msgstr "Importiere Facebook Leads"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,message_is_follower:0
+#: field:crm.facebook.page,message_is_follower:0
+msgid "Is a Follower"
+msgstr "Ist ein Follower"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,message_last_post:0
+#: field:crm.facebook.page,message_last_post:0
+msgid "Last Message Date"
+msgstr "Last Message Date"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,__last_update:0
+#: field:crm.facebook.form.field,__last_update:0
+#: field:crm.facebook.page,__last_update:0
+msgid "Last Modified on"
+msgstr "Geändert am"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,write_uid:0
+#: field:crm.facebook.form.field,write_uid:0
+#: field:crm.facebook.page,write_uid:0
+msgid "Last Updated by"
+msgstr "Geändert von"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,write_date:0
+#: field:crm.facebook.form.field,write_date:0
+#: field:crm.facebook.page,write_date:0
+msgid "Last Updated on"
+msgstr "Geändert am"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.page,crm_form_ids:0
+msgid "Lead Forms"
+msgstr "Lead Formulare"
+
+#. module: crm_facebook_leads
+#: model:ir.model,name:crm_facebook_leads.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "Interessent / Chance"
+
+#. module: crm_facebook_leads
+#: sql_constraint:crm.facebook.form.field:0
+msgid "Mapping must be unique per form"
+msgstr "Eine Feldzuweisung darf nur für ein Formular verwendet werden!"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+#: field:crm.facebook.form,mappings:0
+msgid "Mappings"
+msgstr "Feldzuweisung"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,medium_id:0
+msgid "Medium"
+msgstr "Medium"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,message_ids:0
+#: field:crm.facebook.page,message_ids:0
+msgid "Messages"
+msgstr "Nachrichten"
+
+#. module: crm_facebook_leads
+#: help:crm.facebook.form,message_ids:0
+#: help:crm.facebook.page,message_ids:0
+msgid "Messages and communication history"
+msgstr "Nachrichtenverlauf"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,name:0
+msgid "Name"
+msgstr "Name"
+
+#. module: crm_facebook_leads
+#: field:crm.lead,crm_page_id:0
+msgid "Page"
+msgstr "Seite"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.page,fb_page_access_token:0
+msgid "Page Access Token"
+msgstr "Seitenzugangstoken"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,section_id:0
+msgid "Sales Team"
+msgstr "Verkaufsteam"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,source_id:0
+msgid "Source"
+msgstr "Quelle"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,state:0
+msgid "State"
+msgstr "Status"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,message_summary:0
+#: field:crm.facebook.page,message_summary:0
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+#. module: crm_facebook_leads
+#: sql_constraint:crm.lead:0
+msgid "This Facebook lead already exists!"
+msgstr "Dieses Facebook Lead existiert bereits!"
+
+#. module: crm_facebook_leads
+#: selection:crm.facebook.form,state:0
+msgid "To review"
+msgstr "Zu Prüfen"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Tracking Info"
+msgstr "Tracking Info"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_form
+msgid "Unarchive"
+msgstr "Dearchivieren"
+
+#. module: crm_facebook_leads
+#: field:crm.facebook.form,message_unread:0
+#: field:crm.facebook.page,message_unread:0
+msgid "Unread Messages"
+msgstr "Ungelesene Nachrichten"
+
+#. module: crm_facebook_leads
+#: view:crm.facebook.form:crm_facebook_leads.crm_facebook_form_tree
+msgid "facebook_forms"
+msgstr "facebook_forms"
+

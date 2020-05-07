@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend form to include frst_cds fields -->
+    <record model="ir.ui.view" id="frst_cds_frst_persongruppe_form_view">
+        <field name="name">frst_cds_frst_persongruppe_form_view</field>
+        <field name="model">frst.persongruppe</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_persongruppe_form"/>
+        <field name="arch" type="xml">
+            <field name="gueltig_von" position="before">
+                <field name="frst_zverzeichnis_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend tree to include frst_cds fields -->
+    <record model="ir.ui.view" id="frst_cds_frst_persongruppe_tree_view">
+        <field name="name">frst_cds_frst_persongruppe_tree_view</field>
+        <field name="model">frst.persongruppe</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_persongruppe_tree"/>
+        <field name="arch" type="xml">
+            <field name="gueltig_von" position="before">
+                <field name="frst_zverzeichnis_id"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Extend search to include frst_cds fields -->
+    <record model="ir.ui.view" id="frst_cds_frst_persongruppe_search_view">
+        <field name="name">frst_cds_frst_persongruppe_search_view</field>
+        <field name="model">frst.persongruppe</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_persongruppe_search"/>
+        <field name="arch" type="xml">
+            <field name="gueltig_von" position="before">
+                <field name="frst_zverzeichnis_id"/>
+            </field>
+        </field>
+    </record>
+
+</data></openerp>

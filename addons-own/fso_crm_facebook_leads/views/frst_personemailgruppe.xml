@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Extend form to include fb_form_id field -->
+        <record model="ir.ui.view" id="fso_crm_facebook_leads_personemailgruppe_form_view">
+            <field name="name">fso_crm_facebook_leads_personemailgruppe_form_view</field>
+            <field name="model">frst.personemailgruppe</field>
+            <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
+            <field name="arch" type="xml">
+                <field name="gueltig_bis" position="after">
+                    <field name="fb_form_id"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Extend tree to include fb_form_id field -->
+        <record model="ir.ui.view" id="fso_crm_facebook_leads_personemailgruppe_tree_view">
+            <field name="name">fso_crm_facebook_leads_personemailgruppe_tree_view</field>
+            <field name="model">frst.personemailgruppe</field>
+            <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_tree"/>
+            <field name="arch" type="xml">
+                <field name="gueltig_bis" position="after">
+                    <field name="fb_form_id"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Extend search to include fb_form_id field -->
+        <record model="ir.ui.view" id="fso_crm_facebook_leads_personemailgruppe_search_view">
+            <field name="name">fso_crm_facebook_leads_personemailgruppe_search_view</field>
+            <field name="model">frst.personemailgruppe</field>
+            <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_search"/>
+            <field name="arch" type="xml">
+                <field name="gueltig_bis" position="after">
+                    <field name="fb_form_id"/>
+                </field>
+                <xpath expr="//group[@name='group_by']" position="after">
+                    <group expand="1" string="Group By..." name="group_by_facebook_form">
+                        <filter name="group_fb_form_id" string="Facebook-Form" domain="[]" context="{'group_by':'fb_form_id'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

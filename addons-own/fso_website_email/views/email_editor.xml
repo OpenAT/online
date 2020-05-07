@@ -147,6 +147,11 @@
                                     <label class="col-sm-2 control-label">Subject:</label>
                                     <div class="col-sm-7"><span t-field="record.subject" class="form-control ckediting_enabled"/></div>
                                 </div>
+                                <!-- preheader / preview text -->
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Preheader:</label>
+                                    <div class="col-sm-7"><span t-field="record.preheader_text" class="form-control input-sm ckediting_enabled"/></div>
+                                </div>
                             </div>
                         </div>
                     </div>
