@@ -50,6 +50,22 @@ class ProductTemplate(models.Model):
                                                selection=[('website_sale_donate.dit_advanced', 'Advanced'),
                                                           ])
 
+    # Custom page themes
+    # ATTENTION: The name of the theme will be added to the <body> tag if you are on the product page
+    #            or a product is in the sale order (check templates.xml)
+    #            Use this extra hook for custom css styles! for product page and checkout step pages!
+    #            Only products with the same themes can be in the shopping cart - if a product with a different
+    #            theme is added it will automatically remove non matching products from the cart!
+    #            Todo: We may keep products with different themes in the cart in the future but use the latest theme
+    website_theme = fields.Selection(string='Website Theme',
+                                     selection=[('', 'No Custom Theme')])
+
+    @api.constrains('website_theme', 'public_categ_ids')
+    def contraint_website_theme(self):
+        for r in self:
+            if r.website_theme:
+                assert not r.public_categ_ids, _("You can not add a product with a custom theme to a shop category!")
+
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):
         for pt in self:

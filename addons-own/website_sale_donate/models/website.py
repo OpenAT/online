@@ -4,6 +4,9 @@ __author__ = 'Michael Karrer'
 from openerp import models, fields, api
 from openerp.tools.translate import _
 
+import logging
+_logger = logging.getLogger(__name__)
+
 # Port to odoo v8 api
 class Website(models.Model):
     _inherit = 'website'
@@ -152,6 +155,7 @@ class Website(models.Model):
 
     @api.multi
     def sale_get_order(self, force_create=False, code=None, update_pricelist=None, context=None):
+        _logger.debug('sale_get_order()')
         context = context or self.env.context or {}
         so = super(Website, self).sale_get_order(force_create=force_create, code=code,
                                                  update_pricelist=update_pricelist, context=context)

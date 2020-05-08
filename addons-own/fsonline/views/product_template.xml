@@ -38,6 +38,7 @@
                     <group name="Basic Settings">
                         <group>
                             <field name="fs_product_type" string="Fundraising Studio Typ"/>
+                            <field name="website_theme" string="Website Theme"/>
                             <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
                             <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
                             <field name="zgruppedetail_ids" string="Fundraising Studio Gruppen"
@@ -388,6 +389,7 @@
                 <field name="website_sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="fs_product_type" string="FS Typ"/>
+                <field name="website_theme" string="Theme"/>
                 <field name="price_donate" string="Freier Betrag"/>
                 <field name="list_price" string="Betrag"/>
                 <field name="payment_interval_default" string="Std. Interv."/>

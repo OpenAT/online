@@ -25,7 +25,6 @@
                                     <!-- TODO: STEPS Indicator -->
                                     <!-- TODO: Maybe we need a custom Template for this steps indicator -->
                                     <t t-call="website_sale_donate.wsd_checkout_pages_header">
-
                                         <t t-set="hide_cart_indicator" t-value="True"/>
                                         <t t-set="hide_confirmation_indicator" t-value="True"/>
                                     </t>

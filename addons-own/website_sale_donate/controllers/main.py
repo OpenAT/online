@@ -282,6 +282,13 @@ class website_sale_donate(website_sale):
                     if sol.payment_interval_id and sol.payment_interval_id in sol.product_id.payment_interval_ids:
                         productpage.qcontext['payment_interval_id'] = sol.payment_interval_id.id
 
+        # Add last_product to add product information to the body and to enable specific css themes
+        # HINT: The information about the last_product is added to the <body> in the template
+        #       'website_sale_donate_product_data'
+        # ATTENTION: You must prevent the settings of individual product themes for products that are in a
+        #            'category' - in this case you must do the individual css design by the category!
+        # productpage.qcontext['last_product'] = product
+
         _logger.warning("product(): END")
         return productpage
 

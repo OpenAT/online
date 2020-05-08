@@ -81,6 +81,7 @@
                                     The "Fundraising Studio Groups" field makes sure the donations land at the right
                                     places (e.g.: for reports). Make sure this field is correctly set!
                                 </p>
+                                <field name="website_theme" string="Website Theme"/>
                                 <field name="zgruppedetail_ids"/>
                             </group>
 
