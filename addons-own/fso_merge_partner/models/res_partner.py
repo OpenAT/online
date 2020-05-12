@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, api
 from openerp.exceptions import ValidationError
-from datetime import timedelta
+
 import logging
 logger = logging.getLogger(__name__)
 

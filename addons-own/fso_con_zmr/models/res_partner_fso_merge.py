@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
-from openerp.exceptions import ValidationError
-from datetime import timedelta
+from openerp import models, api
+
 import logging
 logger = logging.getLogger(__name__)
 
 
 class ResPartnerFSOMergeConZmr(models.Model):
-    _name = "res.partner"
+    _inherit = "res.partner"
 
     # ---------
     # FSO MERGE
