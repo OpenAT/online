@@ -21,16 +21,13 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_con_zmr",
-    'summary': """FS-Online Austrian ZMR Connector""",
+    'name': "FS-Online fso_merge_partner",
+    'summary': """FS-Online Merge two partner""",
     'description': """
-FS-Online fso_con_zmr
-=====================
- 
-This addon determines the BPK number from FinanzOnline for partners and allows to submit donation reports.
+This adds methods to merge two res.partner.
 
     """,
-    'author': "Datadialog - Michael Karrer",
+    'author': "Datadialog - Michael Karrer, Martin Kaip",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
@@ -39,22 +36,7 @@ This addon determines the BPK number from FinanzOnline for partners and allows t
     'auto_install': False,
     'depends': [
         'base',
-        'fso_base',
-        'fso_merge_partner',
     ],
     'data': [
-        'security/group_res_partner_bpk_manager.xml',
-        'security/ir.model.access.csv',
-        'views/res_company.xml',
-        'views/res_partner.xml',
-        'views/res_partner_bpk.xml',
-        'views/res_partner_donation_report.xml',
-        'views/res_partner_donation_report_submissions.xml',
-        'views/account_fiscalyear.xml',
-        #'views/fsonline_menu.xml', # moved to fsonline
-        #
-        'data/install_update_actions.xml',
-        'data/server_actions.xml',
-        'data/scheduled_actions.xml',
     ],
 }
