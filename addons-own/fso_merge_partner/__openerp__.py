@@ -35,7 +35,7 @@ This adds methods to merge two res.partner.
     'application': False,
     'auto_install': False,
     'depends': [
-        'base',
+        'fso_merge',
     ],
     'data': [
     ],

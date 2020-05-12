@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class ResPartnerFSOMerge(models.Model):
     _name = "res.partner"
-    _inherit = ["res.partner", "fso_merge"]
+    _inherit = ["res.partner", "fso.merge"]
 
     # ---------
     # FSO MERGE
