@@ -22,13 +22,12 @@ class ResPartnerFSOMerge(models.Model):
         if rec_to_remove.parent_id and rec_to_remove.parent_id.id == rec_to_keep.id:
             raise ValidationError("You cannot merge a partner with his parent!")
 
-        if 'account.move.line' in self.env:
-            logger.info("FSO MERGE FOR res.partner: _fso_merge_validate() that the partner-to-remove has no "
-                        "accounting records!")
-            # Check if the partner_to_remove has account journal items
-            if self.env['ir.model'].sudo().search([('model', '=', 'account.move.line')]):
-                if self.env['account.move.line'].sudo().search([('partner_id', '=', rec_to_remove.id)]):
-                    raise ValidationError("You cannot merge a partner with existing account journal entries!")
+        logger.info("FSO MERGE FOR res.partner: _fso_merge_validate() that the partner-to-remove has no "
+                    "accounting records!")
+        # Check if the partner_to_remove has account journal items
+        if self.env['ir.model'].sudo().search([('model', '=', 'account.move.line')]):
+            if self.env['account.move.line'].sudo().search([('partner_id', '=', rec_to_remove.id)]):
+                raise ValidationError("You cannot merge a partner with existing account journal entries!")
 
         return res
 
