@@ -119,9 +119,10 @@ To solve this we did:
         'views/templates_53_ppt_opc.xml',
         'views/templates_60_checkout_steps.xml',
         'views/views.xml',
+        'views/sale_order_line.xml',
         'views/website.xml',
         #'views/fsonline_menu.xml', # Moved to fsonline addon
-        'data/run_on_install_update.xml'        # Update xml_id field on update (and install)
+        'data/run_on_install_update.xml'        # Update xml_id field on update and install
     ],
     'post_init_hook': 'post_init_hook',         # Update xml_id field on install (same as above but only on install)
 }
