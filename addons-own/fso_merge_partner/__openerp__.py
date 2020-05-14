@@ -36,6 +36,7 @@ This adds methods to merge two res.partner.
     'auto_install': False,
     'depends': [
         'fso_merge',
+        #'crm', # added only temporarily to check the crm merge vs. the fso_merge!
     ],
     'data': [
     ],

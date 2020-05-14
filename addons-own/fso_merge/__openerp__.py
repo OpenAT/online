@@ -37,7 +37,7 @@ The addon does nothing by itself. You have to inhert  this in any other model wh
     'application': False,
     'auto_install': False,
     'depends': [
-        'base',
+        'mail',
     ],
     'data': [
     ],
