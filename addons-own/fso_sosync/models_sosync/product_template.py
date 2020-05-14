@@ -7,6 +7,7 @@ class ProductTemplateSosync(models.Model):
     _inherit = ["product.template", "base.sosync"]
 
     name = fields.Char(sosync="True")
+    default_code = fields.Char(sosync="True")
     active = fields.Boolean(sosync="True")
 
     # Verkaufsbeschreibung (in Angeboten oder auf der Webseiten bei einigen Templates)
