@@ -213,7 +213,7 @@ class FsoForms(http.Controller):
         # -----------------
         # Clear Session Data if the record was not found or too many records are found an return an empty recordset
         if len(record) != 1:
-            _logger.error('Fso form record stored in session data not found! Removing form data from session!')
+            _logger.warning('Record for current fso_form not found! Clearing fso_form data from request.session!')
             self.remove_fso_form_session_data(form.id)
             return form_model_obj
         else:
