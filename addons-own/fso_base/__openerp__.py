@@ -117,6 +117,8 @@ TODO (must be done manually right now):
         'web_menu_xmlid',
         'fso_frst_groups_frst_cds',
         'fso_partner_frst_cds',
+        # We may remove this again in the future to make it an optional addon
+        'need_action_menu_disabled',
     ],
     'data': [
         #
