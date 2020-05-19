@@ -6,3 +6,5 @@ import res_partner_donation_report
 import res_partner_donation_report_submission
 import res_partner
 import account_fiscalyear
+
+import res_partner_fso_merge

@@ -40,6 +40,7 @@ This addon determines the BPK number from FinanzOnline for partners and allows t
     'depends': [
         'base',
         'fso_base',
+        'fso_merge_partner',
     ],
     'data': [
         'security/group_res_partner_bpk_manager.xml',

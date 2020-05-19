@@ -213,7 +213,7 @@ class FsoForms(http.Controller):
         # -----------------
         # Clear Session Data if the record was not found or too many records are found an return an empty recordset
         if len(record) != 1:
-            _logger.error('Fso form record stored in session data not found! Removing form data from session!')
+            _logger.warning('Record for current fso_form not found! Clearing fso_form data from request.session!')
             self.remove_fso_form_session_data(form.id)
             return form_model_obj
         else:
@@ -565,9 +565,25 @@ class FsoForms(http.Controller):
         messages = list()
         form_field_errors = dict()
 
+        # UGLY HACK TO AVOID POST SUBMITS OF A FORM AFTER AN ODOO SERVICE RESTART WITHOUT AN ENV USER
+        # HINT: I guess this should be done globally by odoo and not just for fso_forms?!?
+        if request and hasattr(request, 'env') and hasattr(request, 'uid') and (request.uid and not request.env.uid):
+            if hasattr(request, 'httprequest') and request.httprequest.url:
+                redirect_url = request.httprequest.url
+            else:
+                redirect_url = '/fso/form/%s' % form.id
+            _logger.error("NO USER IN request.env.uid! REDIRECTING TO: %s" % redirect_url)
+            return request.redirect(redirect_url)
+
         # Get the form and session related record
         # HINT: This will either return a single record or an empty recordset (= form.model_id.model object)
         record = self.get_fso_form_record(form)
+        if record:
+            _logger.info("Record %s,%s was found for form %s for request.uid %s and request.env.uid %s"
+                         "" % (record._name, record.id, form.id, request.uid, request.env.uid if request.env else ''))
+            if not record._uid:
+                _logger.error('RECORD WAS FOUND FOR FORM %s BUT HAS NO USER IN THE ENV! record._uid: %s'
+                              '' % (form.id, record._uid))
 
         # ----------------------
         # HANDLE FORM SUBMISSION

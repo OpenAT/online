@@ -20,23 +20,17 @@
 
                     <div class="oe_left" style="width: calc(100% - 430px);">
                         <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
-                        <div style="margin-left: 140px;">
-                            <div class="oe_edit_only"><label for="name"/></div>
-                            <h1><field name="name" /></h1>
+                        <div style="margin-left: 140px; margin-top: 12px;">
+                            <div class="oe_edit_only"><label for="name" string="Name"/></div>
+                            <h1><field name="name" required="True"/></h1>
+                            <div class="oe_edit_only"><label for="description_sale" string="Kurztext / Kurzbeschreibung"/></div>
+                            <h3><field name="description_sale"/></h3>
                         </div>
-                        <!-- div>
-                            <div class="oe_edit_only"><label for="description_sale" string="Kurztext (Kurzbeschreibung)"/></div>
-                            <div><field name="description_sale"/></div>
-                        </div -->
                     </div>
-
-                    <group>
-                        <label colspan="2" class="oe_edit_only" for="description_sale" string="Kurztext (Kurzbeschreibung)"/>
-                        <field colspan="2" nolabel="1" name="description_sale"/>
-                    </group>
 
                     <group name="Basic Settings">
                         <group>
+                            <field name="default_code" string="Interner Name"/>
                             <field name="fs_product_type" string="Fundraising Studio Typ"/>
                             <field name="website_theme" string="Website Theme"/>
                             <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
@@ -47,18 +41,9 @@
                             <field name="product_page_template" string="Webseitenvorlage"/>
                         </group>
                         <group>
-                            <!--
-                            <field name="product_page_template" string="Webseitenvorlage"/>
-                            <field name="website_published" string="Webfreigabe"/>
-                            <field name="website_published_start" string="Webanzeige Start"/>
-                            <field name="website_published_end" string="Webanzeige Ende"/>
-                            <field name="website_visible" string="Webanzeige (berechnet)" readonly="1"/>
-                            <field name="website_url" invisible="0" widget="url" readonly="1" string="Standard URL"/>
-                            <label for="description_sale" colspan="2" string="Kurztext (Kurzbeschreibung)" class="oe_edit_only"/>
-                            <field name="description_sale" colspan="2" nolabel="1"/>
-                            -->
                             <field name="type"/>
                             <field name="uom_id" string="Mengeneinheit"/>
+                            <field name="seo_url" string="Erzwungene URL (SEO)"/>
                             <field name="website_url" invisible="0" widget="url" readonly="1" string="Standard URL"/>
                         </group>
                     </group>

@@ -11,6 +11,7 @@
                 <menuitem id="menu_fsonline_donationshop_cart" name="Donation Carts" sequence="3200" parent="fso_base.menu_fsonline_website" action="sale.action_quotations"/>
                 <menuitem id="menu_fsonline_donationshop_order" name="Orders" sequence="3300" parent="fso_base.menu_fsonline_website" action="sale.action_orders"/>
                 <menuitem id="menu_fsonline_donationshop_payment" name="Payments" sequence="3400" parent="fso_base.menu_fsonline_website" action="payment.action_payment_transaction"/>
+                <menuitem id="menu_fsonline_donationshop_sale_order_line" name="Statistic" sequence="3410" parent="fso_base.menu_fsonline_website" action="website_sale_donate.sale_order_line_wsd_action"/>
                 <!-- Domains and Widgets -->
                 <menuitem id="widget_manager_menu" parent="fso_base.menu_fsonline_website" sequence="3500" action="website_widget_manager.widget_manager_action"/>
                 <menuitem id="widget_manager_lp_menu" parent="fso_base.menu_fsonline_website" sequence="3600" action="website_widget_manager.widget_manager_lp_action"/>
@@ -34,6 +35,7 @@
                 <menuitem id="menu_fsonline_web_shop_cart" name="Donation Carts" sequence="520" parent="menu_fsonline_web_shop" action="sale.action_quotations"/>
                 <menuitem id="menu_fsonline_web_shop_order" name="Orders" sequence="530" parent="menu_fsonline_web_shop" action="sale.action_orders"/>
                 <menuitem id="menu_fsonline_web_shop_payment" name="Payments" sequence="540" parent="menu_fsonline_web_shop" action="payment.action_payment_transaction"/>
+                <menuitem id="menu_fsonline_web_shop_sale_order_line" name="Statistic" sequence="560" parent="menu_fsonline_web_shop" action="website_sale_donate.sale_order_line_wsd_action"/>
                 <menuitem id="menu_fsonline_web_widget_manager"  action="website_widget_manager.widget_manager_action" parent="menu_fsonline_web_shop" sequence="1000"/>
                 <menuitem id="menu_fsonline_web_landing_pages_manager" action="website_widget_manager.widget_manager_lp_action" parent="menu_fsonline_web_shop" sequence="1100"/>
         

@@ -19,3 +19,5 @@ import website_sale_donate
 import frst_zgruppedetail
 
 import fso_forms
+
+import sale_order_line

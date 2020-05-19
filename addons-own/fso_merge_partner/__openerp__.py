@@ -21,12 +21,10 @@
 ##############################################################################
 
 {
-    'name': "FS-Online fso_merge",
-    'summary': """FS-Online Merge two records""",
+    'name': "FS-Online fso_merge_partner",
+    'summary': """FS-Online Merge two partner""",
     'description': """
-This add add abstract methods to merge two records of any model and update (hopefully) all related records.
-
-The addon does nothing by itself. You have to inhert  this in any other model where you need a method to merge records.
+This adds methods to merge two res.partner.
 
     """,
     'author': "Datadialog - Michael Karrer, Martin Kaip",
@@ -37,7 +35,8 @@ The addon does nothing by itself. You have to inhert  this in any other model wh
     'application': False,
     'auto_install': False,
     'depends': [
-        'mail',
+        'fso_merge',
+        #'crm', # added only temporarily to check the crm merge vs. the fso_merge!
     ],
     'data': [
     ],

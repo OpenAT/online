@@ -231,8 +231,8 @@ class FSOMergeAbstract(models.AbstractModel):
 
     @api.model
     def _fso_merge_validate(self, rec_to_remove=None, rec_to_keep=None):
-        assert rec_to_remove.ensure_one(), "Record-to-remove was not found!"
-        assert rec_to_keep.ensure_one(), "Record-to-keep was not found!"
+        assert rec_to_remove and rec_to_remove.ensure_one(), "Record-to-remove was not found!"
+        assert rec_to_keep and rec_to_keep.ensure_one(), "Record-to-keep was not found!"
         return True
 
     @api.model
