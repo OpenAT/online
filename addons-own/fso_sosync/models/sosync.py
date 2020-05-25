@@ -41,6 +41,10 @@ class BaseSosync(models.AbstractModel):
     sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
                                    help="Exact datetime of source-data-readout for the sync job!")
 
+    # Create and Write Date from Fundraising Studio
+    frst_create_date = fields.Datetime(string="FRST Create Date", readonly=True)
+    frst_write_date = fields.Datetime(string="FRST Write Date", readonly=True)
+
     # Create more menu actions for manual sync job creation on update or installation of the addon
     def init(self, cr, context=None):
         ir_actions_server_obj = self.pool.get('ir.actions.server')

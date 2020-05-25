@@ -81,7 +81,7 @@
         <field name="model">sale.order.line</field>
         <field name="arch" type="xml">
             <graph string="Sale Order Lines" type="bar" stacked="True">
-                <field name="write_date" interval="month" type="row"/>
+                <field name="create_date" interval="month" type="row"/>
                 <field name="price_subtotal_stored" type="measure"/>
                 <field name="product_id" type="col"/>
             </graph>
