@@ -69,6 +69,14 @@
 
     <!-- TOD: INHERIT website.layout:  Set data attributes for the products in the cart and for the current product if on a product page (=product is set as a variable) -->
     <template id="website_sale_donate_product_data" inherit_id="website.layout" name="Set shopping cart or product data attributes to website body">
+        <xpath expr="//head" position="before">
+            <!-- TODO: Since we set all important information right here we might remove all "website.sale_get_order()" from the other templates and just use the variable "website_sale_order" instead to speed up the template loading -->
+            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+            <t t-set="latest_website_sale_order_line" t-value="website_sale_order.website_order_line[-1] if website_sale_order and website_sale_order.website_order_line else ''"/>
+            <t t-set="latest_website_sale_order_product" t-value="(latest_website_sale_order_line.product_id or '') if latest_website_sale_order_line else ''"/>
+            <t t-set="latest_product" t-value="product if product else (latest_website_sale_order_product or '')"/>
+        </xpath>
+
         <xpath expr="//body" position="attributes">
 
             <!-- OLD STUFF JUST AS AN EXAMPLE -->
@@ -85,15 +93,11 @@
 
 
             <!--
-                Add information about the current product if on product page or there are products in the cart (product_id, templates, ...)
-                to be able to add custom css/js by current product or product(s) in the cart !
+                Add information about the latest product if on product page or the latest product from the shopping cart (sale order)
+                to be able to add custom css/js by the current product page or the latest product in the cart !
             -->
-            <attribute name="t-att-data-last-product-id">
-                product.id if product else website.sale_get_order().website_order_line[-1].product_id.id if website.sale_get_order() and website.sale_get_order().website_order_line else 'False'
-            </attribute>
-            <attribute name="t-att-data-last-product-theme">
-                (product.website_theme or 'False') if product else (website.sale_get_order().website_order_line[-1].product_id.website_theme or 'False') if website.sale_get_order() and website.sale_get_order().website_order_line else 'False'
-            </attribute>
+            <attribute name="t-att-data-latest-product-id">latest_product.id if latest_product else 'False'</attribute>
+            <attribute name="t-att-data-latest-product-theme">(latest_product.website_theme or 'False') if latest_product else 'False'</attribute>
 
         </xpath>
     </template>

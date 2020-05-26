@@ -236,7 +236,7 @@
                         <div class="row wsd_payment_page_content">
 
                             <!-- Left Column -->
-                            <div class="col-sm-8">
+                            <div class="col-sm-8" id="wsd_payment_page_left_col">
                                 <!-- Small Cart -->
                                 <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
                                 <t t-call="website_sale_donate.small_cart_header">
@@ -274,7 +274,7 @@
                             </div>
 
                             <!-- Right Column -->
-                            <div class="col-sm-3 col-sm-offset-1">
+                            <div class="col-sm-3 col-sm-offset-1" id="wsd_payment_page_right_col">
                                 <!-- Billing Address -->
                                 <div class="payment_billing_address">
                                     <h4>Bill To:</h4>

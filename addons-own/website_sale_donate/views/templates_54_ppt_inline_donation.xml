@@ -6,6 +6,7 @@
         <template id="ppt_inline_donation" name="Product Page Template: Inline Donation">
             <t t-call="website.layout">
                 <t t-set="additional_title" t-value="product.name"/>
+
                 <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale ppt_inline_donation">
 
                     <!-- Main Section with optional parallax bg-image -->
@@ -22,15 +23,13 @@
                                     <!-- Categories, Search and Publish-Button Bar -->
                                     <t t-call="website_sale_donate.categories_search_publish"/>
 
-                                    <!-- TODO: STEPS Indicator -->
-                                    <!-- TODO: Maybe we need a custom Template for this steps indicator -->
+                                    <!-- Checkout Steps Indicator -->
                                     <t t-call="website_sale_donate.wsd_checkout_pages_header">
                                         <t t-set="hide_cart_indicator" t-value="True"/>
                                         <t t-set="hide_confirmation_indicator" t-value="True"/>
                                     </t>
 
                                     <!-- Main Product Page Content (Description Field and Checkoutbox) -->
-                                    <!-- TODO: Maybe we need a custom Template for the Donation Buttons ?!? -->
                                     <div class="row">
                                         <!-- CHECKOUTBOX (Add to Cart Box) -->
                                         <div class="col-md-12" id="wsd-checkout-box">

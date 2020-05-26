@@ -163,6 +163,8 @@
                                         <field name="step_indicator_setup"/>
                                     </group>
                                     <group colspan="2" name="step_indicator_setup_settings" attrs="{'invisible': [('step_indicator_setup','=', False)]}">
+                                        <field name="step_indicator_ul_class"/>
+
                                         <field name="hide_cart_indicator"/>
                                         <field name="cart_indicator_name" attrs="{'invisible': [('hide_cart_indicator','=', True)]}"/>
                                         <field name="hide_product_indicator"/>

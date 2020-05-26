@@ -24,6 +24,8 @@ class ProductTemplate(models.Model):
     # Shop Step/Page Indicator Setup
     step_indicator_setup = fields.Boolean(string="Individual Step-Indicator Setup")
 
+    step_indicator_ul_class = fields.Char(string="Step-Indicator <ul> classes")
+
     hide_cart_indicator = fields.Boolean(string='Hide Cart Indicator')
     cart_indicator_name = fields.Char(string='Cart Indicator Name', translate=True, default=_('Donation Cart'))
 
@@ -57,8 +59,9 @@ class ProductTemplate(models.Model):
     #            Only products with the same themes can be in the shopping cart - if a product with a different
     #            theme is added it will automatically remove non matching products from the cart!
     #            Todo: We may keep products with different themes in the cart in the future but use the latest theme
-    website_theme = fields.Selection(string='Website Theme',
-                                     selection=[('', 'No Custom Theme')])
+    website_theme = fields.Selection(string='Custom Design',
+                                     selection=[('', 'No Custom Theme')],
+                                     help="Adds a custom attribute to the <body> tag to be used in CSS selectors!")
 
     @api.constrains('website_theme', 'public_categ_ids')
     def contraint_website_theme(self):
