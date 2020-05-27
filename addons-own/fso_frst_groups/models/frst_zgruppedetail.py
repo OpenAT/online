@@ -97,14 +97,20 @@ class FRSTzGruppeDetail(models.Model):
     def write(self, vals):
         if self and vals and not self.env.user.has_group('base.sosync'):
             # Do not change the group folder (because of the tabellentyp_id)
-            assert 'zgruppe_id' not in vals, _("You can not change the group folder (zgruppe_id). Please delete and "
-                                               "recreate the group!")
+            if 'zgruppe_id' in vals:
+                raise ValidationError(_("You can not change the group folder (zgruppe_id). Please delete and "
+                                        "recreate the group!"))
             # Do not change the "geltungsbereich"
-            assert 'geltungsbereich' not in vals, _("You can not change the 'geltungsbereich'. Please delete and "
-                                                    "recreate the group!")
-            # Do not change system groups at all
+            if 'geltungsbereich' in vals:
+                raise ValidationError(_("You can not change the 'geltungsbereich'. Please delete and "
+                                        "recreate the group!"))
+
+            # Prevent the change of any relevant fields for system groups
             if any(r.geltungsbereich != 'local' for r in self):
-                raise ValidationError('You can not change system groups!')
+                if any(f in vals for f in ['zgruppe_id', 'geltungsbereich', 'gui_anzeige_profil', 'gruppe_kurz',
+                                           'gruppe_lang', 'gui_anzeigen', 'gueltig_von', 'gueltig_bis', 'steuerung_bit',
+                                           ]):
+                    raise ValidationError('You can not change system groups!')
 
         return super(FRSTzGruppeDetail, self).write(vals)
 
