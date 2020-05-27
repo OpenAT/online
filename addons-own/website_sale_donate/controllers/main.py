@@ -203,6 +203,9 @@ class website_sale_donate(website_sale):
         # Render the regular product page (just to run the logic behind it)
         productpage = super(website_sale_donate, self).product(product, category, search, **kwargs)
 
+        # Add Information that the product page controller was called
+        productpage.qcontext['product_controller_called'] = True
+
         # Render Custom Product Template based on the product_page_template field if any set
         # Add One-Page-Checkout qcontext if template is ppt_opc
         if product.product_page_template:
@@ -303,6 +306,9 @@ class website_sale_donate(website_sale):
 
         cartpage = super(website_sale_donate, self).cart(**post)
         cartpage.qcontext['keep'] = QueryURL(attrib=request.httprequest.args.getlist('attrib'))
+
+        # Add Information that the cart page controller was called
+        cartpage.qcontext['cart_controller_called'] = True
 
         # One-Page-Checkout
         if request.website['one_page_checkout']:
@@ -627,6 +633,10 @@ class website_sale_donate(website_sale):
         _logger.warning("opc_payment(): run super().payment(**post)")
         payment_page = super(website_sale_donate, self).payment(**post)
 
+        # Add Information that the payment page controller was called
+        if hasattr(payment_page, 'qcontext'):
+            payment_page.qcontext['payment_controller_called'] = True
+
         # ----------------
         # CHECK FOR ERRORS
         # ----------------
@@ -890,6 +900,9 @@ class website_sale_donate(website_sale):
             _logger.warning("checkout(): END, checkout_page has no qcontext. Most likely a redirection after error!")
             return checkout_page
 
+        # Add Information that the checkout page controller was called
+        checkout_page.qcontext['checkout_controller_called'] = True
+
         # Add the acquirer id to the checkoutpage qcontext
         if post and post.get('acquirer'):
             checkout_page.qcontext.update({'acquirer_id': post.get('acquirer')})
@@ -1093,13 +1106,20 @@ class website_sale_donate(website_sale):
             order_id = int(order_id)
             order = request.registry['sale.order'].browse(cr, SUPERUSER_ID, order_id, context=context)[0]
             if order and order.name and order.payment_tx_id:
-                return request.website.render("website_sale_donate.confirmation_static", {'order': order})
+                return request.website.render("website_sale_donate.confirmation_static",
+                                              {'order': order,
+                                               'confirmation_controller_called': True
+                                               })
             else:
                 _logger.error('payment_confirmation_static(): Sale Order or corresponding Payment Transaction missing!')
                 raise ValueError
         except Exception as e:
             _logger.error('payment_confirmation_static(): EXCEPTION: %s' % repr(e))
-            return request.website.render("website_sale_donate.confirmation_static", {'order': None})
+            return request.website.render("website_sale_donate.confirmation_static",
+                                          {
+                                              'order': None,
+                                              'confirmation_controller_called': True
+                                          })
 
     # For (small) cart JSON updates use arbitrary price (price_donate) if set sale.order.line
     @http.route()

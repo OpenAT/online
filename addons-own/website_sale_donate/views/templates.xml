@@ -74,7 +74,14 @@
             <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
             <t t-set="latest_website_sale_order_line" t-value="website_sale_order.website_order_line[-1] if website_sale_order and website_sale_order.website_order_line else ''"/>
             <t t-set="latest_website_sale_order_product" t-value="(latest_website_sale_order_line.product_id or '') if latest_website_sale_order_line else ''"/>
+
             <t t-set="latest_product" t-value="product if product else (latest_website_sale_order_product or '')"/>
+
+            <t t-set="on_shop_page" t-value="False"/>
+            <t t-if="cart_controller_called or product_controller_called or checkout_controller_called or payment_controller_called or confirmation_controller_called">
+                <t t-set="on_shop_page" t-value="True"/>
+            </t>
+
         </xpath>
 
         <xpath expr="//body" position="attributes">
@@ -91,7 +98,16 @@
             <attribute name="t-att-data-last-visited-rootcatid"> request.session.get('last_visited_rootcatid', 'False') </attribute>
             <attribute name="t-att-data-catid"> category.id if category else 'False' </attribute>
 
+            <!-- SHOP PAGE INFORMATION -->
+            <attribute name="t-att-data-on-shop-page">on_shop_page or ''</attribute>
 
+            <attribute name="t-att-data-cart-controller-called">cart_controller_called or ''</attribute>
+            <attribute name="t-att-data-product-controller-called">product_controller_called or ''</attribute>
+            <attribute name="t-att-data-checkout-controller-called">checkout_controller_called or ''</attribute>
+            <attribute name="t-att-data-payment-controller-called">payment_controller_called or ''</attribute>
+            <attribute name="t-att-data-confirmation-controller-called">confirmation_controller_called or ''</attribute>
+
+            <!-- CURRENT PRODUCT INFORMATION -->
             <!--
                 Add information about the latest product if on product page or the latest product from the shopping cart (sale order)
                 to be able to add custom css/js by the current product page or the latest product in the cart !
