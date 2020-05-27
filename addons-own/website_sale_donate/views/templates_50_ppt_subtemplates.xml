@@ -219,7 +219,7 @@
                                 <t t-set="payment_interval_as_selection" t-value="True if (website.payment_interval_as_selection or product.payment_interval_as_selection) else False"/>
                                 <h4 t-att-class="'payment_interval_ids payment_interval_lines_ids text-left' if not payment_interval_ids_class else 'payment_interval_ids payment_interval_lines_ids '+payment_interval_ids_class">
                                     <hr />
-                                    <small class="text-muted">How frequent would you like to donate this amount:</small>
+                                    <small class="payment_interval_info text-muted">How frequent would you like to donate this amount:</small>
                                     <div class="form-group">
 
                                         <!-- DEPRECATED START -->

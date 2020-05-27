@@ -87,6 +87,8 @@ class ProductTemplate(models.Model):
         else:
             self.fs_workflow = 'product'
 
+    # CRUD and COPY
+    # -------------
     @api.multi
     def write(self, vals):
         if vals and 'fs_product_type' in vals and not 'fs_workflow' in vals:
@@ -96,7 +98,19 @@ class ProductTemplate(models.Model):
                 vals['fs_workflow'] = 'product'
         return super(ProductTemplate, self).write(vals)
 
+    @api.multi
+    def copy(self, default=None):
+        default = default if default else {}
+
+        # TODO: Create copy of the donation buttons
+        # TODO: Create cops of the payment methods
+        # TODO: Create copy of the payment intervals
+
+        return super(ProductTemplate, self).copy(default=default)
+
+
     # Custom Checkout Fields Form Button Action
+    # -----------------------------------------
     # TODO: Add frontend validations
     @api.multi
     def create_checkout_fields_form(self):

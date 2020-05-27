@@ -103,14 +103,14 @@ class product_template(osv.Model):
         'price_donate': fields.boolean('Arbitrary Price'),
         'price_donate_min': fields.integer(string='Minimum Arbitrary Price'),
         'price_suggested_ids': fields.one2many('product.website_price_buttons', 'product_id',
-                                               string='Suggested Donation-Values'),
+                                               string='Suggested Donation-Values', copy=True),
         # DEPRECATED payment_interval_ids only left here for downward compatibility
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
         # PAYMENT INTERVAL
         'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
         'payment_interval_as_selection': fields.boolean(string='Payment Interval as Selection List'),
         'payment_interval_lines_ids': fields.one2many('product.payment_interval_lines', 'product_id',
-                                               string='Payment Intervals'),
+                                               string='Payment Intervals', copy=True),
         'button_addtocart_text': fields.char('Add-To-Cart Button Text', size=30, translate=True),
         'hide_panelfooter': fields.boolean('Hide Checkout Panel Footer'),
 
