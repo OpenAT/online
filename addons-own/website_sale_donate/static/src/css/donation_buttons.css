@@ -1,3 +1,6 @@
 .donation_button_group .donation_button {
     width: 100%;
 }
+.btn.donation_button_snippets {
+    white-space: initial;
+}

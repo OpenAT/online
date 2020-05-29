@@ -36,7 +36,7 @@
                         <!-- Snippet Area button -->
                         <t t-if="not d_button.name">
                             <div t-field="d_button.snippets" type="button" href="#"
-                                    t-att-class="'price_donate_suggested btn btn-link oe_structure donation_button_snippets donation_button ' + d_button_id + (' donation_button_active' if d_button_active else ''"
+                                    t-att-class="'price_donate_suggested btn btn-link oe_structure donation_button_snippets donation_button ' + d_button_id + (' donation_button_active' if d_button_active else '')"
                                     t-att-data-price="d_button.amount"/>
                         </t>
                     </t>

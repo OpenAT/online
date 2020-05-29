@@ -59,15 +59,15 @@ class ProductTemplate(models.Model):
     #            Only products with the same themes can be in the shopping cart - if a product with a different
     #            theme is added it will automatically remove non matching products from the cart!
     #            Todo: We may keep products with different themes in the cart in the future but use the latest theme
-    website_theme = fields.Selection(string='Custom Design',
+    website_theme = fields.Selection(string='Custom CSS Theme',
                                      selection=[('', 'No Custom Theme')],
                                      help="Adds a custom attribute to the <body> tag to be used in CSS selectors!")
 
     @api.constrains('website_theme', 'public_categ_ids')
     def contraint_website_theme(self):
         for r in self:
-            if r.website_theme:
-                assert not r.public_categ_ids, _("You can not add a product with a custom theme to a shop category!")
+            if r.website_theme and r.public_categ_ids:
+                raise AssertionError(_("You can not add a product with a custom css theme to a shop category!"))
 
     @api.depends('active', 'website_published', 'website_published_start', 'website_published_end')
     def compute_website_visible(self):
