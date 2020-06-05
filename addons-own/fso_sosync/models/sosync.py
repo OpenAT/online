@@ -36,10 +36,21 @@ class BaseSosync(models.AbstractModel):
     # NEW COMMON FIELDS
     sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True, index=True)
     sosync_write_date = fields.Char(string="Sosync Write Date", readonly=True, index=True,
-                                    help="Last change of one or more sosync-tracked-fields.")
+                                    help="Last change of one or more sosync-tracked-fields. This is just like a "
+                                         "'record version'! Could be replaced by a uniqe hash of the field data in the"
+                                         "future.")
     # HINT: Is a char field to show exact ms
+    # TODO: Ask Martin what exactly is used here - maybe this is already the same as the new field 'last_sync_version'
     sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
                                    help="Exact datetime of source-data-readout for the sync job!")
+
+    # HINT: Is a char field to show exact ms
+    last_sync_version = fields.Char(string="Last synced Version", readonly=True,
+                                    help="The 'sosync_write_date' (which is the record-version) of the latest sync."
+                                         "If this is different from the current 'sosync_write_date' unsynced changes "
+                                         "happended since the last sync!\nIn case of changes in both systems at a sync "
+                                         "We choose Fundraising Studio as the winner and force the direction 'From "
+                                         "FRST to FSON'!")
 
     # Create and Write Date from Fundraising Studio
     frst_create_date = fields.Datetime(string="FRST Create Date", readonly=True)
