@@ -15,7 +15,7 @@
                         <field name="write_date"/>
                         <field name="sosync_fs_id"/>
                         <field name="sosync_write_date"/>
-                        <field name="sosync_sync_date"/>
+                        <field name="last_sync_version"/>
                     </group>
                 </page>
             </xpath>

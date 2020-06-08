@@ -39,11 +39,7 @@ class BaseSosync(models.AbstractModel):
                                     help="Last change of one or more sosync-tracked-fields. This is just like a "
                                          "'record version'! Could be replaced by a uniqe hash of the field data in the"
                                          "future.")
-    # HINT: Is a char field to show exact ms
-    # TODO: Ask Martin what exactly is used here - maybe this is already the same as the new field 'last_sync_version'
-    sosync_sync_date = fields.Char(string="Last sosync sync", readonly=True,
-                                   help="Exact datetime of source-data-readout for the sync job!")
-
+    
     # HINT: Is a char field to show exact ms
     last_sync_version = fields.Char(string="Last synced Version", readonly=True,
                                     help="The 'sosync_write_date' (which is the record-version) of the latest sync."
@@ -519,7 +515,7 @@ class BaseSosync(models.AbstractModel):
         data_to_copy = super(BaseSosync, self).copy_data(cr, uid, id, default, context=context)
 
         # Remove sosync fields from data_to_copy
-        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'sosync_sync_date'):
+        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'last_sync_version'):
             data_to_copy.pop(sosync_field, None)
 
         return data_to_copy

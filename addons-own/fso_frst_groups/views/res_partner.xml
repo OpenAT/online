@@ -25,7 +25,7 @@
             <!--</field>-->
             <!--<field name="email" position="after">-->
                 <!--<field name="sosync_fs_id"/>-->
-                <!--<field name="sosync_sync_date"/>-->
+                <!--<field name="last_sync_version"/>-->
             <!--</field>-->
         <!--</field>-->
     <!--</record>-->
