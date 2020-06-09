@@ -41,7 +41,7 @@ class BaseSosync(models.AbstractModel):
                                          "future.")
     
     # HINT: Is a char field to show exact ms
-    last_sync_version = fields.Char(string="Last synced Version", readonly=True,
+    sosync_synced_version = fields.Char(string="Last synced Version", readonly=True,
                                     help="The 'sosync_write_date' (which is the record-version) of the latest sync."
                                          "If this is different from the current 'sosync_write_date' unsynced changes "
                                          "happended since the last sync!\nIn case of changes in both systems at a sync "
@@ -515,7 +515,7 @@ class BaseSosync(models.AbstractModel):
         data_to_copy = super(BaseSosync, self).copy_data(cr, uid, id, default, context=context)
 
         # Remove sosync fields from data_to_copy
-        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'last_sync_version'):
+        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version'):
             data_to_copy.pop(sosync_field, None)
 
         return data_to_copy

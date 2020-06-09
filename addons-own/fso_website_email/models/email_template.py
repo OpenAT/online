@@ -428,7 +428,7 @@ class EmailTemplate(models.Model):
         #       Just as a safety measure they are excluded here also.
         data_to_restore = {key: value for (key, value) in data_to_restore.items() if key not in (
             'active', 'name', 'version_of_email_id', 'version_ids',
-            'sosync_write_date', 'last_sync_version', 'sosync_fs_id')}
+            'sosync_write_date', 'sosync_synced_version', 'sosync_fs_id')}
 
         # Create a new version from current data first
         logger.info("Create new version for email.template (ID %s) before restoring data from version with id %s"

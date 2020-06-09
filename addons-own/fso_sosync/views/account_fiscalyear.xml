@@ -10,7 +10,7 @@
             <xpath expr="//field[@name='drg_last']" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_write_date"/>
-                <field name="last_sync_version"/>
+                <field name="sosync_synced_version"/>
             </xpath>
         </field>
     </record>

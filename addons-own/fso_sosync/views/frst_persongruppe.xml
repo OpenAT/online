@@ -10,7 +10,7 @@
             <field name="gueltig_bis" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_write_date"/>
-                <field name="last_sync_version"/>
+                <field name="sosync_synced_version"/>
             </field>
         </field>
     </record>
@@ -23,7 +23,7 @@
         <field name="arch" type="xml">
             <field name="gueltig_bis" position="after">
                 <field name="sosync_fs_id"/>
-                <field name="last_sync_version"/>
+                <field name="sosync_synced_version"/>
             </field>
         </field>
     </record>
@@ -37,7 +37,7 @@
             <field name="id" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_write_date"/>
-                <field name="last_sync_version"/>
+                <field name="sosync_synced_version"/>
             </field>
         </field>
     </record>
