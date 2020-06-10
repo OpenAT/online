@@ -12,6 +12,7 @@ class MailMassMailingContactSosync(models.Model):
     list_id = fields.Many2one(sosync="True")
     partner_id = fields.Many2one(sosync="True")
     personemail_id = fields.Many2one(sosync="True")
+    personemailgruppe_id = fields.Many2one(sosync="True")
 
     origin = fields.Char(sosync="True")
 
