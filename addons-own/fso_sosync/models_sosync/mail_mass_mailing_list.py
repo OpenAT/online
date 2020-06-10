@@ -16,6 +16,8 @@ class MailMassMailingListSosync(models.Model):
     name = fields.Char(sosync="True")
     list_type = fields.Selection(sosync="True")
 
+    zgruppedetail_id = fields.Many2one(sosync="True")
+
     website_published = fields.Boolean(sosync="True")
     system_list = fields.Boolean(sosync="True")
 
