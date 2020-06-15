@@ -144,12 +144,10 @@ class product_template(osv.Model):
                  "resized as a 64x64px image, with aspect ratio preserved. "\
                  "Use this field anywhere a small image is required."),
         # FRST Groups frst.zgruppedetail
-        # ATTENTION: TODO: Check if the domain works because 'sosync_fs_id' is only known after fso_sosnync which
-        #                  can not be a dependency of website_sale_donate!
-        # HINT: 40200 = Vertragsart, 40300 = Patenart, 40700 = Mitgliedsbeitrag
+        # HINT: '100100' = tabellentyp_id 'Person', '100106' = tabellentyp_id 'Vertrag'
         'zgruppedetail_ids': fields.many2many('frst.zgruppedetail', string='Fundraising Studio Groups',
                                               domain="[('gui_anzeigen', '=', True),"
-                                                     " ('zgruppe_id.sosync_fs_id','in', [40200, 40300, 40700])]"),
+                                                     " ('zgruppe_id.tabellentyp_id','in', ['100100', '100106'])]"),
 
     }
     _defaults = {
