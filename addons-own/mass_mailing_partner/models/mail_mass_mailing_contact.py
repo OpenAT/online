@@ -53,7 +53,10 @@ class MailMassMailingContact(models.Model):
                                      domain=[('email', '!=', False)])
 
     # ATTENTION: partner_id is just like a related field (could be done by related field but did not work as expected)
-    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner', readonly=True, index=True)
+    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',
+                                 computed="_compute_partner_id", store=False,
+                                 search="_search_partner_id",
+                                 readonly=True)
 
     # Log additional subscriptions after the record was created
     renewed_subscription_log = fields.Text(string="Renewed Subscription Log", readonly=True)
@@ -66,6 +69,15 @@ class MailMassMailingContact(models.Model):
     ]
 
     @api.multi
+    @api.depends('personemail_id')
+    def _compute_partner_id(self):
+        for r in self:
+            r.partner_id = r.personemail_id.partner_id if r.personemail_id else False
+
+    def _search_partner_id(self, operator, value):
+        return [('personemail_id.partner_id', operator, value)]
+
+    @api.constrains('personemail_id', 'email', 'list_id')
     def _post_update_check(self):
         for r in self:
             if r.personemail_id:
@@ -183,8 +195,7 @@ class MailMassMailingContact(models.Model):
                 if pe_free:
                     # Link current list contact to first non linked PersonEmail
                     pe_free_first = pe_free[0]
-                    r.write({'personemail_id': pe_free_first.id,
-                             'partner_id': pe_free_first.partner_id.id})
+                    r.write({'personemail_id': pe_free_first.id})
                     recordset_to_return = recordset_to_return | r
 
                     # Avoid mail.thread auto subscription for the public-website-user
@@ -201,7 +212,6 @@ class MailMassMailingContact(models.Model):
                         lc_vals['email'] = r.email
                         lc_vals['list_id'] = r.list_id.id
                         lc_vals['personemail_id'] = pe.id
-                        lc_vals['partner_id'] = pe.partner_id.id
 
                         # Create new list contact
                         lc_new = lc_obj_sudo.create(lc_vals)
@@ -232,8 +242,7 @@ class MailMassMailingContact(models.Model):
                          'last_email_update': last_email_update})
 
                     # Update the list contact record
-                    r.write({'personemail_id': pe.id,
-                             'partner_id': websiteuser_partner.id})
+                    r.write({'personemail_id': pe.id})
 
                     # Add the record to the recordset that will be returned
                     recordset_to_return = recordset_to_return | r
@@ -260,8 +269,7 @@ class MailMassMailingContact(models.Model):
                         "" % (partner.main_personemail_id.email, r.email))
 
                     # Update the list contact record
-                    r.write({'personemail_id': partner.main_personemail_id.id,
-                             'partner_id': partner.id})
+                    r.write({'personemail_id': partner.main_personemail_id.id})
 
                     # Add the record to the recordset that will be returned
                     recordset_to_return = recordset_to_return | r
@@ -273,12 +281,6 @@ class MailMassMailingContact(models.Model):
 
     @api.model
     def create(self, vals):
-        # Auto append partner_id
-        if vals.get('personemail_id') and not vals.get('partner_id'):
-            pe = self.env['frst.personemail'].sudo().browse([vals['personemail_id']])
-            if pe:
-                vals['partner_id'] = pe.partner_id.id
-
         # Avoid mail.thread auto subscription for website-users since they have no access to mail.message
         if not self.env.user.has_group('base.group_user'):
             self = self.with_context(mail_create_nolog=True)
@@ -297,18 +299,12 @@ class MailMassMailingContact(models.Model):
             res = res_pe[0]
 
         # Check if everything is ok
-        res._post_update_check()
+        #res._post_update_check()
 
         return res
 
     @api.multi
     def write(self, vals):
-        # Auto append partner_id
-        if vals.get('personemail_id') and not vals.get('partner_id'):
-            pe = self.env['frst.personemail'].sudo().browse([vals['personemail_id']])
-            if pe:
-                vals['partner_id'] = pe.partner_id.id
-
         # Make sure no email change is happening if already linked to PersonEmail
         self._pre_update_check(vals)
 
@@ -320,6 +316,6 @@ class MailMassMailingContact(models.Model):
         self.link_personemail()
 
         # Check if everything is ok
-        self._post_update_check()
+        #self._post_update_check()
 
         return res
