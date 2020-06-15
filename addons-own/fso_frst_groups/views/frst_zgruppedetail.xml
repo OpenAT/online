@@ -42,6 +42,7 @@
                             <field name="geltungsbereich"/>
                         </group>
                         <group>
+                             <field name="display_name"/>
                             <field name="gui_anzeigen"/>
                             <field name="gui_anzeige_profil"/>
                             <field name="gueltig_von"/>
@@ -82,8 +83,9 @@
         <field name="arch" type="xml">
             <tree string="zGruppeDetail">
                 <field name="id"/>
+                <field name="display_name" invisible="0"/>
                 <field name="gruppe_kurz" invisible="1"/>
-                <field name="gruppe_lang"/>
+                <field name="gruppe_lang" invisible="1"/>
                 <field name="zgruppe_id"/>
                 <field name="geltungsbereich"/>
                 <field name="gui_anzeigen"/>
@@ -102,9 +104,10 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="zGruppeDetail">
+                <field name="display_name"/>
                 <field name="id"/>
+                <field name="gruppe_lang" invisible="1"/>
                 <field name="gruppe_kurz" invisible="1"/>
-                <field name="gruppe_lang"/>
                 <field name="zgruppe_id"/>
                 <field name="geltungsbereich"/>
                 <field name="gui_anzeige_profil"/>

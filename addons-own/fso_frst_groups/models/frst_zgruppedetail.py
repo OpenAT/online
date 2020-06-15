@@ -9,7 +9,11 @@ logger = logging.getLogger(__name__)
 # Fundraising Studio groups
 class FRSTzGruppeDetail(models.Model):
     _name = "frst.zgruppedetail"
-    _rec_name = "gruppe_lang"
+    _rec_name = "display_name"
+
+    # Compute a name based on <frst_id> - <zgruppe_id.tabelentyp_id> - <gruppe_lang>
+    display_name = fields.Char(string="Group Name", compute="_compute_display_name", search="_search_display_name",
+                               readonly=True, store=False)
 
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
                                  string="zGruppeID",
@@ -67,6 +71,23 @@ class FRSTzGruppeDetail(models.Model):
                                                    ('workflow', "Fundraising Studio Workflow"),
                                                    ],
                                         string="Approval Type", default='doubleoptin')
+
+    @api.multi
+    @api.depends('gruppe_lang', 'zgruppe_id')
+    def _compute_display_name(self):
+        tabellentyp_dict = dict(self.env['frst.zgruppe']._fields['tabellentyp_id'].selection)
+        for r in self:
+            r.display_name = "%s (%s, %s)" % (
+                r.gruppe_lang or r.gruppe_kurz,
+                tabellentyp_dict.get(r.zgruppe_id.tabellentyp_id, _('unknown')).upper() if r.zgruppe_id else _('unknown'),
+                r.sosync_fs_id if 'sosync_fs_id' in r._fields else _('unknown')
+            )
+
+    def _search_display_name(self, operator, value):
+        return ['|',
+                  ('gruppe_lang', operator, value),
+                  ('sosync_fs_id', operator, value)
+                ]
 
     @api.onchange('gruppe_lang', 'geltungsbereich')
     def onchange_gruppe_lang_geltungsbereich(self):

@@ -147,7 +147,12 @@ class product_template(osv.Model):
         # HINT: '100100' = tabellentyp_id 'Person', '100106' = tabellentyp_id 'Vertrag'
         'zgruppedetail_ids': fields.many2many('frst.zgruppedetail', string='Fundraising Studio Groups',
                                               domain="[('gui_anzeigen', '=', True),"
-                                                     " ('zgruppe_id.tabellentyp_id','in', ['100100', '100106'])]"),
+                                                     " ('zgruppe_id.tabellentyp_id','in', ['100100', '100106'])]",
+                                              help="These groups will be copied to the sale order line when the product"
+                                                   " is added to the shopping cart. The groups will be automatically "
+                                                   "assigned (set) by FRST when processing a sale order line from "
+                                                   "FS-Online!"
+                                              )
 
     }
     _defaults = {

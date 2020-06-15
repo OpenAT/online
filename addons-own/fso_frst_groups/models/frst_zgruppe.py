@@ -55,7 +55,7 @@ class FRSTzGruppe(models.Model):
     #
     # TODO: Nur eine zGruppeDetail im Gruppenordner darf einem Datensatz zugeordnet werden (z.B. Person)
     # TODO: Mehrfache Zuweisung der selben zGruppeDetail im Gruppenordner auf einen Datensatz ist nicht erlaubt
-    #       Beispiel einer Mehrfachzuordnung: kommt nur für Statistikgruppen vor die auch ablaufen können
+    #       Beispiel einer Mehrfachzuordnung: kommt nur für Statistikgruppen vor die auch ablaufen koennen
     #       z.B.: 'Großpender' im Jahr 2018 aber nicht 2019 dann wieder 2020
     #       ACHTUNG: Der default Wert ist 'True' da im Regelfall eine mehrfache Zuordnung nicht sinnig ist
     # TODO: Nur eine zGruppeDetail im Gruppenordner darf gueltig sein
