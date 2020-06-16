@@ -53,9 +53,9 @@ class MailMassMailingContact(models.Model):
                                      domain=[('email', '!=', False)])
 
     # ATTENTION: This is not available in Fundrasing Studio!
-    partner_id = fields.Many2one(string="Partner der PersonEmail", comodel_name='res.partner',
-                                 related="personemail_id.partner_id", store=False, readonly=True,
-                                 help="Shows the partner of the linked PersonEmail. It's only for convenience!")
+    pe_partner_id = fields.Many2one(string="Partner der PersonEmail", comodel_name='res.partner',
+                                    related="personemail_id.partner_id", store=False, readonly=True,
+                                    help="Shows the partner of the linked PersonEmail. It's only for convenience!")
 
     # Log additional subscriptions after the record was created
     renewed_subscription_log = fields.Text(string="Renewed Subscription Log", readonly=True)
@@ -72,9 +72,9 @@ class MailMassMailingContact(models.Model):
     def _post_update_check(self):
         for r in self:
             if r.personemail_id:
-                if not r.partner_id:
+                if not r.pe_partner_id:
                     raise ValidationError('PersonEmail is set but Partner is missing!')
-                if r.personemail_id.partner_id.id != r.partner_id.id:
+                if r.personemail_id.partner_id.id != r.pe_partner_id.id:
                     raise ValidationError('The Partner and the Partner from PersonEmail do not match!')
                 if r.email and r.email.lower() != r.personemail_id.email.lower():
                     raise ValidationError('The email is not matching the already linked PartnerEmail!')
@@ -119,9 +119,9 @@ class MailMassMailingContact(models.Model):
             # ALWAYS LINK TO PERSONEMAIL IF 'partner_mandatory' is set for the list
             # ---------------------------------------------------------------------
             if r.list_id.partner_mandatory and not r.personemail_id:
-                assert not r.partner_id, "partner_id can not be set if personemail_id is not set!"
+                assert not r.pe_partner_id, "pe_partner_id can not be set if personemail_id is not set!"
                 assert not create_vals.get('personemail_id'), "personemail_id can not be in create_vals"
-                assert not create_vals.get('partner_id'), "partner_id can not be in create_vals"
+                assert not create_vals.get('pe_partner_id'), "pe_partner_id can not be in create_vals"
                 if create_vals.get('email'):
                     assert create_vals['email'].lower() == r.email.lower(), \
                         "email in create_vals must match email of list contact"

@@ -13,10 +13,10 @@
             <field name="renewed_subscription_date" string="Renewed"/>
         </field>
         <field name="email" position="attributes">
-            <attribute name="attrs">{'readonly': [('partner_id', '!=', False)]}</attribute>
+            <attribute name="attrs">{'readonly': [('pe_partner_id', '!=', False)]}</attribute>
         </field>
         <field name="name" position="attributes">
-            <attribute name="attrs">{'readonly': [('partner_id', '!=', False)]}</attribute>
+            <attribute name="attrs">{'readonly': [('pe_partner_id', '!=', False)]}</attribute>
         </field>
     </field>
 </record>
@@ -27,15 +27,15 @@
     <field name="inherit_id" ref="mass_mailing.view_mail_mass_mailing_contact_search"/>
     <field name="arch" type="xml">
         <field name="email" position="after">
-            <field name="partner_id"/>
+            <field name="pe_partner_id"/>
             <field name="personemail_id"/>
         </field>
         <filter name="group_create_date" position="after">
-            <filter string="Partner"
-                    name="group_partner"
-                    context="{'group_by': 'partner_id'}"/>
+            <filter string="PersonEmail-Partner"
+                    name="group_pe_partner_id"
+                    context="{'group_by': 'pe_partner_id'}"/>
             <filter string="PersonEmail"
-                    name="group_partner"
+                    name="group_personemail_id"
                     context="{'group_by': 'personemail_id'}"/>
         </filter>
     </field>

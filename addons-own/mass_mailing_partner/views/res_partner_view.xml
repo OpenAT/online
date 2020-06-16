@@ -15,8 +15,8 @@
     <field name="arch" type="xml">
         <div class="oe_right oe_button_box" position="inside">
             <button name="%(mass_mailing.action_view_mass_mailing_contacts)d"
-                    context="{'search_default_partner_id': active_id,
-                              'default_partner_id': active_id}"
+                    context="{'search_default_pe_partner_id': active_id,
+                              'default_pe_partner_id': active_id}"
                     type="action"
                     class="oe_stat_button oe_inline"
                     icon="fa-pencil-square-o">
