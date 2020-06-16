@@ -43,7 +43,7 @@ class MailMassMailingContact(models.Model):
     TODO: If logged in:
       - TODO: Allow multiple subscriptions to mailing lists (with checkboxes)
       - TODO: Allow multiple OPT-OUT to maling lists (with checkboxes)
-    TODO: These Rules may only apply for list contacts linked to a massmailing list of no type or of type "email" !!!
+    TODO: These Rules may only apply for list contacts linked to a massmailing list of "no-type" or of type "email" !!!
     TODO: The Mass Mailing list type and mass mailing contact approval should to be separate addons!!!
     """
     _inherit = 'mail.mass_mailing.contact'
@@ -53,9 +53,8 @@ class MailMassMailingContact(models.Model):
                                      domain=[('email', '!=', False)])
 
     # ATTENTION: partner_id is just like a related field (could be done by related field but did not work as expected)
-    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',
-                                 computed="_compute_partner_id", store=False,
-                                 search="_search_partner_id",
+    partner_id = fields.Many2one(string="Partner der PersonEmail", comodel_name='res.partner',
+                                 related="personemail_id.partner_id", store=False,
                                  readonly=True)
 
     # Log additional subscriptions after the record was created
@@ -68,16 +67,15 @@ class MailMassMailingContact(models.Model):
            'A PersonEmail can only by used once per mailing list. '))
     ]
 
-    @api.multi
-    @api.depends('personemail_id')
-    def _compute_partner_id(self):
-        for r in self:
-            r.partner_id = r.personemail_id.partner_id if r.personemail_id else False
+    # @api.multi
+    # def _compute_partner_id(self):
+    #     for r in self:
+    #         r.partner_id = r.personemail_id.partner_id if r.personemail_id else False
+    #
+    # def _search_partner_id(self, operator, value):
+    #     return [('personemail_id.partner_id', operator, value)]
 
-    def _search_partner_id(self, operator, value):
-        return [('personemail_id.partner_id', operator, value)]
-
-    @api.constrains('personemail_id', 'email', 'list_id')
+    #@api.constrains('personemail_id', 'email', 'list_id')
     def _post_update_check(self):
         for r in self:
             if r.personemail_id:
@@ -299,7 +297,7 @@ class MailMassMailingContact(models.Model):
             res = res_pe[0]
 
         # Check if everything is ok
-        #res._post_update_check()
+        res._post_update_check()
 
         return res
 
@@ -316,6 +314,6 @@ class MailMassMailingContact(models.Model):
         self.link_personemail()
 
         # Check if everything is ok
-        #self._post_update_check()
+        self._post_update_check()
 
         return res

@@ -17,7 +17,7 @@ class ResPartnerSosync(models.Model):
     #state_id = fields.Many2one(sosync="True")      # Wird derzeit im FS nicht verwendet - daher kann es ausgelassen werden.
 
     # NEW:
-    bpk_state = fields.Selection(sosync="True")
+    # bpk_state = fields.Selection(sosync="True")   # WURDE AUS DEM SYNC WIEDER ENTFERNT DA DOPPELTE SYNCS UND NICHT VERWENDEDT IN FRST
 
     gender = fields.Selection(sosync="True")        # TODO: Extend selection list based on FS-Values in FSO GeschlechttypID
     #TODO im DEFFERED: lang = fields.Selection(sosync="True")          # SpracheID in FS wird ueber kuerzel gemapped z.b.: de_DE, en_US

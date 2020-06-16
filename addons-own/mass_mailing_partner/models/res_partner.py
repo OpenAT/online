@@ -12,14 +12,28 @@ from openerp.exceptions import ValidationError
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    # TODO: Make it a computed field non stored and with search
     mass_mailing_contact_ids = fields.One2many(
         string="Mailing lists",
         oldname="mass_mailing_contacts",
-        comodel_name='mail.mass_mailing.contact', inverse_name='partner_id')
+        comodel_name='mail.mass_mailing.contact', store=False,
+        compute="_compute_mass_mailing_contact_ids",
+        search="_search_mass_mailing_contact_ids"
+    )
 
     mass_mailing_stats = fields.One2many(
         string="Mass mailing stats",
         comodel_name='mail.mail.statistics', inverse_name='partner_id')
+
+    # TODO !!!
+    @api.multi
+    def _compute_mass_mailing_contact_ids(self):
+        for r in self:
+            r.mass_mailing_contact_ids = r.frst_personemail_ids.mass_mailing_contact_ids
+
+    # TODO !!!
+    def _search_mass_mailing_contact_ids(self, operator, value):
+        return [('frst_personemail_ids.mass_mailing_contact_ids', operator, value)]
 
     @api.constrains('email')
     def _check_email_mass_mailing_contacts(self):
