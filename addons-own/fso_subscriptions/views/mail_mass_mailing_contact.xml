@@ -21,7 +21,7 @@
                             <group name="basic">
                                 <field name="list_id"/>
                                 <field name="personemail_id"/>
-                                <field name="partner_id"/>
+                                <field name="pe_partner_id"/>
                                 <field name="firstname"/>
                                 <field name="lastname"/>
                                 <field name="name" readonly="True"/>

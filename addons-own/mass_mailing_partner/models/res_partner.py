@@ -12,7 +12,6 @@ from openerp.exceptions import ValidationError
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    # # TODO: Make it a computed field non stored and with search
     pe_mass_mailing_contact_ids = fields.One2many(
         string="PersonEmail List Contacts", oldname="mass_mailing_contacts", comodel_name='mail.mass_mailing.contact',
         related="frst_personemail_ids.mass_mailing_contact_ids", store=False,
@@ -25,8 +24,6 @@ class ResPartner(models.Model):
     @api.constrains('email')
     def _check_email_mass_mailing_contacts(self):
         for r in self:
-            # if r.frst_personemail_ids:
-                # mass_mailing_contact_ids = r.mapped("frst_personemail_ids.mass_mailing_contact_ids")
             if r.pe_mass_mailing_contact_ids and not r.email:
                 raise ValidationError(
                     _("The PersonEmails of this partner '%s' are subscribed to one or more "

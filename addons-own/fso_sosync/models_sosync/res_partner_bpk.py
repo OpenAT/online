@@ -42,7 +42,6 @@ class ResPartnerSosync(models.Model):
     bpk_request_zip = fields.Char(sosync="fson-to-frst")
     bpk_request_street = fields.Char(sosync="fson-to-frst")
 
-
     bpk_response_data = fields.Text(sosync="fson-to-frst")
     bpk_response_time = fields.Float(sosync="fson-to-frst")
 

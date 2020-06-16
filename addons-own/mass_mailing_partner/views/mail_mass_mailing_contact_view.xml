@@ -8,7 +8,7 @@
     <field name="inherit_id" ref="mass_mailing.view_mail_mass_mailing_contact_tree"/>
     <field name="arch" type="xml">
         <field name="email" position="after">
-            <field name="partner_id"/>
+            <field name="pe_partner_id"/>
             <field name="personemail_id"/>
             <field name="renewed_subscription_date" string="Renewed"/>
         </field>

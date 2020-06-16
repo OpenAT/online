@@ -182,7 +182,7 @@ class MailMassMailingContact(models.Model):
                         continue
 
                 # Create new subscriptions for existing PersonEmail(s)
-                # -------------------------------------------------------
+                # ----------------------------------------------------
                 if pe_free:
                     # Link current list contact to first non linked PersonEmail
                     pe_free_first = pe_free[0]
