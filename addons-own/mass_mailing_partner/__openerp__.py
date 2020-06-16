@@ -3,6 +3,7 @@
 
 {
     "name": "mass_mailing_partner V2",
+    'summary': "mass_mailing_partner link mail.mass_mass_mailing.contacts to frst.personeamil records if set in list",
     "version": "8.0.2.1.0",
     "author": "Michael Karrer",
     "license": "AGPL-3",

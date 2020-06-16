@@ -8,6 +8,8 @@ from openerp import models, api, fields, _
 from openerp.exceptions import Warning as UserError
 
 
+# TODO: This wizard will not work currently because the field 'partner_id' was changed to an related field - must
+#       be reworked!
 class PartnerMailListWizard(models.TransientModel):
     _name = "partner.mail.list.wizard"
     _description = "Add multiple partners to one mailing list"
@@ -26,6 +28,7 @@ class PartnerMailListWizard(models.TransientModel):
 
             if not partner.email:
                 raise UserError(_("Partner '%s' has no email.") % partner.name)
+
 
             contact_vals = {
                 'partner_id': partner.id,

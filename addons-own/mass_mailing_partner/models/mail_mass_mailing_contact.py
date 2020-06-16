@@ -52,30 +52,23 @@ class MailMassMailingContact(models.Model):
     personemail_id = fields.Many2one(comodel_name='frst.personemail', string="Person Email (FRST)",
                                      domain=[('email', '!=', False)])
 
-    # ATTENTION: partner_id is just like a related field (could be done by related field but did not work as expected)
+    # ATTENTION: This is not available in Fundrasing Studio!
     partner_id = fields.Many2one(string="Partner der PersonEmail", comodel_name='res.partner',
-                                 related="personemail_id.partner_id", store=False,
-                                 readonly=True)
+                                 related="personemail_id.partner_id", store=False, readonly=True,
+                                 help="Shows the partner of the linked PersonEmail. It's only for convenience!")
 
     # Log additional subscriptions after the record was created
     renewed_subscription_log = fields.Text(string="Renewed Subscription Log", readonly=True)
     renewed_subscription_date = fields.Datetime(string="Renewed Subscription", readonly=True)
 
+    # Make sure a PersonEmail can only be subscribed once per mail.mass_mailing.list
     _sql_constraints = [
         ('personemail_list_uniq', 'unique(personemail_id, list_id)',
          _('An other list contact with this PersonEmail exits already for this mailing list! '
            'A PersonEmail can only by used once per mailing list. '))
     ]
 
-    # @api.multi
-    # def _compute_partner_id(self):
-    #     for r in self:
-    #         r.partner_id = r.personemail_id.partner_id if r.personemail_id else False
-    #
-    # def _search_partner_id(self, operator, value):
-    #     return [('personemail_id.partner_id', operator, value)]
-
-    #@api.constrains('personemail_id', 'email', 'list_id')
+    @api.multi
     def _post_update_check(self):
         for r in self:
             if r.personemail_id:
