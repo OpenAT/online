@@ -6,5 +6,7 @@ class ProductProductSosync(models.Model):
     _name = "product.product"
     _inherit = ["product.product", "base.sosync"]
 
-    default_code = fields.Char(sosync="True")
-    product_tmpl_id = fields.Many2one(sosync="True")
+    # This model is read-only in FRST
+
+    default_code = fields.Char(sosync="fson-to-frst")
+    product_tmpl_id = fields.Many2one(sosync="fson-to-frst")

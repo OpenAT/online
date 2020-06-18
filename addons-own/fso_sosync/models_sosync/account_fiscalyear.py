@@ -23,9 +23,9 @@ class AccountFiscalYearSosync(models.Model):
     drg_interval_number = fields.Integer(sosync="True")         # FRST scheduler interval number
     drg_interval_type = fields.Selection(sosync="True")         # FRST scheduler interval unit e.g.: days or month
 
-    drg_next_run = fields.Datetime(sosync="True")       # Next scheduled run for donation report checks/generation STP in FRST
+    drg_next_run = fields.Datetime(sosync="frst-to-fson")       # Next scheduled run for donation report checks/generation STP in FRST
 
-    drg_last = fields.Datetime(sosync="True")           # Last scheduled run of the donation report checks/generation STP in FRST
-    drg_last_count = fields.Integer(sosync="True")      # Count of donation reports generated at the last scheduled run in FRST
+    drg_last = fields.Datetime(sosync="frst-to-fson")           # Last scheduled run of the donation report checks/generation STP in FRST
+    drg_last_count = fields.Integer(sosync="frst-to-fson")      # Count of donation reports generated at the last scheduled run in FRST
 
-    meldungs_jahr = fields.Char(sosync="True")          # computed field based on ze_datum_von and ze_datum_bis
+    meldungs_jahr = fields.Char(sosync="True")                  # computed field based on ze_datum_von and ze_datum_bis

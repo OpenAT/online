@@ -26,27 +26,27 @@ class ResPartnerDonationReportSosync(models.Model):
     # Fields for state and submission (calculated and updated by FSON)
     # ----------------------------------------------------------------
     # ATTENTION: The 'error' state is only for errors prior to any submission!!! e.g.: bpk_missing
-    state = fields.Selection(sosync="True")
-    error_type = fields.Selection(sosync="True")
-    error_code = fields.Char(sosync="True")
-    error_detail = fields.Text(sosync="True")
-    submission_type = fields.Selection(sosync="True")
-    submission_refnr = fields.Char(sosync="True")
-    submission_firstname = fields.Char(sosync="True")
-    submission_lastname = fields.Char(sosync="True")
-    submission_birthdate_web = fields.Date(sosync="True")
-    submission_zip = fields.Char(sosync="True")
-    submission_bpk_request_id = fields.Char(sosync="True")
-    submission_bpk_public = fields.Char(sosync="True")
-    submission_bpk_private = fields.Char(sosync="True")
+    state = fields.Selection(sosync="fson-to-frst")
+    error_type = fields.Selection(sosync="fson-to-frst")
+    error_code = fields.Char(sosync="fson-to-frst")
+    error_detail = fields.Text(sosync="fson-to-frst")
+    submission_type = fields.Selection(sosync="fson-to-frst")
+    submission_refnr = fields.Char(sosync="fson-to-frst")
+    submission_firstname = fields.Char(sosync="fson-to-frst")
+    submission_lastname = fields.Char(sosync="fson-to-frst")
+    submission_birthdate_web = fields.Date(sosync="fson-to-frst")
+    submission_zip = fields.Char(sosync="fson-to-frst")
+    submission_bpk_request_id = fields.Char(sosync="fson-to-frst")
+    submission_bpk_public = fields.Char(sosync="fson-to-frst")
+    submission_bpk_private = fields.Char(sosync="fson-to-frst")
 
     # Fields from the Spendenmeldung-Meldung
     # --------------------------------------
-    submission_id_datetime = fields.Datetime(sosync="True")     # Datetime of the submission (try) to FinanzOnline
+    submission_id_datetime = fields.Datetime(sosync="fson-to-frst")     # Datetime of the submission (try) to FinanzOnline
 
     # Fields set after response from FinanzOnline
     # -------------------------------------------
-    response_content = fields.Text(sosync="True")
-    response_error_code = fields.Char(sosync="True")
-    response_error_detail = fields.Text(sosync="True")
-    response_error_orig_refnr = fields.Char(sosync="True")      # ERR-U-008 unbek. RefNr.
+    response_content = fields.Text(sosync="fson-to-frst")
+    response_error_code = fields.Char(sosync="fson-to-frst")
+    response_error_detail = fields.Text(sosync="fson-to-frst")
+    response_error_orig_refnr = fields.Char(sosync="fson-to-frst")      # ERR-U-008 unbek. RefNr.

@@ -15,7 +15,7 @@ class FRSTzGruppeDetailSosync(models.Model):
     gueltig_von = fields.Date(sosync="True")
     gueltig_bis = fields.Date(sosync="True")
 
-    subscription_email = fields.Many2one(sosync="True")
+    subscription_email = fields.Many2one(sosync="True")             # Link an E-Mail template for the automatic Double-Opt-In e-mail. The Workflow is in FRST to send the e-mail and must be activated once!
 
     bestaetigung_erforderlich = fields.Boolean(sosync="True")
     bestaetigung_typ = fields.Selection(sosync="True")

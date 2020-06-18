@@ -14,4 +14,4 @@ class FRSTPersonEmailSosync(models.Model):
     gueltig_bis = fields.Date(sosync="True")
     main_address = fields.Boolean(sosync="True")
 
-    state = fields.Selection(sosync="True")
+    state = fields.Selection(sosync="fson-to-frst")

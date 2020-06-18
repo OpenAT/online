@@ -7,6 +7,15 @@
 .openerp .oe_view .oe_form .oe_form_field[data-sosync="True"] {
     border-left: 1px solid #33cd33;
 }
+.openerp .oe_view .oe_form .oe_form_field[data-sosync="frst-to-fson"] {
+    border-left: 1px solid #f207f8;
+}
+.openerp .oe_view .oe_form .oe_form_field[data-sosync="fson-to-frst"] {
+    border-left: 1px solid #f19d0d;
+}
+.openerp .oe_view .oe_form .oe_form_field[data-sosync="fson-only"] {
+    border-left: 1px solid #898989;
+}
 .openerp .oe_view .oe_form .oe_form_field.oe_form_field_date {
     height: 22px;
 }
@@ -17,6 +26,7 @@
 .openerp .oe_view_manager_view_form .oe_form .oe_form_field[data-sosync="False"]:empty,
 .openerp .oe_view_manager_view_form .oe_form .oe_form_field[data-sosync="True"]:empty {
     display: inherit !important;
+    height: 22px;
 }
 
 /* correction for the top padding */

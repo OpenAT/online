@@ -15,7 +15,9 @@ class EmailTemplateSosync(models.Model):
     subject = fields.Char(sosync="True")  # EmailBetreff
     email_from = fields.Char(sosync="True")  # EmailVon
     reply_to = fields.Char(sosync="True")  # EmailAntwortAn
-    fso_template_view_id = fields.Many2one(sosync="True")   # Not Synced by useful for syncjob creation
-    body_html = fields.Html(sosync="True")                  # Not synced but useful for syncjob creation
-    fso_email_html_parsed = fields.Text(sosync="True")      # e-mail body html to be used by multimailer
+
+    fso_template_view_id = fields.Many2one(sosync="fson-only")   # Not Synced! by useful for syncjob creation
+    body_html = fields.Html(sosync="fson-only")                  # Not synced! but useful for syncjob creation
+
+    fso_email_html_parsed = fields.Text(sosync="fson-to-frst")      # e-mail body html to be used by multimailer
 

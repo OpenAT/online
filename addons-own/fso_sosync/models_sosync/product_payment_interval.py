@@ -6,5 +6,7 @@ class ProductPaymentIntervalSosync(models.Model):
     _name = "product.payment_interval"
     _inherit = ["product.payment_interval", "base.sosync"]
 
-    name = fields.Text(sosync="True")
-    xml_id = fields.Char(sosync="True")     # unique name to be used by FRST to match the payment interval
+    # This model is read-only in FRST
+
+    name = fields.Text(sosync="fson-to-frst")
+    xml_id = fields.Char(sosync="fson-to-frst")     # unique name to be used by FRST to match the payment interval

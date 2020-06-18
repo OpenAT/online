@@ -45,7 +45,8 @@ class MailMassMailingContactSosync(models.Model):
     bestaetigt_am_um = fields.Datetime(sosync="True")
     bestaetigt_typ = fields.Selection(sosync="True")
     bestaetigt_herkunft = fields.Char(sosync="True")
-    state = fields.Selection(sosync="True")
+
+    state = fields.Selection(sosync="fson-to-frst")
 
     # FRST print fields
     # HINT: Would be great if this could be done "automatically" but right now i could not find a way ...

@@ -8,10 +8,12 @@ class PaymentTransactionSosync(models.Model):
 
     _sync_job_priority = 4000
 
-    state = fields.Selection(sosync="True")
-    frst_iban = fields.Char(sosync="True")
-    frst_bic = fields.Char(sosync="True")
-    acquirer_reference = fields.Char(sosync="True")
-    esr_reference_number = fields.Char(sosync="True")
-    reference = fields.Char(sosync="True")
-    amount = fields.Float(sosync="True")
+    # This model is read-only in FRST
+
+    state = fields.Selection(sosync="fson-to-frst")
+    frst_iban = fields.Char(sosync="fson-to-frst")
+    frst_bic = fields.Char(sosync="fson-to-frst")
+    acquirer_reference = fields.Char(sosync="fson-to-frst")
+    esr_reference_number = fields.Char(sosync="fson-to-frst")
+    reference = fields.Char(sosync="fson-to-frst")
+    amount = fields.Float(sosync="fson-to-frst")

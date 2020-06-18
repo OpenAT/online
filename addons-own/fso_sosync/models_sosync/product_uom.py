@@ -6,5 +6,7 @@ class ProductUomSosync(models.Model):
     _name = "product.uom"
     _inherit = ["product.uom", "base.sosync"]
 
-    name = fields.Char(sosync="True")
-    active = fields.Boolean(sosync="True")
+    # This model is read-only in FRST
+
+    name = fields.Char(sosync="fson-to-frst")
+    active = fields.Boolean(sosync="fson-to-frst")

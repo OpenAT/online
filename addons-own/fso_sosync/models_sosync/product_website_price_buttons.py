@@ -6,10 +6,12 @@ class ProductWebsitePriceButtonsSosync(models.Model):
     _name = "product.website_price_buttons"
     _inherit = ["product.website_price_buttons", "base.sosync"]
 
-    name = fields.Char(sosync="True")
+    # This model is read-only in FRST
 
-    amount = fields.Float(sosync="True")
-    sequence = fields.Integer(sosync="True")
+    name = fields.Char(sosync="fson-to-frst")
+
+    amount = fields.Float(sosync="fson-to-frst")
+    sequence = fields.Integer(sosync="fson-to-frst")
 
     # TO: product.template
-    product_id = fields.Many2one(sosync="True")
+    product_id = fields.Many2one(sosync="fson-to-frst")

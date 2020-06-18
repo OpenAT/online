@@ -8,9 +8,11 @@ class SaleOrderSosync(models.Model):
 
     _sync_job_priority = 4000
 
-    partner_id = fields.Many2one(sosync="True")
-    payment_tx_id = fields.Many2one(sosync="True")
-    payment_acquirer_id = fields.Many2one(sosync="True")
-    date_order = fields.Datetime(sosync="True")
-    amount_total = fields.Float(sosync="True")
-    state = fields.Selection(sosync="True")
+    # This model is read-only in FRST
+
+    partner_id = fields.Many2one(sosync="fson-to-frst")
+    payment_tx_id = fields.Many2one(sosync="fson-to-frst")
+    payment_acquirer_id = fields.Many2one(sosync="fson-to-frst")
+    date_order = fields.Datetime(sosync="fson-to-frst")
+    amount_total = fields.Float(sosync="fson-to-frst")
+    state = fields.Selection(sosync="fson-to-frst")
