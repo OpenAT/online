@@ -177,6 +177,12 @@ body #oe_snippets .nav > li.active {
     border-bottom: 1px dotted #3379b7;
     box-shadow: inset 0 0 4px #23537d45;
 }
+#email_template_settings span.form-control {
+    overflow-wrap: break-word;
+    overflow: auto;
+    height: auto;
+    min-height: 34px;
+}
 .email_template_settings_content {
     /*padding: 20px 0 0 0;*/
 }
