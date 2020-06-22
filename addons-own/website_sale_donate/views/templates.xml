@@ -71,7 +71,7 @@
     <template id="website_sale_donate_product_data" inherit_id="website.layout" name="Set shopping cart or product data attributes to website body">
         <xpath expr="//head" position="before">
             <!-- TODO: Since we set all important information right here we might remove all "website.sale_get_order()" from the other templates and just use the variable "website_sale_order" instead to speed up the template loading -->
-            <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+            <t t-set="website_sale_order" t-value="website.sale_get_order() if website else ''"/>
             <t t-set="latest_website_sale_order_line" t-value="website_sale_order.website_order_line[-1] if website_sale_order and website_sale_order.website_order_line else ''"/>
             <t t-set="latest_website_sale_order_product" t-value="(latest_website_sale_order_line.product_id or '') if latest_website_sale_order_line else ''"/>
 
