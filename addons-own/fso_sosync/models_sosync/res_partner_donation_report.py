@@ -26,7 +26,7 @@ class ResPartnerDonationReportSosync(models.Model):
     # Fields for state and submission (calculated and updated by FSON)
     # ----------------------------------------------------------------
     # ATTENTION: The 'error' state is only for errors prior to any submission!!! e.g.: bpk_missing
-    state = fields.Selection(sosync="fson-to-frst")
+    state = fields.Selection(sosync="True")                 # ATTENTION: state may be written by FRST for "imported" Donation Reports
     error_type = fields.Selection(sosync="fson-to-frst")
     error_code = fields.Char(sosync="fson-to-frst")
     error_detail = fields.Text(sosync="fson-to-frst")

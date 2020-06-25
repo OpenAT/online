@@ -10,7 +10,7 @@ class MailMassMailingContactSosync(models.Model):
     _inherit = ["mail.mass_mailing.contact", "base.sosync"]
 
     list_id = fields.Many2one(sosync="True")
-    partner_id = fields.Many2one(sosync="True")
+    # partner_id = fields.Many2one(sosync="True")       # Ganz ausgebaut!!! (intern ersetzt mit pe_partner_id)
     personemail_id = fields.Many2one(sosync="True")
     personemailgruppe_id = fields.Many2one(sosync="True")
 
