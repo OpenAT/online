@@ -443,6 +443,16 @@ class ResPartnerZMRGetBPK(models.Model):
 
         return res
 
+    @api.multi
+    def unlink(self):
+        # Prevent the deletion of partners with submitted donation reports
+        # ATTENTION: This is needed since we added a cascade delete to the partner_id field.
+        #            DELETE's DONE IN SQL ON THE DB WILL NOT CHECK THIS AND WILL DELETE PARTNERS WITH SUBMITTED REPORTS!
+        for r in self:
+            if any(rep.state not in ['new', 'skipped', 'disabled']
+                   for rep in r.donation_report_ids):
+                raise ValidationError("Submitted Donation Reports exists for partner %s" % r.id)
+
     # -------------
     # MODEL ACTIONS
     # -------------

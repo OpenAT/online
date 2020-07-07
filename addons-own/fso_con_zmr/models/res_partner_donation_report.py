@@ -161,7 +161,9 @@ class ResPartnerFADonationReport(models.Model):
                                       default="T", required=True, readonly=True, states={'new': [('readonly', False)]},
                                       track_visibility='onchange',
                                       index=True)
-    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  required=True,
+    partner_id = fields.Many2one(string="Partner", comodel_name='res.partner',  inverse_name="donation_report_ids",
+                                 ondelete='cascade',
+                                 required=True,
                                  track_visibility='onchange',
                                  readonly=True, states={'new': [('readonly', False)]},
                                  index=True)
