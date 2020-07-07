@@ -11,8 +11,20 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     # MISSING INDEXES
-    associate_member = fields.Many2one(index=True)
+    #write_uid = fields.Many2one(index=True)
+    #create_uid = fields.Many2one(index=True)
+
     country_id = fields.Many2one(index=True)
+    state_id = fields.Many2one(index=True)
+
+    title = fields.Many2one(index=True)
+    user_id = fields.Many2one(index=True)       # TODO: Check the addon of this field!
+
+    assigned_partner_id = fields.Many2one(index=True)
+    associate_member = fields.Many2one(index=True)
+    grade_id = fields.Many2one(index=True)
+    section_id = fields.Many2one(index=True)
+    payment_responsible_id = fields.Many2one(index=True)
 
     # New res.partner fields for Fundraising Studio
     # HINT: fore_name_web is DEPRECATED use firstname from partner_firstname_lastname addon
