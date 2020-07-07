@@ -6,7 +6,8 @@ from openerp import api, models, fields
 class CrmFacebookFormField(models.Model):
     _name = 'crm.facebook.form.field'
 
-    crm_form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', string='Form')
+    crm_form_id = fields.Many2one('crm.facebook.form', required=True, readonly=True, ondelete='cascade', index=True,
+                                  string='Form')
     fb_label = fields.Char(readonly=True)
     fb_field_id = fields.Char(required=True, readonly=True)
     fb_field_key = fields.Char(required=True, readonly=True)

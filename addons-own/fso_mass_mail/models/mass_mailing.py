@@ -25,7 +25,7 @@ class MassMailingCampaign(models.Model):
     # Link an utm campaign to this mass_mailing.campaign
     campaign_id = fields.Many2one('utm.campaign', 'campaign_id',
                                   required=True,
-                                  ondelete='cascade',
+                                  ondelete='cascade', index=True,
                                   help="This name helps you tracking your different campaign efforts, "
                                        "e.g. Fall_Drive, Christmas_Special",
                                   default=lambda self: self.env.ref('utm.utm_campaign_default'))
@@ -74,7 +74,7 @@ class MassMailing(models.Model):
                                   help="This name helps you tracking your different campaign efforts, e.g. Fall_Drive, Christmas_Special")
     source_id = fields.Many2one('utm.source', string='Subject',
                                 required=True,
-                                ondelete='cascade',
+                                ondelete='cascade', index=True,
                                 default=lambda self: self.env.ref('utm.utm_source_newsletter'),
                                 help="This is the link source, e.g. Search Engine, another domain, or name of email list")
     medium_id = fields.Many2one('utm.medium', string='Medium',

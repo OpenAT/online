@@ -206,7 +206,7 @@ class link_tracker_code(models.Model):
     _name = "link.tracker.code"
 
     code = fields.Char(string='Short URL Code', store=True)
-    link_id = fields.Many2one('link.tracker', 'Link', required=True, ondelete='cascade')
+    link_id = fields.Many2one('link.tracker', 'Link', required=True, ondelete='cascade', index=True)
 
     @api.model
     def get_random_code_string(self):
@@ -229,7 +229,7 @@ class link_tracker_click(models.Model):
     _rec_name = "link_id"
 
     click_date = fields.Date(string='Create Date')
-    link_id = fields.Many2one('link.tracker', 'Link', required=True, ondelete='cascade')
+    link_id = fields.Many2one('link.tracker', 'Link', required=True, ondelete='cascade', index=True)
     ip = fields.Char(string='Internet Protocol')
     country_id = fields.Many2one('res.country', 'Country')
 

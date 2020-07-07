@@ -17,7 +17,7 @@ class FRSTzGruppeDetail(models.Model):
 
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
                                  string="zGruppeID",
-                                 required=True, ondelete="cascade")
+                                 required=True, ondelete="cascade", index=True)
     geltungsbereich = fields.Selection(string="Geltungsbereich",
                                        selection=[('local', 'Local Group'),
                                                   ('system', 'System Group')],

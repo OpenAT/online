@@ -19,7 +19,7 @@ class product_website_price_buttons(models.Model):
     snippets = fields.Html(string='Snippet Dropping Area')
     amount = fields.Float(string='Amount', required=True)
     product_id = fields.Many2one(comodel_name='product.template', inverse_name="price_suggested_ids",
-                                 string='Product', required=True, ondelete='cascade')
+                                 string='Product', required=True, ondelete='cascade', index=True)
     css_classes = fields.Char(string='CSS classes')
     clearfix = fields.Boolean(string="Linebreak")
     arbitrary_price = fields.Boolean(string="Arbitrary Price")

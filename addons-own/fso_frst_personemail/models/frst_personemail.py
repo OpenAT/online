@@ -92,10 +92,11 @@ class FRSTPersonEmail(models.Model):
 
     # Partner related to this e-mail address
     partner_id = fields.Many2one(string="Person", required=True, ondelete='cascade',
-                                comodel_name="res.partner", inverse_name='frst_personemail_ids',
-                                help="This field should normally NEVER change after record creation. The only exception"
-                                     "to this rule would be a quick typo fix after manual creation in FRST GUI.",
-                                index=True)
+                                 comodel_name="res.partner", inverse_name='frst_personemail_ids',
+                                 help="This field should normally NEVER change after record creation. The only "
+                                      "exception to this rule would be a quick typo fix after manual creation in FRST "
+                                      "GUI.",
+                                 index=True)
     partner_main_email_ids = fields.One2many(string="Main E-Mail Partner(s)",
                                              comodel_name='res.partner', inverse_name='main_personemail_id',
                                              readonly=True,

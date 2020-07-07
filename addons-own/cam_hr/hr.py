@@ -184,7 +184,7 @@ class hr_holidays_template(osv.osv):
         'name': fields.char('Name', size=100, required=True),
         'sequence': fields.integer('Sequence',help=_('If there are multiple templates, the one with the lowest sequence is chosen.')),
         'create_employees': fields.boolean('Create holidays for new employees'),
-        'line_ids': fields.one2many('hr.holidays.template_line','template_id','Public Holidays',ondelete='cascade'),
+        'line_ids': fields.one2many('hr.holidays.template_line','template_id','Public Holidays',ondelete='cascade', index=True),
     }
     
     _defaults = {    
