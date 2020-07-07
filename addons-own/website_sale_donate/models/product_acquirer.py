@@ -11,8 +11,8 @@ class acquirer_lines(models.Model):
 
     sequence = fields.Integer(string='Sequence', default=1000)
 
-    acquirer_id = fields.Many2one(comodel_name='payment.acquirer', string='Payment Acquirer', required=True)
-    product_id = fields.Many2one(comodel_name='product.template', string='Product', required=True)
+    acquirer_id = fields.Many2one(comodel_name='payment.acquirer', string='Payment Acquirer', required=True, index=True)
+    product_id = fields.Many2one(comodel_name='product.template', string='Product', required=True, index=True)
 
     acquirer_pre_msg = fields.Html(string="Overwrite Default Acquirer Message", translate=True)
 

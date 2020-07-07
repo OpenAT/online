@@ -20,6 +20,7 @@ class FRSTzVerzeichnis(models.Model):
     bemerkung = fields.Text(string="Bemerkung", help="Bemerkung")
 
     parent_id = fields.Many2one(comodel_name="frst.zverzeichnis", inverse_name='child_ids', string="Ordner",
+                                index=True,
                                 domain="[('verzeichnistyp_id','=',True)]",
                                 help="zVerzeichnisIDParent, Folder in which this CDS record belongs",
                                 track_visibility='onchange')

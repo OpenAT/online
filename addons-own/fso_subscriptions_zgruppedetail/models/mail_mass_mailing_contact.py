@@ -15,6 +15,7 @@ class MailMassMailingContact(models.Model):
     #       contact when the PersonEmailGruppe gets deleted!
     personemailgruppe_id = fields.Many2one(string="PersonEmailGruppe",
                                            comodel_name="frst.personemailgruppe",
+                                           index=True,
                                            readonly=True, ondelete="set null")
 
     @api.multi

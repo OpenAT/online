@@ -107,7 +107,7 @@ class product_template(osv.Model):
         # DEPRECATED payment_interval_ids only left here for downward compatibility
         'payment_interval_ids': fields.many2many('product.payment_interval', string='Payment Intervals'),
         # PAYMENT INTERVAL
-        'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval'),
+        'payment_interval_default': fields.many2one('product.payment_interval', string='Default Payment Interval', index=True),
         'payment_interval_as_selection': fields.boolean(string='Payment Interval as Selection List'),
         'payment_interval_lines_ids': fields.one2many('product.payment_interval_lines', 'product_id',
                                                string='Payment Intervals', copy=True),
@@ -185,10 +185,10 @@ class account_invoice(osv.Model):
     _inherit = 'account.invoice'
 
     _columns = {
-        'wsd_cat_root_id': fields.many2one('product.public.category', 'RootCateg.', on_delete='set null', copy=False),
-        'wsd_so_id': fields.many2one('sale.order', 'Sale Order', on_delete='set null', copy=False),
-        'wsd_payment_acquirer_id': fields.many2one('payment.acquirer', 'Payment Acquirer', on_delete='set null', copy=False),
-        'wsd_payment_tx_id': fields.many2one('payment.transaction', 'Transaction', on_delete='set null', copy=False),
+        'wsd_cat_root_id': fields.many2one('product.public.category', 'RootCateg.', on_delete='set null', copy=False, index=True),
+        'wsd_so_id': fields.many2one('sale.order', 'Sale Order', on_delete='set null', copy=False, index=True),
+        'wsd_payment_acquirer_id': fields.many2one('payment.acquirer', 'Payment Acquirer', on_delete='set null', copy=False, index=True),
+        'wsd_payment_tx_id': fields.many2one('payment.transaction', 'Transaction', on_delete='set null', copy=False, index=True),
     }
 
 

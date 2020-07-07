@@ -129,6 +129,7 @@ class ResPartnerFADonationReport(models.Model):
     # ----------------
     # Erstmeldung
     report_erstmeldung_id = fields.Many2one(string="Zugehoerige Erstmeldung", track_visibility='onchange',
+                                            index=True,
                                             comodel_name='res.partner.donation_report', readonly=True)
     # Follow Up reports to this Erstmeldung
     report_follow_up_ids = fields.One2many(string="Follow-Up Reports", comodel_name="res.partner.donation_report",
@@ -137,6 +138,7 @@ class ResPartnerFADonationReport(models.Model):
     # ------------
     # Skipped by donation report
     skipped_by_id = fields.Many2one(string="Skipped by Report", comodel_name='res.partner.donation_report',
+                                    index=True,
                                     readonly=True)
     # This report skipped these donation reports
     skipped = fields.One2many(string="Skipped the Reports", comodel_name="res.partner.donation_report",
@@ -147,6 +149,7 @@ class ResPartnerFADonationReport(models.Model):
     # The last submitted report that should be cancelled by this cancellation donation report
     cancelled_lsr_id = fields.Many2one(string="Cancelled Last Submitted Report",
                                        comodel_name='res.partner.donation_report',
+                                       index=True,
                                        readonly=True)
     # The cancellation donation report(s) that cancelled this regular report
     cancelled_by_ids = fields.One2many(string="Cancelled by Report(s)",

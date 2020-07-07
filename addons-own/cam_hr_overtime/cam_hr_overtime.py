@@ -40,8 +40,8 @@ class overtime_correction(osv.osv):
     _columns = {
         'value_hours': fields.float('Hours', required=True, help="This field is added to the current overtime. For correction please insert a negative value! e.g. -20"),
         'name': fields.char('Description', size=128, required=True, help="Diese Beschreibung wird auf dem Timesheet angedruckt!"),
-        'timesheet_id': fields.many2one('hr_timesheet_sheet.sheet', 'Timesheet', required=True, help="Bitte beachten Sie, dass das Timesheet im status 'Entwurf' sein muss!"),
-        'employee_id': fields.many2one('hr.employee', 'Employee', required=True),
+        'timesheet_id': fields.many2one('hr_timesheet_sheet.sheet', 'Timesheet', required=True, index=True, help="Bitte beachten Sie, dass das Timesheet im status 'Entwurf' sein muss!"),
+        'employee_id': fields.many2one('hr.employee', 'Employee', required=True, index=True),
     }
     
     _defaults = {
@@ -495,7 +495,7 @@ class hr_timesheet_sheet_sheet_day_detail(osv.osv):
     
     _columns = {
         'name': fields.date('Date', readonly=True),
-        'sheet_id': fields.many2one('hr_timesheet_sheet.sheet', 'Sheet', readonly=True, select="1"),
+        'sheet_id': fields.many2one('hr_timesheet_sheet.sheet', 'Sheet', readonly=True, select="1", index=True),
         'employee_id': fields.many2one('hr.employee', 'Employee', readonly=True, select="1"),
         'attendance': fields.function(_attendance, string='Attendance', type='float', readonly=True),
         #'planned': fields.function(_planned_hours, string='Planned', readonly=True),

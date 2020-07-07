@@ -30,8 +30,8 @@ class cam_hr_ovetime_config_settings(osv.osv_memory):
         'max_difference_day': fields.integer('Max difference per Day', required=True,
                                       help='Max difference per day in minutes. If difference is higher, it will raise a warning each sign in/sign out with the specific days. User wont be able to confirm the timesheet, if there are >1 days.\nThis check is only active if value > 0.'),
         'lunch_duration': fields.integer('Lunch Duration', help='Lunch duration in minutes (used for Lunch-button)'),
-        'vacation_type_id': fields.many2one('hr.holidays.status', 'Holiday state of vacation'),
-        'illness_type_id': fields.many2one('hr.holidays.status', 'Holiday state of illness'),
+        'vacation_type_id': fields.many2one('hr.holidays.status', 'Holiday state of vacation', index=True),
+        'illness_type_id': fields.many2one('hr.holidays.status', 'Holiday state of illness', index=True,),
     }
     
     def get_default_overtime_values(self, cr, uid, fields, context=None):

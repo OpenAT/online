@@ -47,6 +47,7 @@ class product_public_category_menu(models.Model):
     #       each category (domain filter in main.py)
     # ATTENTION: Hidden categories are treated like root categories even if root_cat is not set!
     cat_root_id = fields.Many2one(comodel_name='product.public.category',
+                                  index=True,
                                   string='Parent Root Category')
     # DIV boxes classes
     cat_products_grid_before = fields.Char(string="CSS classes for div#products_grid_before")
@@ -66,7 +67,7 @@ class product_public_category_menu(models.Model):
                                                         'Payment Provider instead of /shop/confirmation_static',
                                                    translate=True)
     # Sales Team for Sales Orders
-    cat_section_id = fields.Many2one(comodel_name='crm.case.section', string='Sales Team')
+    cat_section_id = fields.Many2one(comodel_name='crm.case.section', string='Sales Team', index=True)
 
 
     # Update the field cat_root_id at addon installation or update
@@ -168,15 +169,15 @@ class product_public_category_menu(models.Model):
 class sale_order_line(models.Model):
     _inherit = 'sale.order.line'
 
-    cat_root_id = fields.Many2one(comodel_name='product.public.category', string='RootCateg.')
-    cat_id = fields.Many2one(comodel_name='product.public.category', string='Categ.')
+    cat_root_id = fields.Many2one(comodel_name='product.public.category', string='RootCateg.', index=True)
+    cat_id = fields.Many2one(comodel_name='product.public.category', string='Categ.', index=True)
 
 
 # Store the cat_id and cat_root_id in the sale order line and in the sale order if all lines are similar!
 class sale_order(models.Model):
     _inherit = "sale.order"
 
-    cat_root_id = fields.Many2one(comodel_name='product.public.category', string='RootCateg.',)
+    cat_root_id = fields.Many2one(comodel_name='product.public.category', string='RootCateg.', index=True)
 
     def _cart_update(self, cr, uid, ids, product_id=None, line_id=None, add_qty=0, set_qty=0, context=None, **kwargs):
 

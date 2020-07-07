@@ -13,4 +13,5 @@ class MailMassMailingList(models.Model):
     partner_mandatory = fields.Boolean(string="Mandatory Partner",
                                        default=False)
     partner_category = fields.Many2one(comodel_name='res.partner.category',
+                                       index=True,
                                        string="Partner Tag")

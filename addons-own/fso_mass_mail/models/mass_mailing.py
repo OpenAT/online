@@ -30,9 +30,11 @@ class MassMailingCampaign(models.Model):
                                        "e.g. Fall_Drive, Christmas_Special",
                                   default=lambda self: self.env.ref('utm.utm_campaign_default'))
     source_id = fields.Many2one('utm.source', string='Source',
+                                index=True,
                                 help="This is the link source, e.g. Search Engine, another domain,or name of email list",
                                 default=lambda self: self.env.ref('utm.utm_source_newsletter'))
     medium_id = fields.Many2one('utm.medium', string='Medium',
+                                index=True,
                                 help="This is the delivery method, e.g. Postcard, Email, or Banner Ad",
                                 default=lambda self: self.env.ref('utm.utm_medium_email'))
 
@@ -66,11 +68,13 @@ class MassMailing(models.Model):
     # ATTENTION: With the added unique() sql constraint this is roughly a one2one field!
     email_template_id = fields.Many2one(string="FSO E-Mail Template",
                                         comodel_name="email.template", inverse_name="mass_mailing_ids",
+                                        index=True,
                                         domain="[('fso_email_template','=',True)]",
                                         context="{'default_fso_email_template': True,}")
 
     # utm and link_tracker integration
     campaign_id = fields.Many2one('utm.campaign', string='Campaign',
+                                  index=True,
                                   help="This name helps you tracking your different campaign efforts, e.g. Fall_Drive, Christmas_Special")
     source_id = fields.Many2one('utm.source', string='Subject',
                                 required=True,
@@ -78,6 +82,7 @@ class MassMailing(models.Model):
                                 default=lambda self: self.env.ref('utm.utm_source_newsletter'),
                                 help="This is the link source, e.g. Search Engine, another domain, or name of email list")
     medium_id = fields.Many2one('utm.medium', string='Medium',
+                                index=True,
                                 help="This is the delivery method, e.g. Postcard, Email, or Banner Ad", default=lambda self: self.env.ref('utm.utm_medium_email'))
     clicks_ratio = fields.Integer(compute="_compute_clicks_ratio", string="Number of Clicks")
 

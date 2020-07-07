@@ -253,7 +253,7 @@ class WebsiteAsWidget(models.Model):
     source_protocol = fields.Selection([('http', "http://"),
                                         ('https', "https://")],
                                        string="Protocol", default='https', required=True)
-    source_domain = fields.Many2one(string='Source Domain', comodel_name='website.website_domains', required=True)
+    source_domain = fields.Many2one(string='Source Domain', comodel_name='website.website_domains', required=True, index=True)
     source_page = fields.Char(string="Source Page", required=True)
     source_screenshot = fields.Binary(string="Source Screenshot")
     # target

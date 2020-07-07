@@ -24,10 +24,10 @@ class calendar_event(osv.osv):
     no_invitations = Boolean(string='No invitation e-mails!', help='Do not send invitation e-mails!', default=True)
     odometer_start = Integer(string='Odometer at start')
     odometer_finish = Integer(string='Odometer at finish')
-    category_id = Many2one('calendar.event.category', string='Category', required=True,
+    category_id = Many2one('calendar.event.category', string='Category', required=True, index=True,
                            default=lambda self: self._get_category())
     meeting_minutes = Text('Internal Meeting Minutes')
-    mainpartner_id = Many2one('res.partner', string='Main Partner')
+    mainpartner_id = Many2one('res.partner', string='Main Partner', index=True)
 
     @api.onchange('mainpartner_id')
     def _add_attendee(self):

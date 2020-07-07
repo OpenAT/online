@@ -39,7 +39,7 @@ class Website(models.Model):
     checkout_title = fields.Char(string='Your Data Form-Title', translate=True)
     delivery_title = fields.Char(string='Delivery-Option Form-Title', translate=True)
     payment_title = fields.Char(string='Payment-Option Form-Title', translate=True)
-    country_default_value = fields.Many2one(comodel_name='res.country', string='Default country for checkout page')
+    country_default_value = fields.Many2one(comodel_name='res.country', string='Default country for checkout page', index=True)
     hide_shipping_address = fields.Boolean(string='Hide Shipping Address')
     hide_delivery_methods = fields.Boolean(string='Hide Delivery Methods')
     checkoutbox_footer = fields.Html(string='Global Footer for the Checkoutbox', translate=True)
@@ -53,8 +53,8 @@ class Website(models.Model):
 
     # SHOP PAYMENT
     # Payment Form
-    acquirer_default = fields.Many2one(comodel_name='payment.acquirer', string='Default Payment Method')
-    payment_interval_default = fields.Many2one(comodel_name='product.payment_interval',
+    acquirer_default = fields.Many2one(comodel_name='payment.acquirer', string='Default Payment Method', index=True)
+    payment_interval_default = fields.Many2one(comodel_name='product.payment_interval', index=True,
                                                string='Default Payment Interval')
     payment_interval_as_selection = fields.Boolean(string='Payment Interval as Selection List')
     # Payment Page
@@ -97,6 +97,7 @@ class Website(models.Model):
         return self.env.ref('sale.email_template_edi_sale')
 
     OrderEmail = fields.Many2one(comodel_name="email.template", string="Sale Order E-Mail Template",
+                                 index=True,
                                  default=_default_order_email, readonly=True)
     OrderEmailPartnerTo = fields.Char(related="OrderEmail.partner_to", readonly=True)
     OrderEmailSubject = fields.Char(related="OrderEmail.subject", readonly=True)
@@ -107,6 +108,7 @@ class Website(models.Model):
         return self.env.ref('fso_base.email_template_webshop')
 
     StatusEmail = fields.Many2one(comodel_name="email.template", string="Payment Status E-Mail Template",
+                                  index=True,
                                   default=_default_status_email, readonly=True)
     StatusEmailPartnerTo = fields.Char(related="StatusEmail.partner_to", readonly=True)
     StatusEmailSubject = fields.Char(related="StatusEmail.subject", readonly=True)

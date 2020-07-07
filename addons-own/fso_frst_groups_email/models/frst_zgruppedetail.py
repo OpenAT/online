@@ -14,6 +14,7 @@ class FRSTzGruppeDetailApprovalMail(models.Model):
     subscription_email = fields.Many2one(string="Subscription E-Mail",
                                          comodel_name='email.template',
                                          inverse_name="frst_groups_subscription_email",
+                                         index=True,
                                          domain="[('fso_email_template', '=', True)]",
                                          help="E-Mail will be send for every newly created subscription in the state "
                                               "'subscribed.', 'approval_pending' or 'approved'. Leave this empty "
@@ -29,6 +30,7 @@ class FRSTzGruppeDetailApprovalMail(models.Model):
     bestaetigung_success_email = fields.Many2one(string="DOI Success E-Mail Template",
                                                  comodel_name='email.template',
                                                  inverse_name="frst_groups_bestaetigung_success_email",
+                                                 index=True,
                                                  domain="[('fso_email_template', '=', True)]",
                                                  help="E-Mail will be send after successful Double-Opt-In approval of "
                                                       "the subscription")

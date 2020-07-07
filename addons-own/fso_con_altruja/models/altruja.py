@@ -22,7 +22,7 @@ class Altruja(models.Model):
 
     # Check if the same job exits already
     skipped = fields.One2many(comodel_name='altruja', inverse_name='skipped_by', readonly=True)
-    skipped_by = fields.Many2one(comodel_name='altruja', inverse_name='skipped', readonly=True)
+    skipped_by = fields.Many2one(comodel_name='altruja', inverse_name='skipped', index=True, readonly=True)
 
     # Errors and exceptions
     error_type = fields.Selection([('processing', 'Processing'),
@@ -40,12 +40,16 @@ class Altruja(models.Model):
     partner_id = fields.Many2one(comodel_name='res.partner', inverse_name="altruja_ids",
                                  readonly=True, index=True)
     sale_order_id = fields.Many2one(comodel_name='sale.order', inverse_name="altruja_ids",
+                                    index=True,
                                     readonly=True)
     sale_order_line_id = fields.Many2one(comodel_name='sale.order.line', inverse_name="altruja_ids",
+                                         index=True,
                                          readonly=True)
     payment_transaction_id = fields.Many2one(comodel_name='payment.transaction', inverse_name="altruja_ids",
+                                             index=True,
                                              readonly=True)
     bank_id = fields.Many2one(comodel_name='res.partner.bank', inverse_name="altruja_ids",
+                              index=True,
                               readonly=True, help="Bankkonto")
 
     # Altruja Fields

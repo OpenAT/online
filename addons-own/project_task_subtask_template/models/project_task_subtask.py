@@ -16,17 +16,18 @@ class ProjectTaskSubtask(models.Model):
     # For subtasks used in subtask templates
     # Link to templates
     subtask_template_id = fields.Many2one(string="Template",
-                                          comodel_name='project.task.subtask.template')
+                                          comodel_name='project.task.subtask.template', index=True)
 
     # For subtasks used in tasks
     # HINT: Keep a reference to the original subtask from a template
-    template_subtask_id = fields.Many2one(string='Origin', comodel_name='project.task.subtask')
+    template_subtask_id = fields.Many2one(string='Origin', comodel_name='project.task.subtask', index=True)
 
     task_template_subtask_ids = fields.One2many(string='Used by Task Subtasks',
                                                 comodel_name='project.task.subtask', inverse_name='template_subtask_id')
 
     template_subtask_id_template_id = fields.Many2one(string="Origin Template",
                                                       comodel_name='project.task.subtask.template',
+                                                      index=True,
                                                       related='template_subtask_id.subtask_template_id', store=True)
     template_subtask_id_name = fields.Char(string="Origin Description", readonly=True,
                                            related="template_subtask_id.name")
@@ -34,8 +35,8 @@ class ProjectTaskSubtask(models.Model):
                                                            related="template_subtask_id.extended_description")
 
     # Remove required for some fields
-    user_id = fields.Many2one(required=False)
-    task_id = fields.Many2one(required=False)
+    user_id = fields.Many2one(required=False, index=True)
+    task_id = fields.Many2one(required=False, index=True)
 
     # Order Subtasks by sequence field
     _order = 'sequence'

@@ -452,6 +452,8 @@ class ResPartnerZMRGetBPK(models.Model):
             if any(rep.state not in ['new', 'skipped', 'disabled']
                    for rep in r.donation_report_ids):
                 raise ValidationError("Submitted Donation Reports exists for partner %s" % r.id)
+        
+        return super(ResPartnerZMRGetBPK, self).unlink()
 
     # -------------
     # MODEL ACTIONS

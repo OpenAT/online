@@ -231,7 +231,7 @@ class link_tracker_click(models.Model):
     click_date = fields.Date(string='Create Date')
     link_id = fields.Many2one('link.tracker', 'Link', required=True, ondelete='cascade', index=True)
     ip = fields.Char(string='Internet Protocol')
-    country_id = fields.Many2one('res.country', 'Country')
+    country_id = fields.Many2one('res.country', 'Country', index=True)
 
     @api.model
     def add_click(self, code, ip, country_code, stat_id=False):

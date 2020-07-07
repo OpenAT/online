@@ -8,7 +8,7 @@ from openerp import models, fields, api
 class MailMailStatistics(models.Model):
     _inherit = "mail.mail.statistics"
 
-    personemail_id = fields.Many2one(comodel_name='frst.personemail', string="Person Email (FRST)")
+    personemail_id = fields.Many2one(comodel_name='frst.personemail', string="Person Email (FRST)", index=True)
 
     # Related field did not work for updates - therefore i try it now as a regular field
     partner_id = fields.Many2one(string="Partner", comodel_name='res.partner', readonly=True, index=True)

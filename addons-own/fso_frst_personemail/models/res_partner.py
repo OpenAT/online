@@ -15,6 +15,7 @@ class ResPartner(models.Model):
 
     # Link the main PersonEmail
     main_personemail_id = fields.Many2one(comodel_name="frst.personemail", inverse_name='partner_main_email_ids',
+                                          index=True,
                                           string="Main Email", readonly=True,
                                           track_visibility='onchange', ondelete='set null')
 

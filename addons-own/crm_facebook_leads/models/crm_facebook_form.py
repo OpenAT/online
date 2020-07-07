@@ -34,6 +34,7 @@ class CrmFacebookForm(models.Model):
 
     crm_page_id = fields.Many2one(string='Facebook Page',
                                   comodel_name='crm.facebook.page', inverse_name='crm_form_ids',
+                                  index=True,
                                   required=True, readonly=True)
     mappings = fields.One2many(string="Form Field Mapping",
                                comodel_name='crm.facebook.form.field', inverse_name='crm_form_id',
@@ -41,6 +42,7 @@ class CrmFacebookForm(models.Model):
 
     # Sales team / leads section
     section_id = fields.Many2one(comodel_name='crm.case.section',
+                                 index=True,
                                  domain=['|',
                                          ('use_leads', '=', True),
                                          ('use_opportunities', '=', True)],

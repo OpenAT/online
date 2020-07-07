@@ -13,6 +13,7 @@ class CrmFacebookFormField(models.Model):
     fb_field_key = fields.Char(required=True, readonly=True)
     fb_field_type = fields.Char(readonly=True)
     crm_field = fields.Many2one('ir.model.fields',
+                                index=True,
                                 domain=[('model', '=', 'crm.lead'),
                                         ('ttype', 'in', ('char',
                                                          'date',

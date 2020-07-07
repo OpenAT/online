@@ -1,5 +1,6 @@
 # -*- coding: utf-'8' "-*-"
 from openerp import api, models, fields, SUPERUSER_ID
+from openerp.exceptions import ValidationError
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -8,6 +9,10 @@ _logger = logging.getLogger(__name__)
 # Additional fields for the web checkout
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+
+    # MISSING INDEXES
+    associate_member = fields.Many2one(index=True)
+    country_id = fields.Many2one(index=True)
 
     # New res.partner fields for Fundraising Studio
     # HINT: fore_name_web is DEPRECATED use firstname from partner_firstname_lastname addon
@@ -47,6 +52,18 @@ class ResPartner(models.Model):
     #                                         ('female_male', 'Female/Male'),
     #                                         ('male_female', 'Male/Female'),
     #                                         ])
+
+    @api.multi
+    def unlink(self):
+
+        # Check if any of the partners has a user attached that belongs to group 'base.group_user'
+        if self:
+            users = self.env['res.users'].sudo().search([('partner_id', 'in', self.ids)])
+            if any(u.has_group('base.group_user') for u in users):
+                raise ValidationError('You can not delete a partner linked to a user that belongs to the '
+                                      '"base.group_user" group! (partner ids: %s)' % self.ids)
+
+        return super(ResPartner, self).unlink()
 
     @api.model
     def update_system_user_names_for_firstname_lastname_addon(self):
