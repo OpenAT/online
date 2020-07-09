@@ -478,7 +478,7 @@
 
                 <!-- Back and Submit Buttons -->
                 <t t-if="not hide_wsd_cfi_buttons">
-                    <div class="clearfix">
+                    <div class="clearfix wsd_cfi_buttons">
                         <!-- Back-To-Page Button -->
                         <t t-call="website_sale_donate.wsd_button_back_to_page">
                             <t t-set="wsd_button_back_to_page" t-value="'btn btn-default'"/>
@@ -487,12 +487,12 @@
                         <!-- Button Submit-Checkout-Form (button_data_to_payment) -->
                         <a class="btn btn-primary pull-right a-submit" id="wsd_checkout_form_submit_button">
                             <t t-if="website.button_data_to_payment">
-                               <span t-field="website.button_data_to_payment"/>
+                                <span class="wsd_checkout_form_submit_button_text" t-field="website.button_data_to_payment"/>
                             </t>
                             <t t-if="not website.button_data_to_payment">
-                               Confirm
+                                <span class="wsd_checkout_form_submit_button_text">Confirm</span>
                             </t>
-                            &amp;nbsp;<span class="glyphicon glyphicon-chevron-right"/>
+                            &amp;nbsp;<span class="wsd_checkout_form_submit_button_icon glyphicon glyphicon-chevron-right"/>
                         </a>
                     </div>
                 </t>

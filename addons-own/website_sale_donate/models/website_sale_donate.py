@@ -343,6 +343,33 @@ class sale_order(osv.Model):
             for l in order.website_order_line:
                 if l.exists() and l.id != sol.id:
 
+                    # Product theme mismatch
+                    if product.donation_input_template != l.product_id.donation_input_template:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'donation_input_template do not match' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
+                    # Checkout steps configuration mismatch
+                    if product.step_indicator_setup:
+                        # Check if the different setups match
+                        if l.product_id.step_indicator_setup:
+                            if any(product[sf] != l.product_id[sf] for sf in product.product_tmpl_id._step_config_fields):
+                                _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                             'checkout steps configurations do not match' % (l.id, order.id))
+                                sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                                continue
+                        else:
+                            sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                            continue
+
+                    # Checkout fields form mismatch (billing fields)
+                    if product.checkout_form_id != l.product_id.checkout_form_id:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'checkout fields configurations do not match' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
                     # Acquirer config mismatch
                     if product.product_acquirer_lines_ids != l.product_id.product_acquirer_lines_ids:
                         product_acquirer_ids = [] if not product.product_acquirer_lines_ids \
@@ -355,21 +382,6 @@ class sale_order(osv.Model):
                                          'acquirer configurations do not match' % (l.id, order.id))
                             sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
                             continue
-
-                    # Checkout steps mismatch
-                    if product.step_indicator_setup and l.product_id.step_indicator_setup:
-                        if any(product[sf] != l.product_id[sf] for sf in product.product_tmpl_id._step_config_fields):
-                            _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
-                                         'checkout steps configurations do not match' % (l.id, order.id))
-                            sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
-                            continue
-
-                    # Checkout fields mismatch (billing fields)
-                    if product.checkout_form_id != l.product_id.checkout_form_id:
-                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
-                                     'checkout fields configurations do not match' % (l.id, order.id))
-                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
-                        continue
 
         return cu
 
