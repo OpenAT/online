@@ -2,6 +2,10 @@
 
 from openerp.tests import common
 from openerp.tools.safe_eval import safe_eval
+from openerp import fields
+from datetime import datetime
+from datetime import timedelta
+from openerp.exceptions import ValidationError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -74,3 +78,46 @@ class TestFRSTPersonEmail(common.TransactionCase):
                                   keep_id=self.partner_max1.main_personemail_id.id)
         # Check if the main email of max 2 is max2_email2@test.com
         self.assertEqual(self.partner_max2.main_personemail_id.email, 'max2_email2@test.com')
+
+    def test_06_forced_main_email_address(self):
+        # Lock the current partner email as the main email
+        self.partner_max1.main_personemail_id.write({'forced_main_address': True})
+        # Create another personemail
+        self.partner_max1.write({'email': 'new_email_address@test.com'})
+        # Check that the first personemail is still the main
+        self.assertEqual(self.partner_max1.main_personemail_id.email, 'max@test.com')
+
+    def test_07_inactivate_forced_main_email_address_before(self):
+        email_max1 = self.partner_max1.main_personemail_id
+        # Lock the current partner email as the main email
+        email_max1.write({'forced_main_address': True})
+        # Deactivate the personemail
+        email_max1.write({'gueltig_bis': datetime.now() - timedelta(days=1)})
+        self.assertEqual(email_max1.state, 'inactive')
+        # Create another email
+        self.partner_max1.write({'email': 'new_email_address@test.com'})
+        # Make sure the new email is the new main email
+        self.assertEqual(self.partner_max1.main_personemail_id.email, 'new_email_address@test.com')
+
+    def test_08_inactivate_forced_main_email_address_after(self):
+        email_max1 = self.partner_max1.main_personemail_id
+        # Lock the current partner email as the main email
+        email_max1.write({'forced_main_address': True})
+        # Create another email
+        self.partner_max1.write({'email': 'new_email_address@test.com'})
+        # Make sure the max@ email is still the main mail because it is the forced main email
+        self.assertEqual(self.partner_max1.main_personemail_id.email, 'max@test.com')
+        # Deactivate the max@ email after the new email was created
+        email_max1.write({'gueltig_bis': datetime.now() - timedelta(days=1)})
+        self.assertEqual(email_max1.state, 'inactive')
+        # Make sure the new email is the new main email
+        self.assertEqual(self.partner_max1.main_personemail_id.email, 'new_email_address@test.com')
+
+    def test_09_set_two_emails_as_forced_main_address(self):
+        email_max1 = self.partner_max1.main_personemail_id
+        email_max1.write({'forced_main_address': True})
+        self.assertEqual(email_max1.forced_main_address, True)
+        with self.assertRaises(AssertionError):
+            self.env['frst.personemail'].create({'partner_id': self.partner_max1.id,
+                                                 'email': 'new_email_address@test.com',
+                                                 'forced_main_address': True})

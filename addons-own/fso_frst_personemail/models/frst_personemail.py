@@ -121,12 +121,19 @@ class FRSTPersonEmail(models.Model):
                              help="A PersonEmail has a state of active if the e-mail format seems valid and now is "
                                   "inside gueltig_von and gueltig_bis")
 
-    # Main email address indicator
+    # Main email address indicator (computed in CRUD)
     main_address = fields.Boolean(string="Main Address", readonly=True,
                                   # compute="compute_main_address", store=True,
                                   help="This indicates if the record is the primary active e-mail address. "
                                        "It will be used in webforms or exports where only one e-mail is allowed."
                                        "It should match with the email field in res.partner!")
+
+    # Force an email to be the main_address
+    forced_main_address = fields.Boolean(string="Forced Main Address",
+                                         help="If set this Email will always be the main address! Can only be set"
+                                              "if the address is in state active. If the forced main email becomes "
+                                              "'inactive' it will not be the main email adress but the last changed"
+                                              "personemail until it is reactivated again.")
 
     # E-Mail approval information
     # ATTENTION: If bestaetigt_am_um is set the E-Mail counts as approved!
@@ -141,6 +148,14 @@ class FRSTPersonEmail(models.Model):
     # -------
     # METHODS
     # -------
+    @api.multi
+    def get_forced(self):
+        """ returns a recordset with all forced main email addresses for the partners of the given personemail
+        recordset
+        """
+        partner_to_check = self.mapped('partner_id')
+        return self.search([('partner_id', 'in', partner_to_check.ids), ('forced_main_address', '=', True)])
+
     @api.multi
     def compute_state(self):
         """ Will only update the 'state' field of frst.personemail """
@@ -177,11 +192,18 @@ class FRSTPersonEmail(models.Model):
             p_id = emails[0].partner_id.id
             p_emails = emails.search([('partner_id', '=', p_id)], order='last_email_update desc, create_date desc')
 
-            # Find active_main_email if any
+            # Find active emails if any
             p_emails_active = p_emails.filtered(lambda m: m.state == 'active')
+
+            # Find forced_main_address active emails if any
+            p_emails_active_forced = p_emails_active.filtered(lambda m: m.forced_main_address)
+            assert len(p_emails_active_forced) <= 1, "More than one forced main email address for partner %s: %s" \
+                                                     "" % (p_id, p_emails_active_forced.ids)
+
+            # Compute the new main email
             if p_emails_active:
                 # HINT: p_emails(_active) is already sorted by 'last_email_update desc'
-                active_main_email = p_emails_active[0]
+                active_main_email = p_emails_active_forced[0] if p_emails_active_forced else p_emails_active[0]
             else:
                 # HINT: In this case p_emails_active is an empty record set
                 active_main_email = p_emails_active
@@ -189,18 +211,21 @@ class FRSTPersonEmail(models.Model):
             # Update main_email and related res.partner email field
             if active_main_email:
 
-                # Set active_main_email as new main_address if it isnt already the main address
+                # Set active_main_email as new main_address if it isn't already the main address
                 if not active_main_email.main_address:
                     active_main_email.write({'main_address': True})
 
                 # TODO: THIS IS A FIX FOR FSO MERGE - MAYBE WITH UNKNOWN SIDE EFFECTS ...
+                # Check if two or more partner point to the same main email - which is a bug that may be caused by
+                # database merges
                 wrong_partners = active_main_email.partner_main_email_ids.filtered(
                     lambda p: p.id != active_main_email.partner_id.id
                 )
                 if wrong_partners:
                     logger.error('More than one Partner for partner_main_email_ids! %s' % wrong_partners.ids)
                     wrong_partners.write({'main_personemail_id': False})
-                # TODO: Maybe we should recompute the mainemail for the wrong partners too?
+                    logger.info('Recompute main email address for wrong partners with ids: %s' % wrong_partners.ids)
+                    wrong_partners.frst_personemail_ids.compute_main_address()
 
             # Unset 'main_address' for all other email addresses
             p_emails_main = p_emails.filtered(lambda m: m.main_address)
@@ -302,6 +327,14 @@ class FRSTPersonEmail(models.Model):
         # Compute 'last_email_update' and 'gueltig_bis' values
         values = self.compute_last_email_update_gueltig_bis(values)
 
+        # Check that no other personemail for this person exists where forced_main_address is set
+        if values.get('forced_main_address', None):
+            forced = self.get_forced()
+            if forced:
+                raise ValidationError(_("Another forced main email address (id %s) exists for this partner (id %s)! "
+                                        "You must unset the other forced_main_address before setting a new one!"
+                                        "" % (forced.ids, values['partner_id'])))
+
         # Create record in the current environment (memory only right now i guess)
         # ATTENTION: self is still empty but the new record exits in the 'res' recordset already
         res = super(FRSTPersonEmail, self).create(values)
@@ -325,6 +358,13 @@ class FRSTPersonEmail(models.Model):
 
         # Compute 'last_email_update' and 'gueltig_bis' values
         values = self.compute_last_email_update_gueltig_bis(values)
+
+        if values.get('forced_main_address', None):
+            forced = self.get_forced()
+            if forced:
+                raise ValidationError(_("Other forced main email address (id %s) exists already! "
+                                        "You must unset other forced_main_address before setting a new one!"
+                                        "" % forced.ids))
 
         # Update (write to) the recordset 'self'
         # ATTENTION: After super 'self' is changed 'res' is only a boolean !
