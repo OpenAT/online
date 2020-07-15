@@ -15,3 +15,5 @@ class FRSTPersonEmailSosync(models.Model):
     main_address = fields.Boolean(sosync="True")
 
     state = fields.Selection(sosync="fson-to-frst")
+
+    forced_main_address = fields.Boolean(sosync="True")
