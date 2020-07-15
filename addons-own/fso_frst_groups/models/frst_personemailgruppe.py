@@ -48,3 +48,21 @@ class FRSTPersonEmailGruppe(models.Model):
                 r.zgruppedetail_id.sosync_fs_id if 'sosync_fs_id' in r._fields else '0',
                 r.frst_personemail_id.email
             )
+
+    # TODO: Maybe we should add this somehow to the state computation - what if a group is added or change to an
+    #       inactive e-mail?!?
+    # @api.model
+    # def create(self, vals):
+    #     email = self.env['frst.personemail'].browse(vals['frst_personemail_id'])
+    #     assert email.state == 'active', "You can not add groups to an inactive email (id %s)!" \
+    #                                     "" % email.id
+    #     res = super(FRSTPersonEmailGruppe, self).create(vals)
+    #     return res
+    #
+    # @api.multi
+    # def write(self, vals):
+    #     res = super(FRSTPersonEmailGruppe, self).write(vals)
+    #     for peg in self:
+    #         assert peg.frst_personemail_id.state == 'active', "You can not add groups to an inactive email (id %s)!" \
+    #                                                           "" % peg.frst_personemail_id.id
+    #     return res
