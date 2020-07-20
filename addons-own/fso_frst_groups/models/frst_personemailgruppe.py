@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.tools.translate import _
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 from datetime import timedelta
+from openerp.exceptions import ValidationError
 import logging
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,13 @@ class FRSTPersonEmailGruppe(models.Model):
                                           string="FRST PersonEmail",
                                           required=True, ondelete='cascade', index=True)
 
+    @api.constrains('gueltig_von', 'gueltig_bis', 'steuerung_bit')
+    def constraint_inactive_personemail(self):
+        for r in self:
+            if r.frst_personemail_id.state != 'active' and r.state in ['subscribed', 'approved']:
+                raise ValidationError(_("Only inactive groups (personemailgruppe %s) are allowed for an inactive "
+                                        "e-mail (personemail %s)!") % (r.id, r.frst_personemail_id.id))
+
     # Override method from abstract model 'frst.checkboxbridgemodel' to use the 'main_personemail_id' field
     @api.model
     def get_target_model_id_from_checkbox_record(self, checkbox_record=False):
@@ -48,21 +57,3 @@ class FRSTPersonEmailGruppe(models.Model):
                 r.zgruppedetail_id.sosync_fs_id if 'sosync_fs_id' in r._fields else '0',
                 r.frst_personemail_id.email
             )
-
-    # TODO: Maybe we should add this somehow to the state computation - what if a group is added or change to an
-    #       inactive e-mail?!?
-    # @api.model
-    # def create(self, vals):
-    #     email = self.env['frst.personemail'].browse(vals['frst_personemail_id'])
-    #     assert email.state == 'active', "You can not add groups to an inactive email (id %s)!" \
-    #                                     "" % email.id
-    #     res = super(FRSTPersonEmailGruppe, self).create(vals)
-    #     return res
-    #
-    # @api.multi
-    # def write(self, vals):
-    #     res = super(FRSTPersonEmailGruppe, self).write(vals)
-    #     for peg in self:
-    #         assert peg.frst_personemail_id.state == 'active', "You can not add groups to an inactive email (id %s)!" \
-    #                                                           "" % peg.frst_personemail_id.id
-    #     return res

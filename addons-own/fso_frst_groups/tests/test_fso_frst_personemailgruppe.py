@@ -2,6 +2,8 @@
 
 from openerp.tests import common
 from openerp.tools.safe_eval import safe_eval
+from openerp.exceptions import ValidationError
+
 from datetime import datetime
 from datetime import timedelta
 
@@ -65,3 +67,15 @@ class TestFRSTPersonEmailGruppe(common.TransactionCase):
         self.assertTrue(email_max.state == 'inactive')
         self.assertNotIn(self.subscription_max1_group_newsletter.state, ['subscribed', 'approved'])
         self.assertNotIn(self.subscription_max1_group_urgentaction.state, ['subscribed', 'approved'])
+
+    def test_02_inactivate_personemail_reactivate_personemailgruppe_assertion(self):
+        email_max = self.partner_max1.main_personemail_id
+        self.assertTrue(email_max.state == 'active')
+        self.assertIn(self.subscription_max1_group_newsletter.state, ['subscribed', 'approved'])
+        # Inactivate the E-Mail which to inactivate all related personemailgruppe(n)
+        email_max.write({'gueltig_bis': datetime.now() - timedelta(days=1)})
+        self.assertTrue(email_max.state == 'inactive')
+        self.assertNotIn(self.subscription_max1_group_newsletter.state, ['subscribed', 'approved'])
+        # Try to reactivate a personeamilgruppe for the inactive email
+        with self.assertRaises(ValidationError):
+            self.subscription_max1_group_newsletter.write({'gueltig_bis': datetime.now() + timedelta(days=1)})

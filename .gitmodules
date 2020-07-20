@@ -106,3 +106,7 @@
 	path = addons-thirdparty/oca/crm
 	url = https://github.com/OCA/crm.git
 	branch = 8.0
+[submodule "addons-thirdparty/oca/connector-magento"]
+	path = addons-thirdparty/oca/connector-magento
+	url = https://github.com/OCA/connector-magento.git
+	branch = 8.0
