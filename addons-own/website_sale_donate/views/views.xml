@@ -389,6 +389,9 @@
                         <field name="validation_rule"/>
                         <field name="css_classes"/>
                         <field name="clearfix"/>
+                        <field name="style"/>
+                        <field name="yes_text"/>
+                        <field name="no_text"/>
                         <field name="information"/>
                     </group>
                 </form>
@@ -408,6 +411,9 @@
                     <field name="validation_rule"/>
                     <field name="css_classes"/>
                     <field name="clearfix"/>
+                    <field name="style"/>
+                    <field name="yes_text"/>
+                    <field name="no_text"/>
                 </tree>
             </field>
         </record>

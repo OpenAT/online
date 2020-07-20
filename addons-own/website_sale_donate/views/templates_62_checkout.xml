@@ -40,14 +40,16 @@
                                 <!-- ALL FIELD TYPES: LABEL -->
                                 <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
                                        t-att-for="f_name">
-                                    <!-- BOOLEAN FIELDS -->
-                                    <t t-if="f_type == 'boolean'">
+
+                                    <!-- BOOLEAN FIELD AS CHECKBOX -->
+                                    <t t-if="f_type == 'boolean' and not billing_field.style">
                                         <input type="checkbox"
                                                t-att-name="f_name"
                                                t-att-value="checkout.get(f_name)"
                                                t-att-checked="True if checkout.get(f_name) else ''"
                                                t-att-required="billing_field.mandatory"/>
                                     </t>
+
                                     <t t-raw="billing_field.label"/>
                                 </label>
 
@@ -85,6 +87,41 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </t>
+
+                                <!-- TODO BOOLEAN FIELD AS RADIO BUTTONS -->
+                                <!-- TODO: CORRECT ERROR MESSAGE IF NO RADIO(VALUE) WAS SELECTED BY SERVER VALIDATION -->
+                                <!-- TODO: !!! RADIO BOX FIELDS FORCE SELECTION BEFORE SEND BY FRONTEND VALIDATION AND CORRECT ERROR MESSAGE IF PROCESSED BY CONTROlLER !!! -->
+                                <t t-if="f_type == 'boolean' and billing_field.style and billing_field.style == 'radio'">
+                                    <!-- Checked / True-->
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   t-att-id="f_name+'_boolean_true'"
+                                                   t-att-name="f_name"
+                                                   value="True"
+                                                   t-att-checked="True if checkout.get(f_name) else ''"
+                                                   t-att-required="billing_field.mandatory"
+                                            />
+                                            <t t-if="billing_field.yes_text"><t t-raw="billing_field.yes_text"/></t>
+                                            <t t-if="not billing_field.yes_text">Yes</t>
+                                        </label>
+                                    </div>
+                                    <!-- Unchecked / False -->
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   t-att-id="f_name+'_boolean_false'"
+                                                   t-att-name="f_name"
+                                                   value="False"
+                                                   t-att-checked="True if not checkout.get(f_name) else ''"
+                                                   t-att-disabled="f_readonly"
+                                                   t-att-required="billing_field.mandatory"
+                                            />
+                                            <t t-if="billing_field.no_text"><t t-raw="billing_field.no_text"/></t>
+                                            <t t-if="not billing_field.no_text">No</t>
+                                        </label>
                                     </div>
                                 </t>
 

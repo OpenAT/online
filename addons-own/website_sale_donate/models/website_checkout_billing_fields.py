@@ -28,3 +28,14 @@ class website_checkout_billing_fields(models.Model):
                                         ('radio_selectnone', 'Radio + SelectNone'),
                                         ('radio', 'Radio')],
                              string='Field Style')
+    yes_text = fields.Char(string="Yes Text", help="Only for radio-styled boolean fields!")
+    no_text = fields.Char(string="No Text", help="Only for radio-styled boolean fields")
+
+    @api.onchange('res_partner_field_id', 'style')
+    def onchange_bool_as_radio_button(self):
+        for r in self:
+            if r.res_partner_field_id and r.res_partner_field_id.ttype == 'boolean':
+                if r.style == 'radio_selectnone':
+                    r.style = 'radio'
+                if r.style == 'radio':
+                    r.mandatory = True
