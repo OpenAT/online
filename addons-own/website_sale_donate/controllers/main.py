@@ -155,9 +155,12 @@ class website_sale_donate(website_sale):
         # -----------------
         # ONE PAGE CHECKOUT Start
         # -----------------
-        # TODO: If this product has a custom billing field configuration we must add it right now to the sale order!
-        #       ATTENTION: This is because checkout_values() can only get the custom config from the sale order!
-        if (request.httprequest.method != 'POST' and product.checkout_form_id) \
+        # TODO: MAYBE we should ALWAYS add the product to the shopping cart for OPC products if a cart with other
+        #       products exits?!? Basically this is what this (unneeded?) part of the code is doing right now anyway!
+        #
+        # If this product has a custom billing field configuration we must add it right now to the sale order!
+        # ATTENTION: This is because checkout_values() can only get the custom config from the sale order!
+        if request.httprequest.method != 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
                 and 'json_cart_update' not in request.session:
             sale_order_id = request.session.sale_order_id
