@@ -9,7 +9,7 @@ def get_environment(session, model_name, backend_id):
     backend_record = session.env['getresponse.backend'].browse(backend_id)
     env = Environment(backend_record, session, model_name)
     lang = backend_record.default_lang_id
-    lang_code = lang.code if lang else 'de_DE'
+    lang_code = lang.code if lang else 'en_US'
     if lang_code == session.context.get('lang'):
         return env
     else:
@@ -30,4 +30,4 @@ def add_checkpoint(session, model_name, record_id, backend_id):
     :type backend_id: int
     """
     return checkpoint.add_checkpoint(session, model_name, record_id,
-                                     'magento.backend', backend_id)
+                                     'getresponse.backend', backend_id)
