@@ -121,3 +121,9 @@ You may also add the inverse fields on the related odoo model. In this case it w
 
 Now we can create an ```adapter``` for the the  getresponse.frst.zgruppedetail model.
 
+...
+
+At the end all of the Importers / Synchronizer run ```import_record()``` which is just a regular function (not bound
+to any class) ```import_record()``` will finally run 
+```env.get_connector_unit(GetResponseImporter).run(getresponse_id, force=force)```
+This means we always use the GetResponseImporter class which implements the generic run() for the get

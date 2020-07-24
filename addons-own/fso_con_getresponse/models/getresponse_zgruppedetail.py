@@ -8,7 +8,7 @@ from .connector import get_environment
 from .backend import getresponse
 
 from .unit_adapter import GetResponseCRUDAdapter
-from .unit_synchronizer_import import GetResponseImporter, DelayedBatchImporter
+from .unit_synchronizer_import import GetResponseImporter, DelayedBatchImporter, DirectBatchImporter
 
 
 # -----------------------
@@ -24,25 +24,30 @@ class GetResponseCampaign(models.Model):
         comodel_name='getresponse.backend',
         string='GetResponse Connector Backend',
         required=True,
+        readonly=True,
         ondelete='restrict'
     )
     odoo_id = fields.Many2one(
         comodel_name='frst.zgruppedetail',
         string='Fundraising Studio Group',
         required=True,
+        readonly=True,
         ondelete='cascade'
     )
     getresponse_id = fields.Char(
         string='GetResponse Campaing ID',
         readonly=True
     )
-
-    sync_date = fields.Datetime(string='Last synchronization date', readonly=True)
-    sync_data = fields.Char(string='Last synchronization data', readonly=True)
+    sync_date = fields.Datetime(
+        string='Last synchronization date',
+        readonly=True)
+    sync_data = fields.Char(
+        string='Last synchronization data',
+        readonly=True)
 
     _sql_constraints = [
         ('getresponse_uniq', 'unique(backend_id, getresponse_id)',
-         'A binding already exists with the same GetResponse ID.'),
+         'A binding already exists with the same GetResponse ID for this GetResponse backend (Account).'),
     ]
 
 
@@ -144,15 +149,34 @@ class ZgruppedetailImporter(GetResponseImporter):
 
 
 @getresponse
+class ZgruppedetailDirectBatchImporter(DirectBatchImporter):
+    _model_name = ['getresponse.frst.zgruppedetail']
+
+
+@getresponse
 class ZgruppedetailDelayedBatchImporter(DelayedBatchImporter):
     _model_name = ['getresponse.frst.zgruppedetail']
 
 
 @job(default_channel='root.getresponse')
-def zgruppedetail_import_batch(session, model_name, backend_id, filters=None):
+def zgruppedetail_import_batch_delay(session, model_name, backend_id, filters=None):
     """ Prepare the batch import of all campaigns modified or created in GetResponse """
     if filters is None:
         filters = {}
     env = get_environment(session, model_name, backend_id)
+    # ZgruppedetailDelayedBatchImporter > DelayedBatchImporter._import_record > import_record.delay() which will start:
+    #     env.get_connector_unit(GetResponseImporter).run()
     importer = env.get_connector_unit(ZgruppedetailDelayedBatchImporter)
+    importer.run(filters=filters)
+
+
+@job(default_channel='root.getresponse')
+def zgruppedetail_import_batch_direct(session, model_name, backend_id, filters=None):
+    """ Prepare the batch import of all campaigns modified or created in GetResponse """
+    if filters is None:
+        filters = {}
+    env = get_environment(session, model_name, backend_id)
+    # ZgruppedetailDirectBatchImporter > DirectBatchImporter._import_record > import_record() which will start:
+    #     env.get_connector_unit(GetResponseImporter).run()
+    importer = env.get_connector_unit(ZgruppedetailDirectBatchImporter)
     importer.run(filters=filters)

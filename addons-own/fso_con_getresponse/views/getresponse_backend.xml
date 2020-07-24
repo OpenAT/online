@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- GetResponse Backend Form -->
+        <record id="view_getresponse_backend_form" model="ir.ui.view">
+            <field name="name">getresponse.backend.form</field>
+            <field name="model">getresponse.backend</field>
+            <field name="arch" type="xml">
+                <form string="GetResponse Backend">
+                    <header>
+                      <button name="import_getresponse_campaigns_direct"
+                        type="object"
+                        class="oe_highlight"
+                        string="Import Campaigns (direct)"/>
+                      <button name="import_getresponse_campaigns_delay"
+                        type="object"
+                        class="oe_highlight"
+                        string="Import Campaigns (delayed)"/>
+                    </header>
+                    <sheet>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                        <group name="getresponse_configuration" string="GetResponse Configuration">
+                            <field name="version"/>
+                            <field name="api_key"/>
+                            <field name="default_lang_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- GetResponse Backend Tree -->
+        <record id="view_getresponse_backend_tree" model="ir.ui.view">
+            <field name="name">getresponse.backend.tree</field>
+            <field name="model">getresponse.backend</field>
+            <field name="arch" type="xml">
+                <tree string="GetResponse Backend">
+                    <field name="name"/>
+                    <field name="version"/>
+                    <field name="default_lang_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- GetResponse Backend Action > Act Window -->
+        <record id="action_getresponse_backend" model="ir.actions.act_window">
+            <field name="name">GetResponse Backend</field>
+            <field name="res_model">getresponse.backend</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_getresponse_backend_tree"/>
+        </record>
+
+    </data>
+</openerp>

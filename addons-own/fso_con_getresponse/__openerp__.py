@@ -6,9 +6,14 @@
     "author": "Michael Karrer",
     "license": "AGPL-3",
     "category": "Connector",
-    "summary": "Connector to GetResponse based on odoo oca connector",
+    "summary": "Connector to GetResponse build with odoo oca connector framework",
     "depends": [
         'connector',
         'fso_frst_groups',
+    ],
+    "data": [
+        'views/getresponse_backend.xml',
+        'views/getresponse_campaigns.xml',
+        'views/getresponse_menu.xml'
     ],
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_getresponse_root"
+            parent="connector.menu_connector_root"
+            name="GetResponse"
+            sequence="10"
+            groups="connector.group_connector_manager"/>
+
+        <menuitem id="menu_getresponse_backend"
+            name="GetResponse Accounts"
+            parent="menu_getresponse_root"
+            sequence="10"
+            action="action_getresponse_backend"/>
+
+        <menuitem id="menu_getresponse_campaing"
+            name="Campaign Bindings"
+            parent="menu_getresponse_root"
+            sequence="20"
+            action="action_getresponse_frst_zgruppedetail"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- GetResponse Campaign Bindings Form -->
+        <record id="view_getresponse_frst_zgruppedetail_form" model="ir.ui.view">
+            <field name="name">getresponse.frst.zgruppedetail.form</field>
+            <field name="model">getresponse.frst.zgruppedetail</field>
+            <field name="arch" type="xml">
+                <form string="GetResponse Campaign Binding">
+                    <sheet>
+                        <label for="backend_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="backend_id" class="oe_inline" />
+                        </h1>
+                        <group name="getresponse_campaign_binding" string="GetResponse Campaign Binding">
+                            <field name="odoo_id"/>
+                            <field name="getresponse_id"/>
+                            <field name="sync_date"/>
+                            <field name="sync_data"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- GetResponse Campaign Bindings Tree -->
+        <record id="view_getresponse_frst_zgruppedetail_tree" model="ir.ui.view">
+            <field name="name">getresponse.frst.zgruppedetail.tree</field>
+            <field name="model">getresponse.frst.zgruppedetail</field>
+            <field name="arch" type="xml">
+                <tree string="GetResponse Campaign Bindings">
+                    <field name="backend_id"/>
+                    <field name="odoo_id"/>
+                    <field name="getresponse_id"/>
+                    <field name="sync_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- GetResponse Campaign Bindings Action > Act Window -->
+        <record id="action_getresponse_frst_zgruppedetail" model="ir.actions.act_window">
+            <field name="name">GetResponse Campaign Bindings</field>
+            <field name="res_model">getresponse.frst.zgruppedetail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_getresponse_frst_zgruppedetail_tree"/>
+        </record>
+
+    </data>
+</openerp>

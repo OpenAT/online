@@ -244,6 +244,8 @@ class GetResponseImporter(Importer):
         self._after_import(binding)
 
 
+# TODO: I dont full understand why this extend the Importer class and not the GetResponseImporter! It is just like in
+#       the mangento example but still i dont get it
 class BatchImporter(Importer):
     """ The role of a BatchImporter is to search for a list of
     items to import, then it can either import them directly or delay
@@ -264,6 +266,7 @@ class BatchImporter(Importer):
         raise NotImplementedError
 
 
+# HINT: The run() method is implemented by BatchImporter
 class DirectBatchImporter(BatchImporter):
     """ Import the records directly, without delaying the jobs. """
     _model_name = None
@@ -276,6 +279,7 @@ class DirectBatchImporter(BatchImporter):
                       record_id)
 
 
+# HINT: The run() method is implemented by BatchImporter
 class DelayedBatchImporter(BatchImporter):
     """ Delay import of the records """
     _model_name = None
@@ -289,6 +293,9 @@ class DelayedBatchImporter(BatchImporter):
                             **kwargs)
 
 
+# TODO: not sure if this is used at all - check usages in magento ... Because the Direct and DelayedBatchImporter all
+#       run import_record() and not import_batch() also the BatchImporter() class has no _import_record() implementation
+#       which may be another hint that this is not used?!?
 @job(default_channel='root.getresponse')
 def import_batch(session, model_name, backend_id, filters=None):
     """ Prepare a batch import of records from GetResponse """
@@ -297,6 +304,7 @@ def import_batch(session, model_name, backend_id, filters=None):
     importer.run(filters=filters)
 
 
+# HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()
 @job(default_channel='root.getresponse')
 def import_record(session, model_name, backend_id, getresponse_id, force=False):
     """ Import a record from GetResponse """
