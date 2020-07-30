@@ -27,6 +27,7 @@
                             <field name="version"/>
                             <field name="api_key"/>
                             <field name="default_lang_id"/>
+                            <field name="default_zgruppe_id"/>
                         </group>
                     </sheet>
                 </form>
@@ -42,6 +43,7 @@
                     <field name="name"/>
                     <field name="version"/>
                     <field name="default_lang_id"/>
+                    <field name="default_zgruppe_id"/>
                 </tree>
             </field>
         </record>

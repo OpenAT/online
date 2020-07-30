@@ -488,7 +488,7 @@ msgstr "Du kannst einen Systemgruppenordner nicht löschen!"
 #: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:69
 #, python-format
 msgid "You can not create a system group!"
-msgstr "Du kannst eine Systemgruppe nicht löschen!"
+msgstr "Du kannst eine Systemgruppe nicht anlegen! (Versuche eine lokale Gruppe anzulegen)"
 
 #. module: fso_frst_groups
 #: selection:frst.zgruppe,tabellentyp_id:0

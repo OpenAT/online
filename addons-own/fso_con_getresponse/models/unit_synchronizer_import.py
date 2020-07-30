@@ -32,9 +32,13 @@ ATTENTION: Call the ``bind`` method even if the records are already bound, to up
 import logging
 from openerp.tools.translate import _
 from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.connector import ConnectorUnit
 from openerp.addons.connector.unit.synchronizer import Importer
 from openerp.addons.connector.exception import IDMissingInBackend
-from .connector import get_environment
+from .connector import get_environment, add_checkpoint
+from .backend import getresponse
+
+import json
 
 _logger = logging.getLogger(__name__)
 
@@ -63,10 +67,18 @@ class GetResponseImporter(Importer):
         # Make sure we already have the getresponse record
         assert self.getresponse_record
 
-        # TODO: Compare the last synced data 'sync_data' of the binding record with the current getresponse record data
-        #       Return True if the data still matches. This is basically a 'field' compare to overcome the limitation
-        #       of GetResponse of not having a 'write_date' or 'last_updated_at' for every object
-        #       For the prototype we just return False to always trigger a sync!
+        # Unbound (new) records can never be up-to-date
+        if not binding:
+            return False
+
+        # Compare the current getresponse data with the data stored at the last sync!
+        current_getresponse_data = self._map_data().values()
+        last_sync_data = json.loads(binding.sync_data, encoding='utf8') if binding.sync_data else {}
+        if cmp(current_getresponse_data, last_sync_data) == 0:
+            _logger.info("Bound record data did not change (%s, %s)! Import will be skipped!"
+                         "" % (binding._model, binding.id))
+            return True
+
         return False
 
     def _import_dependency(self, getresponse_id, binding_model,
@@ -147,11 +159,15 @@ class GetResponseImporter(Importer):
         return
 
     def _get_binding(self):
-        return self.binder.to_openerp(self.getresponse_id, browse=True)
+        # TODo: The original magento connector did implement a browse option for the to_openerp() method. It is still
+        #       unclear if this is needed on this minimal implementation also
+        #return self.binder.to_openerp(self.getresponse_id, browse=True)
+        return self.binder.to_openerp(self.getresponse_id)
 
     def _create_data(self, map_record, **kwargs):
         return map_record.values(for_create=True, **kwargs)
 
+    # ---------------------
     # CREATE RECORD IN ODOO
     # ---------------------
     def _create(self, data):
@@ -165,6 +181,7 @@ class GetResponseImporter(Importer):
         _logger.debug('%d created from getresponse %s', binding, self.getresponse_id)
         return binding
 
+    # ---------------------
     # UPDATE RECORD IN ODOO
     # ---------------------
     def _update_data(self, map_record, **kwargs):
@@ -185,6 +202,9 @@ class GetResponseImporter(Importer):
         """ Hook called at the end of the import """
         return
 
+    # -----------------
+    # RUN/DO THE IMPORT
+    # -----------------
     def run(self, getresponse_id, force=False):
         """ Run the synchronization
 
@@ -225,20 +245,28 @@ class GetResponseImporter(Importer):
         self._import_dependencies()
 
         # Get the data from the GetResponse record already prepared (mapped) for the odoo record
+        # TODO: I think that this is the data that should be stored to sync_date - it's the data from the getresponse
+        #       object but already prepared (mapped) for the odoo record
         map_record = self._map_data()
 
-        # Update an existing record in odoo
+        # ---------------------------------
+        # UPDATE an existing record in odoo
+        # ---------------------------------
         if binding:
-            record = self._update_data(map_record)
-            self._update(binding, record)
-        # Create a new record in odoo
-        else:
-            record = self._create_data(map_record)
-            binding = self._create(record)
+            update_values = self._update_data(map_record)
+            self._update(binding, update_values)
 
-        # Call the binder again to update sync_date and sync_data
-        # TODO: Add sync_data to the binder - not implemented yet
-        self.binder.bind(self.getresponse_id, binding)
+        # ---------------------------
+        # CREATE a new record in odoo
+        # ---------------------------
+        else:
+            create_values = self._create_data(map_record)
+            binding = self._create(create_values)
+
+        # Call the binder again to update the binding and the 'sync_data' for concurrent write detection
+        # ATTENTION: We store only the fields without '@only_create' mapped fields since those fields seems unneeded
+        #            for the data comparison TODO: Make sure to check if this is true for every synced model!
+        self.binder.bind(self.getresponse_id, binding, sync_data=self._update_data(map_record))
 
         # After import hook
         self._after_import(binding)
@@ -293,9 +321,25 @@ class DelayedBatchImporter(BatchImporter):
                             **kwargs)
 
 
-# TODO: not sure if this is used at all - check usages in magento ... Because the Direct and DelayedBatchImporter all
-#       run import_record() and not import_batch() also the BatchImporter() class has no _import_record() implementation
-#       which may be another hint that this is not used?!?
+@getresponse
+class AddCheckpoint(ConnectorUnit):
+    """ Add a connector.checkpoint on the underlying model
+    (not the getresponse.* but the _inherits'ed model) """
+
+    _model_name = ['getresponse.frst.zgruppedetail']
+
+    def run(self, openerp_binding_id):
+        binding = self.model.browse(openerp_binding_id)
+        record = binding.openerp_id
+        add_checkpoint(self.session,
+                       record._model._name,
+                       record.id,
+                       self.backend_record.id)
+
+
+# TODO: not sure if import_batch() is used at all - check usages in magento ... Because the Direct and
+#       DelayedBatchImporter all run import_record() and not import_batch() also the BatchImporter() class has no
+#       _import_record() implementation which may be another hint that this is not used?!?
 @job(default_channel='root.getresponse')
 def import_batch(session, model_name, backend_id, filters=None):
     """ Prepare a batch import of records from GetResponse """

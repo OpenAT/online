@@ -41,6 +41,9 @@ class GetResponseCampaign(models.Model):
     sync_date = fields.Datetime(
         string='Last synchronization date',
         readonly=True)
+
+    # TODO: Store the raw data of the last sync - should relate to the mapper ...
+    #       ATTENTION: Maybe this is possible in the bind method ?!?
     sync_data = fields.Char(
         string='Last synchronization data',
         readonly=True)
@@ -87,23 +90,24 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
     def read(self, id, attributes=None):
         """ Returns the information of a record  """
         campaign = self.getresponse.get_campaign(id, params=attributes)
-        # TODO: Check if a dict() is expected! Right now we return a campaign object!
-        return campaign
+        # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
+        return campaign.__dict__
 
     def search_read(self, filters=None):
         """ Search records based on 'filters' and return their information"""
         campaigns = self.getresponse.get_campaigns(filters)
-        # TODO: Check if a dict() is expected! Right now we return a campaign object!
-        return campaigns
+        # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
+        return campaigns.__dict__
 
     def create(self, data):
         campaign = getresponse.create_campaign(data)
-        # TODO: Check if a dict() is expected! Right now we return a campaign object!
-        return campaign
+        # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
+        return campaign.__dict__
 
     def write(self, id, data):
         campaign = self.getresponse.update_campaign(id, body=data)
-        return campaign
+        # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
+        return campaign.__dict__
 
     def delete(self, id):
         raise NotImplementedError
@@ -119,14 +123,34 @@ class ZgruppedetailImportMapper(ImportMapper):
 
     # (getresponse_field_name, odoo_field_name)
     direct = [
-        ('name', 'name')
+        ('name', 'gruppe_lang'),
+        ('name', 'gruppe_kurz')
     ]
 
-    def _map_children(self, record, attr, model):
-        pass
+    @mapping
+    def backend_id(self, record):
+        return {'backend_id': self.backend_record.id}
+
+    @mapping
+    def getresponse_id(self, record):
+        return {'getresponse_id': record['id']}
+
+    @only_create
+    @mapping
+    def geltungsbereich(self, record):
+        return {'geltungsbereich': 'local'}
+
+    @only_create
+    @mapping
+    def zgruppe_id(self, record):
+        # get 'default_zgruppe_id' from the getresponse backend
+        return {'zgruppe_id': self.backend_record.default_zgruppe_id.id}
 
     # TODO: subscription settings - this needs to be implemented in the getresponse client as well as in the
     #       frst.zgruppedetail model or maybe just in the backend as a global config?
+
+    def _map_children(self, record, attr, model):
+        pass
 
 
 # ---------------------------------

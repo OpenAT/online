@@ -26,7 +26,9 @@ class FRSTzGruppeDetail(models.Model):
                                         help="Show this group in the person profile view.",
                                         default=True)
 
-    gruppe_kurz = fields.Char(string="GruppeKurz", required=True)
+    gruppe_kurz = fields.Char(string="GruppeKurz", required=True,
+                              help="gruppe_kurz is no longer in use - use gruppe_lang instead! "
+                                   "The value of gruppe_lang will be copied to gruppe_kurz if gruppe_kurz is empty!")
     gruppe_lang = fields.Char(string="GruppeLang", required=True)
     gui_anzeigen = fields.Boolean("GuiAnzeigen",
                                   help="If set this group is available for this instance")
