@@ -207,6 +207,46 @@ class BaseSosync(models.AbstractModel):
             pass
         return watched_fields_json
 
+    @api.model
+    def sosync_check(self, values=None):
+        """ Check for for a new sosync version
+
+        :param values: odoo field values (dict)
+        :return: sosync_write_date, watched fields
+        """
+        # SKIPP BY SOSYNCER FIELDS IN VALUES
+        skipp = False
+        sosyncer_fields = ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
+                           'frst_create_date', 'frst_write_date')
+        if any(f in values for f in sosyncer_fields):
+            skipp = True
+
+        # SKIPP BY SWITCH 'no_sosync_jobs' IN CONTEXT
+        elif self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
+            current_model = self._name
+            no_sosync_jobs = self.env.context.get('no_sosync_jobs')
+            if current_model in no_sosync_jobs:
+
+                # Check the record ids in no_sosync_jobs for the current model if any
+                skipp_record_ids = no_sosync_jobs.get(current_model)
+                if skipp_record_ids:
+                    unexpected_ids = set(skipp_record_ids).symmetric_difference(set(self.ids))
+                    if unexpected_ids:
+                        raise ValueError("Missing or unexpected ids in no_sosync_jobs! "
+                                         "self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s'"
+                
+                                         "" % (self.ids, no_sosync_jobs, unexpected_ids))
+
+                # Set skipp to True
+                skipp = True
+
+        # CHECK FOR WATCHED FIELDS IF NOT SKIPPED ALREADY
+        watched_fields = self._sosync_watched_fields(values) if not skipp else False
+        if watched_fields:
+            return self._sosync_write_date_now(), watched_fields
+        else:
+            return False, False
+
     @api.multi
     def create_sync_job(self, job_date=False, sosync_write_date=False,
                         job_priority=False,
@@ -287,34 +327,6 @@ class BaseSosync(models.AbstractModel):
     # 'no_sosync_jobs'={model_name: [record_ids]}
     # e.g.: 'context': {'no_sosync_jobs': {'frst.personemailgruppe': [peg_id]}}
 
-    def check_watched_fields(self, values):
-        # Skipp by sosyncer fields
-        # INFO: Skipp new sync version if sosyncer fields are in the values
-        sosyncer_fields = ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
-                           'frst_create_date', 'frst_write_date')
-        if any(f in values for f in sosyncer_fields):
-            return False
-
-        # Skipp by context switch 'no_sosync_jobs'
-        if self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
-            current_model = self._name
-            no_sosync_jobs = self.env.context.get('no_sosync_jobs')
-            if current_model in no_sosync_jobs:
-                skipp_record_ids = no_sosync_jobs.get(current_model)
-                # HINT: If skipp_record_ids is an empty list this must be a CREATE by the sosyncer service
-                if not skipp_record_ids:
-                    return False
-                unexpected_ids = set(skipp_record_ids).symmetric_difference(set(self.ids))
-                if unexpected_ids:
-                    raise ValueError("Missing or unexpected ids in no_sosync_jobs! "
-                                     "self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s'"
-                                     "" % (self.ids, no_sosync_jobs, unexpected_ids))
-                else:
-                    return False
-
-        # Check for watched fields
-        return self._sosync_watched_fields(values)
-
     # CREATE
     # ------
     @api.model
@@ -322,18 +334,16 @@ class BaseSosync(models.AbstractModel):
         values = values if values else dict()
 
         # Detect sosync-record-version changes
-        new_sosync_version = False
-        watched_fields = self.check_watched_fields(values)
-        if watched_fields:
-            new_sosync_version = self._sosync_write_date_now()
-            values['sosync_write_date'] = new_sosync_version
+        sosync_write_date, watched_fields = self.sosync_check(values=values)
+        if sosync_write_date:
+            values['sosync_write_date'] = sosync_write_date
 
         # Create the record
         new_record = super(BaseSosync, self).create(values, **kwargs)
 
         # Create the sosync sync job
-        if new_record and new_sosync_version:
-            new_record.create_sync_job(sosync_write_date=new_sosync_version,
+        if new_record and sosync_write_date:
+            new_record.create_sync_job(sosync_write_date=sosync_write_date,
                                        job_source_fields=watched_fields)
 
         return new_record
@@ -352,19 +362,17 @@ class BaseSosync(models.AbstractModel):
         vals = vals if vals else dict()
 
         # Detect sosync-record-version changes
-        new_sosync_version = False
-        watched_fields = self.check_watched_fields(vals)
-        if watched_fields:
-            new_sosync_version = self._sosync_write_date_now()
-            vals['sosync_write_date'] = new_sosync_version
+        sosync_write_date, watched_fields = self.sosync_check(cr, user, values=vals, context=context)
+        if sosync_write_date:
+            vals['sosync_write_date'] = sosync_write_date
 
         # Update the record(s)
         res = super(BaseSosync, self)._write(cr, user, ids, vals, context=context)
 
         # Create the sosync sync job(s)
-        if res and new_sosync_version:
+        if res and sosync_write_date:
             recs = self.browse(cr, user, ids, context)
-            recs.create_sync_job(sosync_write_date=new_sosync_version,
+            recs.create_sync_job(sosync_write_date=sosync_write_date,
                                  job_source_fields=watched_fields)
 
         return res
@@ -374,18 +382,16 @@ class BaseSosync(models.AbstractModel):
         values = values if values else dict()
 
         # Detect sosync-record-version changes
-        new_sosync_version = False
-        watched_fields = self.check_watched_fields(values)
-        if watched_fields:
-            new_sosync_version = self._sosync_write_date_now()
-            values['sosync_write_date'] = new_sosync_version
+        sosync_write_date, watched_fields = self.sosync_check(values=values)
+        if sosync_write_date:
+            values['sosync_write_date'] = sosync_write_date
 
         # Update the record(s)
         boolean_result = super(BaseSosync, self).write(values, **kwargs)
 
         # Create the sosync sync job(s)
-        if boolean_result and new_sosync_version:
-            self.create_sync_job(sosync_write_date=new_sosync_version,
+        if boolean_result and sosync_write_date:
+            self.create_sync_job(sosync_write_date=sosync_write_date,
                                  job_source_fields=watched_fields)
 
         return boolean_result
