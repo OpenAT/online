@@ -16,6 +16,7 @@
                         <group name="getresponse_campaign_binding" string="GetResponse Campaign Binding">
                             <field name="odoo_id"/>
                             <field name="getresponse_id"/>
+                            <field name="sync_with_getresponse"/>
                             <field name="sync_date"/>
                             <field name="sync_data"/>
                         </group>

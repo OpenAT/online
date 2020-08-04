@@ -13,7 +13,8 @@
     ],
     "data": [
         'views/getresponse_backend.xml',
-        'views/getresponse_campaigns.xml',
-        'views/getresponse_menu.xml'
+        'views/getresponse_frst_zgruppedetail.xml',
+        'views/getresponse_menu.xml',
+        'views/frst_zgruppedetail.xml',
     ],
 }

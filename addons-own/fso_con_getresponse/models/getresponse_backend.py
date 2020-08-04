@@ -2,7 +2,7 @@ from openerp import fields, models, api
 from openerp.addons.connector.session import ConnectorSession
 from openerp.tools.translate import _
 
-from .getresponse_zgruppedetail import zgruppedetail_import_batch_delay, zgruppedetail_import_batch_direct
+from .getresponse_frst_zgruppedetail import zgruppedetail_import_batch_delay, zgruppedetail_import_batch_direct
 
 
 # New model to hold all settings for the getresponse connector
@@ -50,7 +50,7 @@ class GetResponseBackend(models.Model):
         for r in self:
             if r.default_zgruppe_id:
                 assert r.default_zgruppe_id.tabellentyp_id == '100110', _(
-                    "The 'Default Group Folder' type must be 'Email'!")
+                    "The 'Default-Group-Folder' type must be 'Email'!")
 
     @api.multi
     def import_getresponse_campaigns_delay(self):

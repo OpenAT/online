@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_form">
+        <field name="name">frst_zgruppedetail_form</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='subscription_settings']" position="before">
+                <group string="GetResponse">
+                    <field name="sync_with_getresponse"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="frst_zgruppedetail_tree">
+        <field name="name">frst_zgruppedetail_tree</field>
+        <field name="model">frst.zgruppedetail</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_zgruppedetail_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bestaetigung_typ']" position="before">
+                <field name="sync_with_getresponse"/>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>

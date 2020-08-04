@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
-from openerp import models, fields
+from openerp import models, fields, api
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
+
 from openerp.addons.connector.unit.mapper import ImportMapper, ExportMapper, mapping, only_create
 from openerp.addons.connector.queue.job import job
 
@@ -11,9 +14,9 @@ from .unit_adapter import GetResponseCRUDAdapter
 from .unit_synchronizer_import import GetResponseImporter, DelayedBatchImporter, DirectBatchImporter
 
 
-# -----------------------
-# CONNECTOR BINDING MODEL
-# -----------------------
+# ------------------------------------------
+# CONNECTOR BINDING MODEL AND ORIGINAL MODEL
+# ------------------------------------------
 # WARNING: When using delegation inheritance, methods are not inherited, only fields!
 class GetResponseCampaign(models.Model):
     _name = 'getresponse.frst.zgruppedetail'
@@ -42,8 +45,7 @@ class GetResponseCampaign(models.Model):
         string='Last synchronization date',
         readonly=True)
 
-    # TODO: Store the raw data of the last sync - should relate to the mapper ...
-    #       ATTENTION: Maybe this is possible in the bind method ?!?
+    # ATTENTION: This will be filled/set by the binder bind() method!
     sync_data = fields.Char(
         string='Last synchronization data',
         readonly=True)
@@ -62,13 +64,26 @@ class GetResponseFrstZgruppedetail(models.Model):
         inverse_name='odoo_id',
     )
 
+    sync_with_getresponse = fields.Boolean(string="Sync with GetResponse",
+                                           help="If set the contacts/subscribers of this group/campaign will be"
+                                                "synced with GetResponse")
+
+    @api.constrains('sync_with_getresponse', 'zgruppe_id')
+    def constrain_sync_with_getresponse(self):
+        for r in self:
+            if r.sync_with_getresponse:
+                # Only E-Mail groups can be enabled to sync with GetResponse
+                if not r.zgruppe_id.tabellentyp_id == '100110':
+                    raise ValidationError(_("Only groups of type e-mail can be synced with GetResponse!"))
+                # TODO: Do not allow to unset 'sync_with_getresponse' as long as PersonEmailGruppe bindings to
+                #       GetResponse contacts exists (= as long as synced subscriber exist)
 
 # ----------------
 # CONNECTOR BINDER
 # ----------------
 # Nothing to do here since no modifications to the generic binder implementation are needed
 # Just make sure to add all binding models to the '_model_name' list of the GetResponseModelBinder class
-# Check unit_binder.py > GetResponseModelBinder()
+# HINT: Check unit_binder.py > GetResponseModelBinder()
 
 
 # -----------------
@@ -113,10 +128,10 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
         raise NotImplementedError
 
 
-# ----------------
-# CONNECTOR MAPPER
-# ----------------
-# Transform the data from GetResponse campaing objects to odoo records and vice versa
+# -----------------------
+# CONNECTOR IMPORT MAPPER
+# -----------------------
+# Transform the data from GetResponse campaign objects to odoo records and vice versa
 @getresponse
 class ZgruppedetailImportMapper(ImportMapper):
     _model_name = 'getresponse.frst.zgruppedetail'
@@ -156,22 +171,12 @@ class ZgruppedetailImportMapper(ImportMapper):
 # ---------------------------------
 # CONNECTOR IMPORTER (SYNCHRONIZER)
 # ---------------------------------
-@getresponse
-class ZgruppedetailImporter(GetResponseImporter):
-    _model_name = ['getresponse.frst.zgruppedetail']
 
-    _base_mapper = ZgruppedetailImportMapper
-
-    def __init__(self, connector_env):
-        """
-        :param connector_env: current environment (backend, session, ...)
-        :type connector_env: :class:`connector.connector.ConnectorEnvironment`
-        """
-        super(ZgruppedetailImporter, self).__init__(connector_env)
-
-    # ATTENTION: We could overwrite all the methods from GetResponseImporter here if needed
-
-
+# SEARCH FOR THE GETRESPONSE RECORDS AND START THE IMPORT FOR EACH RECORD DELAYED OR DIRECT
+# -----------------------------------------------------------------------------------------
+# HINT: These classes and methods are responsible for the search of GetResponse records
+#       You could also decide if you want the records to do the batch imported directly or delayed
+#       In the end those classes will start ZgruppedetailImporter() > run() for each of the found records
 @getresponse
 class ZgruppedetailDirectBatchImporter(DirectBatchImporter):
     _model_name = ['getresponse.frst.zgruppedetail']
@@ -184,7 +189,7 @@ class ZgruppedetailDelayedBatchImporter(DelayedBatchImporter):
 
 @job(default_channel='root.getresponse')
 def zgruppedetail_import_batch_delay(session, model_name, backend_id, filters=None):
-    """ Prepare the batch import of all campaigns modified or created in GetResponse """
+    """ Prepare the batch import of all GetResponse campaigns """
     if filters is None:
         filters = {}
     env = get_environment(session, model_name, backend_id)
@@ -196,7 +201,7 @@ def zgruppedetail_import_batch_delay(session, model_name, backend_id, filters=No
 
 @job(default_channel='root.getresponse')
 def zgruppedetail_import_batch_direct(session, model_name, backend_id, filters=None):
-    """ Prepare the batch import of all campaigns modified or created in GetResponse """
+    """ Prepare the batch import of all GetResponse campaigns """
     if filters is None:
         filters = {}
     env = get_environment(session, model_name, backend_id)
@@ -204,3 +209,34 @@ def zgruppedetail_import_batch_direct(session, model_name, backend_id, filters=N
     #     env.get_connector_unit(GetResponseImporter).run()
     importer = env.get_connector_unit(ZgruppedetailDirectBatchImporter)
     importer.run(filters=filters)
+# -----------------------------------------------------------------------------------------
+
+
+# IMPORT EACH FOUND RECORD (SYNC FLOW)
+# ------------------------------------
+# In this class we could alter the generic GetResponse import sync flow for 'getresponse.frst.zgruppedetail'
+# HINT: We could overwrite all the methods from GetResponseImporter here if needed!
+@getresponse
+class ZgruppedetailImporter(GetResponseImporter):
+    _model_name = ['getresponse.frst.zgruppedetail']
+
+    _base_mapper = ZgruppedetailImportMapper
+
+    def __init__(self, connector_env):
+        """
+        :param connector_env: current environment (backend, session, ...)
+        :type connector_env: :class:`connector.connector.ConnectorEnvironment`
+        """
+        super(ZgruppedetailImporter, self).__init__(connector_env)
+# ------------------------------------
+
+
+# -----------------------
+# TODO: CONNECTOR EXPORT MAPPER
+# -----------------------
+
+
+# ---------------------------------
+# TODO: CONNECTOR EXPORTER (SYNCHRONIZER)
+# ---------------------------------
+

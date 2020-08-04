@@ -18,10 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
 """
-
-Importers for GetResponse.
+Import data from GetResponse.
 
 An import can be skipped if changes in both system are detected. (Concurrent write)
 
@@ -91,12 +89,10 @@ class GetResponseImporter(Importer):
         :param getresponse_id: id of the related binding to import
         :param binding_model: name of the binding model for the relation
         :type binding_model: str | unicode
-        :param importer_cls: :class:`openerp.addons.connector.\
-                                     connector.ConnectorUnit`
+        :param importer_cls: :class:`openerp.addons.connector.connector.ConnectorUnit`
                              class or parent class to use for the export.
                              By default: GetResponseImporter
-        :type importer_cls: :class:`openerp.addons.connector.\
-                                    connector.MetaConnectorUnit`
+        :type importer_cls: :class:`openerp.addons.connector.connector.MetaConnectorUnit`
         :param always: if True, the record is updated even if it already
                        exists, note that it is still skipped if it has
                        not been modified on GetResponce since the last
@@ -272,8 +268,6 @@ class GetResponseImporter(Importer):
         self._after_import(binding)
 
 
-# TODO: I dont full understand why this extend the Importer class and not the GetResponseImporter! It is just like in
-#       the mangento example but still i dont get it
 class BatchImporter(Importer):
     """ The role of a BatchImporter is to search for a list of
     items to import, then it can either import them directly or delay
@@ -340,12 +334,12 @@ class AddCheckpoint(ConnectorUnit):
 # TODO: not sure if import_batch() is used at all - check usages in magento ... Because the Direct and
 #       DelayedBatchImporter all run import_record() and not import_batch() also the BatchImporter() class has no
 #       _import_record() implementation which may be another hint that this is not used?!?
-@job(default_channel='root.getresponse')
-def import_batch(session, model_name, backend_id, filters=None):
-    """ Prepare a batch import of records from GetResponse """
-    env = get_environment(session, model_name, backend_id)
-    importer = env.get_connector_unit(BatchImporter)
-    importer.run(filters=filters)
+# @job(default_channel='root.getresponse')
+# def import_batch(session, model_name, backend_id, filters=None):
+#     """ Prepare a batch import of records from GetResponse """
+#     env = get_environment(session, model_name, backend_id)
+#     importer = env.get_connector_unit(BatchImporter)
+#     importer.run(filters=filters)
 
 
 # HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()
