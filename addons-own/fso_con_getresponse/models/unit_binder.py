@@ -31,7 +31,7 @@ class GetResponseModelBinder(Binder):
         # Call the original bind() method to write the sync_date field
         res = super(GetResponseModelBinder, self).bind(external_id=external_id, binding_id=binding_id)
 
-        # Make sure binding_id is an odoo record
+        # If we got an id instead of an odoo record we load the odoo record right now
         if not isinstance(binding_id, models.BaseModel):
             binding_id = self.model.browse(binding_id)
 
