@@ -280,18 +280,40 @@ class BaseSosync(models.AbstractModel):
     # -------------
 
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ATTENTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # The sosyncer must send the record_ids and model information in the context!
-    # 'no_sosync_jobs'={model_name: record_ids}
+    # Odoo sorts abstract models always at the bottom of the python MRO (.__class__.__mro__). So this methods will not
+    # be called first no matter what the addon dependency graph says.
+
+    # The sosyncer will send the record_ids and model information in the context!
+    # 'no_sosync_jobs'={model_name: [record_ids]}
     # e.g.: 'context': {'no_sosync_jobs': {'frst.personemailgruppe': [peg_id]}}
 
-    # This is necessary to make sure the sosyncer method is the first method that is called!
-    # Odoo sorts abstract models always at the bottom of the python MRO (.__class__.__mro__). So this methods will not
-    # be called first no matter what the addon dependency graph says. Therefore we need to call a custom method
-    # (a wrapper) to make sure we are the first method called to set the context to prevent the sync job
-    # creation for the record created, updated or unlinked by the sosyncer BUT still create sync jobs for all others!
+    def check_watched_fields(self, values):
+        # Skipp by sosyncer fields
+        # INFO: Skipp new sync version if sosyncer fields are in the values
+        sosyncer_fields = ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
+                           'frst_create_date', 'frst_write_date')
+        if any(f in values for f in sosyncer_fields):
+            return False
 
-    # TODO: create() and write() use the 'sosync_write_date' in the values to suppress unwanted sync jobs and
-    #       unlink() use the context information - maybe we should just use the context information?!?
+        # Skipp by context switch 'no_sosync_jobs'
+        if self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
+            current_model = self._name
+            no_sosync_jobs = self.env.context.get('no_sosync_jobs')
+            if current_model in no_sosync_jobs:
+                skipp_record_ids = no_sosync_jobs.get(current_model)
+                # HINT: If skipp_record_ids is an empty list this must be a CREATE by the sosyncer service
+                if not skipp_record_ids:
+                    return False
+                unexpected_ids = set(skipp_record_ids).symmetric_difference(set(self.ids))
+                if unexpected_ids:
+                    raise ValueError("Missing or unexpected ids in no_sosync_jobs! "
+                                     "self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s'"
+                                     "" % (self.ids, no_sosync_jobs, unexpected_ids))
+                else:
+                    return False
+
+        # Check for watched fields
+        return self._sosync_watched_fields(values)
 
     # CREATE
     # ------
@@ -301,11 +323,10 @@ class BaseSosync(models.AbstractModel):
 
         # Detect sosync-record-version changes
         new_sosync_version = False
-        if 'sosync_write_date' not in values:
-            watched_fields = self._sosync_watched_fields(values)
-            if watched_fields:
-                new_sosync_version = self._sosync_write_date_now()
-                values['sosync_write_date'] = new_sosync_version
+        watched_fields = self.check_watched_fields(values)
+        if watched_fields:
+            new_sosync_version = self._sosync_write_date_now()
+            values['sosync_write_date'] = new_sosync_version
 
         # Create the record
         new_record = super(BaseSosync, self).create(values, **kwargs)
@@ -332,11 +353,10 @@ class BaseSosync(models.AbstractModel):
 
         # Detect sosync-record-version changes
         new_sosync_version = False
-        if 'sosync_write_date' not in vals:
-            watched_fields = self._sosync_watched_fields(cr, user, values=vals, context=context)
-            if watched_fields:
-                new_sosync_version = self._sosync_write_date_now()
-                vals['sosync_write_date'] = new_sosync_version
+        watched_fields = self.check_watched_fields(vals)
+        if watched_fields:
+            new_sosync_version = self._sosync_write_date_now()
+            vals['sosync_write_date'] = new_sosync_version
 
         # Update the record(s)
         res = super(BaseSosync, self)._write(cr, user, ids, vals, context=context)
@@ -355,11 +375,10 @@ class BaseSosync(models.AbstractModel):
 
         # Detect sosync-record-version changes
         new_sosync_version = False
-        if 'sosync_write_date' not in values:
-            watched_fields = self._sosync_watched_fields(values)
-            if watched_fields:
-                new_sosync_version = self._sosync_write_date_now()
-                values['sosync_write_date'] = new_sosync_version
+        watched_fields = self.check_watched_fields(values)
+        if watched_fields:
+            new_sosync_version = self._sosync_write_date_now()
+            values['sosync_write_date'] = new_sosync_version
 
         # Update the record(s)
         boolean_result = super(BaseSosync, self).write(values, **kwargs)
@@ -466,7 +485,8 @@ class BaseSosync(models.AbstractModel):
         data_to_copy = super(BaseSosync, self).copy_data(cr, uid, id, default, context=context)
 
         # Remove sosync fields from data_to_copy
-        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version'):
+        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
+                             'frst_create_date', 'frst_write_date'):
             data_to_copy.pop(sosync_field, None)
 
         return data_to_copy
