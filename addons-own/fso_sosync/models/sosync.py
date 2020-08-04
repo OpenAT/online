@@ -207,7 +207,7 @@ class BaseSosync(models.AbstractModel):
             pass
         return watched_fields_json
 
-    @api.model
+    @api.multi
     def sosync_check(self, values=None):
         """ Check for for a new sosync version
 
@@ -234,7 +234,6 @@ class BaseSosync(models.AbstractModel):
                     if unexpected_ids:
                         raise ValueError("Missing or unexpected ids in no_sosync_jobs! "
                                          "self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s'"
-                
                                          "" % (self.ids, no_sosync_jobs, unexpected_ids))
 
                 # Set skipp to True
@@ -362,7 +361,7 @@ class BaseSosync(models.AbstractModel):
         vals = vals if vals else dict()
 
         # Detect sosync-record-version changes
-        sosync_write_date, watched_fields = self.sosync_check(cr, user, values=vals, context=context)
+        sosync_write_date, watched_fields = self.sosync_check(cr, user, ids, values=vals, context=context)
         if sosync_write_date:
             vals['sosync_write_date'] = sosync_write_date
 
