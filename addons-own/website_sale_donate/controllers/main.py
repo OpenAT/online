@@ -162,7 +162,7 @@ class website_sale_donate(website_sale):
 
         # !!! GET REQUEST !!! (= Regular load of product page for the OPC product.template)
         # If this product has a custom billing field or style configuration we must add it right now to the sale order
-        # because checkout_values() can only get the custom config from the sale order!
+        # because checkout_values() can only get the custom config from the sale order! .
         if request.httprequest.method != 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
                 and 'json_cart_update' not in request.session:
