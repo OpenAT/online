@@ -155,26 +155,30 @@ class website_sale_donate(website_sale):
         # -----------------
         # ONE PAGE CHECKOUT Start
         # -----------------
-        # TODO: MAYBE we should ALWAYS add the product to the shopping cart for OPC products if a cart with other
-        #       products exits?!? Basically this is what this (unneeded?) part of the code is doing right now anyway!
-        #
-        # If this product has a custom billing field configuration we must add it right now to the sale order!
-        # ATTENTION: This is because checkout_values() can only get the custom config from the sale order!
+
+        # ATTENTION: cart_update() expect a product.product id (a product variant id).
+        #            On a 'normal' shop product page this is always correct since the product variant id is given in
+        #            the checkoutbox (todo: check if this is true by checking the checkoutbox field product_id)
+
+        # !!! GET REQUEST !!! (= Regular load of product page for the OPC product.template)
+        # If this product has a custom billing field or style configuration we must add it right now to the sale order
+        # because checkout_values() can only get the custom config from the sale order!
         if request.httprequest.method != 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
                 and 'json_cart_update' not in request.session:
-            sale_order_id = request.session.sale_order_id
-            p_in_sale_order = None
-            if sale_order_id:
-                p_in_sale_order = request.registry['sale.order.line'].search(
-                    cr, SUPERUSER_ID,
-                    [('order_id', '=', sale_order_id),
-                     ('product_id', 'in', product.ids + product.product_variant_ids.ids)],
-                    context=context)
-            if not p_in_sale_order:
-                _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF CUSTOM BILLING FIELDS CONFIG!")
-                self.cart_update(product_id=product.id, set_qty=1)
 
+            sale_order = request.website.sale_get_order()
+            if sale_order and len(product.product_variant_ids) >= 1:
+                # WARNING: !!! 'product' is product.template but cart_update expects a product.product id !!!
+                product_variant_ids = product.product_variant_ids.ids
+
+                # Check if any product.product ids of this product.template is already in the sale order
+                so_product_variant_ids = sale_order.order_line.product_id.mapped('id')
+                if not any(pv_id in so_product_variant_ids for pv_id in product_variant_ids):
+                    _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF POSSIBLE CUSTOM CONFIG!")
+                    self.cart_update(product_id=product_variant_ids[0], set_qty=1)
+
+        # !!! POST REQUEST !!! (OPC form was submitted)
         # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
         if request.httprequest.method == 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
@@ -183,8 +187,16 @@ class website_sale_donate(website_sale):
             # and set the Quantity to the value of the qty selector in the checkoutbox
             if 'add_qty' in kwargs and not 'set_qty' in kwargs:
                 kwargs['set_qty'] = kwargs['add_qty']
+
+            # Fallback if product_id is missing in kwargs
+            # ATTENTION: The 'product_id' in the kwargs is always a product.product id an not a product.template id!
             if not kwargs.get('product_id'):
-                kwargs['product_id'] = product.id
+                first_product_variant_id = product.product_variant_ids.ids[0]
+                _logger.error("product(): No product_id in kwargs! Using first product variant id from product template"
+                              " as a fallback! (product_template_id: %s, first_product_variant_id: %s)"
+                              "" % (product.id, first_product_variant_id))
+                kwargs['product_id'] = first_product_variant_id
+
             _logger.warning("product(): self.cart_update(**kwargs)")
 
             cu_res = self.cart_update(**kwargs)
@@ -352,7 +364,7 @@ class website_sale_donate(website_sale):
 
         cr, uid, context = request.cr, request.uid, request.context
 
-        product = request.registry['product.product'].browse(cr, SUPERUSER_ID, int(product_id), context=context)
+        product = request.registry['product.product'].browse(cr, SUPERUSER_ID, [int(product_id)], context=context)
 
         # Redirect to the calling page (referrer) if the browser has added it
         # HINT: Not every browser adds the referrer to the header
