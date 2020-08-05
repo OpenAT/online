@@ -163,20 +163,26 @@ class website_sale_donate(website_sale):
         # !!! GET REQUEST !!! (= Regular load of product page for the OPC product.template)
         # If this product has a custom billing field or style configuration we must add it right now to the sale order
         # because checkout_values() can only get the custom config from the sale order! .
-        if request.httprequest.method != 'POST' \
-                and product.product_page_template == u'website_sale_donate.ppt_opc' \
-                and 'json_cart_update' not in request.session:
-
-            sale_order = request.website.sale_get_order()
-            if sale_order and len(product.product_variant_ids) >= 1:
-                # WARNING: !!! 'product' is product.template but cart_update expects a product.product id !!!
-                product_variant_ids = product.product_variant_ids.ids
-
-                # Check if any product.product ids of this product.template is already in the sale order
-                so_product_variant_ids = sale_order.order_line.mapped('product_id.id')
-                if not any(pv_id in so_product_variant_ids for pv_id in product_variant_ids):
-                    _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF POSSIBLE CUSTOM CONFIG!")
-                    self.cart_update(product_id=product_variant_ids[0], set_qty=1)
+        #
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # WARNING: This was disabled again because it causes WAY TOO MUCH side effects!!! It was only added for
+        #          the GL2K project with the custom themes and custom checkout fields ... so no big deal to disable it!
+        #          THIS MEANS THAT CUSTOM CHECKOUT FIELDS WILL CURRENTLY NOT WORK WITH OPC PAGES
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # if request.httprequest.method != 'POST' \
+        #         and product.product_page_template == u'website_sale_donate.ppt_opc' \
+        #         and 'json_cart_update' not in request.session:
+        #
+        #     sale_order = request.website.sale_get_order()
+        #     if sale_order and len(product.product_variant_ids) >= 1:
+        #         # WARNING: !!! 'product' is product.template but cart_update expects a product.product id !!!
+        #         product_variant_ids = product.product_variant_ids.ids
+        #
+        #         # Check if any product.product ids of this product.template is already in the sale order
+        #         so_product_variant_ids = sale_order.order_line.mapped('product_id.id')
+        #         if not any(pv_id in so_product_variant_ids for pv_id in product_variant_ids):
+        #             _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF POSSIBLE CUSTOM CONFIG!")
+        #             self.cart_update(product_id=product_variant_ids[0], set_qty=1)
 
         # !!! POST REQUEST !!! (OPC form was submitted)
         # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
@@ -357,6 +363,7 @@ class website_sale_donate(website_sale):
     # HINT: can also be called by Products-Listing Category Page if add-to-cart is enabled
     @http.route(['/shop/cart/update'])
     def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+        # ATTENTION: !!! product_id is meant to be a product.product id !!! (and !NOT! a product_template id!)
         try:
             _logger.warning("cart_update(): START %s" % request.httprequest)
         except:
