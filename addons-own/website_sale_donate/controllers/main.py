@@ -173,7 +173,7 @@ class website_sale_donate(website_sale):
                 product_variant_ids = product.product_variant_ids.ids
 
                 # Check if any product.product ids of this product.template is already in the sale order
-                so_product_variant_ids = sale_order.order_line.product_id.mapped('id')
+                so_product_variant_ids = sale_order.order_line.mapped('product_id.id')
                 if not any(pv_id in so_product_variant_ids for pv_id in product_variant_ids):
                     _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF POSSIBLE CUSTOM CONFIG!")
                     self.cart_update(product_id=product_variant_ids[0], set_qty=1)
