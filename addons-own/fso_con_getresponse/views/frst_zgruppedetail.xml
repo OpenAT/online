@@ -10,6 +10,13 @@
             <xpath expr="//group[@name='subscription_settings']" position="before">
                 <group string="GetResponse">
                     <field name="sync_with_getresponse"/>
+
+                    <field name="gr_language_code"/>
+                    <field name="gr_optin_email"/>
+                    <field name="gr_optin_api"/>
+                    <field name="gr_optin_import"/>
+                    <field name="gr_optin_webform"/>
+
                 </group>
             </xpath>
         </field>

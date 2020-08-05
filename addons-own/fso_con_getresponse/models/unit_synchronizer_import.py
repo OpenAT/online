@@ -29,10 +29,12 @@ ATTENTION: Call the ``bind`` method even if the records are already bound, to up
 
 import logging
 from openerp.tools.translate import _
+
 from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.connector import ConnectorUnit
 from openerp.addons.connector.unit.synchronizer import Importer
 from openerp.addons.connector.exception import IDMissingInBackend
+
 from .connector import get_environment, add_checkpoint
 from .backend import getresponse
 

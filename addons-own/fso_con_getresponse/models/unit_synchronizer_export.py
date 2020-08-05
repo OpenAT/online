@@ -21,7 +21,7 @@
 """
 Export data to GetResponse.
 
-An export may be forced if changes in both system are detected. (Concurrent write)
+An export will be forced if changes in both system are detected. (Concurrent write)
 """
 import psycopg2
 from psycopg2 import errorcodes
@@ -65,7 +65,11 @@ class GetResponseExporter(Exporter):
     # TODO
     def _should_import(self):
         """ Before the export, compare the update date (todo: and data) in GetResponse and the last sync date (todo: and data) in Odoo,
-        if the update date in GetResponse  is more recent, schedule an import to not miss changes done in GetResponse.
+        if the update date in GetResponse is more recent (todo: and there where no changes in odoo),
+        schedule an import to not miss changes done in GetResponse.
+
+        TODO: If changes in both system happened _should_import() will return fales to enforce the export! This means
+              the data in odoo wins in case of changes in both systems
         """
         assert self.binding_record
 

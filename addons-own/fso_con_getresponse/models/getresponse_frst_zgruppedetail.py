@@ -68,6 +68,16 @@ class GetResponseFrstZgruppedetail(models.Model):
                                            help="If set the contacts/subscribers of this group/campaign will be"
                                                 "synced with GetResponse")
 
+    gr_language_code = fields.Char(string="GetResponse Language Code", readonly=True)
+    gr_optin_email = fields.Selection(string="GetResponse OptIn Email", readonly=True,
+                                      selection=[('single', 'single'), ('double', 'double')])
+    gr_optin_api = fields.Selection(string="GetResponse OptIn API", readonly=True,
+                                    selection=[('single', 'single'), ('double', 'double')])
+    gr_optin_import = fields.Selection(string="GetResponse OptIn Import", readonly=True,
+                                       selection=[('single', 'single')])
+    gr_optin_webform = fields.Selection(string="GetResponse OptIn Webform", readonly=True,
+                                        selection=[('single', 'single'), ('double', 'double')])
+
     @api.constrains('sync_with_getresponse', 'zgruppe_id')
     def constrain_sync_with_getresponse(self):
         for r in self:
@@ -134,12 +144,25 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
 # Transform the data from GetResponse campaign objects to odoo records and vice versa
 @getresponse
 class ZgruppedetailImportMapper(ImportMapper):
+    """ Map all the fields of the the GetResponse API library campaign object to the odoo record fields.
+    You can find all all available fields here: ..../getresponse-python/getresponse/campaign.py
+
+    ATTENTION: The field names of the  GetResponse API library (getresponse-python) may not match the field names
+               found in the getresponse API documentation e.g. Campaign.language_code is 'languageCode' in the api.
+               The final transformation to the correct API names is done by the getresponse-python lib. Check
+               _create() from getresponse-python > campaign.py to see the final transformations
+    """
     _model_name = 'getresponse.frst.zgruppedetail'
+
+    # TODO: Check if this method may be the correct one for PersonEmail and Partner for PersonEmailGruppe"
+    def _map_children(self, record, attr, model):
+        pass
 
     # (getresponse_field_name, odoo_field_name)
     direct = [
         ('name', 'gruppe_lang'),
-        ('name', 'gruppe_kurz')
+        ('name', 'gruppe_kurz'),
+        ('language_code', 'gr_language_code')
     ]
 
     @mapping
@@ -161,11 +184,22 @@ class ZgruppedetailImportMapper(ImportMapper):
         # get 'default_zgruppe_id' from the getresponse backend
         return {'zgruppe_id': self.backend_record.default_zgruppe_id.id}
 
-    # TODO: subscription settings - this needs to be implemented in the getresponse client as well as in the
-    #       frst.zgruppedetail model or maybe just in the backend as a global config?
+    # OptIn
+    @mapping
+    def gr_optin_email(self, record):
+        return {'gr_optin_email': record['opting_types']['email']}
 
-    def _map_children(self, record, attr, model):
-        pass
+    @mapping
+    def gr_optin_api(self, record):
+        return {'gr_optin_api': record['opting_types']['api']}
+
+    @mapping
+    def gr_optin_import(self, record):
+        return {'gr_optin_import': record['opting_types']['import']}
+
+    @mapping
+    def gr_optin_webform(self, record):
+        return {'gr_optin_webform': record['opting_types']['webform']}
 
 
 # ---------------------------------
@@ -234,7 +268,50 @@ class ZgruppedetailImporter(GetResponseImporter):
 # -----------------------
 # TODO: CONNECTOR EXPORT MAPPER
 # -----------------------
+@getresponse
+class ZgruppedetailExportMapper(ExportMapper):
+    """ Map all the fields of the odoo record to the GetResponse API library campaign object.
+    You can find all all available fields here: ..../getresponse-python/getresponse/campaign.py
 
+    ATTENTION: The field names of the  GetResponse API library (getresponse-python) may not match the field names
+               found in the getresponse API documentation e.g. Campaign.language_code is 'languageCode' in the api.
+               The final transformation to the correct API names is done by the getresponse-python lib. Check
+               _create() from getresponse-python > campaign.py to see the final transformations
+
+    ATTENTION: We do NOT map fields that should be set in getresponse only! So OptIn Types or gr_language_code can be
+               changed in getresponse only. The only exception from this rule is if we create campaigns from odoo
+               zGruppeDetail records where we need to set the defaults on creation time.
+    """
+
+    def _map_children(self, record, attr, model):
+        pass
+
+    _model_name = 'getresponse.frst.zgruppedetail'
+
+    @mapping
+    def name(self, record):
+        return {'name': record.gruppe_lang or record.gruppe_kurz}
+
+    @only_create
+    @mapping
+    def language_code(self, record):
+        return {'language_code': 'DE'}
+
+    # OptIn
+    # ATTENTION: We can only export or import contacts (subscribers / PersonEmailGruppe) that are approved. Or in
+    #            other words only subscribers where the optin is already done! This is more or less a getresponse
+    #            constrain since non approved subscribers are treated like 'deleted' from getresponse and will not be
+    #            returned by regular searches!
+    #            Therefore do not sync any PersonEmailGruppe in an state other than 'approved' or 'subscribed'
+    #            Because of this  all subscribers created by the api through FSON are subscribed already and we set
+    #            'api' to 'single'.
+    @only_create
+    @mapping
+    def opting_types(self, record):
+        return {'opting_types': {
+            'api': 'single',
+            }
+        }
 
 # ---------------------------------
 # TODO: CONNECTOR EXPORTER (SYNCHRONIZER)

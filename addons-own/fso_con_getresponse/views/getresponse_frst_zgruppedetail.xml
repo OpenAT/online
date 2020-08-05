@@ -19,6 +19,12 @@
                             <field name="sync_with_getresponse"/>
                             <field name="sync_date"/>
                             <field name="sync_data"/>
+
+                            <field name="gr_language_code"/>
+                            <field name="gr_optin_email"/>
+                            <field name="gr_optin_api"/>
+                            <field name="gr_optin_import"/>
+                            <field name="gr_optin_webform"/>
                         </group>
                     </sheet>
                 </form>

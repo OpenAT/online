@@ -15,6 +15,7 @@ class GetResponseCRUDAdapter(CRUDAdapter):
         super(GetResponseCRUDAdapter, self).__init__(connector_env)
         backend = self.backend_record
 
+        # TODO: maybe i should rename this this to getresponse_adapter for clarification
         self.getresponse = GetResponse(backend.api_key)
 
     def search(self, filters=None):
