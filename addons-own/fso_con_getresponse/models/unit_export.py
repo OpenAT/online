@@ -33,14 +33,60 @@ from openerp.addons.connector.unit.synchronizer import Exporter
 from openerp.addons.connector.exception import IDMissingInBackend, RetryableJobError
 from openerp.addons.connector.queue.job import job, related_action
 
-from .unit_synchronizer_import import import_record
-from .connector import get_environment
-from .related_action import unwrap_binding
+from .unit_import import import_record
+from .helper_connector import get_environment
+from .helper_related_action import unwrap_binding
 
 import logging
 _logger = logging.getLogger(__name__)
 
 
+# ------------------------------------------------------------------------------
+# SEARCH FOR ODOO RECORDS AND START THE EXPORT FOR EACH RECORD DELAYED OR DIRECT
+# ------------------------------------------------------------------------------
+class BatchExporter(Exporter):
+    """ The role of a BatchExporter is to search for a list of items to export, then it can either import them directly
+    or delay (by connector job) the import of each item separately.
+    """
+    _model_name = None
+
+    def run(self):
+        raise ValueError("The BatchExporter class uses batch_run() instead of run() to avoid confusion with the .run()"
+                         " method of the single record export class GetResponseExporter()!")
+
+    # ATTENTION: The singe record exporter class GetResponseExporter and the batch exporter class BatchExporter
+    #            both use .run to start the export (which is confusing at best).
+    def batch_run(self, domain=None, fields=None, delay=False, **kwargs):
+        """ Batch export odoo records to GetResponse
+        """
+
+        # ---------------------------
+        # SEARCH FOR THE ODOO RECORDS
+        # ---------------------------
+        domain = domain or []
+        odoo_model = self.model._name
+        records = self.env[odoo_model].search(domain)
+
+        # ------------------------------------------
+        # RUN _export_record() FOR EACH FOUND RECORD
+        # ------------------------------------------
+        for record in records:
+            if delay:
+                export_record.delay(self.session,
+                                    self.model._name,
+                                    record.id,
+                                    fields=fields,
+                                    **kwargs)
+            else:
+                export_record(self.session,
+                              self.model._name,
+                              record.id,
+                              fields=fields)
+
+
+# ------------------------------------
+# EXPORT AN ODOO RECORD TO GETRESPONSE
+# ------------------------------------
 class GetResponseExporter(Exporter):
     """ A common flow for the exports to GetResponse """
     def __init__(self, connector_env):
@@ -252,24 +298,6 @@ class GetResponseExporter(Exporter):
         """
         return self.mapper.map_record(self.binding_record)
 
-    # TODO: Check if this is still needed since it says "To remove in 8.0" and was replaced by _validate_create_data
-    #       and _validate_update_data
-    # def _validate_data(self, data):
-    #     """ Check if the values to import are correct
-    #
-    #     Kept for retro-compatibility. To remove in 8.0
-    #
-    #     Pro-actively check before the ``Model.create`` or ``Model.update``
-    #     if some fields are missing or invalid
-    #
-    #     Raise `InvalidDataError`
-    #     """
-    #     _logger.warning('Deprecated: _validate_data is deprecated '
-    #                     'in favor of validate_create_data() '
-    #                     'and validate_update_data()')
-    #     self._validate_create_data(data)
-    #     self._validate_update_data(data)
-
     def _validate_create_data(self, data):
         """ Check if the values to import are correct
 
@@ -374,7 +402,10 @@ class GetResponseExporter(Exporter):
         result = self._run(*args, **kwargs)
 
         # Bind the record after export again to update bind record data
-        self.binder.bind(self.getresponse_id, self.binding_id)
+        # TODO: add sync_data like in the importer
+        map_record = self._map_data()
+        update_values = self._update_data(map_record)
+        self.binder.bind(self.getresponse_id, self.binding_id, sync_data=update_values)
 
         # Commit so we keep the external ID when there are several exports (due to dependencies) and one of them fails.
         # The commit will also release the lock acquired on the binding record
@@ -389,11 +420,22 @@ class GetResponseExporter(Exporter):
 
 # HINT: The @related_action decorator will add a button on the jobs form view that will open the form view of the
 #       unwrapped record. E.g. a job for getresponse.frst.zgruppedetail will open the form view for frst.zgruppedetail
+# ATTENTION: export_record expects binding records !!! Create them first if needed!
+#            Check ZgruppedetailBatchExporter batch_run() for an example!
 @job(default_channel='root.getresponse')
 @related_action(action=unwrap_binding)
 def export_record(session, model_name, binding_id, fields=None):
     """ Export an odoo record to GetResponse """
+    # Get the odoo binding record
     record = session.env[model_name].browse(binding_id)
+
+    # Get an connector environment
     env = get_environment(session, model_name, record.backend_id.id)
+
+    # ATTENTION: The GetResponseExporter class may be changed by the model specific implementation!
+    #            The connector knows which classes to consider based on the _model_name of the class and the
+    #            'model_name' in the args of import_record used in the connector environment above
     exporter = env.get_connector_unit(GetResponseExporter)
+
+    # Start the .run() method of the found exporter class
     return exporter.run(binding_id, fields=fields)

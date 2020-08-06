@@ -16,7 +16,7 @@ class GetResponseCRUDAdapter(CRUDAdapter):
         backend = self.backend_record
 
         # TODO: maybe i should rename this this to getresponse_adapter for clarification
-        self.getresponse = GetResponse(backend.api_key)
+        self.getresponse_api_session = GetResponse(backend.api_key)
 
     def search(self, filters=None):
         """ Search records according to some criterias

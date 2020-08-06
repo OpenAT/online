@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 from openerp import fields, models, api
 from openerp.addons.connector.session import ConnectorSession
 from openerp.tools.translate import _
 
-from .getresponse_frst_zgruppedetail import zgruppedetail_import_batch_delay, zgruppedetail_import_batch_direct
+from .getresponse_frst_zgruppedetail_import import zgruppedetail_import_batch_delay, zgruppedetail_import_batch_direct
+from .getresponse_frst_zgruppedetail_export import zgruppedetail_export_batch
 
 
 # New model to hold all settings for the getresponse connector
@@ -52,6 +54,9 @@ class GetResponseBackend(models.Model):
                 assert r.default_zgruppe_id.tabellentyp_id == '100110', _(
                     "The 'Default-Group-Folder' type must be 'Email'!")
 
+    # ----------------
+    # IMPORT CAMPAIGNS
+    # ----------------
     @api.multi
     def import_getresponse_campaigns_delay(self):
         """ Import all campaigns from getresponse as frst.zgruppedetail """
@@ -66,7 +71,26 @@ class GetResponseBackend(models.Model):
         for backend in self:
             zgruppedetail_import_batch_direct(session, 'getresponse.frst.zgruppedetail', backend.id, filters=None)
 
+    # ----------------
+    # EXPORT CAMPAIGNS
+    # ----------------
+    @api.multi
+    def export_getresponse_campaigns_direct(self):
+        """ Export all frst.zgruppedetail groups with sync_with_getresponse=True to getresponse campaigns """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            zgruppedetail_export_batch(session, 'getresponse.frst.zgruppedetail', backend.id, delay=False)
 
+    @api.multi
+    def export_getresponse_campaigns_delay(self):
+        """ Export all frst.zgruppedetail groups with sync_with_getresponse=True delayed (connector jobs)
+        to getresponse campaigns """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            zgruppedetail_export_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
+
+
+# Inverse field
 class FRSTzGruppe(models.Model):
     _inherit = 'frst.zgruppe'
 

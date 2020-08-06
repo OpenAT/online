@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from openerp import fields, models, api
 import openerp.addons.connector.backend as backend
 

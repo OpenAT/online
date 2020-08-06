@@ -37,10 +37,10 @@
             <field name="model">getresponse.frst.zgruppedetail</field>
             <field name="arch" type="xml">
                 <tree string="GetResponse Campaign Bindings">
-                    <field name="backend_id"/>
                     <field name="odoo_id"/>
                     <field name="getresponse_id"/>
                     <field name="sync_date"/>
+                    <field name="backend_id"/>
                 </tree>
             </field>
         </record>

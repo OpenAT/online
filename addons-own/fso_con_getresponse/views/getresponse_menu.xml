@@ -15,7 +15,7 @@
             action="action_getresponse_backend"/>
 
         <menuitem id="menu_getresponse_campaing"
-            name="Campaign Bindings"
+            name="Campaigns (Lists)"
             parent="menu_getresponse_root"
             sequence="20"
             action="action_getresponse_frst_zgruppedetail"/>

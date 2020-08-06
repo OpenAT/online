@@ -35,7 +35,7 @@ from openerp.addons.connector.connector import ConnectorUnit
 from openerp.addons.connector.unit.synchronizer import Importer
 from openerp.addons.connector.exception import IDMissingInBackend
 
-from .connector import get_environment, add_checkpoint
+from .helper_connector import get_environment, add_checkpoint
 from .backend import getresponse
 
 import json
@@ -43,6 +43,85 @@ import json
 _logger = logging.getLogger(__name__)
 
 
+# ----------------------------------------
+# ADD A CHECKPOINT FOR MANUAL INTERVENTION
+# ----------------------------------------
+# TODO: Check where and how to add checkpoints in the sync process
+@getresponse
+class AddCheckpoint(ConnectorUnit):
+    """ Add a connector.checkpoint on the underlying model
+    (not the getresponse.* but the _inherits'ed model) """
+
+    _model_name = ['getresponse.frst.zgruppedetail']
+
+    def run(self, openerp_binding_id):
+        binding = self.model.browse(openerp_binding_id)
+        record = binding.openerp_id
+        add_checkpoint(self.session,
+                       record._model._name,
+                       record.id,
+                       self.backend_record.id)
+
+
+# -------------------------------------------------------------------------
+# SEARCH FOR RECORDS AND START THE IMPORT FOR EACH RECORD DELAYED OR DIRECT
+# -------------------------------------------------------------------------
+class BatchImporter(Importer):
+    """ The role of a BatchImporter is to search for a list of
+    items to import, then it can either import them directly or delay
+    the import of each item separately.
+    """
+
+    def run(self, filters=None):
+        """ Run the synchronization """
+
+        # ------------------------------
+        # SEARCH FOR GETRESPONSE RECORDS
+        # ------------------------------
+        record_ids = self.backend_adapter.search(filters)
+
+        # RUN import_record() FOR EACH FOUND RECORD
+        for record_id in record_ids:
+            self._import_record(record_id)
+
+    def _import_record(self, record_id):
+        """ Import a record directly or delay the import of the record.
+
+        Method to implement in sub-classes.
+        """
+        raise NotImplementedError
+
+
+# HINT: The run() method is implemented by BatchImporter
+class DirectBatchImporter(BatchImporter):
+    """ Import the records directly, without delaying the jobs. """
+    _model_name = None
+
+    def _import_record(self, record_id):
+        """ Import the record directly """
+        import_record(self.session,
+                      self.model._name,
+                      self.backend_record.id,
+                      record_id)
+
+
+# HINT: The run() method is implemented by BatchImporter
+class DelayedBatchImporter(BatchImporter):
+    """ Delay import of the records """
+    _model_name = None
+
+    def _import_record(self, record_id, **kwargs):
+        """ Delay the import of the records"""
+        import_record.delay(self.session,
+                            self.model._name,
+                            self.backend_record.id,
+                            record_id,
+                            **kwargs)
+
+
+# ---------------------------
+# IMPORT A GETRESPONSE RECORD
+# ---------------------------
 class GetResponseImporter(Importer):
     """ Base importer for GetResponse records """
 
@@ -157,8 +236,8 @@ class GetResponseImporter(Importer):
         return
 
     def _get_binding(self):
-        # TODo: The original magento connector did implement a browse option for the to_openerp() method. It is still
-        #       unclear if this is needed on this minimal implementation also
+        # TODO: The magento connector did implement a browse= option for the to_openerp() method.
+        #       It's unclear to me if this is needed on this minimal implementation also
         #return self.binder.to_openerp(self.getresponse_id, browse=True)
         return self.binder.to_openerp(self.getresponse_id)
 
@@ -247,16 +326,12 @@ class GetResponseImporter(Importer):
         #       object but already prepared (mapped) for the odoo record
         map_record = self._map_data()
 
-        # ---------------------------------
         # UPDATE an existing record in odoo
-        # ---------------------------------
         if binding:
             update_values = self._update_data(map_record)
             self._update(binding, update_values)
 
-        # ---------------------------
         # CREATE a new record in odoo
-        # ---------------------------
         else:
             create_values = self._create_data(map_record)
             binding = self._create(create_values)
@@ -270,84 +345,16 @@ class GetResponseImporter(Importer):
         self._after_import(binding)
 
 
-class BatchImporter(Importer):
-    """ The role of a BatchImporter is to search for a list of
-    items to import, then it can either import them directly or delay
-    the import of each item separately.
-    """
-
-    def run(self, filters=None):
-        """ Run the synchronization """
-        record_ids = self.backend_adapter.search(filters)
-        for record_id in record_ids:
-            self._import_record(record_id)
-
-    def _import_record(self, record_id):
-        """ Import a record directly or delay the import of the record.
-
-        Method to implement in sub-classes.
-        """
-        raise NotImplementedError
-
-
-# HINT: The run() method is implemented by BatchImporter
-class DirectBatchImporter(BatchImporter):
-    """ Import the records directly, without delaying the jobs. """
-    _model_name = None
-
-    def _import_record(self, record_id):
-        """ Import the record directly """
-        import_record(self.session,
-                      self.model._name,
-                      self.backend_record.id,
-                      record_id)
-
-
-# HINT: The run() method is implemented by BatchImporter
-class DelayedBatchImporter(BatchImporter):
-    """ Delay import of the records """
-    _model_name = None
-
-    def _import_record(self, record_id, **kwargs):
-        """ Delay the import of the records"""
-        import_record.delay(self.session,
-                            self.model._name,
-                            self.backend_record.id,
-                            record_id,
-                            **kwargs)
-
-
-@getresponse
-class AddCheckpoint(ConnectorUnit):
-    """ Add a connector.checkpoint on the underlying model
-    (not the getresponse.* but the _inherits'ed model) """
-
-    _model_name = ['getresponse.frst.zgruppedetail']
-
-    def run(self, openerp_binding_id):
-        binding = self.model.browse(openerp_binding_id)
-        record = binding.openerp_id
-        add_checkpoint(self.session,
-                       record._model._name,
-                       record.id,
-                       self.backend_record.id)
-
-
-# TODO: not sure if import_batch() is used at all - check usages in magento ... Because the Direct and
-#       DelayedBatchImporter all run import_record() and not import_batch() also the BatchImporter() class has no
-#       _import_record() implementation which may be another hint that this is not used?!?
-# @job(default_channel='root.getresponse')
-# def import_batch(session, model_name, backend_id, filters=None):
-#     """ Prepare a batch import of records from GetResponse """
-#     env = get_environment(session, model_name, backend_id)
-#     importer = env.get_connector_unit(BatchImporter)
-#     importer.run(filters=filters)
-
-
 # HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()
 @job(default_channel='root.getresponse')
 def import_record(session, model_name, backend_id, getresponse_id, force=False):
     """ Import a record from GetResponse """
     env = get_environment(session, model_name, backend_id)
+
+    # ATTENTION: The GetResponseImporter class may be changed by the model specific implementation!
+    #            The connector knows which classes to consider based on the _model_name of the class and the
+    #            'model_name' in the args of import_record
     importer = env.get_connector_unit(GetResponseImporter)
+
+    # Start the .run() method of the importer
     importer.run(getresponse_id, force=force)
