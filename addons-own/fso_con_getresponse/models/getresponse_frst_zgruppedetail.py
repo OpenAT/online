@@ -16,15 +16,11 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
-from openerp.addons.connector.unit.mapper import ImportMapper, ExportMapper, mapping, only_create
-from openerp.addons.connector.queue.job import job
-
-from .helper_connector import get_environment
 from .backend import getresponse
-
 from .unit_adapter import GetResponseCRUDAdapter
-from .unit_import import GetResponseImporter, DelayedBatchImporter, DirectBatchImporter
+from.unit_binder import GetResponseBinder
 
+import re
 
 # ------------------------------------------
 # CONNECTOR BINDING MODEL AND ORIGINAL MODEL
@@ -81,7 +77,11 @@ class GetResponseFrstZgruppedetail(models.Model):
     sync_with_getresponse = fields.Boolean(string="Sync with GetResponse",
                                            help="If set the contacts/subscribers of this group/campaign will be"
                                                 "synced with GetResponse")
-
+    gr_name = fields.Char(string='GetResponse Campaign Name',
+                          help="GetResponse will ony accept campaign names "
+                               "consisting of '0-9' 'a-z' and '_'. If a group uses a name "
+                               "not compatible with GetResponse you may choose an alternative "
+                               "name for GetResponse here!")
     gr_language_code = fields.Char(string="GetResponse Language Code", readonly=True)
     gr_optin_email = fields.Selection(string="GetResponse OptIn Email", readonly=True,
                                       selection=[('single', 'single'), ('double', 'double')])
@@ -92,22 +92,42 @@ class GetResponseFrstZgruppedetail(models.Model):
     gr_optin_webform = fields.Selection(string="GetResponse OptIn Webform", readonly=True,
                                         selection=[('single', 'single'), ('double', 'double')])
 
-    @api.constrains('sync_with_getresponse', 'zgruppe_id')
+    # This may be better placed in the binding model and combined with the backend_id BUT for now synchronisation
+    # to multiple backends (GetResponse Accounts) is not supported anyway ;)
+    _sql_constraints = [
+        ('gr_name_uniq', 'unique(gr_name)', 'A group already exists with the same GetResponse Campaign Name'),
+    ]
+
+    @api.constrains('sync_with_getresponse', 'zgruppe_id', 'gruppe_lang', 'gruppe_kurz')
     def constrain_sync_with_getresponse(self):
         for r in self:
             if r.sync_with_getresponse:
                 # Only E-Mail groups can be enabled to sync with GetResponse
                 if not r.zgruppe_id.tabellentyp_id == '100110':
                     raise ValidationError(_("Only groups of type e-mail can be synced with GetResponse!"))
+                # Check the group name
+                if not r.gr_name:
+                    name = r.gruppe_lang or r.gruppe_kurz
+                    assert re.match(r"(?:[a-z0-9_]+)\Z", name, flags=0), _(
+                        "Only a-z, 0-9 and _ is allowed for the GetResponse campaign name '{}'! "
+                        "Please change the group name or use the 'GetResponse Campaign Name' field!").format(name)
                 # TODO: Do not allow to unset 'sync_with_getresponse' as long as PersonEmailGruppe bindings to
                 #       GetResponse contacts exists (= as long as synced subscriber exist)
+
+    @api.constrains('gr_name')
+    def constrain_gr_name(self):
+        for r in self:
+            if r.gr_name:
+                assert re.match(r"(?:[a-z0-9_]+)\Z", r.gr_name, flags=0), _(
+                    "Only a-z, 0-9 and _ is allowed for the GetResponse campaign name: '{}'").format(r.gr_name)
+
 
 # ----------------
 # CONNECTOR BINDER
 # ----------------
 # Nothing to do here since no modifications to the generic binder implementation are needed
-# Just make sure to add all binding models to the '_model_name' list of the GetResponseModelBinder class
-# HINT: Check unit_binder.py > GetResponseModelBinder()
+# Just make sure to add all binding models to the '_model_name' list of the GetResponseBinder class
+# HINT: Check unit_binder.py > GetResponseBinder()
 
 
 # -----------------
@@ -117,6 +137,10 @@ class GetResponseFrstZgruppedetail(models.Model):
 # connector_env, the backend, the backend_record and about the connector session
 @getresponse
 class ZgruppedetailAdapter(GetResponseCRUDAdapter):
+    """
+    ATTENTION: read() and search_read() will return a dict and not the getresponse_record itself but
+               create() and write() will return a getresponse object from the getresponse-python lib!
+    """
     _model_name = 'getresponse.frst.zgruppedetail'
     _getresponse_model = 'campaign'
 
@@ -127,26 +151,26 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
         return [campaign.id for campaign in campaigns]
 
     def read(self, id, attributes=None):
-        """ Returns the information of a record  """
+        """ Returns the information of one record found by the external record id as a dict """
         campaign = self.getresponse_api_session.get_campaign(id, params=attributes)
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return campaign.__dict__
 
     def search_read(self, filters=None):
-        """ Search records based on 'filters' and return their information"""
+        """ Search records based on 'filters' and return their information as a dict """
         campaigns = self.getresponse_api_session.get_campaigns(filters)
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return campaigns.__dict__
 
     def create(self, data):
         campaign = self.getresponse_api_session.create_campaign(data)
-        # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
-        return campaign.__dict__
+        # WARNING: !!! We return the campaign object an not a dict !!!
+        return campaign
 
     def write(self, id, data):
         campaign = self.getresponse_api_session.update_campaign(id, body=data)
-        # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
-        return campaign.__dict__
+        # WARNING: !!! We return the campaign object and not a dict !!!
+        return campaign
 
     # TODO
     def delete(self, id):

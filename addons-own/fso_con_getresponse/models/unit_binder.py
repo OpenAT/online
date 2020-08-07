@@ -12,7 +12,7 @@ import json
 #        an Adapter class
 #        a Syncronizer class
 @getresponse
-class GetResponseModelBinder(Binder):
+class GetResponseBinder(Binder):
     _model_name = [
         'getresponse.frst.zgruppedetail'            # Getresponse Campaigns
     ]
@@ -29,7 +29,7 @@ class GetResponseModelBinder(Binder):
     
     def bind(self, external_id, binding_id, sync_data=None):
         # Call the original bind() method to write the sync_date field
-        res = super(GetResponseModelBinder, self).bind(external_id=external_id, binding_id=binding_id)
+        res = super(GetResponseBinder, self).bind(external_id=external_id, binding_id=binding_id)
 
         # If we got an id instead of an odoo record we load the odoo record right now
         if not isinstance(binding_id, models.BaseModel):

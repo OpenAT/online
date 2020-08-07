@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Author: Guewen Baconnier
+#    Author: Guewen Baconnier, Michael Karrer
 #    Copyright 2013 Camptocamp SA
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -67,9 +67,9 @@ class BatchExporter(Exporter):
         odoo_model = self.model._name
         records = self.env[odoo_model].search(domain)
 
-        # ------------------------------------------
-        # RUN _export_record() FOR EACH FOUND RECORD
-        # ------------------------------------------
+        # -----------------------------------------
+        # RUN export_record() FOR EACH FOUND RECORD
+        # -----------------------------------------
         for record in records:
             if delay:
                 export_record.delay(self.session,
@@ -98,6 +98,9 @@ class GetResponseExporter(Exporter):
         self.binding_id = None
         self.getresponse_id = None
         self.binding_record = None
+
+        # Getresponse record returned from the getresponse-python lib
+        self.getresponse_record = None
 
     def _delay_import(self):
         """ Schedule an import of the record.
@@ -299,7 +302,7 @@ class GetResponseExporter(Exporter):
         return self.mapper.map_record(self.binding_record)
 
     def _validate_create_data(self, data):
-        """ Check if the values to import are correct
+        """ Check if the values to export are correct
 
         Pro-actively check before the ``Model.create`` if some fields are missing or invalid
 
@@ -308,7 +311,7 @@ class GetResponseExporter(Exporter):
         return
 
     def _validate_update_data(self, data):
-        """ Check if the values to import are correct
+        """ Check if the values to export are correct
 
         Pro-actively check before the ``Model.update`` if some fields are missing or invalid
 
@@ -321,9 +324,12 @@ class GetResponseExporter(Exporter):
         return map_record.values(for_create=True, fields=fields, **kwargs)
 
     def _create(self, data):
-        """ Create the record in GetResponse """
-        # special check on data before export
+        """ Create the record in GetResponse
+        ::returns an getresponse object (from the getresponse-python lib)
+        """
+        # Special check on data before export
         self._validate_create_data(data)
+        # Create the GetResponse record
         return self.backend_adapter.create(data)
 
     def _update_data(self, map_record, fields=None, **kwargs):
@@ -333,16 +339,17 @@ class GetResponseExporter(Exporter):
     def _update(self, data):
         """ Update the record in GetResponse """
         assert self.getresponse_id
-        # special check on data before export
+        # Special check on data before export
         self._validate_update_data(data)
-        self.backend_adapter.write(self.getresponse_id, data)
+        # Update the GetResponse record
+        return self.backend_adapter.write(self.getresponse_id, data)
 
     def _after_export(self):
         """ Can do several actions after exporting a record to GetResponse """
         pass
 
     def _run(self, fields=None):
-        """ Flow of the synchronization, implemented in inherited classes"""
+        """ Flow of the synchronization. May be implemented in inherited classes"""
         assert self.binding_id
         assert self.binding_record
 
@@ -360,16 +367,38 @@ class GetResponseExporter(Exporter):
 
         map_record = self._map_data()
 
+        # ---------------------------
+        # UPDATE A GETRESPONSE RECORD
+        # ---------------------------
         if self.getresponse_id:
-            record = self._update_data(map_record, fields=fields)
-            if not record:
+            update_data = self._update_data(map_record, fields=fields)
+            if not update_data:
                 return _('Nothing to export.')
-            self._update(record)
+
+            # Add the returned getresponse_record to self
+            self.getresponse_record = self._update(update_data)
+
+            # Check the returned getresponse_id
+            assert self.getresponse_id == self.getresponse_record.id, _(
+                "Binding GetResponse id '%s' does not match GetRepsonse ID '%s' of the returned object!!"
+                "" % (self.getresponse_id, self.getresponse_record.id)
+            )
+
+        # -------------------------------------------------------------------
+        # CREATE A GETRESPONSE RECORD AND UPDATE THE 'getresponse_id' of self
+        # -------------------------------------------------------------------
         else:
-            record = self._create_data(map_record, fields=fields)
-            if not record:
+            create_data = self._create_data(map_record, fields=fields)
+            if not create_data:
                 return _('Nothing to export.')
-            self.getresponse_id = self._create(record)
+
+            # Add the returned getresponse_record to self
+            self.getresponse_record = self._create(create_data)
+
+            # Update the external id for the binding update later on in .run()
+            assert self.getresponse_record.id, "GetResponse Object did not return an id! %s" % self.getresponse_record
+            self.getresponse_id = self.getresponse_record.id
+
         return _('Record with ID %s was exported to GetResponse.') % self.getresponse_id
 
     # ------------------------------------------
@@ -398,11 +427,12 @@ class GetResponseExporter(Exporter):
         if should_import:
             self._delay_import()
 
-        # Run the specific export (synchronization flow) of the bound model
+        # RUN THE EXPORT
+        # (synchronization flow of the bound model)
         result = self._run(*args, **kwargs)
 
-        # Bind the record after export again to update bind record data
-        # TODO: add sync_data like in the importer
+        # BIND THE RECORD AFTER THE EXPORT AGAIN
+        # (to update bind record data and add sync_data like in the importer)
         map_record = self._map_data()
         update_values = self._update_data(map_record)
         self.binder.bind(self.getresponse_id, self.binding_id, sync_data=update_values)
@@ -412,6 +442,9 @@ class GetResponseExporter(Exporter):
         self.session.commit()
 
         # Hook to do stuff after a record export
+        # TODO: Update the odoo record with the data from the getresponse object stored in self.getresponse_record
+        #       Check _run() to see where it is stored! I think this would best fit in _after_export()?!?
+        #       !!! But be careful not to trigger an other export so update the context accordingly !!!
         self._after_export()
 
         # Return the _run() result

@@ -16,11 +16,15 @@
                       <button name="import_getresponse_campaigns_delay"
                         type="object"
                         class="oe_highlight"
-                        string="Import Campaigns (delayed)"/>
+                        string="Import Campaigns Delayed"/>
                       <button name="export_getresponse_campaigns_direct"
                         type="object"
                         class="oe_highlight"
                         string="Export Campaigns"/>
+                      <button name="export_getresponse_campaigns_delay"
+                        type="object"
+                        class="oe_highlight"
+                        string="Export Campaigns Delayed"/>
                     </header>
                     <sheet>
                         <label for="name" class="oe_edit_only"/>

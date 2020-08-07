@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Author: Guewen Baconnier
+#    Author: Guewen Baconnier, Michael Karrer
 #    Copyright 2013 Camptocamp SA
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -67,12 +67,16 @@ class AddCheckpoint(ConnectorUnit):
 # SEARCH FOR RECORDS AND START THE IMPORT FOR EACH RECORD DELAYED OR DIRECT
 # -------------------------------------------------------------------------
 class BatchImporter(Importer):
-    """ The role of a BatchImporter is to search for a list of
-    items to import, then it can either import them directly or delay
-    the import of each item separately.
+    """ The role of a BatchImporter is to search for a list of items to import, then it can either import them
+    directly or delay the import of each item separately.
     """
+    _model_name = None
 
-    def run(self, filters=None):
+    def run(self):
+        raise ValueError("The BatchImporter class uses batch_run() instead of run() to avoid confusion with the .run()"
+                         " method of the single record export class GetResponseImporter()!")
+
+    def batch_run(self, filters=None, delay=False, **kwargs):
         """ Run the synchronization """
 
         # ------------------------------
@@ -80,43 +84,21 @@ class BatchImporter(Importer):
         # ------------------------------
         record_ids = self.backend_adapter.search(filters)
 
+        # -----------------------------------------
         # RUN import_record() FOR EACH FOUND RECORD
+        # -----------------------------------------
         for record_id in record_ids:
-            self._import_record(record_id)
-
-    def _import_record(self, record_id):
-        """ Import a record directly or delay the import of the record.
-
-        Method to implement in sub-classes.
-        """
-        raise NotImplementedError
-
-
-# HINT: The run() method is implemented by BatchImporter
-class DirectBatchImporter(BatchImporter):
-    """ Import the records directly, without delaying the jobs. """
-    _model_name = None
-
-    def _import_record(self, record_id):
-        """ Import the record directly """
-        import_record(self.session,
-                      self.model._name,
-                      self.backend_record.id,
-                      record_id)
-
-
-# HINT: The run() method is implemented by BatchImporter
-class DelayedBatchImporter(BatchImporter):
-    """ Delay import of the records """
-    _model_name = None
-
-    def _import_record(self, record_id, **kwargs):
-        """ Delay the import of the records"""
-        import_record.delay(self.session,
-                            self.model._name,
-                            self.backend_record.id,
-                            record_id,
-                            **kwargs)
+            if delay:
+                import_record.delay(self.session,
+                                    self.model._name,
+                                    self.backend_record.id,
+                                    record_id,
+                                    **kwargs)
+            else:
+                import_record(self.session,
+                              self.model._name,
+                              self.backend_record.id,
+                              record_id)
 
 
 # ---------------------------
@@ -322,24 +304,22 @@ class GetResponseImporter(Importer):
         self._import_dependencies()
 
         # Get the data from the GetResponse record already prepared (mapped) for the odoo record
-        # TODO: I think that this is the data that should be stored to sync_date - it's the data from the getresponse
-        #       object but already prepared (mapped) for the odoo record
         map_record = self._map_data()
+        update_data = self._update_data(map_record)
 
         # UPDATE an existing record in odoo
         if binding:
-            update_values = self._update_data(map_record)
-            self._update(binding, update_values)
+            self._update(binding, update_data)
 
         # CREATE a new record in odoo
         else:
-            create_values = self._create_data(map_record)
-            binding = self._create(create_values)
+            create_data = self._create_data(map_record)
+            binding = self._create(create_data)
 
         # Call the binder again to update the binding and the 'sync_data' for concurrent write detection
         # ATTENTION: We store only the fields without '@only_create' mapped fields since those fields seems unneeded
         #            for the data comparison TODO: Make sure to check if this is true for every synced model!
-        self.binder.bind(self.getresponse_id, binding, sync_data=self._update_data(map_record))
+        self.binder.bind(self.getresponse_id, binding, sync_data=update_data)
 
         # After import hook
         self._after_import(binding)

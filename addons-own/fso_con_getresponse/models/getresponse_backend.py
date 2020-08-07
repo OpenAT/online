@@ -3,7 +3,7 @@ from openerp import fields, models, api
 from openerp.addons.connector.session import ConnectorSession
 from openerp.tools.translate import _
 
-from .getresponse_frst_zgruppedetail_import import zgruppedetail_import_batch_delay, zgruppedetail_import_batch_direct
+from .getresponse_frst_zgruppedetail_import import zgruppedetail_import_batch
 from .getresponse_frst_zgruppedetail_export import zgruppedetail_export_batch
 
 
@@ -30,7 +30,8 @@ class GetResponseBackend(models.Model):
         required=True,
     )
     api_key = fields.Char(string='GetResponse API Key')
-    #api_url = fields.Char(string='GetResponse API URL') # Currently this is directly set in the getresponse-python client lib
+    # Currently this is statically set in the getresponse-python client lib
+    #api_url = fields.Char(string='GetResponse API URL')
     default_lang_id = fields.Many2one(
         comodel_name='res.lang',
         string='Default Language',
@@ -54,26 +55,26 @@ class GetResponseBackend(models.Model):
                 assert r.default_zgruppe_id.tabellentyp_id == '100110', _(
                     "The 'Default-Group-Folder' type must be 'Email'!")
 
-    # ----------------
-    # IMPORT CAMPAIGNS
-    # ----------------
-    @api.multi
-    def import_getresponse_campaigns_delay(self):
-        """ Import all campaigns from getresponse as frst.zgruppedetail """
-        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
-        for backend in self:
-            zgruppedetail_import_batch_delay.delay(session, 'getresponse.frst.zgruppedetail', backend.id, filters=None)
-
+    # ------------------------
+    # IMPORT CAMPAIGNS BUTTONS
+    # ------------------------
     @api.multi
     def import_getresponse_campaigns_direct(self):
         """ Import all campaigns from getresponse as frst.zgruppedetail """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            zgruppedetail_import_batch_direct(session, 'getresponse.frst.zgruppedetail', backend.id, filters=None)
+            zgruppedetail_import_batch(session, 'getresponse.frst.zgruppedetail', backend.id, delay=False)
 
-    # ----------------
-    # EXPORT CAMPAIGNS
-    # ----------------
+    @api.multi
+    def import_getresponse_campaigns_delay(self):
+        """ Import all campaigns from getresponse as frst.zgruppedetail delayed (connector jobs) """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            zgruppedetail_import_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
+
+    # ------------------------
+    # EXPORT CAMPAIGNS BUTTONS
+    # ------------------------
     @api.multi
     def export_getresponse_campaigns_direct(self):
         """ Export all frst.zgruppedetail groups with sync_with_getresponse=True to getresponse campaigns """

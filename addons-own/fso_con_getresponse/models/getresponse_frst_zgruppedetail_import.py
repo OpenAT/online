@@ -9,9 +9,10 @@ from openerp.addons.connector.queue.job import job
 
 from .helper_connector import get_environment
 from .backend import getresponse
+from .unit_import import BatchImporter, GetResponseImporter
 
-from .unit_adapter import GetResponseCRUDAdapter
-from .unit_import import GetResponseImporter, DelayedBatchImporter, DirectBatchImporter
+import logging
+_logger = logging.getLogger(__name__)
 
 
 # -----------------------
@@ -36,18 +37,25 @@ class ZgruppedetailImportMapper(ImportMapper):
 
     # (getresponse_field_name, odoo_field_name)
     direct = [
-        ('name', 'gruppe_lang'),
-        ('name', 'gruppe_kurz'),
+        ('name', 'gr_name'),
         ('language_code', 'gr_language_code')
     ]
 
     @mapping
     def backend_id(self, record):
+        # TODO: Get the field name '_openerp_field' from the binder for 'getresponse.frst.zgruppedetail'
         return {'backend_id': self.backend_record.id}
 
     @mapping
     def getresponse_id(self, record):
+        # TODO: Get the field name '_openerp_field' from the binder for 'getresponse.frst.zgruppedetail'
         return {'getresponse_id': record['id']}
+
+    @only_create
+    @mapping
+    def gruppe_lang(self, record):
+        return {'gruppe_lang': record['name'],
+                'gruppe_kurz': record['name']}
 
     @only_create
     @mapping
@@ -86,37 +94,22 @@ class ZgruppedetailImportMapper(ImportMapper):
 # SEARCH FOR RECORDS AND START THE IMPORT FOR EACH RECORD DELAYED OR DIRECT
 # -------------------------------------------------------------------------
 @getresponse
-class ZgruppedetailDirectBatchImporter(DirectBatchImporter):
+class ZgruppedetailBatchImporter(BatchImporter):
     _model_name = ['getresponse.frst.zgruppedetail']
 
 
 @job(default_channel='root.getresponse')
-def zgruppedetail_import_batch_direct(session, model_name, backend_id, filters=None):
+def zgruppedetail_import_batch(session, model_name, backend_id, filters=None, delay=False, **kwargs):
     """ Prepare the batch import of all GetResponse campaigns """
     if filters is None:
         filters = {}
-    env = get_environment(session, model_name, backend_id)
-    # ZgruppedetailDirectBatchImporter > DirectBatchImporter._import_record > import_record() which will start:
-    #     env.get_connector_unit(GetResponseImporter).run()
-    importer = env.get_connector_unit(ZgruppedetailDirectBatchImporter)
-    importer.run(filters=filters)
+    connector_env = get_environment(session, model_name, backend_id)
 
+    # Get the import connector unit
+    importer = connector_env.get_connector_unit(ZgruppedetailBatchImporter)
 
-@getresponse
-class ZgruppedetailDelayedBatchImporter(DelayedBatchImporter):
-    _model_name = ['getresponse.frst.zgruppedetail']
-
-
-@job(default_channel='root.getresponse')
-def zgruppedetail_import_batch_delay(session, model_name, backend_id, filters=None):
-    """ Prepare the batch import of all GetResponse campaigns """
-    if filters is None:
-        filters = {}
-    env = get_environment(session, model_name, backend_id)
-    # ZgruppedetailDelayedBatchImporter > DelayedBatchImporter._import_record > import_record.delay() which will start:
-    #     env.get_connector_unit(GetResponseImporter).run()
-    importer = env.get_connector_unit(ZgruppedetailDelayedBatchImporter)
-    importer.run(filters=filters)
+    # Start the batch import
+    importer.batch_run(filters=filters, delay=delay, **kwargs)
 
 
 # ---------------------------
@@ -130,10 +123,28 @@ class ZgruppedetailImporter(GetResponseImporter):
 
     _base_mapper = ZgruppedetailImportMapper
 
-    # # This seems not neede at all ?!?
-    # def __init__(self, connector_env):
-    #     """
-    #     :param connector_env: current environment (backend, session, ...)
-    #     :type connector_env: :class:`connector.connector.ConnectorEnvironment`
-    #     """
-    #     super(ZgruppedetailImporter, self).__init__(connector_env)
+    # TODO: Find existing groups and bind them before the import if not bound already
+    # Because of this you can bind existing GetResponse Campaigns to Existing Groups if you set the gr_name
+    # correctly before the import!
+    def _get_binding(self):
+        bind_record = super(ZgruppedetailImporter, self)._get_binding()
+
+        # Search for an existing Group
+        if not bind_record:
+            original_odoo_model = self.binder.unwrap_model()
+            map_record_update_data = self._update_data(self._map_data())
+            existing_group = self.env[original_odoo_model].search(
+                [('gr_name', '=', map_record_update_data['gr_name'])]
+            )
+            # Create a binding record before the import - so it will trigger an 'update' and not an 'create'
+            if len(existing_group) == 1:
+                binding_vals = {
+                    self.binder._backend_field: self.backend_record.id,
+                    self.binder._openerp_field: existing_group.id
+                }
+                bind_record = self.env[self.model._name].create(binding_vals)
+                _logger.info("Created binding for unbound 'GetResponse sync enabled frst.zgruppedetail' before "
+                             " import! (binding: %s %s, vals: %s)" % (bind_record._name, bind_record.id, binding_vals))
+
+        return bind_record
+
