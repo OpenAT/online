@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="gr_custom_field_form">
+        <field name="name">gr_custom_field_form</field>
+        <field name="model">gr.custom_field</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="GetResponse Custom Field Definition">
+                <sheet>
+                    <group name="odoo_field" string="Odoo Field">
+                        <field name="lang_id"/>
+                        <field name="field_id" select="1"/>
+                        <field name="field_ttype"/>
+                        <field name="field_model_name"/>
+                    </group>
+                    <group name="getresponse_settings" string="GetResponse Custom Field Settings">
+                        <field name="gr_name"/>
+                        <field name="gr_type"/>
+                        <field name="gr_format"/>
+                        <field name="gr_hidden"/>
+                    </group>
+                    <group name="gr_values" string="GetResponse Custom Field Values">
+                        <div colspan="2" class="backend-help oe_edit_only" name="gr_values_help" style="margin-top: 1em;">
+                            <p>
+                                GetResponse unterstützt keine mehrsprachigen Werte für 'custom fields'! Das bedeutet
+                                mann müsste z.B.: für die Eingabe der Länder ein 'custom field' pro Sprache in
+                                GetResponse anlegen und dann entsprechend der Sprache der 'Campaign' (Liste) das Feld
+                                wählen. Das Mapping des Wertes zu Selektions- oder Many2One-Feldern wird daher aktuell
+                                über den deutschen Wert im Feld 'name' oder den deutschen Wert der Selektionsauswahl
+                                durchgeführt. Ändern sich diese deutschen Werte in FS-Online müssten also auch die
+                                'Custom Field Values' in GetResponse entsprechend geändert werden.<br/>
+                                <br/>
+                                Die Werte müssen als Komma getrennte Liste von Strings angegeben werden:<br/>
+                                Beispiel A: ['Österreich', 'Deutschland', 'Schweiz']<br/>
+                                Beispiel B: ['Herr', 'Frau']
+                            </p>
+                        </div>
+                        <field name="trigger_compute_gr_values"/>
+                        <field name="gr_values"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="gr_custom_field_tree">
+        <field name="name">gr_custom_field_tree</field>
+        <field name="model">gr.custom_field</field>
+        <field name="field_parent">child_ids</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="GetResponse Custom Field Definition" toolbar="1">
+                <field name="id"/>
+                <field name="lang_id" invisible="1"/>
+                <field name="field_id"/>
+                <field name="field_ttype"/>
+                <field name="field_model_name"/>
+                <field name="gr_name"/>
+                <field name="gr_type"/>
+                <field name="gr_format"/>
+                <field name="gr_hidden"/>
+            </tree>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="gr_custom_field_search">
+        <field name="name">gr_custom_field_search</field>
+        <field name="model">gr.custom_field</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="GetResponse Custom Field Definition">
+                <field name="id"/>
+                <field name="field_id"/>
+                <field name="field_ttype"/>
+                <field name="field_model_name"/>
+                <field name="gr_name"/>
+                <field name="gr_type"/>
+                <field name="gr_format"/>
+                <field name="gr_hidden"/>
+                <separator/>
+                <group expand="1" string="Group By...">
+                    <filter name="group_field_model_name" string="Model" context="{'group_by':'field_model_name'}"/>
+                    <filter name="group_field_ttype" string="Field-Type" context="{'group_by':'field_ttype'}"/>
+                    <filter name="group_gr_type" string="GetResponse-Field-Type" context="{'group_by':'gr_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="gr_custom_field_action" model="ir.actions.act_window" >
+        <field name="name">GetResponse Custom Field Definition</field>
+        <field name="res_model">gr.custom_field</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="gr_custom_field_search"/>
+    </record>
+    <record id="gr_custom_field_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="gr_custom_field_tree"/>
+        <field name="act_window_id" ref="gr_custom_field_action"/>
+    </record>
+    <record id="gr_custom_field_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="gr_custom_field_form"/>
+        <field name="act_window_id" ref="gr_custom_field_action"/>
+    </record>
+
+    <!-- INFO: The menuitem is located in getresponse_menu.xml -->
+
+</data></openerp>

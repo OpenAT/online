@@ -18,7 +18,7 @@ from openerp.tools.translate import _
 
 from .backend import getresponse
 from .unit_adapter import GetResponseCRUDAdapter
-from.unit_binder import GetResponseBinder
+from .unit_binder import GetResponseBinder
 
 import re
 

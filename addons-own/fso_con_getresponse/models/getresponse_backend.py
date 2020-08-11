@@ -30,11 +30,15 @@ class GetResponseBackend(models.Model):
         required=True,
     )
     api_key = fields.Char(string='GetResponse API Key')
+
     # Currently this is statically set in the getresponse-python client lib
     #api_url = fields.Char(string='GetResponse API URL')
+
     default_lang_id = fields.Many2one(
         comodel_name='res.lang',
         string='Default Language',
+        required=True,
+        default=lambda self: self.default_default_lang_id()
     )
 
     # For GetResponse Campaign import (campaigns created in GetResponse)
@@ -48,12 +52,28 @@ class GetResponseBackend(models.Model):
     #       frst.zgruppedetail model or maybe just in the backend as a global config?
     #       Check also: class ZgruppedetailImportMapper(ImportMapper)
 
+    # ----------
+    # CONSTRAINS
+    # ----------
     @api.constrains('default_zgruppe_id')
     def constraint_default_zgruppe_id(self):
         for r in self:
             if r.default_zgruppe_id:
                 assert r.default_zgruppe_id.tabellentyp_id == '100110', _(
                     "The 'Default-Group-Folder' type must be 'Email'!")
+
+    @api.constrains('default_lang_id')
+    def constraint_default_lang_id(self):
+        for r in self:
+            assert r.default_lang_id.code == 'de_DE', "Only german 'de_DE' is supported!"
+
+    # --------
+    # DEFAULTS
+    # --------
+    @api.model
+    def default_default_lang_id(self):
+        german_lang = self.env['res.lang'].search([('code', '=', 'de_DE')], limit=1)
+        return german_lang if len(german_lang) == 1 else False
 
     # ------------------------
     # IMPORT CAMPAIGNS BUTTONS

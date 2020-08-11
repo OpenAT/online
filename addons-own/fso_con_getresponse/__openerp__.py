@@ -12,9 +12,10 @@
         'fso_frst_groups',
     ],
     "data": [
+        'views/gr_custom_field.xml',
         'views/getresponse_backend.xml',
+        'views/frst_zgruppedetail.xml',
         'views/getresponse_frst_zgruppedetail.xml',
         'views/getresponse_menu.xml',
-        'views/frst_zgruppedetail.xml',
     ],
 }

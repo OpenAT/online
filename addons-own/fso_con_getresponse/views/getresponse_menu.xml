@@ -11,13 +11,19 @@
         <menuitem id="menu_getresponse_backend"
             name="GetResponse Accounts"
             parent="menu_getresponse_root"
-            sequence="10"
+            sequence="20"
             action="action_getresponse_backend"/>
+
+        <menuitem id="menu_getresponse_gr_custom_field"
+            name="Custom Field Definitions"
+            parent="menu_getresponse_root"
+            sequence="30"
+            action="gr_custom_field_action"/>
 
         <menuitem id="menu_getresponse_campaing"
             name="Campaigns (Lists)"
             parent="menu_getresponse_root"
-            sequence="20"
+            sequence="40"
             action="action_getresponse_frst_zgruppedetail"/>
 
     </data>

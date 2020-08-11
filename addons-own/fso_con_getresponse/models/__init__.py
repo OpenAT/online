@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from . import gr_custom_field
+
 from . import helper_connector
 from . import helper_related_action
 
@@ -13,4 +15,3 @@ from . import unit_export
 from . import getresponse_frst_zgruppedetail
 from . import getresponse_frst_zgruppedetail_import
 from . import getresponse_frst_zgruppedetail_export
-
