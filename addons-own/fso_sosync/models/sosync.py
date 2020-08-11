@@ -33,6 +33,9 @@ class BaseSosync(models.AbstractModel):
     """
     _name = "base.sosync"
 
+    _sosyncer_fields = ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
+                        'frst_create_date', 'frst_write_date')
+
     # NEW COMMON FIELDS
     sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True, index=True)
     sosync_write_date = fields.Char(string="Sosync Write Date", readonly=True, index=True,
@@ -207,17 +210,18 @@ class BaseSosync(models.AbstractModel):
             pass
         return watched_fields_json
 
+    # TODO: set raise_ids_check to True after testing
     @api.multi
-    def sosync_check(self, values=None):
+    def sosync_check(self, values=None, raise_ids_check=False):
         """ Check for for a new sosync version
 
         :param values: odoo field values (dict)
+        :param raise_ids_check: if True raise an exception if the ids in no_sosync_jobs do not match ids in self
         :return: sosync_write_date, watched fields
         """
         # SKIPP BY SOSYNCER FIELDS IN VALUES
         skipp = False
-        sosyncer_fields = ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
-                           'frst_create_date', 'frst_write_date')
+        sosyncer_fields = self._sosyncer_fields
         if any(f in values for f in sosyncer_fields):
             skipp = True
 
@@ -232,9 +236,13 @@ class BaseSosync(models.AbstractModel):
                 if skipp_record_ids:
                     unexpected_ids = set(skipp_record_ids).symmetric_difference(set(self.ids))
                     if unexpected_ids:
-                        raise ValueError("Missing or unexpected ids in no_sosync_jobs! "
-                                         "self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s'"
-                                         "" % (self.ids, no_sosync_jobs, unexpected_ids))
+                        msg = "Missing or unexpected ids in no_sosync_jobs! " \
+                              "self._name: '%s', self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s', " \
+                              "values: '%s'" % (self._name, self.ids, no_sosync_jobs, unexpected_ids, values)
+                        if raise_ids_check:
+                            raise ValueError(msg)
+                        else:
+                            logger.error(msg)
 
                 # Set skipp to True
                 skipp = True
@@ -361,7 +369,8 @@ class BaseSosync(models.AbstractModel):
         vals = vals if vals else dict()
 
         # Detect sosync-record-version changes
-        sosync_write_date, watched_fields = self.sosync_check(cr, user, ids, values=vals, context=context)
+        sosync_write_date, watched_fields = self.sosync_check(cr, user, ids, values=vals, raise_ids_check=False,
+                                                              context=context)
         if sosync_write_date:
             vals['sosync_write_date'] = sosync_write_date
 
@@ -490,8 +499,7 @@ class BaseSosync(models.AbstractModel):
         data_to_copy = super(BaseSosync, self).copy_data(cr, uid, id, default, context=context)
 
         # Remove sosync fields from data_to_copy
-        for sosync_field in ('sosync_fs_id', 'sosync_write_date', 'sosync_synced_version',
-                             'frst_create_date', 'frst_write_date'):
+        for sosync_field in self._sosyncer_fields:
             data_to_copy.pop(sosync_field, None)
 
         return data_to_copy

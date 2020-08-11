@@ -50,3 +50,9 @@ class ResPartnerDonationReportSosync(models.Model):
     response_error_code = fields.Char(sosync="fson-to-frst")
     response_error_detail = fields.Text(sosync="fson-to-frst")
     response_error_orig_refnr = fields.Char(sosync="fson-to-frst")      # ERR-U-008 unbek. RefNr.
+
+    # Allow Changes to the sosync fields even after the donation report was submitted
+    def _changes_allowed_fields_after_submission(self):
+        allowed_fields = super(ResPartnerDonationReportSosync, self)._changes_allowed_fields_after_submission()
+        allowed_fields += self._sosyncer_fields
+        return allowed_fields
