@@ -9,22 +9,30 @@
             <field name="arch" type="xml">
                 <form string="GetResponse Backend">
                     <header>
-                      <button name="import_getresponse_campaigns_direct"
-                        type="object"
-                        class="oe_highlight"
-                        string="Import Campaigns"/>
-                      <button name="import_getresponse_campaigns_delay"
-                        type="object"
-                        class="oe_highlight"
-                        string="Import Campaigns Delayed"/>
-                      <button name="export_getresponse_campaigns_direct"
-                        type="object"
-                        class="oe_highlight"
-                        string="Export Campaigns"/>
-                      <button name="export_getresponse_campaigns_delay"
-                        type="object"
-                        class="oe_highlight"
-                        string="Export Campaigns Delayed"/>
+                        <!-- Campaigns -->
+                        <button name="import_getresponse_campaigns_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Import Campaigns"/>
+                        <button name="import_getresponse_campaigns_delay"
+                                type="object"
+                                string="Import Campaigns Delayed"/>
+                        <button name="export_getresponse_campaigns_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Export Campaigns"/>
+                        <button name="export_getresponse_campaigns_delay"
+                                type="object"
+                                string="Export Campaigns Delayed"/>
+                        <!-- Custom Fields -->
+                        <button name="export_getresponse_custom_fields_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Export Custom Field Definitions"/>
+                        <button name="export_getresponse_custom_fields_delay"
+                                type="object"
+                                string="Export Custom Field Definitions Delayed"/>
+                        <!-- TODO: Tags -->
                     </header>
                     <sheet>
                         <label for="name" class="oe_edit_only"/>

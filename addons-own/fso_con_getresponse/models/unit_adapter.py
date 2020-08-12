@@ -3,6 +3,7 @@ from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
 from getresponse.client import GetResponse
 
 
+# HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
 class GetResponseCRUDAdapter(CRUDAdapter):
     """ Adapter to talk with GetResponse API. Implements the basic CRUD methods and search """
 

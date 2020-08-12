@@ -8,6 +8,10 @@
 #       Methods to get the odoo record based on the getresponse id and vice versa
 #     - THE ADAPTER
 #       Send or get data from the getresponse api, implements the CRUD methods and searching
+#     - TODO: CREATION OF BINDING RECORDS
+#       create a binding record on record creation of the unwrapped model
+#     - TODO: FIRING OF EVENTS
+#       Call consumer functions on events like @on_record_create and alike
 #
 # The importers and exporters are in separate files!
 # TODO: Custom Fields must be synced and created first for all contact fields needed!
@@ -32,7 +36,7 @@ import re
 class GetResponseContact(models.Model):
     _name = 'getresponse.frst.personemailgruppe'
     _inherits = {'frst.personemailgruppe': 'odoo_id'}
-    _description = 'GetResponse Contact (Subscription)'
+    _description = 'GetResponse Contact (Subscription) Binding'
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',

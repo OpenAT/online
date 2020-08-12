@@ -10,6 +10,7 @@ from openerp.addons.connector.queue.job import job
 from .helper_connector import get_environment
 from .backend import getresponse
 from .unit_export import BatchExporter, GetResponseExporter
+from .unit_export_delete import GetResponseDeleteExporter
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -72,13 +73,13 @@ class ZgruppedetailExportMapper(ExportMapper):
         }
 
 
-# ---------------------------------
-# CONNECTOR IMPORTER (SYNCHRONIZER)
-# ---------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# EXPORT SYNCHRONIZER(S)
+# ---------------------------------------------------------------------------------------------------------------------
 
-# -------------------------------------------------------------------------
-# SEARCH FOR RECORDS AND START THE IMPORT FOR EACH RECORD DELAYED OR DIRECT
-# -------------------------------------------------------------------------
+# --------------
+# BATCH EXPORTER
+# --------------
 @getresponse
 class ZgruppedetailBatchExporter(BatchExporter):
     _model_name = ['getresponse.frst.zgruppedetail']
@@ -118,9 +119,9 @@ def zgruppedetail_export_batch(session, model_name, backend_id, domain=None, fie
     batch_exporter.batch_run(domain=domain, fields=fields, delay=delay, **kwargs)
 
 
-# ---------------------------
-# EXPORT A GETRESPONSE RECORD
-# ---------------------------
+# ----------------------
+# SINGLE RECORD EXPORTER
+# ----------------------
 # In this class we could alter the generic GetResponse export sync flow for 'getresponse.frst.zgruppedetail'
 # HINT: We could overwrite all the methods from the shared GetResponseExporter here if needed!
 @getresponse
@@ -129,3 +130,10 @@ class ZgruppedetailExporter(GetResponseExporter):
 
     _base_mapper = ZgruppedetailExportMapper
 
+
+# -----------------------------
+# SINGLE RECORD DELETE EXPORTER
+# -----------------------------
+@getresponse
+class ZgruppedetailDeleteExporter(GetResponseDeleteExporter):
+    _model_name = ['getresponse.frst.zgruppedetail']

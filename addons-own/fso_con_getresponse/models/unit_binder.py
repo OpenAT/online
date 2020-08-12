@@ -6,16 +6,12 @@ from .backend import getresponse
 import json
 
 
-# HINT: This will register this Binder class in the main parent class 'ConnectorUnit' which has a slot for
-#        a Binder class
-#        a Mapper class
-#        an Adapter class
-#        a Syncronizer class
-@getresponse
+# HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
 class GetResponseBinder(Binder):
-    _model_name = [
-        'getresponse.frst.zgruppedetail'            # Getresponse Campaigns
-    ]
+    # _model_name = [
+    #     'getresponse.frst.zgruppedetail',               # Getresponse Campaigns
+    #     'getresponse.gr.custom_field'                   # Getresponse Custom Field Definitions
+    # ]
 
     # ATTENTION: This just uses the basic implementation of the binder - to make this work the fields names
     #            in the binding model must match the expected field names of the class 'Binder' OR tell the binder
@@ -36,7 +32,7 @@ class GetResponseBinder(Binder):
             binding_id = self.model.browse(binding_id)
 
         # Update 'sync_data' field of the binding record for comparison (concurrent write detection) at the next sync
-        last_sync_data_json = json.dumps(sync_data, ensure_ascii=False).encode('utf8')
+        last_sync_data_json = json.dumps(sync_data, encoding='utf-8', ensure_ascii=False).encode('utf8')
         binding_id.with_context(connector_no_export=True).write({'sync_data': last_sync_data_json})
 
         return res

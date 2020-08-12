@@ -19,7 +19,14 @@ from .unit_binder import GetResponseBinder
 # CONNECTOR BINDING MODEL AND ORIGINAL MODEL
 # ------------------------------------------
 # WARNING: When using delegation inheritance, methods are not inherited, only fields!
-class GrCustomFields(models.Model):
+class GrCustomField(models.Model):
+    """ Custom Field Definitions for the GetResponse import and export of e-mail subscriptions
+    (contact <> PersonEmalGruppe + PersonEmail + Person)
+
+    An odoo field may have multiple definitons for different languages and values. Therefore the official in charge for
+    the forms and settings in GetResponse must make sure that only one field per campaign/form/contact is used or there
+    will be errors or unexpected values when importing the contact!
+    """
     _name = 'gr.custom_field'
     _description = 'GetResponse Custom Fields'
 
@@ -89,11 +96,6 @@ class GrCustomFields(models.Model):
     # ----------
     # CONSTRAINS
     # ----------
-    _sql_constraints = [
-        ('field_id_uniq', 'unique(field_id)',
-         'A GetResponse Custom Field Definition already exists for the odoo field with this id.'),
-    ]
-
     @api.constrains('field_id')
     def _constrain_field_id(self):
         for r in self:
@@ -126,23 +128,95 @@ class GrCustomFields(models.Model):
         for r in self:
             assert r.lang_id.code == 'de_DE', "Only german 'de_DE' is supported!"
 
-    # --------
-    # COMPUTED
-    # --------
+    # ---------------
+    # COMPUTED FIELDS
+    # ---------------
     @api.depends('field_id', 'lang_id')
     def compute_gr_name(self):
         for r in self:
-            if r.field_id and r.lang_id:
+            if r.field_id and r.lang_id and isinstance(r.id, int):
                 assert r.lang_id.iso_code, (
                         "The selected language '%s' has no iso_code! Please add the iso_code!" % r.lang_id.name
                 )
-                gr_name = self._gr_field_prefix + r.lang_id.iso_code + '_' + r.field_id.name
-                assert 10 <= len(gr_name) <= 128, "The gr_name '%s' must be between 10 and 128 characters!" % gr_name
+                gr_name = self._gr_field_prefix + 'id' + str(r.id) + '_' + r.lang_id.iso_code + '_' + r.field_id.name
+                assert 12 <= len(gr_name) <= 128, "The gr_name '%s' must be between 10 and 128 characters!" % gr_name
                 assert re.match(r"(?:[a-z0-9_]+)\Z", gr_name, flags=0), _(
                     "Only a-z, 0-9 and _ is allowed for the GetResponse field name: '{}'! ").format(gr_name)
                 r.gr_name = gr_name
             else:
                 r.gr_name = False
+
+    # ------------
+    # GUI ONCHANGE
+    # ------------
+    # Helper to create the json string with possible values for the custom field based on the selected odoo
+    # field and the lang of the field
+    @api.onchange('trigger_compute_gr_values')
+    def compute_gr_values(self):
+        for r in self:
+
+            if not r.trigger_compute_gr_values:
+                return
+
+            # Make sure we get the values for the language set in for the field
+            f_name = r.field_id.name
+            f_model = r.field_model_name
+            f_lang_code = r.lang_id.code
+            assert f_lang_code, "Language of this field has no 'code'!"
+            f_recordset_field_lang = r.env[f_model].with_context(lang=f_lang_code)
+
+            values = []
+            # SELECTION FIELD
+            if r.field_ttype == 'selection':
+                # Use fields_get() to get the selection values in the correct language
+                # HINT: recordset._fields[f_name].selection will always use the en_us values (= values from the
+                #       field-definition-code)
+                # HINT: fields_get() will return a dict with all requested fields as the keys and in the correct lang!
+                field_definitions = f_recordset_field_lang.fields_get([f_name])
+                selection_list_correct_lang = field_definitions[f_name]['selection']
+                selection_dict_correct_lang = dict(selection_list_correct_lang)
+                values = selection_dict_correct_lang.values()
+            # MANY2ONE FIELD
+            elif r.field_ttype == 'many2one':
+                f_comodel_name = r.field_id.relation
+                records = f_recordset_field_lang.env[f_comodel_name].search([], limit=1000)
+                values = records.mapped('name')
+            # TODO: BOOLEAN FIELDS
+            elif r.field_ttype == 'boolean':
+                # TODO: I really dont understand why the getresponse checkbox type needs values?!?
+                #       which values and how are they are mapped?!?! To be tested!
+                values = ['true', 'false']
+
+            # Check for duplicated entries
+            unique_values = set()
+            duplicates = []
+            for value in values:
+                if value not in unique_values:
+                    unique_values.add(value)
+                else:
+                    duplicates.append(value)
+
+            # Remove duplicates from unique_values completely
+            # HINT: difference_update(): Remove all elements of another set from this set.
+            unique_values.difference_update(set(duplicates))
+
+            # Convert unique values json string
+            unique_values_json = json.dumps(list(unique_values), encoding='utf-8', ensure_ascii=False).encode('utf8')
+
+            # Append warning message if the limit was reached
+            if len(values) > 999:
+                warning_msg = 'WARNING: Limit of 1000 Records was reached! Values might be incomplete!\n\n'
+                unique_values_json = warning_msg + unique_values_json
+
+            # Append warning message if duplicates are found
+            if duplicates:
+                warning_msg = 'WARNING: Some values are not unique and therefore where removed! Removed duplicates:\n' \
+                              '%s\n\n' % str(duplicates)
+                unique_values_json = warning_msg + unique_values_json
+
+            # Update gr_values and trigger_compute_gr_values
+            r.gr_values = unique_values_json
+            r.trigger_compute_gr_values = False
 
     # --------
     # METHODS
@@ -152,55 +226,13 @@ class GrCustomFields(models.Model):
         german_lang = self.env['res.lang'].search([('code', '=', 'de_DE')], limit=1)
         return german_lang if len(german_lang) == 1 else False
 
-    # TODO: Helper to create the json string with possible values for the custom field based on the selected odoo
-    #       field and the lang of the field
-    @api.onchange('trigger_compute_gr_values')
-    def compute_gr_values(self):
-        for r in self:
-
-            if not r.trigger_compute_gr_values:
-                return
-
-            context_lang = self.env.context.get('lang', None)
-            field_lang_code = r.lang_id.code
-            assert field_lang_code, "Language of this field has no 'code'!"
-            res = []
-            # selection field
-            if r.field_ttype == 'selection':
-                f_name = r.field_id.name
-                f_model = r.field_model_name
-                f_recordset_correct_lang = r.env[f_model].with_context(lang=field_lang_code)
-                # Use fields_get() to get the selection values in the correct language
-                # HINT: recordset._fields[f_name].selection will always use the en_us values (= values from the
-                #       field-definition-code)
-                # HINT: fields_get() will return a dict with all requested fields as the keys
-                selection_list_correct_lang = f_recordset_correct_lang.fields_get([f_name])[f_name]['selection']
-                selection_dict_correct_lang = dict(selection_list_correct_lang)
-                res = selection_dict_correct_lang.values()
-            # many2one field
-            elif r.field_ttype == 'many2one':
-                records = self.env[r.field_model_name].search([])
-                res = records.mapped('name')
-                if len(records) != res:
-                    res = ['WARNING: Record names are not unique!\n'].append(res)
-            # Boolean field
-            elif r.field_ttype == 'boolean':
-                # TODO: I really dont understand why the checkbox needs values - which values?!?! to be tested!
-                res = ['true', 'false']
-
-            # Convert to json string
-            res_json = json.dumps(res, encoding='utf8', ensure_ascii=False)
-
-            # Update gr_values
-            r.gr_values = res_json
-            r.trigger_compute_gr_values = False
-            #return {'value': {'gr_values': res_json, 'trigger_compute_gr_values': False}}
-
     # -------------
     # CRUD AND COPY
     # -------------
     @api.multi
     def write(self, values):
+
+        # Constrain changes to some fields after the field definition was created!
         for r in self:
             if 'field_id' in values and values['field_id'] != r.field_id.id:
                 raise ValidationError("You can not change the linked field after the custom field was created!")
@@ -208,8 +240,12 @@ class GrCustomFields(models.Model):
                 raise ValidationError("You can not change the language after the custom field was created!")
             if 'gr_name' in values and values['gr_name'] != r.gr_name:
                 raise ValidationError("You can not change the gr_name after the custom field was created!")
+            if 'gr_type' in values and values['gr_type'] != r.gr_type:
+                raise ValidationError("You can not change the gr_type after the custom field was created!")
+            if 'gr_format' in values and values['gr_format'] != r.gr_format:
+                raise ValidationError("You can not change the gr_format after the custom field was created!")
 
-        return super(GrCustomFields, self).write(values)
+        return super(GrCustomField, self).write(values)
 
 
 class GetResponseIrModelFields(models.Model):

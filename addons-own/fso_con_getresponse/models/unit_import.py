@@ -47,25 +47,26 @@ _logger = logging.getLogger(__name__)
 # ADD A CHECKPOINT FOR MANUAL INTERVENTION
 # ----------------------------------------
 # TODO: Check where and how to add checkpoints in the sync process
-@getresponse
-class AddCheckpoint(ConnectorUnit):
-    """ Add a connector.checkpoint on the underlying model
-    (not the getresponse.* but the _inherits'ed model) """
-
-    _model_name = ['getresponse.frst.zgruppedetail']
-
-    def run(self, openerp_binding_id):
-        binding = self.model.browse(openerp_binding_id)
-        record = binding.openerp_id
-        add_checkpoint(self.session,
-                       record._model._name,
-                       record.id,
-                       self.backend_record.id)
+# @getresponse
+# class AddCheckpoint(ConnectorUnit):
+#     """ Add a connector.checkpoint on the underlying model
+#     (not the getresponse.* but the _inherits'ed model) """
+#
+#     _model_name = ['getresponse.frst.zgruppedetail']
+#
+#     def run(self, openerp_binding_id):
+#         binding = self.model.browse(openerp_binding_id)
+#         record = binding.openerp_id
+#         add_checkpoint(self.session,
+#                        record._model._name,
+#                        record.id,
+#                        self.backend_record.id)
 
 
 # -------------------------------------------------------------------------
 # SEARCH FOR RECORDS AND START THE IMPORT FOR EACH RECORD DELAYED OR DIRECT
 # -------------------------------------------------------------------------
+# HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
 class BatchImporter(Importer):
     """ The role of a BatchImporter is to search for a list of items to import, then it can either import them
     directly or delay the import of each item separately.
@@ -104,6 +105,7 @@ class BatchImporter(Importer):
 # ---------------------------
 # IMPORT A GETRESPONSE RECORD
 # ---------------------------
+# HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
 class GetResponseImporter(Importer):
     """ Base importer for GetResponse records """
 

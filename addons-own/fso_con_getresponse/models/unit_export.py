@@ -44,6 +44,7 @@ _logger = logging.getLogger(__name__)
 # ------------------------------------------------------------------------------
 # SEARCH FOR ODOO RECORDS AND START THE EXPORT FOR EACH RECORD DELAYED OR DIRECT
 # ------------------------------------------------------------------------------
+# HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
 class BatchExporter(Exporter):
     """ The role of a BatchExporter is to search for a list of items to export, then it can either import them directly
     or delay (by connector job) the import of each item separately.
@@ -87,6 +88,7 @@ class BatchExporter(Exporter):
 # ------------------------------------
 # EXPORT AN ODOO RECORD TO GETRESPONSE
 # ------------------------------------
+# HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
 class GetResponseExporter(Exporter):
     """ A common flow for the exports to GetResponse """
     def __init__(self, connector_env):
@@ -117,7 +119,7 @@ class GetResponseExporter(Exporter):
         if the update date in GetResponse is more recent (todo: and there where no changes in odoo),
         schedule an import to not miss changes done in GetResponse.
 
-        TODO: If changes in both system happened _should_import() will return fales to enforce the export! This means
+        TODO: If changes in both system happened _should_import() will return False to enforce the export! This means
               the data in odoo wins in case of changes in both systems
         """
         assert self.binding_record

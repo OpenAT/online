@@ -32,9 +32,19 @@
                                 durchgeführt. Ändern sich diese deutschen Werte in FS-Online müssten also auch die
                                 'Custom Field Values' in GetResponse entsprechend geändert werden.<br/>
                                 <br/>
+                                Es kann daher erforderlich werden, dass ein Feld in FS-Online mehrfach angelegt werden
+                                muss um z.B.: auf Kampagnen mit untersch. Sprache einzugehen oder andere 'values' für
+                                das Feld zu ermöglichen. Es liegt dann in der Verantwortung des GetResponse Benutzers
+                                nur eines dieser Felder pro 'Contact' in GetResponse zu verwenden. Wird das selbe
+                                FS-Online Feld mehrfach für einen Contact verwendet wird dies unweigerlich zu Fehlern
+                                und unerwarteten Verhalten beim Import und Export führen!<br/>
+                                <br/>
                                 Die Werte müssen als Komma getrennte Liste von Strings angegeben werden:<br/>
                                 Beispiel A: ['Österreich', 'Deutschland', 'Schweiz']<br/>
-                                Beispiel B: ['Herr', 'Frau']
+                                Beispiel B: ['Herr', 'Frau']<br/>
+                                <br/>
+                                ACHTUNG: Werden die 'values' des Feldes im Nachhinein geändert kann dies zu
+                                Datenverlust in GetResponse führen oder das Update des Feldes verhindern!
                             </p>
                         </div>
                         <field name="trigger_compute_gr_values"/>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- GetResponse Custom Field Definition Bindings Form -->
+        <record id="view_getresponse_gr_custom_field_form" model="ir.ui.view">
+            <field name="name">getresponse.gr.custom_field.form</field>
+            <field name="model">getresponse.gr.custom_field</field>
+            <field name="arch" type="xml">
+                <form string="GetResponse Custom Field Definition Binding">
+                    <sheet>
+                        <label for="backend_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="backend_id" class="oe_inline" />
+                        </h1>
+                        <group name="getresponse_gr_custom_field_binding" string="Custom Field Definition Binding">
+                            <group>
+                            <field name="odoo_id"/>
+                            <field name="getresponse_id"/>
+
+                            </group>
+                            <group>
+                                <field name="sync_date"/>
+                                <field name="sync_data"/>
+                            </group>
+
+                        </group>
+                        <group name="getresponse_campaing_data" string="Custom Field Definition Settings and Data">
+                            <group>
+                                <field name="field_id"/>
+                                <field name="field_ttype"/>
+                                <field name="field_model_name"/>
+                                <field name="lang_id"/>
+                            </group>
+                            <group>
+                                <field name="gr_name"/>
+                                <field name="gr_type"/>
+                                <field name="gr_format"/>
+                                <field name="gr_hidden"/>
+                                <field name="gr_values"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- GetResponse Custom Field Definition Bindings Tree -->
+        <record id="view_getresponse_gr_custom_field_tree" model="ir.ui.view">
+            <field name="name">getresponse.gr.custom_field.tree</field>
+            <field name="model">getresponse.gr.custom_field</field>
+            <field name="arch" type="xml">
+                <tree string="GetResponse Custom Field Definition Bindings">
+                    <field name="id"/>
+                    <field name="backend_id"/>
+                    <field name="odoo_id" invisible="1"/>
+                    <field name="getresponse_id"/>
+                    <field name="sync_date"/>
+                    <field name="field_id"/>
+                    <field name="gr_name"/>
+                    <field name="gr_type"/>
+                    <field name="gr_format"/>
+                    <field name="gr_hidden"/>
+                    <field name="gr_values"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- GetResponse Custom Field Definition Bindings Action > Act Window -->
+        <record id="action_getresponse_gr_custom_field" model="ir.actions.act_window">
+            <field name="name">GetResponse Custom Field Definition Bindings</field>
+            <field name="res_model">getresponse.gr.custom_field</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_getresponse_gr_custom_field_tree"/>
+        </record>
+
+    </data>
+</openerp>

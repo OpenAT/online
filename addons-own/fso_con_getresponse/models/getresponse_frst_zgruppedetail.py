@@ -8,10 +8,16 @@
 #       Methods to get the odoo record based on the getresponse id and vice versa
 #     - THE ADAPTER
 #       Send or get data from the getresponse api, implements the CRUD methods and searching
+#     - TODO: CREATION OF BINDING RECORDS
+#       create a binding record on record creation of the unwrapped model
+#     - TODO: FIRING OF EVENTS
+#       Call consumer functions on events like @on_record_create and alike
 #
 # The importers and exporters are in separate files:
 # getresponse_frst_zgruppedetail_import.py, getresponse_frst_zgruppedetail_export.py
 # ----------------
+import re
+
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
@@ -20,7 +26,6 @@ from .backend import getresponse
 from .unit_adapter import GetResponseCRUDAdapter
 from .unit_binder import GetResponseBinder
 
-import re
 
 # ------------------------------------------
 # CONNECTOR BINDING MODEL AND ORIGINAL MODEL
@@ -29,7 +34,7 @@ import re
 class GetResponseCampaign(models.Model):
     _name = 'getresponse.frst.zgruppedetail'
     _inherits = {'frst.zgruppedetail': 'odoo_id'}
-    _description = 'GetResponse Campaign (List)'
+    _description = 'GetResponse Campaign (List) Binding'
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
@@ -125,10 +130,9 @@ class GetResponseFrstZgruppedetail(models.Model):
 # ----------------
 # CONNECTOR BINDER
 # ----------------
-# Nothing to do here since no modifications to the generic binder implementation are needed
-# Just make sure to add all binding models to the '_model_name' list of the GetResponseBinder class
-# HINT: Check unit_binder.py > GetResponseBinder()
-
+@getresponse
+class ZgruppedetailBinder(GetResponseBinder):
+    _model_name = 'getresponse.frst.zgruppedetail'
 
 # -----------------
 # CONNECTOR ADAPTER
@@ -142,7 +146,7 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
                create() and write() will return a getresponse object from the getresponse-python lib!
     """
     _model_name = 'getresponse.frst.zgruppedetail'
-    _getresponse_model = 'campaign'
+    _getresponse_model = 'campaigns'
 
     def search(self, filters=None):
         """ Returns a list of GetResponse campaign ids """

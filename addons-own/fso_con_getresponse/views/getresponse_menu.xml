@@ -2,29 +2,44 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_getresponse_root"
+
+        <menuitem id="menu_getresponse_root_settings"
             parent="connector.menu_connector_root"
-            name="GetResponse"
+            name="GetResponse Settings"
             sequence="10"
             groups="connector.group_connector_manager"/>
 
         <menuitem id="menu_getresponse_backend"
-            name="GetResponse Accounts"
-            parent="menu_getresponse_root"
-            sequence="20"
+            name="API Accounts"
+            parent="menu_getresponse_root_settings"
+            sequence="1010"
             action="action_getresponse_backend"/>
 
         <menuitem id="menu_getresponse_gr_custom_field"
             name="Custom Field Definitions"
-            parent="menu_getresponse_root"
-            sequence="30"
+            parent="menu_getresponse_root_settings"
+            sequence="1020"
             action="gr_custom_field_action"/>
 
+
+        <menuitem id="menu_getresponse_root_bindings"
+            parent="connector.menu_connector_root"
+            name="GetResponse Bindings"
+            sequence="20"
+            groups="connector.group_connector_manager"/>
+
         <menuitem id="menu_getresponse_campaing"
-            name="Campaigns (Lists)"
-            parent="menu_getresponse_root"
-            sequence="40"
+            name="Campaigns"
+            parent="menu_getresponse_root_bindings"
+            sequence="2010"
             action="action_getresponse_frst_zgruppedetail"/>
+
+        <menuitem id="menu_getresponse_custom_field"
+            name="Custom Fields"
+            parent="menu_getresponse_root_bindings"
+            sequence="2020"
+            action="action_getresponse_gr_custom_field"/>
+
 
     </data>
 </openerp>
