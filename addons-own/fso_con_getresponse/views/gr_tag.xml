@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="gr_tag_form">
+        <field name="name">gr_tag_form</field>
+        <field name="model">gr.tag</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="GetResponse Tag Definition">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group string="Optional Information">
+                        <field name="description"/>
+                        <field name="origin"/>
+                    </group>
+                    <group string="Partner with this Tag">
+                        <field name="partner_ids">
+                            <tree string="Partners">
+                                <field name="id"/>
+                                <field name="name"/>
+                                <field name="email"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="gr_tag_tree">
+        <field name="name">gr_tag_tree</field>
+        <field name="model">gr.tag</field>
+        <field name="field_parent">child_ids</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="GetResponse Tag Definition" toolbar="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="gr_tag_search">
+        <field name="name">gr_tag_search</field>
+        <field name="model">gr.tag</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="GetResponse Tag Definition">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="partner_ids"/>
+                <field name="description"/>
+                <field name="origin"/>
+            </search>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="gr_tag_action" model="ir.actions.act_window" >
+        <field name="name">GetResponse Tag Definition</field>
+        <field name="res_model">gr.tag</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="gr_tag_search"/>
+    </record>
+    <record id="gr_tag_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="gr_tag_tree"/>
+        <field name="act_window_id" ref="gr_tag_action"/>
+    </record>
+    <record id="gr_tag_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="gr_tag_form"/>
+        <field name="act_window_id" ref="gr_tag_action"/>
+    </record>
+
+    <!-- INFO: The menuitem is located in getresponse_menu.xml -->
+
+</data></openerp>

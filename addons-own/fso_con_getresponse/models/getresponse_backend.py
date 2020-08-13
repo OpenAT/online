@@ -8,6 +8,9 @@ from .getresponse_frst_zgruppedetail_export import zgruppedetail_export_batch
 
 from .getresponse_gr_custom_field_export import gr_custom_field_export_batch
 
+from .getresponse_gr_tag_import import gr_tag_import_batch
+from .getresponse_gr_tag_export import gr_tag_export_batch
+
 
 # New model to hold all settings for the getresponse connector
 # Also responsible to return the requested version of the backend. Lists all available versions in the field 'version'
@@ -113,6 +116,10 @@ class GetResponseBackend(models.Model):
             zgruppedetail_export_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
 
     # ----------------------------
+    # TODO: IMPORT CUSTOM FIELDS BUTTONS
+    # ----------------------------
+
+    # ----------------------------
     # EXPORT CUSTOM FIELDS BUTTONS
     # ----------------------------
     @api.multi
@@ -128,6 +135,40 @@ class GetResponseBackend(models.Model):
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             gr_custom_field_export_batch.delay(session, 'getresponse.gr.custom_field', backend.id, delay=True)
+
+    # -------------------
+    # IMPORT TAGS BUTTONS
+    # -------------------
+    @api.multi
+    def import_getresponse_tags_direct(self):
+        """ Import all tags from getresponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            gr_tag_import_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
+
+    @api.multi
+    def import_getresponse_tags_delay(self):
+        """ Import all tags from getresponse delayed (connector jobs) """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            gr_tag_import_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
+
+    # -------------------
+    # EXPORT TAGS BUTTONS
+    # -------------------
+    @api.multi
+    def export_getresponse_tags_direct(self):
+        """ Export all gr.tag field definitions to GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            gr_tag_export_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
+
+    @api.multi
+    def export_getresponse_tags_delay(self):
+        """ Export all gr.tag field definitions to GetResponse delayed (connector jobs) """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            gr_tag_export_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
 
 
 # Inverse field for the default_zgruppe_id settings field in the backend

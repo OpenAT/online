@@ -35,7 +35,7 @@ class ZgruppedetailImportMapper(ImportMapper):
     def _map_children(self, record, attr, model):
         pass
 
-    # (getresponse_field_name, odoo_field_name)
+    # ('source: getresponse-python object field', 'target: odoo field')
     direct = [
         ('name', 'gr_name'),
         ('language_code', 'gr_language_code')

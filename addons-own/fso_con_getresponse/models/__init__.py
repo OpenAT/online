@@ -22,7 +22,12 @@ from . import getresponse_frst_zgruppedetail_export
 from . import gr_custom_field
 from . import getresponse_gr_custom_field
 from . import getresponse_gr_custom_field_export
+# TODO: Import of custom fields
 
-# TODO: Tags
+# Tags
+from . import gr_tag
+from . import getresponse_gr_tag
+from . import getresponse_gr_tag_export
+from . import getresponse_gr_tag_import
 
 # TODO: Contacts

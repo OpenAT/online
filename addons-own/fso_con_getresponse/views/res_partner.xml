@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+        <!-- Extend res.partner form to include the getrespones tags -->
+        <record model="ir.ui.view" id="res_partner_form_gr_tag">
+            <field name="name">res_partner_form_gr_tag</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="email" position="after">
+                    <field name="getresponse_tag_ids" widget="many2many_tags"/>
+                </field>
+            </field>
+        </record>
+
+</data></openerp>

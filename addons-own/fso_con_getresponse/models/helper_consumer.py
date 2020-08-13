@@ -12,6 +12,24 @@ from .unit_export_delete import export_delete_record
 _logger = logging.getLogger(__name__)
 
 
+# TODO: Write this as an generic method to be called by the consumers!
+def consumer_create_bindings_for_all_backends(session, model_name, record_id, vals):
+    """ This is used in combination with @on_record_create to create bindings on record create """
+
+    # TODO: Get the backend_field_name from the binder somehow ... egg chicken problem?
+    binding_model_obj = session.env['getresponse.gr.tag']
+    getresponse_backends = session.env['getresponse.backend'].search([])
+
+    for backend in getresponse_backends:
+        existing = binding_model_obj.search([('odoo_id', '=', record_id), ('backend_id', '=', backend.id)], limit=1)
+        if not existing:
+            binding_vals = {'backend_id': backend.id, 'odoo_id': record_id}
+            binding_record = binding_model_obj.create(binding_vals)
+            _logger.info("Created binding for '%s' before batch export! (binding: %s %s, vals: %s)"
+                         "" % (model_name, binding_record._name, binding_record.id, binding_vals)
+                         )
+
+
 def consumer_export_binding(session, binding_model_name, binding_record_id, vals, delay=True):
     """ Export a binding record direct or delayed (by connector job)
 

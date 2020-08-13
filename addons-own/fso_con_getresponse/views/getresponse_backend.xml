@@ -32,7 +32,21 @@
                         <button name="export_getresponse_custom_fields_delay"
                                 type="object"
                                 string="Export Custom Field Definitions Delayed"/>
-                        <!-- TODO: Tags -->
+                        <!-- Tags -->
+                        <button name="import_getresponse_tags_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Import Tag Definitions"/>
+                        <button name="import_getresponse_tags_delay"
+                                type="object"
+                                string="Import Tag Definitions Delayed"/>
+                        <button name="export_getresponse_tags_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Export Tag Definitions"/>
+                        <button name="export_getresponse_tags_delay"
+                                type="object"
+                                string="Export Tag Definitions Delayed"/>
                     </header>
                     <sheet>
                         <label for="name" class="oe_edit_only"/>

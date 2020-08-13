@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 # -----------------------------------------------------------------------------
+# TODO: !!!! This is NOT READY or even loaded: We focus on the tags and contacts first !!!
 # This import will either
 #     - update the custom field data or
 #     - try to delete custom fields in GetResponse that do no longer exist in FSON
@@ -40,6 +41,7 @@ class GrCustomFieldImportMapper(ImportMapper):
         pass
 
     # TODO: map fields
+    # ('source: getresponse-python object field', 'target: odoo field')
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -73,34 +75,33 @@ def gr_custom_field_import_batch(session, model_name, backend_id, filters=None, 
 # ----------------------
 # In this class we could alter the generic GetResponse import sync flow for 'getresponse.frst.zgruppedetail'
 # HINT: We could overwrite all the methods from the shared GetResponseImporter here if needed!
-@getresponse
-class GrCustomFieldImporter(GetResponseImporter):
-    _model_name = ['getresponse.frst.zgruppedetail']
-
-    _base_mapper = GrCustomFieldImportMapper
-
-    # TODO: We can either bind custom fields that do no longer exist in fson or we can skipp them or even try to
-    #       delete them in GetResponse ?!?
-    def _get_binding(self):
-        bind_record = super(GrCustomFieldImporter, self)._get_binding()
-
-        # Search for an existing Group
-        # TODO: This is currently the code for campaigns and must be reworked for custom fields
-        if not bind_record:
-            original_odoo_model = self.binder.unwrap_model()
-            map_record_update_data = self._update_data(self._map_data())
-            existing_group = self.env[original_odoo_model].search(
-                [('gr_name', '=', map_record_update_data['gr_name'])]
-            )
-            # Create a binding record before the import - so it will trigger an 'update' and not an 'create'
-            if len(existing_group) == 1:
-                binding_vals = {
-                    self.binder._backend_field: self.backend_record.id,
-                    self.binder._openerp_field: existing_group.id
-                }
-                bind_record = self.env[self.model._name].create(binding_vals)
-                _logger.info("Created binding for unbound 'GetResponse sync enabled frst.zgruppedetail' before "
-                             " import! (binding: %s %s, vals: %s)" % (bind_record._name, bind_record.id, binding_vals))
-
-        return bind_record
+# @getresponse
+# class GrCustomFieldImporter(GetResponseImporter):
+#     _model_name = ['getresponse.frst.zgruppedetail']
+#
+#     _base_mapper = GrCustomFieldImportMapper
+#
+#     # TODO: We can either bind custom fields that do no longer exist in fson or we can skipp them or even try to
+#     #       delete them in GetResponse ?!?
+#     def _get_binding(self):
+#         bind_record = super(GrCustomFieldImporter, self)._get_binding()
+#
+#         # Try to
+#         if not bind_record:
+#             original_odoo_model = self.binder.unwrap_model()
+#             map_record_update_data = self._update_data(self._map_data())
+#             existing_group = self.env[original_odoo_model].search(
+#                 [('gr_name', '=', map_record_update_data['gr_name'])]
+#             )
+#             # Create a binding record before the import - so it will trigger an 'update' and not an 'create'
+#             if len(existing_group) == 1:
+#                 binding_vals = {
+#                     self.binder._backend_field: self.backend_record.id,
+#                     self.binder._openerp_field: existing_group.id
+#                 }
+#                 bind_record = self.env[self.model._name].create(binding_vals)
+#                 _logger.info("Created binding for unbound 'GetResponse sync enabled frst.zgruppedetail' before "
+#                              " import! (binding: %s %s, vals: %s)" % (bind_record._name, bind_record.id, binding_vals))
+#
+#         return bind_record
 

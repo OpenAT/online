@@ -17,10 +17,14 @@
 # getresponse_frst_zgruppedetail_import.py, getresponse_frst_zgruppedetail_export.py
 # ----------------
 import re
+from getresponse.excs import NotFoundError
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
+
+from openerp.addons.connector.event import on_record_create, on_record_write, on_record_unlink
+from openerp.addons.connector.exception import IDMissingInBackend
 
 from .backend import getresponse
 from .unit_adapter import GetResponseCRUDAdapter
@@ -156,7 +160,10 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
 
     def read(self, id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
-        campaign = self.getresponse_api_session.get_campaign(id, params=attributes)
+        try:
+            campaign = self.getresponse_api_session.get_campaign(id, params=attributes)
+        except NotFoundError as e:
+            raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return campaign.__dict__
 
@@ -172,7 +179,10 @@ class ZgruppedetailAdapter(GetResponseCRUDAdapter):
         return campaign
 
     def write(self, id, data):
-        campaign = self.getresponse_api_session.update_campaign(id, body=data)
+        try:
+            campaign = self.getresponse_api_session.update_campaign(id, body=data)
+        except NotFoundError as e:
+            raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
         # WARNING: !!! We return the campaign object and not a dict !!!
         return campaign
 

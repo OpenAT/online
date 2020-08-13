@@ -220,9 +220,6 @@ class GetResponseImporter(Importer):
         return
 
     def _get_binding(self):
-        # TODO: The magento connector did implement a browse= option for the to_openerp() method.
-        #       It's unclear to me if this is needed on this minimal implementation also
-        #return self.binder.to_openerp(self.getresponse_id, browse=True)
         return self.binder.to_openerp(self.getresponse_id)
 
     def _create_data(self, map_record, **kwargs):
@@ -279,10 +276,15 @@ class GetResponseImporter(Importer):
             getresponse_id,
         )
 
-        # Get the data of the GetResponse Record (self.backend_adapter.read(self.getresponse_id))
+        # Get the data of the GetResponse Record: will use "self.backend_adapter.read(self.getresponse_id)"
+        # HINT: This situation may only exist if we import a record before we export it or the record was delete
+        #       just now (so between the read-list-of-records and the processing of one record of the list)
         try:
             self.getresponse_record = self._get_getresponse_data()
         except IDMissingInBackend:
+            # TODO: We may want to add an error and a status field to the binding model and extend .bind()
+            #       with extra attributes so we could update the binding in case of errors. This would make it
+            #       much easier to see which records have errors!!!
             return _('Record does no longer exist in GetResponse')
 
         # Check if we must skip the import (e.g. on changes in both systems)

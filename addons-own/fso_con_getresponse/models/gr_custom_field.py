@@ -15,9 +15,6 @@ from .unit_adapter import GetResponseCRUDAdapter
 from .unit_binder import GetResponseBinder
 
 
-# ------------------------------------------
-# CONNECTOR BINDING MODEL AND ORIGINAL MODEL
-# ------------------------------------------
 # WARNING: When using delegation inheritance, methods are not inherited, only fields!
 class GrCustomField(models.Model):
     """ Custom Field Definitions for the GetResponse import and export of e-mail subscriptions

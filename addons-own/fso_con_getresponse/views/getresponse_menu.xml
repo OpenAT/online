@@ -9,17 +9,23 @@
             sequence="10"
             groups="connector.group_connector_manager"/>
 
-        <menuitem id="menu_getresponse_backend"
-            name="API Accounts"
-            parent="menu_getresponse_root_settings"
-            sequence="1010"
-            action="action_getresponse_backend"/>
+            <menuitem id="menu_getresponse_backend"
+                name="API Accounts"
+                parent="menu_getresponse_root_settings"
+                sequence="1010"
+                action="action_getresponse_backend"/>
 
-        <menuitem id="menu_getresponse_gr_custom_field"
-            name="Custom Field Definitions"
-            parent="menu_getresponse_root_settings"
-            sequence="1020"
-            action="gr_custom_field_action"/>
+            <menuitem id="menu_getresponse_gr_custom_field"
+                name="Custom Field Definitions"
+                parent="menu_getresponse_root_settings"
+                sequence="1020"
+                action="gr_custom_field_action"/>
+
+            <menuitem id="menu_getresponse_gr_tag"
+                name="Tag Definitions"
+                parent="menu_getresponse_root_settings"
+                sequence="1030"
+                action="gr_tag_action"/>
 
 
         <menuitem id="menu_getresponse_root_bindings"
@@ -28,17 +34,23 @@
             sequence="20"
             groups="connector.group_connector_manager"/>
 
-        <menuitem id="menu_getresponse_campaing"
-            name="Campaigns"
-            parent="menu_getresponse_root_bindings"
-            sequence="2010"
-            action="action_getresponse_frst_zgruppedetail"/>
+            <menuitem id="menu_getresponse_campaing"
+                name="Campaigns"
+                parent="menu_getresponse_root_bindings"
+                sequence="2010"
+                action="action_getresponse_frst_zgruppedetail"/>
 
-        <menuitem id="menu_getresponse_custom_field"
-            name="Custom Fields"
-            parent="menu_getresponse_root_bindings"
-            sequence="2020"
-            action="action_getresponse_gr_custom_field"/>
+            <menuitem id="menu_getresponse_custom_field"
+                name="Custom Fields"
+                parent="menu_getresponse_root_bindings"
+                sequence="2020"
+                action="action_getresponse_gr_custom_field"/>
+
+            <menuitem id="menu_getresponse_tag"
+                name="Tags"
+                parent="menu_getresponse_root_bindings"
+                sequence="2030"
+                action="action_getresponse_gr_tag"/>
 
 
     </data>

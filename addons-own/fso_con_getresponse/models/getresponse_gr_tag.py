@@ -36,10 +36,10 @@ _logger = logging.getLogger(__name__)
 # CONNECTOR BINDING MODEL AND ORIGINAL MODEL
 # ------------------------------------------
 # WARNING: When using delegation inheritance, methods are not inherited, only fields!
-class GetResponseGrCustomFieldBinding(models.Model):
-    _name = 'getresponse.gr.custom_field'
-    _inherits = {'gr.custom_field': 'odoo_id'}
-    _description = 'GetResponse Custom Field Definition Binding'
+class GetResponseGrTagBinding(models.Model):
+    _name = 'getresponse.gr.tag'
+    _inherits = {'gr.tag': 'odoo_id'}
+    _description = 'GetResponse Tag Definition Binding'
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
@@ -49,14 +49,14 @@ class GetResponseGrCustomFieldBinding(models.Model):
         ondelete='restrict'
     )
     odoo_id = fields.Many2one(
-        comodel_name='gr.custom_field',
-        string='GetResponse Custom Field Definition',
+        comodel_name='gr.tag',
+        string='GetResponse Tag Definition',
         required=True,
         readonly=True,
         ondelete='cascade'
     )
     getresponse_id = fields.Char(
-        string='GetResponse Custom Field ID',
+        string='GetResponse Tag ID',
         readonly=True
     )
     sync_date = fields.Datetime(
@@ -76,11 +76,11 @@ class GetResponseGrCustomFieldBinding(models.Model):
     ]
 
 
-class GrCustomFieldGetResponse(models.Model):
-    _inherit = 'gr.custom_field'
+class GrTagGetResponse(models.Model):
+    _inherit = 'gr.tag'
 
     getresponse_bind_ids = fields.One2many(
-        comodel_name='getresponse.gr.custom_field',
+        comodel_name='getresponse.gr.tag',
         inverse_name='odoo_id',
     )
 
@@ -90,17 +90,17 @@ class GrCustomFieldGetResponse(models.Model):
 # -----------------
 # INFO: This is called AFTER the record create (but before the commit)
 # TODO: Replace by generic method in helper_consumer.py
-@on_record_create(model_names=['gr.custom_field'])
-def create_gr_custom_field_bindings_for_all_backends(session, model_name, record_id, vals):
+@on_record_create(model_names=['gr.tag'])
+def create_gr_tag_bindings_for_all_backends(session, model_name, record_id, vals):
     if session.context.get('connector_no_export'):
-        _logger.info("Skipp create_gr_custom_field_bindings_for_all_backends because connector_no_export in context:"
+        _logger.info("Skipp create_gr_tag_bindings_for_all_backends because connector_no_export in context:"
                      " '%s', '%s', '%s'" % (model_name, record_id, vals))
         return
 
-    _logger.warning("create_custom_field_bindings_for_all_backends: %s, %s, %s" % (model_name, record_id, vals))
+    _logger.info("create_gr_tag_bindings_for_all_backends: %s, %s, %s" % (model_name, record_id, vals))
 
     # TODO: Get the backend_field_name from the binder somehow ... egg chicken problem?
-    binding_model_obj = session.env['getresponse.gr.custom_field']
+    binding_model_obj = session.env['getresponse.gr.tag']
     getresponse_backends = session.env['getresponse.backend'].search([])
 
     for backend in getresponse_backends:
@@ -114,42 +114,45 @@ def create_gr_custom_field_bindings_for_all_backends(session, model_name, record
 
 
 # ATTENTION: The model that inherits the base model will not trigger an write for all fields that are in the
-#            inherits model: e.g. if we update 'getresponse.gr.custom_field'.gr_values only 'gr.custom_field' will
-#            call the write method. That is why we need to add the model 'gr.custom_field' to @on_record_write.
+#            inherits model: e.g. if we update 'getresponse.gr.tag'.name only 'gr.tag' will
+#            call the write method. That is why we need to add the model 'gr.tag' to @on_record_write.
 # INFO: This is called AFTER the record create or write (but before the commit)
-@on_record_create(model_names=['getresponse.gr.custom_field'])
-@on_record_write(model_names=['getresponse.gr.custom_field', 'gr.custom_field'])
-def delay_export_gr_custom_field(session, model_name, record_id, vals):
-    _logger.warning("delay_export_custom_field: %s, %s, %s" % (model_name, record_id, vals))
-    if model_name == 'getresponse.gr.custom_field':
+@on_record_create(model_names=['gr.tag'])
+@on_record_write(model_names=['gr.tag'])
+def delay_export_gr_tag(session, model_name, record_id, vals):
+    _logger.info("delay_export_gr_tag: %s, %s, %s" % (model_name, record_id, vals))
+
+    if model_name == 'getresponse.gr.tag':
         consumer_export_binding(session, model_name, record_id, vals, delay=True)
     else:
         record = session.env[model_name].browse([record_id])
         for binding_record in record.getresponse_bind_ids:
-            assert binding_record._name == 'getresponse.gr.custom_field', "Unexpected binding model!"
+            assert binding_record._name == 'getresponse.gr.tag', "Unexpected binding model!"
             consumer_export_binding(session, binding_record._name, binding_record.id, vals, delay=True)
 
 
-# ATTENTION: Since cascade deletes are done in the database we have to watch the 'gr.custom_field' model also because
-#            the deletion of the getresponse.gr.custom_field record is not done by the orm but by the database itself!
-@on_record_unlink(model_names=['getresponse.gr.custom_field', 'gr.custom_field'])
-def delay_export_delete_of_gr_custom_field(session, model_name, record_id):
-    _logger.warning("delay_export_delete_of_custom_field: %s, %s" % (model_name, record_id))
-    if model_name == 'getresponse.gr.custom_field':
+# ATTENTION: Since cascade deletes are done in the database we have to watch the 'gr.tag' model also because
+#            the deletion of the getresponse.gr.tag record is not done by the orm but by the database itself!
+@on_record_unlink(model_names=['gr.tag'])
+def delay_export_delete_of_gr_tag(session, model_name, record_id):
+    _logger.info("delay_export_delete_of_gr_tag: %s, %s" % (model_name, record_id))
+
+    if model_name == 'getresponse.gr.tag':
         consumer_export_unlink_for_binding(session, model_name, record_id, delay=True)
     else:
         record = session.env[model_name].browse([record_id])
         for binding_record in record.getresponse_bind_ids:
-            assert binding_record._name == 'getresponse.gr.custom_field', "Unexpected binding model!"
+            assert binding_record._name == 'getresponse.gr.tag', "Unexpected binding model!"
             consumer_export_unlink_for_binding(session, binding_record._name, binding_record.id, delay=True)
 
 
 # ----------------
 # CONNECTOR BINDER
 # ----------------
+# You may override binder methods here if special processing is needed for this model
 @getresponse
-class CustomFieldBinder(GetResponseBinder):
-    _model_name = ['getresponse.gr.custom_field']
+class GrTagBinder(GetResponseBinder):
+    _model_name = ['getresponse.gr.tag']
 
 
 # -----------------
@@ -158,47 +161,47 @@ class CustomFieldBinder(GetResponseBinder):
 # The Adapter is a subclass of an ConnectorUnit class. The ConnectorUnit Object holds information about the
 # connector_env, the backend, the backend_record and about the connector session
 @getresponse
-class CustomFieldAdapter(GetResponseCRUDAdapter):
+class GrTagAdapter(GetResponseCRUDAdapter):
     """
     ATTENTION: read() and search_read() will return a dict and not the getresponse_record itself but
                create() and write() will return a getresponse object from the getresponse-python lib!
     """
 
-    _model_name = 'getresponse.gr.custom_field'
-    _getresponse_model = 'custom-fields'
+    _model_name = 'getresponse.gr.tag'
+    _getresponse_model = 'tags'
 
     def search(self, params=None):
-        """ Search records based on 'filters' and return a list of their ids """
-        custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
-        return [cf.id for cf in custom_fields]
+        """ Search records based on 'filters' and return a list of their external ids """
+        tags = self.getresponse_api_session.get_tags(params=params)
+        return [tag.id for tag in tags]
 
     def read(self, external_id, params=None):
         """ Returns the information of one record found by the external record id as a dict """
         try:
-            custom_field = self.getresponse_api_session.get_custom_field(external_id, params=params)
+            tag = self.getresponse_api_session.get_tag(external_id, params=params)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
-        # WARNING: A dict() is expected! Right now 'custom_field' is a custom_field object!
-        return custom_field.__dict__
+        # WARNING: A dict() is expected! Right now 'tag' is a tag object!
+        return tag.__dict__
 
     def search_read(self, params=None):
         """ Search records based on 'filters' and return their data """
-        custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
-        # WARNING: A dict() is expected! Right now 'custom_field' is a custom_field object!
-        return custom_fields.__dict__
+        tags = self.getresponse_api_session.get_tags(params=params)
+        # WARNING: A dict() is expected! Right now 'tag' is a tag object!
+        return tags.__dict__
 
     def create(self, data):
-        custom_field = self.getresponse_api_session.create_custom_field(data)
-        # WARNING: !!! We return the custom_field object an not a dict !!!
-        return custom_field
+        tag = self.getresponse_api_session.create_tag(data)
+        # WARNING: !!! We return the tag object an not a dict !!!
+        return tag
 
     def write(self, external_id, data):
         try:
-            custom_field = self.getresponse_api_session.update_custom_field(external_id, body=data)
+            tag = self.getresponse_api_session.update_tag(external_id, body=data)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
-        # WARNING: !!! We return the custom_field object and not a dict !!!
-        return custom_field
+        # WARNING: !!! We return the tag object and not a dict !!!
+        return tag
 
     def delete(self, external_id):
         """
@@ -206,7 +209,7 @@ class CustomFieldAdapter(GetResponseCRUDAdapter):
             bool: True for success, False otherwise
         """
         try:
-            result = self.getresponse_api_session.delete_custom_field(external_id)
+            result = self.getresponse_api_session.delete_tag(external_id)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
         return result
