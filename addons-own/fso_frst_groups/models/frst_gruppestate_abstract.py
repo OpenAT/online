@@ -56,8 +56,10 @@ class FRSTGruppeState(models.AbstractModel):
 
     steuerung_bit = fields.Boolean(string="Steuerung Bit", default=True,
                                    help="If not set: Person is explicitly excluded/unsubscribed from this group!")
-    gueltig_von = fields.Date("GueltigVon", required=True, default=lambda s: fields.datetime.now())
-    gueltig_bis = fields.Date("GueltigBis", required=True, default=lambda s: fields.date(2099, 12, 31))
+
+    # ATTENTION: The default is now computed below in the create() method!
+    gueltig_von = fields.Date("GueltigVon", required=True)
+    gueltig_bis = fields.Date("GueltigBis", required=True)
 
     # Group approval information
     bestaetigt_am_um = fields.Datetime("Bestaetigt", readonly=True)
@@ -96,3 +98,29 @@ class FRSTGruppeState(models.AbstractModel):
                 r.state = state
 
         return True
+
+    @api.model
+    def create(self, vals):
+
+        # Compute the default values for 'gueltig_von' and 'gueltig_bis' if none where provided!
+        if 'gueltig_von' not in vals and 'gueltig_bis' not in vals:
+            # Default values for gueltig_von and gueltig_bis
+            gueltig_von = fields.datetime.now()
+            gueltig_bis = fields.date(2099, 12, 31)
+
+            # Set to 'approval needed magic date' if bestaetigung_erforderlich is set in the group
+            group_model_field_name = self._group_model_field
+            vals_group_id = vals.get(group_model_field_name, False)
+            if vals_group_id:
+                group_model_name = self._fields.get(group_model_field_name).comodel_name
+                group = self.env[group_model_name].browse([vals_group_id])
+                if group.bestaetigung_erforderlich:
+                    gueltig_von = self._approval_pending_date
+                    gueltig_bis = self._approval_pending_date
+
+            # Add to vals
+            vals['gueltig_von'] = gueltig_von
+            vals['gueltig_bis'] = gueltig_bis
+
+        # Create the record
+        return super(FRSTGruppeState, self).create(vals)
