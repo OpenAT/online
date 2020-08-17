@@ -1,3 +1,5 @@
+# THIS FILE IS DEPRECATED AND KEPT FOR REFERENCE
+
 # TODO: branch will be switched from o8 to master like all other branches for master repo fundraising_studio
 
 # FS-Online odoo code base
