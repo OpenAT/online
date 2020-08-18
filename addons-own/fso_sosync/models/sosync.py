@@ -219,36 +219,60 @@ class BaseSosync(models.AbstractModel):
         :param raise_ids_check: if True raise an exception if the ids in no_sosync_jobs do not match ids in self
         :return: sosync_write_date, watched fields
         """
+        if not values:
+            values = dict()
+
         # SKIPP BY SOSYNCER FIELDS IN VALUES
+        # ATTENTION: All computed fields (either by ORM on in create() write()) must be done in a separate call to
+        #            create() or write() or the sosyncer fields in the vals will suppress the creation of sync jobs!!!
         skipp = False
         sosyncer_fields = self._sosyncer_fields
         if any(f in values for f in sosyncer_fields):
             skipp = True
 
+        # If we only update the 'sosync_synced_version' field no other changes should happen to the record(s) of this
+        # model! Therefore no sync jobs should be created! To ensure this we check the context if only the
+        # 'sosync_synced_version' field is in the values.
+        # HINT: This is different if other values and sosyncer fields are also in the values - then there is a good
+        #       chance that some computed fields of the record might change also - which should lead to new sync jobs
+        #       if the computed fields of the record of this model are watched by the sosyncer! Even if the model is
+        #       listed in 'no_sosync_jobs'!
+        if len(values) == 1 and 'sosync_synced_version' in values:
+            if self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
+                no_sosync_jobs = self.env.context.get('no_sosync_jobs')
+                if self._name in no_sosync_jobs:
+                    skipp = True
+
+        # DISABLED: Leads to unwanted side effects for computed fields or fields computed in create() or write() for
+        #           the same model!
         # SKIPP BY SWITCH 'no_sosync_jobs' IN CONTEXT
-        elif self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
-            current_model = self._name
-            no_sosync_jobs = self.env.context.get('no_sosync_jobs')
-            if current_model in no_sosync_jobs:
+        # elif self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
+        #     current_model = self._name
+        #     no_sosync_jobs = self.env.context.get('no_sosync_jobs')
+        #     if current_model in no_sosync_jobs:
+        #
+        #         # Check the record ids in no_sosync_jobs for the current model if any
+        #         skipp_record_ids = no_sosync_jobs.get(current_model)
+        #         if skipp_record_ids:
+        #             unexpected_ids = set(skipp_record_ids).symmetric_difference(set(self.ids))
+        #             if unexpected_ids:
+        #                 msg = "Missing or unexpected ids in no_sosync_jobs! " \
+        #                       "self._name: '%s', self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s', " \
+        #                       "values: '%s'" % (self._name, self.ids, no_sosync_jobs, unexpected_ids, values)
+        #                 if raise_ids_check:
+        #                     raise ValueError(msg)
+        #                 else:
+        #                     logger.error(msg)
+        #
+        #         # Set skipp to True
+        #         skipp = True
 
-                # Check the record ids in no_sosync_jobs for the current model if any
-                skipp_record_ids = no_sosync_jobs.get(current_model)
-                if skipp_record_ids:
-                    unexpected_ids = set(skipp_record_ids).symmetric_difference(set(self.ids))
-                    if unexpected_ids:
-                        msg = "Missing or unexpected ids in no_sosync_jobs! " \
-                              "self._name: '%s', self.ids: '%s', no_sosync_jobs: '%s', unexpected_ids: '%s', " \
-                              "values: '%s'" % (self._name, self.ids, no_sosync_jobs, unexpected_ids, values)
-                        if raise_ids_check:
-                            raise ValueError(msg)
-                        else:
-                            logger.error(msg)
+        # CHECK FOR WATCHED FIELDS !!! IF NOT SKIPPED ALREADY !!!
+        watched_fields = False
+        if not skipp:
+            watched_fields = self._sosync_watched_fields(values)
 
-                # Set skipp to True
-                skipp = True
-
-        # CHECK FOR WATCHED FIELDS IF NOT SKIPPED ALREADY
-        watched_fields = self._sosync_watched_fields(values) if not skipp else False
+        # Return 'sosync write date' and 'watched fields' if not skipped and watched fields where found
         if watched_fields:
             return self._sosync_write_date_now(), watched_fields
         else:
