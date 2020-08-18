@@ -10,18 +10,31 @@
             <form string="GetResponse Custom Field Definition">
                 <sheet>
                     <group name="odoo_field" string="Odoo Field">
-                        <field name="lang_id"/>
-                        <field name="field_id" select="1"/>
-                        <field name="field_ttype"/>
-                        <field name="field_model_name"/>
+                        <group>
+                            <field name="field_id" select="1" attrs="{'required':[('name','=',False)]}"/>
+                            <field name="name"/>
+                            <div colspan="2" class="backend-help oe_edit_only" name="gr_values_help" style="margin-top: 1em;">
+                                <p> Der (nach der Feldauswahl) automatisch vorgeschlagene Feldname darf NICHT geändert werden um einen einwandfreien Betrieb der Schnittstelle zu gewährleisten! </p>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="lang_id"/>
+                            <field name="field_ttype"/>
+                            <field name="field_model_name"/>
+                        </group>
                     </group>
                     <group name="getresponse_settings" string="GetResponse Custom Field Settings">
-                        <field name="gr_name"/>
-                        <field name="gr_type"/>
-                        <field name="gr_format"/>
-                        <field name="gr_hidden"/>
+                        <group>
+                            <field name="gr_type"/>
+                            <field name="gr_hidden"/>
+                        </group>
+                        <group>
+                            <field name="gr_format"/>
+                        </group>
                     </group>
                     <group name="gr_values" string="GetResponse Custom Field Values">
+                        <field name="trigger_compute_gr_values"/>
+                        <field name="gr_values"/>
                         <div colspan="2" class="backend-help oe_edit_only" name="gr_values_help" style="margin-top: 1em;">
                             <p>
                                 GetResponse unterstützt keine mehrsprachigen Werte für 'custom fields'! Das bedeutet
@@ -47,8 +60,7 @@
                                 Datenverlust in GetResponse führen oder das Update des Feldes verhindern!
                             </p>
                         </div>
-                        <field name="trigger_compute_gr_values"/>
-                        <field name="gr_values"/>
+                        <field name="gr_values_mappings"/>
                     </group>
                 </sheet>
             </form>
@@ -62,15 +74,15 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="GetResponse Custom Field Definition" toolbar="1">
-                <field name="id"/>
+                <field name="name"/>
                 <field name="lang_id" invisible="1"/>
                 <field name="field_id"/>
                 <field name="field_ttype"/>
                 <field name="field_model_name"/>
-                <field name="gr_name"/>
                 <field name="gr_type"/>
                 <field name="gr_format"/>
                 <field name="gr_hidden"/>
+                <field name="id"/>
             </tree>
         </field>
     </record>
@@ -81,14 +93,14 @@
         <field name="type">search</field>
         <field name="arch" type="xml">
             <search string="GetResponse Custom Field Definition">
-                <field name="id"/>
+                <field name="name"/>
                 <field name="field_id"/>
                 <field name="field_ttype"/>
                 <field name="field_model_name"/>
-                <field name="gr_name"/>
                 <field name="gr_type"/>
                 <field name="gr_format"/>
                 <field name="gr_hidden"/>
+                <field name="id"/>
                 <separator/>
                 <group expand="1" string="Group By...">
                     <filter name="group_field_model_name" string="Model" context="{'group_by':'field_model_name'}"/>

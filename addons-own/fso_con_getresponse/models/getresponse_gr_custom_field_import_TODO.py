@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
-# -----------------------------------------------------------------------------
-# TODO: !!!! This is NOT READY or even loaded: We focus on the tags and contacts first !!!
-# This import will either
-#     - update the custom field data or
-#     - try to delete custom fields in GetResponse that do no longer exist in FSON
-# -----------------------------------------------------------------------------
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
@@ -40,9 +34,14 @@ class GrCustomFieldImportMapper(ImportMapper):
     def _map_children(self, record, attr, model):
         pass
 
-    # TODO: map fields
-    # ('source: getresponse-python object field', 'target: odoo field')
-
+    # Direct mappings
+    # ('source: getresponse-python object field', 'target: odoo record field')
+    direct = [('name', 'name'),
+              ('type', 'gr_type'),
+              ('format', 'gr_format'),
+              ('hidden', 'gr_hidden'),
+              ('values', 'gr_values')
+              ]
 
 # ---------------------------------------------------------------------------------------------------------------------
 # IMPORT SYNCHRONIZER(S)

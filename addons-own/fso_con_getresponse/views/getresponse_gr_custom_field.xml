@@ -27,13 +27,14 @@
                         </group>
                         <group name="getresponse_campaing_data" string="Custom Field Definition Settings and Data">
                             <group>
+                                <field name="name"/>
+                                <field name="lang_id"/>
                                 <field name="field_id"/>
                                 <field name="field_ttype"/>
                                 <field name="field_model_name"/>
-                                <field name="lang_id"/>
+
                             </group>
                             <group>
-                                <field name="gr_name"/>
                                 <field name="gr_type"/>
                                 <field name="gr_format"/>
                                 <field name="gr_hidden"/>
@@ -53,11 +54,11 @@
                 <tree string="GetResponse Custom Field Definition Bindings">
                     <field name="id"/>
                     <field name="backend_id"/>
-                    <field name="odoo_id" invisible="1"/>
+                    <field name="odoo_id"/>
                     <field name="getresponse_id"/>
                     <field name="sync_date"/>
+                    <field name="name"/>
                     <field name="field_id"/>
-                    <field name="gr_name"/>
                     <field name="gr_type"/>
                     <field name="gr_format"/>
                     <field name="gr_hidden"/>

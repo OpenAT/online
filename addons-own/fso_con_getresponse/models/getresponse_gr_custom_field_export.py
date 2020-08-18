@@ -62,8 +62,8 @@ class GrCustomFieldExportMapper(ExportMapper):
 
     @only_create
     @mapping
-    def gr_name(self, record):
-        return {'name': record.gr_name}
+    def name(self, record):
+        return {'name': record.name}
 
     @only_create
     @mapping

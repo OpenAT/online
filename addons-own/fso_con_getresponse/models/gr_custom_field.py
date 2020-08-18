@@ -5,6 +5,7 @@
 # ----------------
 import re
 import json
+import datetime
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
@@ -27,7 +28,7 @@ class GrCustomField(models.Model):
     _name = 'gr.custom_field'
     _description = 'GetResponse Custom Fields'
 
-    _gr_field_prefix = 'frst_'
+    _gr_field_prefix = 'frst__'
     _gr_type_mappings = {
         'boolean': ['checkbox'],
         'char': ['text', 'phone'],
@@ -45,18 +46,25 @@ class GrCustomField(models.Model):
     # ------
     # FIELDS
     # ------
+    # HINT: A default name is either generated in odoo or comes from a getresponse import!
+    #       Therefore the user can not choose the getresponse name for this field!
+    name = fields.Char(string='Name', required=True)
+
+    # HINT: This default also means that we assume that every imported field from GetResponse is 'german'!
+    lang_id = fields.Many2one(comodel_name='res.lang', string='Language', required=True,
+                              default=lambda self: self._default_lang_id()
+                              )
+
+    # Odoo field type and field values language
     field_id = fields.Many2one(string="Field", comodel_name='ir.model.fields', inverse_name='gr_custom_field_ids',
-                               required=True, index=True, ondelete='cascade',
+                               index=True, ondelete='cascade',
                                domain=[('model_id.model', 'in', _gr_models)])
     field_ttype = fields.Selection(string="Field Type", related='field_id.ttype', help='ttype',
                                    readonly=True, store=True)
     field_model_name = fields.Char(string="Field Model", related='field_id.model_id.model', help='Model name',
                                    readonly=True, store=True)
-    lang_id = fields.Many2one(comodel_name='res.lang', string='Language', required=True,
-                              default=lambda self: self._default_lang_id()
-                              )
 
-    gr_name = fields.Char(string="GetResponse Field Name", compute="compute_gr_name", store=True, readonly=True)
+    # GetResponse custom field data
     gr_type = fields.Selection(string="GetResponse Field Type",
                                required=True,
                                selection=[('text', 'text'),
@@ -90,26 +98,52 @@ class GrCustomField(models.Model):
     gr_values = fields.Text(string="GetResponse Field Values",
                             help="JSON string with possible values for the GetResponse custom field")
 
+    # Store some extra infos for the generated values
+    gr_values_mappings = fields.Text(string="Field Value Mappings",
+                                     help="JSON string with 'values to ids' mappings for the GetResponse custom field."
+                                          " This is just a helper to be able to detect if 'value to id' mapping has"
+                                          " changed. Please do not change this field manually!")
+
     # ----------
     # CONSTRAINS
     # ----------
-    @api.constrains('field_id')
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)', 'A custom field with this name exists already.'),
+    ]
+
+    @api.constrains('name')
+    def _constrain_name(self):
+        for r in self:
+            assert 12 <= len(r.name) <= 128, "The name '%s' must be between 10 and 128 characters!" % r.name
+            assert re.match(r"(?:[a-z0-9_]+)\Z", r.name, flags=0), _(
+                "Only a-z, 0-9 and _ is allowed for the a GetResponse Custom Field name: '{}'! ").format(r.name)
+
+    @api.constrains('lang_id')
+    def _constraint_lang_id(self):
+        for r in self:
+            assert r.lang_id.code == 'de_DE', "Only german 'de_DE' is supported!"
+
+    @api.constrains('field_id', 'name')
     def _constrain_field_id(self):
         for r in self:
-            assert r.field_model_name in self._gr_models, (
-                    "Only fields of the models '%s' are allowed!" % str(self._gr_models)
-            )
+            if r.name.startswith(self._gr_field_prefix):
+                assert r.field_id, _(
+                    "If you create a GetResponse custom field in FS-Online you must choose an odoo field!")
+            if r.field_id:
+                assert r.field_model_name in self._gr_models, (
+                        "Only fields of the models '%s' are allowed!" % str(self._gr_models))
 
     @api.constrains('field_id', 'gr_type')
     def _constrain_gr_type(self):
         for r in self:
-            assert r.field_id.ttype in self._gr_type_mappings, (
-                    "The odoo field type '%s' is not supported!" % r.field_id.ttype
-            )
-            assert r.gr_type in self._gr_type_mappings[r.field_id.ttype], (
-                    "Wrong gr_type for the odoo field type %s! Please use one of %s "
-                    "" % (r.field_id.ttype, self._gr_type_mappings[r.field_id.ttype])
-            )
+            if r.field_id:
+                assert r.field_ttype in self._gr_type_mappings, (
+                        "The odoo field type '%s' is not supported!" % r.field_ttype
+                )
+                assert r.gr_type in self._gr_type_mappings[r.field_ttype], (
+                        "Wrong gr_type for the odoo field type '%s'! Please use one of '%s'."
+                        "" % (r.field_ttype, self._gr_type_mappings[r.field_ttype])
+                )
 
     @api.constrains('gr_values')
     def _constrain_gr_values(self):
@@ -119,39 +153,36 @@ class GrCustomField(models.Model):
                 assert r.gr_values, "GetResponse Field Values is mandatory for gr_type '%s'" % r.gr_type
             else:
                 assert not r.gr_values, "GetResponse Field Values must be empty for gr_type '%s'" % r.gr_type
-
-    @api.constrains('lang_id')
-    def constraint_lang_id(self):
-        for r in self:
-            assert r.lang_id.code == 'de_DE', "Only german 'de_DE' is supported!"
-
-    # ---------------
-    # COMPUTED FIELDS
-    # ---------------
-    @api.depends('field_id', 'lang_id')
-    def compute_gr_name(self):
-        for r in self:
-            if r.field_id and r.lang_id and isinstance(r.id, int):
-                assert r.lang_id.iso_code, (
-                        "The selected language '%s' has no iso_code! Please add the iso_code!" % r.lang_id.name
-                )
-                gr_name = self._gr_field_prefix + 'id' + str(r.id) + '_' + r.lang_id.iso_code + '_' + r.field_id.name
-                assert 12 <= len(gr_name) <= 128, "The gr_name '%s' must be between 10 and 128 characters!" % gr_name
-                assert re.match(r"(?:[a-z0-9_]+)\Z", gr_name, flags=0), _(
-                    "Only a-z, 0-9 and _ is allowed for the GetResponse field name: '{}'! ").format(gr_name)
-                r.gr_name = gr_name
-            else:
-                r.gr_name = False
+            # Check if the data is valid json and a list
+            if r.gr_values:
+                try:
+                    data = json.loads(r.gr_values, encoding='utf-8')
+                except Exception as e:
+                    raise ValueError("gr_values must be a valid json string!\n\n'%s'" % e.message)
+                assert isinstance(data, list), "gr_values must be a list of strings!"
 
     # ------------
     # GUI ONCHANGE
     # ------------
+    @api.onchange('field_id', 'lang_id')
+    def _onchange_name(self):
+        for r in self:
+            if r.field_id and r.lang_id:
+                if not r.name or r.name.startswith(self._gr_field_prefix):
+                    r.name = r._default_name()
+
+    @api.onchange('gr_values')
+    def _onchange_gr_values(self):
+        for r in self:
+            # Clear gr_values_mappings in case gr_values gets cleared
+            if not r.gr_values and r.gr_values_mappings:
+                r.gr_values_mappings = False
+
     # Helper to create the json string with possible values for the custom field based on the selected odoo
     # field and the lang of the field
     @api.onchange('trigger_compute_gr_values')
-    def compute_gr_values(self):
+    def _onchange_gr_values(self):
         for r in self:
-
             if not r.trigger_compute_gr_values:
                 return
 
@@ -162,7 +193,7 @@ class GrCustomField(models.Model):
             assert f_lang_code, "Language of this field has no 'code'!"
             f_recordset_field_lang = r.env[f_model].with_context(lang=f_lang_code)
 
-            values = []
+            value_mappings = {}
             # SELECTION FIELD
             if r.field_ttype == 'selection':
                 # Use fields_get() to get the selection values in the correct language
@@ -171,48 +202,54 @@ class GrCustomField(models.Model):
                 # HINT: fields_get() will return a dict with all requested fields as the keys and in the correct lang!
                 field_definitions = f_recordset_field_lang.fields_get([f_name])
                 selection_list_correct_lang = field_definitions[f_name]['selection']
-                selection_dict_correct_lang = dict(selection_list_correct_lang)
-                values = selection_dict_correct_lang.values()
+                value_mappings = dict(selection_list_correct_lang)
             # MANY2ONE FIELD
             elif r.field_ttype == 'many2one':
                 f_comodel_name = r.field_id.relation
                 records = f_recordset_field_lang.env[f_comodel_name].search([], limit=1000)
-                values = records.mapped('name')
-            # TODO: BOOLEAN FIELDS
+                value_mappings = {str(r.id): r.name for r in records}
+            # BOOLEAN FIELD
             elif r.field_ttype == 'boolean':
                 # TODO: I really dont understand why the getresponse checkbox type needs values?!?
-                #       which values and how are they are mapped?!?! To be tested!
-                values = ['true', 'false']
+                #       which values and how are they are mapped?!?! To be discovered ;)
+                value_mappings = {'true': 'true', 'false': 'false'}
 
-            # Check for duplicated entries
-            unique_values = set()
-            duplicates = []
-            for value in values:
-                if value not in unique_values:
-                    unique_values.add(value)
+            # Check for duplicated values in the dict
+            seen_values = {}
+            unique_value_mappings = {}
+            duplicated_value_mappings = {}
+            for key, value in value_mappings.iteritems():
+                # The value is not a key in the seen_values dict (no duplicated value)
+                if value not in seen_values:
+                    seen_values[value] = key
+                    unique_value_mappings[key] = value
+                # The value is already a key in the seen_values dict (is a duplicated value)
                 else:
-                    duplicates.append(value)
-
-            # Remove duplicates from unique_values completely
-            # HINT: difference_update(): Remove all elements of another set from this set.
-            unique_values.difference_update(set(duplicates))
+                    # Remove the duplicated value entry from the unique_value_mappings dict and store the removed
+                    # key / value pair in 'duplicated_value_mappings'
+                    if seen_values[value] in unique_value_mappings:
+                        duplicated_value_mappings[seen_values[value]] = unique_value_mappings.pop(seen_values[value])
+                    # Add the entry to the duplicated_value_mappings dict
+                    duplicated_value_mappings[key] = value
 
             # Convert unique values json string
-            unique_values_json = json.dumps(list(unique_values), encoding='utf-8', ensure_ascii=False).encode('utf8')
+            unique_values = unique_value_mappings.values()
+            unique_values_json = json.dumps(unique_values, encoding='utf-8', ensure_ascii=False).encode('utf8')
 
             # Append warning message if the limit was reached
-            if len(values) > 999:
+            if len(unique_values) > 999:
                 warning_msg = 'WARNING: Limit of 1000 Records was reached! Values might be incomplete!\n\n'
                 unique_values_json = warning_msg + unique_values_json
 
             # Append warning message if duplicates are found
-            if duplicates:
+            if duplicated_value_mappings:
                 warning_msg = 'WARNING: Some values are not unique and therefore where removed! Removed duplicates:\n' \
-                              '%s\n\n' % str(duplicates)
+                              '%s\n\n' % str(duplicated_value_mappings)
                 unique_values_json = warning_msg + unique_values_json
 
             # Update gr_values and trigger_compute_gr_values
             r.gr_values = unique_values_json
+            r.gr_values_mappings = json.dumps(seen_values, encoding='utf-8', ensure_ascii=False).encode('utf8')
             r.trigger_compute_gr_values = False
 
     # --------
@@ -223,24 +260,56 @@ class GrCustomField(models.Model):
         german_lang = self.env['res.lang'].search([('code', '=', 'de_DE')], limit=1)
         return german_lang if len(german_lang) == 1 else False
 
+    @api.multi
+    def _default_name(self):
+        self.ensure_one()
+        r = self
+
+        # Add the generic field prefix for custom fields created in odoo
+        name = self._gr_field_prefix
+
+        # Add the language code (lowercase)
+        name += r.lang_id.code.lower() + '__'
+        # Add the odoo field id
+        name += 'fid' + str(r.field_id.id) + '__'
+        # Add the odoo field name (lowercase)
+        name += r.field_id.name.lower() + '__'
+        # Add a unique number
+        name += datetime.datetime.now().strftime('%y%m%d%M%S')
+
+        return name
+
+    @api.multi
+    def update_checks(self, values):
+        if self.env.context.get('skipp_write_checks', False):
+            return
+
+        for r in self:
+            if 'name' in values and values['name'] != r.name:
+                raise ValidationError("You can not change the field name '%s' after the custom field was"
+                                      " created!" % r.name)
+            if 'field_id' in values and values['field_id'] != r.field_id.id:
+                raise ValidationError("You can not change the odoo field after the custom field was created!")
+            if 'lang_id' in values and values['lang_id'] != r.lang_id.id:
+                raise ValidationError("You can not change the language after the custom field was created!")
+
+            # TODO: Maybe we should add this in a separate method in 'getresponse_gr_custom_field.py' to allow
+            #       changes on custom field import!
+
+            if 'gr_type' in values and values['gr_type'] != r.gr_type:
+                raise ValidationError("You can not change the gr_type after the custom field was created!")
+            # We do allow to change gr_format if not yet set
+            if 'gr_format' in values and r.gr_format and values['gr_format'] != r.gr_format:
+                raise ValidationError("You can not change the gr_format after the custom field was created!")
+
     # -------------
     # CRUD AND COPY
     # -------------
     @api.multi
     def write(self, values):
 
-        # Constrain changes to some fields after the field definition was created!
-        for r in self:
-            if 'field_id' in values and values['field_id'] != r.field_id.id:
-                raise ValidationError("You can not change the linked field after the custom field was created!")
-            if 'lang_id' in values and values['lang_id'] != r.lang_id.id:
-                raise ValidationError("You can not change the language after the custom field was created!")
-            if 'gr_name' in values and values['gr_name'] != r.gr_name:
-                raise ValidationError("You can not change the gr_name after the custom field was created!")
-            if 'gr_type' in values and values['gr_type'] != r.gr_type:
-                raise ValidationError("You can not change the gr_type after the custom field was created!")
-            if 'gr_format' in values and values['gr_format'] != r.gr_format:
-                raise ValidationError("You can not change the gr_format after the custom field was created!")
+        # Disallow changes to some fields after the custom field was created!
+        self.update_checks(values)
 
         return super(GrCustomField, self).write(values)
 
