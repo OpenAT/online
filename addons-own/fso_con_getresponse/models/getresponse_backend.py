@@ -6,6 +6,7 @@ from openerp.tools.translate import _
 from .getresponse_frst_zgruppedetail_import import zgruppedetail_import_batch
 from .getresponse_frst_zgruppedetail_export import zgruppedetail_export_batch
 
+from .getresponse_gr_custom_field_import import gr_custom_field_import_batch
 from .getresponse_gr_custom_field_export import gr_custom_field_export_batch
 
 from .getresponse_gr_tag_import import gr_tag_import_batch
@@ -118,6 +119,19 @@ class GetResponseBackend(models.Model):
     # ----------------------------
     # TODO: IMPORT CUSTOM FIELDS BUTTONS
     # ----------------------------
+    @api.multi
+    def import_getresponse_custom_fields_direct(self):
+        """ Export all gr.custom_field field definitions to GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            gr_custom_field_import_batch(session, 'getresponse.gr.custom_field', backend.id, delay=False)
+
+    @api.multi
+    def import_getresponse_custom_fields_delay(self):
+        """ Export all gr.custom_field field definitions to GetResponse delayed (connector jobs) """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            gr_custom_field_import_batch.delay(session, 'getresponse.gr.custom_field', backend.id, delay=True)
 
     # ----------------------------
     # EXPORT CUSTOM FIELDS BUTTONS

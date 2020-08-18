@@ -51,18 +51,18 @@
             <field name="name">getresponse.gr.custom_field.tree</field>
             <field name="model">getresponse.gr.custom_field</field>
             <field name="arch" type="xml">
-                <tree string="GetResponse Custom Field Definition Bindings">
+                <tree string="GetResponse Custom Field Definition Bindings" colors="red:getresponse_id == False;green: field_id != False;grey: field_id == False;">
                     <field name="id"/>
                     <field name="backend_id"/>
                     <field name="odoo_id"/>
                     <field name="getresponse_id"/>
                     <field name="sync_date"/>
-                    <field name="name"/>
+                    <field name="name" invisible="1"/>
                     <field name="field_id"/>
                     <field name="gr_type"/>
-                    <field name="gr_format"/>
+                    <field name="gr_format" invisible="True"/>
                     <field name="gr_hidden"/>
-                    <field name="gr_values"/>
+                    <field name="gr_values" invisible="True"/>
                 </tree>
             </field>
         </record>

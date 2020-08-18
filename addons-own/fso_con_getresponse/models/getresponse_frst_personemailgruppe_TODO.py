@@ -18,6 +18,8 @@
 # TODO: Custom Tags Model and sync of custom Tag definition
 # TODO: Find out what would work best for partner > PersonEmail > Personemailgrupp to contact model
 # ----------------
+import logging
+
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
@@ -26,7 +28,7 @@ from .backend import getresponse
 from .unit_adapter import GetResponseCRUDAdapter
 from .unit_binder import GetResponseBinder
 
-import re
+_logger = logging.getLogger(__name__)
 
 
 # ------------------------------------------
@@ -85,9 +87,9 @@ class GetResponseFrstZgruppedetail(models.Model):
 # ----------------
 # CONNECTOR BINDER
 # ----------------
-# Nothing to do here since no modifications to the generic binder implementation are needed
-# Just make sure to add all binding models to the '_model_name' list of the GetResponseBinder class
-# HINT: Check unit_binder.py > GetResponseBinder()
+@getresponse
+class ContactBinder(GetResponseBinder):
+    _model_name = ['frst.personemailgruppe']
 
 
 # -----------------
@@ -96,7 +98,7 @@ class GetResponseFrstZgruppedetail(models.Model):
 # The Adapter is a subclass of an ConnectorUnit class. The ConnectorUnit Object holds information about the
 # connector_env, the backend, the backend_record and about the connector session
 @getresponse
-class PersonemailgruppeAdapter(GetResponseCRUDAdapter):
+class ContactAdapter(GetResponseCRUDAdapter):
     """
     ATTENTION: read() and search_read() will return a dict and not the getresponse_record itself but
                create() and write() will return a getresponse object from the getresponse-python lib!
@@ -104,18 +106,36 @@ class PersonemailgruppeAdapter(GetResponseCRUDAdapter):
     _model_name = 'getresponse.frst.personemailgruppe'
     _getresponse_model = 'contact'
 
-    # TODO: add fields to get_all_contacts to search only for the ids of the contacts
-    def search(self, campaign_ids=None, **kwargs):
-        """ Returns a list of GetResponse contact ids """
-        assert isinstance(campaign_ids, list), "campaign_ids must be a list"
-        assert len(campaign_ids) >= 1, "Select at least one campaign to search for contacts"
-        contacts = self.get_all_contacts(campaign_ids=campaign_ids, **kwargs)
+    def search(self, getresponse_campaign_id, name=None, email=None, custom_fields=None, **kwargs):
+        """ Returns a list of GetResponse contact ids
+
+        'name', 'email' and 'custom_fields' are optional easy search attributes
+
+        available operators: 'is', 'is_not', 'contains', 'not_contains', 'starts', 'ends', 'not_starts', 'not_ends'
+
+        :param getresponse_campaign_id: string
+        :param name: tuple or string
+            tuple format: (operator, value)
+        :param email: tuple or string
+            tuple format: (operator, value)
+        :param custom_fields: list
+            format: [(getresponse_custom_field_id, operator, value)]
+
+        :return: list
+            returns a list with the getresponse contact ids (external ids)
+        """
+        assert isinstance(getresponse_campaign_id, basestring), "getresponse_campaign_id must be a string"
+        # HINT: get_all_contacts will do 4 searches to find contacts for all subscriber types - therefore it will
+        #       return ALL contacts! (=including non approved or inactive contacts)
+        contacts = self.get_all_contacts(campaign_ids=[getresponse_campaign_id],
+                                         name=name, email=email, custom_fields=custom_fields,
+                                         **kwargs)
         return [contact.id for contact in contacts]
 
     # TODO
     def read(self, id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
-        campaign = self.getresponse_api_session.get_campaign(id, params=attributes)
+        contact = self.getresponse_api_session.get_campaign(id, params=attributes)
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return campaign.__dict__
 

@@ -32,7 +32,7 @@ class GetResponseBinder(Binder):
             binding_id = self.model.browse(binding_id)
 
         # Update 'sync_data' field of the binding record for comparison (concurrent write detection) at the next sync
-        last_sync_data_json = json.dumps(sync_data, encoding='utf-8', ensure_ascii=False).encode('utf8')
+        last_sync_data_json = json.dumps(sync_data, encoding='utf-8', ensure_ascii=False)
         binding_id.with_context(connector_no_export=True).write({'sync_data': last_sync_data_json})
 
         return res

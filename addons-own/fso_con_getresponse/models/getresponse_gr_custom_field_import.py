@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
+import json
+
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
@@ -20,21 +22,35 @@ _logger = logging.getLogger(__name__)
 # -----------------------
 # Transform the data from GetResponse campaign objects to odoo records and vice versa
 @getresponse
-class GrTagImportMapper(ImportMapper):
-    """ Map all the fields of the the getresponse-python library object to the odoo record fields.
+class GrCustomFieldImportMapper(ImportMapper):
+    """ Map all the fields of the getresponse-python library object to the odoo record fields.
 
     ATTENTION: The field names of the  GetResponse API library (getresponse-python) may not match the field names
                found in the getresponse API documentation e.g. Campaign.language_code is 'languageCode' in the api.
-               Check _create() from getresponse-python > tag.py for the mappings
+               Check getresponse-python > custom_field.py for the mappings
     """
-    _model_name = 'getresponse.gr.tag'
+    _model_name = 'getresponse.gr.custom_field'
 
     def _map_children(self, record, attr, model):
         pass
 
     # Direct mappings
     # ('source: getresponse-python object field', 'target: odoo record field')
-    direct = [('name', 'name')]
+    direct = [('name', 'name'),
+              ('type', 'gr_type'),
+              ('format', 'gr_format'),
+              ('hidden', 'gr_hidden'),
+              # ('values', 'gr_values')
+              ]
+
+    # ATTENTION: The python lib will already convert values from a json string to a python object!
+    @mapping
+    def gr_values(self, record):
+        if record['values']:
+            values_json = json.dumps(record['values'], encoding='utf-8', ensure_ascii=False)
+        else:
+            values_json = False
+        return {'gr_values': values_json}
 
     @mapping
     def backend_id(self, record):
@@ -51,23 +67,24 @@ class GrTagImportMapper(ImportMapper):
 # IMPORT SYNCHRONIZER(S)
 # ---------------------------------------------------------------------------------------------------------------------
 
+
 # --------------
 # BATCH IMPORTER
 # --------------
 @getresponse
-class GrTagBatchImporter(BatchImporter):
-    _model_name = ['getresponse.gr.tag']
+class GrCustomFieldBatchImporter(BatchImporter):
+    _model_name = ['getresponse.gr.custom_field']
 
 
 @job(default_channel='root.getresponse')
-def gr_tag_import_batch(session, model_name, backend_id, filters=None, delay=False, **kwargs):
-    """ Prepare the batch import for all GetResponse Tag Definitions """
+def gr_custom_field_import_batch(session, model_name, backend_id, filters=None, delay=False, **kwargs):
+    """ Prepare the batch import for all GetResponse Custom Field Definitions """
     if filters is None:
         filters = {}
     connector_env = get_environment(session, model_name, backend_id)
 
     # Get the import connector unit
-    importer = connector_env.get_connector_unit(GrTagBatchImporter)
+    importer = connector_env.get_connector_unit(GrCustomFieldBatchImporter)
 
     # Start the batch import
     importer.batch_run(filters=filters, delay=delay, **kwargs)
@@ -76,21 +93,21 @@ def gr_tag_import_batch(session, model_name, backend_id, filters=None, delay=Fal
 # ----------------------
 # IMPORT A SINGLE RECORD
 # ----------------------
-# In this class we could alter the generic GetResponse import sync flow We could overwrite all the methods from the
-# shared GetResponseImporter here if needed!
+# In this class we could alter the generic GetResponse import sync flow for 'getresponse.frst.zgruppedetail'
+# HINT: We could overwrite all the methods from the shared GetResponseImporter here if needed!
 @getresponse
-class GrTagImporter(GetResponseImporter):
-    _model_name = ['getresponse.gr.tag']
+class GrCustomFieldImporter(GetResponseImporter):
+    _model_name = ['getresponse.gr.custom_field']
 
-    _base_mapper = GrTagImportMapper
+    _base_mapper = GrCustomFieldImportMapper
 
-    # BIND RECORDS TO EXISTING GR.TAG RECORDS ON IMPORT
-    # -------------------------------------------------
-    #     - Tag with the same name exists but no binding -> Create binding before import
-    #     - Tag with binding exists but binding has no getresponse_id -> Update the binding before import
+    # BIND RECORDS TO EXISTING GR.CUSTOM_FIELD RECORDS ON IMPORT
+    # ----------------------------------------------------------
+    #     - Field with the same name exists but no binding -> Create binding before import
+    #     - Field with binding exists but binding has no getresponse_id -> Update the binding before import
     def _get_binding(self):
         # HINT: The bind record will be searched/found based on the external_id
-        bind_record = super(GrTagImporter, self)._get_binding()
+        bind_record = super(GrCustomFieldImporter, self)._get_binding()
 
         map_record = self._map_data()
         mapped_update_data = self._update_data(map_record)
@@ -102,19 +119,19 @@ class GrTagImporter(GetResponseImporter):
         if bind_record and getattr(bind_record, external_id_field_name):
             return bind_record
 
-        # SEARCH FOR AN EXISTING TAG. IF FOUND CREATE OR UPDATE BINDING FOR EXISTING TAG BEFORE IMPORT
+        # SEARCH FOR AN EXISTING CUSTOM FIELD. IF FOUND CREATE OR UPDATE BINDING BEFORE IMPORT
         # HINT: Must be unbound or bound without an external id or super()._get_binding() would have found it
         #       in the first place!
         # INFO: Normally all the mapped import data would be written to the binder model. Because of delegated
         #       inheritance this would create the bind_record and the unwrapped model record at the same time.
-        #       But if the tag exists already we need to create the binding before the import to trigger
-        #       an import_update (instead of an create) to bind the existing tag!
-        getresponse_tag_name = mapped_update_data['name']
+        #       But if the custom field exists already we need to create the binding before the import to trigger
+        #       an import_update (instead of an create) to bind the existing custom field!
+        getresponse_cf_name = mapped_update_data['name']
         original_odoo_model = self.binder.unwrap_model()
-        existing_tag = self.env[original_odoo_model].search([('name', '=', getresponse_tag_name)])
-        if len(existing_tag) == 1 and external_id_in_import_data:
+        existing_cf = self.env[original_odoo_model].search([('name', '=', getresponse_cf_name)])
+        if len(existing_cf) == 1 and external_id_in_import_data:
             # Check if a binding exist already for this backend
-            existing_bind_record = existing_tag.getresponse_bind_ids.filtered(
+            existing_bind_record = existing_cf.getresponse_bind_ids.filtered(
                 lambda r: r.backend_id.id == self.backend_record.id)
 
             # UPDATE AN EXISTING BINDING WITH THE EXTERNAL ID BEFORE IMPORT
@@ -134,7 +151,7 @@ class GrTagImporter(GetResponseImporter):
             else:
                 binding_vals = {
                     self.binder._backend_field: self.backend_record.id,
-                    self.binder._openerp_field: existing_tag.id,
+                    self.binder._openerp_field: existing_cf.id,
                     self.binder._external_field: external_id_in_import_data,
                 }
                 _logger.warning("A tag for this name was found! "
@@ -147,3 +164,5 @@ class GrTagImporter(GetResponseImporter):
         # NO BINDING WAS FOUND
         # HINT: bind_record is an empty recordset
         return bind_record
+
+

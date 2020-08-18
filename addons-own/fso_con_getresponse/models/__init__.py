@@ -22,7 +22,7 @@ from . import getresponse_frst_zgruppedetail_export
 from . import gr_custom_field
 from . import getresponse_gr_custom_field
 from . import getresponse_gr_custom_field_export
-# TODO: Import of custom fields
+from . import getresponse_gr_custom_field_import
 
 # Tags
 from . import gr_tag

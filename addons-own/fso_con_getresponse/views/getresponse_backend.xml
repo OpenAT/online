@@ -14,39 +14,10 @@
                                 type="object"
                                 class="oe_highlight"
                                 string="Import Campaigns"/>
-                        <button name="import_getresponse_campaigns_delay"
-                                type="object"
-                                string="Import Campaigns Delayed"/>
                         <button name="export_getresponse_campaigns_direct"
                                 type="object"
                                 class="oe_highlight"
                                 string="Export Campaigns"/>
-                        <button name="export_getresponse_campaigns_delay"
-                                type="object"
-                                string="Export Campaigns Delayed"/>
-                        <!-- Custom Fields -->
-                        <button name="export_getresponse_custom_fields_direct"
-                                type="object"
-                                class="oe_highlight"
-                                string="Export Custom Field Definitions"/>
-                        <button name="export_getresponse_custom_fields_delay"
-                                type="object"
-                                string="Export Custom Field Definitions Delayed"/>
-                        <!-- Tags -->
-                        <button name="import_getresponse_tags_direct"
-                                type="object"
-                                class="oe_highlight"
-                                string="Import Tag Definitions"/>
-                        <button name="import_getresponse_tags_delay"
-                                type="object"
-                                string="Import Tag Definitions Delayed"/>
-                        <button name="export_getresponse_tags_direct"
-                                type="object"
-                                class="oe_highlight"
-                                string="Export Tag Definitions"/>
-                        <button name="export_getresponse_tags_delay"
-                                type="object"
-                                string="Export Tag Definitions Delayed"/>
                     </header>
                     <sheet>
                         <label for="name" class="oe_edit_only"/>
@@ -59,6 +30,89 @@
                             <field name="default_lang_id"/>
                             <field name="default_zgruppe_id"/>
                         </group>
+                        <notebook>
+                            <page string="Force Import/Export">
+                                <group string="Campaigns (Mailing Lists)">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_campaigns_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Import Campaigns"/>
+                                            <button name="import_getresponse_campaigns_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Import Campaigns Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_campaigns_direct"
+                                                    colspan="2"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Export Campaigns"/>
+                                            <button name="export_getresponse_campaigns_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Export Campaigns Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Custom Field Definitions">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_custom_fields_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Import Custom Field Definitions"/>
+                                            <button name="import_getresponse_custom_fields_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Import Custom Field Definitions Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_custom_fields_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Export Custom Field Definitions"/>
+                                            <button name="export_getresponse_custom_fields_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Export Custom Field Definitions Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Tag Definitions">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_tags_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Import Tag Definitions"/>
+                                            <button name="import_getresponse_tags_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Import Tag Definitions Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_tags_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Export Tag Definitions"/>
+                                            <button name="export_getresponse_tags_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Export Tag Definitions Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

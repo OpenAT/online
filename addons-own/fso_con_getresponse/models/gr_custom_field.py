@@ -29,18 +29,22 @@ class GrCustomField(models.Model):
     _description = 'GetResponse Custom Fields'
 
     _gr_field_prefix = 'frst__'
+
+    # ATTENTION: 'one2many' and 'many2many' are not supported! (check constrains below)
     _gr_type_mappings = {
         'boolean': ['checkbox'],
-        'char': ['text', 'phone'],
+        'char': ['text', 'phone', 'url', 'ip'],
         'text': ['textarea'],
         'selection': ['single_select', 'gender'],
         'many2one': ['single_select', 'country', 'gender'],
+        'one2many': ['multi_select', 'currency', 'country'],
+        'many2many': ['multi_select', 'currency', 'country'],
         'date': ['date'],
         'datetime': ['datetime'],
         'integer': ['number'],
         'float': ['number']
     }
-    _gr_types_values_mandatory = ('checkbox', 'single_select', 'gender', 'country')
+    _gr_types_values_mandatory = ('checkbox', 'single_select', 'gender', 'country', 'multi_select', 'currency')
     _gr_models = ('res.partner', 'frst.personemail', 'frst.personemailgruppe')
 
     # ------
@@ -69,21 +73,26 @@ class GrCustomField(models.Model):
                                required=True,
                                selection=[('text', 'text'),
                                           ('textarea', 'textarea'),
+                                          ('radio', 'radio'),
                                           ('checkbox', 'checkbox'),
                                           ('single_select', 'single_select'),
+                                          ('multi_select', 'multi_select'),
                                           ('number', 'number'),
                                           ('date', 'date'),
                                           ('datetime', 'datetime'),
                                           ('country', 'country'),
                                           ('phone', 'phone'),
-                                          ('gender', 'gender')]
+                                          ('gender', 'gender'),
+                                          ('ip', 'ip'),
+                                          ('url', 'url')]
                                )
     gr_format = fields.Selection(string="GetResponse Field Format",
                                  selection=[('text', 'text'),
                                             ('textarea', 'textarea'),
                                             ('radio', 'radio'),
                                             ('checkbox', 'checkbox'),
-                                            ('single_select', 'single_select')]
+                                            ('single_select', 'single_select'),
+                                            ('multi_select', 'multi_select')]
                                  )
     gr_hidden = fields.Selection(string="GetResponse Hidden",
                                  required=True,
@@ -114,7 +123,7 @@ class GrCustomField(models.Model):
     @api.constrains('name')
     def _constrain_name(self):
         for r in self:
-            assert 12 <= len(r.name) <= 128, "The name '%s' must be between 10 and 128 characters!" % r.name
+            assert 2 <= len(r.name) <= 128, "The name '%s' must be between 10 and 128 characters!" % r.name
             assert re.match(r"(?:[a-z0-9_]+)\Z", r.name, flags=0), _(
                 "Only a-z, 0-9 and _ is allowed for the a GetResponse Custom Field name: '{}'! ").format(r.name)
 
@@ -137,7 +146,7 @@ class GrCustomField(models.Model):
     def _constrain_gr_type(self):
         for r in self:
             if r.field_id:
-                assert r.field_ttype in self._gr_type_mappings, (
+                assert r.field_ttype not in ('one2many', 'many2many'), (
                         "The odoo field type '%s' is not supported!" % r.field_ttype
                 )
                 assert r.gr_type in self._gr_type_mappings[r.field_ttype], (
@@ -158,7 +167,7 @@ class GrCustomField(models.Model):
                 try:
                     data = json.loads(r.gr_values, encoding='utf-8')
                 except Exception as e:
-                    raise ValueError("gr_values must be a valid json string!\n\n'%s'" % e.message)
+                    raise ValueError("gr_values must be a valid json string!\n%s\n'%s'" % (r.gr_values, e.message))
                 assert isinstance(data, list), "gr_values must be a list of strings!"
 
     # ------------
@@ -234,7 +243,7 @@ class GrCustomField(models.Model):
 
             # Convert unique values json string
             unique_values = unique_value_mappings.values()
-            unique_values_json = json.dumps(unique_values, encoding='utf-8', ensure_ascii=False).encode('utf8')
+            unique_values_json = json.dumps(unique_values, encoding='utf-8', ensure_ascii=False)
 
             # Append warning message if the limit was reached
             if len(unique_values) > 999:
@@ -249,7 +258,7 @@ class GrCustomField(models.Model):
 
             # Update gr_values and trigger_compute_gr_values
             r.gr_values = unique_values_json
-            r.gr_values_mappings = json.dumps(seen_values, encoding='utf-8', ensure_ascii=False).encode('utf8')
+            r.gr_values_mappings = json.dumps(seen_values, encoding='utf-8', ensure_ascii=False)
             r.trigger_compute_gr_values = False
 
     # --------
