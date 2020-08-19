@@ -237,11 +237,22 @@ class BaseSosync(models.AbstractModel):
         #       chance that some computed fields of the record might change also - which should lead to new sync jobs
         #       if the computed fields of the record of this model are watched by the sosyncer! Even if the model is
         #       listed in 'no_sosync_jobs'!
+        context = self.env.context if self.env and self.env.context else {}
+
+        # Add 'sosync_synced_version_update_only' to the context if only 'sosync_synced_version' is updated!
         if len(values) == 1 and 'sosync_synced_version' in values:
-            if self.env and self.env.context and 'no_sosync_jobs' in self.env.context:
-                no_sosync_jobs = self.env.context.get('no_sosync_jobs')
-                if self._name in no_sosync_jobs:
-                    skipp = True
+            if 'sosync_synced_version_update_only' not in context:
+                if 'no_sosync_jobs' in context:
+                    no_sosync_jobs = context.get('no_sosync_jobs', {}).keys()
+                    if no_sosync_jobs:
+                        self = self.with_context(sosync_synced_version_update_only=no_sosync_jobs)
+                        context = self.env.context if self.env and self.env.context else {}
+
+        # Skipp any sync job creation for syncer writes where only the sosync_synced_version is updated
+        sosync_synced_version_update_only = context.get('sosync_synced_version_update_only', {})
+        if self._name in sosync_synced_version_update_only:
+            logger.info('Skipp sync job creation for sosync_synced_version_update: %s, %s' % (self._name, self.ids))
+            skipp = True
 
         # DISABLED: Leads to unwanted side effects for computed fields or fields computed in create() or write() for
         #           the same model!
