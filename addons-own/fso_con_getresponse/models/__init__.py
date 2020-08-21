@@ -13,12 +13,12 @@ from . import unit_import
 from . import unit_export
 from . import unit_export_delete
 
-# Campaign
+# Campaigns
 from . import getresponse_frst_zgruppedetail
 from . import getresponse_frst_zgruppedetail_import
 from . import getresponse_frst_zgruppedetail_export
 
-# Custom Field
+# Custom Fields
 from . import gr_custom_field
 from . import getresponse_gr_custom_field
 from . import getresponse_gr_custom_field_export
@@ -30,4 +30,6 @@ from . import getresponse_gr_tag
 from . import getresponse_gr_tag_export
 from . import getresponse_gr_tag_import
 
-# TODO: Contacts
+# TODO: Contacts (Subscriptions)
+from . import getresponse_frst_personemailgruppe
+from . import getresponse_frst_personemailgruppe_export

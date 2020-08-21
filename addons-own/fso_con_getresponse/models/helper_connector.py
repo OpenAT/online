@@ -9,7 +9,7 @@ def get_environment(session, model_name, backend_id):
     backend_record = session.env['getresponse.backend'].browse(backend_id)
     con_env = ConnectorEnvironment(backend_record, session, model_name)
     lang = backend_record.default_lang_id
-    lang_code = lang.code if lang else 'en_US'
+    lang_code = lang.code if lang else 'de_de'
     if lang_code == session.context.get('lang'):
         return con_env
     else:

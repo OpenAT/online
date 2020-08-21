@@ -2,7 +2,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 # ----------------
 # Custom field mappings for GetResponse!
+# HINT: Only values that are in the custom field definition can be used for a custom field - therefore all values
+#       should always be in the field definition. Also there is no empty value - therefore we use 'keine Auswahl'
+
 # ----------------
+import logging
 import re
 import json
 import datetime
@@ -14,6 +18,8 @@ from openerp.tools.translate import _
 from .backend import getresponse
 from .unit_adapter import GetResponseCRUDAdapter
 from .unit_binder import GetResponseBinder
+
+_logger = logging.getLogger(__name__)
 
 
 # WARNING: When using delegation inheritance, methods are not inherited, only fields!
@@ -29,6 +35,10 @@ class GrCustomField(models.Model):
     _description = 'GetResponse Custom Fields'
 
     _gr_field_prefix = 'frst__'
+
+    _gr_false_key = 'false'
+    _gr_true_key = 'true'
+    _gr_false_value = {_gr_false_key: _('keine Angabe')}
 
     # ATTENTION: 'one2many' and 'many2many' are not supported! (check constrains below)
     _gr_type_mappings = {
@@ -46,6 +56,9 @@ class GrCustomField(models.Model):
     }
     _gr_types_values_mandatory = ('checkbox', 'single_select', 'gender', 'country', 'multi_select', 'currency')
     _gr_models = ('res.partner', 'frst.personemail', 'frst.personemailgruppe')
+
+    # Buffer to prevent redundant searches in the db
+    _gr_watched_fields = None
 
     # ------
     # FIELDS
@@ -189,6 +202,7 @@ class GrCustomField(models.Model):
 
     # Helper to create the json string with possible values for the custom field based on the selected odoo
     # field and the lang of the field
+    # TODO: Split the functions in smaller methods and use them in record_to_gr_value() to return the correct value!
     @api.onchange('trigger_compute_gr_values')
     def _onchange_gr_values(self):
         for r in self:
@@ -203,6 +217,7 @@ class GrCustomField(models.Model):
             f_recordset_field_lang = r.env[f_model].with_context(lang=f_lang_code)
 
             value_mappings = {}
+
             # SELECTION FIELD
             if r.field_ttype == 'selection':
                 # Use fields_get() to get the selection values in the correct language
@@ -212,16 +227,28 @@ class GrCustomField(models.Model):
                 field_definitions = f_recordset_field_lang.fields_get([f_name])
                 selection_list_correct_lang = field_definitions[f_name]['selection']
                 value_mappings = dict(selection_list_correct_lang)
+
+                # Add a way to 'clear' non mandatory fields
+                if not r.field_id.required:
+                    value_mappings.update(self._gr_false_value)
+
             # MANY2ONE FIELD
             elif r.field_ttype == 'many2one':
                 f_comodel_name = r.field_id.relation
                 records = f_recordset_field_lang.env[f_comodel_name].search([], limit=1000)
+                # TODO: allow other fields of the related model than just name
                 value_mappings = {str(r.id): r.name for r in records}
+
+                # Add a way to 'clear' non mandatory fields
+                if not r.field_id.required:
+                    value_mappings.update(self._gr_false_value)
+
             # BOOLEAN FIELD
             elif r.field_ttype == 'boolean':
                 # TODO: I really dont understand why the getresponse checkbox type needs values?!?
                 #       which values and how are they are mapped?!?! To be discovered ;)
-                value_mappings = {'true': 'true', 'false': 'false'}
+                value_mappings = {self._gr_true_key: self._gr_true_key,
+                                  self._gr_false_key: self._gr_false_key}
 
             # Check for duplicated values in the dict
             seen_values = {}
@@ -302,25 +329,116 @@ class GrCustomField(models.Model):
             if 'lang_id' in values and values['lang_id'] != r.lang_id.id:
                 raise ValidationError("You can not change the language after the custom field was created!")
 
-            # TODO: Maybe we should add this in a separate method in 'getresponse_gr_custom_field.py' to allow
-            #       changes on custom field import!
-
             if 'gr_type' in values and values['gr_type'] != r.gr_type:
                 raise ValidationError("You can not change the gr_type after the custom field was created!")
             # We do allow to change gr_format if not yet set
             if 'gr_format' in values and r.gr_format and values['gr_format'] != r.gr_format:
                 raise ValidationError("You can not change the gr_format after the custom field was created!")
 
+    # Get a Custom field and a record and return the correct value like in the gr_values field!
+    # TODO: Split the functions in _onchange_gr_values() in smaller methods and use them here!
+    @api.multi
+    def record_to_gr_value(self, record):
+        self.ensure_one()
+        record.ensure_one()
+        custom_field = self
+        assert custom_field.field_id, "The custom field %s is not mapped to an odoo field!" % custom_field.id
+        assert custom_field.field_model_name == record._name, (
+            "The model of the given record (%s, %s) is not matching the custom field odoo field model (%s, %s)!"
+            "" % (record._name, record.id, custom_field.field_model_name, custom_field.id)
+        )
+
+        # Make sure we get the values for the language set in for the field
+        cf_lang_code = custom_field.lang_id.code
+        assert cf_lang_code, "Language of custom field %s has no 'code'!" % custom_field.id
+        if record.env.context.get('lang') != cf_lang_code:
+            _logger.error('Language of the record (%s, %s) is not matching the language of the custom field (%s, %s)!'
+                          '' % (record._name, record.id, custom_field.name, custom_field.id))
+            record = record.with_context(lang=cf_lang_code)
+
+
+        cf_odoo_field_name = custom_field.field_id.name
+
+        # Get the value from the record for the mapped odoo field in the GetResponse Custom Field Definition
+        record_cf_field_value = record[cf_odoo_field_name]
+
+        _gr_not_selected_value = self._gr_false_value.get(self._gr_false_key)
+
+        # SELECTION FIELD
+        if custom_field.field_ttype == 'selection':
+            # TODO: This may not handle selection field with a possible value of ('', '') correctly
+            if not record_cf_field_value:
+                gr_value = _gr_not_selected_value
+            else:
+                field_definitions = record.fields_get([cf_odoo_field_name])
+                selection_vals = field_definitions[cf_odoo_field_name]['selection']
+                selection_vals_dict = dict(selection_vals)
+                gr_value = selection_vals_dict[record_cf_field_value]
+
+        # MANY2ONE FIELD
+        elif custom_field.field_ttype == 'many2one':
+            # TODO: allow other fields of the related model than just 'name'
+            related_record = record[cf_odoo_field_name]
+            gr_value = related_record.name if related_record else False
+            if not gr_value:
+                gr_value = _gr_not_selected_value
+
+        # BOOLEAN FIELD
+        elif custom_field.field_ttype == 'boolean':
+            gr_value = 'true' if record[cf_odoo_field_name] else 'false'
+
+        # ALL OTHER FIELDS
+        else:
+            gr_value = record[cf_odoo_field_name]
+
+        return gr_value
+
+    @api.model
+    def watched_fields(self):
+
+        # HINT: The buffer will be reset in the crud methods
+        if self._gr_watched_fields is None:
+            custom_field_names = {}
+            mapped_custom_fields = self.sudo().search([('field_id', '!=', False)])
+            for f in mapped_custom_fields:
+                if f.field_model_name not in custom_field_names:
+                    custom_field_names[f.field_model_name] = [f.field_id.name]
+                else:
+                    custom_field_names[f.field_model_name].append(f.field_id.name)
+            self._gr_watched_fields = custom_field_names
+
+        return self._gr_watched_fields
+
     # -------------
     # CRUD AND COPY
     # -------------
+    @api.model
+    def create(self, values):
+
+        # Unset _gr_watched_fields buffer
+        self._gr_watched_fields = None
+
+        return super(GrCustomField, self).create(values)
+
     @api.multi
     def write(self, values):
+
+        # Unset _gr_watched_fields buffer
+        if values:
+            self._gr_watched_fields = None
 
         # Disallow changes to some fields after the custom field was created!
         self.update_checks(values)
 
         return super(GrCustomField, self).write(values)
+
+    @api.multi
+    def unlink(self):
+
+        # Unset _gr_watched_fields buffer
+        self._gr_watched_fields = None
+
+        return super(GrCustomField, self).unlink()
 
 
 class GetResponseIrModelFields(models.Model):
