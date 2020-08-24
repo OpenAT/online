@@ -36,4 +36,3 @@ class GetResponseBinder(Binder):
         binding_id.with_context(connector_no_export=True).write({'sync_data': last_sync_data_json})
 
         return res
-

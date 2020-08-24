@@ -10,6 +10,7 @@
     "depends": [
         'connector',
         'fso_frst_groups',
+        'fso_frst_cds',
     ],
     "data": [
         'views/gr_custom_field.xml',

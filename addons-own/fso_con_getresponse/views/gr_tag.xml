@@ -11,8 +11,10 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="type"/>
+                        <field name="cds_id"/>
                     </group>
-                    <group string="Optional Information">
+                    <group string="Extra Information">
                         <field name="description"/>
                         <field name="origin"/>
                     </group>
@@ -39,6 +41,8 @@
             <tree string="GetResponse Tag Definition" toolbar="1">
                 <field name="id"/>
                 <field name="name"/>
+                <field name="type"/>
+                <field name="cds_id"/>
                 <field name="description"/>
             </tree>
         </field>
@@ -55,6 +59,8 @@
                 <field name="partner_ids"/>
                 <field name="description"/>
                 <field name="origin"/>
+                <field name="cds_id"/>
+                <field name="type"/>
             </search>
         </field>
     </record>

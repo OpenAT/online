@@ -16,7 +16,16 @@ class GrTag(models.Model):
     _name = 'gr.tag'
     _description = 'GetResponse Tag Definition'
 
+    _no_change_after_create = ['name', 'type', 'cds_id']
+
     name = fields.Char(string="Name", required=True)
+    type = fields.Selection(string="Type", selection=[('manual', 'manual'), ('system', 'system')],
+                            default='manual', required=True,
+                            help="Manual tags are created by the user, system tags are created automatically by"
+                                 "Fundraising Studio and should NEVER be created manually!")
+    # Link to the CDS
+    cds_id = fields.Many2one(string="CDS",
+                             comodel_name='frst.zverzeichnis', inverse_name='gr_tag_ids')
 
     # Link res.partner
     partner_ids = fields.Many2many(comodel_name='res.partner', inverse_name='getresponse_tag_ids',
@@ -26,9 +35,12 @@ class GrTag(models.Model):
     description = fields.Text(string="Description")
     origin = fields.Text(string="Origin", readonly=True, help="Field for FRST to store origin informations.")
 
+    # ----------
+    # CONSTRAINS
+    # ----------
     _sql_constraints = [
-        ('name_uniq', 'unique(name)',
-         'A tag with this name exists already!'),
+        ('name_uniq', 'unique(name)', 'A tag with this name exists already!'),
+        ('cds_id_uniq', 'unique(cds_id)', 'An other tag is set for this CDS entry!'),
     ]
 
     @api.constrains('name')
@@ -40,6 +52,19 @@ class GrTag(models.Model):
             #       in the first place!
             assert re.match(r"(?:[a-z0-9_]+)\Z", r.name, flags=0), _(
                                 "Only a-z, 0-9 and _ is allowed for the Tag name: '{}'! ").format(r.name)
+
+    @api.multi
+    def write(self, values):
+
+        # Constrain changes to some fields after the creation
+        if any(f_name in values for f_name in self._no_change_after_create):
+            for r in self:
+                for f_name in self._no_change_after_create:
+                    if f_name in values:
+                        assert getattr(r, f_name) == values[f_name], _(
+                            "You can not change field %s after tag creation!" % f_name)
+
+        return super(GrTag, self).write(values)
 
     @api.multi
     def unlink(self):
@@ -55,3 +80,13 @@ class GrTagResPartner(models.Model):
     # Link GetResponse Tags
     getresponse_tag_ids = fields.Many2many(comodel_name='gr.tag', inverse_name='partner_ids',
                                            string='Getresponse Tags')
+
+
+class GrTagFRSTzVerzeichnis(models.Model):
+    _inherit = 'frst.zverzeichnis'
+
+    # TODO: possible One2One relation workaround (This may not work with the cds_id_uniq constraint?!?)
+    # https://odoo-development.readthedocs.io/en/latest/dev/py/one2one.html
+    gr_tag_ids = fields.One2many(string="GetResponse Tags",
+                                 comodel_name='gr.tag', inverse_name='cds_id', readonly=True)
+
