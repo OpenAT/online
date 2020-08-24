@@ -43,7 +43,6 @@ def create_personemailgruppe_bindings_for_all_backends(session, model_name, reco
                       " '%s', '%s', '%s'" % (peg_record.state, model_name, record_id, vals))
         return
 
-
     # Create the binding
     _logger.info("create_personemailgruppe_bindings_for_all_backends: %s, %s, %s" % (model_name, record_id, vals))
     binding_model_obj = session.env['getresponse.frst.personemailgruppe']

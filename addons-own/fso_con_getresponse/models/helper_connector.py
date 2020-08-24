@@ -7,7 +7,11 @@ from openerp.addons.connector.checkpoint import checkpoint
 def get_environment(session, model_name, backend_id):
     """ Create an environment to work with. """
     backend_record = session.env['getresponse.backend'].browse(backend_id)
+
+    # Get a connector environment for the given model
     con_env = ConnectorEnvironment(backend_record, session, model_name)
+
+    # Change the language based on the backend setting and return the env
     lang = backend_record.default_lang_id
     lang_code = lang.code if lang else 'de_de'
     if lang_code == session.context.get('lang'):
