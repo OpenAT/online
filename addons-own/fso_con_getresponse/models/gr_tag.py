@@ -53,6 +53,12 @@ class GrTag(models.Model):
             assert re.match(r"(?:[a-z0-9_]+)\Z", r.name, flags=0), _(
                                 "Only a-z, 0-9 and _ is allowed for the Tag name: '{}'! ").format(r.name)
 
+    @api.constrains('cds_id')
+    def _constrain_cds_id(self):
+        for r in self:
+            if r.cds_id:
+                assert not r.cds_id.verzeichnistyp_id, _("You can not select a CDS folder!")
+
     @api.multi
     def write(self, values):
 
@@ -85,7 +91,7 @@ class GrTagResPartner(models.Model):
 class GrTagFRSTzVerzeichnis(models.Model):
     _inherit = 'frst.zverzeichnis'
 
-    # TODO: possible One2One relation workaround (This may not work with the cds_id_uniq constraint?!?)
+    # TODO: possible One2One relation workaround (This may not work with the cds_id_uniq constraint above?!?)
     # https://odoo-development.readthedocs.io/en/latest/dev/py/one2one.html
     gr_tag_ids = fields.One2many(string="GetResponse Tags",
                                  comodel_name='gr.tag', inverse_name='cds_id', readonly=True)
