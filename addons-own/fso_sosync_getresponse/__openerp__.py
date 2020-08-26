@@ -23,16 +23,11 @@
 {
     'name': "FS-Online fso_sosync_getresponse",
     'summary': """Enable getresponse tags synchronization via Sosync""",
-    'description': """
-FS-Online fso_sosync_getresponse
-===========================================
-Specifies sosync tracked fields for model crm.lead
-
-    """,
+    'description': """ nable getresponse tags synchronization via Sosync""",
     'author': "Datadialog",
     'website': "http://www.datadialog.net",
     'category': 'Uncategorized',
-    'version': '0.5',
+    'version': '1',
     'installable': True,
     'application': False,
     'auto_install': False,

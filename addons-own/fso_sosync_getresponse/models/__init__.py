@@ -2,3 +2,4 @@
 
 import gr_tag
 import res_partner
+import frst_zgruppedetail

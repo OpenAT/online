@@ -8,12 +8,6 @@
 #       Methods to get the odoo record based on the getresponse id and vice versa
 #     - THE ADAPTER
 #       Send or get data from the getresponse api, implements the CRUD methods and searching
-#     - TODO: CREATION OF BINDING RECORDS
-#       create a binding record on record creation of the unwrapped model
-#     - TODO: FIRING OF EVENTS
-#       Call consumer functions on events like @on_record_create and alike
-#
-# The importers and exporters are in separate files!
 # ----------------
 
 # !!!!!!!!!
