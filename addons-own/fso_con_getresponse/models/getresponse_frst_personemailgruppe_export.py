@@ -173,56 +173,10 @@ class ContactExportMapper(ExportMapper):
 class ContactBatchExporter(BatchExporter):
     _model_name = ['getresponse.frst.personemailgruppe']
 
-    # CREATE BINDING RECORDS BEFORE THE BATCH EXPORT
-    def batch_run_create_binding_records(self):
-        odoo_regular_model_name = self.binder.unwrap_model()
-
-        assert self.model._name == 'getresponse.frst.personemailgruppe', (
-            "Model 'getresponse.frst.personemailgruppe' expected!"
-        )
-
-        # SEARCH FOR CONTACTS IN ENABLED CAMPAIGN-BINDINGS NOT LINKED TO A BINDING RECORD
-        # Get all enabled campaign bindings
-        campaigns = self.session.env['getresponse.frst.zgruppedetail'].sudo().search(
-            [('sync_with_getresponse', '=', True)]
-        )
-        campaign_contacts = campaigns.mapped('frst_personemailgruppe_ids')
-        # TODO: Consider status of personemailgruppe (contact) also
-        contacts_without_binding = campaign_contacts.filtered(lambda r: not r.getresponse_bind_ids)
-
-        # CREATE A BINDING BEFORE THE EXPORT
-        for contact in contacts_without_binding:
-            binding_vals = {
-                self.binder._backend_field: self.backend_record.id,
-                self.binder._openerp_field: contact.id
-            }
-            binding = self.env[self.model._name].create(binding_vals)
-            _logger.info("Created binding for '%s' before batch export! (binding: %s %s, vals: %s)"
-                         "" % (odoo_regular_model_name, binding._name, binding.id, binding_vals)
-                         )
-
-    # ONLY EXPORT CONTACT-BINDINGS WHERE THE CAMPAIGN IS ENABLED FOR SYNCING!
-    # TODO: Consider status of personemailgruppe (contact) also
-    def batch_run_search_binding_records(self, domain=None):
-        odoo_binding_model_name = self.model._name
-        assert odoo_binding_model_name == 'getresponse.frst.personemailgruppe', (
-            "Model 'getresponse.frst.personemailgruppe' expected!"
-        )
-
-        odoo_binding_model_obj = self.env['getresponse.frst.personemailgruppe']
-
-        if not domain:
-            binding_records = odoo_binding_model_obj.search([('zgruppedetail_id.sync_with_getresponse', '=', True)])
-        else:
-            domain_records = odoo_binding_model_obj.search(domain)
-            binding_records = domain_records.filtered(lambda r: r.zgruppedetail_id.sync_with_getresponse)
-
-        return binding_records
-
 
 @job(default_channel='root.getresponse')
 def contact_export_batch(session, model_name, backend_id, domain=None, fields=None, delay=False, **kwargs):
-    """ Prepare the batch export of custom field definitions to GetResponse """
+    """ Prepare the batch export of contacts to GetResponse """
     connector_env = get_environment(session, model_name, backend_id)
 
     # Get the exporter connector unit
@@ -243,19 +197,11 @@ class ContactExporter(GetResponseExporter):
 
     _base_mapper = ContactExportMapper
 
-    # ONLY EXPORT CONTACT-BINDINGS WHERE THE CAMPAIGN IS ENABLED FOR SYNCING!
-    # TODO: Consider status of personemailgruppe (contact) also
-    def _get_openerp_data(self):
-        peg_record = super(ContactExporter, self)._get_openerp_data()
-        assert peg_record.zgruppedetail_id.sync_with_getresponse, (
-                "The campaign (zgruppedetail) %s of the contact (personemailgruppe) %s is not enabled to sync with"
-                " GetResponse!" % (peg_record.zgruppedetail_id.id, peg_record.id)
-        )
-        return peg_record
-
+    #  TODO: FOLLOWUP: I really think an import would be better - this could update the sync_data and other
+    #                  stuff also!!!
     def delayed_contact_binding_after_export(self, binding_id, contact_email, contact_campaing_id):
         self.binding_id = binding_id
-        self.binding_record = self._get_openerp_data()
+        self.binding_record = self._get_binding_record()
 
         contact_ids = self.backend_adapter.search(getresponse_campaign_id=contact_campaing_id, email=contact_email)
 
@@ -294,7 +240,8 @@ class ContactExporter(GetResponseExporter):
         
         # TODO: Create a delayed binding job with some retries (1, 2, 4, 8 minutes)
         #       Maybe it would be better to just run some sort of regular contact import?
-        #       I really think an import would be better - this could update the sync_data and other stuff also!!!
+        #       FOLLOWUP: I really think an import would be better - this could update the sync_data and other
+        #                 stuff also!!!
         contact_email = create_data['email']
         contact_campaing_id = create_data['campaign']['campaignId']
         delayed_contact_binding.delay(self.session, self.model._name, self.binding_id,
@@ -319,6 +266,8 @@ class ContactDeleteExporter(GetResponseDeleteExporter):
     _model_name = ['getresponse.frst.personemailgruppe']
 
 
+#  TODO: FOLLOWUP: I really think an import would be better - this could update the sync_data and other
+#                  stuff also!!!
 @job(default_channel='root.getresponse', retry_pattern={1: 5, 2: 10, 3: 2 * 60})
 def delayed_contact_binding(session, model_name, binding_id, contact_email, contact_campaing_id,
                             eta=10, max_retries=7):

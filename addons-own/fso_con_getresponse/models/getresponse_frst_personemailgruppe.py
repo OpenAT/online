@@ -53,6 +53,8 @@ class GetResponseContact(models.Model):
     _inherits = {'frst.personemailgruppe': 'odoo_id'}
     _description = 'GetResponse Contact (Subscription) Binding'
 
+    _sync_allowed_states = ['subscribed', 'approved']
+
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
         string='GetResponse Connector Backend',
@@ -103,6 +105,30 @@ class GetResponseFrstZgruppedetail(models.Model):
 @getresponse
 class ContactBinder(GetResponseBinder):
     _model_name = ['getresponse.frst.personemailgruppe']
+
+    _sync_allowed_states = ['subscribed', 'approved']
+    _bindings_domain = [('zgruppedetail_id.sync_with_getresponse', '=', True),
+                        ('state', 'in', _sync_allowed_states)
+                        ]
+
+    # Make sure only personemailgruppe with sync enabled campaign and allowed state will get a prepared binding
+    # HINT: get_unbound() is used by prepare_bindings() which is used in the batch exporter > prepare_binding_records()
+    #       and in helper_consumer.py > prepare_binding_on_record_create() to filter out records where no binding
+    #       should be prepared (created) for export.
+    def get_unbound(self, domain=None):
+        domain = domain if domain else []
+        domain += self._bindings_domain
+        unbound = super(ContactBinder, self).get_unbound(domain=domain)
+        return unbound
+
+    # Make sure only bindings with sync enabled campaign and allowed state are returned
+    # HINT: get_bindings() is used in single record exporter run() > _get_binding_record() to filter and validate
+    #       the binding record
+    def get_bindings(self, domain=None):
+        domain = domain if domain else []
+        domain += self._bindings_domain
+        bindings = super(ContactBinder, self).get_bindings(domain=domain)
+        return bindings
 
 
 # -----------------

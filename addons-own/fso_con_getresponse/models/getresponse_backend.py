@@ -9,8 +9,8 @@ from .getresponse_frst_zgruppedetail_export import zgruppedetail_export_batch
 from .getresponse_gr_custom_field_import import gr_custom_field_import_batch
 from .getresponse_gr_custom_field_export import gr_custom_field_export_batch
 
-from .getresponse_gr_tag_import import gr_tag_import_batch
-from .getresponse_gr_tag_export import gr_tag_export_batch
+from .getresponse_gr_tag_import import tag_import_batch
+from .getresponse_gr_tag_export import tag_export_batch
 
 from .getresponse_frst_personemailgruppe_export import contact_export_batch
 
@@ -160,14 +160,14 @@ class GetResponseBackend(models.Model):
         """ Import all tags from getresponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            gr_tag_import_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
+            tag_import_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
 
     @api.multi
     def import_getresponse_tags_delay(self):
         """ Import all tags from getresponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            gr_tag_import_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
+            tag_import_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
 
     # -------------------
     # EXPORT TAGS BUTTONS
@@ -177,14 +177,14 @@ class GetResponseBackend(models.Model):
         """ Export all gr.tag field definitions to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            gr_tag_export_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
+            tag_export_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
 
     @api.multi
     def export_getresponse_tags_delay(self):
         """ Export all gr.tag field definitions to GetResponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            gr_tag_export_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
+            tag_export_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
 
     # -----------------------
     # EXPORT CONTACTS BUTTONS

@@ -3,6 +3,9 @@
 from openerp.addons.connector.connector import ConnectorEnvironment
 from openerp.addons.connector.checkpoint import checkpoint
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 def get_environment(session, model_name, backend_id):
     """ Create an environment to work with. """
@@ -34,3 +37,46 @@ def add_checkpoint(session, model_name, record_id, backend_id):
     :type backend_id: int
     """
     return checkpoint.add_checkpoint(session, model_name, record_id, 'getresponse.backend', backend_id)
+
+
+def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind_record_id=None):
+    if skipp_only_bind_record_id:
+        assert skipp_only_bind_model, "skipp_only_bind_model is given but skipp_only_bind_record_id is missing!"
+
+    context = context if context else {}
+
+    if 'connector_no_export' not in context:
+        connector_no_export = 'not_in_context'
+    else:
+        connector_no_export = context['connector_no_export']
+
+    # Not found in context
+    if connector_no_export == 'not_in_context':
+        skipp_export = False
+
+    # Skipp export for all models and all records
+    elif connector_no_export is True:
+        if skipp_only_bind_model or skipp_only_bind_record_id:
+            _logger.warning("connector_no_export is True but skipp_only_bind_model '%s' or skipp_only_bind_record_id"
+                            " '%s' are set! " % skipp_only_bind_model, skipp_only_bind_record_id)
+        skipp_export = True
+
+    # Skipp exports only if the model and the record id are in 'connector_no_export'
+    elif skipp_only_bind_record_id:
+        skipp_ids = connector_no_export.get(skipp_only_bind_model, [])
+        skipp_ids = skipp_ids if isinstance(skipp_ids, list) else [skipp_ids]
+        skipp_export = True if skipp_only_bind_record_id in skipp_ids else False
+
+    # Skipp exports only if the model is in 'connector_no_export'
+    elif skipp_only_bind_model:
+        skipp_export = True if skipp_only_bind_model in connector_no_export else False
+
+    # Unexpected value type for 'connector_no_export'
+    else:
+        raise TypeError("'connector_no_export' (%s) must be of type 'True' or 'dict'!" % connector_no_export)
+
+    if skipp_export:
+        _logger.info("Skipp export of binding record ('%s', '%s') because of 'connector_no_export' (%s) in context!"
+                     "" % (skipp_only_bind_model, skipp_only_bind_record_id, connector_no_export))
+
+    return skipp_export

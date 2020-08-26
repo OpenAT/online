@@ -18,7 +18,7 @@ _logger = logging.getLogger(__name__)
 # CONNECTOR EXPORT MAPPER
 # -----------------------
 @getresponse
-class GrTagExportMapper(ExportMapper):
+class TagExportMapper(ExportMapper):
     """ Map all the fields of the odoo record to the GetResponse API field names.
 
     ATTENTION: !!! FOR THE EXPORT WE MUST USE THE FIELD NAMES OF THE GET RESPONSE API !!!
@@ -50,40 +50,17 @@ class GrTagExportMapper(ExportMapper):
 # BATCH EXPORTER
 # --------------
 @getresponse
-class GrTagBatchExporter(BatchExporter):
+class TagBatchExporter(BatchExporter):
     _model_name = ['getresponse.gr.tag']
-
-    def batch_run(self, domain=None, fields=None, delay=False, **kwargs):
-        domain = domain if isinstance(domain, list) else []
-
-        # SEARCH FOR RECORDS NOT LINKED TO A BINDING RECORD
-        # ATTENTION: You must use None for the search domain (instead of False)
-        original_odoo_model = self.binder.unwrap_model()
-        tags = self.env[original_odoo_model].search(domain)
-        tags_without_binding = tags.filtered(lambda r: not r.getresponse_bind_ids)
-
-        # CREATE A BINDING BEFORE THE EXPORT
-        for tag in tags_without_binding:
-            binding_vals = {
-                self.binder._backend_field: self.backend_record.id,
-                self.binder._openerp_field: tag.id
-            }
-            binding = self.env[self.model._name].create(binding_vals)
-            _logger.info("Created binding for '%s' before batch export! (binding: %s %s, vals: %s)"
-                         "" % (original_odoo_model, binding._name, binding.id, binding_vals)
-                         )
-
-        # SINCE ALL BINDINGS EXIST NOW WE CAN CALL THE ORIGINAL batch_run()
-        return super(GrTagBatchExporter, self).batch_run(domain=domain, fields=fields, delay=delay, **kwargs)
 
 
 @job(default_channel='root.getresponse')
-def gr_tag_export_batch(session, model_name, backend_id, domain=None, fields=None, delay=False, **kwargs):
+def tag_export_batch(session, model_name, backend_id, domain=None, fields=None, delay=False, **kwargs):
     """ Prepare the batch export of tag definitions to GetResponse """
     connector_env = get_environment(session, model_name, backend_id)
 
     # Get the exporter connector unit
-    batch_exporter = connector_env.get_connector_unit(GrTagBatchExporter)
+    batch_exporter = connector_env.get_connector_unit(TagBatchExporter)
 
     # Start the batch export
     batch_exporter.batch_run(domain=domain, fields=fields, delay=delay, **kwargs)
@@ -95,16 +72,16 @@ def gr_tag_export_batch(session, model_name, backend_id, domain=None, fields=Non
 # In this class we could alter the generic GetResponse export sync flow We could overwrite all the methods from the
 # shared GetResponseExporter here if needed!
 @getresponse
-class GrTagExporter(GetResponseExporter):
+class TagExporter(GetResponseExporter):
     _model_name = ['getresponse.gr.tag']
 
-    _base_mapper = GrTagExportMapper
+    _base_mapper = TagExportMapper
 
 
 # -----------------------------
 # SINGLE RECORD DELETE EXPORTER
 # -----------------------------
 @getresponse
-class GrTagDeleteExporter(GetResponseDeleteExporter):
+class TagDeleteExporter(GetResponseDeleteExporter):
     _model_name = ['getresponse.gr.tag']
 

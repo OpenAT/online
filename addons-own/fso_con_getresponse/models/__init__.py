@@ -23,13 +23,17 @@ from . import gr_custom_field
 from . import getresponse_gr_custom_field
 from . import getresponse_gr_custom_field_export
 from . import getresponse_gr_custom_field_import
+# TODO: from . import getresponse_gr_custom_field_consumer.py
 
 # Tags
 from . import gr_tag
 from . import getresponse_gr_tag
 from . import getresponse_gr_tag_export
 from . import getresponse_gr_tag_import
+# TODO: from . import getresponse_gr_tag_consumer
 
-# TODO: Contacts (Subscriptions)
+# Contacts (Subscriptions)
 from . import getresponse_frst_personemailgruppe
 from . import getresponse_frst_personemailgruppe_export
+# TODO: from . import getresponse_frst_personemailgruppe_import
+# TODO: from . import getresponse_frst_personemailgruppe_consumer

@@ -36,6 +36,7 @@ from openerp.addons.connector.queue.job import job, related_action
 from .unit_import import import_record
 from .helper_connector import get_environment
 from .helper_related_action import unwrap_binding
+from .unit_binder import GetResponseBinder
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -55,18 +56,11 @@ class BatchExporter(Exporter):
         raise ValueError("The BatchExporter class uses batch_run() instead of run() to avoid confusion with the .run()"
                          " method of the single record export class GetResponseExporter()!")
 
-    def batch_run_create_binding_records(self):
-        """ Create binding records before the batch export """
-        return
+    def prepare_binding_records(self):
+        return self.binder.prepare_bindings()
 
-    def batch_run_search_binding_records(self, domain=None):
-        # ------------------------------
-        # SEARCH FOR THE BINDING RECORDS
-        # ------------------------------
-        domain = domain or []
-        odoo_binding_model = self.model._name
-        binding_records = self.env[odoo_binding_model].search(domain)
-        return binding_records
+    def get_binding_records(self, domain=None):
+        return self.binder.get_bindings(domain=domain)
 
     # ATTENTION: The singe record exporter class GetResponseExporter and the batch exporter class BatchExporter
     #            both use .run to start the export (which is confusing at best).
@@ -80,15 +74,19 @@ class BatchExporter(Exporter):
         :type fields: list
         """
 
-        # ------------------------------------
-        # CREATE BINDING RECORDS BEFORE SEARCH
-        # ------------------------------------
-        self.batch_run_create_binding_records()
+        # -------------------------------------
+        # PREPARE BINDING RECORDS BEFORE SEARCH
+        # -------------------------------------
+        prepared_bindings = self.prepare_binding_records()
+        _logger.info("Prepared %s bindings before batch export! ('%s', '%s')"
+                     "" % (len(prepared_bindings), prepared_bindings._name, prepared_bindings.ids))
 
         # --------------------------
         # SEARCH FOR BINDING RECORDS
         # --------------------------
-        binding_records = self.batch_run_search_binding_records(domain=domain)
+        binding_records = self.get_binding_records(domain=domain)
+        _logger.info("Found %s bindings to batch export! ('%s', '%s')"
+                     "" % (len(binding_records), binding_records._name, binding_records.ids))
 
         # -------------------------------------------------
         # RUN export_record() FOR EACH FOUND BINDING RECORD
@@ -169,9 +167,14 @@ class GetResponseExporter(Exporter):
         #             finished
         return False
 
-    def _get_openerp_data(self):
-        """ Return the raw Odoo data for ``self.binding_id`` """
-        return self.model.browse(self.binding_id)
+    def _get_binding_record(self):
+        """ Return the binding record """
+        binding = self.binder.get_bindings(domain=[('id', '=', self.binding_id)])
+        assert len(binding) <= 1, "More than one binding record returned!"
+        if binding:
+            assert binding.id == self.binding_id, "Id of returned binding does not match self.binding_id!"
+            assert binding._name == self.model._name, "Model of binding record does not match self.model"
+        return binding
 
     def _lock(self):
         """ Lock the binding record.
@@ -439,8 +442,11 @@ class GetResponseExporter(Exporter):
         """
         self.binding_id = binding_id
 
-        # Get the odoo binding-model-record
-        self.binding_record = self._get_openerp_data()
+        # Get (and validate) the binding-model-record
+        self.binding_record = self._get_binding_record()
+        if not self.binding_record:
+            return _('Export of binding (%s, %s) was SKIPPED by binder.get_bindings()!'
+                     ) % (self.model._name, binding_id)
 
         # Get the GetResponse ID of the record (if it is already bound/synced)
         self.getresponse_id = self.binder.to_backend(self.binding_id)
@@ -497,4 +503,5 @@ def export_record(session, model_name, binding_id, fields=None):
     exporter = env.get_connector_unit(GetResponseExporter)
 
     # Start the .run() method of the found exporter class
+    # ATTENTION: The binding is checked/validate in .run() by _get_binding_record() > binder.get_bindings()
     return exporter.run(binding_id, fields=fields)

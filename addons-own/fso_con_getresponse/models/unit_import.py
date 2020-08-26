@@ -83,12 +83,12 @@ class BatchImporter(Importer):
         # ------------------------------
         # SEARCH FOR GETRESPONSE RECORDS
         # ------------------------------
-        record_ids = self.backend_adapter.search(filters)
+        getresponse_record_ids = self.backend_adapter.search(filters)
 
         # -----------------------------------------
         # RUN import_record() FOR EACH FOUND RECORD
         # -----------------------------------------
-        for record_id in record_ids:
+        for record_id in getresponse_record_ids:
             if delay:
                 import_record.delay(self.session,
                                     self.model._name,
@@ -199,7 +199,7 @@ class GetResponseImporter(Importer):
         """
         return
 
-    def _must_skip(self):
+    def skip_by_getresponse_data(self):
         """ Hook called right after we read the data from the backend.
 
         If the method returns a message giving a reason for the
@@ -217,10 +217,20 @@ class GetResponseImporter(Importer):
         #       of GetResponse of not having a 'write_date' or 'last_updated_at' for every object
         #       For the prototype we just return False to always trigger a sync!
 
-        return
+        return False
 
     def _get_binding(self):
         return self.binder.to_openerp(self.getresponse_id)
+
+    def bind_before_import(self, binding):
+        return binding
+
+    def skip_by_binding(self, binding):
+        binding = self.binder.get_bindings(filter=[('id', '=', binding.id)])
+        if not binding:
+            return _("Import was skipped for binding (%s, %s) by binder.get_bindings()") % (binding._name, binding.id)
+
+        return False
 
     def _create_data(self, map_record, **kwargs):
         return map_record.values(for_create=True, **kwargs)
@@ -232,8 +242,10 @@ class GetResponseImporter(Importer):
         """ Create the odoo record """
         # Validate getresponse record data before odoo record creation
         self._validate_data(data)
-        # Get the correct model and prevent export job generation via connector_no_export=True
+
+        # Add connector_no_export=True to prevent any GetResponse export
         model = self.model.with_context(connector_no_export=True)
+
         # Create the new binding record (and therefore the regular odoo record (delegation inheritance) also
         binding = model.create(data)
         _logger.debug('%d created from getresponse %s', binding, self.getresponse_id)
@@ -249,8 +261,10 @@ class GetResponseImporter(Importer):
         """ Update an OpenERP record """
         # Validate getresponse record data before odoo record update
         self._validate_data(data)
-        # Add connector_no_export=True to the env of the binding record to prevent export job creation
-        binding = binding.with_context(connector_no_export=True)
+
+        # Add connector_no_export={bind_model_name: [id]} to prevent GetResponse exports for this binding
+        binding = binding.with_context(connector_no_export={binding._name: [binding.id]})
+
         # Update the binding record (and therefore the regular odoo record (delegation inheritance) also
         binding.write(data)
         _logger.debug('%d updated from getresponse %s', binding, self.getresponse_id)
@@ -287,13 +301,22 @@ class GetResponseImporter(Importer):
             #       much easier to see which records have errors!!!
             return _('Record does no longer exist in GetResponse')
 
-        # Check if we must skip the import (e.g. on changes in both systems)
-        skip = self._must_skip()
-        if skip:
-            return skip
+        # Skip import based on the returned GetResponse record data
+        skip_by_getresponse_data = self.skip_by_getresponse_data()
+        if skip_by_getresponse_data:
+            return skip_by_getresponse_data
 
-        # Get the odoo binding model record
+        # Search for a binding record that has the external id (self.getresponse_id)
         binding = self._get_binding()
+
+        # Bind to existing records (or use prepared bindings) before import
+        binding = self.bind_before_import(binding)
+
+        # Skip import based on the binding (based on odoo record data filtered out by binder.get_bindings())
+        if binding:
+            skip_by_binding = self.skip_by_binding(binding)
+            if skip_by_binding:
+                return skip_by_binding
 
         # Check the data in odoo is already up to date and skipp import if so
         if not force and self._is_uptodate(binding):
