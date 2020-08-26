@@ -3,8 +3,7 @@
 # ----------------
 # Custom field mappings for GetResponse!
 # HINT: Only values that are in the custom field definition can be used for a custom field - therefore all values
-#       should always be in the field definition. Also there is no empty value - therefore we use 'keine Auswahl'
-
+#       should always be in the field definition. Also there is no empty value - therefore we use _gr_false_value
 # ----------------
 import logging
 import re
@@ -15,9 +14,6 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
-from .backend import getresponse
-from .unit_adapter import GetResponseCRUDAdapter
-from .unit_binder import GetResponseBinder
 
 _logger = logging.getLogger(__name__)
 

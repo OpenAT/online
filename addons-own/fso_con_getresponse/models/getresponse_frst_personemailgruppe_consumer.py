@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 import logging
-from getresponse.excs import NotFoundError
-
-from openerp import models, fields
 
 from openerp.addons.connector.event import on_record_create, on_record_write, on_record_unlink
-from openerp.addons.connector.exception import IDMissingInBackend
 
-from .backend import getresponse
 from .helper_consumer import prepare_binding, export_binding, export_delete
-from .helper_connector import get_environment, skipp_export_by_context
-from .unit_adapter import GetResponseCRUDAdapter
-from .unit_binder import GetResponseBinder
+
 
 _logger = logging.getLogger(__name__)
 

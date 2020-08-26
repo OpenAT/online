@@ -18,7 +18,7 @@ _logger = logging.getLogger(__name__)
 # CONNECTOR EXPORT MAPPER
 # -----------------------
 @getresponse
-class GrCustomFieldExportMapper(ExportMapper):
+class CustomFieldExportMapper(ExportMapper):
     """ Map all the fields of the odoo record to the GetResponse API field names.
 
     ATTENTION: !!! FOR THE EXPORT WE MUST USE THE FIELD NAMES OF THE GET RESPONSE API !!!
@@ -85,41 +85,17 @@ class GrCustomFieldExportMapper(ExportMapper):
 # BATCH EXPORTER
 # --------------
 @getresponse
-class GrCustomFieldBatchExporter(BatchExporter):
+class CustomFieldBatchExporter(BatchExporter):
     _model_name = ['getresponse.gr.custom_field']
-
-    def batch_run(self, domain=None, fields=None, delay=False, **kwargs):
-        domain = domain if isinstance(domain, list) else []
-
-        # SEARCH FOR RECORDS NOT LINKED TO A BINDING RECORD
-        # ATTENTION: You must use None for the search domain (instead of False)
-        original_odoo_model = self.binder.unwrap_model()
-        domain_no_binding = domain + [('getresponse_bind_ids', '=', None)]
-        custom_fields = self.env[original_odoo_model].search(domain)
-        custom_fields_without_binding = custom_fields.filtered(lambda r: not r.getresponse_bind_ids)
-
-        # CREATE A BINDING BEFORE THE EXPORT
-        for custom_field in custom_fields_without_binding:
-            binding_vals = {
-                self.binder._backend_field: self.backend_record.id,
-                self.binder._openerp_field: custom_field.id
-            }
-            binding = self.env[self.model._name].create(binding_vals)
-            _logger.info("Created binding for '%s' before batch export! (binding: %s %s, vals: %s)"
-                         "" % (original_odoo_model, binding._name, binding.id, binding_vals)
-                         )
-
-        # SINCE ALL BINDINGS EXIST NOW WE CAN CALL THE ORIGINAL batch_run()
-        return super(GrCustomFieldBatchExporter, self).batch_run(domain=domain, fields=fields, delay=delay, **kwargs)
 
 
 @job(default_channel='root.getresponse')
-def gr_custom_field_export_batch(session, model_name, backend_id, domain=None, fields=None, delay=False, **kwargs):
+def custom_field_export_batch(session, model_name, backend_id, domain=None, fields=None, delay=False, **kwargs):
     """ Prepare the batch export of custom field definitions to GetResponse """
     connector_env = get_environment(session, model_name, backend_id)
 
     # Get the exporter connector unit
-    batch_exporter = connector_env.get_connector_unit(GrCustomFieldBatchExporter)
+    batch_exporter = connector_env.get_connector_unit(CustomFieldBatchExporter)
 
     # Start the batch export
     batch_exporter.batch_run(domain=domain, fields=fields, delay=delay, **kwargs)
@@ -131,16 +107,16 @@ def gr_custom_field_export_batch(session, model_name, backend_id, domain=None, f
 # In this class we could alter the generic GetResponse export sync flow for 'getresponse.frst.zgruppedetail'
 # HINT: We could overwrite all the methods from the shared GetResponseExporter here if needed!
 @getresponse
-class GrCustomFieldExporter(GetResponseExporter):
+class CustomFieldExporter(GetResponseExporter):
     _model_name = ['getresponse.gr.custom_field']
 
-    _base_mapper = GrCustomFieldExportMapper
+    _base_mapper = CustomFieldExportMapper
 
 
 # -----------------------------
 # SINGLE RECORD DELETE EXPORTER
 # -----------------------------
 @getresponse
-class GrCustomFieldDeleteExporter(GetResponseDeleteExporter):
+class CustomFieldDeleteExporter(GetResponseDeleteExporter):
     _model_name = ['getresponse.gr.custom_field']
 

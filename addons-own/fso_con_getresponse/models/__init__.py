@@ -1,39 +1,42 @@
 # -*- coding: utf-8 -*-
 
-from . import helper_connector
-from . import helper_related_action
-from . import helper_consumer
+# ATTENTION: Do not use from . import ... in __init__.py files or it may mess up odoo 8
 
-from . import backend
-from . import getresponse_backend
+import helper_connector
+import helper_related_action
+import helper_consumer
 
-from . import unit_binder
-from . import unit_adapter
-from . import unit_import
-from . import unit_export
-from . import unit_export_delete
+import backend
+import getresponse_backend
+
+import unit_binder
+import unit_adapter
+import unit_import
+import unit_export
+import unit_export_delete
 
 # Campaigns
-from . import getresponse_frst_zgruppedetail
-from . import getresponse_frst_zgruppedetail_import
-from . import getresponse_frst_zgruppedetail_export
+import getresponse_frst_zgruppedetail
+import getresponse_frst_zgruppedetail_import
+import getresponse_frst_zgruppedetail_export
+# TODO: import getresponse_frst_zgruppedetail_import
 
 # Custom Fields
-from . import gr_custom_field
-from . import getresponse_gr_custom_field
-from . import getresponse_gr_custom_field_export
-from . import getresponse_gr_custom_field_import
-# TODO: from . import getresponse_gr_custom_field_consumer.py
+import gr_custom_field
+import getresponse_gr_custom_field
+import getresponse_gr_custom_field_export
+import getresponse_gr_custom_field_import
+import getresponse_gr_custom_field_consumer
 
 # Tags
-from . import gr_tag
-from . import getresponse_gr_tag
-from . import getresponse_gr_tag_export
-from . import getresponse_gr_tag_import
-# TODO: from . import getresponse_gr_tag_consumer
+import gr_tag
+import getresponse_gr_tag
+import getresponse_gr_tag_export
+import getresponse_gr_tag_import
+import getresponse_gr_tag_consumer
 
 # Contacts (Subscriptions)
-from . import getresponse_frst_personemailgruppe
-from . import getresponse_frst_personemailgruppe_export
-# TODO: from . import getresponse_frst_personemailgruppe_import
-# TODO: from . import getresponse_frst_personemailgruppe_consumer
+import getresponse_frst_personemailgruppe
+import getresponse_frst_personemailgruppe_export
+# TODO: import getresponse_frst_personemailgruppe_import
+import getresponse_frst_personemailgruppe_consumer
