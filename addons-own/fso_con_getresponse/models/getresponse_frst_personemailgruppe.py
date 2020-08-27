@@ -51,6 +51,7 @@ class GetResponseContact(models.Model):
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
+        index=True,
         string='GetResponse Connector Backend',
         required=True,
         readonly=True,
@@ -58,6 +59,8 @@ class GetResponseContact(models.Model):
     )
     odoo_id = fields.Many2one(
         comodel_name='frst.personemailgruppe',
+        inverse_name='getresponse_bind_ids',
+        index=True,
         string='Fundraising Studio Subscription',
         required=True,
         readonly=True,
@@ -77,10 +80,13 @@ class GetResponseContact(models.Model):
         string='Last synchronization data',
         readonly=True)
 
-    # This constraint is very important for the multithreaded conflict resolution - needed in every binding model!
+    # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
+    # TODO: Check if the backend_uniq constrain makes any problems for the parallel processing of jobs
     _sql_constraints = [
         ('getresponse_uniq', 'unique(backend_id, getresponse_id)',
          'A binding already exists with the same GetResponse ID for this GetResponse backend (Account).'),
+        ('odoo_uniq', 'unique(backend_id, odoo_id)',
+         'A binding already exists for this odoo record and this GetResponse backend (Account).'),
     ]
 
 
@@ -224,17 +230,28 @@ class ContactAdapter(GetResponseCRUDAdapter):
     # ATTENTION: PLEASE CHECK 'PITFALLS' COMMENT AT THE START OF THE FILE!
     def write(self, ext_id, data):
 
+        # UPSERT CUSTOM FIELDS
+        # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
+        #       a custom field!!!
         # Only append/update custom field values in GetResponse but do not replace 'customFieldValues'!
-        # TODO: Check custom field values - currently we get an empty list ...
         custom_field_values = data.pop('customFieldValues', None)
         if custom_field_values:
+
+            # TODO: remove all custom fields with empty values because you can not unset/delete on upsert
+            for index, cf in enumerate(custom_field_values):
+                # HINT: x2Many fields are not supported yet - therefore the first value is the only one ;)
+                if not cf['value'][0]:
+                    custom_field_values.pop(index)
+
             cfv_payload = {'customFieldValues': custom_field_values}
             cfv_upsert_result = self.getresponse_api_session.upsert_contact_custom_fields(ext_id, cfv_payload)
             assert len(custom_field_values) == len(cfv_upsert_result.get('customFieldValues', [])), (
                 "Upsert (add or update) of custom fields failed!")
 
+        # UPSERT TAGS
         # Only append tags in GetResponse but do not replace 'tags'!
-        # TODO: Decide when to really replace (remove) tags in GetResponse
+        # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
+        #       a tag!!!
         tags = data.pop('tags', None)
         if tags:
             tags_payload = {'tags': tags}

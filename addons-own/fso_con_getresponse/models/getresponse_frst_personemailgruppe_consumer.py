@@ -13,12 +13,17 @@ _logger = logging.getLogger(__name__)
 # -----------------
 # CONSUMER / EVENTS
 # -----------------
+# ATTENTION: This can only core odoo events - GetResponse Events must be covered by a controller that receives
+#            HTTP request on record creation or update in GetResponse
 
 # INFO: This is called AFTER the record create (but before the commit)
 @on_record_create(model_names=['frst.personemailgruppe'])
 def prepare_binding_on_contact_create(session, model_name, record_id, vals):
-    """ Prepare a contact binding (without external id) for all existing backend records """
-    prepare_binding(session, model_name, record_id, vals)
+    """ Prepare a contact binding (without external id) for all backends (multiple backends possible)"""
+    # We could get the binding model from session.env[model_name]._fields['getresponse_bind_ids'].comodel_name
+    binding_model_name = 'getresponse.frst.personemailgruppe'
+    unwrapped_record_id = record_id
+    prepare_binding(session, binding_model_name, unwrapped_record_id, vals)
 
 
 # INFO: This is called AFTER the record create (but before the commit)
@@ -76,5 +81,6 @@ def export_binding_on_contact_update(session, model_name, record_id, vals):
 def export_delete_on_contact_delete(session, model_name, record_id):
     """ Delete the contact(s) in getresponse for all existing bindings (multiple backends possible) """
     record = session.env[model_name].browse([record_id])
+    # Get all binding records and export the delete
     for binding_record in record.getresponse_bind_ids:
         export_delete(session, binding_record._name, binding_record.id, delay=True)

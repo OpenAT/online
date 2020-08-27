@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from openerp import models
 from openerp.addons.connector.connector import Binder
 from .backend import getresponse
 
 import json
+
+_logger = logging.getLogger(__name__)
 
 
 # HINT: Only use the @getresponse decorator on the class where you define _model_name but not on the parent classes!
@@ -21,8 +25,9 @@ class GetResponseBinder(Binder):
     _openerp_field = 'odoo_id'
     _sync_date_field = 'sync_date'
 
-    # ATTENTION: You must name all inverse fields of the '_openerp_field' like this!
-    _inverse_openerp_field = 'getresponse_bind_ids'
+    # WARNING: The _inverse_binding_ids_field name MUST be the same in all getresponse related binding models!
+    #          You MUST name all inverse fields of the '_openerp_field' like this!
+    _inverse_binding_ids_field = 'getresponse_bind_ids'
 
     # ADD 'sync_data' TO THE BINDING METHOD AND BINDING RECORD
     def bind(self, external_id, binding_id, sync_data=None):
@@ -49,34 +54,71 @@ class GetResponseBinder(Binder):
         unwrapped_odoo_model = self.unwrap_model()
         backend_id = self.backend_record.id
 
-        unwrapped_records = self.env[unwrapped_odoo_model].search(domain)
+        # DISABLED: This was replaced by the domain below
+        # TODO: We need to check if this is faster on large recordsets than the search below.
+        #       I guessed the db search is faster and therefore i disabled this code.
+        # # Get an empty recordset
+        # unwrapped_records = self.env[unwrapped_odoo_model].search(domain)
+        # unbound_unwrapped_records = self.env[unwrapped_odoo_model]
+        #
+        # # Search for records without a binding for this backend
+        # backend_field = self._backend_field
+        # for r in unwrapped_records:
+        #     binding_records = getattr(r, self._inverse_binding_ids_field)
+        #
+        #     # No bindings at all or not binding for this backend
+        #     if not binding_records or not any(
+        #             getattr(binding, backend_field).id == backend_id for binding in binding_records):
+        #         unbound_unwrapped_records = unbound_unwrapped_records | r
 
-        # Get an empty recordset
-        unbound_unwrapped_records = self.env[unwrapped_odoo_model]
+        # Path to the backend id field of the bindings
+        backend_id_search_path = self._inverse_binding_ids_field + '.' + self._backend_field + '.id'
 
-        # Search for unbound records
-        for r in unwrapped_records:
-            binding_records = getattr(r, self._inverse_openerp_field)
+        # Get all records bound to this backend
+        # HINT: If we test for a x2many field the test will return TRUE if it matches any of the records
+        #       (this is just like any() in python)
+        bound_unwrapped_records = self.env[unwrapped_odoo_model].search([(backend_id_search_path, '=', backend_id)])
 
-            # No bindings at all or not binding for this backend
-            if not binding_records or not any(binding.id == backend_id for binding in binding_records):
-                unbound_unwrapped_records = unbound_unwrapped_records | r
+        # Get all records without any binding or without any binding for the current backend
+        domain += ['|',
+                     (self._inverse_binding_ids_field, '=', False),
+                     ('id', 'not in', bound_unwrapped_records.ids)
+                   ]
 
+        unbound_unwrapped_records = self.env[unwrapped_odoo_model].search(domain)
         return unbound_unwrapped_records
 
     # PREPARE (CREATE) A NEW BINDING (BINDING WITHOUT AN EXTERNAL ID)
-    def _prepare_binding(self, unwrapped_record_id):
+    def _prepare_binding(self, unwrapped_record_id, append_vals=None, connector_no_export=None):
         backend_id = self.backend_record.id
         binding_vals = {self._backend_field: backend_id,
                         self._openerp_field: unwrapped_record_id}
-        prepared_binding_record = self.model.create(binding_vals)
+
+        if append_vals:
+            assert isinstance(append_vals, dict), "'append_vals' must be a dict!"
+            binding_vals.update(append_vals)
+
+        if connector_no_export:
+            prepared_binding_record = self.model.with_context(
+                connector_no_export=connector_no_export).create(binding_vals)
+        else:
+            prepared_binding_record = self.model.create(binding_vals)
+
+        _logger.info("Prepared binding record '%s', '%s'" % (prepared_binding_record._name, prepared_binding_record.id))
+
         return prepared_binding_record
 
     # CREATE BINDINGS FOR UNBOUND RECORDS
-    def prepare_bindings(self, unbound_unwrapped_records=None, domain=None):
+    def prepare_bindings(self, unbound_unwrapped_records=None, domain=None, append_vals=None, connector_no_export=None):
         """ Prepare (create) binding records for all unwrapped records without a binding record
         ATTENTION: This method must be used by all methods and consumer that prepare (create) binding records!
+
+        HINT: If you use unbound_unwrapped_records (recordset) instead of a domain the filters of get_unbound will not
+              apply. This is like a 'force' prepare binding!
+
+          domain: an odoo domain for the unwrapped odoo model
         """
+        assert not (unbound_unwrapped_records and domain), "Use 'domain' or 'unbound_unwrapped_records' but not both!"
         # Get unbound records
         if not unbound_unwrapped_records:
             unbound_unwrapped_records = self.get_unbound(domain=domain)
@@ -87,9 +129,9 @@ class GetResponseBinder(Binder):
                 "unbound_unwrapped_records model must be %s" % unwrapped_odoo_model)
 
         # Prepare a binding for all unbound records
-        prepared_bindings = self.env[self.model]
+        prepared_bindings = self.env[self.model._name]
         for r in unbound_unwrapped_records:
-            binding = self._prepare_binding(r.id)
+            binding = self._prepare_binding(r.id, append_vals=append_vals, connector_no_export=connector_no_export)
             prepared_bindings = prepared_bindings | binding
 
         return prepared_bindings

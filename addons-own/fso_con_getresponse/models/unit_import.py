@@ -226,7 +226,7 @@ class GetResponseImporter(Importer):
         return binding
 
     def skip_by_binding(self, binding):
-        binding = self.binder.get_bindings(filter=[('id', '=', binding.id)])
+        binding = self.binder.get_bindings(domain=[('id', '=', binding.id)])
         if not binding:
             return _("Import was skipped for binding (%s, %s) by binder.get_bindings()") % (binding._name, binding.id)
 
@@ -312,7 +312,8 @@ class GetResponseImporter(Importer):
         # Bind to existing records (or use prepared bindings) before import
         binding = self.bind_before_import(binding)
 
-        # Skip import based on the binding (based on odoo record data filtered out by binder.get_bindings())
+        # Skip import updates based on the binding (based on odoo record data filtered out by binder.get_bindings())
+        # HINT: This will not be checked on create because obviously no binding would exists at this point
         if binding:
             skip_by_binding = self.skip_by_binding(binding)
             if skip_by_binding:
@@ -332,6 +333,8 @@ class GetResponseImporter(Importer):
 
         # Get the data from the GetResponse record already prepared (mapped) for the odoo record
         map_record = self._map_data()
+
+        # Get the updated data already here (even if this is a create) to store the update data in the binding
         update_data = self._update_data(map_record)
 
         # UPDATE an existing record in odoo

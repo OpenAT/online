@@ -32,8 +32,10 @@ _logger = logging.getLogger(__name__)
 # INFO: This is called AFTER the record create (but before the commit)
 @on_record_create(model_names=['gr.custom_field'])
 def prepare_binding_on_custom_field_create(session, model_name, record_id, vals):
-    """ Prepare a custom field definition binding (without external id) for all existing backend records """
-    prepare_binding(session, model_name, record_id, vals)
+    """ Prepare a custom field definition binding (without external id) for all backends (multiple backends possible)"""
+    binding_model_name = 'getresponse.gr.custom_field'
+    unwrapped_record_id = record_id
+    prepare_binding(session, binding_model_name, unwrapped_record_id, vals)
 
 
 # INFO: This is called AFTER the record create (but before the commit)
@@ -46,15 +48,17 @@ def export_custom_field_on_custom_field_binding_create(session, binding_model_na
 # INFO: This is called AFTER the record write (but before the commit)
 @on_record_write(model_names=['gr.custom_field'])
 def export_binding_on_custom_field_update(session, model_name, record_id, vals):
-    """ Update the custom field definition(s) in getresponse for all existing bindings (multiple backends possible) """
+    """ Update the custom field definition(s) in getresponse for all existing bindings (multiple backends possible)"""
     record = session.env[model_name].browse([record_id])
+    # Get all binding records and export them
     for binding_record in record.getresponse_bind_ids:
         export_binding(session, binding_record._name, binding_record.id, vals, delay=True)
 
 
-@on_record_unlink(model_names=['frst.personemailgruppe'])
+@on_record_unlink(model_names=['gr.custom_field'])
 def export_delete_on_custom_field_delete(session, model_name, record_id):
-    """ Delete the custom field definition(s) in getresponse for all existing bindings (multiple backends possible) """
+    """ Delete the custom field definition(s) in getresponse for all existing bindings (multiple backends possible)"""
     record = session.env[model_name].browse([record_id])
+    # Get all binding records and export the delete
     for binding_record in record.getresponse_bind_ids:
         export_delete(session, binding_record._name, binding_record.id, delay=True)

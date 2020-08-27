@@ -52,9 +52,6 @@ class ContactExportMapper(ExportMapper):
 
     # ATTENTION: !!! FOR THE EXPORT WE MUST USE THE RAW FIELD NAMES OF THE GET RESPONSE API !!!
 
-    # TODO: We need to make sure that the campaign exists and is in sync BEFORE we export a contact
-    #       Therefore we need to implement _run.()._export_dependencies() or make sure campaigns are
-    #       always exported first
     @mapping
     def campaign(self, bind_record):
         zgruppedetail = bind_record.zgruppedetail_id
@@ -72,8 +69,6 @@ class ContactExportMapper(ExportMapper):
         email = personemail.email
         return {'email': email}
 
-    # TODO: Maybe we can find a more sophisticated method for the firstname and lastname stuff?
-    #       e.g. if we have firstname and lastname parts in the custom fields we could split them like we need it ...
     # ATTENTION: 'name' ist NOT required for contact creation!
     @mapping
     def name(self, bind_record):
@@ -81,15 +76,23 @@ class ContactExportMapper(ExportMapper):
         name = partner.name
         return {'name': name}
 
-    # TODO: We need to make sure that all tag definitions exists and are in sync BEFORE we export a contact
-    #       Therefore we many need to implement _run.()._export_dependencies() or make sure tag definitions are
-    #       always exported first
     # ATTENTION: A CONTACT 'UPDATE' WOULD REPLACE ALL CURRENT TAGS WITH THE TAGS GIVEN HERE!
     @mapping
     def tags(self, bind_record):
         partner = bind_record.frst_personemail_id.partner_id
 
         partner_gr_tags = partner.getresponse_tag_ids
+
+        # TODO: Get the current tags list from getresponse
+        #       Get the tags of the last sync from sync_data of the binding
+        #       Get a set of changed tags since the last sync (fson_removed, fson_added, gr_removed, gr_added)
+        #       Prepare the new final list of tags
+        # TODO: If we call importer._map_data() this will run the mappper on the import side which may again load
+        #       the odoo record on the export side ... make sure there is no recursion going on here!
+        #       But i guess the import mapper may not need the export mapper but just go straight for the odoo data?
+        # importer = env.get_connector_unit(GetResponseImporter)
+        # gr_raw_data = importer._map_data()
+        # mapped_update_data = importer._update_data(map_record)
 
         if not partner_gr_tags:
             return
@@ -107,6 +110,10 @@ class ContactExportMapper(ExportMapper):
         return {'tags': getresponse_tag_ids}
 
     # ATTENTION: A CONTACT 'UPDATE' WOULD REPLACE ALL CURRENT CUSTOM FIELDS WITH THE CUSTOM FIELDS GIVEN HERE!
+    # TODO: We only import or export values for custom field definitions that are linked to an odoo field!
+    #       But to be able to remove custom field values from Getresponse it might be better to import all
+    #       custom field values - even the ones we can not map - to be able to prepare a complete list of fields
+    #       for the export and the import. we may store this additional values to an extra field in the binding.
     @mapping
     def custom_field_values(self, bind_record):
         # HINT: Make sure the lang of the bind_record and the fields is the lang in the backend and of the custom field
@@ -116,6 +123,11 @@ class ContactExportMapper(ExportMapper):
 
         if not mapped_custom_fields:
             return
+
+        # TODO: Get the current custom field values from getresponse
+        #       Get the custom field values of the last sync from sync_data of the binding
+        #       Get a set of changed field values since the last sync (fson_removed, fson_added, gr_removed, gr_added)
+        #       Prepare the new final list of custom field values
 
         bind_record_model_name = bind_record._name
         peg_binder = self.binder_for(bind_record_model_name)
@@ -218,6 +230,52 @@ class ContactExporter(GetResponseExporter):
                              "" % (contact_id, self.binding_id))
                 self.binder.bind(contact_id, self.binding_id, sync_data='DELAYED CONTACT BINDING')
 
+    # Export missing tag and custom field definitions
+    def _export_dependencies(self):
+        # ------------------------
+        # EXPORT MISSING CAMPAIGNS
+        # ------------------------
+        campaigns = self.session.env['frst.zgruppedetail'].sudo().search([('sync_with_getresponse', "!=", False)])
+
+        cmp_binding_model = getattr(campaigns, self.binder._inverse_binding_ids_field)._name
+        cmp_binder = self.binder_for(cmp_binding_model)
+
+        for cmp in campaigns:
+            cmp_external_id = cmp_binder.to_backend(cmp.id, wrap=True)
+            if not cmp_external_id:
+                self._export_dependency(cmp)
+
+        # ------------------------------
+        # EXPORT MISSING TAG DEFINITIONS
+        # ------------------------------
+        unwrapped_record = self.binder.unwrap_binding(self.binding_record, browse=True)
+        partner_gr_tags = unwrapped_record.frst_personemail_id.partner_id.getresponse_tag_ids
+
+        if partner_gr_tags:
+            tag_binding_model = getattr(partner_gr_tags[0], self.binder._inverse_binding_ids_field)._name
+            tags_binder = self.binder_for(tag_binding_model)
+
+            # Export tag definitions with missing binding or existing binding without an external id
+            for tag_definition in partner_gr_tags:
+                tag_external_id = tags_binder.to_backend(tag_definition.id, wrap=True)
+                # Export this prepared binding for the tag definition before the contact (peg) export
+                if not tag_external_id:
+                    self._export_dependency(tag_definition)
+
+        # ----------------------------------------------
+        # EXPORT MISSING MAPPED CUSTOM FIELD DEFINITIONS
+        # ----------------------------------------------
+        mapped_custom_fields = self.session.env['gr.custom_field'].sudo().search([('field_id', "!=", False)])
+
+        if mapped_custom_fields:
+            cf_binding_model = getattr(mapped_custom_fields[0], self.binder._inverse_binding_ids_field)._name
+            cf_binder = self.binder_for(cf_binding_model)
+
+            for custom_field_definition in mapped_custom_fields:
+                cf_external_id = cf_binder.to_backend(custom_field_definition.id, wrap=True)
+                if not cf_external_id:
+                    self._export_dependency(custom_field_definition)
+
     # ATTENTION: On contact creation GetResponse will only return a boolean because the real contact creation may be
     #            delayed. Therefore we can not bind the record directly after the contact creation but need to
     #            create a delayed job to search for the new contact and bind it later!
@@ -238,9 +296,8 @@ class ContactExporter(GetResponseExporter):
         # UPDATE THE EXTERNAL ID FOR THE BINDING UPDATE LATER ON IN .run()
         self.getresponse_id = 'DELAYED CONTACT CREATION IN GETRESPONSE'
         
-        # TODO: Create a delayed binding job with some retries (1, 2, 4, 8 minutes)
-        #       Maybe it would be better to just run some sort of regular contact import?
-        #       FOLLOWUP: I really think an import would be better - this could update the sync_data and other
+        # Create a delayed binding job with some retries (1, 2, 4, 8 minutes)
+        # TODO: FOLLOWUP: I really think an import would be better - this could update the sync_data and other
         #                 stuff also!!!
         contact_email = create_data['email']
         contact_campaing_id = create_data['campaign']['campaignId']

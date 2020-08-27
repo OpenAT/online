@@ -35,6 +35,7 @@ class GetResponseGrTagBinding(models.Model):
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
+        index=True,
         string='GetResponse Connector Backend',
         required=True,
         readonly=True,
@@ -42,6 +43,8 @@ class GetResponseGrTagBinding(models.Model):
     )
     odoo_id = fields.Many2one(
         comodel_name='gr.tag',
+        inverse_name='getresponse_bind_ids',
+        index=True,
         string='GetResponse Tag Definition',
         required=True,
         readonly=True,
@@ -61,16 +64,20 @@ class GetResponseGrTagBinding(models.Model):
         string='Last synchronization data',
         readonly=True)
 
-    # This constraint is very important for the multithreaded conflict resolution - needed in every binding model!
+    # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
+    # TODO: Check if the backend_uniq constrain makes any problems for the parallel processing of jobs
     _sql_constraints = [
         ('getresponse_uniq', 'unique(backend_id, getresponse_id)',
          'A binding already exists with the same GetResponse ID for this GetResponse backend (Account).'),
+        ('odoo_uniq', 'unique(backend_id, odoo_id)',
+         'A binding already exists for this odoo record and this GetResponse backend (Account).'),
     ]
 
 
 class GrTagGetResponse(models.Model):
     _inherit = 'gr.tag'
 
+    # ATTENTION: INVERSE FIELD MUST BE CALLED 'getresponse_bind_ids' !!!
     getresponse_bind_ids = fields.One2many(
         comodel_name='getresponse.gr.tag',
         inverse_name='odoo_id',

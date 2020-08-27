@@ -144,12 +144,11 @@ class GrCustomField(models.Model):
     @api.constrains('field_id', 'name')
     def _constrain_field_id(self):
         for r in self:
-            if r.name.startswith(self._gr_field_prefix):
-                assert r.field_id, _(
-                    "If you create a GetResponse custom field in FS-Online you must choose an odoo field!")
             if r.field_id:
-                assert r.field_model_name in self._gr_models, (
-                        "Only fields of the models '%s' are allowed!" % str(self._gr_models))
+                assert r.field_model_name in self._gr_models, _(
+                        "Only odoo fields of the models '%s' are allowed!" % str(self._gr_models))
+                assert r.name.startswith(self._gr_field_prefix), _(
+                    "Only custom field definitions created in FS-Online are allowed to be mapped to odoo fields!")
 
     @api.constrains('field_id', 'gr_type')
     def _constrain_gr_type(self):

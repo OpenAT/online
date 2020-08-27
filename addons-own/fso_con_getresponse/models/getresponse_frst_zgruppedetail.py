@@ -35,6 +35,7 @@ class GetResponseCampaign(models.Model):
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
+        index=True,
         string='GetResponse Connector Backend',
         required=True,
         readonly=True,
@@ -42,6 +43,8 @@ class GetResponseCampaign(models.Model):
     )
     odoo_id = fields.Many2one(
         comodel_name='frst.zgruppedetail',
+        inverse_name='getresponse_bind_ids',
+        index=True,
         string='Fundraising Studio Group',
         required=True,
         readonly=True,
@@ -61,10 +64,13 @@ class GetResponseCampaign(models.Model):
         string='Last synchronization data',
         readonly=True)
 
-    # This constraint is very important for the multithreaded conflict resolution - needed in every binding model!
+    # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
+    # TODO: Check if the backend_uniq constrain makes any problems for the parallel processing of jobs
     _sql_constraints = [
         ('getresponse_uniq', 'unique(backend_id, getresponse_id)',
          'A binding already exists with the same GetResponse ID for this GetResponse backend (Account).'),
+        ('odoo_uniq', 'unique(backend_id, odoo_id)',
+         'A binding already exists for this odoo record and this GetResponse backend (Account).'),
     ]
 
 
@@ -128,8 +134,30 @@ class GetResponseFrstZgruppedetail(models.Model):
 # CONNECTOR BINDER
 # ----------------
 @getresponse
-class ZgruppedetailBinder(GetResponseBinder):
+class CampaignBinder(GetResponseBinder):
     _model_name = 'getresponse.frst.zgruppedetail'
+
+    _bindings_domain = [('sync_with_getresponse', '=', True)]
+
+    # Make sure only sync enabled groups will get a prepared binding
+    # HINT: get_unbound() is used by prepare_bindings() which is used in the batch exporter > prepare_binding_records()
+    #       and in helper_consumer.py > prepare_binding_on_record_create() to filter out records where no binding
+    #       should be prepared (created) for export.
+    def get_unbound(self, domain=None):
+        domain = domain if domain else []
+        domain += self._bindings_domain
+        unbound = super(CampaignBinder, self).get_unbound(domain=domain)
+        return unbound
+
+    # Make sure only bindings with sync enabled groups are returned
+    # HINT: get_bindings() is used in single record exporter run() > _get_binding_record() to filter and validate
+    #       the binding record
+    def get_bindings(self, domain=None):
+        domain = domain if domain else []
+        domain += self._bindings_domain
+        bindings = super(CampaignBinder, self).get_bindings(domain=domain)
+        return bindings
+
 
 # -----------------
 # CONNECTOR ADAPTER
@@ -137,7 +165,7 @@ class ZgruppedetailBinder(GetResponseBinder):
 # The Adapter is a subclass of an ConnectorUnit class. The ConnectorUnit Object holds information about the
 # connector_env, the backend, the backend_record and about the connector session
 @getresponse
-class ZgruppedetailAdapter(GetResponseCRUDAdapter):
+class CampaignAdapter(GetResponseCRUDAdapter):
     """
     ATTENTION: read() and search_read() will return a dict and not the getresponse_record itself but
                create() and write() will return a getresponse object from the getresponse-python lib!

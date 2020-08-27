@@ -39,11 +39,11 @@
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Import Campaigns"/>
+                                                    string="Batch Import Campaigns"/>
                                             <button name="import_getresponse_campaigns_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Import Campaigns Delayed"/>
+                                                    string="Batch Import Campaigns Delayed"/>
                                         </div>
                                         <div style="margin-bottom:0.5em;">
                                             <button name="export_getresponse_campaigns_direct"
@@ -51,11 +51,11 @@
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Export Campaigns"/>
+                                                    string="Batch Export Campaigns"/>
                                             <button name="export_getresponse_campaigns_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Export Campaigns Delayed"/>
+                                                    string="Batch Export Campaigns Delayed"/>
                                         </div>
                                     </div>
                                 </group>
@@ -66,22 +66,22 @@
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Import Custom Field Definitions"/>
+                                                    string="Batch Import Custom Field Definitions"/>
                                             <button name="import_getresponse_custom_fields_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Import Custom Field Definitions Delayed"/>
+                                                    string="Batch Import Custom Field Definitions Delayed"/>
                                         </div>
                                         <div style="margin-bottom:0.5em;">
                                             <button name="export_getresponse_custom_fields_direct"
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Export Custom Field Definitions"/>
+                                                    string="Batch Export Custom Field Definitions"/>
                                             <button name="export_getresponse_custom_fields_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Export Custom Field Definitions Delayed"/>
+                                                    string="Batch Export Custom Field Definitions Delayed"/>
                                         </div>
                                     </div>
                                 </group>
@@ -92,22 +92,22 @@
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Import Tag Definitions"/>
+                                                    string="Batch Import Tag Definitions"/>
                                             <button name="import_getresponse_tags_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Import Tag Definitions Delayed"/>
+                                                    string="Batch Import Tag Definitions Delayed"/>
                                         </div>
                                         <div style="margin-bottom:0.5em;">
                                             <button name="export_getresponse_tags_direct"
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Export Tag Definitions"/>
+                                                    string="Batch Export Tag Definitions"/>
                                             <button name="export_getresponse_tags_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Export Tag Definitions Delayed"/>
+                                                    string="Batch Export Tag Definitions Delayed"/>
                                         </div>
                                     </div>
                                 </group>
@@ -129,11 +129,11 @@
                                                     type="object"
                                                     class="oe_highlight oe_inline"
                                                     style="margin-right:1em;"
-                                                    string="Export Contacts"/>
+                                                    string="Batch Export Contacts"/>
                                             <button name="export_getresponse_contacts_delay"
                                                     type="object"
                                                     class="oe_inline"
-                                                    string="Export Contacts Delayed"/>
+                                                    string="Batch Export Contacts Delayed"/>
                                         </div>
                                     </div>
                                 </group>

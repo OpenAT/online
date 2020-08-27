@@ -13,7 +13,7 @@ from .unit_binder import GetResponseBinder
 _logger = logging.getLogger(__name__)
 
 
-def prepare_binding(session, model_name, record_id, vals):
+def prepare_binding(session, binding_model_name, unwrapped_record_id, vals):
     # HINT: No recursion switch needed because prepare_binding can only be called on record create in FSON
 
     # Search for the getresponse backend records
@@ -21,14 +21,14 @@ def prepare_binding(session, model_name, record_id, vals):
     for backend in getresponse_backends:
 
         # Get an connector environment
-        env = get_environment(session, model_name, backend.id)
+        env = get_environment(session, binding_model_name, backend.id)
 
         # Get the binder
         binder = env.get_connector_unit(GetResponseBinder)
 
         # ATTENTION: We use 'prepare_bindings()' to make sure 'get_unbound()' is used in case any limitations or
         #            constrains are added to get_unbound(). Check the binder definition for this model if unsure :)
-        binder.prepare_bindings(domain=[('id', '=', record_id)])
+        binder.prepare_bindings(domain=[('id', '=', unwrapped_record_id)])
 
 
 def export_binding(session, binding_model_name, binding_record_id, vals, delay=True):

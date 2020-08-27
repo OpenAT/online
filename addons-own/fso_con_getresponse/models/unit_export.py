@@ -204,7 +204,8 @@ class GetResponseExporter(Exporter):
                 (self.model._name, self.binding_id))
 
     def _has_to_skip(self):
-        """ Return True if the export can be skipped """
+        """ Return a message if the export can be skipped """
+        # return _('Export to GetResponse of record with ID %s was SKIPPED.') % self.getresponse_id
         return False
 
     @contextmanager
@@ -234,10 +235,7 @@ class GetResponseExporter(Exporter):
             else:
                 raise
 
-    # TODO: Check where the field 'magento_bind_ids' is used in the original magento connector addon to know how and
-    #       where to use getresponse_bind_ids
-    def _export_dependency(self, relation, binding_model, exporter_class=None,
-                           binding_field='getresponse_bind_ids', binding_extra_vals=None):
+    def _export_dependency(self, related_record, exporter_class=None, prepared_binding_extra_vals=None):
         """
         Export a dependency. The exporter class is a subclass of ``GetResponseExporter``. If a more precise class
         needs to be defined, it can be passed to the ``exporter_class`` keyword argument.
@@ -251,73 +249,75 @@ class GetResponseExporter(Exporter):
                      You should call this method only at the beginning of the exporter synchronization,
                      in :meth:`~._export_dependencies`.
 
-        :param relation: record to export if not already exported
-        :type relation: :py:class:`openerp.models.BaseModel`
-        :param binding_model: name of the binding model for the relation
-        :type binding_model: str | unicode
-        :param exporter_cls: :py:class:`openerp.addons.connector.connector.ConnectorUnit` class or parent class to use
+        :param related_record: record to export if not already exported may be a binding or an unwrapped record
+        :type related_record: :py:class:`openerp.models.BaseModel`
+        :param exporter_class: :py:class:`openerp.addons.connector.connector.ConnectorUnit` class or parent class to use
                              for the export.
                              By default: GetResponseExporter
-        :type exporter_cls: :py:class:`openerp.addons.connector.connector.MetaConnectorUnit`
-        :param binding_field: name of the one2many field on a normal record that points to the binding record
-                              (default: magento_bind_ids).
-                              It is used only when the relation is not a binding but is a normal record.
-        :type binding_field: str | unicode
-        :binding_extra_vals:  In case we want to create a new binding pass extra values for this binding
-        :type binding_extra_vals: dict
+        :type exporter_class: :py:class:`openerp.addons.connector.connector.MetaConnectorUnit`
+        :prepared_binding_extra_vals:  In case we want to prepare a new binding pass extra values for this binding
+        :type prepared_binding_extra_vals: dict
         """
-        if not relation:
-            return
-        if exporter_class is None:
-            exporter_class = GetResponseExporter
+        # HINT: The binder field names must be the same for all getresponse related binding models!
+        assert related_record.ensure_one(), "related_record must be a single odoo record!"
+        binding_ids_field = self.binder._inverse_binding_ids_field
+        backend_field = self.binder._backend_field
 
-        # Get an instance of the binder class for the current model
-        rel_binder = self.binder_for(binding_model)
+        # 'related_record' is an unwrapped record
+        if hasattr(related_record, binding_ids_field):
+            unwrapped_record = related_record
 
-        # Use the field names of the binder
-        # TODO: Check if this is correct for the domains and the dict below
-        binder_openerp_field = rel_binder._openerp_field
-        binder_backend_field = rel_binder._backend_field
+            # Search for an existing binding for the current backend
+            existing_bindings = getattr(unwrapped_record, binding_ids_field)
+            binding = existing_bindings.filtered(lambda r: getattr(r, backend_field).id == self.backend_record.id)
 
-        # 'wrap' is typically 'True' if the relation is for instance a 'product.product' record but the binding model is
-        # 'magento.product.product'
-        wrap = relation._model._name != binding_model
+            # Get the binding model and the correct binder for the binding model
+            binding_model = existing_bindings._name
+            binder = self.binder_for(binding_model)
 
-        if wrap and hasattr(relation, binding_field):
-            # TODO: check if the correct field names of the binder are used!
-            domain = [(binder_openerp_field, '=', relation.id),
-                      (binder_backend_field, '=', self.backend_record.id)]
-            binding = self.env[binding_model].search(domain)
-            if binding:
-                assert len(binding) == 1, 'Only 1 binding for a backend is supported in _export_dependency'
-            # We are working with a unwrapped record (e.g. product.category) and the binding does not exist yet.
-            # Example: I created a product.product and its binding magento.product.product and we are exporting it,
-            # but we need to create the binding for the product.category on which it depends.
-            else:
-                # TODO: check if the correct field names of the binder are used!
-                bind_values = {binder_backend_field: self.backend_record.id,
-                               binder_openerp_field: relation.id}
-                if binding_extra_vals:
-                    bind_values.update(binding_extra_vals)
-                # If 2 jobs create it at the same time, retry one later. A unique constraint (backend_id, openerp_id)
-                # should exist on the binding model
-                with self._retry_unique_violation():
-                    binding = (self.env[binding_model]
-                               .with_context(connector_no_export=True)
-                               .sudo()
-                               .create(bind_values))
-                    # Eager commit to avoid having 2 jobs exporting at the same time. The constraint will pop if an
-                    # other job already created the same binding. It will be caught and raise a RetryableJobError.
-                    self.session.commit()
+        # 'related_record' is a binding record
         else:
-            # If magento_bind_ids does not exist we are typically in a
-            # "direct" binding (the binding record is the same record).
-            # If wrap is True, relation is already a binding record.
-            binding = relation
+            binding = related_record
 
-        if not rel_binder.to_backend(binding):
+            # Get the binding model and the correct binder for the binding model
+            binding_model = binding._name
+            binder = self.binder_for(binding_model)
+
+            # Get the unwrapped record for this binding
+            unwrapped_record = binder.unwrap_binding(binding.id, browse=True)
+
+        assert len(unwrapped_record) == 1, "None or more than one unwrapped records found! %s" % unwrapped_record
+
+        # Prepare a binding record for the export
+        if not binding:
+            # If jobs create the binding at the same time, retry later.
+            # WARNING: A unique constraint (backend_id, openerp_id) MUST exist on the binding model!
+            with self._retry_unique_violation():
+                binding = binder.prepare_bindings(domain=[('id', '=', unwrapped_record.id)],
+                                                  append_vals=prepared_binding_extra_vals,
+                                                  connector_no_export=True)
+                # Eager commit to avoid having 2 jobs exporting at the same time. The constraint will pop if an
+                # other job already created the same binding. It will be caught and raise a RetryableJobError.
+                self.session.commit()
+
+        assert len(binding) == 1, "None or more than one binding records found! %s" % binding
+
+        # Export the binding if it is a prepared binding (no external id)
+        external_id = binder.to_backend(binding)
+        if not external_id:
+            # Get the exporter
+            if exporter_class is None:
+                exporter_class = GetResponseExporter
+            # Create a new connector environment and exporter for the binding model
             exporter = self.unit_for(exporter_class, model=binding_model)
+
+            # Run the export
+            _logger.info("Export dependency binding '%s', '%s'" % (binding._name, binding.id))
             exporter.run(binding.id)
+
+        else:
+            _logger.info("Export dependency SKIPPED because binding with an external id exists: '%s', '%s'"
+                         "" % (binding._name, binding.id))
 
     def _export_dependencies(self):
         """ Export the dependencies for the record"""
@@ -399,39 +399,6 @@ class GetResponseExporter(Exporter):
         """ Can do several actions after exporting a record to GetResponse """
         pass
 
-    def _run(self, fields=None):
-        """ Flow of the synchronization. May be implemented in inherited classes"""
-        assert self.binding_id
-        assert self.binding_record
-
-        if not self.getresponse_id:
-            fields = None  # should be created with all the fields
-
-        if self._has_to_skip():
-            return
-
-        # Export the missing linked resources first
-        self._export_dependencies()
-
-        # Prevent other jobs to export the same record. Will be released on commit (or rollback)
-        self._lock()
-
-        map_record = self._map_data()
-
-        # ---------------------------
-        # UPDATE A GETRESPONSE RECORD
-        # ---------------------------
-        if self.getresponse_id:
-            self.update(map_record, fields=fields)
-
-        # -------------------------------------------------------------------
-        # CREATE A GETRESPONSE RECORD AND UPDATE THE 'getresponse_id' of self
-        # -------------------------------------------------------------------
-        else:
-            self.create(map_record, fields=fields)
-
-        return _('Record with ID %s was exported to GetResponse.') % self.getresponse_id
-
     # ------------------------------------------
     # EXPORT THE RECORD FROM ODOO TO GETRESPONSE
     # ------------------------------------------
@@ -444,6 +411,8 @@ class GetResponseExporter(Exporter):
 
         # Get (and validate) the binding-model-record
         self.binding_record = self._get_binding_record()
+
+        # Skipp by binding
         if not self.binding_record:
             return _('Export of binding (%s, %s) was SKIPPED by binder.get_bindings()!'
                      ) % (self.model._name, binding_id)
@@ -461,9 +430,38 @@ class GetResponseExporter(Exporter):
         if should_import:
             self._delay_import()
 
-        # RUN THE EXPORT
-        # (synchronization flow of the bound model)
-        result = self._run(*args, **kwargs)
+        # Get the fields list to export from the kwargs (this will limit the exported fields)
+        fields = kwargs.get('fields', None)
+
+        # Do not limit the imported fields if a new record will be created
+        if not self.getresponse_id:
+            fields = None  # should be created with all the fields
+
+        # Check if we can skip the export
+        skip_export = self._has_to_skip()
+        if skip_export:
+            return skip_export
+
+        # Export any needed linked resources first
+        self._export_dependencies()
+
+        # Prevent other jobs to export the same record. Will be released on commit (or rollback)
+        self._lock()
+
+        # Get the odoo record
+        map_record = self._map_data()
+
+        # ---------------------------
+        # UPDATE A GETRESPONSE RECORD
+        # ---------------------------
+        if self.getresponse_id:
+            self.update(map_record, fields=fields)
+
+        # -------------------------------------------------------------------
+        # CREATE A GETRESPONSE RECORD AND UPDATE THE 'getresponse_id' of self
+        # -------------------------------------------------------------------
+        else:
+            self.create(map_record, fields=fields)
 
         # BIND THE RECORD AFTER THE EXPORT TO UPDATE THE BINDING-RECORD DATA
         # (to update bind record data and add sync_data like in the importer)
@@ -473,14 +471,14 @@ class GetResponseExporter(Exporter):
         # The commit will also release the lock acquired on the binding record
         self.session.commit()
 
-        # HOOK TO DO STUFF AFTER A RECORD EXPORT
+        # DO STUFF AFTER A RECORD EXPORT
         # TODO: Update the odoo record with the data from the getresponse object stored in self.getresponse_record
         #       Check _run() to see where it is stored! I think this would best fit in _after_export()?!?
         #       !!! But be careful not to trigger an other export so update the context accordingly !!!
         self._after_export()
 
         # Return the _run() result
-        return result
+        return _('Record with ID %s was exported to GetResponse.') % self.getresponse_id
 
 
 # HINT: The @related_action decorator will add a button on the jobs form view that will open the form view of the

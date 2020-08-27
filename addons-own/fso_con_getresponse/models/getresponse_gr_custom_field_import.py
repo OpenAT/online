@@ -6,7 +6,7 @@ from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
-from openerp.addons.connector.unit.mapper import ImportMapper, mapping
+from openerp.addons.connector.unit.mapper import ImportMapper, mapping, only_create
 from openerp.addons.connector.queue.job import job
 
 from .helper_connector import get_environment
@@ -40,7 +40,6 @@ class CustomFieldImportMapper(ImportMapper):
               ('type', 'gr_type'),
               ('format', 'gr_format'),
               ('hidden', 'gr_hidden'),
-              # ('values', 'gr_values')
               ]
 
     # ATTENTION: The python lib will already convert values from a json string to a python object!
@@ -54,12 +53,10 @@ class CustomFieldImportMapper(ImportMapper):
 
     @mapping
     def backend_id(self, record):
-        # TODO: Get the field name '_openerp_field' from the binder for 'getresponse.gr.tag'
         return {'backend_id': self.backend_record.id}
 
     @mapping
     def getresponse_id(self, record):
-        # TODO: Get the field name '_openerp_field' from the binder for 'getresponse.gr.tag'
         return {'getresponse_id': record['id']}
 
 

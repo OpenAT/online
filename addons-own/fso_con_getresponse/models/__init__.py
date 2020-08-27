@@ -19,24 +19,24 @@ import unit_export_delete
 import getresponse_frst_zgruppedetail
 import getresponse_frst_zgruppedetail_import
 import getresponse_frst_zgruppedetail_export
-# TODO: import getresponse_frst_zgruppedetail_import
+# TODO: import getresponse_frst_zgruppedetail_consumer
 
 # Custom Fields
 import gr_custom_field
 import getresponse_gr_custom_field
 import getresponse_gr_custom_field_export
 import getresponse_gr_custom_field_import
-import getresponse_gr_custom_field_consumer
+#import getresponse_gr_custom_field_consumer
 
 # Tags
 import gr_tag
 import getresponse_gr_tag
 import getresponse_gr_tag_export
 import getresponse_gr_tag_import
-import getresponse_gr_tag_consumer
+#import getresponse_gr_tag_consumer
 
 # Contacts (Subscriptions)
 import getresponse_frst_personemailgruppe
 import getresponse_frst_personemailgruppe_export
 # TODO: import getresponse_frst_personemailgruppe_import
-import getresponse_frst_personemailgruppe_consumer
+#import getresponse_frst_personemailgruppe_consumer

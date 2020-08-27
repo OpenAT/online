@@ -34,6 +34,7 @@ class GetResponseGrCustomFieldBinding(models.Model):
 
     backend_id = fields.Many2one(
         comodel_name='getresponse.backend',
+        index=True,
         string='GetResponse Connector Backend',
         required=True,
         readonly=True,
@@ -41,6 +42,8 @@ class GetResponseGrCustomFieldBinding(models.Model):
     )
     odoo_id = fields.Many2one(
         comodel_name='gr.custom_field',
+        inverse_name='getresponse_bind_ids',
+        index=True,
         string='GetResponse Custom Field Definition',
         required=True,
         readonly=True,
@@ -60,10 +63,13 @@ class GetResponseGrCustomFieldBinding(models.Model):
         string='Last synchronization data',
         readonly=True)
 
-    # This constraint is very important for the multithreaded conflict resolution - needed in every binding model!
+    # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
+    # TODO: Check if the backend_uniq constrain makes any problems for the parallel processing of jobs
     _sql_constraints = [
         ('getresponse_uniq', 'unique(backend_id, getresponse_id)',
          'A binding already exists with the same GetResponse ID for this GetResponse backend (Account).'),
+        ('odoo_uniq', 'unique(backend_id, odoo_id)',
+         'A binding already exists for this odoo record and this GetResponse backend (Account).'),
     ]
 
 
@@ -83,6 +89,26 @@ class GrCustomFieldGetResponse(models.Model):
 class CustomFieldBinder(GetResponseBinder):
     _model_name = ['getresponse.gr.custom_field']
 
+    _bindings_domain = [('field_id', '!=', False)]
+
+    # Make sure only mapped custom field definitions will get a prepared binding
+    # HINT: get_unbound() is used by prepare_bindings() which is used in the batch exporter > prepare_binding_records()
+    #       and in helper_consumer.py > prepare_binding_on_record_create() to filter out records where no binding
+    #       should be prepared (created) for export.
+    def get_unbound(self, domain=None):
+        domain = domain if domain else []
+        domain += self._bindings_domain
+        unbound = super(CustomFieldBinder, self).get_unbound(domain=domain)
+        return unbound
+
+    # Make sure only bindings with a mapped custom field definition are returned
+    # HINT: get_bindings() is used in single record exporter run() > _get_binding_record() to filter and validate
+    #       the binding record
+    def get_bindings(self, domain=None):
+        domain = domain if domain else []
+        domain += self._bindings_domain
+        bindings = super(CustomFieldBinder, self).get_bindings(domain=domain)
+        return bindings
 
 # -----------------
 # CONNECTOR ADAPTER

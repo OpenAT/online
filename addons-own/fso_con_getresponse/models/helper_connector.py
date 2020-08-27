@@ -7,12 +7,12 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def get_environment(session, model_name, backend_id):
+def get_environment(session, binding_model_name, backend_id):
     """ Create an environment to work with. """
     backend_record = session.env['getresponse.backend'].browse(backend_id)
 
     # Get a connector environment for the given model
-    con_env = ConnectorEnvironment(backend_record, session, model_name)
+    con_env = ConnectorEnvironment(backend_record, session, binding_model_name)
 
     # Change the language based on the backend setting and return the env
     lang = backend_record.default_lang_id
@@ -24,7 +24,7 @@ def get_environment(session, model_name, backend_id):
             return con_env
 
 
-def add_checkpoint(session, model_name, record_id, backend_id):
+def add_checkpoint(session, binding_model_name, record_id, backend_id):
     """ Add a row in the model ``connector.checkpoint`` for a record,
     meaning it has to be reviewed by a user.
     :param session: current session
@@ -36,7 +36,7 @@ def add_checkpoint(session, model_name, record_id, backend_id):
     :param backend_id: ID of the GetResponse Backend
     :type backend_id: int
     """
-    return checkpoint.add_checkpoint(session, model_name, record_id, 'getresponse.backend', backend_id)
+    return checkpoint.add_checkpoint(session, binding_model_name, record_id, 'getresponse.backend', backend_id)
 
 
 def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind_record_id=None):
@@ -58,7 +58,8 @@ def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind
     elif connector_no_export is True:
         if skipp_only_bind_model or skipp_only_bind_record_id:
             _logger.warning("connector_no_export is True but skipp_only_bind_model '%s' or skipp_only_bind_record_id"
-                            " '%s' are set! " % skipp_only_bind_model, skipp_only_bind_record_id)
+                            " '%s' are set! " % (skipp_only_bind_model, skipp_only_bind_record_id)
+                            )
         skipp_export = True
 
     # Skipp exports only if the model and the record id are in 'connector_no_export'
@@ -77,6 +78,7 @@ def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind
 
     if skipp_export:
         _logger.info("Skipp export of binding record ('%s', '%s') because of 'connector_no_export' (%s) in context!"
-                     "" % (skipp_only_bind_model, skipp_only_bind_record_id, connector_no_export))
+                     "" % (skipp_only_bind_model, skipp_only_bind_record_id, connector_no_export)
+                     )
 
     return skipp_export

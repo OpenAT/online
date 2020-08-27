@@ -10,7 +10,7 @@
             groups="connector.group_connector_manager"/>
 
             <menuitem id="menu_getresponse_backend"
-                name="API Accounts"
+                name="Backends (API Accounts)"
                 parent="menu_getresponse_root_settings"
                 sequence="1010"
                 action="action_getresponse_backend"/>
@@ -35,25 +35,25 @@
             groups="connector.group_connector_manager"/>
 
             <menuitem id="menu_getresponse_campaing"
-                name="Campaigns"
+                name="Campaign Bindings"
                 parent="menu_getresponse_root_bindings"
                 sequence="2010"
                 action="action_getresponse_frst_zgruppedetail"/>
 
             <menuitem id="menu_getresponse_custom_field"
-                name="Custom Fields"
+                name="Custom Field Bindings"
                 parent="menu_getresponse_root_bindings"
                 sequence="2020"
                 action="action_getresponse_gr_custom_field"/>
 
             <menuitem id="menu_getresponse_tag"
-                name="Tags"
+                name="Tag Bindings"
                 parent="menu_getresponse_root_bindings"
                 sequence="2030"
                 action="action_getresponse_gr_tag"/>
 
             <menuitem id="menu_getresponse_contact"
-                name="Contacts"
+                name="Contact Bindings"
                 parent="menu_getresponse_root_bindings"
                 sequence="2040"
                 action="action_getresponse_frst_personemailgruppe"/>
