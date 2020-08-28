@@ -113,17 +113,17 @@
                                 </group>
                                 <group string="Contacts">
                                     <div>
-                                        <!--<div style="margin-bottom:0.5em;">-->
-                                        <!--    <button name="import_getresponse_tags_direct"-->
-                                        <!--            type="object"-->
-                                        <!--            class="oe_highlight oe_inline"-->
-                                        <!--            style="margin-right:1em;"-->
-                                        <!--            string="Import Tag Definitions"/>-->
-                                        <!--    <button name="import_getresponse_tags_delay"-->
-                                        <!--            type="object"-->
-                                        <!--            class="oe_inline"-->
-                                        <!--            string="Import Tag Definitions Delayed"/>-->
-                                        <!--</div>-->
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_contacts_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Import Contacts"/>
+                                            <button name="import_getresponse_contacts_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Import Contacts Delayed"/>
+                                        </div>
                                         <div style="margin-bottom:0.5em;">
                                             <button name="export_getresponse_contacts_direct"
                                                     type="object"

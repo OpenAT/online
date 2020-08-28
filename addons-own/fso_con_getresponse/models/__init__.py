@@ -38,5 +38,5 @@ import getresponse_gr_tag_import
 # Contacts (Subscriptions)
 import getresponse_frst_personemailgruppe
 import getresponse_frst_personemailgruppe_export
-# TODO: import getresponse_frst_personemailgruppe_import
+import getresponse_frst_personemailgruppe_import
 #import getresponse_frst_personemailgruppe_consumer

@@ -77,13 +77,16 @@ class BatchImporter(Importer):
         raise ValueError("The BatchImporter class uses batch_run() instead of run() to avoid confusion with the .run()"
                          " method of the single record export class GetResponseImporter()!")
 
+    def _batch_run_search(self, filters=None, **kwargs):
+        return self.backend_adapter.search(filters)
+
     def batch_run(self, filters=None, delay=False, **kwargs):
         """ Run the synchronization """
 
-        # ------------------------------
-        # SEARCH FOR GETRESPONSE RECORDS
-        # ------------------------------
-        getresponse_record_ids = self.backend_adapter.search(filters)
+        # ---------------------------------
+        # SEARCH FOR GETRESPONSE RECORD IDS
+        # ---------------------------------
+        getresponse_record_ids = self._batch_run_search(filters=filters, **kwargs)
 
         # -----------------------------------------
         # RUN import_record() FOR EACH FOUND RECORD
@@ -117,6 +120,7 @@ class GetResponseImporter(Importer):
         super(GetResponseImporter, self).__init__(connector_env)
         self.getresponse_id = None
         self.getresponse_record = None
+        self.binding_record = None
 
     def _get_getresponse_data(self):
         """ Return the raw Getresponse object/data for ``self.getresponse_id`` """
@@ -222,34 +226,36 @@ class GetResponseImporter(Importer):
     def _get_binding(self):
         return self.binder.to_openerp(self.getresponse_id)
 
-    def bind_before_import(self, binding):
-        return binding
+    def bind_before_import(self):
+        return self.binding_record
 
-    def skip_by_binding(self, binding):
-        binding = self.binder.get_bindings(domain=[('id', '=', binding.id)])
-        if not binding:
-            return _("Import was skipped for binding (%s, %s) by binder.get_bindings()") % (binding._name, binding.id)
-
+    def skip_by_binding(self):
+        if self.binding_record:
+            filtered_binding = self.binder.get_bindings(domain=[('id', '=', self.binding_record.id)])
+            if not filtered_binding:
+                return _("Import was SKIPPED for binding (%s, %s) by binder.get_bindings()"
+                         ) % (self.binding_record._name, self.binding_record.id)
         return False
-
-    def _create_data(self, map_record, **kwargs):
-        return map_record.values(for_create=True, **kwargs)
 
     # ---------------------
     # CREATE RECORD IN ODOO
     # ---------------------
-    def _create(self, data):
-        """ Create the odoo record """
-        # Validate getresponse record data before odoo record creation
-        self._validate_data(data)
+    def _create_data(self, map_record, **kwargs):
+        return map_record.values(for_create=True, **kwargs)
 
+    def _create(self, data):
         # Add connector_no_export=True to prevent any GetResponse export
         model = self.model.with_context(connector_no_export=True)
-
-        # Create the new binding record (and therefore the regular odoo record (delegation inheritance) also
+        # Create the binding record (and therefore the regular odoo record (delegation inheritance) also
         binding = model.create(data)
         _logger.debug('%d created from getresponse %s', binding, self.getresponse_id)
         return binding
+
+    def create(self, data):
+        """ Create an odoo record """
+        # Validate getresponse record data before odoo record creation
+        self._validate_data(data)
+        return self._create(data)
 
     # ---------------------
     # UPDATE RECORD IN ODOO
@@ -258,17 +264,18 @@ class GetResponseImporter(Importer):
         return map_record.values(**kwargs)
 
     def _update(self, binding, data):
-        """ Update an OpenERP record """
-        # Validate getresponse record data before odoo record update
-        self._validate_data(data)
-
         # Add connector_no_export={bind_model_name: [id]} to prevent GetResponse exports for this binding
         binding = binding.with_context(connector_no_export={binding._name: [binding.id]})
-
         # Update the binding record (and therefore the regular odoo record (delegation inheritance) also
-        binding.write(data)
+        result = binding.write(data)
         _logger.debug('%d updated from getresponse %s', binding, self.getresponse_id)
-        return
+        return result
+
+    def update(self, binding, data):
+        """ Update an Odoo record """
+        # Validate getresponse record data before odoo record update
+        self._validate_data(data)
+        return self._update(binding, data)
 
     def _after_import(self, binding):
         """ Hook called at the end of the import """
@@ -307,20 +314,20 @@ class GetResponseImporter(Importer):
             return skip_by_getresponse_data
 
         # Search for a binding record that has the external id (self.getresponse_id)
-        binding = self._get_binding()
+        self.binding_record = self._get_binding()
 
         # Bind to existing records (or use prepared bindings) before import
-        binding = self.bind_before_import(binding)
+        self.binding_record = self.bind_before_import()
 
         # Skip import updates based on the binding (based on odoo record data filtered out by binder.get_bindings())
         # HINT: This will not be checked on create because obviously no binding would exists at this point
-        if binding:
-            skip_by_binding = self.skip_by_binding(binding)
+        if self.binding_record:
+            skip_by_binding = self.skip_by_binding()
             if skip_by_binding:
                 return skip_by_binding
 
         # Check the data in odoo is already up to date and skipp import if so
-        if not force and self._is_uptodate(binding):
+        if not force and self._is_uptodate(self.binding_record):
             return _('Already up-to-date.')
 
         # Keep a lock on this import until the transaction is committed
@@ -331,28 +338,35 @@ class GetResponseImporter(Importer):
         # Import the missing linked resources
         self._import_dependencies()
 
-        # Get the data from the GetResponse record already prepared (mapped) for the odoo record
+        # Connector map record - based on the getresponse record in self.getresponse_record
         map_record = self._map_data()
 
         # Get the updated data already here (even if this is a create) to store the update data in the binding
         update_data = self._update_data(map_record)
 
-        # UPDATE an existing record in odoo
-        if binding:
-            self._update(binding, update_data)
+        # ---------------------------------
+        # UPDATE an existing binding record
+        # ---------------------------------
+        if self.binding_record:
+            update_result = self.update(self.binding_record, update_data)
 
-        # CREATE a new record in odoo
+        # ---------------------------
+        # CREATE a new binding record
+        # ---------------------------
         else:
             create_data = self._create_data(map_record)
-            binding = self._create(create_data)
+            self.binding_record = self.create(create_data)
 
+        # -------------------------------
+        # UPDATE THE BINDING AFTER IMPORT
+        # -------------------------------
         # Call the binder again to update the binding and the 'sync_data' for concurrent write detection
         # ATTENTION: We store only the fields without '@only_create' mapped fields since those fields seems unneeded
         #            for the data comparison TODO: Make sure to check if this is true for every synced model!
-        self.binder.bind(self.getresponse_id, binding, sync_data=update_data)
+        self.binder.bind(self.getresponse_id, self.binding_record, sync_data=update_data)
 
         # After import hook
-        self._after_import(binding)
+        self._after_import(self.binding_record)
 
 
 # HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()

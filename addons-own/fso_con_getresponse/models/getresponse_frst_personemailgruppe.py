@@ -146,15 +146,15 @@ class ContactAdapter(GetResponseCRUDAdapter):
     _getresponse_model = 'contact'
 
     # ATTENTION: !!! A segments search will NOT return all the fields! E.g. custom fields or tags will be missing!
-    def search(self, getresponse_campaign_id, name=None, email=None, custom_fields=None, **kwargs):
+    def search(self, getresponse_campaign_ids=None, name=None, email=None, custom_fields=None, **kwargs):
         """ Returns a list of GetResponse contact ids
 
         'name', 'email' and 'custom_fields' are optional easy search attributes
 
         available operators: 'is', 'is_not', 'contains', 'not_contains', 'starts', 'ends', 'not_starts', 'not_ends'
 
-        :param getresponse_campaign_id: string
-        :param name: tuple or string
+        :param getresponse_campaign_ids: list
+        :param name: list of strings
             tuple format: (operator, value)
         :param email: tuple or string
             tuple format: (operator, value)
@@ -164,12 +164,11 @@ class ContactAdapter(GetResponseCRUDAdapter):
         :return: list
             returns a list with the getresponse contact ids (external ids)
         """
-        assert isinstance(getresponse_campaign_id, basestring), "getresponse_campaign_id must be a string"
         # HINT: get_all_contacts will do 4 searches to find contacts for all subscriber types - therefore it will
         #       return ALL contacts! (=including non approved or inactive contacts)
         # ATTENTION: !!! A segments search will NOT return all the fields! E.g. custom fields or tags will be missing!
         #            This is not a real problem here because we return only the list of id's anyway!
-        contacts = self.getresponse_api_session.get_all_contacts(campaign_ids=[getresponse_campaign_id],
+        contacts = self.getresponse_api_session.get_all_contacts(campaign_ids=getresponse_campaign_ids,
                                                                  name=name,
                                                                  email=email,
                                                                  custom_fields=custom_fields,

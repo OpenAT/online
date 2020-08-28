@@ -484,7 +484,7 @@ class GetResponseExporter(Exporter):
 # HINT: The @related_action decorator will add a button on the jobs form view that will open the form view of the
 #       unwrapped record. E.g. a job for getresponse.frst.zgruppedetail will open the form view for frst.zgruppedetail
 # ATTENTION: export_record expects binding records !!! Create them first if needed!
-#            Check ZgruppedetailBatchExporter batch_run() for an example!
+#            Check CampaignBatchExporter batch_run() for an example!
 @job(default_channel='root.getresponse')
 @related_action(action=unwrap_binding)
 def export_record(session, model_name, binding_id, fields=None):

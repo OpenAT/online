@@ -215,7 +215,7 @@ class ContactExporter(GetResponseExporter):
         self.binding_id = binding_id
         self.binding_record = self._get_binding_record()
 
-        contact_ids = self.backend_adapter.search(getresponse_campaign_id=contact_campaing_id, email=contact_email)
+        contact_ids = self.backend_adapter.search(getresponse_campaign_ids=[contact_campaing_id], email=contact_email)
 
         if len(contact_ids) == 1:
             contact_id = contact_ids[0]

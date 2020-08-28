@@ -388,6 +388,29 @@ class GrCustomField(models.Model):
 
         return gr_value
 
+    @api.multi
+    def get_odoo_value(self, raw_value):
+        """ Get a GetResponse Value and convert it to the correct odoo value """
+        # Works only with a singe custom field
+        self.ensure_one()
+        custom_field = self
+
+        if custom_field.field_ttype == 'boolean':
+            assert raw_value in ('true', 'false'), "'true' or 'false' expected for a boolean field! %s" % raw_value
+            odoo_value = True if raw_value == 'true' else False
+
+        elif custom_field.field_ttype in ('selection', 'many2one'):
+            mappings = json.loads(custom_field.gr_values_mappings, encoding='utf-8')
+            # TODO: We may also search for the odoo value in the future... right now it must be in the
+            #       gr_values_mappings keys!
+            assert raw_value in mappings, "Custom field value '%s' not found in gr_values_mappings keys!" % raw_value
+            odoo_value = mappings['raw_value']
+
+        else:
+            odoo_value = raw_value
+
+        return odoo_value
+
     @api.model
     def watched_fields(self):
 

@@ -3,8 +3,8 @@ from openerp import fields, models, api
 from openerp.addons.connector.session import ConnectorSession
 from openerp.tools.translate import _
 
-from .getresponse_frst_zgruppedetail_import import zgruppedetail_import_batch
-from .getresponse_frst_zgruppedetail_export import zgruppedetail_export_batch
+from .getresponse_frst_zgruppedetail_import import campaign_import_batch
+from .getresponse_frst_zgruppedetail_export import campaign_export_batch
 
 from .getresponse_gr_custom_field_import import custom_field_import_batch
 from .getresponse_gr_custom_field_export import custom_field_export_batch
@@ -13,6 +13,7 @@ from .getresponse_gr_tag_import import tag_import_batch
 from .getresponse_gr_tag_export import tag_export_batch
 
 from .getresponse_frst_personemailgruppe_export import contact_export_batch
+from .getresponse_frst_personemailgruppe_import import contact_import_batch
 
 
 # New model to hold all settings for the getresponse connector
@@ -58,7 +59,7 @@ class GetResponseBackend(models.Model):
 
     # TODO: subscription settings - this needs to be implemented in the getresponse client as well as in the
     #       frst.zgruppedetail model or maybe just in the backend as a global config?
-    #       Check also: class ZgruppedetailImportMapper(ImportMapper)
+    #       Check also: class CampaignImportMapper(ImportMapper)
 
     # ----------
     # CONSTRAINS
@@ -88,49 +89,49 @@ class GetResponseBackend(models.Model):
     # ------------------------
     @api.multi
     def import_getresponse_campaigns_direct(self):
-        """ Import all campaigns from getresponse as frst.zgruppedetail """
+        """ Batch Import all campaigns (zgruppedetail) from GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            zgruppedetail_import_batch(session, 'getresponse.frst.zgruppedetail', backend.id, delay=False)
+            campaign_import_batch(session, 'getresponse.frst.zgruppedetail', backend.id, delay=False)
 
     @api.multi
     def import_getresponse_campaigns_delay(self):
-        """ Import all campaigns from getresponse as frst.zgruppedetail delayed (connector jobs) """
+        """ Batch Import all campaigns (zgruppedetail) from GetResponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            zgruppedetail_import_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
+            campaign_import_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
 
     # ------------------------
     # EXPORT CAMPAIGNS BUTTONS
     # ------------------------
     @api.multi
     def export_getresponse_campaigns_direct(self):
-        """ Export all frst.zgruppedetail groups with sync_with_getresponse=True to getresponse campaigns """
+        """ Batch Export all campaigns (zgruppedetail with sync_with_getresponse=True) to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            zgruppedetail_export_batch(session, 'getresponse.frst.zgruppedetail', backend.id, delay=False)
+            campaign_export_batch(session, 'getresponse.frst.zgruppedetail', backend.id, delay=False)
 
     @api.multi
     def export_getresponse_campaigns_delay(self):
-        """ Export all frst.zgruppedetail groups with sync_with_getresponse=True delayed (connector jobs)
-        to getresponse campaigns """
+        """ Batch Export all campaigns (zgruppedetail with sync_with_getresponse=True) to GetResponse
+        delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
-            zgruppedetail_export_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
+            campaign_export_batch.delay(session, 'getresponse.frst.zgruppedetail', backend.id, delay=True)
 
     # ----------------------------
     # IMPORT CUSTOM FIELDS BUTTONS
     # ----------------------------
     @api.multi
     def import_getresponse_custom_fields_direct(self):
-        """ Export all gr.custom_field field definitions to GetResponse """
+        """ Batch Import all Custom Field Definitions (gr.custom_field) to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             custom_field_import_batch(session, 'getresponse.gr.custom_field', backend.id, delay=False)
 
     @api.multi
     def import_getresponse_custom_fields_delay(self):
-        """ Export all gr.custom_field field definitions to GetResponse delayed (connector jobs) """
+        """ Batch Import all Custom Field Definitions (gr.custom_field) to GetResponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             custom_field_import_batch.delay(session, 'getresponse.gr.custom_field', backend.id, delay=True)
@@ -140,14 +141,14 @@ class GetResponseBackend(models.Model):
     # ----------------------------
     @api.multi
     def export_getresponse_custom_fields_direct(self):
-        """ Export all gr.custom_field field definitions to GetResponse """
+        """ Batch Export mapped Custom Field Definitions (gr.custom_field) to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             custom_field_export_batch(session, 'getresponse.gr.custom_field', backend.id, delay=False)
 
     @api.multi
     def export_getresponse_custom_fields_delay(self):
-        """ Export all gr.custom_field field definitions to GetResponse delayed (connector jobs) """
+        """ Batch Export mapped Custom Field Definitions (gr.custom_field) to GetResponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             custom_field_export_batch.delay(session, 'getresponse.gr.custom_field', backend.id, delay=True)
@@ -157,14 +158,14 @@ class GetResponseBackend(models.Model):
     # -------------------
     @api.multi
     def import_getresponse_tags_direct(self):
-        """ Import all tags from getresponse """
+        """ Batch Import all Tag Definitions (gr.tag) from getresponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             tag_import_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
 
     @api.multi
     def import_getresponse_tags_delay(self):
-        """ Import all tags from getresponse delayed (connector jobs) """
+        """ Batch Import all Tag Definitions (gr.tag) from getresponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             tag_import_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
@@ -174,31 +175,49 @@ class GetResponseBackend(models.Model):
     # -------------------
     @api.multi
     def export_getresponse_tags_direct(self):
-        """ Export all gr.tag field definitions to GetResponse """
+        """ Batch Export all Tag Definitions (gr.tag) to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             tag_export_batch(session, 'getresponse.gr.tag', backend.id, delay=False)
 
     @api.multi
     def export_getresponse_tags_delay(self):
-        """ Export all gr.tag field definitions to GetResponse delayed (connector jobs) """
+        """ Batch Export all Tag Definitions (gr.tag) to GetResponse delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             tag_export_batch.delay(session, 'getresponse.gr.tag', backend.id, delay=True)
+
+    # -----------------------
+    # IMPORT CONTACTS BUTTONS
+    # -----------------------
+    @api.multi
+    def import_getresponse_contacts_direct(self):
+        """ Batch Import all Contacts (personemailgruppe) for enabled Campaigns (zgruppedetail) from GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            contact_import_batch(session, 'getresponse.frst.personemailgruppe', backend.id, delay=False)
+
+    @api.multi
+    def import_getresponse_contacts_delay(self):
+        """ Batch Import all Contacts (personemailgruppe) for enabled Campaigns (zgruppedetail) from GetResponse
+        delayed (connector jobs) """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for backend in self:
+            contact_import_batch.delay(session, 'getresponse.frst.personemailgruppe', backend.id, delay=True)
 
     # -----------------------
     # EXPORT CONTACTS BUTTONS
     # -----------------------
     @api.multi
     def export_getresponse_contacts_direct(self):
-        """ Export all contacts (personemailgruppe) for enabled campaigns (zgruppedetail) to GetResponse """
+        """ Batch Export all Contacts (personemailgruppe) for enabled Campaigns (zgruppedetail) to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:
             contact_export_batch(session, 'getresponse.frst.personemailgruppe', backend.id, delay=False)
 
     @api.multi
     def export_getresponse_contacts_delay(self):
-        """ Export all contacts (personemailgruppe) for enabled campaigns (zgruppedetail) to GetResponse
+        """ Batch Export all Contacts (personemailgruppe) for enabled Campaigns (zgruppedetail) to GetResponse
         delayed (connector jobs) """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for backend in self:

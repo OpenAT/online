@@ -84,7 +84,8 @@ class TagImporter(GetResponseImporter):
     # --------------------------------------------------------------------------
     #     - Tag with the same name exists but no binding -> Create binding before import
     #     - Tag with binding exists but binding has no getresponse_id -> Update the binding before import
-    def bind_before_import(self, binding):
+    def bind_before_import(self):
+        binding = self.binding_record
         # Skipp bind_before_import() because a binding was already found for the getresponse_id.
         if binding:
             return binding
@@ -122,4 +123,4 @@ class TagImporter(GetResponseImporter):
             self.binder.bind(getresponse_id, prepared_binding.id)
             return prepared_binding
 
-        return super(TagImporter, self).bind_before_import(binding)
+        return super(TagImporter, self).bind_before_import()

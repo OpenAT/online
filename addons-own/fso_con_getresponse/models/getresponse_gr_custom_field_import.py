@@ -98,7 +98,8 @@ class CustomFieldImporter(GetResponseImporter):
 
     _base_mapper = CustomFieldImportMapper
 
-    def bind_before_import(self, binding):
+    def bind_before_import(self):
+        binding = self.binding_record
         # Skipp bind_before_import() because a binding was already found for the getresponse_id.
         if binding:
             return binding
@@ -136,4 +137,5 @@ class CustomFieldImporter(GetResponseImporter):
             self.binder.bind(getresponse_id, prepared_binding.id)
             return prepared_binding
 
-        return super(CustomFieldImporter, self).bind_before_import(binding)
+        # Nothing found so we return the original method result
+        return super(CustomFieldImporter, self).bind_before_import()

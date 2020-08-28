@@ -89,7 +89,7 @@ class GrTagGetResponse(models.Model):
 # ----------------
 # You may override binder methods here if special processing is needed for this model
 @getresponse
-class GrTagBinder(GetResponseBinder):
+class TagBinder(GetResponseBinder):
     _model_name = ['getresponse.gr.tag']
 
 
@@ -99,7 +99,7 @@ class GrTagBinder(GetResponseBinder):
 # The Adapter is a subclass of an ConnectorUnit class. The ConnectorUnit Object holds information about the
 # connector_env, the backend, the backend_record and about the connector session
 @getresponse
-class GrTagAdapter(GetResponseCRUDAdapter):
+class TagAdapter(GetResponseCRUDAdapter):
     """
     ATTENTION: read() and search_read() will return a dict and not the getresponse_record itself but
                create() and write() will return a getresponse object from the getresponse-python lib!

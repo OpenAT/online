@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 # -----------------------
 # Transform the data from GetResponse campaign objects to odoo records and vice versa
 @getresponse
-class ZgruppedetailImportMapper(ImportMapper):
+class CampaignImportMapper(ImportMapper):
     """ Map all the fields of the the GetResponse API library campaign object to the odoo record fields.
     You can find all all available fields here: ..../getresponse-python/getresponse/campaign.py
 
@@ -94,19 +94,19 @@ class ZgruppedetailImportMapper(ImportMapper):
 # BATCH IMPORTER
 # --------------
 @getresponse
-class ZgruppedetailBatchImporter(BatchImporter):
+class CampaignBatchImporter(BatchImporter):
     _model_name = ['getresponse.frst.zgruppedetail']
 
 
 @job(default_channel='root.getresponse')
-def zgruppedetail_import_batch(session, model_name, backend_id, filters=None, delay=False, **kwargs):
+def campaign_import_batch(session, model_name, backend_id, filters=None, delay=False, **kwargs):
     """ Prepare the batch import of all GetResponse campaigns """
     if filters is None:
         filters = {}
     connector_env = get_environment(session, model_name, backend_id)
 
     # Get the import connector unit
-    importer = connector_env.get_connector_unit(ZgruppedetailBatchImporter)
+    importer = connector_env.get_connector_unit(CampaignBatchImporter)
 
     # Start the batch import
     importer.batch_run(filters=filters, delay=delay, **kwargs)
@@ -118,33 +118,49 @@ def zgruppedetail_import_batch(session, model_name, backend_id, filters=None, de
 # In this class we could alter the generic GetResponse import sync flow for 'getresponse.frst.zgruppedetail'
 # HINT: We could overwrite all the methods from the shared GetResponseImporter here if needed!
 @getresponse
-class ZgruppedetailImporter(GetResponseImporter):
+class CampaignImporter(GetResponseImporter):
     _model_name = ['getresponse.frst.zgruppedetail']
 
-    _base_mapper = ZgruppedetailImportMapper
+    _base_mapper = CampaignImportMapper
 
-    # TODO: Find existing groups and bind them before the import if not bound already
-    # Because of this you can bind existing GetResponse Campaigns to Existing Groups if you set the gr_name
-    # correctly before the import!
-    def _get_binding(self):
-        bind_record = super(ZgruppedetailImporter, self)._get_binding()
+    def bind_before_import(self):
+        binding = self.binding_record
+        # Skipp bind_before_import() because a binding was already found for the getresponse_id.
+        if binding:
+            return binding
 
-        # Search for an existing Group
-        if not bind_record:
-            original_odoo_model = self.binder.unwrap_model()
-            map_record_update_data = self._update_data(self._map_data())
-            existing_group = self.env[original_odoo_model].search(
-                [('gr_name', '=', map_record_update_data['gr_name'])]
-            )
-            # Create a binding record before the import - so it will trigger an 'update' and not an 'create'
-            if len(existing_group) == 1:
-                binding_vals = {
-                    self.binder._backend_field: self.backend_record.id,
-                    self.binder._openerp_field: existing_group.id
-                }
-                bind_record = self.env[self.model._name].create(binding_vals)
-                _logger.info("Created binding for unbound 'GetResponse sync enabled frst.zgruppedetail' before "
-                             " import! (binding: %s %s, vals: %s)" % (bind_record._name, bind_record.id, binding_vals))
+        # The record data read from GetResponse as a dict()
+        map_record = self._map_data()
 
-        return bind_record
+        # Odoo update data (vals dict for odoo fields)
+        mapped_update_data = self._update_data(map_record)
 
+        # The external id from the getresponse record data dict
+        getresponse_id = self.getresponse_id
+
+        # The unique custom field definition name
+        getresponse_campaign_name = mapped_update_data['gr_name']
+
+        # The backend id
+        backend_id = self.backend_record.id
+
+        # EXISTING PREPARED BINDING (binding without external id)
+        prepared_binding = self.model.search([('backend_id', '=', backend_id),
+                                              ('gr_name', '=', getresponse_campaign_name)])
+        if prepared_binding:
+            assert len(prepared_binding) == 1, 'More than one binding found for this campaign name!'
+            assert not prepared_binding.getresponse_id, 'Prepared binding has a getresponse_id?'
+            self.binder.bind(getresponse_id, prepared_binding.id)
+            return prepared_binding
+
+        # EXISTING GROUP WITH THIS CAMPAIGN NAME (WITHOUT BINDING)
+        unwrapped_model = self.binder.unwrap_model()
+        custom_field = self.env[unwrapped_model].search([('gr_name', '=', getresponse_campaign_name)])
+        if custom_field:
+            assert len(custom_field) == 1, "More than one campaign (zgruppedetail) with this name found!"
+            prepared_binding = self.binder._prepare_binding(custom_field.id)
+            self.binder.bind(getresponse_id, prepared_binding.id)
+            return prepared_binding
+
+        # Nothing found so we return the original method result
+        return super(CampaignImporter, self).bind_before_import()
