@@ -233,36 +233,39 @@ class ContactAdapter(GetResponseCRUDAdapter):
     # ATTENTION: PLEASE CHECK 'PITFALLS' COMMENT AT THE START OF THE FILE!
     def write(self, ext_id, data):
 
-        # UPSERT CUSTOM FIELDS
-        # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
-        #       a custom field!!!
-        # Only append/update custom field values in GetResponse but do not replace 'customFieldValues'!
-        custom_field_values = data.pop('customFieldValues', None)
-        if custom_field_values:
+        # DISABLED: !!! SINCE WE NOW MERGE THE TAGS AND CUSTOM FIELD DATA FROM GETRESPONSE ON EXPORT IN THE MAPPER !!!
+        #
+        # # UPSERT CUSTOM FIELDS
+        # # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
+        # #       a custom field!!!
+        # # Only append/update custom field values in GetResponse but do not replace 'customFieldValues'!
+        # custom_field_values = data.pop('customFieldValues', None)
+        # if custom_field_values:
+        #
+        #     # TODO: remove all custom fields with empty values because you can not unset/delete on upsert
+        #     for index, cf in enumerate(custom_field_values):
+        #         # HINT: x2Many fields are not supported yet - therefore the first value is the only one ;)
+        #         if not cf['value'][0]:
+        #             custom_field_values.pop(index)
+        #
+        #     cfv_payload = {'customFieldValues': custom_field_values}
+        #     cfv_upsert_result = self.getresponse_api_session.upsert_contact_custom_fields(ext_id, cfv_payload)
+        #     assert len(custom_field_values) == len(cfv_upsert_result.get('customFieldValues', [])), (
+        #         "Upsert (add or update) of custom fields failed!")
+        #
+        # # UPSERT TAGS
+        # # Only append tags in GetResponse but do not replace 'tags'!
+        # # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
+        # #       a tag!!!
+        # tags = data.pop('tags', None)
+        # if tags:
+        #     tags_payload = {'tags': tags}
+        #     tags_upsert_result = self.getresponse_api_session.upsert_contact_tags(ext_id, tags_payload)
+        #     assert len(tags) == len(tags_upsert_result.get('tags', [])), (
+        #         "Upsert (add or update) of tags failed!")
 
-            # TODO: remove all custom fields with empty values because you can not unset/delete on upsert
-            for index, cf in enumerate(custom_field_values):
-                # HINT: x2Many fields are not supported yet - therefore the first value is the only one ;)
-                if not cf['value'][0]:
-                    custom_field_values.pop(index)
-
-            cfv_payload = {'customFieldValues': custom_field_values}
-            cfv_upsert_result = self.getresponse_api_session.upsert_contact_custom_fields(ext_id, cfv_payload)
-            assert len(custom_field_values) == len(cfv_upsert_result.get('customFieldValues', [])), (
-                "Upsert (add or update) of custom fields failed!")
-
-        # UPSERT TAGS
-        # Only append tags in GetResponse but do not replace 'tags'!
-        # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
-        #       a tag!!!
-        tags = data.pop('tags', None)
-        if tags:
-            tags_payload = {'tags': tags}
-            tags_upsert_result = self.getresponse_api_session.upsert_contact_tags(ext_id, tags_payload)
-            assert len(tags) == len(tags_upsert_result.get('tags', [])), (
-                "Upsert (add or update) of tags failed!")
-
-        # Update the other contact data
+        # Update the contact in GetResponse
+        # ATTENTION: !!! This will replace the custom fields and the tags completely in GetResponse !!!
         contact = self.getresponse_api_session.update_contact(ext_id, body=data)
 
         # WARNING: !!! We return the campaign object and not a dict !!!
