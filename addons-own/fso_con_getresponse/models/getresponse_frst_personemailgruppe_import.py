@@ -45,6 +45,14 @@ class ContactImportMapper(ImportMapper):
     #            Therefore we must use getresponse_record['name'] instead of getresponse_record.name
 
     @mapping
+    def backend_id(self, record):
+        return {'frst.personemailgruppe.backend_id': self.backend_record.id}
+
+    @mapping
+    def getresponse_id(self, record):
+        return {'frst.personemailgruppe.getresponse_id': record['id']}
+
+    @mapping
     def zgruppedetail_id(self, getresponse_record):
         # HINT: The Campaign must already exists because we will only import contacts for enabled campaigns
         campaign_binder = self.binder_for('getresponse.frst.zgruppedetail')
@@ -55,20 +63,26 @@ class ContactImportMapper(ImportMapper):
 
         zgruppedetail = campaign_binder.to_openerp(external_campaign_id, unwrap=True)
         assert zgruppedetail, "Group (zgruppedetail) not found for external id %s" % external_campaign_id
-        return {'zgruppedetail_id': zgruppedetail.id}
+        return {'frst.personemailgruppe.zgruppedetail_id': zgruppedetail.id}
 
     @mapping
     def name(self, getresponse_record):
+        # ATTENTION: Check finalize() for the handling of name missing or lastname in custom fields!
         return {'res.partner.name': getresponse_record['name']}
 
     @mapping
     def email(self, getresponse_record):
-        return {'res.partner.email': getresponse_record['email']}
+        return {'frst.personemail.email': getresponse_record['email']}
 
     @mapping
     def getresponse_tag_ids(self, getresponse_record):
+        # ATTENTION: The import would be have been skipped already if the odoo data changed since the last sync and
+        #            would have forced an export to GetResponse instead! Therefore we do not need to merge or compare
+        #            the odoo tags with the getresponse tags like we do at the contact export mapper
+
         tags = getresponse_record.get('tags', [])
 
+        # Current GetResponse Tags data
         tags_binder = self.binder_for('getresponse.gr.tag')
         getresponse_tag_ids = []
         for gr_tag in tags:
@@ -78,31 +92,42 @@ class ContactImportMapper(ImportMapper):
             assert tag, "Odoo Tag Definition for external id %s missing!" % gr_tag['tagId']
             getresponse_tag_ids.append(tag.id)
 
-        # Search for an existing bound record (by external id)
-        contact_binder = self.binder_for('getresponse.frst.personemailgruppe')
-        contact_binding = contact_binder.to_openerp(getresponse_record['id'])
-
-        # If no binding was found this must be a contact 'create' so we just return the data
-        if not contact_binding:
-            return {'partner.getresponse_tag_ids': getresponse_tag_ids}
-
-        # TODO: FOR UPDATES COMPARE DATA FOR THE FINAL TAG LIST
-        # TODO Get the last sync data tags
-        last_sync_data = json.loads(contact_binding.sync_data, encoding='utf8') if contact_binding.sync_data else {}
-        last_sync_tags = last_sync_data.get('tags')
-        # TODO: Get the current odoo res.partner tags
-        # TODO: Create and return final tag list
+        # (6, _, ids) replaces all existing records in the set by the ids list
+        return {'res.partner.getresponse_tag_ids': (6, None, getresponse_tag_ids)}
 
     @mapping
     def custom_fields(self, getresponse_record):
-        custom_field_values = getresponse_record.get('custom_field_values', {})
+        # ATTENTION: The import would be have been skipped already if the odoo data changed since the last sync and
+        #            would have forced an export to GetResponse instead! Therefore we do not need to merge or compare
+        #            the odoo custom field data with getresponse like we do at the contact export mapper
+        #
+        # ATTENTION: GetResponse fields with a value list can NOT have an empty value but must use one of the
+        #            values of the custom field definition!
+        #
+        # ATTENTION: I !GUESS! that if no value is given to a custom field the field will be missing completely in the
+        #            custom_field_values of the contact. Therefore we check if fields are missing since the last sync
+        #            and set the odoo value to False if the field definitions still exits in odoo and are still mapped!
+        getresponse_custom_field_data = getresponse_record.get('custom_field_values', {})
 
+        # Get the last sync field data if any
+        contact_binder = self.binder_for('getresponse.frst.personemailgruppe')
+        binding = contact_binder.to_openerp(getresponse_record['id'])
+        last_sync_field_data = {}
+        if binding.compare_data:
+            last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8')
+            if 'customFieldValues' in last_sync_cmp_data:
+                last_custom_field_values = last_sync_cmp_data['customFieldValues']
+                last_sync_field_data = {f['customFieldId']: f['value'] for f in last_custom_field_values}
+
+        # CONVERT THE CUSTOM FIELD VALUES FROM GETRESPONSE TO ODOO FIELD NAMES AND VALUES
+        # -------------------------------------------------------------------------------
         cf_binder = self.binder_for('getresponse.gr.custom_field')
         result = {}
-        for gr_cf in custom_field_values:
+        for gr_cf in getresponse_custom_field_data:
 
             # Get the custom field definition record
-            odoo_cf = cf_binder.to_openerp(gr_cf['customFieldId'], unwrap=True)
+            custom_field_ext_id = gr_cf['customFieldId']
+            odoo_cf = cf_binder.to_openerp(custom_field_ext_id, unwrap=True)
             assert odoo_cf, "Odoo Custom Field Definition for external id %s missing!" % gr_cf['customFieldId']
 
             # Only get values for mapped custom fields
@@ -113,33 +138,86 @@ class ContactImportMapper(ImportMapper):
             assert odoo_cf.field_model_name in ('res.partner', 'frst.personemail', 'frst.personemailgruppe'), (
                 "Unsupported custom field model %s" % odoo_cf.field_model_name)
 
-            # Get the odoo value
+            # Convert the GetResponse value to an odoo field value
             values = gr_cf['values']
             assert len(values) == 1, 'Multi Values are not supported for a mapped custom field! %s' % values
-            raw_value = values[0]
-            assert raw_value, 'Empty values for custom fields should not be supported by GetResponse?!? %s' % raw_value
-            odoo_value = odoo_cf.get_odoo_value(raw_value)
+            odoo_value = odoo_cf.get_odoo_value(values[0])
 
-            # Prepend the model name to the value key if the model is not 'frst.personemailgruppe'
-            # HINT: Check create and update of the importer to see the deconstruction of the values
-            prefix = odoo_cf.field_model_name if odoo_cf.field_model_name != 'frst.personemailgruppe' else ''
-            key = prefix + '.' + odoo_cf.field_id.name
+            # Prepend the model name to the value key
+            # HINT: Check finalize()  and create() and update() for the deconstruction of the cf values
+            odoo_model_and_field_name = odoo_cf.field_model_name + '.' + odoo_cf.field_id.name
 
             # Append the custom field data
-            result[key] = odoo_value
+            result[odoo_model_and_field_name] = odoo_value
 
-        # Search for an existing bound record (by external id)
+        # SET FIELD VALUE TO 'False' FOR FIELDS THAT WHERE UNAMBIGUOUSLY REMOVED IN GETRESPONSE SINCE THE LAST SYNC
+        # ---------------------------------------------------------------------------------------------------------
         contact_binder = self.binder_for('getresponse.frst.personemailgruppe')
-        contact_binding = contact_binder.to_openerp(getresponse_record['id'])
+        binding = contact_binder.to_openerp(getresponse_record['id'])
+        if binding.compare_data:
+            last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8')
+            if 'customFieldValues' in last_sync_cmp_data:
+                last_custom_field_values = last_sync_cmp_data['customFieldValues']
+                last_sync_field_data = {f['customFieldId']: f['value'] for f in last_custom_field_values}
+                for last_sync_f_id in last_sync_field_data:
+                    if last_sync_f_id not in getresponse_custom_field_data:
+                        odoo_cf = cf_binder.to_openerp(last_sync_f_id, unwrap=True)
+                        if not odoo_cf or not odoo_cf.field_id:
+                            continue
+                        if odoo_cf.field_model_name in ('res.partner', 'frst.personemail', 'frst.personemailgruppe'):
+                            odoo_model_and_field_name = odoo_cf.field_model_name + '.' + odoo_cf.field_id.name
+                            result[odoo_model_and_field_name] = False
 
-        # If no binding was found this must be a contact 'create' so we just return the data
-        if not contact_binding:
-            return result
+        # Return the result
+        return result
 
-        # TODO: FOR UPDATES COMPARE DATA FOR FINAL CUSTOM FIELD VALUES
-        # WARNING: ONLY REMOVE CUSTOM FIELD VALUES IF THERE IS LAST SYNC DATA AND THERE WAS A VALUE ON THE LAST SYNC
-        # GetResponse Custom Fields
-        mapped_custom_fields = self.session.env['gr.custom_field'].sudo().search([('field_id', "!=", False)])
+    def finalize(self, map_record, values):
+        """ Called at the end of the mapping.
+
+        Can be used to modify the values before returning them, as the
+        ``on_change``.
+
+        :param map_record: source map_record
+        :type map_record: :py:class:`MapRecord`
+        :param values: mapped values
+        :returns: mapped values
+        :rtype: dict
+        """
+
+        result = {'res.partner': {},
+                  'frst.personemail': {},
+                  'frst.personemailgruppe': {},
+                  }
+        for key, value in values.iteritems():
+            split = key.rsplit('.', 1)
+            assert len(split) == 2, "Unexpected key found in contact data: %s" % split
+
+            odoo_model_name = split[0]
+            assert odoo_model_name in result.keys(), (
+                    'Unknown model name in contact data: %s (%s, %s)' % (odoo_model_name, key, value))
+
+            odoo_field_name = split[1]
+
+            result[odoo_model_name][odoo_field_name] = value
+
+        # ASSERTIONS
+        # ----------
+        assert result['frst.personemailgruppe']['zgruppedetail_id'], _(
+            "zgruppedetail_id missing in contact data! %s" % values)
+        assert result['frst.personemail']['email'], "'email' missing in personemail data! %s" % values
+
+        # res.partner no 'name' handling
+        # ------------------------------
+        if not any(result['res.partner'].get(f, '') for f in ('name', 'firstname', 'lastname')):
+            result['res.partner']['name'] = result['frst.personemail']['email']
+
+        # res.partner firstname and lastname handling
+        # -------------------------------------------
+        if any(result['res.partner'].get(f, '') for f in ('firstname', 'lastname')):
+            result['res.partner'].pop('name', None)
+
+        # Return the final odoo data
+        return result
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -215,15 +293,63 @@ class ContactImporter(GetResponseImporter):
             return False
 
     def _create(self, data):
-        # TODO: We need to create partner first the personemail and then the personemailgruppe
-        # Deconstruct the data dict and create the three records
+        model_no_export = self.model.with_context(connector_no_export=True)
 
+        # Get the data
+        peg_data = data['frst.personemailgruppe']
+        personemail_data = data['frst.personemail']
+        partner_data = data['res.partner']
+
+        # Create the partner
+        # HINT: We add the email to the res.partner create data to automatically create the frst.personemail
+        partner_data['email'] = personemail_data['email']
+        partner = model_no_export.env['res.partner'].create(partner_data)
+
+        # Check the auto-generated frst.personemail
+        personemail = partner.main_personemail_id
+        assert personemail.email == partner.email == partner_data['email'], _(
+            "The emails do not match! (%s, %s, %s)" % (personemail.email, partner.email, partner_data['email']))
+
+        # Update the personemail if needed
+        if len(personemail_data) > 1:
+            personemail.write(personemail_data)
+
+        # Create the new binding
+        # HINT: We append the new personemail to the peg data
+        peg_data['frst_personemail_id'] = personemail.id
+        peg_binding = model_no_export.create(peg_data)
+
+        return peg_binding
 
     def _update(self, binding, data):
-        # TODO: We need to update the partner the personemail and the personemailgruppe
-        # Deconstruct the data and update the three records if needed
-        # (Make sure the E-Mail did not change)
+        binding_no_export = binding.with_context(connector_no_export={binding._name: [binding.id]})
 
+        # personemailgruppe
+        peg_data = data['frst.personemailgruppe']
+        peg = binding_no_export.odoo_id
+
+        # personemail
+        personemail_data = data['frst.personemail']
+        personemail = peg.frst_personemail_id
+
+        # partner data
+        partner_data = data['res.partner']
+        partner = peg.frst_personemail_id.partner_id
+
+        assert personemail_data['email'] == personemail.email, "The email can not be changed! %s, %s" % (data, binding)
+
+        # Update the person
+        if partner_data:
+            assert partner.write(partner_data), "Could not update partner! %s" % partner
+
+        # Update the personemail
+        if personemail_data:
+            assert personemail.write(personemail_data), "Could not update personemail! %s" % personemail
+
+        # Update the binding record (and therefore the regular odoo record (delegation inheritance) also
+        result = binding_no_export.write(peg_data)
+
+        return result
 
     # ----------------------------------------------------------------------------------------------------------------
     # DISABLED: Because we do not want to change existing person data just because someone guessed the right email

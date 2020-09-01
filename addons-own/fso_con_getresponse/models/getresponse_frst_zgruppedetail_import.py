@@ -130,16 +130,16 @@ class CampaignImporter(GetResponseImporter):
             return binding
 
         # The record data read from GetResponse as a dict()
-        map_record = self._map_data()
+        map_record = self._get_map_record()
 
         # Odoo update data (vals dict for odoo fields)
-        mapped_update_data = self._update_data(map_record)
+        odoo_update_data = self._update_data(map_record)
 
         # The external id from the getresponse record data dict
         getresponse_id = self.getresponse_id
 
         # The unique custom field definition name
-        getresponse_campaign_name = mapped_update_data['gr_name']
+        getresponse_campaign_name = odoo_update_data['gr_name']
 
         # The backend id
         backend_id = self.backend_record.id

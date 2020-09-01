@@ -30,7 +30,7 @@ class GetResponseBinder(Binder):
     _inverse_binding_ids_field = 'getresponse_bind_ids'
 
     # ADD 'sync_data' TO THE BINDING METHOD AND BINDING RECORD
-    def bind(self, external_id, binding_id, sync_data=None):
+    def bind(self, external_id, binding_id, sync_data=None, compare_data=None):
         # Call the original bind() method to write the sync_date field
         res = super(GetResponseBinder, self).bind(external_id=external_id, binding_id=binding_id)
 
@@ -38,9 +38,15 @@ class GetResponseBinder(Binder):
         if not isinstance(binding_id, models.BaseModel):
             binding_id = self.model.browse(binding_id)
 
-        # Update 'sync_data' field of the binding record for comparison (concurrent write detection) at the next sync
+        # Update 'sync_data' field of the binding
         last_sync_data_json = json.dumps(sync_data, encoding='utf-8', ensure_ascii=False)
-        binding_id.with_context(connector_no_export=True).write({'sync_data': last_sync_data_json})
+
+        # Compare data (this is in the GetResponse payload format - created by the export mapper)
+        compare_data_json = json.dumps(compare_data, encoding='utf-8', ensure_ascii=False)
+
+        # Update the binding data (suppress exports on binding update with 'connector_no_export')
+        binding_id.with_context(connector_no_export=True).write({'sync_data': last_sync_data_json,
+                                                                 'compare_data': compare_data_json})
 
         return res
 

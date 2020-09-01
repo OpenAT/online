@@ -15,17 +15,18 @@
                         </h1>
                         <group name="getresponse_gr_custom_field_binding" string="Custom Field Definition Binding">
                             <group>
-                            <field name="odoo_id"/>
-                            <field name="getresponse_id"/>
-
+                                <field name="odoo_id"/>
                             </group>
                             <group>
-                                <field name="sync_date"/>
-                                <field name="sync_data"/>
+                                <field name="getresponse_id"/>
                             </group>
-
                         </group>
-                        <group name="getresponse_campaing_data" string="Custom Field Definition Settings and Data">
+                        <group string="Sync Data" name="sync_data">
+                            <field name="sync_date"/>
+                            <field name="sync_data"/>
+                            <field name="compare_data"/>
+                        </group>
+                        <group name="custom_field_definition_data" string="Custom Field Definition Settings and Data">
                             <group>
                                 <field name="name"/>
                                 <field name="lang_id"/>

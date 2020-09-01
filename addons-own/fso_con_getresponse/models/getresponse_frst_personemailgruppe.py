@@ -80,6 +80,10 @@ class GetResponseContact(models.Model):
         string='Last synchronization data',
         readonly=True)
 
+    compare_data = fields.Char(
+        string='Last synchronization data to compare',
+        readonly=True)
+
     # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
     # TODO: Check if the backend_uniq constrain makes any problems for the parallel processing of jobs
     _sql_constraints = [

@@ -91,16 +91,16 @@ class TagImporter(GetResponseImporter):
             return binding
 
         # The record data read from GetResponse as a dict()
-        map_record = self._map_data()
+        map_record = self._get_map_record()
 
         # Odoo update data (vals dict for odoo fields)
-        mapped_update_data = self._update_data(map_record)
+        odoo_record_update_data = self._update_data(map_record)
 
         # The external id from the getresponse record data dict
         getresponse_id = self.getresponse_id
 
         # The unique tag name
-        getresponse_tag_name = mapped_update_data['name']
+        getresponse_tag_name = odoo_record_update_data['name']
 
         # The backend id
         backend_id = self.backend_record.id

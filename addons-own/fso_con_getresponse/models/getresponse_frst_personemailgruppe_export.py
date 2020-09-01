@@ -20,11 +20,13 @@ from openerp.tools.translate import _
 
 from openerp.addons.connector.unit.mapper import ExportMapper, mapping, only_create
 from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.exception import IDMissingInBackend
 
 from .helper_connector import get_environment
 from .backend import getresponse
 from .unit_export import BatchExporter, GetResponseExporter
 from .unit_export_delete import GetResponseDeleteExporter
+from .getresponse_frst_personemailgruppe_import import ContactImporter
 
 _logger = logging.getLogger(__name__)
 
@@ -45,10 +47,28 @@ class ContactExportMapper(ExportMapper):
                BUT for the export to GetResponse (update or write) we need the prepare the API "raw data" for the
                request!
     """
+    def __init__(self, connector_env):
+        super(ContactExportMapper, self).__init__(connector_env)
+        self.current_getresponse_record = None
+
     _model_name = 'getresponse.frst.personemailgruppe'
 
     def _map_children(self, bind_record, attr, model):
         pass
+
+    def _get_current_getresponse_record(self, bind_record):
+        assert bind_record.getresponse_id == self.getresponse_id, (
+            "bind_record.getresponse_id and self.getresponse_id do not match!")
+        if not self.current_getresponse_record:
+            try:
+                self.current_getresponse_record = self.backend_adapter.read(self.getresponse_id)
+            except IDMissingInBackend:
+                if bind_record.getresponse_id:
+                    raise IDMissingInBackend('GetResponse ID %s no longer exits!' % self.getresponse_id)
+            except Exception as e:
+                raise e
+
+        return self.current_getresponse_record
 
     # ATTENTION: !!! FOR THE EXPORT WE MUST USE THE RAW FIELD NAMES OF THE GET RESPONSE API !!!
 
@@ -81,73 +101,74 @@ class ContactExportMapper(ExportMapper):
     def tags(self, bind_record):
         partner = bind_record.frst_personemail_id.partner_id
 
-        partner_gr_tags = partner.getresponse_tag_ids
-
-        # TODO: Get the current tags list from getresponse
-        #       Get the tags of the last sync from sync_data of the binding
-        #       Get a set of changed tags since the last sync (fson_removed, fson_added, gr_removed, gr_added)
-        #       Prepare the new final list of tags
-        # TODO: If we call importer._map_data() this will run the mappper on the import side which may again load
-        #       the odoo record on the export side ... make sure there is no recursion going on here!
-        #       But i guess the import mapper may not need the export mapper but just go straight for the odoo data?
-        # importer = env.get_connector_unit(GetResponseImporter)
-        # gr_raw_data = importer._map_data()
-        # mapped_update_data = importer._update_data(map_record)
-
-        if not partner_gr_tags:
-            return
-
+        # Current odoo tags
+        current_odoo_tags = partner.getresponse_tag_ids
         tags_binder = self.binder_for('getresponse.gr.tag')
-        getresponse_tag_ids = []
-        for tag in partner_gr_tags:
+        odoo_tags_ext_ids = []
+        for tag in current_odoo_tags:
             getresponse_tag_id = tags_binder.to_backend(tag.id, wrap=True)
             assert getresponse_tag_id, (
                     "Could not find the getresponse id for tag (gr.tag) %s for contact (personemailgruppe) %s "
-                    "" % (tag.id, bind_record.id)
-            )
-            getresponse_tag_ids.append({"tagId": getresponse_tag_id})
+                    "" % (tag.id, bind_record.id))
+            odoo_tags_ext_ids.append(getresponse_tag_id)
 
-        return {'tags': getresponse_tag_ids}
+        # Directly export the odoo tag list for GetResponse contact record creation
+        if not bind_record.getresponse_id:
+            return {'tags': [{'tagId': tag_id} for tag_id in odoo_tags_ext_ids]}
+
+        # Get current getresponse tag list
+        current_getresponse_record = self._get_current_getresponse_record(bind_record)
+        getresponse_tags = current_getresponse_record.raw_data.get('tags', {})
+        getresponse_tag_ids = [tag.get('tagId') for tag in getresponse_tags]
+
+        # Combine the current getresponse tags with the tags in odoo
+        result = list(set(odoo_tags_ext_ids) | set(getresponse_tag_ids))
+
+        # REMOVE TAGS THAT WHERE UNAMBIGUOUSLY REMOVED IN ODOO SINCE THE LAST SYNC
+        if bind_record.compare_data:
+            last_sync_cmp_data = json.loads(bind_record.compare_data, encoding='utf8')
+            if 'tags' in last_sync_cmp_data:
+                last_sync_tags = last_sync_cmp_data.get('tags')
+                last_sync_tag_ids = [tag.get('tagId') for tag in last_sync_tags]
+                for index, tag_id in enumerate(result):
+                    if tag_id in last_sync_tag_ids and tag_id not in odoo_tags_ext_ids:
+                        result.pop(index)
+
+        # Return the final tag list
+        return {'tags': [{'tagId': tag_id} for tag_id in result]}
 
     # ATTENTION: A CONTACT 'UPDATE' WOULD REPLACE ALL CURRENT CUSTOM FIELDS WITH THE CUSTOM FIELDS GIVEN HERE!
-    # TODO: We only import or export values for custom field definitions that are linked to an odoo field!
-    #       But to be able to remove custom field values from Getresponse it might be better to import all
-    #       custom field values - even the ones we can not map - to be able to prepare a complete list of fields
-    #       for the export and the import. we may store this additional values to an extra field in the binding.
     @mapping
     def custom_field_values(self, bind_record):
         # HINT: Make sure the lang of the bind_record and the fields is the lang in the backend and of the custom field
         #       This should be the case already since helper_connector.py get_environment() should handle this!
         # Get all mapped custom fields:
-        mapped_custom_fields = self.session.env['gr.custom_field'].sudo().search([('field_id', "!=", False)])
+        custom_fields_obj = self.session.env['gr.custom_field']
+        mapped_custom_fields = custom_fields_obj.sudo().search([('field_id', "!=", False)])
 
+        # If there are no mapped custom fields we will not change the custom fields of the contact in GetResponse!
         if not mapped_custom_fields:
             return
 
-        # TODO: Get the current custom field values from getresponse
-        #       Get the custom field values of the last sync from sync_data of the binding
-        #       Get a set of changed field values since the last sync (fson_removed, fson_added, gr_removed, gr_added)
-        #       Prepare the new final list of custom field values
-
+        # Get the unwrapped record field name
         bind_record_model_name = bind_record._name
         peg_binder = self.binder_for(bind_record_model_name)
         openerp_field_name = peg_binder._openerp_field
 
+        # Get the odoo records that belong to the GetResponse Contact
         personemailgruppe = getattr(bind_record, openerp_field_name)
         personemail = personemailgruppe.frst_personemail_id
         partner = personemail.partner_id
 
-        custom_field_values = []
+        # Get the odoo custom field data
+        odoo_mapped_custom_field_data = {}
         custom_field_binder = self.binder_for('getresponse.gr.custom_field')
-
         for custom_field in mapped_custom_fields:
             # Get the external id of the custom field
             getresponse_custom_field_id = custom_field_binder.to_backend(custom_field.id, wrap=True)
             assert getresponse_custom_field_id, (
                     "Could not find the getresponse id for custom field (gr.custom_field) %s "
-                    "for contact (personemailgruppe) %s " % (custom_field.id, bind_record.id)
-            )
-
+                    "for contact (personemailgruppe) %s " % (custom_field.id, bind_record.id))
             # Get the 'Getresponse value' from the record with the custom field model
             cf_odoo_field_model = custom_field.field_model_name
             if cf_odoo_field_model == personemailgruppe._name:
@@ -158,20 +179,48 @@ class ContactExportMapper(ExportMapper):
                 custom_field_value = custom_field.record_to_gr_value(partner)
             else:
                 raise ValueError("The model '%s' is not supported for getresponse custom fields!" % cf_odoo_field_model)
-
+            # Convert the value to a string
             # ATTENTION: Multiple values are currently NOT supported (so one2many and many2many is not supported yet)
             value = '' if not custom_field_value else custom_field_value
             value = value if isinstance(value, basestring) else str(custom_field_value)
+            # Append the custom field data to odoo_mapped_custom_field_data
+            odoo_mapped_custom_field_data[getresponse_custom_field_id] = value
 
-            # ATTENTION: custom field values must always be in a list
-            custom_field_values.append(
-                {
-                    "customFieldId": getresponse_custom_field_id,
-                    "value": [value]
-                 }
-            )
+        # Directly export the odoo custom field data for GetResponse contact record creation
+        if not bind_record.getresponse_id:
+            return {'customFieldValues': [{'customFieldId': key, 'value': value}
+                                          for key, value in odoo_mapped_custom_field_data.iteritems()]}
 
-        return {'customFieldValues': custom_field_values}
+        # Get the current GetResponse custom field data of the contact
+        current_getresponse_record = self._get_current_getresponse_record(bind_record)
+        gr_custom_field_values = current_getresponse_record.raw_data.get('customFieldValues', {})
+        gr_custom_field_data = {f['customFieldId']: f['value'] for f in gr_custom_field_values}
+
+        # Odoo field values takes precedence on export over the GetResponse custom field values
+        result = gr_custom_field_data
+        result.update(odoo_mapped_custom_field_data)
+
+        # REMOVE FORMER MAPPED CUSTOM FIELDS
+        odoo_cf_prefix = custom_fields_obj._gr_field_prefix
+        field_exporter = self.unit_for(GetResponseExporter, model='getresponse.gr.custom_field')
+        field_definitions = field_exporter.backend_adapter.search_read(self.f_id)
+        cf_key_to_name = {cfd['customFieldId']: cfd['name'] for cfd in field_definitions.raw_data}
+        for f_id in result:
+            if f_id not in odoo_mapped_custom_field_data:
+                if f_id not in odoo_mapped_custom_field_data and cf_key_to_name[f_id].startswith(odoo_cf_prefix):
+                    result.pop(f_id)
+
+        # REMOVE CUSTOM FIELDS THAT WHERE UNAMBIGUOUSLY REMOVED IN ODOO SINCE THE LAST SYNC
+        if bind_record.compare_data:
+            last_sync_cmp_data = json.loads(bind_record.compare_data, encoding='utf8')
+            if 'customFieldValues' in last_sync_cmp_data:
+                last_custom_field_values = last_sync_cmp_data['customFieldValues']
+                last_sync_field_data = {f['customFieldId']: f['value'] for f in last_custom_field_values}
+            for f_id in result:
+                if f_id in last_sync_field_data and f_id not in odoo_mapped_custom_field_data:
+                    result.pop(f_id)
+
+        return {'customFieldValues': [{'customFieldId': key, 'value': value} for key, value in result.iteritems()]}
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -209,28 +258,7 @@ class ContactExporter(GetResponseExporter):
 
     _base_mapper = ContactExportMapper
 
-    #  TODO: FOLLOWUP: I really think an import would be better - this could update the sync_data and other
-    #                  stuff also!!!
-    def delayed_contact_binding_after_export(self, binding_id, contact_email, contact_campaing_id):
-        self.binding_id = binding_id
-        self.binding_record = self._get_binding_record()
-
-        contact_ids = self.backend_adapter.search(getresponse_campaign_ids=[contact_campaing_id], email=contact_email)
-
-        if len(contact_ids) == 1:
-            contact_id = contact_ids[0]
-            assert contact_id and isinstance(contact_id, basestring), 'GetResponse Contact ID must be a string!'
-
-            # Read the contact from GetResponse
-            contact_dict = self.backend_adapter.read(contact_id)
-
-            if contact_dict and contact_dict.get('id', '') == contact_id:
-                self.getresponse_id = contact_id
-                _logger.info("Delayed binding for contact with external id %s! binding id %s"
-                             "" % (contact_id, self.binding_id))
-                self.binder.bind(contact_id, self.binding_id, sync_data='DELAYED CONTACT BINDING')
-
-    # Export missing tag and custom field definitions
+    # Export missing campaigns, tag definitions and custom field definitions
     def _export_dependencies(self):
         # ------------------------
         # EXPORT MISSING CAMPAIGNS
@@ -279,40 +307,41 @@ class ContactExporter(GetResponseExporter):
     # ATTENTION: On contact creation GetResponse will only return a boolean because the real contact creation may be
     #            delayed. Therefore we can not bind the record directly after the contact creation but need to
     #            create a delayed job to search for the new contact and bind it later!
-    def create(self, map_record, fields=None):
-        create_data = self._create_data(map_record, fields=fields)
-        if not create_data:
-            return _('Nothing to export.')
-
-        # Special check on data before export
-        self._validate_create_data(create_data)
-
+    def create(self, create_data=None):
         boolean_result = self.backend_adapter.create(create_data)
-        assert boolean_result, "Could not create the contact! (binding_id: %s)" % self.binding_id
+        assert boolean_result, ("EXPORT: Could not schedule the contact creation in getresponse! (%s, %s)"
+                                "" % (self.binding_record._name, self.binding_record.id))
+
+        # Log the export
+        _logger.info("EXPORT: Contact creation was scheduled in GetResponse for binding '%s', '%s'"
+                     "" % (self.binding_record._name, self.binding_record.id))
 
         # ADD THE RETURNED GETRESPONSE_RECORD TO SELF
         self.getresponse_record = 'DELAYED CONTACT CREATION IN GETRESPONSE'
 
-        # UPDATE THE EXTERNAL ID FOR THE BINDING UPDATE LATER ON IN .run()
+        # UPDATE THE EXTERNAL ID FOR THE BINDING UPDATE LATER ON IN .run() > _update_binding_after_export()
         self.getresponse_id = 'DELAYED CONTACT CREATION IN GETRESPONSE'
         
         # Create a delayed binding job with some retries (1, 2, 4, 8 minutes)
-        # TODO: FOLLOWUP: I really think an import would be better - this could update the sync_data and other
-        #                 stuff also!!!
         contact_email = create_data['email']
         contact_campaing_id = create_data['campaign']['campaignId']
-        delayed_contact_binding.delay(self.session, self.model._name, self.binding_id,
-                                      contact_email, contact_campaing_id,
-                                      eta=10, max_retries=7)
+        eta = 10
+        delayed_contact_binding_and_import.delay(self.session, self.model._name, self.binding_id,
+                                                 contact_email, contact_campaing_id,
+                                                 eta=eta, max_retries=7)
 
-    def _bind_after_export(self):
+        # Log the delayed binding
+        _logger.info("EXPORT: A delayed contact binding and import was scheduled in '%s's for '%s', '%s', '%s', '%s'"
+                     "" % (eta, self.binding_record._name, self.binding_record.id, contact_email, contact_campaing_id))
+
+    def _update_binding_after_export(self, map_record, sync_data=None):
         if self.getresponse_id == 'DELAYED CONTACT CREATION IN GETRESPONSE':
             _logger.info(
-                "Could not bind contact after export because the contact creation in GetResponse is delayed!"
-                " (binding_id: %s)" % self.binding_id
+                "EXPORT: SKIPP _update_binding_after_export() because the contact creation in GetResponse is delayed!"
+                " (%s, %s)" % (self.binding_record._name, self.binding_record.id)
             )
         else:
-            return super(ContactExporter, self)._bind_after_export()
+            return super(ContactExporter, self)._update_binding_after_export(map_record, sync_data=sync_data)
 
 
 # -----------------------------
@@ -323,19 +352,35 @@ class ContactDeleteExporter(GetResponseDeleteExporter):
     _model_name = ['getresponse.frst.personemailgruppe']
 
 
-#  TODO: FOLLOWUP: I really think an import would be better - this could update the sync_data and other
-#                  stuff also!!!
-@job(default_channel='root.getresponse', retry_pattern={1: 5, 2: 10, 3: 2 * 60})
-def delayed_contact_binding(session, model_name, binding_id, contact_email, contact_campaing_id,
-                            eta=10, max_retries=7):
+@job(default_channel='root.getresponse', retry_pattern={1: 10, 2: 60, 3: 10 * 60})
+def delayed_contact_binding_and_import(session, model_name, binding_id, contact_email, contact_campaing_id,
+                                       eta=10, max_retries=7):
     # Get the odoo binding record
-    record = session.env[model_name].browse(binding_id)
+    binding = session.env[model_name].browse(binding_id)
 
     # Get an connector environment
-    env = get_environment(session, model_name, record.backend_id.id)
+    env = get_environment(session, model_name, binding.backend_id.id)
 
-    # Get the exporter
-    exporter = env.get_connector_unit(ContactExporter)
+    # Get the importer
+    contact_importer = env.get_connector_unit(ContactImporter)
 
-    # Run the delayed binding
-    exporter.delayed_contact_binding_after_export(binding_id, contact_email, contact_campaing_id)
+    # Search for the contact in GetResponse
+    contact_ids = contact_importer.backend_adapter.search(getresponse_campaign_ids=[contact_campaing_id],
+                                                          email=contact_email)
+    assert len(contact_ids) == 1, ("Contact for delayed binding not found in GetResponse! '%s', '%s', '%s', '%s'"
+                                   "" % (model_name, binding_id, contact_email, contact_campaing_id))
+
+    # Get and check the external id of the contact
+    getresponse_contact_id = contact_ids[0]
+    assert getresponse_contact_id and isinstance(getresponse_contact_id, basestring), (
+        'GetResponse Contact ID must be a string!')
+
+    # UPDATE THE BINDING WITH THE GETRESPONSE CONTACT ID BEFORE IMPORT
+    contact_importer.binder.bind(getresponse_contact_id, binding_id,
+                                 sync_data='DELAYED CONTACT BINDING',
+                                 compare_data='DELAYED CONTACT BINDING')
+    _logger.info("Binding '%s', '%s', was bound to '%s' before import for delayed contact creation!"
+                 "" % (model_name, binding_id, getresponse_contact_id))
+
+    # IMPORT THE CONTACT FROM GETRESPONSE
+    contact_importer.run(getresponse_contact_id)

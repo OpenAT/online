@@ -26,17 +26,20 @@ An export will be forced if changes in both system are detected. (Concurrent wri
 import psycopg2
 from psycopg2 import errorcodes
 from contextlib import contextmanager
+import json
+from datetime import datetime
+from datetime import timedelta
 
 from openerp.tools.translate import _
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 from openerp.addons.connector.unit.synchronizer import Exporter
 from openerp.addons.connector.exception import IDMissingInBackend, RetryableJobError
 from openerp.addons.connector.queue.job import job, related_action
 
-from .unit_import import import_record
+# from .unit_import import import_record
 from .helper_connector import get_environment
 from .helper_related_action import unwrap_binding
-from .unit_binder import GetResponseBinder
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -125,48 +128,6 @@ class GetResponseExporter(Exporter):
         # Getresponse record returned from the getresponse-python lib
         self.getresponse_record = None
 
-    def _delay_import(self):
-        """ Schedule an import of the record.
-
-        Adapt in the sub-classes when the model is not imported using ``import_record``.
-        """
-        # 'force' is 'True' because the sync_date will be more recent so the import would be skipped
-        assert self.getresponse_id
-        import_record.delay(self.session, self.model._name, self.backend_record.id, self.getresponse_id, force=True)
-
-    # TODO
-    def _should_import(self):
-        """ Before the export, compare the update date (todo: and data) in GetResponse and the last sync date (todo: and data) in Odoo,
-        if the update date in GetResponse is more recent (todo: and there where no changes in odoo),
-        schedule an import to not miss changes done in GetResponse.
-
-        TODO: If changes in both system happened _should_import() will return False to enforce the export! This means
-              the data in odoo wins in case of changes in both systems
-        """
-        assert self.binding_record
-
-        # Record was never synced (export new-odoo-record)
-        if not self.getresponse_id:
-            return False
-
-        # If a binding record exists already we first check if the record was already exported. If it was already
-        # exported it will have a sync_date if the export was not done yet we need to trigger the export.
-        sync_date_string = self.binding_record.sync_date
-        if not sync_date_string:
-            return True
-
-        # Read the getresponse record data
-        getresponse_record = self.backend_adapter.read(self.getresponse_id)
-
-        # TODO: At this point we should import the GetResponse record first if:
-        #           - the odoo record has NO! changes (binding_record.sync_data == odoo record data)
-        #           and
-        #           - the getresponse_record has changed (binding_record.sync_data != getresponse_record data)
-
-        # HINT: TODO: For the prototype we will just start the export - replace with the result of the check above when
-        #             finished
-        return False
-
     def _get_binding_record(self):
         """ Return the binding record """
         binding = self.binder.get_bindings(domain=[('id', '=', self.binding_id)])
@@ -203,9 +164,57 @@ class GetResponseExporter(Exporter):
                 '(%s with id %s). The job will be retried later.' %
                 (self.model._name, self.binding_id))
 
-    def _has_to_skip(self):
-        """ Return a message if the export can be skipped """
-        # return _('Export to GetResponse of record with ID %s was SKIPPED.') % self.getresponse_id
+    def _skip_export_for_updates(self):
+        """ Return a message if the export must be skipped because e.g.:
+              - odoo data has not changed since last sync
+            or raise an exception to prevent the export e.g.:
+              - no changes in odoo but write date in GetResponse is newer than the sync_date in odoo
+
+              Returns: a message if the export must be skipped or 'False' to continue with the export
+        """
+        # Skip checks for unbound records or records with prepared bindings because these would create new records
+        binding = self.binding_record
+        if not binding or not binding.getresponse_id:
+            return False
+
+        # GetResponse update-payload-data of the last sync
+        last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8') if binding.compare_data else {}
+
+        # Current odoo record export update data (=GetResponse update payload)
+        map_record = self.mapper.map_record(binding)
+        current_odoo_export_data = map_record.values()
+
+        # SKIPP EXPORT BECAUSE NO CHANGES WHERE MADE IN ODOO SINCE LAST EXPORT
+        if cmp(last_sync_cmp_data, current_odoo_export_data) == 0:
+            msg = ("SKIPP export of '%s' because export data did not change since last export for binding '%s', '%s'!"
+                   " current_odoo_export_data: %s, last_sync_cmp_data: %s"
+                   "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data, last_sync_cmp_data))
+            _logger.info(msg)
+            return msg
+
+        # CHECK FOR CHANGES IN GETRESPONSE SINCE THE LAST IMPORT
+        # HINT: Right now this will only trigger a log message and nothing else! The export will be done and may
+        #       override GetResponse data - this is less of a problem because the export and import mapper for
+        #       contacts will merge the current getresponse tags and custom fields - so no or very little data
+        #       could be lost.
+        if binding.sync_date:
+            last_sync_date = datetime.strptime(binding.sync_date, DEFAULT_SERVER_DATETIME_FORMAT)
+            try:
+                getresponse_record = self.backend_adapter.read(self.getresponse_id)
+            except IDMissingInBackend:
+                raise IDMissingInBackend('GetResponse ID %s no longer exits!' % self.getresponse_id)
+            except Exception as e:
+                raise e
+            getresponse_create_date = getresponse_record.get('created_on', None)
+            getresponse_write_date = getresponse_record.get('changed_on', None)
+            getresponse_last_change = getresponse_write_date or getresponse_create_date
+            if getresponse_last_change and (timedelta(seconds=5) + getresponse_last_change) > last_sync_date:
+                msg = ("FORCE EXPORT of '%s' because data changed in both systems for binding '%s', '%s'!"
+                       " GetResponse data will be overwritten! gr_last_change: %s, last_sync_date: %s"
+                       "" % (self.getresponse_id, binding._name, binding.id, getresponse_last_change, last_sync_date))
+                _logger.error(msg)
+
+        # Continue with the export
         return False
 
     @contextmanager
@@ -323,7 +332,7 @@ class GetResponseExporter(Exporter):
         """ Export the dependencies for the record"""
         return
 
-    def _map_data(self):
+    def _get_map_record(self):
         """ Returns an instance of
         :py:class:`~openerp.addons.connector.unit.mapper.MapRecord`
         """
@@ -351,49 +360,52 @@ class GetResponseExporter(Exporter):
         """ Get the data to pass to :py:meth:`_create` """
         return map_record.values(for_create=True, fields=fields, **kwargs)
 
-    def create(self, map_record, fields=None):
-        create_data = self._create_data(map_record, fields=fields)
+    def create(self, create_data=None):
         if not create_data:
             return _('Nothing to export.')
-
-        # Special check on data before export
-        self._validate_create_data(create_data)
 
         # ADD THE RETURNED GETRESPONSE_RECORD TO SELF
         self.getresponse_record = self.backend_adapter.create(create_data)
 
-        # UPDATE THE EXTERNAL ID FOR THE BINDING UPDATE LATER ON IN .run()
+        # Store the getresponse id (external id) to use it in _update_binding_after_export()
         assert self.getresponse_record.id, "GetResponse Object did not return an id! %s" % self.getresponse_record
         self.getresponse_id = self.getresponse_record.id
+
+        # Log the export
+        _logger.info("EXPORT: '%s' created in GetResponse as '%s' with create data '%s'"
+                     "" % (self.model._name, self.getresponse_id, create_data))
 
     def _update_data(self, map_record, fields=None, **kwargs):
         """ Get the data to pass to :py:meth:`_update` """
         return map_record.values(fields=fields, **kwargs)
 
-    def update(self, map_record, fields=None):
-        update_data = self._update_data(map_record, fields=fields)
+    def update(self, update_data=None):
         if not update_data:
             return _('Nothing to export.')
 
         assert self.getresponse_id
 
-        # Special check on data before export
-        self._validate_update_data(update_data)
-
-        # Add the returned getresponse_record to self
+        # Store the returned getresponse_record
         self.getresponse_record = self.backend_adapter.write(self.getresponse_id, update_data)
 
-        # Check the returned getresponse_id
+        # Compare the returned getresponse_id with the initial getresponse id
         assert self.getresponse_id == self.getresponse_record.id, _(
             "Binding GetResponse id '%s' does not match GetRepsonse ID '%s' of the returned object!!"
             "" % (self.getresponse_id, self.getresponse_record.id)
         )
 
-    def _bind_after_export(self):
-        """ Bind the record again after the export to update bind record data! (sync date, external id ...)"""
-        map_record = self._map_data()
-        update_values = self._update_data(map_record)
-        self.binder.bind(self.getresponse_id, self.binding_id, sync_data=update_values)
+        # Log the export
+        _logger.info("EXPORT: Data for binding '%s', '%s' exported to GetResponse '%s'"
+                     "" % (self.binding_record._name, self.binding_record.id, self.getresponse_id))
+
+    def _update_binding_after_export(self, map_record, sync_data=None):
+        """ Bind the record again after the export to update bind record data! (sync date, external id ...) """
+
+        # Get the update data again because the sync_data could be incomplete because of the 'fields' filter!
+        getresponse_payload_update_data = self._update_data(map_record)
+
+        self.binder.bind(self.getresponse_id, self.binding_id,
+                         sync_data=sync_data, compare_data=getresponse_payload_update_data)
 
     def _after_export(self):
         """ Can do several actions after exporting a record to GetResponse """
@@ -409,76 +421,80 @@ class GetResponseExporter(Exporter):
         """
         self.binding_id = binding_id
 
-        # Get (and validate) the binding-model-record
+        # Get the binding
         self.binding_record = self._get_binding_record()
 
-        # Skipp by binding
+        # SKIP BY BINDING
+        # ---------------
         if not self.binding_record:
-            return _('Export of binding (%s, %s) was SKIPPED by binder.get_bindings()!'
-                     ) % (self.model._name, binding_id)
+            return _("Export of '%s', '%s' was SKIPPED BY BINDING! The binding no longer exists or was filtered"
+                     " out by binder.get_bindings()!") % (self.model._name, binding_id)
 
         # Get the GetResponse ID of the record (if it is already bound/synced)
         self.getresponse_id = self.binder.to_backend(self.binding_id)
 
-        # CHECK IF WE NEED TO IMPORT THE RECORD FROM GETRESPONSE TO ODOO BEFORE WE EXPORT THE RECORD
-        # Import the record prior to the export only if changes are detected in GetResponse but not in odoo!
-        try:
-            should_import = self._should_import()
-        except IDMissingInBackend:
-            self.getresponse_id = None
-            should_import = False
-        if should_import:
-            self._delay_import()
+        # Get the fields list to export from the kwargs (this will limit the exported fields for the update)
+        if self.getresponse_id:
+            fields = kwargs.get('fields', None)
+        else:
+            # Do not limit the fields if a new record will be created in GetResponse
+            fields = None
 
-        # Get the fields list to export from the kwargs (this will limit the exported fields)
-        fields = kwargs.get('fields', None)
-
-        # Do not limit the imported fields if a new record will be created
-        if not self.getresponse_id:
-            fields = None  # should be created with all the fields
-
-        # Check if we can skip the export
-        skip_export = self._has_to_skip()
+        # SKIP EXPORT FOR UPDATES
+        # -----------------------
+        skip_export = self._skip_export_for_updates()
         if skip_export:
             return skip_export
 
-        # Export any needed linked resources first
+        # -------------------
+        # EXPORT DEPENDENCIES
+        # -------------------
         self._export_dependencies()
 
         # Prevent other jobs to export the same record. Will be released on commit (or rollback)
         self._lock()
 
-        # Get the odoo record
-        map_record = self._map_data()
+        # Get the connector map record (for the export this is the odoo record)
+        map_record = self._get_map_record()
 
         # ---------------------------
         # UPDATE A GETRESPONSE RECORD
         # ---------------------------
         if self.getresponse_id:
-            self.update(map_record, fields=fields)
+            # Get the update data for GetResponse
+            getresponse_payload_data = self._update_data(map_record, fields=fields)
+            # Check the update data before export
+            self._validate_update_data(getresponse_payload_data)
+            # Update the record in GetResponse and store the the returned getresponse record data in self
+            self.update(update_data=getresponse_payload_data)
 
-        # -------------------------------------------------------------------
-        # CREATE A GETRESPONSE RECORD AND UPDATE THE 'getresponse_id' of self
-        # -------------------------------------------------------------------
+        # ---------------------------
+        # CREATE A GETRESPONSE RECORD
+        # ---------------------------
         else:
-            self.create(map_record, fields=fields)
+            # Get the create data for GetResponse
+            getresponse_payload_data = self._create_data(map_record, fields=fields)
+            # Check the create data before export
+            self._validate_create_data(getresponse_payload_data)
+            # Create the record in getresponse and store the returned getresponse record and id in self
+            self.create(create_data=getresponse_payload_data)
 
-        # BIND THE RECORD AFTER THE EXPORT TO UPDATE THE BINDING-RECORD DATA
-        # (to update bind record data and add sync_data like in the importer)
-        self._bind_after_export()
+        # --------------------------------------
+        # UPDATE THE BINDING RECORD AFTER EXPORT
+        # --------------------------------------
+        self._update_binding_after_export(map_record, sync_data=getresponse_payload_data)
 
         # COMMIT SO WE KEEP THE EXTERNAL ID WHEN THERE ARE SEVERAL EXPORTS (DUE TO DEPENDENCIES) AND ONE OF THEM FAILS.
         # The commit will also release the lock acquired on the binding record
         self.session.commit()
 
         # DO STUFF AFTER A RECORD EXPORT
-        # TODO: Update the odoo record with the data from the getresponse object stored in self.getresponse_record
-        #       Check _run() to see where it is stored! I think this would best fit in _after_export()?!?
-        #       !!! But be careful not to trigger an other export so update the context accordingly !!!
+        # TODO: We may update the odoo record by the data in the returned getresponse record (self.getresponse_record)
         self._after_export()
 
         # Return the _run() result
-        return _('Record with ID %s was exported to GetResponse.') % self.getresponse_id
+        return _("Binding '%s', '%s' was exported to GetResponse '%s'."
+                 ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
 
 
 # HINT: The @related_action decorator will add a button on the jobs form view that will open the form view of the

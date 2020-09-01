@@ -15,15 +15,16 @@
                         </h1>
                         <group name="getresponse_campaign_binding" string="Campaign Binding">
                             <group>
-                            <field name="odoo_id"/>
-                            <field name="getresponse_id"/>
-
+                                <field name="odoo_id"/>
                             </group>
                             <group>
-                                <field name="sync_date"/>
-                                <field name="sync_data"/>
+                                <field name="getresponse_id"/>
                             </group>
-
+                        </group>
+                        <group string="Sync Data" name="sync_data">
+                            <field name="sync_date"/>
+                            <field name="sync_data"/>
+                            <field name="compare_data"/>
                         </group>
                         <group name="getresponse_campaing_data" string="Campaign Settings and Data">
                             <group>

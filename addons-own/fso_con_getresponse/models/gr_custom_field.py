@@ -149,6 +149,9 @@ class GrCustomField(models.Model):
                         "Only odoo fields of the models '%s' are allowed!" % str(self._gr_models))
                 assert r.name.startswith(self._gr_field_prefix), _(
                     "Only custom field definitions created in FS-Online are allowed to be mapped to odoo fields!")
+                assert r.field_id.name != 'email', _(
+                        "You can not map the field 'email'! The field email is mandatory and therefore"
+                        "automatically mapped!")
 
     @api.constrains('field_id', 'gr_type')
     def _constrain_gr_type(self):
@@ -404,12 +407,12 @@ class GrCustomField(models.Model):
             # TODO: We may also search for the odoo value in the future... right now it must be in the
             #       gr_values_mappings keys!
             assert raw_value in mappings, "Custom field value '%s' not found in gr_values_mappings keys!" % raw_value
-            odoo_value = mappings['raw_value']
+            odoo_value = mappings[raw_value]
 
         else:
             odoo_value = raw_value
 
-        return odoo_value
+        return odoo_value if odoo_value else False
 
     @api.model
     def watched_fields(self):
