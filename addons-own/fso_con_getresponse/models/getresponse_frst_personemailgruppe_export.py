@@ -378,14 +378,39 @@ class ContactExporter(GetResponseExporter):
         _logger.info("EXPORT: A delayed contact binding and import was scheduled in '%s's for '%s', '%s', '%s', '%s'"
                      "" % (eta, self.binding_record._name, self.binding_record.id, contact_email, contact_campaing_id))
 
-    def _update_binding_after_export(self, map_record, sync_data=None):
+    def _update_binding_after_export(self, map_record, sync_data=None, compare_data=None):
         if self.getresponse_id == 'DELAYED CONTACT CREATION IN GETRESPONSE':
             _logger.info(
                 "EXPORT: SKIPP _update_binding_after_export() because the contact creation in GetResponse is delayed!"
                 " (%s, %s)" % (self.binding_record._name, self.binding_record.id)
             )
         else:
-            return super(ContactExporter, self)._update_binding_after_export(map_record, sync_data=sync_data)
+            return super(ContactExporter, self)._update_binding_after_export(map_record,
+                                                                             sync_data=sync_data,
+                                                                             compare_data=compare_data)
+
+    def _update_odoo_record_data_after_export(self):
+        # TODO: Update the odoo records with the getresponse record data after the export because data may
+        #       be merged or added by the export mapper or getresponse
+
+        # TODO: maybe we need to set the binding too
+
+        binding = self.binding_record
+
+        # Get the odoo record update data from the getreponse record
+        contact_importer = self.unit_for(ContactImporter)
+        contact_importer.binding_record = binding
+        contact_importer.getresponse_id = binding.getresponse_id
+        contact_importer.getresponse_record = contact_importer._get_getresponse_data()
+        contact_importer.map_record = contact_importer._get_map_record()
+        update_data = contact_importer.map_record.values()
+
+        # Update the odoo record (with conectore_no_export for the current binding)
+        result = contact_importer._update(self.binding_record, update_data)
+
+        # Log the update and return the result
+        _logger.info('Updated odoo record data for binding %s, %s after export!' % (binding._name, binding.id))
+        return result
 
 
 # -----------------------------

@@ -38,7 +38,6 @@ from openerp.addons.connector.unit.synchronizer import Exporter
 from openerp.addons.connector.exception import IDMissingInBackend, RetryableJobError
 from openerp.addons.connector.queue.job import job, related_action
 
-# from .unit_import import import_record
 from .helper_connector import get_environment, cmp_payloads
 from .helper_related_action import unwrap_binding
 
@@ -414,9 +413,8 @@ class GetResponseExporter(Exporter):
         self.binder.bind(self.getresponse_id, self.binding_id,
                          sync_data=sync_data, compare_data=compare_data)
 
-    # # TODO
-    # def _update_odoo_record_data_after_export(self):
-    #     return NotImplementedError
+    def _update_odoo_record_data_after_export(self):
+        return
 
     def _after_export(self):
         """ Can do several actions after exporting a record to GetResponse """
