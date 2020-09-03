@@ -28,6 +28,8 @@ ATTENTION: Call the ``bind`` method even if the records are already bound, to up
 """
 
 import logging
+from copy import deepcopy
+
 from openerp.tools.translate import _
 
 from openerp.addons.connector.queue.job import job
@@ -35,7 +37,7 @@ from openerp.addons.connector.unit.synchronizer import Importer
 from openerp.addons.connector.unit.mapper import ExportMapper
 from openerp.addons.connector.exception import IDMissingInBackend
 
-from .helper_connector import get_environment
+from .helper_connector import get_environment, cmp_payloads
 from .unit_export import GetResponseExporter
 
 import json
@@ -147,26 +149,35 @@ class GetResponseImporter(Importer):
             last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8') if binding.compare_data else {}
 
             # Current odoo record export update data (=GetResponse update payload)
+            # ATTENTION: The export mapper would merge the current getresponse data with the current odoo data!
+            #            !!! Therefore we need to set no_external_data=True !!!
             export_mapper = self.unit_for(ExportMapper)
             map_record = export_mapper.map_record(binding)
-            current_odoo_export_data = map_record.values()
+            current_odoo_export_data = map_record.values(no_external_data=True)
 
             # Check if relevant odoo data changed since last export
-            if cmp(last_sync_cmp_data, current_odoo_export_data):
-                msg = ("SKIPP IMPORT of '%s' because odoo record data changed since last sync for binding '%s', '%s'!"
-                       " current_odoo_export_data: %s, last_sync_cmp_data: %s"
-                       "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data,
-                             last_sync_cmp_data))
-                _logger.error(msg)
-                # TODO: We should schedule an forced export of the record and than just return a message!
-                raise ValueError(msg)
+            if cmp_payloads(last_sync_cmp_data, current_odoo_export_data):
+                _logger.error("SKIPP IMPORT of '%s'! Odoo record data changed since last sync for binding '%s', '%s'!"
+                              "" % (self.getresponse_id, binding._name, binding.id,))
+
+                # FORCE EXPORT THE BINDING
+                exporter = self.unit_for(GetResponseExporter)
+                _logger.warning("FORCE EXPORT of '%s' (binding '%s', '%s') because a concurrent write was detected!"
+                                "" % (self.getresponse_id, binding._name, binding.id))
+                exporter.run(binding.id)
+
+                # SKIPP THE IMPORT
+                return ("SKIPP IMPORT of '%s'! Odoo record data changed since last sync for binding '%s', '%s'!"
+                        "\n\ncurrent_odoo_export_data:\n%s,\n\nlast_sync_cmp_data:\n%s"
+                        "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data,
+                              last_sync_cmp_data))
+
+        # A binding without compare data for binding updates should not exist!
         else:
             msg = ("Could not check '%s' for odoo data changes before import because binding.compare_data is"
                    " missing for binding '%s', '%s'!" % (self.getresponse_id, binding._name, binding.id))
             _logger.error(msg)
-            # TODO: Unclear what to do in this case - we can not simply deactivate it because this would prevent
-            #       the import of unmapped custom field definitions - Maybe we just skipp the import of cfd's
-            #       completely because we export them anyway in the export mapper custom fields handling
+            # TODO: Maybe we should raise an exception instead of
             return False
 
         # Continue with the import
@@ -188,7 +199,7 @@ class GetResponseImporter(Importer):
         :type importer_cls: :class:`openerp.addons.connector.connector.MetaConnectorUnit`
         :param always: if True, the record is updated even if it already
                        exists, note that it is still skipped if it has
-                       not been modified on GetResponce since the last
+                       not been modified on GetResponse since the last
                        update. When False, it will import it only when
                        it does not yet exist.
         :type always: boolean
@@ -307,9 +318,12 @@ class GetResponseImporter(Importer):
         assert self.binding_record, "self.binding_record is missing!"
 
         # Create the compare data based on the current odoo data after the import
+        # ATTENTION: The export mapper would merge the current getresponse data with the current odoo data!
+        #            !!! Therefore we need to set no_external_data=True !!! This should work perfectly because after
+        #            an import the data must match the current GR data!
         export_mapper = self.unit_for(ExportMapper)
         map_record = export_mapper.map_record(self.binding_record)
-        current_getresponse_update_payload = map_record.values()
+        current_getresponse_update_payload = map_record.values(no_external_data=True)
 
         # Update the binding data
         self.binder.bind(self.getresponse_id, self.binding_record,
@@ -390,14 +404,18 @@ class GetResponseImporter(Importer):
         # ---------------------------------
         if self.binding_record:
             odoo_record_data = self._update_data(self.map_record)
-            update_result = self.update(self.binding_record, odoo_record_data)
+            # Copy data to avoid side effects of added data (like sosync_write_date) on record update later on
+            copy_of_data = deepcopy(odoo_record_data)
+            update_result = self.update(self.binding_record, copy_of_data)
 
         # ---------------------------
         # CREATE a new binding record
         # ---------------------------
         else:
             odoo_record_data = self._create_data(self.map_record)
-            self.binding_record = self.create(odoo_record_data)
+            # Copy data to avoid side effects of added data (like sosync_write_date) on record update later on
+            copy_of_data = deepcopy(odoo_record_data)
+            self.binding_record = self.create(copy_of_data)
 
         # --------------------------------------
         # UPDATE THE BINDING RECORD AFTER IMPORT

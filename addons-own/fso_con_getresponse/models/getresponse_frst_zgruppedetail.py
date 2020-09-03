@@ -183,12 +183,17 @@ class CampaignAdapter(GetResponseCRUDAdapter):
         campaigns = self.getresponse_api_session.get_campaigns(filters)
         return [campaign.id for campaign in campaigns]
 
-    def read(self, id, attributes=None):
+    def read(self, ext_id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
         try:
             campaign = self.getresponse_api_session.get_campaign(id, params=attributes)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not campaign:
+            raise ValueError('No data returned from GetResponse for campaign %s! Response: %s'
+                             '' % (ext_id, campaign))
+
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return campaign.__dict__
 
@@ -196,21 +201,26 @@ class CampaignAdapter(GetResponseCRUDAdapter):
         """ Search records based on 'filters' and return their information as a dict """
         campaigns = self.getresponse_api_session.get_campaigns(filters)
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
-        return campaigns.__dict__
+        return [c.__dict__ for c in campaigns]
 
     def create(self, data):
         campaign = self.getresponse_api_session.create_campaign(data)
+        assert campaign, "Could not create campaign in GetResponse!"
         # WARNING: !!! We return the campaign object an not a dict !!!
         return campaign
 
-    def write(self, id, data):
+    def write(self, ext_id, data):
         try:
-            campaign = self.getresponse_api_session.update_campaign(id, body=data)
+            campaign = self.getresponse_api_session.update_campaign(ext_id, body=data)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
-        # WARNING: !!! We return the campaign object and not a dict !!!
+
+        if not campaign:
+            raise ValueError('No data was written to GetResponse for campaign %s! Response: %s'
+                             '' % (ext_id, campaign))
+
         return campaign
 
-    # TODO
-    def delete(self, id):
+    # It is not planed/allowed to delete any campaigns in GetResponse by FRST/FSON !
+    def delete(self, ext_id):
         raise NotImplementedError

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
+from copy import deepcopy
+
 from openerp.addons.connector.connector import ConnectorEnvironment
 from openerp.addons.connector.checkpoint import checkpoint
 
@@ -15,11 +17,12 @@ def get_environment(session, binding_model_name, backend_id):
     con_env = ConnectorEnvironment(backend_record, session, binding_model_name)
 
     # Change the language based on the backend setting and return the env
-    lang = backend_record.default_lang_id
-    lang_code = lang.code if lang else 'de_de'
+    backend_lang = backend_record.default_lang_id
+    lang_code = backend_lang.code if backend_lang and backend_lang.code else 'de_DE'
     if lang_code == session.context.get('lang'):
         return con_env
     else:
+        _logger.error("Changing lang code for connector env to %s" % lang_code)
         with con_env.session.change_context(lang=lang_code):
             return con_env
 
@@ -82,3 +85,21 @@ def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind
                      )
 
     return skipp_export
+
+
+def cmp_payloads(payload_a, payload_b):
+    """ Compares two GetResponse payloads """
+    payloads = {'a': deepcopy(payload_a), 'b': deepcopy(payload_b)}
+
+    # WARNING: We have to convert the tags-list and custom-field-list to dicts because python cmp()
+    #          would compare the position of list items also and not just if the same items are in the lists!
+    for key, payload in payloads.iteritems():
+        assert isinstance(payload, dict), 'The payload to compare must be of type dict! %s' % payload
+        # prep_compare_date = deepcopy(compare_data)
+        if 'customFieldValues' in payload:
+            payload['customFieldValues'] = {f['customFieldId']: f['value'] for f in payload['customFieldValues']}
+        if 'tags' in payload:
+            payload['tags'] = {t['tagId']: True for t in payload['tags']}
+
+    result = cmp(payloads['a'], payloads['b'])
+    return result

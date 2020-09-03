@@ -130,35 +130,54 @@ class CustomFieldAdapter(GetResponseCRUDAdapter):
     _getresponse_model = 'custom-fields'
 
     def search(self, params=None):
-        """ Search records based on 'filters' and return a list of their ids """
+        """ Search records based on 'filters'
+
+        Returns: list of custom field ids
+        """
         custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
         return [cf.id for cf in custom_fields]
 
     def read(self, external_id, params=None):
         """ Returns the information of one record found by the external record id as a dict """
+
         try:
             custom_field = self.getresponse_api_session.get_custom_field(external_id, params=params)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not custom_field:
+            raise ValueError('No data returned from GetResponse for custom field %s! Response: %s'
+                             '' % (external_id, custom_field))
+
         # WARNING: A dict() is expected! Right now 'custom_field' is a custom_field object!
         return custom_field.__dict__
 
     def search_read(self, params=None):
-        """ Search records based on 'filters' and return their data """
+        """ Search records based on 'filters' and return their data
+
+        Returns: list of custom fields as dicts
+        """
         custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
-        # WARNING: A dict() is expected! Right now 'custom_field' is a custom_field object!
-        return custom_fields.__dict__
+        # WARNING: A dict() is expected! Right now 'custom_field' is a list of custom_field object!
+        return [cf.__dict__ for cf in custom_fields]
 
     def create(self, data):
         custom_field = self.getresponse_api_session.create_custom_field(data)
+        assert custom_field, "Could not create custom field in GetResponse!"
         # WARNING: !!! We return the custom_field object an not a dict !!!
         return custom_field
 
     def write(self, external_id, data):
+
         try:
             custom_field = self.getresponse_api_session.update_custom_field(external_id, body=data)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not custom_field:
+            raise ValueError('No data was written to GetResponse for custom field %s! Response: %s'
+                             '' % (external_id, custom_field))
+
         # WARNING: !!! We return the custom_field object and not a dict !!!
         return custom_field
 
@@ -171,6 +190,11 @@ class CustomFieldAdapter(GetResponseCRUDAdapter):
             result = self.getresponse_api_session.delete_custom_field(external_id)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not result:
+            raise ValueError('Custom field %s could not be deleted in GetResponse! Response: %s'
+                             '' % (external_id, result))
+
         return result
 
 

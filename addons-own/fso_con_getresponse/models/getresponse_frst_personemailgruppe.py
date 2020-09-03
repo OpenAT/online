@@ -150,7 +150,8 @@ class ContactAdapter(GetResponseCRUDAdapter):
     _getresponse_model = 'contact'
 
     # ATTENTION: !!! A segments search will NOT return all the fields! E.g. custom fields or tags will be missing!
-    def search(self, getresponse_campaign_ids=None, name=None, email=None, custom_fields=None, **kwargs):
+    def search(self, getresponse_campaign_ids=None, name=None, email=None, custom_fields=None,
+               subscriber_types=('subscribed',), **kwargs):
         """ Returns a list of GetResponse contact ids
 
         'name', 'email' and 'custom_fields' are optional easy search attributes
@@ -164,6 +165,8 @@ class ContactAdapter(GetResponseCRUDAdapter):
             tuple format: (operator, value)
         :param custom_fields: list
             format: [(getresponse_custom_field_id, operator, value)]
+        :param subscriber_types: tuple
+            format: ('subscribed', 'undelivered', 'removed', 'unconfirmed')
 
         :return: list
             returns a list with the getresponse contact ids (external ids)
@@ -176,12 +179,21 @@ class ContactAdapter(GetResponseCRUDAdapter):
                                                                  name=name,
                                                                  email=email,
                                                                  custom_fields=custom_fields,
+                                                                 subscriber_types=subscriber_types,
                                                                  **kwargs)
         return [contact.id for contact in contacts]
 
     def read(self, ext_id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
-        contact = self.getresponse_api_session.get_contact(ext_id, params=attributes)
+        try:
+            contact = self.getresponse_api_session.get_contact(ext_id, params=attributes)
+        except NotFoundError as e:
+            raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not contact:
+            raise ValueError('No data returned from GetResponse for contact %s! Response: %s'
+                             '' % (ext_id, contact))
+
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return contact.__dict__
 
@@ -214,11 +226,10 @@ class ContactAdapter(GetResponseCRUDAdapter):
         """
         contacts = self.getresponse_api_session.get_contacts(filters)
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
-        return contacts.__dict__
+        return [c.__dict__ for c in contacts]
 
-    # TODO: Handle 'contact exists' or 'non unique value' exceptions
     def create(self, data):
-        """ Create a Contact
+        """ Scedules a Contact creation in GetResponse
 
         Returns:
             bool: True for success, False otherwise
@@ -229,51 +240,35 @@ class ContactAdapter(GetResponseCRUDAdapter):
         assert boolean_result, "Could not create contact in GetResponse!"
         return boolean_result
 
-    # TODO: Handle NotFoundError exceptions
     # ATTENTION: PLEASE CHECK 'PITFALLS' COMMENT AT THE START OF THE FILE!
     def write(self, ext_id, data):
-
-        # DISABLED: !!! SINCE WE NOW MERGE THE TAGS AND CUSTOM FIELD DATA FROM GETRESPONSE ON EXPORT IN THE MAPPER !!!
-        #
-        # # UPSERT CUSTOM FIELDS
-        # # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
-        # #       a custom field!!!
-        # # Only append/update custom field values in GetResponse but do not replace 'customFieldValues'!
-        # custom_field_values = data.pop('customFieldValues', None)
-        # if custom_field_values:
-        #
-        #     # TODO: remove all custom fields with empty values because you can not unset/delete on upsert
-        #     for index, cf in enumerate(custom_field_values):
-        #         # HINT: x2Many fields are not supported yet - therefore the first value is the only one ;)
-        #         if not cf['value'][0]:
-        #             custom_field_values.pop(index)
-        #
-        #     cfv_payload = {'customFieldValues': custom_field_values}
-        #     cfv_upsert_result = self.getresponse_api_session.upsert_contact_custom_fields(ext_id, cfv_payload)
-        #     assert len(custom_field_values) == len(cfv_upsert_result.get('customFieldValues', [])), (
-        #         "Upsert (add or update) of custom fields failed!")
-        #
-        # # UPSERT TAGS
-        # # Only append tags in GetResponse but do not replace 'tags'!
-        # # TODO: This will be replaced by a more sophisticated thing because upsert can never 'clear' (set empty)
-        # #       a tag!!!
-        # tags = data.pop('tags', None)
-        # if tags:
-        #     tags_payload = {'tags': tags}
-        #     tags_upsert_result = self.getresponse_api_session.upsert_contact_tags(ext_id, tags_payload)
-        #     assert len(tags) == len(tags_upsert_result.get('tags', [])), (
-        #         "Upsert (add or update) of tags failed!")
-
         # Update the contact in GetResponse
         # ATTENTION: !!! This will replace the custom fields and the tags completely in GetResponse !!!
-        contact = self.getresponse_api_session.update_contact(ext_id, body=data)
 
-        # WARNING: !!! We return the campaign object and not a dict !!!
+        try:
+            contact = self.getresponse_api_session.update_contact(ext_id, body=data)
+        except NotFoundError as e:
+            raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not contact:
+            raise ValueError('No data was written to GetResponse for contact %s! Response: %s'
+                             '' % (ext_id, contact))
+
+        # WARNING: !!! We return the contact object and not a dict !!!
         return contact
 
     def delete(self, ext_id):
+        """
+        Returns:
+            bool: True for success, False otherwise
+        """
         try:
             result = self.getresponse_api_session.delete_contact(ext_id)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not result:
+            raise ValueError('Contact %s could not be deleted in GetResponse! Response: %s'
+                             '' % (ext_id, result))
+
         return result

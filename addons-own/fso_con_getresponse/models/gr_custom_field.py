@@ -226,9 +226,11 @@ class GrCustomField(models.Model):
                 selection_list_correct_lang = field_definitions[f_name]['selection']
                 value_mappings = dict(selection_list_correct_lang)
 
+                # DISABLED: I think that an empty value would simply lead to a complete field removal from the contact
+                #           in GetResponse. Therefore a special value to clear the field is not necessary.
                 # Add a way to 'clear' non mandatory fields
-                if not r.field_id.required:
-                    value_mappings.update(self._gr_false_value)
+                # if not r.field_id.required:
+                #     value_mappings.update(self._gr_false_value)
 
             # MANY2ONE FIELD
             elif r.field_ttype == 'many2one':
@@ -237,14 +239,15 @@ class GrCustomField(models.Model):
                 # TODO: allow other fields of the related model than just name
                 value_mappings = {str(r.id): r.name for r in records}
 
+                # DISABLED: I think that an empty value would simply lead to a complete field removal from the contact
+                #           in GetResponse. Therefore a special value to clear the field is not necessary.
                 # Add a way to 'clear' non mandatory fields
-                if not r.field_id.required:
-                    value_mappings.update(self._gr_false_value)
+                # if not r.field_id.required:
+                #     value_mappings.update(self._gr_false_value)
 
             # BOOLEAN FIELD
             elif r.field_ttype == 'boolean':
-                # TODO: I really dont understand why the getresponse checkbox type needs values?!?
-                #       which values and how are they are mapped?!?! To be discovered ;)
+                # TODO: check if these values really match with true and false of the checkbox in GetResponse forms!
                 value_mappings = {self._gr_true_key: self._gr_true_key,
                                   self._gr_false_key: self._gr_false_key}
 
@@ -286,9 +289,9 @@ class GrCustomField(models.Model):
             r.gr_values_mappings = json.dumps(seen_values, encoding='utf-8', ensure_ascii=False)
             r.trigger_compute_gr_values = False
 
-    # --------
+    # -------
     # METHODS
-    # --------
+    # -------
     @api.model
     def _default_lang_id(self):
         german_lang = self.env['res.lang'].search([('code', '=', 'de_DE')], limit=1)
@@ -334,7 +337,6 @@ class GrCustomField(models.Model):
                 raise ValidationError("You can not change the gr_format after the custom field was created!")
 
     # Get a Custom field and a record and return the correct value like in the gr_values field!
-    # TODO: Split the functions in _onchange_gr_values() in smaller methods and use them here!
     @api.multi
     def record_to_gr_value(self, record):
         self.ensure_one()
@@ -348,38 +350,38 @@ class GrCustomField(models.Model):
 
         # Make sure we get the values for the language set in for the field
         cf_lang_code = custom_field.lang_id.code
+        context_lang = record.env.context.get('lang', '')
         assert cf_lang_code, "Language of custom field %s has no 'code'!" % custom_field.id
-        if record.env.context.get('lang') != cf_lang_code:
-            _logger.error('Language of the record (%s, %s) is not matching the language of the custom field (%s, %s)!'
-                          '' % (record._name, record.id, custom_field.name, custom_field.id))
+        if context_lang != cf_lang_code:
+            _logger.warning('Language of the record %s (%s, %s) is not matching the language of the custom field '
+                            '%s (%s, %s)! Switching record language to: %s' % (
+                context_lang, record._name, record.id, cf_lang_code, custom_field.name, custom_field.id, cf_lang_code))
             record = record.with_context(lang=cf_lang_code)
 
 
         cf_odoo_field_name = custom_field.field_id.name
 
-        # Get the value from the record for the mapped odoo field in the GetResponse Custom Field Definition
-        record_cf_field_value = record[cf_odoo_field_name]
-
-        _gr_not_selected_value = self._gr_false_value.get(self._gr_false_key)
 
         # SELECTION FIELD
         if custom_field.field_ttype == 'selection':
-            # TODO: This may not handle selection field with a possible value of ('', '') correctly
-            if not record_cf_field_value:
-                gr_value = _gr_not_selected_value
+            odoo_field_value = record[cf_odoo_field_name]
+            # TODO: Currently we may not handle selection fields with a possible selection value of ('', '') correctly
+            if not odoo_field_value:
+                gr_value = False
             else:
                 field_definitions = record.fields_get([cf_odoo_field_name])
                 selection_vals = field_definitions[cf_odoo_field_name]['selection']
                 selection_vals_dict = dict(selection_vals)
-                gr_value = selection_vals_dict[record_cf_field_value]
+                gr_value = selection_vals_dict[odoo_field_value]
 
         # MANY2ONE FIELD
         elif custom_field.field_ttype == 'many2one':
-            # TODO: allow other fields of the related model than just 'name'
+            # TODO: allow other target fields of the related model than just 'name'
             related_record = record[cf_odoo_field_name]
-            gr_value = related_record.name if related_record else False
-            if not gr_value:
-                gr_value = _gr_not_selected_value
+            if related_record:
+                gr_value = related_record.name if related_record.name else False
+            else:
+                gr_value = False
 
         # BOOLEAN FIELD
         elif custom_field.field_ttype == 'boolean':
@@ -387,7 +389,7 @@ class GrCustomField(models.Model):
 
         # ALL OTHER FIELDS
         else:
-            gr_value = record[cf_odoo_field_name]
+            gr_value = record[cf_odoo_field_name] if record[cf_odoo_field_name] else False
 
         return gr_value
 
@@ -398,20 +400,29 @@ class GrCustomField(models.Model):
         self.ensure_one()
         custom_field = self
 
+        # BOOLEAN
         if custom_field.field_ttype == 'boolean':
             assert raw_value in ('true', 'false'), "'true' or 'false' expected for a boolean field! %s" % raw_value
             odoo_value = True if raw_value == 'true' else False
 
+        # SELECTION AND MANY2ONE
+        # TODO: We may also search for the odoo value in the future... right now it must be in the
+        #       gr_values_mappings keys!
         elif custom_field.field_ttype in ('selection', 'many2one'):
             mappings = json.loads(custom_field.gr_values_mappings, encoding='utf-8')
-            # TODO: We may also search for the odoo value in the future... right now it must be in the
-            #       gr_values_mappings keys!
+
             assert raw_value in mappings, "Custom field value '%s' not found in gr_values_mappings keys!" % raw_value
             odoo_value = mappings[raw_value]
 
+            # DEPRECATED: We removed the special clearing values for selection and many2one fields
+            if odoo_value in ('false', 'true'):
+                odoo_value = True if odoo_value == 'true' else False
+
+        # ALL OTHER FIELD TYPES
         else:
             odoo_value = raw_value
 
+        # Return the odoo field value
         return odoo_value if odoo_value else False
 
     @api.model

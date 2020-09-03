@@ -12,6 +12,7 @@ from openerp.addons.connector.queue.job import job
 from .helper_connector import get_environment
 from .backend import getresponse
 from .unit_import import BatchImporter, GetResponseImporter
+from .unit_export import GetResponseExporter
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -93,7 +94,8 @@ class ContactImportMapper(ImportMapper):
             getresponse_tag_ids.append(tag.id)
 
         # (6, _, ids) replaces all existing records in the set by the ids list
-        return {'res.partner.getresponse_tag_ids': (6, None, getresponse_tag_ids)}
+        result = [(6, 0, getresponse_tag_ids)] if getresponse_tag_ids else False
+        return {'res.partner.getresponse_tag_ids': result}
 
     @mapping
     def custom_fields(self, getresponse_record):
@@ -110,14 +112,14 @@ class ContactImportMapper(ImportMapper):
         getresponse_custom_field_data = getresponse_record.get('custom_field_values', {})
 
         # Get the last sync field data if any
-        contact_binder = self.binder_for('getresponse.frst.personemailgruppe')
-        binding = contact_binder.to_openerp(getresponse_record['id'])
-        last_sync_field_data = {}
-        if binding.compare_data:
-            last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8')
-            if 'customFieldValues' in last_sync_cmp_data:
-                last_custom_field_values = last_sync_cmp_data['customFieldValues']
-                last_sync_field_data = {f['customFieldId']: f['value'] for f in last_custom_field_values}
+        # contact_binder = self.binder_for('getresponse.frst.personemailgruppe')
+        # binding = contact_binder.to_openerp(getresponse_record['id'])
+        # last_sync_field_data = {}
+        # if binding.compare_data:
+        #     last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8')
+        #     if 'customFieldValues' in last_sync_cmp_data:
+        #         last_custom_field_values = last_sync_cmp_data['customFieldValues']
+        #         last_sync_field_data = {f['customFieldId']: f['value'] for f in last_custom_field_values}
 
         # CONVERT THE CUSTOM FIELD VALUES FROM GETRESPONSE TO ODOO FIELD NAMES AND VALUES
         # -------------------------------------------------------------------------------
@@ -152,22 +154,27 @@ class ContactImportMapper(ImportMapper):
 
         # SET FIELD VALUE TO 'False' FOR FIELDS THAT WHERE UNAMBIGUOUSLY REMOVED IN GETRESPONSE SINCE THE LAST SYNC
         # ---------------------------------------------------------------------------------------------------------
+        current_gr_contact_custom_field_ids = [grcf['customFieldId'] for grcf in getresponse_custom_field_data]
         contact_binder = self.binder_for('getresponse.frst.personemailgruppe')
-        binding = contact_binder.to_openerp(getresponse_record['id'])
-        if binding.compare_data:
-            last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8')
+        contact_binding = contact_binder.to_openerp(getresponse_record['id'])
+        if contact_binding.compare_data:
+            # Get the compare data (getresponse payload) of the last sync
+            last_sync_cmp_data = json.loads(contact_binding.compare_data, encoding='utf8')
             if 'customFieldValues' in last_sync_cmp_data:
-                last_custom_field_values = last_sync_cmp_data['customFieldValues']
-                last_sync_field_data = {f['customFieldId']: f['value'] for f in last_custom_field_values}
-                for last_sync_f_id in last_sync_field_data:
-                    if last_sync_f_id not in getresponse_custom_field_data:
-                        odoo_cf = cf_binder.to_openerp(last_sync_f_id, unwrap=True)
-                        if not odoo_cf or not odoo_cf.field_id:
+                # Get the external custom field ids of the last sync
+                last_sync_contact_custom_fields = last_sync_cmp_data['customFieldValues']
+                last_sync_custom_field_ids = [lscf['customFieldId'] for lscf in last_sync_contact_custom_fields]
+                for last_sync_fid in last_sync_custom_field_ids:
+                    if last_sync_fid not in current_gr_contact_custom_field_ids:
+                        odoo_cf = cf_binder.to_openerp(last_sync_fid, unwrap=True)
+                        # Do NOT clear odoo-record-field-value for removed, unmapped or custom fields of the wrong model
+                        if not odoo_cf or not odoo_cf.field_id or odoo_cf.field_model_name not in (
+                                'res.partner', 'frst.personemail', 'frst.personemailgruppe'):
                             continue
-                        if odoo_cf.field_model_name in ('res.partner', 'frst.personemail', 'frst.personemailgruppe'):
-                            odoo_model_and_field_name = odoo_cf.field_model_name + '.' + odoo_cf.field_id.name
-                            result[odoo_model_and_field_name] = False
-
+                        # CLEAR THE ODOO FIELD VALUE BECAUSE THE CUSTOM FIELD OF THE CONTACT WAS REMOVED IN GETRESPONSE
+                        odoo_model_and_field_name = odoo_cf.field_model_name + '.' + odoo_cf.field_id.name
+                        result[odoo_model_and_field_name] = False
+        
         # Return the result
         return result
 
@@ -209,12 +216,16 @@ class ContactImportMapper(ImportMapper):
         # res.partner no 'name' handling
         # ------------------------------
         if not any(result['res.partner'].get(f, '') for f in ('name', 'firstname', 'lastname')):
-            result['res.partner']['name'] = result['frst.personemail']['email']
+            result['res.partner']['lastname'] = result['frst.personemail']['email']
 
         # res.partner firstname and lastname handling
         # -------------------------------------------
         if any(result['res.partner'].get(f, '') for f in ('firstname', 'lastname')):
             result['res.partner'].pop('name', None)
+        else:
+            if result['res.partner'].get('name'):
+                result['res.partner'].pop('firstname', None)
+                result['res.partner'].pop('lastname', None)
 
         # Return the final odoo data
         return result
@@ -296,7 +307,7 @@ class ContactImporter(GetResponseImporter):
         model_no_export = self.model.with_context(connector_no_export=True)
 
         # Get the data
-        peg_data = data['frst.personemailgruppe']
+        peg_binding_data = data['frst.personemailgruppe']
         personemail_data = data['frst.personemail']
         partner_data = data['res.partner']
 
@@ -314,10 +325,10 @@ class ContactImporter(GetResponseImporter):
         if len(personemail_data) > 1:
             personemail.write(personemail_data)
 
-        # Create the new binding
-        # HINT: We append the new personemail to the peg data
-        peg_data['frst_personemail_id'] = personemail.id
-        peg_binding = model_no_export.create(peg_data)
+        # Create the new binding and therefore the unwrapped odoo record
+        # HINT: We append the new personemail to the peg binding data
+        peg_binding_data['frst_personemail_id'] = personemail.id
+        peg_binding = model_no_export.create(peg_binding_data)
 
         return peg_binding
 
@@ -325,16 +336,16 @@ class ContactImporter(GetResponseImporter):
         binding_no_export = binding.with_context(connector_no_export={binding._name: [binding.id]})
 
         # personemailgruppe
-        peg_data = data['frst.personemailgruppe']
-        peg = binding_no_export.odoo_id
+        peg_binding_data = data['frst.personemailgruppe']
+        peg_binding = binding_no_export
 
         # personemail
         personemail_data = data['frst.personemail']
-        personemail = peg.frst_personemail_id
+        personemail = peg_binding.frst_personemail_id
 
         # partner data
         partner_data = data['res.partner']
-        partner = peg.frst_personemail_id.partner_id
+        partner = personemail.partner_id
 
         assert personemail_data['email'] == personemail.email, "The email can not be changed! %s, %s" % (data, binding)
 
@@ -347,9 +358,22 @@ class ContactImporter(GetResponseImporter):
             assert personemail.write(personemail_data), "Could not update personemail! %s" % personemail
 
         # Update the binding record (and therefore the regular odoo record (delegation inheritance) also
-        result = binding_no_export.write(peg_data)
+        result = binding_no_export.write(peg_binding_data)
 
         return result
+
+    def _after_import(self, binding):
+        # Export other Contact bindings of this res.partner after changed odoo data by getresponse contact import
+        partner = binding.frst_personemail_id.partner_id
+        all_contact_bindings = partner.mapped('frst_personemail_ids.personemailgruppe_ids.getresponse_bind_ids')
+        export_contact_bindings_after_import = all_contact_bindings - binding
+        for contact_binding in export_contact_bindings_after_import:
+            # FORCE EXPORT THE BINDING
+            exporter = self.unit_for(GetResponseExporter)
+            _logger.info("Export related contact binding '%s', '%s' to '%s' after import of '%s', '%s'!"
+                         "" % (contact_binding._name, contact_binding.id, contact_binding.getresponse_id,
+                               binding._name, binding.id))
+            exporter.run(contact_binding.id)
 
     # ----------------------------------------------------------------------------------------------------------------
     # DISABLED: Because we do not want to change existing person data just because someone guessed the right email

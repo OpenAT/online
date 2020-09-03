@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from copy import deepcopy
 
 from openerp import models
 from openerp.addons.connector.connector import Binder
@@ -38,11 +39,11 @@ class GetResponseBinder(Binder):
         if not isinstance(binding_id, models.BaseModel):
             binding_id = self.model.browse(binding_id)
 
-        # Update 'sync_data' field of the binding
-        last_sync_data_json = json.dumps(sync_data, encoding='utf-8', ensure_ascii=False)
+        # Prepare 'sync_data'
+        last_sync_data_json = json.dumps(sync_data, encoding='utf-8', ensure_ascii=False, default=str)
 
-        # Compare data (this is in the GetResponse payload format - created by the export mapper)
-        compare_data_json = json.dumps(compare_data, encoding='utf-8', ensure_ascii=False)
+        # Prepare 'compare_data' (this is a GetResponse payload - created by the export mapper)
+        compare_data_json = json.dumps(compare_data, encoding='utf-8', ensure_ascii=False, default=str)
 
         # Update the binding data (suppress exports on binding update with 'connector_no_export')
         binding_id.with_context(connector_no_export=True).write({'sync_data': last_sync_data_json,

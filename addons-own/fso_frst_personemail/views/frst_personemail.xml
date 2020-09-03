@@ -21,6 +21,7 @@
                         <field name="bestaetigt_am_um"/>
                         <field name="bestaetigt_typ"/>
                         <field name="bestaetigt_herkunft"/>
+                        <field name="anrede_lang"/>
                         <!--<field name="last_forced_main_address_set"/>-->
                     </group>
                 </group>

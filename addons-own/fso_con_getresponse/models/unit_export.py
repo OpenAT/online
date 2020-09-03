@@ -29,6 +29,7 @@ from contextlib import contextmanager
 import json
 from datetime import datetime
 from datetime import timedelta
+import pytz
 
 from openerp.tools.translate import _
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
@@ -38,7 +39,7 @@ from openerp.addons.connector.exception import IDMissingInBackend, RetryableJobE
 from openerp.addons.connector.queue.job import job, related_action
 
 # from .unit_import import import_record
-from .helper_connector import get_environment
+from .helper_connector import get_environment, cmp_payloads
 from .helper_related_action import unwrap_binding
 
 import logging
@@ -181,22 +182,24 @@ class GetResponseExporter(Exporter):
         last_sync_cmp_data = json.loads(binding.compare_data, encoding='utf8') if binding.compare_data else {}
 
         # Current odoo record export update data (=GetResponse update payload)
+        # ATTENTION: The export mapper would merge the current getresponse data with the current odoo data!
+        #            !!! Therefore we need to set no_external_data=True !!!
         map_record = self.mapper.map_record(binding)
-        current_odoo_export_data = map_record.values()
+        current_odoo_export_data = map_record.values(no_external_data=True)
 
         # SKIPP EXPORT BECAUSE NO CHANGES WHERE MADE IN ODOO SINCE LAST EXPORT
-        if cmp(last_sync_cmp_data, current_odoo_export_data) == 0:
-            msg = ("SKIPP export of '%s' because export data did not change since last export for binding '%s', '%s'!"
-                   " current_odoo_export_data: %s, last_sync_cmp_data: %s"
-                   "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data, last_sync_cmp_data))
-            _logger.info(msg)
-            return msg
+        if cmp_payloads(last_sync_cmp_data, current_odoo_export_data) == 0:
+            _logger.info("SKIPP export of '%s'! Export data did not change since last sync for binding '%s', '%s'!"
+                         "" % (self.getresponse_id, binding._name, binding.id,))
+            # Skip the export by returning a message
+            return ("SKIPP export of '%s'! Export data did not change since last export for binding '%s', '%s'!"
+                    "\n\ncurrent_odoo_export_data:\n%s,\n\nlast_sync_cmp_data:\n%s"
+                    "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data, last_sync_cmp_data))
 
         # CHECK FOR CHANGES IN GETRESPONSE SINCE THE LAST IMPORT
-        # HINT: Right now this will only trigger a log message and nothing else! The export will be done and may
-        #       override GetResponse data - this is less of a problem because the export and import mapper for
-        #       contacts will merge the current getresponse tags and custom fields - so no or very little data
-        #       could be lost.
+        # HINT: Right now this check will only trigger a log message and nothing else! The export will be done and may
+        #       override GetResponse data! This is less of a problem because the export mapper for contacts will
+        #       merge the current getresponse tags and custom fields - so no or very little data could be lost.
         if binding.sync_date:
             last_sync_date = datetime.strptime(binding.sync_date, DEFAULT_SERVER_DATETIME_FORMAT)
             try:
@@ -207,12 +210,20 @@ class GetResponseExporter(Exporter):
                 raise e
             getresponse_create_date = getresponse_record.get('created_on', None)
             getresponse_write_date = getresponse_record.get('changed_on', None)
-            getresponse_last_change = getresponse_write_date or getresponse_create_date
-            if getresponse_last_change and (timedelta(seconds=5) + getresponse_last_change) > last_sync_date:
-                msg = ("FORCE EXPORT of '%s' because data changed in both systems for binding '%s', '%s'!"
-                       " GetResponse data will be overwritten! gr_last_change: %s, last_sync_date: %s"
-                       "" % (self.getresponse_id, binding._name, binding.id, getresponse_last_change, last_sync_date))
-                _logger.error(msg)
+            gr_last_change = getresponse_write_date or getresponse_create_date
+            if gr_last_change:
+                if gr_last_change.tzinfo is None or gr_last_change.tzinfo.utcoffset(gr_last_change) is None:
+                    gr_last_change = pytz.utc.localize(gr_last_change)
+                if last_sync_date.tzinfo is None or last_sync_date.tzinfo.utcoffset(last_sync_date) is None:
+                    last_sync_date = pytz.utc.localize(last_sync_date)
+                difference = gr_last_change - last_sync_date
+                # If the last change in getresponse was 5 or more second later then the last sync we log a message
+                if difference.total_seconds() >= 5:
+                    msg = ("FORCE EXPORT of '%s' because data changed in both systems for binding '%s', '%s'!"
+                           " GetResponse data will be overwritten! gr_last_change: %s, last_sync_date: %s"
+                           "" % (self.getresponse_id, binding._name, binding.id, gr_last_change, last_sync_date))
+                    # Do NOT skip the export but log an error message
+                    _logger.error(msg)
 
         # Continue with the export
         return False
@@ -398,14 +409,14 @@ class GetResponseExporter(Exporter):
         _logger.info("EXPORT: Data for binding '%s', '%s' exported to GetResponse '%s'"
                      "" % (self.binding_record._name, self.binding_record.id, self.getresponse_id))
 
-    def _update_binding_after_export(self, map_record, sync_data=None):
+    def _update_binding_after_export(self, map_record, sync_data=None, compare_data=None):
         """ Bind the record again after the export to update bind record data! (sync date, external id ...) """
-
-        # Get the update data again because the sync_data could be incomplete because of the 'fields' filter!
-        getresponse_payload_update_data = self._update_data(map_record)
-
         self.binder.bind(self.getresponse_id, self.binding_id,
-                         sync_data=sync_data, compare_data=getresponse_payload_update_data)
+                         sync_data=sync_data, compare_data=compare_data)
+
+    # # TODO
+    # def _update_odoo_record_data_after_export(self):
+    #     return NotImplementedError
 
     def _after_export(self):
         """ Can do several actions after exporting a record to GetResponse """
@@ -433,12 +444,13 @@ class GetResponseExporter(Exporter):
         # Get the GetResponse ID of the record (if it is already bound/synced)
         self.getresponse_id = self.binder.to_backend(self.binding_id)
 
+        # DISABLED: Because it makes everything much harder to compare!
         # Get the fields list to export from the kwargs (this will limit the exported fields for the update)
-        if self.getresponse_id:
-            fields = kwargs.get('fields', None)
-        else:
-            # Do not limit the fields if a new record will be created in GetResponse
-            fields = None
+        # if self.getresponse_id:
+        #     fields = kwargs.get('fields', None)
+        # else:
+        #     # Do not limit the fields if a new record will be created in GetResponse
+        #     fields = None
 
         # SKIP EXPORT FOR UPDATES
         # -----------------------
@@ -460,36 +472,44 @@ class GetResponseExporter(Exporter):
         # ---------------------------
         # UPDATE A GETRESPONSE RECORD
         # ---------------------------
+        # Get the update data for GetResponse
+        payload_create_data = None
+        payload_update_data = self._update_data(map_record, fields=None)
         if self.getresponse_id:
-            # Get the update data for GetResponse
-            getresponse_payload_data = self._update_data(map_record, fields=fields)
             # Check the update data before export
-            self._validate_update_data(getresponse_payload_data)
+            self._validate_update_data(payload_update_data)
             # Update the record in GetResponse and store the the returned getresponse record data in self
-            self.update(update_data=getresponse_payload_data)
+            self.update(update_data=payload_update_data)
 
         # ---------------------------
         # CREATE A GETRESPONSE RECORD
         # ---------------------------
         else:
             # Get the create data for GetResponse
-            getresponse_payload_data = self._create_data(map_record, fields=fields)
+            payload_create_data = self._create_data(map_record, fields=None)
             # Check the create data before export
-            self._validate_create_data(getresponse_payload_data)
+            self._validate_create_data(payload_create_data)
             # Create the record in getresponse and store the returned getresponse record and id in self
-            self.create(create_data=getresponse_payload_data)
+            self.create(create_data=payload_create_data)
 
         # --------------------------------------
         # UPDATE THE BINDING RECORD AFTER EXPORT
         # --------------------------------------
-        self._update_binding_after_export(map_record, sync_data=getresponse_payload_data)
+        sync_data = payload_create_data if payload_create_data else payload_update_data
+        self._update_binding_after_export(map_record, sync_data=sync_data, compare_data=payload_update_data)
 
         # COMMIT SO WE KEEP THE EXTERNAL ID WHEN THERE ARE SEVERAL EXPORTS (DUE TO DEPENDENCIES) AND ONE OF THEM FAILS.
         # The commit will also release the lock acquired on the binding record
         self.session.commit()
 
+        # UPDATE ODOO RECORD DATA BY GETRESPONSE DATA AFTER EXPORT TO 'IMPORT' POTENTIALLY MERGED OR COMPUTED DATA
+        # --------------------------------------------------------------------------------------------------------
+        # ATTENTION: The export mapper may have merged getresponse data - Therefore we need to update the odoo record
+        #            even on an export to store potential data change by the data merge to the odoo record
+        self._update_odoo_record_data_after_export()
+
         # DO STUFF AFTER A RECORD EXPORT
-        # TODO: We may update the odoo record by the data in the returned getresponse record (self.getresponse_record)
+        # ------------------------------
         self._after_export()
 
         # Return the _run() result

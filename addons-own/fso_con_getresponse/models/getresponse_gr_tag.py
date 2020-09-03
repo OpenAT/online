@@ -123,6 +123,11 @@ class TagAdapter(GetResponseCRUDAdapter):
             tag = self.getresponse_api_session.get_tag(external_id, params=params)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not tag:
+            raise ValueError('No data returned from GetResponse for tag %s! Response: %s'
+                             '' % (external_id, tag))
+
         # WARNING: A dict() is expected! Right now 'tag' is a tag object!
         return tag.__dict__
 
@@ -130,10 +135,11 @@ class TagAdapter(GetResponseCRUDAdapter):
         """ Search records based on 'filters' and return their data """
         tags = self.getresponse_api_session.get_tags(params=params)
         # WARNING: A dict() is expected! Right now 'tag' is a tag object!
-        return tags.__dict__
+        return [tag.__dict__ for tag in tags]
 
     def create(self, data):
         tag = self.getresponse_api_session.create_tag(data)
+        assert tag, "Could not create tag in GetResponse!"
         # WARNING: !!! We return the tag object an not a dict !!!
         return tag
 
@@ -142,6 +148,11 @@ class TagAdapter(GetResponseCRUDAdapter):
             tag = self.getresponse_api_session.update_tag(external_id, body=data)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not tag:
+            raise ValueError('No data was written to GetResponse for tag %s! Response: %s'
+                             '' % (external_id, tag))
+
         # WARNING: !!! We return the tag object and not a dict !!!
         return tag
 
@@ -154,6 +165,11 @@ class TagAdapter(GetResponseCRUDAdapter):
             result = self.getresponse_api_session.delete_tag(external_id)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
+
+        if not result:
+            raise ValueError('Tag %s could not be deleted in GetResponse! Response: %s'
+                             '' % (external_id, result))
+
         return result
 
 
