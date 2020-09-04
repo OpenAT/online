@@ -362,18 +362,18 @@ class ContactImporter(GetResponseImporter):
 
         return result
 
-    def _after_import(self, binding):
-        # Export other Contact bindings of this res.partner after changed odoo data by getresponse contact import
-        partner = binding.frst_personemail_id.partner_id
+    def _import_related_bindings(self, *args, **kwargs):
+        contact_binding = self.binding_record
+        partner = contact_binding.frst_personemail_id.partner_id
         all_contact_bindings = partner.mapped('frst_personemail_ids.personemailgruppe_ids.getresponse_bind_ids')
-        export_contact_bindings_after_import = all_contact_bindings - binding
-        for contact_binding in export_contact_bindings_after_import:
+        related_contact_bindings = all_contact_bindings - contact_binding
+        for related_binding in related_contact_bindings:
             # FORCE EXPORT THE BINDING
             exporter = self.unit_for(GetResponseExporter)
-            _logger.info("Export related contact binding '%s', '%s' to '%s' after import of '%s', '%s'!"
-                         "" % (contact_binding._name, contact_binding.id, contact_binding.getresponse_id,
-                               binding._name, binding.id))
-            exporter.run(contact_binding.id)
+            _logger.info("Export related contact binding '%s', '%s' to '%s' AFTER IMPORT OF '%s', '%s'!"
+                         "" % (related_binding._name, related_binding.id, related_binding.getresponse_id,
+                               contact_binding._name, contact_binding.id))
+            exporter.run(contact_binding.id, skip_import_related_bindings=True)
 
     # ----------------------------------------------------------------------------------------------------------------
     # DISABLED: Because we do not want to change existing person data just because someone guessed the right email

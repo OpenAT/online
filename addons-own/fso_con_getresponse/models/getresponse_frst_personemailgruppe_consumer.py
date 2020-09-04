@@ -75,6 +75,8 @@ def export_binding_on_contact_update(session, model_name, record_id, vals):
     #            run() > _get_binding_record() > binder.get_bindings()
     for binding_record in peg_bindings:
         export_binding(session, binding_record._name, binding_record.id, vals, delay=True)
+        # TEST: It may be enough to export only one of the bindings since the export will export related bindings
+        break
 
 
 @on_record_unlink(model_names=['frst.personemailgruppe'])

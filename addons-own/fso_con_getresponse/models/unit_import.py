@@ -329,14 +329,17 @@ class GetResponseImporter(Importer):
         self.binder.bind(self.getresponse_id, self.binding_record,
                          sync_data=sync_data, compare_data=current_getresponse_update_payload)
 
-    def _after_import(self, binding):
+    def _import_related_bindings(self, *args, **kwargs):
+        return
+
+    def _after_import(self, *args, **kwargs):
         """ Hook called at the end of the import """
         return
 
     # -----------------
     # RUN/DO THE IMPORT
     # -----------------
-    def run(self, getresponse_id, force=False):
+    def run(self, getresponse_id, force=False, *args, **kwargs):
         """ Run the synchronization
 
         :param getresponse_id: identifier of the record in GetResponse
@@ -422,8 +425,15 @@ class GetResponseImporter(Importer):
         # --------------------------------------
         self._update_binding_after_import(sync_data=odoo_record_data)
 
-        # After import hook
-        self._after_import(self.binding_record)
+        # IMPORT RELATED BINDINGS
+        # -----------------------
+        if 'skip_import_related_bindings' not in kwargs:
+            self._import_related_bindings(*args, **kwargs)
+
+        # AFTER IMPORT HOOK
+        # -----------------
+        if 'skip_after_import' not in kwargs:
+            self._after_import(*args, **kwargs)
 
 
 # HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()

@@ -413,12 +413,15 @@ class GetResponseExporter(Exporter):
         self.binder.bind(self.getresponse_id, self.binding_id,
                          sync_data=sync_data, compare_data=compare_data)
 
-    def _update_odoo_record_data_after_export(self):
+    def _update_odoo_record_data_after_export(self, *args, **kwargs):
         return
 
-    def _after_export(self):
+    def _export_related_bindings(self, *args, **kwargs):
+        return
+
+    def _after_export(self, *args, **kwargs):
         """ Can do several actions after exporting a record to GetResponse """
-        pass
+        return
 
     # ------------------------------------------
     # EXPORT THE RECORD FROM ODOO TO GETRESPONSE
@@ -504,11 +507,17 @@ class GetResponseExporter(Exporter):
         # --------------------------------------------------------------------------------------------------------
         # ATTENTION: The export mapper may have merged getresponse data - Therefore we need to update the odoo record
         #            even on an export to store potential data change by the data merge to the odoo record
-        self._update_odoo_record_data_after_export()
+        self._update_odoo_record_data_after_export(*args, **kwargs)
+
+        # EXPORT RELATED BINDINGS AFTER AN EXPORT
+        # ---------------------------------------
+        if 'skip_export_related_bindings' not in kwargs:
+            self._export_related_bindings(*args, **kwargs)
 
         # DO STUFF AFTER A RECORD EXPORT
         # ------------------------------
-        self._after_export()
+        if 'skip_after_export' not in kwargs:
+            self._after_export(*args, **kwargs)
 
         # Return the _run() result
         return _("Binding '%s', '%s' was exported to GetResponse '%s'."

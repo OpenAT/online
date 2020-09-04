@@ -135,6 +135,7 @@ class ContactExportMapper(ExportMapper):
 
         # REMOVE TAGS THAT WHERE UNAMBIGUOUSLY REMOVED IN ODOO SINCE THE LAST SYNC
         # ------------------------------------------------------------------------
+        # TODO: We may get all related bindings here and generate the complete list to not loose any data
         # HINT: This would only remove tags that are still in GR but where removed in odoo
         # HINT: We do not remove GetResponse Tags here - If only changes in GetResponse where made since the last
         #       sync we would do an import already instead of the export!
@@ -145,7 +146,6 @@ class ContactExportMapper(ExportMapper):
             if 'tags' in last_sync_cmp_data:
                 last_sync_tags = last_sync_cmp_data.get('tags')
                 last_sync_tag_ids = [tag.get('tagId') for tag in last_sync_tags]
-
                 for index, tag_id in enumerate(combined_tags):
                     if tag_id in last_sync_tag_ids and tag_id not in odoo_tags_ext_ids:
                         combined_tags.pop(index)
@@ -220,6 +220,7 @@ class ContactExportMapper(ExportMapper):
 
         # REMOVE FORMER MAPPED ODOO CUSTOM FIELDS FROM CURRENT GETRESPONSE FIELD DATA
         # ---------------------------------------------------------------------------
+        # TODO: We may get all related bindings here and generate the complete list to not loose any data
         # HINT: This would only remove custom fields that are no longer mapped in odoo or where removed in odoo
         odoo_cf_prefix = custom_fields_obj._gr_field_prefix
         field_exporter = self.unit_for(GetResponseExporter, model='getresponse.gr.custom_field')
@@ -231,6 +232,7 @@ class ContactExportMapper(ExportMapper):
 
         # COMBINE CURRENT ODOO CUSTOM FIELDS WITH CURRENT GETRESPONSE CUSTOM FIELDS
         # -------------------------------------------------------------------------
+        # TODO: We may get all related bindings here and generate the complete list to not loose any data
         # HINT: Odoo field values takes precedence on export over the GetResponse custom field values
         # HINT: We do not remove GetResponse CF data here - If only changes in GetResponse where made since the last
         #       sync we would do an import already instead of the export!
@@ -389,12 +391,9 @@ class ContactExporter(GetResponseExporter):
                                                                              sync_data=sync_data,
                                                                              compare_data=compare_data)
 
-    def _update_odoo_record_data_after_export(self):
-        # TODO: Update the odoo records with the getresponse record data after the export because data may
-        #       be merged or added by the export mapper or getresponse
-
-        # TODO: maybe we need to set the binding too
-
+    def _update_odoo_record_data_after_export(self, *args, **kwargs):
+        # Update the odoo records with the getresponse record data after the export because data may have been
+        # merged or added by the export mapper or getresponse
         binding = self.binding_record
 
         # Get the odoo record update data from the getreponse record
@@ -409,9 +408,21 @@ class ContactExporter(GetResponseExporter):
         result = contact_importer._update(self.binding_record, update_data)
 
         # Log the update and return the result
-        _logger.info('Updated odoo record data for binding %s, %s after export!' % (binding._name, binding.id))
+        _logger.info('Updated odoo record data (for binding %s, %s) after export!' % (binding._name, binding.id))
         return result
 
+    def _export_related_bindings(self, *args, **kwargs):
+        # Export other Contact bindings of this res.partner
+        # HINT: The export will be skipped if the last sync compare data matches the current payload
+        contact_binding = self.binding_record
+        partner = contact_binding.frst_personemail_id.partner_id
+        all_contact_bindings = partner.mapped('frst_personemail_ids.personemailgruppe_ids.getresponse_bind_ids')
+        related_contact_bindings = all_contact_bindings - contact_binding
+        for related_binding in related_contact_bindings:
+            _logger.info("Export related contact binding '%s', '%s' to '%s' AFTER EXPORT OF '%s', '%s'!"
+                         "" % (related_binding._name, related_binding.id, related_binding.getresponse_id,
+                               contact_binding._name, contact_binding.id))
+            self.run(related_binding.id, skip_export_related_bindings=True)
 
 # -----------------------------
 # SINGLE RECORD DELETE EXPORTER
