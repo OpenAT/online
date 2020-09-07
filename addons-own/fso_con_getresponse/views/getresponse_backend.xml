@@ -8,17 +8,6 @@
             <field name="model">getresponse.backend</field>
             <field name="arch" type="xml">
                 <form string="GetResponse Backend">
-                    <header>
-                        <!-- Campaigns -->
-                        <button name="import_getresponse_campaigns_direct"
-                                type="object"
-                                class="oe_highlight"
-                                string="Import Campaigns"/>
-                        <button name="export_getresponse_campaigns_direct"
-                                type="object"
-                                class="oe_highlight"
-                                string="Export Campaigns"/>
-                    </header>
                     <sheet>
                         <label for="name" class="oe_edit_only"/>
                         <h1>

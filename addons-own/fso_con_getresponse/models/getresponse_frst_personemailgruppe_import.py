@@ -370,7 +370,7 @@ class ContactImporter(GetResponseImporter):
         for related_binding in related_contact_bindings:
             # FORCE EXPORT THE BINDING
             exporter = self.unit_for(GetResponseExporter)
-            _logger.info("Export related contact binding '%s', '%s' to '%s' AFTER IMPORT OF '%s', '%s'!"
+            _logger.info("IMPORT: Export related contact binding '%s', '%s' to '%s' AFTER IMPORT OF '%s', '%s'!"
                          "" % (related_binding._name, related_binding.id, related_binding.getresponse_id,
                                contact_binding._name, contact_binding.id))
             exporter.run(contact_binding.id, skip_import_related_bindings=True)

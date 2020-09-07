@@ -30,10 +30,16 @@ from openerp.exceptions import ValidationError
 from openerp.tools.translate import _
 
 from openerp.addons.connector.exception import IDMissingInBackend
+from openerp.addons.connector.session import ConnectorSession
 
 from .backend import getresponse
 from .unit_adapter import GetResponseCRUDAdapter
 from .unit_binder import GetResponseBinder
+from .unit_export import export_record
+from .unit_import import import_record
+
+from .getresponse_frst_personemailgruppe_export import contact_export_batch
+from .getresponse_frst_personemailgruppe_import import contact_import_batch
 
 _logger = logging.getLogger(__name__)
 
@@ -92,6 +98,23 @@ class GetResponseContact(models.Model):
         ('odoo_uniq', 'unique(backend_id, odoo_id)',
          'A binding already exists for this odoo record and this GetResponse backend (Account).'),
     ]
+
+    # ---------------------
+    # CONTACTS SYNC BUTTONS
+    # ---------------------
+    @api.multi
+    def export_getresponse_contact_direct(self):
+        """ Export Contact Binding (personemailgruppe) for enabled Campaigns (zgruppedetail) to GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for binding in self:
+            export_record(session, binding._name, binding.backend_id.id)
+
+    @api.multi
+    def import_getresponse_contact_direct(self):
+        """ Import Contact Binding (personemailgruppe) for enabled Campaigns (zgruppedetail) from GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for binding in self:
+            import_record(session, binding._name, binding.backend_id.id)
 
 
 class GetResponseFrstZgruppedetail(models.Model):

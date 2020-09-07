@@ -15,6 +15,7 @@
 
 import logging
 import json
+from datetime import datetime, timedelta
 
 from openerp.tools.translate import _
 
@@ -361,35 +362,23 @@ class ContactExporter(GetResponseExporter):
                      "" % (self.binding_record._name, self.binding_record.id))
 
         # UPDATE self.getresponse_record FOR THE BINDING UPDATE LATER ON IN .run() > _update_binding_after_export()
-        self.getresponse_record = 'DELAYED CONTACT CREATION IN GETRESPONSE'
-
-        # UPDATE self.getresponse_id FOR THE BINDING UPDATE LATER ON IN .run() > _update_binding_after_export()
-        self.getresponse_id = 'DELAYED CONTACT CREATION IN GETRESPONSE'
+        # ATTENTION: This will be checked in unit_export.py > run()
+        self.getresponse_record = 'DELAYED CREATION IN GETRESPONSE'
 
         # ---------------------------------------------------------
         # SCHEDULE AN ODOO JOB TO BIND AND IMPORT THE CONTACT LATER
         # ---------------------------------------------------------
         contact_email = create_data['email']
         contact_campaing_id = create_data['campaign']['campaignId']
-        eta = 15
+        eta = 60*2
         delayed_contact_binding_and_import.delay(self.session, self.model._name, self.binding_id,
                                                  contact_email, contact_campaing_id,
                                                  eta=eta, max_retries=7)
 
         # Log the delayed binding
-        _logger.info("EXPORT: A delayed contact binding and import was scheduled in '%s's for '%s', '%s', '%s', '%s'"
+        _logger.info("EXPORT: A delayed contact binding and import was scheduled in '%s's for '%s', '%s', email: '%s',"
+                     " campaign_id: '%s'"
                      "" % (eta, self.binding_record._name, self.binding_record.id, contact_email, contact_campaing_id))
-
-    def _update_binding_after_export(self, map_record, sync_data=None, compare_data=None):
-        if self.getresponse_id == 'DELAYED CONTACT CREATION IN GETRESPONSE':
-            _logger.info(
-                "EXPORT: SKIPP _update_binding_after_export() because the contact creation in GetResponse is delayed!"
-                " (%s, %s)" % (self.binding_record._name, self.binding_record.id)
-            )
-        else:
-            return super(ContactExporter, self)._update_binding_after_export(map_record,
-                                                                             sync_data=sync_data,
-                                                                             compare_data=compare_data)
 
     def _update_odoo_record_data_after_export(self, *args, **kwargs):
         # Update the odoo records with the getresponse record data after the export because data may have been
@@ -423,6 +412,23 @@ class ContactExporter(GetResponseExporter):
                          "" % (related_binding._name, related_binding.id, related_binding.getresponse_id,
                                contact_binding._name, contact_binding.id))
             self.run(related_binding.id, skip_export_related_bindings=True)
+            
+    def run(self, binding_id, *args, **kwargs):
+        try:
+            return super(ContactExporter, self).run(binding_id, *args, **kwargs)
+        except IDMissingInBackend as e:
+            # Expire the personemailgruppe since it was removed in GetResponse
+            if self.binding_record and self.binding_record.getresponse_id:
+                peg = self.binder.unwrap_binding(self.binding_record)
+                if len(peg) == 1:
+                    _logger.warning('External ID %s not found in GetResponse! Expiring frst.personeamilgruppe %s'
+                                    '' % (self.binding_record.getresponse_id, peg.id))
+                    yesterday = datetime.now() - timedelta(days=1)
+                    peg.with_context(connector_no_export=True).write({'gueltig_bis': yesterday})
+                    return
+            raise e
+        except Exception as e:
+            raise e
 
 # -----------------------------
 # SINGLE RECORD DELETE EXPORTER
@@ -472,9 +478,9 @@ def delayed_contact_binding_and_import(session, model_name, binding_id, contact_
     # contact_importer.binder.bind(getresponse_contact_id, binding_id,
     #                              sync_data='DELAYED CONTACT BINDING',
     #                              compare_data=False)
-    _logger.info("Binding '%s', '%s', was bound to '%s' before import for delayed contact creation!"
+    _logger.info("LATE BINDING: Binding '%s', '%s', was bound to '%s' before import for delayed contact creation!"
                  "" % (model_name, binding_id, getresponse_contact_id))
 
     # IMPORT THE CONTACT FROM GETRESPONSE
     # -----------------------------------
-    contact_importer.run(getresponse_contact_id)
+    contact_importer.run(getresponse_contact_id, skip_import_related_bindings=True)

@@ -123,8 +123,8 @@ class GetResponseFrstZgruppedetail(models.Model):
                     assert re.match(r"(?:[a-z0-9_]+)\Z", name, flags=0), _(
                         "Only a-z, 0-9 and _ is allowed for the GetResponse campaign name '{}'! "
                         "Please change the group name or use the 'GetResponse Campaign Name' field!").format(name)
-                # TODO: Do not allow to unset 'sync_with_getresponse' as long as PersonEmailGruppe bindings to
-                #       GetResponse contacts exists (= as long as synced subscriber exist)
+                # TODO: Check that the api double-opt-in setting in is 'single' for API we may just raise a warning
+                #       to make it possible to change the api setting?!?
 
     @api.constrains('gr_name')
     def constrain_gr_name(self):
@@ -186,7 +186,7 @@ class CampaignAdapter(GetResponseCRUDAdapter):
     def read(self, ext_id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
         try:
-            campaign = self.getresponse_api_session.get_campaign(id, params=attributes)
+            campaign = self.getresponse_api_session.get_campaign(ext_id, params=attributes)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
 

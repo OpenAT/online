@@ -431,6 +431,17 @@ class GetResponseExporter(Exporter):
 
         :param binding_id: identifier of the binding record to export
         """
+        # DISABLED: Because it makes everything much harder to compare!
+        # Get the fields list to export from the kwargs (this will limit the exported fields for the update)
+        # if self.getresponse_id:
+        #     fields = kwargs.get('fields', None)
+        # else:
+        #     # Do not limit the fields if a new record will be created in GetResponse
+        #     fields = None
+        if kwargs.get('fields', False):
+            _logger.error("EXPORT: fields in kwargs! Reset fields to Null!")
+            kwargs['fields'] = None
+
         self.binding_id = binding_id
 
         # Get the binding
@@ -444,14 +455,6 @@ class GetResponseExporter(Exporter):
 
         # Get the GetResponse ID of the record (if it is already bound/synced)
         self.getresponse_id = self.binder.to_backend(self.binding_id)
-
-        # DISABLED: Because it makes everything much harder to compare!
-        # Get the fields list to export from the kwargs (this will limit the exported fields for the update)
-        # if self.getresponse_id:
-        #     fields = kwargs.get('fields', None)
-        # else:
-        #     # Do not limit the fields if a new record will be created in GetResponse
-        #     fields = None
 
         # SKIP EXPORT FOR UPDATES
         # -----------------------
@@ -496,12 +499,23 @@ class GetResponseExporter(Exporter):
         # --------------------------------------
         # UPDATE THE BINDING RECORD AFTER EXPORT
         # --------------------------------------
-        sync_data = payload_create_data if payload_create_data else payload_update_data
-        self._update_binding_after_export(map_record, sync_data=sync_data, compare_data=payload_update_data)
+        if not self.getresponse_record == 'DELAYED CREATION IN GETRESPONSE':
+            sync_data = payload_create_data if payload_create_data else payload_update_data
+            self._update_binding_after_export(map_record, sync_data=sync_data, compare_data=payload_update_data)
 
         # COMMIT SO WE KEEP THE EXTERNAL ID WHEN THERE ARE SEVERAL EXPORTS (DUE TO DEPENDENCIES) AND ONE OF THEM FAILS.
         # The commit will also release the lock acquired on the binding record
         self.session.commit()
+
+        # SKIPP AFTER EXPORT METHODS IF THE CREATION IS DELAYED IN GETRESPONSE
+        # --------------------------------------------------------------------
+        if self.getresponse_record == 'DELAYED CREATION IN GETRESPONSE':
+            _logger.info(
+                "EXPORT: SKIPP all after export methods in run() because the creation in GetResponse is delayed!"
+                " (%s, %s)" % (self.binding_record._name, self.binding_record.id)
+            )
+            return _("Binding '%s', '%s' was exported to GetResponse '%s'."
+                     ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
 
         # UPDATE ODOO RECORD DATA BY GETRESPONSE DATA AFTER EXPORT TO 'IMPORT' POTENTIALLY MERGED OR COMPUTED DATA
         # --------------------------------------------------------------------------------------------------------

@@ -8,6 +8,16 @@
             <field name="model">getresponse.frst.personemailgruppe</field>
             <field name="arch" type="xml">
                 <form string="GetResponse Contact Binding">
+                    <header>
+                        <button name="export_getresponse_contact_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Export"/>
+                        <button name="import_getresponse_contact_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Import"/>
+                    </header>
                     <sheet>
                         <label for="backend_id" class="oe_edit_only"/>
                         <h1>

@@ -13,6 +13,8 @@
         'fso_frst_cds',
     ],
     "data": [
+        'security/fs_groups_security.xml',
+        'security/ir.model.access.csv',
         'views/gr_custom_field.xml',
         'views/gr_tag.xml',
         'views/res_partner.xml',

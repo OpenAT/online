@@ -47,7 +47,7 @@ def export_binding(session, binding_model_name, binding_record_id, vals, delay=T
 
 
 def export_delete(session, binding_model_name, binding_record_id, delay=True):
-
+    _logger.info("EXPORT DELETE: %s, %s" % (binding_model_name, binding_record_id))
     # Prevent export of binding-deletion! (recursion switch)
     if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
         return

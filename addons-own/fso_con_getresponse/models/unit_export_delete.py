@@ -59,12 +59,12 @@ def export_delete_record(session, model_name, backend_id, getresponse_id):
     """ Delete a record in GetResponse """
 
     # Get an connector environment
-    env = get_environment(session, model_name, backend_id)
+    connector_env = get_environment(session, model_name, backend_id)
 
     # ATTENTION: The GetResponseDeleter class may be changed by the model specific implementation!
     #            The connector knows which classes to consider based on the _model_name of the class and the
     #            'model_name' in the args of import_record used in the connector environment above
-    deleter = env.get_connector_unit(GetResponseDeleteExporter)
-
+    deleter = connector_env.get_connector_unit(GetResponseDeleteExporter)
+    _logger.info("DELETE RECORD %s IN GETRESPONSE!" % getresponse_id)
     # Start the .run() method of the found exporter class
     return deleter.run(getresponse_id)

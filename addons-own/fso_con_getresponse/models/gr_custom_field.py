@@ -353,7 +353,7 @@ class GrCustomField(models.Model):
         context_lang = record.env.context.get('lang', '')
         assert cf_lang_code, "Language of custom field %s has no 'code'!" % custom_field.id
         if context_lang != cf_lang_code:
-            _logger.warning('Language of the record %s (%s, %s) is not matching the language of the custom field '
+            _logger.debug('Language of the record %s (%s, %s) is not matching the language of the custom field '
                             '%s (%s, %s)! Switching record language to: %s' % (
                 context_lang, record._name, record.id, cf_lang_code, custom_field.name, custom_field.id, cf_lang_code))
             record = record.with_context(lang=cf_lang_code)
