@@ -343,10 +343,19 @@ class sale_order(osv.Model):
             for l in order.website_order_line:
                 if l.exists() and l.id != sol.id:
 
-                    # Product theme mismatch
+                    # Donation button template mismatch
                     if product.donation_input_template != l.product_id.donation_input_template:
                         _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
-                                     'donation_input_template do not match' % (l.id, order.id))
+                                     'donation_input_template (donation button templates) do not match'
+                                     '' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
+                    # Product theme mismatch
+                    if product.website_theme != l.product_id.website_theme:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'designs of the products (website_theme) do not match'
+                                     '' % (l.id, order.id))
                         sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
                         continue
 
