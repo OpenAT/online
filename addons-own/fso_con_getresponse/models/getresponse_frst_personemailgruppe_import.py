@@ -337,7 +337,8 @@ class ContactImporter(GetResponseImporter):
         return peg_binding
 
     def _update(self, binding, data):
-        binding_no_export = binding.with_context(connector_no_export={binding._name: [binding.id]})
+        # binding_no_export = binding.with_context(connector_no_export={binding._name: [binding.id]})
+        binding_no_export = binding.with_context(connector_no_export=True)
 
         def _remove_unchanged(update_data, record):
             result = {}
@@ -347,6 +348,8 @@ class ContactImporter(GetResponseImporter):
                 f_type = record._fields[f_name].type
                 if f_type in ('many2one', 'one2many', 'many2many'):
                     record_value = getattr(record, f_name).ids
+                    if update_value and isinstance(update_value, basestring):
+                        update_value = int(update_value)
                     compare_value = update_value if isinstance(update_value, list) else [update_value]
                     if len(compare_value) == 1 and isinstance(compare_value[0], tuple) and compare_value[0][0] == 6:
                         compare_value = compare_value[0][2]
@@ -437,14 +440,14 @@ class ContactImporter(GetResponseImporter):
 
         # The group (zgruppedetail) this contact (personemailgruppe) belongs to
         campaign_binder = self.binder_for('getresponse.frst.zgruppedetail')
-        external_campaign_id = getresponse_record.campaign.id
+        external_campaign_id = getresponse_record['campaign'].id
         zgruppedetail = campaign_binder.to_openerp(external_campaign_id, unwrap=True)
         zgruppedetail_id = zgruppedetail.id if zgruppedetail else None
         if not zgruppedetail_id:
             return super(ContactImporter, self).bind_before_import()
 
         # The unique email of the contact (personemailgruppe)
-        email = getresponse_record.email
+        email = getresponse_record['email']
 
         # EXISTING PREPARED BINDING (binding without external id)
         prepared_binding = self.model.search([('backend_id', '=', backend_id),

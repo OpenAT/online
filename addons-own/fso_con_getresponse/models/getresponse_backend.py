@@ -223,6 +223,21 @@ class GetResponseBackend(models.Model):
         for backend in self:
             contact_export_batch.delay(session, 'getresponse.frst.personemailgruppe', backend.id, delay=True)
 
+    # -----------------
+    # SCHEDULED ACTIONS
+    # -----------------
+    @api.model
+    def scheduled_contact_import(self):
+        backends = self.sudo().search([])
+        for backend in backends:
+            backend.import_getresponse_contacts_delay()
+
+    @api.model
+    def scheduled_contact_export(self):
+        backends = self.sudo().search([])
+        for backend in backends:
+            backend.export_getresponse_contacts_delay()
+
 
 # Inverse field for the default_zgruppe_id settings field in the backend
 class FRSTzGruppe(models.Model):

@@ -36,5 +36,6 @@
         'fso_con_getresponse',
     ],
     'data': [
+        'security/ir.model.access.csv'
     ],
 }

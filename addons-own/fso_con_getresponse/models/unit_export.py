@@ -551,8 +551,6 @@ class GetResponseExporter(Exporter):
                  ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
 
 
-
-
 # HINT: The @related_action decorator will add a button on the jobs form view that will open the form view of the
 #       unwrapped record. E.g. a job for getresponse.frst.zgruppedetail will open the form view for frst.zgruppedetail
 # ATTENTION: export_record expects binding records !!! Create them first if needed!

@@ -300,7 +300,8 @@ class GetResponseImporter(Importer):
 
     def _update(self, binding, data):
         # Add connector_no_export={bind_model_name: [id]} to prevent GetResponse exports for this binding
-        binding = binding.with_context(connector_no_export={binding._name: [binding.id]})
+        # binding = binding.with_context(connector_no_export={binding._name: [binding.id]})
+        binding = binding.with_context(connector_no_export=True)
         # Update the binding record (and therefore the regular odoo record (delegation inheritance) also
         boolean_result = binding.write(data)
         return boolean_result

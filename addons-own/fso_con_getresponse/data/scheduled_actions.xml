@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data noupdate="1">
+
+    <!-- ================= -->
+    <!-- SCHEDULED ACTIONS -->
+    <!-- ================= -->
+
+    <record id="ir_cron_scheduled_getresponse_import" model="ir.cron" forcecreate="1">
+        <field name="name">GetResponse: Scheduled IMPORT of GetResponse CONTACTS for all backends</field>
+        <field name="priority" eval="5500" />
+        <field name="active" eval="True"/>
+        <field name="interval_number">7</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">getresponse.backend</field>
+        <field name="function">scheduled_contact_import</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+    <record id="ir_cron_scheduled_getresponse_export" model="ir.cron" forcecreate="1">
+        <field name="name">GetResponse: Scheduled EXPORT of GetResponse CONTACTS for all backends</field>
+        <field name="priority" eval="5501" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">7</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">getresponse.backend</field>
+        <field name="function">scheduled_contact_export</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+</data></openerp>
