@@ -15,6 +15,8 @@ _logger = logging.getLogger(__name__)
 
 def prepare_binding(session, binding_model_name, unwrapped_record_id, vals):
     # HINT: No recursion switch needed because prepare_binding can only be called on record create in FSON
+    _logger.info("CONSUMER: prepare binding for binding model: %s and unwrapped record id: %s"
+                 "" % (binding_model_name, unwrapped_record_id))
 
     # Search for the getresponse backend records
     getresponse_backends = session.env['getresponse.backend'].search([])
@@ -32,22 +34,19 @@ def prepare_binding(session, binding_model_name, unwrapped_record_id, vals):
 
 
 def export_binding(session, binding_model_name, binding_record_id, vals, delay=True):
-
+    _logger.info("CONSUMER: EXPORT binding %s %s" % (binding_model_name, binding_record_id))
     # Prevent export of binding at binding import! (recursion switch)
     if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
         return
 
-    # Only export the changed fields (TODO: Test if this is a good idea ;) )
-    fields = vals.keys()
-
     if delay:
-        export_record.delay(session, binding_model_name, binding_record_id, fields=fields)
+        export_record.delay(session, binding_model_name, binding_record_id)
     else:
-        export_record(session, binding_model_name, binding_record_id, fields=fields)
+        export_record(session, binding_model_name, binding_record_id)
 
 
 def export_delete(session, binding_model_name, binding_record_id, delay=True):
-    _logger.info("EXPORT DELETE: %s, %s" % (binding_model_name, binding_record_id))
+    _logger.info("CONSUMER: EXPORT DELETE for binding %s, %s" % (binding_model_name, binding_record_id))
     # Prevent export of binding-deletion! (recursion switch)
     if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
         return

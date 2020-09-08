@@ -421,11 +421,12 @@ class ContactExporter(GetResponseExporter):
             if self.binding_record and self.binding_record.getresponse_id:
                 peg = self.binder.unwrap_binding(self.binding_record)
                 if len(peg) == 1:
-                    _logger.warning('External ID %s not found in GetResponse! Expiring frst.personeamilgruppe %s'
-                                    '' % (self.binding_record.getresponse_id, peg.id))
+                    msg = ('CONTACT ID %s NOT FOUND IN GETRESPONSE! Expiring frst.personemailgruppe %s !'
+                           '' % (self.binding_record.getresponse_id, peg.id))
+                    _logger.warning(msg)
                     yesterday = datetime.now() - timedelta(days=1)
                     peg.with_context(connector_no_export=True).write({'gueltig_bis': yesterday})
-                    return
+                    return msg
             raise e
         except Exception as e:
             raise e
@@ -441,6 +442,8 @@ class ContactDeleteExporter(GetResponseDeleteExporter):
 @job(default_channel='root.getresponse', retry_pattern={1: 60, 2: 60 * 2, 3: 60 * 10})
 def delayed_contact_binding_and_import(session, model_name, binding_id, contact_email, contact_campaing_id,
                                        eta=10, max_retries=7):
+    _logger.info("DELAYED BINDING: Start import for model name: %s, binding_id %s, contact_email %s, campaign id %s"
+                 "" % (model_name, binding_id, contact_email, contact_campaing_id))
     # Get the odoo binding record
     binding = session.env[model_name].browse(binding_id)
 
@@ -460,10 +463,12 @@ def delayed_contact_binding_and_import(session, model_name, binding_id, contact_
                                                           email=contact_email,
                                                           subscriber_types=('subscribed',))
     if not contact_ids:
-        raise RetryableJobError("Contact for delayed binding not found in GetResponse! '%s', '%s', '%s', cmp: '%s'"
+        raise RetryableJobError("DELAYED BINDING: Contact for delayed binding not found in GetResponse!"
+                                " model name: %s, binding_id %s, contact_email %s, campaign id %s"
                                 "" % (model_name, binding_id, contact_email, contact_campaing_id))
     elif len(contact_ids) > 1:
-        raise ValueError("Contact for delayed binding found MULTIPLE TIMES in GetResponse! '%s', '%s', '%s', cmp: '%s'"
+        raise ValueError("DELAYED BINDING: Contact for delayed binding found MULTIPLE TIMES in GetResponse!"
+                         " model name: %s, binding_id %s, contact_email %s, campaign id %s"
                          "" % (model_name, binding_id, contact_email, contact_campaing_id))
 
     # Get and check the external id of the contact
@@ -474,13 +479,17 @@ def delayed_contact_binding_and_import(session, model_name, binding_id, contact_
     # UPDATE THE BINDING WITH THE GETRESPONSE CONTACT ID BEFORE IMPORT
     # ----------------------------------------------------------------
     # ATTENTION: Do not use binder.bind or you will erase important binding data!
+    _logger.info("DELAYED BINDING: Binding '%s', '%s', will be bound to '%s' before import of contact!"
+                 "" % (model_name, binding_id, getresponse_contact_id))
     binding.with_context(connector_no_export=True).write({'getresponse_id': getresponse_contact_id})
     # contact_importer.binder.bind(getresponse_contact_id, binding_id,
     #                              sync_data='DELAYED CONTACT BINDING',
     #                              compare_data=False)
-    _logger.info("LATE BINDING: Binding '%s', '%s', was bound to '%s' before import for delayed contact creation!"
+    _logger.info("DELAYED BINDING: Binding '%s', '%s', was bound to '%s' before import for delayed contact creation!"
                  "" % (model_name, binding_id, getresponse_contact_id))
 
     # IMPORT THE CONTACT FROM GETRESPONSE
     # -----------------------------------
-    contact_importer.run(getresponse_contact_id, skip_import_related_bindings=True)
+    contact_importer.run(getresponse_contact_id,
+                         skip_import_related_bindings=True,
+                         skip_export_related_bindings=True)

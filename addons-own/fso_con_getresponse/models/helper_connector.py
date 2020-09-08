@@ -22,7 +22,7 @@ def get_environment(session, binding_model_name, backend_id):
     if lang_code == session.context.get('lang'):
         return con_env
     else:
-        _logger.error("Changing lang code for connector env to %s" % lang_code)
+        _logger.warning("Changing lang code for getresponse connector env to %s" % lang_code)
         with con_env.session.change_context(lang=lang_code):
             return con_env
 
@@ -60,9 +60,8 @@ def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind
     # Skipp export for all models and all records
     elif connector_no_export is True:
         if skipp_only_bind_model or skipp_only_bind_record_id:
-            _logger.warning("connector_no_export is True but skipp_only_bind_model '%s' or skipp_only_bind_record_id"
-                            " '%s' are set! " % (skipp_only_bind_model, skipp_only_bind_record_id)
-                            )
+            _logger.debug("connector_no_export is True but skipp_only_bind_model '%s' or skipp_only_bind_record_id"
+                          " '%s' are set! " % (skipp_only_bind_model, skipp_only_bind_record_id))
         skipp_export = True
 
     # Skipp exports only if the model and the record id are in 'connector_no_export'
@@ -80,7 +79,7 @@ def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind
         raise TypeError("'connector_no_export' (%s) must be of type 'True' or 'dict'!" % connector_no_export)
 
     if skipp_export:
-        _logger.info("Skipp export of binding record ('%s', '%s') because of 'connector_no_export' (%s) in context!"
+        _logger.info("SKIPP EXPORT OF BINDING RECORD ('%s', '%s') because of 'connector_no_export' (%s) in context!"
                      "" % (skipp_only_bind_model, skipp_only_bind_record_id, connector_no_export)
                      )
 

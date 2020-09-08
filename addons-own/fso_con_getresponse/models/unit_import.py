@@ -157,13 +157,13 @@ class GetResponseImporter(Importer):
 
             # Check if relevant odoo data changed since last export
             if cmp_payloads(last_sync_cmp_data, current_odoo_export_data):
-                _logger.error("SKIPP IMPORT of '%s'! Odoo record data changed since last sync for binding '%s', '%s'!"
-                              "" % (self.getresponse_id, binding._name, binding.id,))
+                _logger.error("IMPORT: SKIPP IMPORT of '%s'! Odoo record data changed since last sync for binding "
+                              "'%s', '%s'!" % (self.getresponse_id, binding._name, binding.id,))
 
                 # FORCE EXPORT THE BINDING
                 exporter = self.unit_for(GetResponseExporter)
-                _logger.warning("FORCE EXPORT of '%s' (binding '%s', '%s') because a concurrent write was detected!"
-                                "" % (self.getresponse_id, binding._name, binding.id))
+                _logger.warning("IMPORT: FORCE EXPORT OF '%s' (binding '%s', '%s') BECAUSE A CONCURRENT WRITE WAS"
+                                " DETECTED!" % (self.getresponse_id, binding._name, binding.id))
                 exporter.run(binding.id)
 
                 # SKIPP THE IMPORT
@@ -174,10 +174,10 @@ class GetResponseImporter(Importer):
 
         # A binding without compare data for binding updates should not exist!
         else:
-            msg = ("Could not check '%s' for odoo data changes before import because binding.compare_data is"
-                   " missing for binding '%s', '%s'!" % (self.getresponse_id, binding._name, binding.id))
+            msg = ("IMPORT: Could not check '%s' for odoo data changes before import because binding.compare_data is"
+                   " missing for binding '%s', '%s'! Continuing with import!"
+                   "" % (self.getresponse_id, binding._name, binding.id))
             _logger.error(msg)
-            # TODO: Maybe we should raise an exception instead of
             return False
 
         # Continue with the import
@@ -344,6 +344,7 @@ class GetResponseImporter(Importer):
 
         :param getresponse_id: identifier of the record in GetResponse
         """
+        _logger.info("IMPORT: run() for external id %s" % getresponse_id)
         # Store the external id to import in self.getresponse_id
         self.getresponse_id = getresponse_id
 
@@ -434,6 +435,8 @@ class GetResponseImporter(Importer):
         # -----------------
         if 'skip_after_import' not in kwargs:
             self._after_import(*args, **kwargs)
+
+        _logger.info("IMPORT: run() for external id %s DONE" % getresponse_id)
 
 
 # HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()

@@ -298,8 +298,10 @@ class ContactImporter(GetResponseImporter):
         external_campaign_id = campaign_object.id
         zgruppedetail = campaign_binder.to_openerp(external_campaign_id, unwrap=True)
         if not zgruppedetail or not zgruppedetail.sync_with_getresponse:
-            return _('Contact import SKIPPED because campaign (zgruppedetail) is not imported yet or not enabled for'
-                     'syncing with GetResponse! %s' % self.getresponse_id)
+            msg = _('Contact import SKIPPED because campaign (zgruppedetail) is not imported yet or not enabled for'
+                    'syncing with GetResponse! %s' % self.getresponse_id)
+            _logger.warning(msg)
+            return msg
         else:
             return False
 
@@ -322,6 +324,8 @@ class ContactImporter(GetResponseImporter):
             "The emails do not match! (%s, %s, %s)" % (personemail.email, partner.email, partner_data['email']))
 
         # Update the personemail if needed
+        # ATTENTION: Since the context of the created partner is with connector_no_export=True it should not be needed
+        #            to set the context again here.
         if len(personemail_data) > 1:
             personemail.write(personemail_data)
 
@@ -335,25 +339,64 @@ class ContactImporter(GetResponseImporter):
     def _update(self, binding, data):
         binding_no_export = binding.with_context(connector_no_export={binding._name: [binding.id]})
 
+        def _remove_unchanged(update_data, record):
+            result = {}
+            for f_name, update_value in update_data.iteritems():
+                if f_name not in record._fields:
+                    continue
+                f_type = record._fields[f_name].type
+                if f_type in ('many2one', 'one2many', 'many2many'):
+                    record_value = getattr(record, f_name).ids
+                    compare_value = update_value if isinstance(update_value, list) else [update_value]
+                    if len(compare_value) == 1 and isinstance(compare_value[0], tuple) and compare_value[0][0] == 6:
+                        compare_value = compare_value[0][2]
+                    record_value = set(record_value)
+                    compare_value = set(compare_value)
+                else:
+                    record_value = getattr(record, f_name)
+                    compare_value = update_value
+
+                # Compare the sets of ids for related fields or regular field data
+                if record_value != compare_value:
+                    result[f_name] = update_value
+
+            return result
+
         # personemailgruppe
-        peg_binding_data = data['frst.personemailgruppe']
+        peg_binding_mdata = data['frst.personemailgruppe']
         peg_binding = binding_no_export
+        # ATTENTION: Remove simple char fields from the update if the data did not change. This will not work for
+        #            any relation field.
+        peg_binding_data = _remove_unchanged(peg_binding_mdata, peg_binding)
+        _logger.info("peg_binding_mdata: %s, peg_binding_data: %s" % (peg_binding_mdata, peg_binding_data))
 
         # personemail
-        personemail_data = data['frst.personemail']
+        personemail_mdata = data['frst.personemail']
         personemail = peg_binding.frst_personemail_id
+        # ATTENTION: Remove simple char fields from the update if the data did not change. This will not work for
+        #            any relation field. The reason to remove unchanged data is to avoid e.g.: main email changes and
+        #            alike!
+        personemail_data = _remove_unchanged(personemail_mdata, personemail)
+        _logger.info("personemail_mdata: %s, personemail_data: %s" % (personemail_mdata, personemail_data))
 
         # partner data
-        partner_data = data['res.partner']
+        partner_mdata = data['res.partner']
         partner = personemail.partner_id
+        # ATTENTION: Remove simple char fields from the update if the data did not change. This will not work for
+        #            any relation field. The reason to remove unchanged data is to avoid e.g.: bpk changes and
+        #            alike!
+        partner_data = _remove_unchanged(partner_mdata, partner)
+        _logger.info("partner_mdata: %s, partner_data: %s" % (partner_mdata, partner_data))
 
-        assert personemail_data['email'] == personemail.email, "The email can not be changed! %s, %s" % (data, binding)
+        assert personemail_mdata['email'] == personemail.email, "The email can not be changed! %s, %s" % (data, binding)
 
         # Update the person
+        # ATTENTION: The partner should have already the context connector_no_export={binding._name: [binding.id]}
         if partner_data:
             assert partner.write(partner_data), "Could not update partner! %s" % partner
 
         # Update the personemail
+        # ATTENTION: The personemail should have already the context connector_no_export={binding._name: [binding.id]}
         if personemail_data:
             assert personemail.write(personemail_data), "Could not update personemail! %s" % personemail
 
@@ -375,58 +418,66 @@ class ContactImporter(GetResponseImporter):
                                contact_binding._name, contact_binding.id))
             exporter.run(contact_binding.id, skip_import_related_bindings=True)
 
-    # ----------------------------------------------------------------------------------------------------------------
-    # DISABLED: Because we do not want to change existing person data just because someone guessed the right email
-    #           Instead we just create a new partner and let the 'dublettenpruefung' of FRST decide to merge the
-    #           contacts or not!
-    # ----------------------------------------------------------------------------------------------------------------
-    # def bind_before_import(self):
-    #     binding = self.binding_record
-    #     # Skipp bind_before_import() because a binding was already found for the getresponse_id.
-    #     if binding:
-    #         return binding
-    #
-    #     # The external id from the getresponse record data dict
-    #     getresponse_id = self.getresponse_id
-    #
-    #     # The getresponse record object
-    #     getresponse_record = self.getresponse_record
-    #
-    #     # The backend id
-    #     backend_id = self.backend_record.id
-    #
-    #     # The group (zgruppedetail) this contact (personemailgruppe) belongs to
-    #     getresponse_record = self.getresponse_record
-    #     campaign_binder = self.binder_for('getresponse.frst.zgruppedetail')
-    #     external_campaign_id = getresponse_record.campaign.id
-    #     zgruppedetail = campaign_binder.to_openerp(external_campaign_id, unwrap=True)
-    #     zgruppedetail_id = zgruppedetail.id if zgruppedetail else None
-    #     if not zgruppedetail_id:
-    #         return super(ContactImporter, self).bind_before_import()
-    #
-    #     # The unique email of the contact (personemailgruppe)
-    #     email = getresponse_record.email
-    #
-    #     # EXISTING PREPARED BINDING (binding without external id)
-    #     prepared_binding = self.model.search([('backend_id', '=', backend_id),
-    #                                           ('zgruppedetail_id', '=', zgruppedetail_id),
-    #                                           ('frst_personemail_id.email', '=', email)])
-    #     if prepared_binding:
-    #         assert len(prepared_binding) == 1, 'More than one binding found for this contact name!'
-    #         assert not prepared_binding.getresponse_id, 'Prepared binding has a getresponse_id?'
-    #         self.binder.bind(getresponse_id, prepared_binding.id)
-    #         return prepared_binding
-    #
-    #     # EXISTING CONTACT (PERSONEMAILGRUPPE) WITHOUT BINDING
-    #     unwrapped_model = self.binder.unwrap_model()
-    #     peg = self.env[unwrapped_model].search([('zgruppedetail_id', '=', zgruppedetail_id),
-    #                                             ('frst_personemail_id.email', '=', email)])
-    #     if peg:
-    #         assert len(peg) == 1, ("More than one contact (personemailgruppe %s) with this email %s found for this "
-    #                                    "campaing (zgruppedetail %s)!" % (peg.ids, email, zgruppedetail_id))
-    #         prepared_binding = self.binder._prepare_binding(peg.id)
-    #         self.binder.bind(getresponse_id, prepared_binding.id)
-    #         return prepared_binding
-    #
-    #     # Nothing found so we return the original method result
-    #     return super(ContactImporter, self).bind_before_import()
+    # Do bind before import if there is a prepared binding waiting for this email for the rare event that an
+    # import is triggered before the delayed binding job gets executed
+    def bind_before_import(self):
+        binding = self.binding_record
+        # Skipp bind_before_import() because a binding was already found for the external getresponse_id.
+        if binding:
+            return binding
+
+        # The external id from the getresponse record data dict
+        getresponse_id = self.getresponse_id
+
+        # The getresponse record object
+        getresponse_record = self.getresponse_record
+
+        # The backend id
+        backend_id = self.backend_record.id
+
+        # The group (zgruppedetail) this contact (personemailgruppe) belongs to
+        campaign_binder = self.binder_for('getresponse.frst.zgruppedetail')
+        external_campaign_id = getresponse_record.campaign.id
+        zgruppedetail = campaign_binder.to_openerp(external_campaign_id, unwrap=True)
+        zgruppedetail_id = zgruppedetail.id if zgruppedetail else None
+        if not zgruppedetail_id:
+            return super(ContactImporter, self).bind_before_import()
+
+        # The unique email of the contact (personemailgruppe)
+        email = getresponse_record.email
+
+        # EXISTING PREPARED BINDING (binding without external id)
+        prepared_binding = self.model.search([('backend_id', '=', backend_id),
+                                              ('zgruppedetail_id', '=', zgruppedetail_id),
+                                              ('frst_personemail_id.email', '=', email)])
+        if prepared_binding:
+            assert len(prepared_binding) == 1, 'More than one binding found for this contact name!'
+            assert not prepared_binding.getresponse_id, 'Prepared binding has a getresponse_id?'
+            # Update the prepared binding before the import
+            prepared_binding.with_context(connector_no_export=True).write({'getresponse_id': getresponse_id})
+            # contact_importer.binder.bind(getresponse_contact_id, binding_id,
+            #                              sync_data='DELAYED CONTACT BINDING',
+            #                              compare_data=False)
+            _logger.info(
+                "BIND BEFORE IMPORT: Prepared Contact Binding '%s', '%s', was bound to '%s' before import!"
+                "" % (prepared_binding._name, prepared_binding.id, getresponse_id))
+            return prepared_binding
+
+        # -------------------------------------------------------------------------------------------------------------
+        # DISABLED: Because we do not want to change existing person data just because someone guessed the right email
+        #           Instead we just create a new partner and let the 'dublettenpruefung' of FRST decide to merge the
+        #           contacts or not!
+        # -------------------------------------------------------------------------------------------------------------
+        # EXISTING CONTACT (PERSONEMAILGRUPPE) WITHOUT BINDING
+        # unwrapped_model = self.binder.unwrap_model()
+        # peg = self.env[unwrapped_model].search([('zgruppedetail_id', '=', zgruppedetail_id),
+        #                                         ('frst_personemail_id.email', '=', email)])
+        # if peg:
+        #     assert len(peg) == 1, ("More than one contact (personemailgruppe %s) with this email %s found for this "
+        #                                "campaing (zgruppedetail %s)!" % (peg.ids, email, zgruppedetail_id))
+        #     prepared_binding = self.binder._prepare_binding(peg.id)
+        #     self.binder.bind(getresponse_id, prepared_binding.id)
+        #     return prepared_binding
+
+        # Nothing found so we return the original method result
+        return super(ContactImporter, self).bind_before_import()

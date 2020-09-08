@@ -59,8 +59,10 @@ class BatchExporter(Exporter):
         raise ValueError("The BatchExporter class uses batch_run() instead of run() to avoid confusion with the .run()"
                          " method of the single record export class GetResponseExporter()!")
 
-    def prepare_binding_records(self):
-        return self.binder.prepare_bindings()
+    def prepare_binding_records(self, unbound_unwrapped_records=None, domain=None, append_vals=None,
+                                connector_no_export=None):
+        return self.binder.prepare_bindings(unbound_unwrapped_records=unbound_unwrapped_records, domain=domain,
+                                            append_vals=append_vals, connector_no_export=connector_no_export)
 
     def get_binding_records(self, domain=None):
         return self.binder.get_bindings(domain=domain)
@@ -76,26 +78,32 @@ class BatchExporter(Exporter):
         :param fields: list of odoo field names to export
         :type fields: list
         """
-
+        _logger.info("BATCH EXPORT: Start of getresponse batch export! model: %s, domain: %s, delay: %s"
+                     "" % (self.model._name, domain, delay))
         # -------------------------------------
         # PREPARE BINDING RECORDS BEFORE SEARCH
         # -------------------------------------
-        prepared_bindings = self.prepare_binding_records()
-        _logger.info("Prepared %s bindings before batch export! ('%s', '%s')"
+        # ATTENTION: Prevent the potential export of the bindings by consumers with connector_no_export=True because
+        #            we export all created bindings in the batch run anyway. This way we dont get duplicated exports!
+        prepared_bindings = self.prepare_binding_records(connector_no_export=True)
+        _logger.info("BATCH EXPORT: Prepared %s bindings before batch export! ('%s', '%s')"
                      "" % (len(prepared_bindings), prepared_bindings._name, prepared_bindings.ids))
 
         # --------------------------
         # SEARCH FOR BINDING RECORDS
         # --------------------------
         binding_records = self.get_binding_records(domain=domain)
-        _logger.info("Found %s bindings to batch export! ('%s', '%s')"
+        _logger.info("BATCH EXPORT: Found %s bindings to batch export! ('%s', '%s')"
                      "" % (len(binding_records), binding_records._name, binding_records.ids))
 
         # -------------------------------------------------
         # RUN export_record() FOR EACH FOUND BINDING RECORD
         # -------------------------------------------------
         binding_model_name = self.model._name
+
         for record in binding_records:
+            _logger.info("BATCH EXPORT: Export binding '%s', '%s'"
+                         "" % (binding_model_name, record.id))
             if delay:
                 export_record.delay(self.session,
                                     binding_model_name,
@@ -431,6 +439,7 @@ class GetResponseExporter(Exporter):
 
         :param binding_id: identifier of the binding record to export
         """
+        _logger.info("EXPORT: run() for binding %s, %s" % (self.model._name, binding_id))
         # DISABLED: Because it makes everything much harder to compare!
         # Get the fields list to export from the kwargs (this will limit the exported fields for the update)
         # if self.getresponse_id:
@@ -450,8 +459,10 @@ class GetResponseExporter(Exporter):
         # SKIP BY BINDING
         # ---------------
         if not self.binding_record:
-            return _("Export of '%s', '%s' was SKIPPED BY BINDING! The binding no longer exists or was filtered"
-                     " out by binder.get_bindings()!") % (self.model._name, binding_id)
+            msg = _("Export of '%s', '%s' was SKIPPED BY BINDING! The binding no longer exists or was filtered"
+                    " out by binder.get_bindings()!") % (self.model._name, binding_id)
+            _logger.warning(msg)
+            return msg
 
         # Get the GetResponse ID of the record (if it is already bound/synced)
         self.getresponse_id = self.binder.to_backend(self.binding_id)
@@ -507,13 +518,14 @@ class GetResponseExporter(Exporter):
         # The commit will also release the lock acquired on the binding record
         self.session.commit()
 
-        # SKIPP AFTER EXPORT METHODS IF THE CREATION IS DELAYED IN GETRESPONSE
-        # --------------------------------------------------------------------
+        # SKIPP ALL AFTER EXPORT METHODS IF THE CREATION IS DELAYED IN GETRESPONSE
+        # ------------------------------------------------------------------------
         if self.getresponse_record == 'DELAYED CREATION IN GETRESPONSE':
             _logger.info(
                 "EXPORT: SKIPP all after export methods in run() because the creation in GetResponse is delayed!"
                 " (%s, %s)" % (self.binding_record._name, self.binding_record.id)
             )
+            _logger.info("EXPORT: run() for binding %s, %s DONE!" % (self.model._name, binding_id))
             return _("Binding '%s', '%s' was exported to GetResponse '%s'."
                      ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
 
@@ -534,8 +546,11 @@ class GetResponseExporter(Exporter):
             self._after_export(*args, **kwargs)
 
         # Return the _run() result
+        _logger.info("EXPORT: run() for binding %s, %s DONE!" % (self.model._name, binding_id))
         return _("Binding '%s', '%s' was exported to GetResponse '%s'."
                  ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
+
+
 
 
 # HINT: The @related_action decorator will add a button on the jobs form view that will open the form view of the
@@ -546,6 +561,7 @@ class GetResponseExporter(Exporter):
 @related_action(action=unwrap_binding)
 def export_record(session, model_name, binding_id, fields=None):
     """ Export an odoo record to GetResponse """
+    _logger.info("EXPORT: export_record() for binding %s, %s" % (model_name, binding_id))
     # Get the odoo binding record
     record = session.env[model_name].browse(binding_id)
 
