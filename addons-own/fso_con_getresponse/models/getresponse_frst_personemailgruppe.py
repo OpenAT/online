@@ -107,7 +107,7 @@ class GetResponseContact(models.Model):
         """ Export Contact Binding (personemailgruppe) for enabled Campaigns (zgruppedetail) to GetResponse """
         session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
         for binding in self:
-            export_record(session, binding._name, binding.backend_id.id)
+            export_record(session, binding._name, binding.id)
 
     @api.multi
     def import_getresponse_contact_direct(self):
