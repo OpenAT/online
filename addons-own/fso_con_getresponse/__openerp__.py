@@ -20,6 +20,7 @@
         'views/res_partner.xml',
         'views/getresponse_backend.xml',
         'views/frst_zgruppedetail.xml',
+        'views/frst_personemailgruppe.xml',
         'views/getresponse_frst_zgruppedetail.xml',
         'views/getresponse_gr_custom_field.xml',
         'views/getresponse_gr_tag.xml',

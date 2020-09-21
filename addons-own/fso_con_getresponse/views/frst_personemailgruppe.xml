@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_personemailgruppe_form">
+        <field name="name">frst_personemailgruppe_form</field>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header//field[@name='state']" position="before">
+                <button name="prepare_getresponse_binding"
+                        type="object"
+                        class="oe_button oe_form_button"
+                        style="margin-right:1em;"
+                        string="Prepare GetResponse Binding"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</data></openerp>

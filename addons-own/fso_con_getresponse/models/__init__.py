@@ -36,6 +36,7 @@ import getresponse_gr_tag_import
 import getresponse_gr_tag_consumer
 
 # Contacts (Subscriptions)
+import frst_personemailgruppe
 import getresponse_frst_personemailgruppe
 import getresponse_frst_personemailgruppe_export
 import getresponse_frst_personemailgruppe_import
