@@ -48,7 +48,7 @@ def export_binding_on_contact_update(session, model_name, record_id, vals):
     # Get Watched fields
     watched_fields = []
     if model_name == 'res.partner':
-        watched_fields = ['name', 'getresponse_tag_ids']
+        watched_fields = ['name', 'firstname', 'lastname', 'getresponse_tag_ids']
         if watched_custom_fields_by_model.get(model_name, False):
             watched_fields += watched_custom_fields_by_model[model_name]
 
