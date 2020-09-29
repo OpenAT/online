@@ -186,7 +186,7 @@ class WebsiteAsWidget(models.Model):
 <script type="text/javascript">
     //<![CDATA[ 
         document.addEventListener("DOMContentLoaded", function(event) {
-            iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: true, inPageAnchors: true, log: false}, '.fso_iframe') 
+            iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: false, inPageAnchors: true, log: false}, '.fso_iframe') 
         });
     //]]>
 </script>
