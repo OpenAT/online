@@ -442,7 +442,10 @@ class GetResponseImporter(Importer):
 
 # HINT: This is called from DirectBatchImporter() and DelayedBatchImporter()
 @job(default_channel='root.getresponse')
-def import_record(session, model_name, backend_id, getresponse_id, force=False):
+def import_record(session, model_name, backend_id, getresponse_id,
+                  force=False,
+                  skip_import_related_bindings=False,
+                  skip_export_related_bindings=False):
     """ Import a record from GetResponse """
     env = get_environment(session, model_name, backend_id)
 
@@ -452,4 +455,7 @@ def import_record(session, model_name, backend_id, getresponse_id, force=False):
     importer = env.get_connector_unit(GetResponseImporter)
 
     # Start the .run() method of the importer
-    importer.run(getresponse_id, force=force)
+    importer.run(getresponse_id,
+                 force=force,
+                 skip_import_related_bindings=skip_import_related_bindings,
+                 skip_export_related_bindings=skip_export_related_bindings)

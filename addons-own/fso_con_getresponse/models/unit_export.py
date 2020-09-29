@@ -421,6 +421,9 @@ class GetResponseExporter(Exporter):
         self.binder.bind(self.getresponse_id, self.binding_id,
                          sync_data=sync_data, compare_data=compare_data)
 
+    def skipp_after_export_methods(self):
+        return False
+
     def _update_odoo_record_data_after_export(self, *args, **kwargs):
         return
 
@@ -453,11 +456,10 @@ class GetResponseExporter(Exporter):
 
         self.binding_id = binding_id
 
-        # Get the binding
-        self.binding_record = self._get_binding_record()
-
         # SKIP BY BINDING
         # ---------------
+        # Get the binding
+        self.binding_record = self._get_binding_record()
         if not self.binding_record:
             msg = _("Export of '%s', '%s' was SKIPPED BY BINDING! The binding no longer exists or was filtered"
                     " out by binder.get_bindings()!") % (self.model._name, binding_id)
@@ -510,23 +512,19 @@ class GetResponseExporter(Exporter):
         # --------------------------------------
         # UPDATE THE BINDING RECORD AFTER EXPORT
         # --------------------------------------
-        if not self.getresponse_record == 'DELAYED CREATION IN GETRESPONSE':
-            sync_data = payload_create_data if payload_create_data else payload_update_data
-            self._update_binding_after_export(map_record, sync_data=sync_data, compare_data=payload_update_data)
+        sync_data = payload_create_data if payload_create_data else payload_update_data
+        self._update_binding_after_export(map_record, sync_data=sync_data, compare_data=payload_update_data)
 
         # COMMIT SO WE KEEP THE EXTERNAL ID WHEN THERE ARE SEVERAL EXPORTS (DUE TO DEPENDENCIES) AND ONE OF THEM FAILS.
         # The commit will also release the lock acquired on the binding record
         self.session.commit()
 
-        # SKIPP ALL AFTER EXPORT METHODS IF THE CREATION IS DELAYED IN GETRESPONSE
-        # ------------------------------------------------------------------------
-        if self.getresponse_record == 'DELAYED CREATION IN GETRESPONSE':
-            _logger.info(
-                "EXPORT: SKIPP all after export methods in run() because the creation in GetResponse is delayed!"
-                " (%s, %s)" % (self.binding_record._name, self.binding_record.id)
-            )
-            _logger.info("EXPORT: run() for binding %s, %s DONE!" % (self.model._name, binding_id))
-            return _("Binding '%s', '%s' was exported to GetResponse '%s'."
+        # ------------------------------
+        # SKIPP ALL AFTER EXPORT METHODS
+        # ------------------------------
+        skipp_after_export_methods = self.skipp_after_export_methods()
+        if skipp_after_export_methods:
+            return _("Binding '%s', '%s' was exported to GetResponse '%s' without after export methods."
                      ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
 
         # UPDATE ODOO RECORD DATA BY GETRESPONSE DATA AFTER EXPORT TO 'IMPORT' POTENTIALLY MERGED OR COMPUTED DATA
@@ -555,7 +553,7 @@ class GetResponseExporter(Exporter):
 #       unwrapped record. E.g. a job for getresponse.frst.zgruppedetail will open the form view for frst.zgruppedetail
 # ATTENTION: export_record expects binding records !!! Create them first if needed!
 #            Check CampaignBatchExporter batch_run() for an example!
-@job(default_channel='root.getresponse')
+@job(default_channel='root.getresponse', retry_pattern={1: 60, 2: 60 * 2, 3: 60 * 10, 5: 60*60})
 @related_action(action=unwrap_binding)
 def export_record(session, model_name, binding_id, fields=None):
     """ Export an odoo record to GetResponse """

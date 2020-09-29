@@ -20,13 +20,17 @@ from datetime import datetime, timedelta
 from openerp.tools.translate import _
 
 from openerp.addons.connector.unit.mapper import ExportMapper, mapping, only_create
-from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.queue.job import job, related_action
 from openerp.addons.connector.exception import IDMissingInBackend, RetryableJobError
 
 from .helper_connector import get_environment
+from .helper_related_action import unwrap_binding
+
 from .backend import getresponse
+
 from .unit_export import BatchExporter, GetResponseExporter
 from .unit_export_delete import GetResponseDeleteExporter
+from .unit_import import import_record
 
 from .getresponse_frst_personemailgruppe_import import ContactImporter
 
@@ -300,6 +304,14 @@ class ContactExporter(GetResponseExporter):
 
     _base_mapper = ContactExportMapper
 
+    def _get_binding_record(self):
+        binding = super(ContactExporter, self)._get_binding_record()
+        if binding and binding.sync_data == 'DELAYED CREATION IN GETRESPONSE':
+            raise RetryableJobError("EXPORT: The binding '%s', '%s' can not be exported yet because we still wait for "
+                                    "the delayed contact binding to finish!" % (binding._name, binding.id))
+        else:
+            return binding
+
     # Export missing campaigns, tag definitions and custom field definitions
     def _export_dependencies(self):
         # ------------------------
@@ -376,9 +388,26 @@ class ContactExporter(GetResponseExporter):
                                                  eta=eta, max_retries=7)
 
         # Log the delayed binding
-        _logger.info("EXPORT: A delayed contact binding and import was scheduled in '%s's for '%s', '%s', email: '%s',"
+        _logger.info("EXPORT: A delayed contact binding was scheduled in '%s's for '%s', '%s', email: '%s',"
                      " campaign_id: '%s'"
                      "" % (eta, self.binding_record._name, self.binding_record.id, contact_email, contact_campaing_id))
+
+    def _update_binding_after_export(self, map_record, sync_data=None, compare_data=None):
+        if self.getresponse_record == 'DELAYED CREATION IN GETRESPONSE':
+            self.binding_record.with_context(connector_no_export=True).write(
+                {'sync_data': 'DELAYED CREATION IN GETRESPONSE',
+                 'compare_data': 'DELAYED CREATION IN GETRESPONSE'})
+        else:
+            super(ContactExporter, self)._update_binding_after_export(map_record,
+                                                                      sync_data=sync_data,
+                                                                      compare_data=compare_data)
+
+    def skipp_after_export_methods(self):
+        if self.binding_record and self.binding_record.sync_data == 'DELAYED CREATION IN GETRESPONSE':
+            return ("EXPORT: Skipp all after export methods for delayed contact binding '%s', '%s'"
+                    "" % (self.binding_record._name, self.binding_record.id))
+        else:
+            return super(ContactExporter, self).skipp_after_export_methods()
 
     def _update_odoo_record_data_after_export(self, *args, **kwargs):
         # Update the odoo records with the getresponse record data after the export because data may have been
@@ -431,6 +460,7 @@ class ContactExporter(GetResponseExporter):
         except Exception as e:
             raise e
 
+
 # -----------------------------
 # SINGLE RECORD DELETE EXPORTER
 # -----------------------------
@@ -439,7 +469,11 @@ class ContactDeleteExporter(GetResponseDeleteExporter):
     _model_name = ['getresponse.frst.personemailgruppe']
 
 
+# -----------------------
+# DELAYED CONTACT BINDING
+# -----------------------
 @job(default_channel='root.getresponse', retry_pattern={1: 60, 2: 60 * 2, 3: 60 * 10})
+@related_action(action=unwrap_binding)
 def delayed_contact_binding_and_import(session, model_name, binding_id, contact_email, contact_campaing_id,
                                        eta=10, max_retries=7):
     _logger.info("DELAYED BINDING: Start import for model name: %s, binding_id %s, contact_email %s, campaign id %s"
@@ -481,15 +515,30 @@ def delayed_contact_binding_and_import(session, model_name, binding_id, contact_
     # ATTENTION: Do not use binder.bind or you will erase important binding data!
     _logger.info("DELAYED BINDING: Binding '%s', '%s', will be bound to '%s' before import of contact!"
                  "" % (model_name, binding_id, getresponse_contact_id))
-    binding.with_context(connector_no_export=True).write({'getresponse_id': getresponse_contact_id})
-    # contact_importer.binder.bind(getresponse_contact_id, binding_id,
-    #                              sync_data='DELAYED CONTACT BINDING',
-    #                              compare_data=False)
-    _logger.info("DELAYED BINDING: Binding '%s', '%s', was bound to '%s' before import for delayed contact creation!"
-                 "" % (model_name, binding_id, getresponse_contact_id))
+    binding.with_context(connector_no_export=True).write({
+        'getresponse_id': getresponse_contact_id,
+        'sync_data': False,
+        'compare_data': False,
+    })
 
-    # IMPORT THE CONTACT FROM GETRESPONSE
-    # -----------------------------------
-    contact_importer.run(getresponse_contact_id,
-                         skip_import_related_bindings=True,
-                         skip_export_related_bindings=True)
+    # Check the external id was written to the binding
+    assert binding.getresponse_id == getresponse_contact_id, (
+        "DELAYED BINDING: External id of binding '%s', '%s' could not be updated!" % (model_name, binding_id))
+
+    # COMMIT SO WE KEEP THE EXTERNAL ID IN ANY CIRCUMSTANCES.
+    binding.env.cr.commit()
+
+    # Log the result
+    result = ("DELAYED BINDING: Binding '%s', '%s', was bound to '%s' before import!"
+              "" % (model_name, binding_id, getresponse_contact_id))
+    _logger.info(result)
+
+    # Create an import job
+    # --------------------
+    _logger.info("DELAYED BINDING: Create an import job for binding '%s', '%s'"
+                 "" % (model_name, binding_id))
+    import_record.delay(session, model_name, binding.backend_id.id, getresponse_contact_id,
+                        skip_import_related_bindings=True,
+                        skip_export_related_bindings=True)
+
+    return result
