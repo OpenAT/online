@@ -145,6 +145,9 @@ class FRSTPersonEmail(models.Model):
     bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft", readonly=True,
                                       help="E.g.: The link or the workflow process")
 
+    # Anrede Lang
+    anrede_lang = fields.Char(string="Anrede Lang", readonly=True)
+
     # -------
     # METHODS
     # -------

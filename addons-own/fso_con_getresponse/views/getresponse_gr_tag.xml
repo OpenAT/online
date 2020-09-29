@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- GetResponse Tag Definition Bindings Form -->
+        <record id="view_getresponse_gr_tag_form" model="ir.ui.view">
+            <field name="name">getresponse.gr.tag.form</field>
+            <field name="model">getresponse.gr.tag</field>
+            <field name="arch" type="xml">
+                <form string="GetResponse Tag Definition Binding">
+                    <sheet>
+                        <label for="backend_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="backend_id" class="oe_inline" />
+                        </h1>
+                        <group name="getresponse_gr_tag_binding" string="Tag Definition Binding">
+                            <group>
+                                <field name="odoo_id"/>
+                            </group>
+                            <group>
+                                <field name="getresponse_id"/>
+                            </group>
+                        </group>
+                        <group string="Sync Data" name="sync_data">
+                            <field name="sync_date"/>
+                            <field name="sync_data"/>
+                            <field name="compare_data"/>
+                        </group>
+                        <group name="getresponse_tag_data" string="Tag Definition Settings and Data">
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- GetResponse Tag Definition Bindings Tree -->
+        <record id="view_getresponse_gr_tag_tree" model="ir.ui.view">
+            <field name="name">getresponse.gr.tag.tree</field>
+            <field name="model">getresponse.gr.tag</field>
+            <field name="arch" type="xml">
+                <tree string="GetResponse Tag Definition Bindings">
+                    <field name="id"/>
+                    <field name="backend_id"/>
+                    <field name="odoo_id" invisible="1"/>
+                    <field name="getresponse_id"/>
+                    <field name="sync_date"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- GetResponse Tag Definition Bindings Action > Act Window -->
+        <record id="action_getresponse_gr_tag" model="ir.actions.act_window">
+            <field name="name">GetResponse Tag Definition Bindings</field>
+            <field name="res_model">getresponse.gr.tag</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_getresponse_gr_tag_tree"/>
+        </record>
+
+    </data>
+</openerp>

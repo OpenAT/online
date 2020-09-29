@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- GetResponse Backend Form -->
+        <record id="view_getresponse_backend_form" model="ir.ui.view">
+            <field name="name">getresponse.backend.form</field>
+            <field name="model">getresponse.backend</field>
+            <field name="arch" type="xml">
+                <form string="GetResponse Backend">
+                    <sheet>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                        <group name="getresponse_configuration" string="GetResponse Configuration">
+                            <field name="version"/>
+                            <field name="api_key"/>
+                            <field name="default_lang_id"/>
+                            <field name="default_zgruppe_id"/>
+                        </group>
+                        <notebook>
+                            <page string="Force Import/Export">
+                                <group string="Campaigns (Mailing Lists)">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_campaigns_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Import Campaigns"/>
+                                            <button name="import_getresponse_campaigns_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Import Campaigns Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_campaigns_direct"
+                                                    colspan="2"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Export Campaigns"/>
+                                            <button name="export_getresponse_campaigns_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Export Campaigns Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Custom Field Definitions">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_custom_fields_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Import Custom Field Definitions"/>
+                                            <button name="import_getresponse_custom_fields_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Import Custom Field Definitions Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_custom_fields_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Export Custom Field Definitions"/>
+                                            <button name="export_getresponse_custom_fields_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Export Custom Field Definitions Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Tag Definitions">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_tags_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Import Tag Definitions"/>
+                                            <button name="import_getresponse_tags_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Import Tag Definitions Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_tags_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Export Tag Definitions"/>
+                                            <button name="export_getresponse_tags_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Export Tag Definitions Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Contacts">
+                                    <div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="import_getresponse_contacts_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Import Contacts"/>
+                                            <button name="import_getresponse_contacts_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Import Contacts Delayed"/>
+                                        </div>
+                                        <div style="margin-bottom:0.5em;">
+                                            <button name="export_getresponse_contacts_direct"
+                                                    type="object"
+                                                    class="oe_highlight oe_inline"
+                                                    style="margin-right:1em;"
+                                                    string="Batch Export Contacts"/>
+                                            <button name="export_getresponse_contacts_delay"
+                                                    type="object"
+                                                    class="oe_inline"
+                                                    string="Batch Export Contacts Delayed"/>
+                                        </div>
+                                    </div>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- GetResponse Backend Tree -->
+        <record id="view_getresponse_backend_tree" model="ir.ui.view">
+            <field name="name">getresponse.backend.tree</field>
+            <field name="model">getresponse.backend</field>
+            <field name="arch" type="xml">
+                <tree string="GetResponse Backend">
+                    <field name="name"/>
+                    <field name="version"/>
+                    <field name="default_lang_id"/>
+                    <field name="default_zgruppe_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- GetResponse Backend Action > Act Window -->
+        <record id="action_getresponse_backend" model="ir.actions.act_window">
+            <field name="name">GetResponse Backend</field>
+            <field name="res_model">getresponse.backend</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_getresponse_backend_tree"/>
+        </record>
+
+    </data>
+</openerp>

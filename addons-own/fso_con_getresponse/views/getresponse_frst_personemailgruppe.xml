@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- GetResponse Contact Bindings Form -->
+        <record id="view_getresponse_frst_personemailgruppe_form" model="ir.ui.view">
+            <field name="name">getresponse.frst.personemailgruppe.form</field>
+            <field name="model">getresponse.frst.personemailgruppe</field>
+            <field name="arch" type="xml">
+                <form string="GetResponse Contact Binding">
+                    <header>
+                        <button name="export_getresponse_contact_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Export"/>
+                        <button name="import_getresponse_contact_direct"
+                                type="object"
+                                class="oe_highlight"
+                                string="Import"/>
+                    </header>
+                    <sheet>
+                        <label for="backend_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="backend_id" class="oe_inline" />
+                        </h1>
+                        <group name="getresponse_frst_personemailgruppe_binding" string="Contact Binding">
+                            <group>
+                                <field name="odoo_id"/>
+                            </group>
+                            <group>
+                                <field name="getresponse_id"/>
+                            </group>
+                        </group>
+                        <group string="Sync Data" name="sync_data">
+                            <field name="sync_date"/>
+                            <field name="sync_data"/>
+                            <field name="compare_data"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- GetResponse Contact Bindings Tree -->
+        <record id="view_getresponse_frst_personemailgruppe_tree" model="ir.ui.view">
+            <field name="name">getresponse.frst.personemailgruppe.tree</field>
+            <field name="model">getresponse.frst.personemailgruppe</field>
+            <field name="arch" type="xml">
+                <tree string="GetResponse Contact Bindings" colors="red:getresponse_id == False;">
+                    <field name="id"/>
+                    <field name="backend_id"/>
+                    <field name="odoo_id"/>
+                    <field name="getresponse_id"/>
+                    <field name="sync_date"/>
+                    <field name="display_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- GetResponse Contact Bindings Action > Act Window -->
+        <record id="action_getresponse_frst_personemailgruppe" model="ir.actions.act_window">
+            <field name="name">GetResponse Contact Bindings</field>
+            <field name="res_model">getresponse.frst.personemailgruppe</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_getresponse_frst_personemailgruppe_tree"/>
+        </record>
+
+    </data>
+</openerp>
