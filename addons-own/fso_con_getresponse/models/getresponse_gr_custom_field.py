@@ -99,19 +99,19 @@ class CustomFieldBinder(GetResponseBinder):
     # HINT: get_unbound() is used by prepare_bindings() which is used in the batch exporter > prepare_binding_records()
     #       and in helper_consumer.py > prepare_binding_on_record_create() to filter out records where no binding
     #       should be prepared (created) for export.
-    def get_unbound(self, domain=None):
+    def get_unbound(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
-        unbound = super(CustomFieldBinder, self).get_unbound(domain=domain)
+        unbound = super(CustomFieldBinder, self).get_unbound(domain=domain, limit=limit)
         return unbound
 
     # Make sure only bindings with a mapped custom field definition are returned
     # HINT: get_bindings() is used in single record exporter run() > _get_binding_record() to filter and validate
     #       the binding record
-    def get_bindings(self, domain=None):
+    def get_bindings(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
-        bindings = super(CustomFieldBinder, self).get_bindings(domain=domain)
+        bindings = super(CustomFieldBinder, self).get_bindings(domain=domain, limit=limit)
         return bindings
 
 # -----------------

@@ -52,7 +52,7 @@ class GetResponseBinder(Binder):
         return res
 
     # GET ALL UNWRAPPED RECORDS WITHOUT A BINDING FOR CURRENT BACKEND
-    def get_unbound(self, domain=None):
+    def get_unbound(self, domain=None, limit=None):
         """ Get unwrapped records without a binding for this backend.
         ATTENTION: This method should be used to remove/filter out unwanted unbound records that should not get a
                    binding record at all (should not be exported)
@@ -92,7 +92,7 @@ class GetResponseBinder(Binder):
                      ('id', 'not in', bound_unwrapped_records.ids)
                    ]
 
-        unbound_unwrapped_records = self.env[unwrapped_odoo_model].search(domain)
+        unbound_unwrapped_records = self.env[unwrapped_odoo_model].search(domain, limit=limit)
         return unbound_unwrapped_records
 
     # PREPARE (CREATE) A NEW BINDING (BINDING WITHOUT AN EXTERNAL ID)
@@ -116,7 +116,8 @@ class GetResponseBinder(Binder):
         return prepared_binding_record
 
     # CREATE BINDINGS FOR UNBOUND RECORDS
-    def prepare_bindings(self, unbound_unwrapped_records=None, domain=None, append_vals=None, connector_no_export=None):
+    def prepare_bindings(self, unbound_unwrapped_records=None, domain=None, append_vals=None, connector_no_export=None,
+                         limit=None):
         """ Prepare (create) binding records for all unwrapped records without a binding record
         ATTENTION: This method must be used by all methods and consumer that prepare (create) binding records!
 
@@ -126,10 +127,11 @@ class GetResponseBinder(Binder):
           domain: an odoo domain for the unwrapped odoo model
         """
         assert not (unbound_unwrapped_records and domain), "Use 'domain' or 'unbound_unwrapped_records' but not both!"
+        assert not (unbound_unwrapped_records and limit), "Use 'limit' or 'unbound_unwrapped_records' but not both!"
 
         # Get unbound records based on the domain
         if not unbound_unwrapped_records:
-            unbound_unwrapped_records = self.get_unbound(domain=domain)
+            unbound_unwrapped_records = self.get_unbound(domain=domain, limit=limit)
 
         # Check the model of the recordset 'unbound_unwrapped_records'
         unwrapped_odoo_model = self.unwrap_model()
@@ -144,7 +146,7 @@ class GetResponseBinder(Binder):
 
         return prepared_bindings
 
-    def get_bindings(self, domain=None):
+    def get_bindings(self, domain=None, limit=None):
         """ Get all binding records for the current backend
         ATTENTION: This method must be used to validate the binding record for all exports!
                    Check unit_export.py _get_binding_record()
@@ -155,5 +157,5 @@ class GetResponseBinder(Binder):
         backend_id = self.backend_record.id
         domain.append((self._backend_field, '=', backend_id))
 
-        bindings = self.model.search(domain)
+        bindings = self.model.search(domain, limit=limit)
         return bindings

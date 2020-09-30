@@ -60,50 +60,19 @@ class BatchExporter(Exporter):
                          " method of the single record export class GetResponseExporter()!")
 
     def prepare_binding_records(self, unbound_unwrapped_records=None, domain=None, append_vals=None,
-                                connector_no_export=None):
+                                connector_no_export=None, limit=None):
         return self.binder.prepare_bindings(unbound_unwrapped_records=unbound_unwrapped_records, domain=domain,
-                                            append_vals=append_vals, connector_no_export=connector_no_export)
+                                            append_vals=append_vals, connector_no_export=connector_no_export,
+                                            limit=limit)
 
-    def get_binding_records(self, domain=None):
-        return self.binder.get_bindings(domain=domain)
+    def get_binding_records(self, domain=None, limit=None):
+        return self.binder.get_bindings(domain=domain, limit=limit)
 
-    # ATTENTION: The singe record exporter class GetResponseExporter and the batch exporter class BatchExporter
-    #            both use .run to start the export (which is confusing at best).
-    def batch_run(self, domain=None, fields=None, delay=False, **kwargs):
-        """ Batch export odoo records to GetResponse
-
-        :param domain: odoo search domain for the binding records
-        :type domain: list
-
-        :param fields: list of odoo field names to export
-        :type fields: list
-        """
-        _logger.info("BATCH EXPORT: Start of getresponse batch export! model: %s, domain: %s, delay: %s"
-                     "" % (self.model._name, domain, delay))
-        # -------------------------------------
-        # PREPARE BINDING RECORDS BEFORE SEARCH
-        # -------------------------------------
-        # ATTENTION: Prevent the potential export of the bindings by consumers with connector_no_export=True because
-        #            we export all created bindings in the batch run anyway. This way we dont get duplicated exports!
-        prepared_bindings = self.prepare_binding_records(connector_no_export=True)
-        _logger.info("BATCH EXPORT: Prepared %s bindings before batch export! ('%s', '%s')"
-                     "" % (len(prepared_bindings), prepared_bindings._name, prepared_bindings.ids))
-
-        # --------------------------
-        # SEARCH FOR BINDING RECORDS
-        # --------------------------
-        binding_records = self.get_binding_records(domain=domain)
-        _logger.info("BATCH EXPORT: Found %s bindings to batch export! ('%s', '%s')"
-                     "" % (len(binding_records), binding_records._name, binding_records.ids))
-
-        # -------------------------------------------------
-        # RUN export_record() FOR EACH FOUND BINDING RECORD
-        # -------------------------------------------------
+    def _batch_export_records(self, binding_records, delay=None, fields=None, **kwargs):
         binding_model_name = self.model._name
-
         for record in binding_records:
-            _logger.info("BATCH EXPORT: Export binding '%s', '%s'"
-                         "" % (binding_model_name, record.id))
+            _logger.info("BATCH EXPORT: Export binding '%s', '%s', delay: %s"
+                         "" % (binding_model_name, record.id, delay))
             if delay:
                 export_record.delay(self.session,
                                     binding_model_name,
@@ -115,6 +84,61 @@ class BatchExporter(Exporter):
                               binding_model_name,
                               record.id,
                               fields=fields)
+
+    # ATTENTION: The singe record exporter class GetResponseExporter and the batch exporter class BatchExporter
+    #            both use .run to start the export (which is confusing at best).
+    def batch_run(self, domain=None, fields=None, delay=False, batch=1000, **kwargs):
+        """ Batch export odoo records to GetResponse
+
+        :param batch: batch size
+        :param delay: If True schedule a connector job if False export directly
+        :param domain: odoo search domain for the binding records
+        :type domain: list
+
+        :param fields: list of odoo field names to export
+        :type fields: list
+        """
+        _logger.info("BATCH EXPORT: START OF GETRESPONSE BATCH EXPORT! model: %s, domain: %s, delay: %s"
+                     "" % (self.model._name, domain, delay))
+
+        # ----------------------------
+        # EXPORT NEW PREPARED BINDINGS
+        # ----------------------------
+        all_exported_binding_ids = []
+        prepared_bindings = True
+        while prepared_bindings:
+            # PREPARE MISSING BINDINGS
+            # ATTENTION: Prevent the potential export of the bindings by consumers with connector_no_export=True!
+            prepared_bindings = self.prepare_binding_records(connector_no_export=True, limit=batch)
+
+            _logger.info("BATCH EXPORT: Prepared %s bindings to batch export! ('%s', '%s')"
+                         "" % (len(prepared_bindings), prepared_bindings._name, prepared_bindings.ids))
+
+            # EXPORT THE PREPARED BINDINGS (or create connector jobs depending on delay)
+            self._batch_export_records(prepared_bindings, delay=delay, fields=fields, **kwargs)
+            all_exported_binding_ids += prepared_bindings.ids
+
+            # FORCE COMMIT TO STORE THE BINDINGS AND CONNECTOR JOBS TO IMMEDIATELY START THE EXPORT
+            self.session.commit()
+
+        # ------------------------
+        # EXPORT EXISTING BINDINGS
+        # ------------------------
+        domain = [] if not domain else domain
+        binding_records = True
+        while binding_records:
+            # SEARCH FOR EXISTING BINDING RECORDS
+            remaining_domain = domain + [('id', 'not in', all_exported_binding_ids)]
+            binding_records = self.get_binding_records(domain=remaining_domain, limit=batch)
+            _logger.info("BATCH EXPORT: Found %s bindings to batch export for remaining_domain '%s'! ('%s', '%s')"
+                         "" % (len(binding_records), remaining_domain, binding_records._name, binding_records.ids))
+
+            # EXPORT THE BINDINGS (or create connector jobs depending on delay)
+            self._batch_export_records(binding_records, delay=delay, fields=fields, **kwargs)
+            all_exported_binding_ids += binding_records.ids
+
+            # FORCE COMMIT TO STORE THE CONNECTOR JOBS TO IMMEDIATELY START THE EXPORT
+            self.session.commit()
 
 
 # ------------------------------------
