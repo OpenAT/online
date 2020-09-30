@@ -13,8 +13,7 @@ from .unit_binder import GetResponseBinder
 _logger = logging.getLogger(__name__)
 
 
-def prepare_binding(session, binding_model_name, unwrapped_record_id, vals):
-    # HINT: No recursion switch needed because prepare_binding can only be called on record create in FSON
+def prepare_binding(session, binding_model_name, unwrapped_record_id, vals, connector_no_export=False):
     _logger.info("CONSUMER: prepare binding for binding model: %s and unwrapped record id: %s"
                  "" % (binding_model_name, unwrapped_record_id))
 
@@ -30,7 +29,7 @@ def prepare_binding(session, binding_model_name, unwrapped_record_id, vals):
 
         # ATTENTION: We use 'prepare_bindings()' to make sure 'get_unbound()' is used in case any limitations or
         #            constrains are added to get_unbound(). Check the binder definition for this model if unsure :)
-        binder.prepare_bindings(domain=[('id', '=', unwrapped_record_id)])
+        binder.prepare_bindings(domain=[('id', '=', unwrapped_record_id)], connector_no_export=connector_no_export)
 
 
 def export_binding(session, binding_model_name, binding_record_id, vals, delay=True):

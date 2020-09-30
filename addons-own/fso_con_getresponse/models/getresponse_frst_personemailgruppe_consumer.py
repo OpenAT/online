@@ -64,9 +64,26 @@ def export_binding_on_contact_update(session, model_name, record_id, vals):
 
     # IF WATCHED FIELDS: Get binding records
     peg_bindings = []
+    pegs = []
     if any(f_name in vals for f_name in watched_fields):
         record = session.env[model_name].browse([record_id])
-        # Find the contact bindings
+
+        # Create missing binding records
+        if model_name == 'res.partner':
+            pegs = record.mapped('frst_personemail_ids.personemailgruppe_ids')
+        elif model_name == 'frst.personemail':
+            pegs = record.mapped('personemailgruppe_ids')
+        elif model_name == 'frst.personemailgruppe':
+            pegs = record
+        for peg in pegs:
+            # ATTENTION: 'prepare_binding()' will use 'prepare_bindings()' to make sure 'get_unbound()' is called to
+            #            respect any limitations or constrains that are added to get_unbound().
+            # HINT: We suppress the export of the new binding because this will be done anyway a few lines below!
+            _logger.info(
+                'CONSUMER: Prepared binding ON %s %s UPDATE for: %s, %s' % (model_name, record_id, peg._name, peg.id))
+            prepare_binding(session, 'getresponse.frst.personemailgruppe', peg.id, vals, connector_no_export=True)
+
+        # Get the 'contact' bindings
         if model_name == 'res.partner':
             peg_bindings = record.mapped('frst_personemail_ids.personemailgruppe_ids.getresponse_bind_ids')
         elif model_name == 'frst.personemail':

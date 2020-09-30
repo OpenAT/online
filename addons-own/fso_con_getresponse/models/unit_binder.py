@@ -126,7 +126,8 @@ class GetResponseBinder(Binder):
           domain: an odoo domain for the unwrapped odoo model
         """
         assert not (unbound_unwrapped_records and domain), "Use 'domain' or 'unbound_unwrapped_records' but not both!"
-        # Get unbound records
+
+        # Get unbound records based on the domain
         if not unbound_unwrapped_records:
             unbound_unwrapped_records = self.get_unbound(domain=domain)
 
