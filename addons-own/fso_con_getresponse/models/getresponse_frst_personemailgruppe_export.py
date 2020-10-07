@@ -443,18 +443,23 @@ class ContactExporter(GetResponseExporter):
             self.run(related_binding.id, skip_export_related_bindings=True)
             
     def run(self, binding_id, *args, **kwargs):
+
+        # RECORD REMOVED IN GETRESPONSE HANDLING
         try:
             return super(ContactExporter, self).run(binding_id, *args, **kwargs)
         except IDMissingInBackend as e:
             # Expire the personemailgruppe since it was removed in GetResponse
             if self.binding_record and self.binding_record.getresponse_id:
-                peg = self.binder.unwrap_binding(self.binding_record)
+                peg = self.binder.unwrap_binding(self.binding_record, browse=True)
                 if len(peg) == 1:
                     msg = ('CONTACT ID %s NOT FOUND IN GETRESPONSE! Expiring frst.personemailgruppe %s !'
                            '' % (self.binding_record.getresponse_id, peg.id))
                     _logger.warning(msg)
                     yesterday = datetime.now() - timedelta(days=1)
+                    # Expire the personemailgruppe
                     peg.with_context(connector_no_export=True).write({'gueltig_bis': yesterday})
+                    # Delete the binding record
+                    self.binding_record.with_context(connector_no_export=True).unlink()
                     return msg
             raise e
         except Exception as e:

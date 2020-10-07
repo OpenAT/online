@@ -111,7 +111,8 @@ class TagImporter(GetResponseImporter):
         if prepared_binding:
             assert len(prepared_binding) == 1, 'More than one binding found for this tag name!'
             assert not prepared_binding.getresponse_id, 'Prepared binding has a getresponse_id?'
-            self.binder.bind(getresponse_id, prepared_binding.id)
+            # Update the prepared binding before the import
+            prepared_binding.with_context(connector_no_export=True).write({'getresponse_id': getresponse_id})
             return prepared_binding
 
         # EXISTING TAG
@@ -119,8 +120,9 @@ class TagImporter(GetResponseImporter):
         tag = self.env[unwrapped_model].search([('name', '=', getresponse_tag_name)])
         if tag:
             assert len(tag) == 1, "More than one tag with this name found!"
-            prepared_binding = self.binder._prepare_binding(tag.id)
-            self.binder.bind(getresponse_id, prepared_binding.id)
+            prepared_binding = self.with_context(connector_no_export=True).binder._prepare_binding(
+                tag.id, connector_no_export=True)
+            self.with_context(connector_no_export=True).binder.bind(getresponse_id, prepared_binding.id)
             return prepared_binding
 
         return super(TagImporter, self).bind_before_import()

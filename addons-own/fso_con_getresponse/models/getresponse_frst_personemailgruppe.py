@@ -175,13 +175,16 @@ class ContactAdapter(GetResponseCRUDAdapter):
 
     # ATTENTION: !!! A segments search will NOT return all the fields! E.g. custom fields or tags will be missing!
     def search(self, getresponse_campaign_ids=None, name=None, email=None, custom_fields=None,
-               subscriber_types=('subscribed',), **kwargs):
+               subscriber_types=('subscribed',), per_page=1000, page=None, params=None, **kwargs):
         """ Returns a list of GetResponse contact ids
 
         'name', 'email' and 'custom_fields' are optional easy search attributes
 
         available operators: 'is', 'is_not', 'contains', 'not_contains', 'starts', 'ends', 'not_starts', 'not_ends'
 
+        :param params: the url arguments (payload) for the request e.g.: {'fields': ['contactId', ]}
+        :param page: page
+        :param per_page: requested number of results per page
         :param getresponse_campaign_ids: list
         :param name: list of strings
             tuple format: (operator, value)
@@ -195,15 +198,23 @@ class ContactAdapter(GetResponseCRUDAdapter):
         :return: list
             returns a list with the getresponse contact ids (external ids)
         """
+        # Return only the contact id from GetResponse if params is not set
+        params = params if params else {'fields': ['contactId', ]}
+
         # HINT: get_all_contacts will do 4 searches to find contacts for all subscriber types - therefore it will
         #       return ALL contacts! (=including non approved or inactive contacts)
         # ATTENTION: !!! A segments search will NOT return all the fields! E.g. custom fields or tags will be missing!
         #            This is not a real problem here because we return only the list of id's anyway!
         contacts = self.getresponse_api_session.get_all_contacts(campaign_ids=getresponse_campaign_ids,
+                                                                 # search
                                                                  name=name,
                                                                  email=email,
                                                                  custom_fields=custom_fields,
                                                                  subscriber_types=subscriber_types,
+                                                                 # params
+                                                                 per_page=per_page,
+                                                                 page=page,
+                                                                 params=params,
                                                                  **kwargs)
         return [contact.id for contact in contacts]
 
@@ -253,7 +264,7 @@ class ContactAdapter(GetResponseCRUDAdapter):
         return [c.__dict__ for c in contacts]
 
     def create(self, data):
-        """ Scedules a Contact creation in GetResponse
+        """ Schedules a Contact creation in GetResponse
 
         Returns:
             bool: True for success, False otherwise

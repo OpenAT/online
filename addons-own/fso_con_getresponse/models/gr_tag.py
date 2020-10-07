@@ -59,6 +59,11 @@ class GrTag(models.Model):
             if r.cds_id:
                 assert not r.cds_id.verzeichnistyp_id, _("You can not select a CDS folder!")
 
+    @api.model
+    def create(self, vals):
+        result = super(GrTag, self).create(vals)
+        return result
+
     @api.multi
     def write(self, values):
 

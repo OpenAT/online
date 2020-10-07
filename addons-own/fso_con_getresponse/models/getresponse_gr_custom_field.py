@@ -137,11 +137,11 @@ class CustomFieldAdapter(GetResponseCRUDAdapter):
         custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
         return [cf.id for cf in custom_fields]
 
-    def read(self, external_id, params=None):
+    def read(self, external_id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
 
         try:
-            custom_field = self.getresponse_api_session.get_custom_field(external_id, params=params)
+            custom_field = self.getresponse_api_session.get_custom_field(external_id, params=attributes)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
 

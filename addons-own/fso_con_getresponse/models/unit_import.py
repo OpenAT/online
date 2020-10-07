@@ -76,36 +76,64 @@ class BatchImporter(Importer):
     _model_name = None
 
     def run(self):
-        raise ValueError("The BatchImporter class uses batch_run() instead of run() to avoid confusion with the .run()"
-                         " method of the single record export class GetResponseImporter()!")
+        raise NotImplementedError("The BatchImporter class uses batch_run() instead of run() to avoid confusion with "
+                                  "the .run() method of the single record export class GetResponseImporter()!")
 
-    def _batch_run_search(self, filters=None, **kwargs):
-        return self.backend_adapter.search(filters)
+    def _batch_run_search(self, filters=None, per_page=None, page=None, **kwargs):
+        # ATTENTION: You must override this function if you want to use per_page and page!
+        if not page or page == 1:
+            result = self.backend_adapter.search(filters)
+        else:
+            result = []
 
-    def batch_run(self, filters=None, delay=False, **kwargs):
+        return result
+
+    def batch_run(self, filters=None, delay=False, per_page=None, page=None, **kwargs):
         """ Run the synchronization """
 
-        # ---------------------------------
-        # SEARCH FOR GETRESPONSE RECORD IDS
-        # ---------------------------------
-        getresponse_record_ids = self._batch_run_search(filters=filters, **kwargs)
+        getresponse_record_ids = True
+        current_page = deepcopy(page) if page else 1
+        record_count = 0
+        run_count = 1
+        while getresponse_record_ids and current_page:
+            # ---------------------------------
+            # SEARCH FOR GETRESPONSE RECORD IDS
+            # ---------------------------------
+            getresponse_record_ids = self._batch_run_search(filters=filters, per_page=per_page, page=current_page,
+                                                            **kwargs)
+            _logger.info("BATCH_IMPORT: Found %s records to import for batch run %s"
+                         "" % (len(getresponse_record_ids), run_count))
 
-        # -----------------------------------------
-        # RUN import_record() FOR EACH FOUND RECORD
-        # -----------------------------------------
-        for record_id in getresponse_record_ids:
-            if delay:
-                import_record.delay(self.session,
-                                    self.model._name,
-                                    self.backend_record.id,
-                                    record_id,
-                                    **kwargs)
+            # -----------------------------------------
+            # RUN import_record() FOR EACH FOUND RECORD
+            # -----------------------------------------
+            for record_id in getresponse_record_ids:
+                if delay:
+                    import_record.delay(self.session,
+                                        self.model._name,
+                                        self.backend_record.id,
+                                        record_id,
+                                        **kwargs)
+                else:
+                    import_record(self.session,
+                                  self.model._name,
+                                  self.backend_record.id,
+                                  record_id)
+
+            # FORCE COMMIT TO STORE THE CONNECTOR JOBS TO IMMEDIATELY START THE IMPORT
+            self.session.commit()
+
+            run_count += 1
+            record_count += len(getresponse_record_ids)
+            _logger.info("BATCH_IMPORT: Processed a total of %s records" % record_count)
+
+            assert run_count <= 90000, "BATCH_IMPORT: Batch imports are limited to 90.000 runs!"
+            assert record_count <= 9000000, "BATCH_IMPORT: Batch imports are limited to 9.000.000 records!"
+
+            if page:
+                current_page = None
             else:
-                import_record(self.session,
-                              self.model._name,
-                              self.backend_record.id,
-                              record_id)
-
+                current_page += 1
 
 # ---------------------------
 # IMPORT A GETRESPONSE RECORD
@@ -277,7 +305,7 @@ class GetResponseImporter(Importer):
         return map_record.values(for_create=True, **kwargs)
 
     def _create(self, data):
-        # Add connector_no_export=True to prevent any GetResponse export
+        # Add connector_no_export=True to prevent any GetResponse export or other consumer events!
         binding_model_no_export = self.model.with_context(connector_no_export=True)
         # Create the binding record and therefore the regular odoo record (delegation inheritance) also
         binding = binding_model_no_export.create(data)

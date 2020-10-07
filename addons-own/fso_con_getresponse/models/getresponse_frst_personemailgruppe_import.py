@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 import json
+from copy import deepcopy
 
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
@@ -94,7 +95,9 @@ class ContactImportMapper(ImportMapper):
             getresponse_tag_ids.append(tag.id)
 
         # (6, _, ids) replaces all existing records in the set by the ids list
-        result = [(6, 0, getresponse_tag_ids)] if getresponse_tag_ids else False
+        # result = [(6, 0, getresponse_tag_ids)] if getresponse_tag_ids else False
+        # ATTENTION: 'False' will !!! NOT !!! empty a many2many field!
+        result = [(6, 0, getresponse_tag_ids)]
         return {'res.partner.getresponse_tag_ids': result}
 
     @mapping
@@ -242,7 +245,8 @@ class ContactImportMapper(ImportMapper):
 class ContactBatchImporter(BatchImporter):
     _model_name = ['getresponse.frst.personemailgruppe']
 
-    def _batch_run_search(self, getresponse_campaign_ids=None, name=None, email=None, custom_fields=None, **kwargs):
+    def _batch_run_search(self, per_page=None, page=None, params=None, getresponse_campaign_ids=None, name=None,
+                          email=None, custom_fields=None, **kwargs):
 
         # Search only for contacts for sync enabled bound campaigns
         getresponse_campaign_ids = [] if not getresponse_campaign_ids else getresponse_campaign_ids
@@ -256,7 +260,25 @@ class ContactBatchImporter(BatchImporter):
                     getresponse_campaign_ids.append(getresponse_cmp_id)
             assert getresponse_campaign_ids, "No bound and sync enabled Campaigns found for the Contact batch import!"
 
-        return self.backend_adapter.search(getresponse_campaign_ids=getresponse_campaign_ids)
+        # Do a paged search for the records
+        all_records = []
+        paged_records = True
+        current_page = deepcopy(page) if page else 1
+        while paged_records and current_page:
+            paged_records = self.backend_adapter.search(getresponse_campaign_ids=getresponse_campaign_ids,
+                                                        per_page=per_page,
+                                                        page=current_page,
+                                                        params=params)
+            all_records.extend(paged_records)
+
+            # The page is controlled from outside (only the results from the requested page will be returned)
+            if page:
+                current_page = None
+            # The page is controlled here and will be incremented until no more records are found
+            else:
+                current_page += 1
+
+        return all_records
 
 
 @job(default_channel='root.getresponse')
@@ -313,7 +335,7 @@ class ContactImporter(GetResponseImporter):
         personemail_data = data['frst.personemail']
         partner_data = data['res.partner']
 
-        # Create the partner
+        # CREATE THE PARTNER
         # HINT: We add the email to the res.partner create data to automatically create the frst.personemail
         partner_data['email'] = personemail_data['email']
         partner = model_no_export.env['res.partner'].create(partner_data)
@@ -323,13 +345,13 @@ class ContactImporter(GetResponseImporter):
         assert personemail.email == partner.email == partner_data['email'], _(
             "The emails do not match! (%s, %s, %s)" % (personemail.email, partner.email, partner_data['email']))
 
-        # Update the personemail if needed
+        # UPDATE THE PERSONEMAIL IF NEEDED
         # ATTENTION: Since the context of the created partner is with connector_no_export=True it should not be needed
         #            to set the context again here.
         if len(personemail_data) > 1:
             personemail.write(personemail_data)
 
-        # Create the new binding and therefore the unwrapped odoo record
+        # CREATE THE NEW BINDING AND THEREFORE THE UNWRAPPED ODOO RECORD
         # HINT: We append the new personemail to the peg binding data
         peg_binding_data['frst_personemail_id'] = personemail.id
         peg_binding = model_no_export.create(peg_binding_data)
@@ -350,7 +372,8 @@ class ContactImporter(GetResponseImporter):
                     record_value = getattr(record, f_name).ids
                     if update_value and isinstance(update_value, basestring):
                         update_value = int(update_value)
-                    compare_value = update_value if isinstance(update_value, list) else [update_value]
+                    compare_value = update_value if isinstance(update_value, list) else \
+                        [update_value] if update_value else []
                     if len(compare_value) == 1 and isinstance(compare_value[0], tuple) and compare_value[0][0] == 6:
                         compare_value = compare_value[0][2]
                     record_value = set(record_value)
@@ -393,18 +416,32 @@ class ContactImporter(GetResponseImporter):
 
         assert personemail_mdata['email'] == personemail.email, "The email can not be changed! %s, %s" % (data, binding)
 
-        # Update the person
+        # ----------------------------------------------------
+        # SKIPP THE ODOO RECORD UPDATE BECAUSE NO DATA CHANGED
+        # ----------------------------------------------------
+        if not partner_data and not personemail_data and not peg_binding_data:
+            _logger.info("SKIPP IMPORT of binding '%s' '%s' since no relevant data changed in GetResponse!"
+                         "" % (binding.id, binding._name))
+            return True
+
+        # ---------------------------------------------
+        # UPDATE THE ODOO RECORDS WITH THE CHANGED DATA
+        # ---------------------------------------------
+        # UPDATE THE PERSON
         # ATTENTION: The partner should have already the context connector_no_export={binding._name: [binding.id]}
         if partner_data:
             assert partner.write(partner_data), "Could not update partner! %s" % partner
 
-        # Update the personemail
+        # UPDATE THE PERSONEMAIL
         # ATTENTION: The personemail should have already the context connector_no_export={binding._name: [binding.id]}
         if personemail_data:
             assert personemail.write(personemail_data), "Could not update personemail! %s" % personemail
 
-        # Update the binding record (and therefore the regular odoo record (delegation inheritance) also
-        result = binding_no_export.write(peg_binding_data)
+        # UPDATE THE BINDING RECORD (and therefore the regular odoo record (delegation inheritance) also
+        if peg_binding_data:
+            result = binding_no_export.write(peg_binding_data)
+        else:
+            result = True
 
         return result
 

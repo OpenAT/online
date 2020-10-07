@@ -16,6 +16,12 @@ _logger = logging.getLogger(__name__)
 def prepare_binding(session, binding_model_name, unwrapped_record_id, vals, connector_no_export=False):
     _logger.info("CONSUMER: prepare binding for binding model: %s and unwrapped record id: %s"
                  "" % (binding_model_name, unwrapped_record_id))
+    # Prevent export of binding at binding import! (recursion switch)
+    # if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
+    if skipp_export_by_context(session.context):
+        _logger.info("CONSUMER: SKIPP PREPARE BINDING for binding model: %s and unwrapped record id: %s"
+                     "" % (binding_model_name, unwrapped_record_id))
+        return
 
     # Search for the getresponse backend records
     getresponse_backends = session.env['getresponse.backend'].search([])
@@ -50,6 +56,7 @@ def export_delete(session, binding_model_name, binding_record_id, delay=True):
     # Prevent export of binding-deletion! (recursion switch)
     # if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
     if skipp_export_by_context(session.context):
+        _logger.info("CONSUMER: SKIPP EXPORT DELETE for binding %s, %s" % (binding_model_name, binding_record_id))
         return
 
     # Get the backend_id

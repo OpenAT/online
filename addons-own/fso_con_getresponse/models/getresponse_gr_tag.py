@@ -117,10 +117,10 @@ class TagAdapter(GetResponseCRUDAdapter):
         tags = self.getresponse_api_session.get_tags(params=params)
         return [tag.id for tag in tags]
 
-    def read(self, external_id, params=None):
+    def read(self, external_id, attributes=None):
         """ Returns the information of one record found by the external record id as a dict """
         try:
-            tag = self.getresponse_api_session.get_tag(external_id, params=params)
+            tag = self.getresponse_api_session.get_tag(external_id, params=attributes)
         except NotFoundError as e:
             raise IDMissingInBackend(str(e.message) + ', ' + str(e.response))
 

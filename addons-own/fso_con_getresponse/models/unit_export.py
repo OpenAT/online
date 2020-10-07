@@ -56,8 +56,8 @@ class BatchExporter(Exporter):
     _model_name = None
 
     def run(self):
-        raise ValueError("The BatchExporter class uses batch_run() instead of run() to avoid confusion with the .run()"
-                         " method of the single record export class GetResponseExporter()!")
+        raise NotImplementedError("The BatchExporter class uses batch_run() instead of run() to avoid confusion with "
+                                  "the .run() method of the single record export class GetResponseExporter()!")
 
     def prepare_binding_records(self, unbound_unwrapped_records=None, domain=None, append_vals=None,
                                 connector_no_export=None, limit=None):
@@ -195,6 +195,10 @@ class GetResponseExporter(Exporter):
                 'A concurrent job is already exporting the same record '
                 '(%s with id %s). The job will be retried later.' %
                 (self.model._name, self.binding_id))
+
+    def _still_exists_in_getresponse(self):
+        if self.getresponse_id:
+            self.backend_adapter.read(self.getresponse_id)
 
     def _skip_export_for_updates(self):
         """ Return a message if the export must be skipped because e.g.:
@@ -493,8 +497,14 @@ class GetResponseExporter(Exporter):
         # Get the GetResponse ID of the record (if it is already bound/synced)
         self.getresponse_id = self.binder.to_backend(self.binding_id)
 
+        # CHECK IF THE RECORD STILL EXISTS IN GETRESPONSE
+        # -----------------------------------------------
+        # HINT: This should raise an IDMissingInBackend exception if the record was removed!
+        self._still_exists_in_getresponse()
+
         # SKIP EXPORT FOR UPDATES
         # -----------------------
+        # E.g. if the odoo data did not change since the last export
         skip_export = self._skip_export_for_updates()
         if skip_export:
             return skip_export

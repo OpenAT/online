@@ -5,6 +5,7 @@ import json
 
 from openerp.addons.connector.unit.mapper import ExportMapper, mapping, only_create
 from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.exception import IDMissingInBackend, RetryableJobError
 
 from .helper_connector import get_environment
 from .backend import getresponse
@@ -76,6 +77,29 @@ class TagExporter(GetResponseExporter):
     _model_name = ['getresponse.gr.tag']
 
     _base_mapper = TagExportMapper
+
+    def run(self, binding_id, *args, **kwargs):
+
+        # RECORD REMOVED IN GETRESPONSE HANDLING
+        try:
+            return super(TagExporter, self).run(binding_id, *args, **kwargs)
+        except IDMissingInBackend as e:
+            # Try to unlink the tag definition in odoo
+            if self.binding_record and self.binding_record.getresponse_id:
+                tag = self.binder.unwrap_binding(self.binding_record, browse=True)
+                if len(tag) == 1:
+                    msg = ('TAG DEFINITION %s NOT FOUND IN GETRESPONSE! UNLINKING TAG %s IN ODOO!'
+                           '' % (self.binding_record.getresponse_id, tag.id))
+                    _logger.warning(msg)
+                    tag.with_context(connector_no_export=True).unlink()
+                    return msg
+
+            # Raise the exception if we could not unlink the tag definition in odoo
+            raise e
+
+        # Raise all other exceptions
+        except Exception as e:
+            raise e
 
 
 # -----------------------------

@@ -79,7 +79,8 @@ def skipp_export_by_context(context, skipp_only_bind_model=None, skipp_only_bind
         raise TypeError("'connector_no_export' (%s) must be of type 'True' or 'dict'!" % connector_no_export)
 
     if skipp_export:
-        _logger.info("SKIPP EXPORT OF BINDING RECORD ('%s', '%s') because of 'connector_no_export' (%s) in context!"
+        _logger.info("SKIPP EXPORT OR TASK FOR BINDING RECORD ('%s', '%s') "
+                     "because of 'connector_no_export' (%s) in context!"
                      "" % (skipp_only_bind_model, skipp_only_bind_record_id, connector_no_export)
                      )
 
