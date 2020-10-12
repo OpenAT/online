@@ -177,10 +177,9 @@ class CampaignAdapter(GetResponseCRUDAdapter):
     _model_name = 'getresponse.frst.zgruppedetail'
     _getresponse_model = 'campaigns'
 
-    def search(self, filters=None):
+    def search(self, params=None, per_page=None, page=None):
         """ Returns a list of GetResponse campaign ids """
-        assert not filters or isinstance(filters, dict), "filters must be a dict!"
-        campaigns = self.getresponse_api_session.get_campaigns(filters)
+        campaigns = self.getresponse_api_session.get_campaigns(params=params, per_page=per_page, page=page)
         return [campaign.id for campaign in campaigns]
 
     def read(self, ext_id, attributes=None):
@@ -197,9 +196,9 @@ class CampaignAdapter(GetResponseCRUDAdapter):
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return campaign.__dict__
 
-    def search_read(self, filters=None):
+    def search_read(self, params=None, per_page=None, page=None):
         """ Search records based on 'filters' and return their information as a dict """
-        campaigns = self.getresponse_api_session.get_campaigns(filters)
+        campaigns = self.getresponse_api_session.get_campaigns(params=params, per_page=per_page, page=page)
         # WARNING: A dict() is expected! Right now 'campaign' is a campaign object!
         return [c.__dict__ for c in campaigns]
 

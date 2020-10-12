@@ -129,12 +129,12 @@ class CustomFieldAdapter(GetResponseCRUDAdapter):
     _model_name = 'getresponse.gr.custom_field'
     _getresponse_model = 'custom-fields'
 
-    def search(self, params=None):
+    def search(self, params=None, per_page=None, page=None):
         """ Search records based on 'filters'
 
         Returns: list of custom field ids
         """
-        custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
+        custom_fields = self.getresponse_api_session.get_custom_fields(params=params, per_page=per_page, page=page)
         return [cf.id for cf in custom_fields]
 
     def read(self, external_id, attributes=None):
@@ -152,12 +152,12 @@ class CustomFieldAdapter(GetResponseCRUDAdapter):
         # WARNING: A dict() is expected! Right now 'custom_field' is a custom_field object!
         return custom_field.__dict__
 
-    def search_read(self, params=None):
+    def search_read(self, params=None, per_page=None, page=None):
         """ Search records based on 'filters' and return their data
 
         Returns: list of custom fields as dicts
         """
-        custom_fields = self.getresponse_api_session.get_custom_fields(params=params)
+        custom_fields = self.getresponse_api_session.get_custom_fields(params=params, per_page=per_page, page=page)
         # WARNING: A dict() is expected! Right now 'custom_field' is a list of custom_field object!
         return [cf.__dict__ for cf in custom_fields]
 

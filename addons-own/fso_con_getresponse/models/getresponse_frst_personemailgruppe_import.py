@@ -12,7 +12,7 @@ from openerp.addons.connector.queue.job import job
 
 from .helper_connector import get_environment
 from .backend import getresponse
-from .unit_import import BatchImporter, GetResponseImporter
+from .unit_import import BatchImporter, GetResponseImporter, import_record
 from .unit_export import GetResponseExporter
 
 import logging
@@ -90,8 +90,18 @@ class ContactImportMapper(ImportMapper):
         for gr_tag in tags:
             # WARNING: The tags in the getresponse_record dict are no objects but the raw data from getresponse
             #          Therefore we have to use the GetResponse api key tagId instead of just id
-            tag = tags_binder.to_openerp(gr_tag['tagId'], unwrap=True)
-            assert tag, "Odoo Tag Definition for external id %s missing!" % gr_tag['tagId']
+            tag_external_id = gr_tag['tagId']
+            tag = tags_binder.to_openerp(tag_external_id, unwrap=True)
+
+            # Import the tag definition if it does not exist jet in odoo
+            if not tag:
+                _logger.info("Tag definition '%s' missing in odoo! Trying to import the tag definition!"
+                             "" % tag_external_id)
+                import_record(self.session, 'getresponse.gr.tag', self.backend_record.id, tag_external_id,
+                              skip_export_related_bindings=True, skip_import_related_bindings=True)
+                tag = tags_binder.to_openerp(tag_external_id, unwrap=True)
+
+            assert tag, "Odoo Tag Definition for external id %s missing!" % tag_external_id
             getresponse_tag_ids.append(tag.id)
 
         # (6, _, ids) replaces all existing records in the set by the ids list
@@ -133,7 +143,16 @@ class ContactImportMapper(ImportMapper):
             # Get the custom field definition record
             custom_field_ext_id = gr_cf['customFieldId']
             odoo_cf = cf_binder.to_openerp(custom_field_ext_id, unwrap=True)
-            assert odoo_cf, "Odoo Custom Field Definition for external id %s missing!" % gr_cf['customFieldId']
+
+            # Import the custom field definition if it does not exist jet in odoo
+            if not odoo_cf:
+                _logger.info("Custom field definition '%s' missing in odoo! Trying to import the definition!"
+                             "" % custom_field_ext_id)
+                import_record(self.session, 'getresponse.gr.custom_field', self.backend_record.id, custom_field_ext_id,
+                              skip_export_related_bindings=True, skip_import_related_bindings=True)
+                odoo_cf = cf_binder.to_openerp(custom_field_ext_id, unwrap=True)
+
+            assert odoo_cf, "Odoo Custom Field Definition for external id %s missing!" % custom_field_ext_id
 
             # Only get values for mapped custom fields
             if not odoo_cf.field_id:
@@ -216,7 +235,7 @@ class ContactImportMapper(ImportMapper):
             "zgruppedetail_id missing in contact data! %s" % values)
         assert result['frst.personemail']['email'], "'email' missing in personemail data! %s" % values
 
-        # res.partner no 'name' handling
+        # res.partner 'no name' handling
         # ------------------------------
         if not any(result['res.partner'].get(f, '') for f in ('name', 'firstname', 'lastname')):
             result['res.partner']['lastname'] = result['frst.personemail']['email']

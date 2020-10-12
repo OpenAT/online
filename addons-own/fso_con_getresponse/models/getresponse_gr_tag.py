@@ -112,9 +112,11 @@ class TagAdapter(GetResponseCRUDAdapter):
     _model_name = 'getresponse.gr.tag'
     _getresponse_model = 'tags'
 
-    def search(self, params=None):
+    def search(self, params=None, per_page=None, page=None):
         """ Search records based on 'filters' and return a list of their external ids """
-        tags = self.getresponse_api_session.get_tags(params=params)
+        # Return only the tag id from GetResponse if params is not set
+        params = params if params else {'fields': ['tagId', ]}
+        tags = self.getresponse_api_session.get_tags(params=params, per_page=per_page, page=page)
         return [tag.id for tag in tags]
 
     def read(self, external_id, attributes=None):
@@ -131,9 +133,9 @@ class TagAdapter(GetResponseCRUDAdapter):
         # WARNING: A dict() is expected! Right now 'tag' is a tag object!
         return tag.__dict__
 
-    def search_read(self, params=None):
+    def search_read(self, params=None, per_page=None, page=None):
         """ Search records based on 'filters' and return their data """
-        tags = self.getresponse_api_session.get_tags(params=params)
+        tags = self.getresponse_api_session.get_tags(params=params, per_page=per_page, page=page)
         # WARNING: A dict() is expected! Right now 'tag' is a tag object!
         return [tag.__dict__ for tag in tags]
 
