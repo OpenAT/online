@@ -26,6 +26,7 @@
         'views/getresponse_gr_tag.xml',
         'views/getresponse_frst_personemailgruppe.xml',
         'views/getresponse_menu.xml',
+        'views/queue_job.xml',
         'data/scheduled_actions.xml',
     ],
 }

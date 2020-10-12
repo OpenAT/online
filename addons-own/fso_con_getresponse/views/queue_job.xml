@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="view_queue_job_search_extended" model="ir.ui.view">
+        <field name="name">queue.job.search</field>
+        <field name="model">queue.job</field>
+        <field name="inherit_id" ref="connector.view_queue_job_search"/>
+
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@string='State']" position="after">
+                <!--<filter string="Error_Text" context="{'group_by': 'exc_info'}" />-->
+                <!--<filter string="Result_Text" context="{'group_by': 'result'}" />-->
+                <filter string="User" context="{'group_by': 'user_id'}" />
+                <filter string="Priority" context="{'group_by': 'priority'}" />
+                <!--<filter string="Function_String" context="{'group_by': 'func_string'}" />-->
+                <filter string="Worker_Process" context="{'group_by': 'worker_id'}" />
+
+                <filter string="Date_Created" context="{'group_by': 'date_created'}" />
+                <filter string="Date_Started" context="{'group_by': 'date_started'}" />
+                <filter string="Date_Done" context="{'group_by': 'date_done'}" />
+
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>
+
