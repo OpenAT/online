@@ -1,23 +1,42 @@
 $(document).ready(function () {
 
     // Set Suggested Price by Buttons
-    var $price_donate = $("#price_donate");
-    var $price_suggested = $(".price_donate_suggested");
-    var $price_suggested_donation_buttons = $('.donation_button:not(.donation_button_snippets)');
+    // ------------------------------
+    let $price_donate = $("#price_donate");
+    let $price_suggested = $(".price_donate_suggested");
+    let $price_suggested_donation_buttons = $('.donation_button:not(.donation_button_snippets)');
 
     $price_suggested.on("click", function (ev1) {
+        // Copy the button value to the <input id="price_donate"> value
         $price_donate.val( $(this).data("price") );
 
         // ACTIVE BUTTON FOR THE NEW DONATION BUTTON LAYOUTS
+
+        // remove class 'btn-primary' from all buttons
         $price_suggested_donation_buttons.removeClass('btn-primary').addClass('btn-default');
+
+        // add 'btn-primary' to the currently clicked button but only if it is no snippet area
         if ($(this).hasClass('donation_button') && ! $(this).hasClass('donation_button_snippets')) {
             $(this).removeClass('btn-default').addClass('btn-primary');
         }
 
     });
+
+    // remove class 'btn-primary' from all buttons if something is typed in the <input id="price_donate">
+    // HINT: The button with the current value will still be btn-primary but this is done by the qweb template!
     $price_donate.on("keypress", function (ev1) {
         $price_suggested_donation_buttons.removeClass('btn-primary').addClass('btn-default');
     });
+
+    // Focus on the input field if the current value does not fit to any suggested button value
+    // Get the suggested values of all buttons and snippet fields
+    let suggested_button_values = []
+    $price_suggested.each(function(){ suggested_button_values.push( $(this).data("price") )})
+    // Set the <input id="price_donate"> in focus if none of the buttons match
+    if ( !suggested_button_values.includes($price_donate.val()) ) {
+        $price_donate.focus()
+    }
+    // ------------------------------
 
 
     // Click radio input of the selected payment interval on first load of the page
@@ -32,7 +51,7 @@ $(document).ready(function () {
     });
 
     // Hide all tabs and related tab-content that are not recurring if recurring payment is selected
-    var $radio_payint = $("input[name='payment_interval_id']");
+    let $radio_payint = $("input[name='payment_interval_id']");
     $radio_payint.on("click", function (ev) {
         if ( $(this).attr('data-payment-interval-external-id') != 'website_sale_donate.once_only' ) {
 
@@ -52,9 +71,9 @@ $(document).ready(function () {
         }
     });
     // Hide all tabs and related tab-content that are not recurring if recurring payment is selected
-    var $select_payint = $("select[name='payment_interval_id']");
+    let $select_payint = $("select[name='payment_interval_id']");
     $select_payint.on("change", function (ev) {
-        var data_payment_interval_external_id = $( "select[name='payment_interval_id'] option:selected" ).attr('data-payment-interval-external-id');
+        let data_payment_interval_external_id = $( "select[name='payment_interval_id'] option:selected" ).attr('data-payment-interval-external-id');
         if ( data_payment_interval_external_id != 'website_sale_donate.once_only' ) {
 
             // hide all acquirer tabs that do not work with recurring transactions if any
@@ -65,7 +84,7 @@ $(document).ready(function () {
                 //console.log('No Tab Active');
                 // Select next non hidden tabs (li) link (a) and click it
                 $('#payment_method li:not(.hidden) a[role="tab"]:first').trigger('click');
-            };
+            }
 
         } else {
             // Unhide all tabs and its content if no recurring payment interval is selected
@@ -74,7 +93,7 @@ $(document).ready(function () {
     });
 
     // Select (check) radio input tag of the acquirer tab on tab click
-    var $payment = $("#payment_method");
+    let $payment = $("#payment_method");
     $('#payment_method a[role="tab"]').on("click", function (e) {
 
         // Set tab-related hidden radio-input-tag to checked
@@ -82,7 +101,7 @@ $(document).ready(function () {
         $( this ).find("input[name='acquirer']").prop('checked', true);
 
         // Disable the other input tags (payment methods) (maybe not needed)
-        var payment_id = $( this ).find("input[name='acquirer']").val();
+        let payment_id = $( this ).find("input[name='acquirer']").val();
         $("div.tab-content div[data-id] input", $payment).attr("disabled", "true");
         $("div.tab-content div[data-id='"+payment_id+"'] input", $payment).removeAttr("disabled");
     });
@@ -93,8 +112,8 @@ $(document).ready(function () {
         console.log('Mike Acquirer Submit Button: preventDefault stopPropagation')
         ev.preventDefault();
         ev.stopPropagation();
-        var $form = $(ev.currentTarget).parents('form');
-        var acquirer_id = $(ev.currentTarget).parents('div.acquirer_button_not_opc').first().data('id');
+        let $form = $(ev.currentTarget).parents('form');
+        let acquirer_id = $(ev.currentTarget).parents('div.acquirer_button_not_opc').first().data('id');
         if (!acquirer_id) {
             console.log('Mike: No acquirer ID');
             return false;
@@ -114,9 +133,9 @@ $(document).ready(function () {
 
 
     // Equal content height tab boxes
-    var maxHeight=0;
+    let maxHeight=0;
     $(".tab-content.tab-equal-heights .tab-pane").each(function(){
-        var height = $(this).height();
+        let height = $(this).height();
         maxHeight = height>maxHeight?height:maxHeight;
     });
     $(".tab-content.tab-equal-heights").height(maxHeight);
