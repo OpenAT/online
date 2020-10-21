@@ -63,6 +63,11 @@ class ProductTemplate(models.Model):
                                      selection=[('', 'No Custom Theme')],
                                      help="Adds a custom attribute to the <body> tag to be used in CSS selectors!")
 
+    # Clear all other products from the shopping cart (sale order) when this product is added
+    clear_cart = fields.Boolean(string="Clear Shopping Cart",
+                                help="Clear all other products from the shopping cart (sale order) when this "
+                                     "product is added")
+
     @api.constrains('website_theme', 'public_categ_ids')
     def contraint_website_theme(self):
         for r in self:

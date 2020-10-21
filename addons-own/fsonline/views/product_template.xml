@@ -32,13 +32,14 @@
                         <group>
                             <field name="default_code" string="Interner Name"/>
                             <field name="fs_product_type" string="Fundraising Studio Typ"/>
-                            <field name="website_theme" string="Website Theme"/>
+                            <field name="website_theme" string="Website Theme (CSS)"/>
                             <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
                             <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
                             <field name="zgruppedetail_ids" string="Fundraising Studio Gruppen"
                                    widget="many2many_tags"
                                    options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                            <field name="product_page_template" string="Webseitenvorlage"/>
+                            <field name="product_page_template" string="Webseitenvorlage (Struktur)"/>
+                            <field name="clear_cart"/>
                         </group>
                         <group>
                             <field name="type"/>

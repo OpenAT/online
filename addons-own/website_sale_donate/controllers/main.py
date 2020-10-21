@@ -184,6 +184,25 @@ class website_sale_donate(website_sale):
         #             _logger.warning("product(): ADD OPC PRODUCT TO SALE ORDER BECAUSE OF POSSIBLE CUSTOM CONFIG!")
         #             self.cart_update(product_id=product_variant_ids[0], set_qty=1)
 
+        # INSTEAD OF ADDING THE OPC PRODUCT TO THE CART WE WILL CLEAR THE CART FROM OTHER PRODUCTS
+        # IF WE ARE ON AN OPC PAGE
+        if request.httprequest.method != 'POST' \
+                and product.product_page_template == u'website_sale_donate.ppt_opc' \
+                and 'json_cart_update' not in request.session:
+
+            sale_order = request.website.sale_get_order()
+            if sale_order and len(product.product_variant_ids) >= 1:
+                # WARNING: !!! 'product' is product.template but cart_update expects a product.product id !!!
+                product_variant_ids = product.product_variant_ids.ids
+
+                # Remove all products from the sale order except variants of this product
+                for l in sale_order.website_order_line:
+                    if l.product_id.id not in product_variant_ids:
+                        _logger.warning('Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                        'we are on a ONE PAGE CHECKOUT product page!'
+                                        '' % (l.id, sale_order.id))
+                        l.unlink()
+
         # !!! POST REQUEST !!! (OPC form was submitted)
         # HINT: This is needed since the regular route cart_update is not called in case of one-page-checkout
         if request.httprequest.method == 'POST' \

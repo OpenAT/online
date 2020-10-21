@@ -343,6 +343,23 @@ class sale_order(osv.Model):
             for l in order.website_order_line:
                 if l.exists() and l.id != sol.id:
 
+                    # Remove other products from cart by setting clear_cart in the current product
+                    if sol.product_id.clear_cart:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'the field "clear_cart" is set for the currently added product'
+                                     '' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
+                    # # DISABLED: Remove other products from cart if the current added product is an OPC product
+                    # if sol.product_id.product_page_template \
+                    #         and sol.product_id.product_page_template == "website_sale_donate.ppt_opc":
+                    #     _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                    #                  'the currently added product is a one page checkout product'
+                    #                  '' % (l.id, order.id))
+                    #     sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                    #     continue
+
                     # Donation button template mismatch
                     if product.donation_input_template != l.product_id.donation_input_template:
                         _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '

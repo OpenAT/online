@@ -120,6 +120,7 @@
                             </group>
 
                             <group string="Webshop: Product Page" colspan="2">
+                                <field name="clear_cart"/>
                                 <field name="product_page_template"/>
                                 <img colspan="2"
                                      src="/website_sale_donate/static/src/img/ppt_donate.png"
