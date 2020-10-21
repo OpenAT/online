@@ -36,9 +36,12 @@ $(document).ready(function () {
     // Auto Submit the payment provider form
     //$(".js_auto_submit_form form").submit();
 
-});
+    // let auto_submit_form = $("#wsd_pp_auto_submit_form.js_auto_submit_form form");
+    // if (auto_submit_form.length) {
+    //     auto_submit_form.submit();
+    // }
 
-$("#wsd_pp_auto_submit_form").ready(function () {
-    // Auto Submit the payment provider form (= payment data to payment provider)
-    $(".js_auto_submit_form form").submit();
+    $("#wsd_pp_auto_submit_form.js_auto_submit_form form").submit()
+
+
 });

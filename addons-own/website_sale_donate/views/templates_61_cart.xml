@@ -25,6 +25,11 @@
         <!-- INHERIT SHOPPING CART -->
         <template id="wsd_cart_extended" inherit_id="website_sale.cart" name="Product-Cart Extensions">
 
+            <!-- Add an id to identify the page more easily -->
+            <xpath expr="//div[@class='container oe_website_sale']" position="attributes">
+                <attribute name="id">wsd_cart_page</attribute>
+            </xpath>
+
             <!-- Custom Page-Headline and Checkout-Step-Indicator and top Snippet-Dropping-Area -->
             <xpath expr="//ul[@class='wizard pull-right']" position="attributes">
                 <attribute name="t-if">False</attribute>

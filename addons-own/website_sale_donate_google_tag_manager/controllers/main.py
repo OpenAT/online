@@ -15,11 +15,34 @@ class WebsiteSaleDonateGTM(website_sale_donate):
         for line in order_lines:
             if line.product_id:
                 products.append({
-                    'id': line.product_id.id,
+                    'id': line.product_tmpl_id.id,
                     'name': line.product_id.name,
                     'price': line.price_unit,
+                    # 'brand': 'Google',
                     'category': line.cat_id.id if line.cat_id else 'False',
+                    'variant': line.product_id.id,
                     'quantity': line.product_uos_qty,
+                    # 'coupon': ''
+                    # Not google Tag Manager conform use dimension[n] and metric[n] instead
+                    'price_donate': line.price_donate or 'False',
+
+                    # Custom Dimensions
+                    # -----------------
+                    # This is needed since the Tag Manager does not accept custom fields
+
+                    # 'fs_product_type': line.product_id.fs_product_type or 'False',
+                    # 'html_template': line.product_id.product_page_template or 'False',
+                    # 'css_theme': line.product_id.website_theme or 'False',
+                    # 'payment_interval_id': line.payment_interval_id.id if line.payment_interval_id else 'False',
+                    # 'payment_interval_name': line.payment_interval_name or 'False',
+                    # 'payment_interval_xmlid': line.payment_interval_xmlid or 'False',
+
+                    'dimension1': line.product_id.fs_product_type or 'False',
+                    'dimension2': line.product_id.product_page_template or 'False',
+                    'dimension3': line.product_id.website_theme or 'False',
+                    'dimension4': line.payment_interval_id.id if line.payment_interval_id else 'False',
+                    'dimension5': line.payment_interval_name or 'False',
+                    'dimension6': line.payment_interval_xmlid or 'False',
                 })
         return products
 
@@ -29,9 +52,11 @@ class WebsiteSaleDonateGTM(website_sale_donate):
             'currencyCode': order.currency_id.name,
             'order_data': {
                 'id': str(order.id)+'__'+order.name,
-                'affiliation': order.company_id.name,
+                'affiliation': 'Fundraising Studio Online',
                 'revenue': order.amount_total,
                 'tax': order.amount_tax,
+                # 'shipping': '5.99',
+                # 'coupon': 'SUMMER_SALE'
             },
             'products': self.order_lines_2_gtm(order.order_line)
         }
