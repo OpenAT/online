@@ -8,12 +8,14 @@
         <!-- START CLEARFIX DIV -->
         <div class="clearfix clearfix-donation-buttons-start"/>
 
+        <t t-set="d_button_values" t-value="product.price_suggested_ids.mapped('amount')"/>
+
         <!-- Donation buttons loop -->
         <t t-foreach="product.price_suggested_ids" t-as="d_button">
 
             <t t-set="d_button_id" t-value="'donation_button_' + str(d_button.id)"/>
             <t t-set="d_button_classes" t-value="d_button.css_classes if d_button.css_classes else ''"/>
-                <div t-att-class="'form-group has-feedback donation_button_group ' + d_button_id + ' ' + d_button_classes + (' arbitrary_price_form_group' if d_button.arbitrary_price else '')">
+                <div t-att-class="'form-group donation_button_group ' + d_button_id + ' ' + d_button_classes + (' arbitrary_price_form_group' if d_button.arbitrary_price else '')">
 
                     <!-- Compute the active button -->
                     <t t-if="price_donate">
@@ -45,7 +47,7 @@
                     <t t-if="d_button.arbitrary_price">
                         <div class="input-group arbitrary_price_input_group">
                             <input type="number"
-                                   class="form-control data-rule-ignore arbitrary_price_input"
+                                   t-att-class="'form-control data-rule-ignore arbitrary_price_input ' + ('btn-primary' if price_donate and price_donate not in d_button_values else '')"
                                    name="price_donate"
                                    id="price_donate"
                                    t-att-min="product.price_donate_min or '1'"

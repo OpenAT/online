@@ -1,7 +1,8 @@
 $(document).ready(function () {
 
-    // Set Suggested Price by Buttons
-    // ------------------------------
+    // Set Suggested Price by Buttons dynamically on click
+    // ---------------------------------------------------
+    // HINT: The initial 'btn-primary' element is set by the qweb template
     let $price_donate = $("#price_donate");
     let $price_suggested = $(".price_donate_suggested");
     let $price_suggested_donation_buttons = $('.donation_button:not(.donation_button_snippets)');
@@ -20,22 +21,16 @@ $(document).ready(function () {
             $(this).removeClass('btn-default').addClass('btn-primary');
         }
 
+        // remove btn-primary from the input field if set
+        $price_donate.removeClass('btn-primary')
+
     });
 
     // remove class 'btn-primary' from all buttons if something is typed in the <input id="price_donate">
-    // HINT: The button with the current value will still be btn-primary but this is done by the qweb template!
     $price_donate.on("keypress", function (ev1) {
         $price_suggested_donation_buttons.removeClass('btn-primary').addClass('btn-default');
+        $price_donate.addClass('btn-primary');
     });
-
-    // Focus on the input field if the current value does not fit to any suggested button value
-    // Get the suggested values of all buttons and snippet fields
-    let suggested_button_values = []
-    $price_suggested.each(function(){ suggested_button_values.push( $(this).data("price") )})
-    // Set the <input id="price_donate"> in focus if none of the buttons match
-    if ( !suggested_button_values.includes($price_donate.val()) ) {
-        $price_donate.focus()
-    }
     // ------------------------------
 
 
@@ -147,4 +142,21 @@ $(document).ready(function () {
     //});
 });
 
-
+// DISABLED BECAUSE IT MAY INTERFERE WITH THE IFRAMERESIZER IF AN ELEMENT IS IN FOCUS BEFORE THE CALCULATION
+// $(window).load(function() {
+//     console.log("LOADED IT");
+//     let $price_donate = $("#price_donate");
+//     let $price_suggested = $(".price_donate_suggested");
+//     if ($price_donate.length && $price_suggested.length) {
+//         console.log("FOUND IT");
+//         // Focus on the input field if the current value does not fit to any suggested button value
+//         // Get the suggested values of all buttons and snippet fields
+//         let suggested_button_values = [];
+//         $price_suggested.each(function(){ suggested_button_values.push( $(this).data("price") )});
+//         // Set the <input id="price_donate"> in focus if none of the buttons match
+//         if ( $price_donate.val() && !suggested_button_values.includes($price_donate.val()) ) {
+//             console.log("Focus on it");
+//             $price_donate.focus();
+//         }
+//     }
+// });
