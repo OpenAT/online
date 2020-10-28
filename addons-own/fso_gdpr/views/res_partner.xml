@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+        <!-- Extend res.partner form to include extra fields -->
+        <record model="ir.ui.view" id="fso_gdpr_res_partner_form">
+            <field name="name">fso_gdpr_res_partner_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="email" position="after">
+                    <field name="gdpr_accepted"/>
+                </field>
+            </field>
+        </record>
+
+</data></openerp>

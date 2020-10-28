@@ -119,6 +119,7 @@ TODO (must be done manually right now):
         'fso_partner_frst_cds',
         # We may remove this again in the future to make it an optional addon
         'need_action_menu_disabled',
+        'fso_gdpr',
     ],
     'data': [
         #
