@@ -33,6 +33,7 @@
                                 <field name="bestaetigt_typ"/>
                                 <field name="bestaetigt_herkunft"/>
                                 <field name="origin"/>
+                                <field name="gdpr_accepted"/>
                             </group>
                         </group>
                         <notebook>
