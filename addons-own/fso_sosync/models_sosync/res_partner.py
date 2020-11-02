@@ -89,3 +89,6 @@ class ResPartnerSosync(models.Model):
 
     # CDS Origin
     frst_zverzeichnis_id = fields.Many2one(sosync="True")
+
+    # ZMR
+    prevent_donation_deduction = fields.Boolean(sosync="True")
