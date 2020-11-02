@@ -121,6 +121,8 @@ class ResPartnerFADonationReport(models.Model):
                                              ('zero_but_lsr', 'Donations are already submitted'),
                                              ('zero_lsr_exception', 'Last submitted report exception'),
                                              ('company_data_changed', 'Company Data Changed'),
+                                             ('prevent_donation_deduction',
+                                              'Prevent Donation Deduction is set on Partner'),
                                              ])
     error_code = fields.Char(string="Error Code", readonly=True)
     error_detail = fields.Text(string="Error Detail", readonly=True, track_visibility='onchange')
@@ -814,6 +816,13 @@ class ResPartnerFADonationReport(models.Model):
             # Skip computation for imported donation reports!
             # -----------------------------------------------
             if r.imported:
+                continue
+
+            # Check prevent_donation_deduction of the partner
+            # -----------------------------------------------
+            if r.partner_id and r.partner_id.prevent_donation_deduction:
+                update_report(r, state='error', error_type='prevent_donation_deduction', error_code=False,
+                              error_detail="prevent_donation_deduction is set on the partner!")
                 continue
 
             # Skip older unsubmitted reports

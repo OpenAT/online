@@ -224,6 +224,19 @@ class DonationReportSubmission(models.Model):
     reports_count = fields.Integer(string="Reports",
                                    compute="compute_line_state_reports_count", compute_sudo=True, readonly=True)
 
+    # ----------
+    # CONSTRAINS
+    # ----------
+    @api.constrains('donation_report_ids')
+    def _constrain_prevent_donation_deduction(self):
+        for submission in self:
+            if submission.donation_report_ids:
+                partner = submission.donation_report_ids.mapped('partner_id')
+                for p in partner:
+                    assert not p.prevent_donation_deduction, _(
+                        "Submission %s contains reports where prevent_donation_deduction is set on partner with id %s)!"
+                        "" % (p.id, submission.id))
+
     # ---------------
     # COMPUTED FIELDS
     # ---------------
@@ -576,6 +589,14 @@ class DonationReportSubmission(models.Model):
                                     error_code='',
                                     error_detail="A maximum of 10000 donation reports are allowed per submission!")
                 continue
+
+            # Check that no reports are included where prevent_donation_deduction is set on the partner
+            if r.donation_report_ids:
+                partner = r.donation_report_ids.mapped('partner_id')
+                for p in partner:
+                    assert not p.prevent_donation_deduction, _(
+                        "Submission %s contains reports where prevent_donation_deduction is set on partner with id %s)!"
+                        "" % (p.id, r.id))
 
             # Check if the submission values have changed
             # -------------------------------------------

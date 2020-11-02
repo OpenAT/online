@@ -34,6 +34,9 @@ class ResPartnerZMRGetBPK(models.Model):
         return 20
 
     # FIELDS
+    prevent_donation_deduction = fields.Boolean(string="Prevent Donation Deduction",
+                                                help="If set no donation reports can be submitted for this partner!")
+
     bpk_request_ids = fields.One2many(comodel_name="res.partner.bpk", inverse_name="bpk_request_partner_id",
                                       string="BPK Requests", oldname="BPKRequestIDS")
     # BPK forced request values
