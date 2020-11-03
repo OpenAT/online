@@ -92,3 +92,6 @@ class ResPartnerSosync(models.Model):
 
     # ZMR
     prevent_donation_deduction = fields.Boolean(sosync="True")
+
+    # GDPR
+    gdpr_accepted = fields.Boolean(sosync="True")

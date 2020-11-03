@@ -96,4 +96,5 @@ class MailMassMailingContactSosync(models.Model):
     pf_mandatsid = fields.Char(sosync="True")
     pf_emaildatum = fields.Char(sosync="True")
 
-
+    # GDPR
+    gdpr_accepted = fields.Boolean(sosync="True")
