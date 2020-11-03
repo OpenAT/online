@@ -8,6 +8,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="prevent_donation_deduction" readonly="True"/>
+            </field>
             <xpath expr="//notebook" position="inside">
                 <page string="ZMR BPK">
                     <group>
