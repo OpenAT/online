@@ -319,13 +319,14 @@ class ContactExporter(GetResponseExporter):
         # ------------------------
         campaigns = self.session.env['frst.zgruppedetail'].sudo().search([('sync_with_getresponse', "!=", False)])
 
-        cmp_binding_model = getattr(campaigns, self.binder._inverse_binding_ids_field)._name
-        cmp_binder = self.binder_for(cmp_binding_model)
+        if campaigns:
+            cmp_binding_model = getattr(campaigns[0], self.binder._inverse_binding_ids_field)._name
+            cmp_binder = self.binder_for(cmp_binding_model)
 
-        for cmp in campaigns:
-            cmp_external_id = cmp_binder.to_backend(cmp.id, wrap=True)
-            if not cmp_external_id:
-                self._export_dependency(cmp)
+            for cmp in campaigns:
+                cmp_external_id = cmp_binder.to_backend(cmp.id, wrap=True)
+                if not cmp_external_id:
+                    self._export_dependency(cmp)
 
         # ------------------------------
         # EXPORT MISSING TAG DEFINITIONS
