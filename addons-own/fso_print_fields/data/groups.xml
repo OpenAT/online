@@ -5,6 +5,11 @@
             <field name="sequence" eval="10"/>
             <field name="name">Person</field>
         </record>
+
+        <record id="pfg_address" model="fso.print_field.group">
+            <field name="sequence" eval="15"/>
+            <field name="name">Adresse</field>
+        </record>
     
         <record id="pfg_person_accounting" model="fso.print_field.group">
             <field name="sequence" eval="20"/>

@@ -102,6 +102,44 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person')),]"/>
         </record>
+
+
+        <!-- pfg_address -->
+        <record id="pf_strasse" model="fso.print_field">
+            <field name="sequence" eval="10"/>
+            <field name="name">Strasse</field>
+            <field name="fs_email_placeholder">%Strasse%</field>
+            <field name="mako_expression">${object.street|safe}</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_address')),]"/>
+        </record>
+
+        <record id="pf_hausnummer" model="fso.print_field">
+            <field name="sequence" eval="11"/>
+            <field name="name">Hausnummer</field>
+            <field name="fs_email_placeholder">%Hausnummer%</field>
+            <field name="mako_expression">${object.street_number_web|safe}</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_address')),]"/>
+        </record>
+
+        <record id="pf_plz" model="fso.print_field">
+            <field name="sequence" eval="12"/>
+            <field name="name">PLZ</field>
+            <field name="fs_email_placeholder">%PLZ%</field>
+            <field name="mako_expression">${object.zip|safe}</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_address')),]"/>
+        </record>
+
+        <record id="pf_ort" model="fso.print_field">
+            <field name="sequence" eval="13"/>
+            <field name="name">Ort</field>
+            <field name="fs_email_placeholder">%Ort%</field>
+            <field name="mako_expression">${object.city|safe}</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_address')),]"/>
+        </record>
         
         
         <!-- pfg_person_accounting -->
