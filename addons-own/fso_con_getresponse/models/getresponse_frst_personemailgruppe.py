@@ -136,7 +136,10 @@ class ContactBinder(GetResponseBinder):
 
     _sync_allowed_states = ['subscribed', 'approved']
     _bindings_domain = [('zgruppedetail_id.sync_with_getresponse', '=', True),
-                        ('state', 'in', _sync_allowed_states)
+                        ('state', 'in', _sync_allowed_states),
+                        # FRST Sperrgruppen
+                        ('frst_personemail_id.partner_id.frst_blocked', '!=', True),
+                        ('frst_personemail_id.partner_id.frst_blocked_email', '!=', True),
                         ]
 
     # Make sure only personemailgruppe with sync enabled campaign and allowed state will get a prepared binding

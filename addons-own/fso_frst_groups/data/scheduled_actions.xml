@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data noupdate="1">
+
+    <!-- ================= -->
+    <!-- SCHEDULED ACTIONS -->
+    <!-- ================= -->
+
+    <!-- Scheduled computation of frst blocked res.partner fields -->
+    <record id="ir_cron_scheduled_set_bpk" model="ir.cron" forcecreate="1">
+        <field name="name">Compute frst_blocked fields (Personen- und Kanalsperrenfelder auf res.partner)</field>
+        <field name="priority" eval="50000" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">res.partner</field>
+        <field name="function">scheduled_set_frst_blocked</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+</data></openerp>

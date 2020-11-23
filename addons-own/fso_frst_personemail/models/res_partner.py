@@ -19,6 +19,13 @@ class ResPartner(models.Model):
                                           string="Main Email", readonly=True,
                                           track_visibility='onchange', ondelete='set null')
 
+    frst_personemail_count = fields.Integer(string="Number of E-Mail Addresses",
+                                            compute="_compute_frst_personemail_count")
+
+    def _compute_frst_personemail_count(self):
+        for r in self:
+            r.frst_personemail_count = len(r.frst_personemail_ids) or 0
+
     # -----------
     # PersonEmail
     # -----------

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-31 17:43+0000\n"
-"PO-Revision-Date: 2020-03-31 17:43+0000\n"
+"POT-Creation-Date: 2020-11-23 14:26+0000\n"
+"PO-Revision-Date: 2020-11-23 14:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,14 +16,38 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Abgelaufen"
+msgstr "Abgelaufen"
+
+#. module: fso_frst_groups
 #: selection:frst.zgruppe,tabellentyp_id:0
 msgid "Adresse"
 msgstr "Adresse"
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Aendertungsdatum"
+msgstr "Aendertungsdatum"
+
+#. module: fso_frst_groups
 #: selection:frst.zgruppe,tabellentyp_id:0
 msgid "Aktion"
 msgstr "Aktion"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Aktiv"
+msgstr "Aktiv"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Anlagedatum"
+msgstr "Anlagedatum"
 
 #. module: fso_frst_groups
 #: help:frst.zgruppe,gruppe_lang:0
@@ -46,6 +70,14 @@ msgid "Approval-Needed"
 msgstr "Bestätigung-erforderlich"
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Approval-Origin"
+msgstr "Bestätigungsherkunft"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
 #: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
 msgid "Approval-Type"
 msgstr "Bestätigungstyp"
@@ -106,7 +138,6 @@ msgstr "Erstellt am"
 #: field:frst.gruppestate,display_name:0
 #: field:frst.persongruppe,display_name:0
 #: field:frst.zgruppe,display_name:0
-#: field:frst.zgruppedetail,display_name:0
 msgid "Display Name"
 msgstr "Anzeigename"
 
@@ -129,6 +160,26 @@ msgid "DoubleOptIn"
 msgstr "DoubleOptIn"
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#. module: fso_frst_groups
+#: view:res.partner:fso_frst_groups.res_partner_form_fields
+msgid "E-Mail Gruppen"
+msgstr "E-Mail Gruppen"
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,frst_personemailgruppe_count:0
+msgid "E-Mail Subscribers"
+msgstr "E-Mail Anmeldungen"
+
+#. module: fso_frst_groups
+#: field:res.partner,partner_personemailgruppe_count:0
+msgid "E-Mail-Gruppen Anzahl"
+msgstr "E-Mail-Gruppen Anzahl"
+
+#. module: fso_frst_groups
 #: help:frst.gruppestate,bestaetigt_herkunft:0
 #: help:frst.personemailgruppe,bestaetigt_herkunft:0
 #: help:frst.persongruppe,bestaetigt_herkunft:0
@@ -148,7 +199,6 @@ msgid "Expired"
 msgstr "Abgelaufen"
 
 #. module: fso_frst_groups
-#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
 #: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
 msgid "Extras"
 msgstr "Extras"
@@ -156,7 +206,7 @@ msgstr "Extras"
 #. module: fso_frst_groups
 #: model:res.groups,name:fso_frst_groups.group_fs_group_manager
 msgid "FRST Groups Manager"
-msgstr "FRST Gruppen Manager"
+msgstr "FRST Groups Manager"
 
 #. module: fso_frst_groups
 #: field:frst.personemailgruppe,frst_personemail_id:0
@@ -174,14 +224,33 @@ msgid "FRST PersonGruppe IDS"
 msgstr "Gruppenzuweisungen für Personen"
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "FRST-Group"
+msgstr "FRST-Gruppe"
+
+#. module: fso_frst_groups
+#: field:res.partner,frst_blocked_email:0
+msgid "FRST: E-Mail Channel Blocked"
+msgstr "FRST: E-Mail gesperrt"
+
+#. module: fso_frst_groups
+#: field:res.partner,frst_blocked:0
+msgid "FRST: Partner Blocked"
+msgstr "FRST: Person gesperrt"
+
+#. module: fso_frst_groups
 #: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
 msgid "Folder"
 msgstr "Gruppenordner"
 
 #. module: fso_frst_groups
-#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
-msgid "GUI Anzeige"
-msgstr "Aktiv"
+#: selection:frst.gruppestate,bestaetigt_typ:0
+#: selection:frst.personemailgruppe,bestaetigt_typ:0
+#: selection:frst.persongruppe,bestaetigt_typ:0
+#: selection:frst.zgruppedetail,bestaetigung_typ:0
+msgid "Fundraising Studio Workflow"
+msgstr "Fundraising Studio Workflow"
 
 #. module: fso_frst_groups
 #: field:frst.zgruppe,geltungsbereich:0
@@ -189,6 +258,17 @@ msgstr "Aktiv"
 #: field:frst.zgruppedetail,geltungsbereich:0
 msgid "Geltungsbereich"
 msgstr "Geltungsbereich"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Group By..."
+msgstr "Gruppierung..."
+
+#. module: fso_frst_groups
+#: field:frst.zgruppedetail,display_name:0
+msgid "Group Name"
+msgstr "Gruppenname"
 
 #. module: fso_frst_groups
 #: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_search
@@ -216,6 +296,40 @@ msgstr "Gruppen"
 #: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
 msgid "Gruppenordner"
 msgstr "Gruppenordner"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_form
+msgid "Gruppenzuweisung auf E-Mail"
+msgstr "Gruppenzuweisung auf E-Mail"
+
+#. module: fso_frst_groups
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_form
+msgid "Gruppenzuweisung auf Person"
+msgstr "Gruppenzuweisung auf Person"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Gueltig-von"
+msgstr "Gueltig-von"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Gueltig-von-ab-2000"
+msgstr "Gueltig-von-ab-2000"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Gueltig-von-ab-2015"
+msgstr "Gueltig-von-ab-2015"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Gueltig-von-ab-2020"
+msgstr "Gueltig-von-ab-2020"
 
 #. module: fso_frst_groups
 #: field:frst.gruppestate,gueltig_bis:0
@@ -260,12 +374,12 @@ msgstr "ID"
 #: help:frst.personemailgruppe,steuerung_bit:0
 #: help:frst.persongruppe,steuerung_bit:0
 msgid "If not set: Person is explicitly excluded/unsubscribed from this group!"
-msgstr "If not set: Person is explicitly excluded/unsubscribed from this group!"
+msgstr "Wenn nicht gesetzt: Die Person ist ausdrücklich von dieser Gruppe ausgenommen!"
 
 #. module: fso_frst_groups
 #: help:frst.zgruppedetail,gui_anzeigen:0
 msgid "If set this group is available for this instance"
-msgstr "If set this group is available for this instance"
+msgstr "Wenn gesetzt: Dies Gruppe ist in dieser Datenbank (Instanz) verfügbar."
 
 #. module: fso_frst_groups
 #: help:frst.zgruppedetail,bestaetigung_erforderlich:0
@@ -273,9 +387,30 @@ msgid "If this checkbox is set gueltig_von and gueltig_bis will be set to the pa
 msgstr "If this checkbox is set gueltig_von and gueltig_bis will be set to the past date 09.09.1999 when the group is created to indicate that an approval is needed before set the group to active."
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Inaktiv"
+msgstr "Inaktiv"
+
+#. module: fso_frst_groups
 #: help:frst.zgruppe,gruppe_kurz:0
 msgid "Interne Bezeichnung"
 msgstr "Interne Bezeichnung"
+
+#. module: fso_frst_groups
+#: help:res.partner,frst_blocked:0
+msgid "Is in one or more active 'Fundraising Studio Personensperrgruppen'"
+msgstr "Die Person ist ein einer oder mehreren aktiven Personensperrgruppen"
+
+#. module: fso_frst_groups
+#: help:res.partner,frst_blocked_email:0
+msgid "Is in one or more active 'Fundraising Studio Personensperrgruppen' for the channel e-mail"
+msgstr "Die Person ist in einer oder mehreren Personensperrgruppen für den E-Mail Kanal"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_tree
+msgid "Ja GUI"
+msgstr "Ja GUI"
 
 #. module: fso_frst_groups
 #: field:frst.zgruppe,ja_gui_anzeige:0
@@ -326,26 +461,47 @@ msgid "Main Email Groups"
 msgstr "Hauptemail Gruppen"
 
 #. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_tree
+msgid "Nein GUI"
+msgstr "Nein GUI"
+
+#. module: fso_frst_groups
 #: field:frst.zgruppe,nein_gui_anzeige:0
 msgid "NeinGuiAnzeige"
 msgstr "NeinGuiAnzeige"
 
 #. module: fso_frst_groups
-#: model:ir.model,name:fso_frst_groups.model_res_partner
-msgid "Partner"
-msgstr "Person"
+#: code:addons/fso_frst_groups/models/frst_personemailgruppe.py:39
+#, python-format
+msgid "Only inactive groups (personemailgruppe %s) are allowed for an inactive e-mail (personemail %s)!"
+msgstr "Only inactive groups (personemailgruppe %s) are allowed for an inactive e-mail (personemail %s)!"
 
 #. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Opt-Out"
+msgstr "Opt-Out"
+
+#. module: fso_frst_groups
+#: model:ir.model,name:fso_frst_groups.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: fso_frst_groups
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
 #: field:frst.persongruppe,partner_id:0
 #: selection:frst.zgruppe,tabellentyp_id:0
 msgid "Person"
 msgstr "Person"
 
 #. module: fso_frst_groups
-#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_form
+#: field:frst.zgruppedetail,frst_persongruppe_count:0
+msgid "Person Subscribers"
+msgstr "Person Subscribers"
+
+#. module: fso_frst_groups
 #: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
 #: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_tree
-#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
 #: model:ir.actions.act_window,name:fso_frst_groups.frst_personemailgruppe_action
 #: model:ir.ui.menu,name:fso_frst_groups.frst_personemailgruppe_menu
 msgid "PersonEmailGruppe"
@@ -357,10 +513,8 @@ msgid "PersonEmailGruppe IDS"
 msgstr "Gruppenzuweisungen E-Mail"
 
 #. module: fso_frst_groups
-#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_form
 #: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
 #: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_tree
-#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
 #: model:ir.actions.act_window,name:fso_frst_groups.frst_persongruppe_action
 #: model:ir.ui.menu,name:fso_frst_groups.frst_persongruppe_menu
 msgid "PersonGruppe"
@@ -370,6 +524,16 @@ msgstr "Gruppenzuweisung Person"
 #: field:frst.zgruppedetail,frst_persongruppe_ids:0
 msgid "PersonGruppe IDS"
 msgstr "Gruppenzuweisungen Person"
+
+#. module: fso_frst_groups
+#: view:res.partner:fso_frst_groups.res_partner_form_fields
+msgid "Personengruppen"
+msgstr "Personengruppen"
+
+#. module: fso_frst_groups
+#: field:res.partner,partner_persongruppe_count:0
+msgid "Personengruppenanzahl"
+msgstr "Personengruppenanzahl"
 
 #. module: fso_frst_groups
 #: selection:frst.gruppestate,bestaetigt_typ:0
@@ -397,10 +561,18 @@ msgstr "Zeige diese Gruppe im Personenfenster"
 
 #. module: fso_frst_groups
 #: field:frst.gruppestate,state:0
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
 #: field:frst.personemailgruppe,state:0
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
 #: field:frst.persongruppe,state:0
 msgid "State"
 msgstr "Status"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Status Filter"
+msgstr "Status Filter"
 
 #. module: fso_frst_groups
 #: field:frst.gruppestate,steuerung_bit:0
@@ -417,9 +589,10 @@ msgid "Subscribed"
 msgstr "Angemeldet"
 
 #. module: fso_frst_groups
-#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
-msgid "Subscribers"
-msgstr "Anmeldungen"
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_graph
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_graph
+msgid "Subscription Analysis"
+msgstr "Subscription Analysis"
 
 #. module: fso_frst_groups
 #: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
@@ -430,6 +603,17 @@ msgstr "Einstellungen für die Anmeldungsbestätigung"
 #: field:frst.personemailgruppe,display_name:0
 msgid "Subscription Name"
 msgstr "Anzeigename"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+msgid "Subscriptions"
+msgstr "Subscriptions"
+
+#. module: fso_frst_groups
+#: view:frst.zgruppe:fso_frst_groups.frst_zgruppe_form
+#: view:frst.zgruppedetail:fso_frst_groups.frst_zgruppedetail_form
+msgid "System"
+msgstr "System"
 
 #. module: fso_frst_groups
 #: selection:frst.zgruppe,geltungsbereich:0
@@ -467,28 +651,52 @@ msgid "Waiting for Approval"
 msgstr "Warte auf Bestätigung"
 
 #. module: fso_frst_groups
-#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:80
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Warte-auf-Bestaetigung"
+msgstr "Warte-auf-Bestaetigung"
+
+#. module: fso_frst_groups
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:128
 #, python-format
 msgid "You can not change the 'geltungsbereich'. Please delete and recreate the group!"
 msgstr "Du kannst den 'geltungsbereich' nicht verändern. Bitte lösche die Gruppe und lege sie neu an falls erforderlich!"
 
 #. module: fso_frst_groups
-#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:77
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:124
 #, python-format
 msgid "You can not change the group folder (zgruppe_id). Please delete and recreate the group!"
 msgstr "Du kannst den Gruppenordner nicht ändern (zgruppe_id). Bitte lösche die Gruppe und lege sie neu an falls erforderlich!"
 
 #. module: fso_frst_groups
-#: code:addons/fso_frst_groups/models/frst_zgruppe.py:57
+#: code:addons/fso_frst_groups/models/frst_zgruppe.py:68
 #, python-format
 msgid "You can not create a system group folder!"
 msgstr "Du kannst einen Systemgruppenordner nicht löschen!"
 
 #. module: fso_frst_groups
-#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:69
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:115
 #, python-format
 msgid "You can not create a system group!"
 msgstr "Du kannst eine Systemgruppe nicht anlegen! (Versuche eine lokale Gruppe anzulegen)"
+
+#. module: fso_frst_groups
+#: view:frst.personemailgruppe:fso_frst_groups.frst_personemailgruppe_search
+#: view:frst.persongruppe:fso_frst_groups.frst_persongruppe_search
+msgid "Zeit Filter"
+msgstr "Zeit Filter"
+
+#. module: fso_frst_groups
+#: help:frst.zgruppedetail,gruppe_kurz:0
+msgid "gruppe_kurz is no longer in use - use gruppe_lang instead! The value of gruppe_lang will be copied to gruppe_kurz if gruppe_kurz is empty!"
+msgstr "gruppe_kurz is no longer in use - use gruppe_lang instead! The value of gruppe_lang will be copied to gruppe_kurz if gruppe_kurz is empty!"
+
+#. module: fso_frst_groups
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:84
+#: code:addons/fso_frst_groups/models/frst_zgruppedetail.py:85
+#, python-format
+msgid "unknown"
+msgstr "unknown"
 
 #. module: fso_frst_groups
 #: selection:frst.zgruppe,tabellentyp_id:0

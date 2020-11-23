@@ -51,5 +51,7 @@ TODO: There is some unicode error in addon fso_frst_groups on init - find and fi
         'views/frst_zgruppedetail.xml',
         #
         'views/res_partner.xml',
+        #
+        'data/scheduled_actions.xml',
     ],
 }

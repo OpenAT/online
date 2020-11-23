@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- Extend res.partner form to include fields -->
+    <record model="ir.ui.view" id="res_partner_form_fso_frst_personemail">
+        <field name="name">res_partner_form_fso_frst_personemail</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button class="oe_inline oe_stat_button"
+                        type="action"
+                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}"
+                        name="%(fso_frst_personemail.frst_personemail_action)d"
+                        icon="fa-envelope-o">
+                    <field name="frst_personemail_count"
+                           widget="statinfo"
+                           string="E-Mail Adressen"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+    
+</data></openerp>

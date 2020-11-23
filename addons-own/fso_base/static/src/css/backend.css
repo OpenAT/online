@@ -62,3 +62,14 @@ tr[style*="grey"] {
 tr[style*="blue"] {
     color: #1482e2 !important;
 }
+
+/* res.partner button box: Full width and left aligned */
+#res_partner_form_button_box {
+    width: 100%;
+    margin-bottom: 2em;
+    text-align: left;
+    border-top: 1px dotted lightgray;
+    border-bottom: 1px dotted lightgray;
+    padding: 1em;
+    /* background-color: #fafafa; */
+}

@@ -28,3 +28,24 @@ class FRSTPersonGruppe(models.Model):
     partner_id = fields.Many2one(comodel_name="res.partner", inverse_name='persongruppe_ids',
                                  string="Person",
                                  required=True, ondelete='cascade', index=True)
+
+    @api.model
+    def create(self, values):
+        res = super(FRSTPersonGruppe, self).create(values)
+
+        # Compute frst blocked
+        if res and res.partner_id:
+            res.partner_id._set_frst_blocked()
+
+        return res
+
+    @api.multi
+    def write(self, values):
+        res = super(FRSTPersonGruppe, self).write(values)
+
+        # Compute frst blocked
+        if res:
+            partner = self.mapped("partner_id")
+            partner._set_frst_blocked()
+
+        return res

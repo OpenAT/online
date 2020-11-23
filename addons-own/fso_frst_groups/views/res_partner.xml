@@ -7,40 +7,37 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button class="oe_inline oe_stat_button"
+                        type="action"
+                        context="{'default_partner_id': active_id, 'search_default_partner_id': active_id}"
+                        name="%(fso_frst_groups.frst_persongruppe_action)d"
+                        icon="fa-user">
+                    <field name="partner_persongruppe_count"
+                           widget="statinfo"
+                           string="Personengruppen"/>
+                </button>
+                <button class="oe_inline oe_stat_button"
+                        type="object"
+                        name="button_open_personemailgruppe"
+                        icon="fa-envelope-o">
+                    <field name="partner_personemailgruppe_count"
+                           widget="statinfo"
+                           string="E-Mail Gruppen"/>
+                </button>
+            </xpath>
+
+            <field name="parent_id" position="before">
+                <label for="frst_blocked"/><field name="frst_blocked"/>
+                <label for="frst_blocked_email"/><field name="frst_blocked_email"/>
+            </field>
+
             <field name="email" position="after">
                 <field name="main_personemail_id"/>
                 <field name="main_email_personemailgruppe_ids" widget="many2many_tags"/>
             </field>
+
         </field>
     </record>
-
-    <!-- Extend res.partner tree to include sosync fields -->
-    <!--<record model="ir.ui.view" id="res_partner_tree_fields">-->
-        <!--<field name="name">sosync_res_partner_tree_fields</field>-->
-        <!--<field name="model">res.partner</field>-->
-        <!--<field name="inherit_id" ref="base.view_partner_tree"/>-->
-        <!--<field name="arch" type="xml">-->
-            <!--<field name="display_name" position="before">-->
-                <!--<field name="id"/>-->
-            <!--</field>-->
-            <!--<field name="email" position="after">-->
-                <!--<field name="sosync_fs_id"/>-->
-                <!--<field name="sosync_synced_version"/>-->
-            <!--</field>-->
-        <!--</field>-->
-    <!--</record>-->
-    
-    <!-- Extend res.partner search to include sosync fields -->
-    <!--<record model="ir.ui.view" id="res_partner_tree_fields">-->
-        <!--<field name="name">sosync_res_partner_search_fields</field>-->
-        <!--<field name="model">res.partner</field>-->
-        <!--<field name="inherit_id" ref="base.view_res_partner_filter"/>-->
-        <!--<field name="arch" type="xml">-->
-            <!--<field name="email" position="after">-->
-                <!--<field name="id"/>-->
-                <!--<field name="sosync_fs_id"/>-->
-            <!--</field>-->
-        <!--</field>-->
-    <!--</record>-->
     
 </data></openerp>

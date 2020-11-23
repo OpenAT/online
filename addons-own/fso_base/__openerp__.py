@@ -99,6 +99,7 @@ TODO (must be done manually right now):
         'website_seo_url_product',
         'cron_run_manually',
         'smile_web_export',
+        'mail_delete_sent_by_footer',
         #'smile_web_search_range', # DISABLED because of JS View errors in Backend
         #'smile_web_search_timedelta', Disabled because of ParseError: "External ID not found in the system: web.assets_backend" while parsing None:5, near <data inherit_id="web.assets_backend">
         # ---
@@ -106,7 +107,7 @@ TODO (must be done manually right now):
         # ---
         'mail_follower_control',
         'mail_global_bcc',
-        'mail_delete_odoo_footer',
+        'mail_delete_access_link_portal',
         'partner_firstname_lastname',
         'partner_fullhierarchy',
         'auth_doubleoptin',

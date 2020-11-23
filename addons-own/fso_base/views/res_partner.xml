@@ -7,6 +7,9 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//div[@name='buttons']" position="attributes">
+                    <attribute name="id">res_partner_form_button_box</attribute>
+                </xpath>
                 <field name="email" position="after">
                     <field name="donation_deduction_optout_web"/>
                     <field name="donation_deduction_disabled"/>

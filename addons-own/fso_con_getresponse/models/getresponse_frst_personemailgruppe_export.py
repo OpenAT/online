@@ -29,7 +29,7 @@ from .helper_related_action import unwrap_binding
 from .backend import getresponse
 
 from .unit_export import BatchExporter, GetResponseExporter
-from .unit_export_delete import GetResponseDeleteExporter
+from .unit_export_delete import GetResponseDeleteExporter, export_delete_record
 from .unit_import import import_record
 
 from .getresponse_frst_personemailgruppe_import import ContactImporter
@@ -306,11 +306,22 @@ class ContactExporter(GetResponseExporter):
 
     def _get_binding_record(self):
         binding = super(ContactExporter, self)._get_binding_record()
+
+        # DELAYED CONTACT CREATION IN PROGRESS
         if binding and binding.sync_data == 'DELAYED CREATION IN GETRESPONSE':
             raise RetryableJobError("EXPORT: The binding '%s', '%s' can not be exported yet because we still wait for "
                                     "the delayed contact binding to finish!" % (binding._name, binding.id))
-        else:
-            return binding
+
+        # DELETE BINDINGS (GR contacts) THAT ARE NO LONGER VALID BASED ON THE BINDER get_bindings() METHOD
+        elif not binding and self.binding_id:
+            blocked_binding = self.model.browse([self.binding_id])
+            if len(blocked_binding) == 1 and blocked_binding.getresponse_id:
+                _logger.warning("EXPORT: The binding '%s', '%s' was filtered out by get_bindings() and therefore is no"
+                                "longer valid! A delete job will be created to delete the contact from GetResponse!")
+                export_delete_record.delay(self.session, blocked_binding._name, self.backend_record.id,
+                                           blocked_binding.getresponse_id)
+
+        return binding
 
     # Export missing campaigns, tag definitions and custom field definitions
     def _export_dependencies(self):
