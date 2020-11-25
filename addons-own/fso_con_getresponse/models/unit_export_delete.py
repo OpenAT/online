@@ -45,11 +45,18 @@ class GetResponseDeleteExporter(Deleter):
             getresponse_id:
 
         Returns:
-            bool: True if the deletion was successfull in GetResponse, False if it failed
+            bool: True if the deletion was successful in GetResponse, False if it failed
         """
         result = self.backend_adapter.delete(getresponse_id)
         if not result:
             raise Exception("Could not delete record %s in GetResponse!" % getresponse_id)
+
+        # Deactivate the binding after we deleted the record in GetResponse
+        binding = self.binder.to_openerp(getresponse_id)
+        if binding and binding.active:
+            _logger.warning("The binding '%s', '%s', 'odoo id %s', 'gr id %s' was deactivated "
+                            "after deleting the record in GetResponse!"
+                            "" % (binding._name, binding.id, binding.odoo_id, binding.getresponse_id))
 
         return _('Record %s deleted in GetResponse') % getresponse_id
 

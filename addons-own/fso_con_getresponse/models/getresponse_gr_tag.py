@@ -68,6 +68,8 @@ class GetResponseGrTagBinding(models.Model):
         string='Last synchronization data to compare',
         readonly=True)
 
+    active = fields.Boolean(string="Active", default=True)
+
     # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
     # TODO: Check if the backend_uniq constrain makes any problems for the parallel processing of jobs
     _sql_constraints = [

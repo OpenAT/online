@@ -13,6 +13,9 @@
                         <h1>
                             <field name="backend_id" class="oe_inline" />
                         </h1>
+                        <group>
+                            <field name="active"/>
+                        </group>
                         <group name="getresponse_campaign_binding" string="Campaign Binding">
                             <group>
                                 <field name="odoo_id"/>

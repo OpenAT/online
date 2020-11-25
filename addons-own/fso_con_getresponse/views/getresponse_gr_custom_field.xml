@@ -13,6 +13,9 @@
                         <h1>
                             <field name="backend_id" class="oe_inline" />
                         </h1>
+                        <group>
+                            <field name="active"/>
+                        </group>
                         <group name="getresponse_gr_custom_field_binding" string="Custom Field Definition Binding">
                             <group>
                                 <field name="odoo_id"/>

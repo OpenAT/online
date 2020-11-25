@@ -316,8 +316,10 @@ class ContactExporter(GetResponseExporter):
         elif not binding and self.binding_id:
             blocked_binding = self.model.browse([self.binding_id])
             if len(blocked_binding) == 1 and blocked_binding.getresponse_id:
-                _logger.warning("EXPORT: The binding '%s', '%s' was filtered out by get_bindings() and therefore is no"
-                                "longer valid! A delete job will be created to delete the contact from GetResponse!")
+                _logger.warning("EXPORT: The binding '%s', '%s', 'odoo id %s', 'gr id %s' was filtered out by "
+                                "get_bindings() and therefore is no longer valid! A delete job will be created to "
+                                "delete the contact from GetResponse!"
+                                "" % (binding._name, binding.id, binding.odoo_id, binding.getresponse_id))
                 export_delete_record.delay(self.session, blocked_binding._name, self.backend_record.id,
                                            blocked_binding.getresponse_id)
 
