@@ -123,23 +123,23 @@ class FRSTGruppeState(models.AbstractModel):
             unsubscribed_domain += [('steuerung_bit', '=', False)]
         unsubscribed_to_fix = self.search(unsubscribed_domain)
         logger.info("Set state 'unsubscribed' for %s %s!" % (len(unsubscribed_to_fix), self._name))
-        unsubscribed_to_fix.write({'state': 'unsubscribed'})
+        unsubscribed_to_fix.compute_state()
 
         # approved
         approved_domain = [('state', '!=', 'approved'), ('bestaetigt_am_um', '!=', False)] + inside
         if model_has_sbit:
             approved_domain += [('steuerung_bit', '=', True)]
         approved_to_fix = self.search(approved_domain)
-        logger.info("Set state 'approved' for %s %s!" % (len(approved_to_fix), self._name))
-        approved_to_fix.write({'state': 'approved'})
+        logger.info("Fix state 'approved' for %s %s!" % (len(approved_to_fix), self._name))
+        approved_to_fix.compute_state()
         
         # subscribed
         subscribed_domain = [('state', '!=', 'subscribed'), ('bestaetigt_am_um', '=', False)] + inside
         if model_has_sbit:
             subscribed_domain += [('steuerung_bit', '=', True)]
         subscribed_to_fix = self.search(subscribed_domain)
-        logger.info("Set state 'subscribed' for %s %s!" % (len(subscribed_to_fix), self._name))
-        subscribed_to_fix.write({'state': 'subscribed'})
+        logger.info("Fix state 'subscribed' for %s %s!" % (len(subscribed_to_fix), self._name))
+        subscribed_to_fix.compute_state()
         
         # approval_pending
         approval_pending_domain = [('state', '!=', 'approval_pending'),
@@ -148,8 +148,8 @@ class FRSTGruppeState(models.AbstractModel):
         if model_has_sbit:
             approval_pending_domain += [('steuerung_bit', '=', True)]
         approval_pending_to_fix = self.search(approval_pending_domain)
-        logger.info("Set state 'approval_pending' for %s %s!" % (len(approval_pending_to_fix), self._name))
-        approval_pending_to_fix.write({'state': 'approval_pending'})
+        logger.info("Fix state 'approval_pending' for %s %s!" % (len(approval_pending_to_fix), self._name))
+        approval_pending_to_fix.compute_state()
         
         # expired
         expired_domain = [('state', '!=', 'expired'),
@@ -157,8 +157,8 @@ class FRSTGruppeState(models.AbstractModel):
                             ('gueltig_von', '>', now),
                             ('gueltig_bis', '<', now)]
         expired_to_fix = self.search(expired_domain)
-        logger.info("Set state 'expired' for %s %s!" % (len(expired_to_fix), self._name))
-        expired_to_fix.write({'state': 'expired'})
+        logger.info("Fix state 'expired' for %s %s!" % (len(expired_to_fix), self._name))
+        expired_to_fix.compute_state()
 
         logger.info('Done scheduled_compute_state() group subscription model %s' % self._name)
 
