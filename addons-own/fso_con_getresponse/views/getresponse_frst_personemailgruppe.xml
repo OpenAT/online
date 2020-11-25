@@ -53,9 +53,44 @@
                     <field name="getresponse_id"/>
                     <field name="sync_date"/>
                     <field name="display_name"/>
+
+                <field name="zgruppedetail_id" invisible="1"/>
+                <field name="frst_personemail_id" invisible="1"/>
                 </tree>
             </field>
         </record>
+
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="view_getresponse_frst_personemailgruppe_search">
+        <field name="name">view_getresponse_frst_personemailgruppe_search</field>
+        <field name="model">getresponse.frst.personemailgruppe</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="GetResponse Contact Binding">
+                <field name="id"/>
+                <field name="backend_id"/>
+                <field name="odoo_id"/>
+                <field name="getresponse_id"/>
+                <field name="sync_date"/>
+                <field name="display_name"/>
+                <field name="zgruppedetail_id"/>
+                <field name="frst_personemail_id"/>
+                <group expand="1" string="Blocked" name="status_filters">
+                    <filter name="filter_no_getresponse_id" string="Keine GetResponse ID"
+                            domain="[('getresponse_id', '=', False)]"/>
+                    <filter name="filter_personblocked" string="Person gesperrt"
+                            domain="[('frst_personemail_id.partner_id.frst_blocked', '=', True)]"/>
+                    <filter name="filter_personemailblocked" string="E-Mail Kanal gesperrt"
+                            domain="[('frst_personemail_id.partner_id.frst_blocked_email', '=', True)]"/>
+                </group>
+                <group expand="1" string="Group By..." name="group_by">
+                    <filter name="group_zgruppedetail_id" string="By FRST Group" domain="[]" context="{'group_by':'zgruppedetail_id'}"/>
+                    <filter name="group_backend_id" string="By Backend" domain="[]" context="{'group_by':'backend_id'}"/>
+                    <filter name="group_sync_date" string="By Sync Date" domain="[]" context="{'group_by':'sync_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
         <!-- GetResponse Contact Bindings Action > Act Window -->
         <record id="action_getresponse_frst_personemailgruppe" model="ir.actions.act_window">
