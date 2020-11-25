@@ -20,11 +20,9 @@
                     type="action"
                     class="oe_stat_button oe_inline"
                     icon="fa-pencil-square-o">
-                Subscriptions
-                <!-- DISABLED BY MIKE -->
-                <!--<field name="mass_mailing_contacts_count"-->
-                       <!--widget="statinfo"-->
-                       <!--string="Mailing lists"/>-->
+                <field name="mass_mailing_contacts_count"
+                       string="MM Contacts"
+                       widget="statinfo"/>
             </button>
             <button name="%(mass_mailing.action_view_mail_mail_statistics)d"
                     context="{'search_default_partner_id': active_id,
@@ -32,11 +30,9 @@
                     type="action"
                     class="oe_stat_button oe_inline"
                     icon="fa-envelope-o">
-                Statistic
-                <!-- DISABLED BY MIKE -->
-                <!--<field name="mass_mailing_stats_count"-->
-                       <!--widget="statinfo"-->
-                       <!--string="Mass mailing stats"/>-->
+                <field name="mass_mailing_stats_count"
+                       widget="statinfo"
+                       string="MM Stats"/>
             </button>
         </div>
     </field>

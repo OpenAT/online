@@ -21,6 +21,23 @@ class ResPartner(models.Model):
         string="Mass mailing stats",
         comodel_name='mail.mail.statistics', inverse_name='partner_id')
 
+    mass_mailing_contacts_count = fields.Integer(string="Mass Mailing Contacts Count",
+                                                 compute="compute_mass_mailing_contacts_count")
+    mass_mailing_stats_count = fields.Integer(string="Mass Mailing Stats Count",
+                                                 compute="compute_mass_mailing_stats_count")
+
+    @api.multi
+    @api.depends('pe_mass_mailing_contact_ids')
+    def compute_mass_mailing_contacts_count(self):
+        for r in self:
+            r.mass_mailing_contacts_count = len(r.pe_mass_mailing_contact_ids) or 0
+
+    @api.multi
+    @api.depends('mass_mailing_stats')
+    def compute_mass_mailing_stats_count(self):
+        for r in self:
+            r.mass_mailing_stats_count = len(r.mass_mailing_stats) or 0
+
     @api.constrains('email')
     def _check_email_mass_mailing_contacts(self):
         for r in self:

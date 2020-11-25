@@ -54,9 +54,12 @@ class GetResponseDeleteExporter(Deleter):
         # Deactivate the binding after we deleted the record in GetResponse
         binding = self.binder.to_openerp(getresponse_id)
         if binding and binding.active:
-            _logger.warning("The binding '%s', '%s', 'odoo id %s', 'gr id %s' was deactivated "
+            _logger.warning("The binding '%s', '%s', odoo_id: '%s', getresponse_id: '%s' was deactivated "
                             "after deleting the record in GetResponse!"
                             "" % (binding._name, binding.id, binding.odoo_id, binding.getresponse_id))
+            binding.write({'active': False})
+        else:
+            _logger.error("No binding found to deactivate for getresponse_id '%s'" % getresponse_id)
 
         return _('Record %s deleted in GetResponse') % getresponse_id
 
