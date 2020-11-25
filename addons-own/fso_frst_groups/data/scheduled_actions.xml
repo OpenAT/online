@@ -19,4 +19,34 @@
         <field name="args" eval="'()'"/>
     </record>
 
+    <!-- Scheduled computation the state for persongruppe -->
+    <record id="ir_cron_scheduled_compute_state_persongruppe" model="ir.cron" forcecreate="1">
+        <field name="name">Compute state for frst.persongruppe (Personengruppen-Anmeldungen)</field>
+        <field name="priority" eval="60000" />
+        <field name="active" eval="True"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.today() + timedelta(days=1)).strftime('%Y-%m-%d 01:48:00')" />
+        <field name="doall" eval="False"/>
+        <field name="model">frst.persongruppe</field>
+        <field name="function">scheduled_compute_state</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+    <!-- Scheduled computation the state for personemailgruppe -->
+    <record id="ir_cron_scheduled_compute_state_personemailgruppe" model="ir.cron" forcecreate="1">
+        <field name="name">Compute state for frst.personemailgruppe (E-Mail-Gruppen-Anmeldungen)</field>
+        <field name="priority" eval="60000" />
+        <field name="active" eval="True"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.today() + timedelta(days=1)).strftime('%Y-%m-%d 03:48:00')" />
+        <field name="doall" eval="False"/>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="function">scheduled_compute_state</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
 </data></openerp>

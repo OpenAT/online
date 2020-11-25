@@ -10,7 +10,7 @@
             <form string="Gruppenzuweisung auf E-Mail">
                 <header>
                     <button string="Compute State" name="compute_state" type="object" class="oe_highlight"/>
-                    <button string="Recompute State for all Groups" name="compute_all_states" type="object"/>
+                    <!--<button string="Recompute State for all Groups" name="compute_all_states" type="object"/>-->
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>

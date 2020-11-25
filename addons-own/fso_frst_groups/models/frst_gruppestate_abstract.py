@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from copy import deepcopy
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 import time
@@ -46,6 +47,7 @@ class FRSTGruppeState(models.AbstractModel):
     _name = "frst.gruppestate"
 
     _approval_pending_date = fields.date(1999, 9, 9).strftime(DEFAULT_SERVER_DATE_FORMAT)
+    _default_gueltig_bis_date = fields.date(2099, 12, 31).strftime(DEFAULT_SERVER_DATE_FORMAT)
 
     state = fields.Selection(selection=[('approval_pending', 'Waiting for Approval'),
                                         ('subscribed', 'Subscribed'),
@@ -71,6 +73,7 @@ class FRSTGruppeState(models.AbstractModel):
     bestaetigt_herkunft = fields.Char("Bestaetigungsherkunft", readonly=True,
                                       help="E.g.: The link or the workflow process")
 
+    @api.multi
     @api.depends('gueltig_von', 'gueltig_bis', 'steuerung_bit')
     def compute_state(self):
         for r in self:
@@ -98,6 +101,66 @@ class FRSTGruppeState(models.AbstractModel):
                 r.state = state
 
         return True
+
+    @api.multi
+    def compute_all_states(self):
+        subscriptions = self.search([])
+        logger.info("Found %s %s to recompute the state for!" % (len(subscriptions), self._name))
+        subscriptions.compute_state()
+        logger.info("Status was recomputed for %s %s records!" % (len(subscriptions), self._name))
+        
+    @api.multi
+    def scheduled_compute_state(self):
+        logger.info('Start scheduled_compute_state() for group subscription model %s' % self._name)
+
+        now = fields.datetime.now()
+        model_has_sbit = True if 'steuerung_bit' in self._fields else False
+        inside = [('gueltig_von', '<=', now), ('gueltig_bis', '>=', now)]
+
+        # unsubscribed
+        unsubscribed_domain = [('state', '!=', 'unsubscribed')] + inside
+        if model_has_sbit:
+            unsubscribed_domain += [('steuerung_bit', '=', False)]
+        unsubscribed_to_fix = self.search(unsubscribed_domain)
+        logger.info("Set state 'unsubscribed' for %s %s!" % (len(unsubscribed_to_fix), self._name))
+        unsubscribed_to_fix.write({'state': 'unsubscribed'})
+
+        # approved
+        approved_domain = [('state', '!=', 'approved'), ('bestaetigt_am_um', '!=', False)] + inside
+        if model_has_sbit:
+            approved_domain += [('steuerung_bit', '=', True)]
+        approved_to_fix = self.search(approved_domain)
+        logger.info("Set state 'approved' for %s %s!" % (len(approved_to_fix), self._name))
+        approved_to_fix.write({'state': 'approved'})
+        
+        # subscribed
+        subscribed_domain = [('state', '!=', 'subscribed'), ('bestaetigt_am_um', '=', False)] + inside
+        if model_has_sbit:
+            subscribed_domain += [('steuerung_bit', '=', True)]
+        subscribed_to_fix = self.search(subscribed_domain)
+        logger.info("Set state 'subscribed' for %s %s!" % (len(subscribed_to_fix), self._name))
+        subscribed_to_fix.write({'state': 'subscribed'})
+        
+        # approval_pending
+        approval_pending_domain = [('state', '!=', 'approval_pending'),
+                                   ('gueltig_von', '=', self._approval_pending_date),
+                                   ('gueltig_bis', '=', self._approval_pending_date)]
+        if model_has_sbit:
+            approval_pending_domain += [('steuerung_bit', '=', True)]
+        approval_pending_to_fix = self.search(approval_pending_domain)
+        logger.info("Set state 'approval_pending' for %s %s!" % (len(approval_pending_to_fix), self._name))
+        approval_pending_to_fix.write({'state': 'approval_pending'})
+        
+        # expired
+        expired_domain = [('state', '!=', 'expired'),
+                          '|',
+                            ('gueltig_von', '>', now),
+                            ('gueltig_bis', '<', now)]
+        expired_to_fix = self.search(expired_domain)
+        logger.info("Set state 'expired' for %s %s!" % (len(expired_to_fix), self._name))
+        expired_to_fix.write({'state': 'expired'})
+
+        logger.info('Done scheduled_compute_state() group subscription model %s' % self._name)
 
     @api.model
     def create(self, vals):

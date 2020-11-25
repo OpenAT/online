@@ -5,6 +5,7 @@ from datetime import timedelta
 import logging
 logger = logging.getLogger(__name__)
 
+
 # PersonGruppe: FRST groups for res.partner
 class FRSTPersonGruppe(models.Model):
     _name = "frst.persongruppe"
