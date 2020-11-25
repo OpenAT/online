@@ -81,15 +81,15 @@
                 <field name="frst_personemail_id"/>
                 <field name="active"/>
                 <group expand="1" string="Blocked" name="status_filters">
-                    <filter name="filter_no_getresponse_id" string="Keine GetResponse ID"
+                    <filter name="filter_no_getresponse_id" string="Keine_GetResponse_ID"
                             domain="[('getresponse_id', '=', False)]"/>
-                    <filter name="filter_personblocked" string="Person gesperrt"
+                    <filter name="filter_personblocked" string="Person_gesperrt"
                             domain="[('frst_personemail_id.partner_id.frst_blocked', '=', True)]"/>
-                    <filter name="filter_personemailblocked" string="E-Mail Kanal gesperrt"
-                            domain="[('frst_personemail_id.partner_id.frst_blocked_email', '=', False)]"/>
-                    <filter name="filter_not_personblocked" string="Person nicht gesperrt"
-                            domain="[('frst_personemail_id.partner_id.frst_blocked', '=', True)]"/>
-                    <filter name="filter_not_personemailblocked" string="E-Mail Kanal nicht gesperrt"
+                    <filter name="filter_personemailblocked" string="E-Mail_Kanal_gesperrt"
+                            domain="[('frst_personemail_id.partner_id.frst_blocked_email', '=', True)]"/>
+                    <filter name="filter_not_personblocked" string="Person_nicht_gesperrt"
+                            domain="[('frst_personemail_id.partner_id.frst_blocked', '=', False)]"/>
+                    <filter name="filter_not_personemailblocked" string="E-Mail_Kanal_nicht_gesperrt"
                             domain="[('frst_personemail_id.partner_id.frst_blocked_email', '=', False)]"/>
                     <filter name="filter_inactive" string="Inaktiv/Geloescht"
                             domain="[('active', '=', False)]"/>

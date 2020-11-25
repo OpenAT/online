@@ -34,13 +34,18 @@ class ResPartner(models.Model):
     partner_personemailgruppe_count = fields.Integer(string="E-Mail-Gruppen Anzahl",
                                                      compute="_compute_frst_personemailgruppe_count")
 
+    @api.multi
+    @api.depends('persongruppe_ids')
     def _compute_frst_persongruppe_count(self):
         for r in self:
             r.partner_persongruppe_count = len(r.persongruppe_ids) or 0
 
+    @api.multi
+    @api.depends('frst_personemail_ids')
     def _compute_frst_personemailgruppe_count(self):
         for r in self:
-            r.partner_personemailgruppe_count = len(r.frst_personemail_ids.personemailgruppe_ids) or 0
+            pegs = r.mapped("frst_personemail_ids.personemailgruppe_ids")
+            r.partner_personemailgruppe_count = len(pegs) if pegs else 0
 
     @api.multi
     def button_open_personemailgruppe(self):
