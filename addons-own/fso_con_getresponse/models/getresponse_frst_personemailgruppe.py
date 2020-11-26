@@ -23,7 +23,7 @@
 #   exporting tags or custom fields!
 
 import logging
-import datetime
+import time
 from getresponse.excs import NotFoundError
 
 from openerp import models, fields, api
@@ -152,10 +152,10 @@ class ContactBinder(GetResponseBinder):
     def get_unbound(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
-        start = datetime.datetime.now()
+        start = time.time()
         _logger.info("get_unbound() start for domain: %s" % domain)
         unbound = super(ContactBinder, self).get_unbound(domain=domain, limit=limit)
-        duration = datetime.datetime.now() - start
+        duration = time.time() - start
         _logger.info("get_unbound() done in %.3f s for domain: %s" % (duration, domain))
         return unbound
 
@@ -165,10 +165,10 @@ class ContactBinder(GetResponseBinder):
     def get_bindings(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
-        start = datetime.datetime.now()
+        start = time.time()
         _logger.info("get_bindings() for domain: %s" % domain)
         bindings = super(ContactBinder, self).get_bindings(domain=domain, limit=limit)
-        duration = datetime.datetime.now() - start
+        duration = time.time() - start
         _logger.info("get_bindings() done in %.3f ms for domain: %s" % (duration, domain))
         return bindings
 
