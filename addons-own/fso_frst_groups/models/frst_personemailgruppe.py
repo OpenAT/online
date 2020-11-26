@@ -32,6 +32,64 @@ class FRSTPersonEmailGruppe(models.Model):
                                           string="FRST PersonEmail",
                                           required=True, ondelete='cascade', index=True)
 
+    partner_frst_blocked = fields.Boolean(string="Partner blocked", readonly=True)
+    partner_frst_blocked_email = fields.Boolean(string="Partner e-mail blocked", readonly=True)
+
+    @api.multi
+    def _compute_state(self):
+        self.ensure_one()
+        r = self
+
+        super(FRSTPersonEmailGruppe, self)._compute_state()
+
+        partner_frst_blocked = r.frst_personemail_id.partner_id.frst_blocked
+        if r.partner_frst_blocked != partner_frst_blocked:
+            r.partner_frst_blocked = partner_frst_blocked
+
+        partner_frst_blocked_email = r.frst_personemail_id.partner_id.frst_blocked_email
+        if r.partner_frst_blocked_email != partner_frst_blocked_email:
+            r.partner_frst_blocked_email = partner_frst_blocked_email
+
+    @api.multi
+    def scheduled_compute_state(self):
+        super(FRSTPersonEmailGruppe, self).scheduled_compute_state()
+
+        # partner_frst_blocked TRUE
+        logger.info("Fix partner_frst_blocked=True")
+        pegs_block_to_set = self.search([
+            ('partner_frst_blocked', '=', False),
+            ('frst_personemail_id.partner_id.frst_blocked', '!=', False)
+        ])
+        logger.info("Found %s personemailgruppe to SET partner_frst_blocked!" % len(pegs_block_to_set))
+        pegs_block_to_set.write({'partner_frst_blocked': True})
+
+        # partner_frst_blocked FALSE
+        logger.info("Fix partner_frst_blocked=False")
+        pegs_block_to_unset = self.search([
+            ('partner_frst_blocked', '!=', False),
+            ('frst_personemail_id.partner_id.frst_blocked', '=', False)
+        ])
+        logger.info("Found %s personemailgruppe to UNSET partner_frst_blocked!" % len(pegs_block_to_unset))
+        pegs_block_to_unset.write({'partner_frst_blocked': False})
+
+        # partner_frst_blocked_email FALSE
+        logger.info("Fix partner_frst_blocked_email=False")
+        pegs_block_email_to_unset = self.search([
+            ('partner_frst_blocked_email', '!=', False),
+            ('frst_personemail_id.partner_id.frst_blocked_email', '=', False)
+        ])
+        logger.info("Found %s personemailgruppe to UNSET partner_frst_blocked_email!" % len(pegs_block_email_to_unset))
+        pegs_block_email_to_unset.write({'partner_frst_blocked_email': False})
+
+        # partner_frst_blocked_email TRUE
+        logger.info("Fix partner_frst_blocked_email=True")
+        pegs_block_email_to_set = self.search([
+            ('partner_frst_blocked_email', '=', False),
+            ('frst_personemail_id.partner_id.frst_blocked_email', '!=', False)
+        ])
+        logger.info("Found %s personemailgruppe to SET partner_frst_blocked_email!" % len(pegs_block_email_to_set))
+        pegs_block_email_to_set.write({'partner_frst_blocked_email': True})
+
     @api.constrains('gueltig_von', 'gueltig_bis', 'steuerung_bit')
     def constraint_inactive_personemail(self):
         for r in self:

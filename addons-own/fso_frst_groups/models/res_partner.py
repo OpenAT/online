@@ -59,7 +59,7 @@ class ResPartner(models.Model):
         return action
 
     # HINT: Changes to 'frst.persongruppe' will trigger the computation also!
-    @api.depends('persongruppe_ids')
+    @api.multi
     def _set_frst_blocked(self):
         for r in self:
             blocked = False

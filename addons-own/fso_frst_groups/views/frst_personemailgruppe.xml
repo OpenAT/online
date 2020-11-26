@@ -23,6 +23,9 @@
                             <field name="gueltig_bis"/>
                         </group>
                         <group>
+                            <field name="partner_frst_blocked"/>
+                            <field name="partner_frst_blocked_email"/>
+
                             <field name="bestaetigt_am_um"/>
                             <field name="bestaetigt_typ"/>
                             <field name="bestaetigt_herkunft"/>
@@ -47,6 +50,8 @@
                 <field name="gueltig_bis"/>
                 <field name="bestaetigt_am_um"/>
                 <field name="bestaetigt_typ"/>
+                <field name="partner_frst_blocked" invisible="1"/>
+                <field name="partner_frst_blocked_email" invisible="1"/>
                 <field name="state"/>
                 <field name="create_date"/>
                 <field name="write_date" invisible="1"/>
@@ -66,6 +71,8 @@
                 <field name="steuerung_bit"/>
                 <field name="gueltig_von"/>
                 <field name="gueltig_bis"/>
+                <field name="partner_frst_blocked"/>
+                <field name="partner_frst_blocked_email"/>
                 <field name="bestaetigt_am_um"/>
                 <field name="bestaetigt_typ"/>
                 <field name="bestaetigt_herkunft"/>

@@ -23,6 +23,7 @@
 #   exporting tags or custom fields!
 
 import logging
+import time
 from getresponse.excs import NotFoundError
 
 from openerp import models, fields, api
@@ -140,8 +141,8 @@ class ContactBinder(GetResponseBinder):
     _bindings_domain = [('zgruppedetail_id.sync_with_getresponse', '=', True),
                         ('state', 'in', _sync_allowed_states),
                         # FRST Sperrgruppen
-                        ('frst_personemail_id.partner_id.frst_blocked', '!=', True),
-                        ('frst_personemail_id.partner_id.frst_blocked_email', '!=', True),
+                        ('partner_frst_blocked', '=', False),
+                        ('partner_frst_blocked_email', '=', False),
                         ]
 
     # Make sure only personemailgruppe with sync enabled campaign and allowed state will get a prepared binding
@@ -151,7 +152,11 @@ class ContactBinder(GetResponseBinder):
     def get_unbound(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
+        start = time.perf_counter()
+        _logger.info("get_unbound() start for domain: %s" % domain)
         unbound = super(ContactBinder, self).get_unbound(domain=domain, limit=limit)
+        duration = (time.perf_counter() - start) * 1000.0
+        _logger.info("get_unbound() done in %.3f ms for domain: %s" % (duration, domain))
         return unbound
 
     # Make sure only bindings with sync enabled campaign and allowed state are returned
@@ -160,7 +165,11 @@ class ContactBinder(GetResponseBinder):
     def get_bindings(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
+        start = time.perf_counter()
+        _logger.info("get_bindings() for domain: %s" % domain)
         bindings = super(ContactBinder, self).get_bindings(domain=domain, limit=limit)
+        duration = (time.perf_counter() - start) * 1000.0
+        _logger.info("get_bindings() done in %.3f ms for domain: %s" % (duration, domain))
         return bindings
 
 

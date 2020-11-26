@@ -30,6 +30,9 @@ class FRSTPersonGruppe(models.Model):
                                  string="Person",
                                  required=True, ondelete='cascade', index=True)
 
+    # partner_frst_blocked = fields.Boolean(related="partner_id.frst_blocked", store=True, readonly=True)
+    # partner_frst_blocked_email = fields.Boolean(related="partner_id.frst_blocked_email", store=True, readonly=True)
+
     @api.model
     def create(self, values):
         res = super(FRSTPersonGruppe, self).create(values)

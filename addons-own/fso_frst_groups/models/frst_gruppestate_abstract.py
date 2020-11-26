@@ -14,17 +14,17 @@ class FRSTGruppeState(models.AbstractModel):
 
     State Descriptions
     ------------------
-    approval_pending:   The Group is assigned but waiting for approval
+    approval_pending:   The group subscription is assigned but waiting for approval
                         CONDITION: gueltig_von and gueltig_bis is set to past-date '09.09.1999' and steuerung_bit
                         FRST ACTIVE: False
                         FSON CHECKBOX: True !!!
 
-    subscribed:         The group is active
+    subscribed:         The group subscription is active
                         CONDITION: gueltig_von <= now <= gueltig_bis and not bestaetigt_am_um and steuerung_bit
                         FRST ACTIVE: True
                         FSON CHECKBOX: True
 
-    approved:           The group is subscribed and approved
+    approved:           The group subscription is approved
                         CONDITION: (gueltig_von <= now <= gueltig_bis) and bestaetigt_am_um and steuerung_bit
                         FRST ACTIVE: True
                         FSON CHECKBOX: True
@@ -34,7 +34,7 @@ class FRSTGruppeState(models.AbstractModel):
                         FRST ACTIVE: False
                         FSON CHECKBOX: False
 
-    expired:            The group is expired (now outside of gueltig_von and gueltig_bis)
+    expired:            The group subscription is expired (now outside of gueltig_von and gueltig_bis)
                         CONDITION: not (gueltig_von <= now <= gueltig_bis)
                         FRST ACTIVE: False
                         FSON CHECKBOX: False
@@ -74,32 +74,37 @@ class FRSTGruppeState(models.AbstractModel):
                                       help="E.g.: The link or the workflow process")
 
     @api.multi
+    def _compute_state(self):
+        self.ensure_one()
+        r = self
+        now = fields.datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+
+        # Compute 'steuerung_bit'
+        steuerung_bit = True
+        if hasattr(r, 'steuerung_bit'):
+            steuerung_bit = r.steuerung_bit
+
+        # Compute state
+        if r.gueltig_von <= now <= r.gueltig_bis:
+            if not steuerung_bit:
+                state = 'unsubscribed'
+            else:
+                state = 'approved' if r.bestaetigt_am_um else 'subscribed'
+        else:
+            if steuerung_bit and r.gueltig_von == r.gueltig_bis == self._approval_pending_date:
+                state = 'approval_pending'
+            else:
+                state = 'expired'
+
+        # Write state
+        if r.state != state:
+            r.state = state
+
+    @api.multi
     @api.depends('gueltig_von', 'gueltig_bis', 'steuerung_bit')
     def compute_state(self):
         for r in self:
-            now = fields.datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
-
-            # Compute 'steuerung_bit'
-            steuerung_bit = True
-            if hasattr(r, 'steuerung_bit'):
-                steuerung_bit = r.steuerung_bit
-
-            # Compute state
-            if r.gueltig_von <= now <= r.gueltig_bis:
-                if not steuerung_bit:
-                    state = 'unsubscribed'
-                else:
-                    state = 'approved' if r.bestaetigt_am_um else 'subscribed'
-            else:
-                if steuerung_bit and r.gueltig_von == r.gueltig_bis == self._approval_pending_date:
-                    state = 'approval_pending'
-                else:
-                    state = 'expired'
-
-            # Write state
-            if r.state != state:
-                r.state = state
-
+            r._compute_state()
         return True
 
     @api.multi
