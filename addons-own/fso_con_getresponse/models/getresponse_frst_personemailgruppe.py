@@ -23,7 +23,7 @@
 #   exporting tags or custom fields!
 
 import logging
-import time
+import datetime
 from getresponse.excs import NotFoundError
 
 from openerp import models, fields, api
@@ -152,11 +152,11 @@ class ContactBinder(GetResponseBinder):
     def get_unbound(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
-        start = time.perf_counter()
+        start = datetime.datetime.now()
         _logger.info("get_unbound() start for domain: %s" % domain)
         unbound = super(ContactBinder, self).get_unbound(domain=domain, limit=limit)
-        duration = (time.perf_counter() - start) * 1000.0
-        _logger.info("get_unbound() done in %.3f ms for domain: %s" % (duration, domain))
+        duration = datetime.datetime.now() - start
+        _logger.info("get_unbound() done in %.3f s for domain: %s" % (duration, domain))
         return unbound
 
     # Make sure only bindings with sync enabled campaign and allowed state are returned
@@ -165,10 +165,10 @@ class ContactBinder(GetResponseBinder):
     def get_bindings(self, domain=None, limit=None):
         domain = domain if domain else []
         domain += self._bindings_domain
-        start = time.perf_counter()
+        start = datetime.datetime.now()
         _logger.info("get_bindings() for domain: %s" % domain)
         bindings = super(ContactBinder, self).get_bindings(domain=domain, limit=limit)
-        duration = (time.perf_counter() - start) * 1000.0
+        duration = datetime.datetime.now() - start
         _logger.info("get_bindings() done in %.3f ms for domain: %s" % (duration, domain))
         return bindings
 
