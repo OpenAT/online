@@ -153,10 +153,11 @@ class ContactBinder(GetResponseBinder):
         domain = domain if domain else []
         domain += self._bindings_domain
         start = time.time()
-        _logger.info("get_unbound() start for domain: %s" % domain)
+        domain_str = str(domain)[:1024]
+        _logger.info("get_unbound() start for domain: %s" % domain_str)
         unbound = super(ContactBinder, self).get_unbound(domain=domain, limit=limit)
         duration = time.time() - start
-        _logger.info("get_unbound() done in %.3f s for domain: %s" % (duration, domain))
+        _logger.info("get_unbound() done in %.3f s for domain: %s" % (duration, domain_str))
         return unbound
 
     # Make sure only bindings with sync enabled campaign and allowed state are returned
@@ -166,10 +167,11 @@ class ContactBinder(GetResponseBinder):
         domain = domain if domain else []
         domain += self._bindings_domain
         start = time.time()
-        _logger.info("get_bindings() for domain: %s" % domain)
+        domain_str = str(domain)[:1024]
+        _logger.info("get_bindings() for domain: %s" % domain_str)
         bindings = super(ContactBinder, self).get_bindings(domain=domain, limit=limit)
         duration = time.time() - start
-        _logger.info("get_bindings() done in %.3f ms for domain: %s" % (duration, domain))
+        _logger.info("get_bindings() done in %.3f ms for domain: %s" % (duration, domain_str))
         return bindings
 
 
