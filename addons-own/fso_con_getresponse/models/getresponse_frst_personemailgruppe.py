@@ -120,6 +120,24 @@ class GetResponseContact(models.Model):
             if binding.getresponse_id:
                 import_record(session, binding._name, binding.backend_id.id, binding.getresponse_id)
 
+    # ------
+    # WIZARD
+    # ------
+    @api.multi
+    def export_getresponse_contact_delay(self):
+        """ Export Contact Binding (personemailgruppe) for enabled Campaigns (zgruppedetail) to GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for binding in self:
+            export_record.delay(session, binding._name, binding.id)
+
+    @api.multi
+    def import_getresponse_contact_delay(self):
+        """ Import Contact Binding (personemailgruppe) for enabled Campaigns (zgruppedetail) from GetResponse """
+        session = ConnectorSession(self.env.cr, self.env.uid, context=self.env.context)
+        for binding in self:
+            if binding.getresponse_id:
+                import_record.delay(session, binding._name, binding.backend_id.id, binding.getresponse_id)
+
 
 class GetResponseFrstZgruppedetail(models.Model):
     _inherit = 'frst.personemailgruppe'

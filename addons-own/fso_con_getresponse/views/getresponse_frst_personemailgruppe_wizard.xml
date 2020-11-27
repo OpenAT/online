@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- IMPORT/EXPORT WIZARD -->
+        <record model="ir.ui.view" id="getresponse_frst_personemailgruppe_wizard_form">
+            <field name="name">getresponse.frst.personemailgruppe.wizard.form</field>
+            <field name="model">getresponse.frst.personemailgruppe.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Contact Bindings Wizard">
+                    <group string="Contact Bindings">
+                        <field name="contact_binding_ids"/>
+                    </group>
+                    <footer>
+                        <h1>Create export or import jobs for the selected bindings:</h1>
+                        <br />
+                        <button name="wizard_export_contact_bindings_delayed" type="object"
+                                string="Export" class="oe_highlight"/>
+                        or
+                        <button name="wizard_import_contact_bindings_delayed" type="object"
+                                string="Import"/>
+                        or
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+        <act_window id="getresponse_contact_bindings_wizard"
+                    name="Contact Bindings Export/Import Wizard"
+                    src_model="getresponse.frst.personemailgruppe"
+                    res_model="getresponse.frst.personemailgruppe.wizard"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+
+    </data>
+</openerp>

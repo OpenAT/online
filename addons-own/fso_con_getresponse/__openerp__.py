@@ -27,6 +27,7 @@
         'views/getresponse_frst_personemailgruppe.xml',
         'views/getresponse_menu.xml',
         'views/queue_job.xml',
+        'views/getresponse_frst_personemailgruppe_wizard.xml',
         'data/scheduled_actions.xml',
     ],
 }
