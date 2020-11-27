@@ -222,6 +222,13 @@ class FsoForms(http.Controller):
 
     def validate_fields(self, form, field_data):
         field_errors = dict()
+
+        # SPAM detection by honeypot fields
+        honey_pot_fields = (f for f in form.field_ids if f.honeypot)
+        honey_pot_test = any(field_data.get('hpf-'+str(f.id), None) for f in honey_pot_fields)
+        if honey_pot_test:
+            return {'honey_pot_test': True}
+
         for f in form.field_ids:
 
             if f.field_id and f.show:
@@ -593,6 +600,11 @@ class FsoForms(http.Controller):
 
             # Validate Fields before we create or update a record
             form_field_errors = self.validate_fields(form, field_data=kwargs)
+            # Honey Pot Test returned True = SPAM submission
+            if form_field_errors.get('honey_pot_test', None):
+                _logger.warning("FSO FORM SUBMIT: SPAM submission detected by honeypot field! Form input was dismissed!"
+                                " form_id %s, kwargs: %s" % (form_id, kwargs))
+                return request.redirect("/fso/form/thanks/" + str(form.id))
             warnings += ['"%s": %s' % (kwargs.get(f, f), msg) for f, msg in form_field_errors.iteritems()]
 
             if not warnings and not errors:

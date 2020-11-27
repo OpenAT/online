@@ -30,6 +30,7 @@
                         <field name="style"/>
                         <field name="information"/>
                         <field name="default"/>
+                        <field name="honeypot"/>
                     </group>
                 </form>
             </field>
@@ -59,6 +60,7 @@
                         <field name="css_classes"/>
                         <field name="clearfix"/>
                         <field name="style"/>
+                        <field name="honeypot"/>
                 </tree>
             </field>
         </record>
@@ -86,6 +88,7 @@
                         <field name="clearfix"/>
                         <field name="style"/>
                         <field name="information"/>
+                        <field name="honeypot"/>
                 </search>
             </field>
         </record>

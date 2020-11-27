@@ -68,6 +68,7 @@
                                         <field name="clearfix"/>
                                         <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
                                         <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
+                                        <field name="honeypot"/>
                                         <!-- <button type="object" name="button_open_field_form_view" string="Edit" class="oe_link" /> -->
                                     </tree>
                                 </field>

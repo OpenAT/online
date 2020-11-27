@@ -194,6 +194,7 @@ class FSONFormField(models.Model):
     _allowed_field_types = ['boolean', 'char', 'text', 'selection', 'many2one', 'date', 'integer', 'float', 'binary']
     _protected_fields = set(MAGIC_COLUMNS + ['parent_left', 'parent_right',
                                              'sosync_fs_id', 'sosync_write_date', 'sosync_synced_version'])
+    _hpf_cls = 'hide_it'
 
     sequence = fields.Integer('Sequence', help='Sequence number for ordering', default=1000)
     show = fields.Boolean(string='Show', help='Show field in webpage', default=True)
@@ -248,12 +249,27 @@ class FSONFormField(models.Model):
 
     default = fields.Char(string="Default", help="For Many2one fields simply use the id or the XMLID of the record")
 
+    honeypot = fields.Boolean(string="Honeypot", help="This field is a honeypot field to detect SPAM. "
+                                                      "It must be invisible in the form! If it is filled it means"
+                                                      "that this was a bot and we can dismiss the form input!")
+
     # TODO: Add file type or mime type restrictions for binary fields
     #       HINT: check html  parameter 'accept' and 'type'
 
     @api.constrains('field_id', 'binary_name_field_id')
     def constrain_field_id(self):
         for r in self:
+            if r.honeypot:
+                if r.field_id:
+                    raise ValidationError('You can not select a real field for a honeypot field!')
+                if r.mandatory:
+                    raise ValidationError('Honeypot fields must not be mandatory or the frontend validation will fail!')
+                if self._hpf_cls not in r.css_classes:
+                    raise ValidationError("The class %s is missing for a honey pot field!" % self._hpf_cls)
+                if r.readonly:
+                    raise ValidationError("Honeypot fields can not be readonly!")
+                if r.default:
+                    raise ValidationError("Honeypot fields can not have a default value!")
             if r.field_id:
                 # Check readonly
                 if r.field_id.readonly and r.show:
@@ -290,7 +306,7 @@ class FSONFormField(models.Model):
                 if r.binary_name_field_id.required and (not r.mandatory or not r.show):
                     raise ValueError('Required fields must have show and mandatory set to True in the form!')
 
-    @api.onchange('show', 'mandatory', 'field_id', 'binary_name_field_id', 'login')
+    @api.onchange('show', 'mandatory', 'field_id', 'binary_name_field_id', 'login', 'honeypot')
     def oc_show(self):
         if not self.show:
             self.mandatory = False
@@ -308,6 +324,16 @@ class FSONFormField(models.Model):
         if self.binary_name_field_id:
             if not self.field_id or (self.field_id and self.field_id.ttype != 'binary'):
                 self.binary_name_field_id = False
+        if self.honeypot:
+            self.mandatory = False
+            self.field_id = False
+            self.nodata = False
+            self.readonly = False
+            self.login = False
+            self.confirmation_email = False
+            self.default = False
+            if self._hpf_cls not in (self.css_classes or ''):
+                self.css_classes = (self.css_classes or '') + ' ' + self._hpf_cls
 
     @api.onchange('style', 'mandatory')
     def oc_style(self):
