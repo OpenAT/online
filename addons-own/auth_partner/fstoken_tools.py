@@ -55,7 +55,7 @@ def fstoken_sanitize(fs_ptoken):
     return token, errors
 
 
-def fstoken_check(fs_ptoken):
+def fstoken_check(fs_ptoken, log_usage=True):
     # Sanitize the token string
     token_record, errors = fstoken_sanitize(fs_ptoken)
     if errors:
@@ -71,6 +71,16 @@ def fstoken_check(fs_ptoken):
         errors.append(_('Wrong or expired code!'))
         _delay_token_check()
         return False, False, errors
+    # Check number of usages (max_checks)
+    if token_record:
+        # ATTENTION: Default to 1 if max_checks is not set or set to 0!
+        max_checks = token_record.max_checks or 1
+        if token_record.number_of_checks > max_checks:
+            max_checks_msg = _('Token %s is expired because token was checked more than allowed by max_checks!'
+                               '' % fs_ptoken)
+            errors.append(max_checks_msg)
+            _logger.info(max_checks_msg)
+            return False, False, errors
 
     # Check if the token has a res.partner assigned
     partner = token_record.partner_id
@@ -140,20 +150,22 @@ def fstoken_check(fs_ptoken):
             return False, False, errors
 
     # Update token statistic fields
-    # TODO: log every use to a new model e.g.: res.partner.fstoken.usage
-    #       add a new kwarg to this function called "origin" and use this if filled for logging
-    #       token usage to res.partner.fstoken.usage
-    time_now = fields.datetime.now()
-    token_values = {
-        'last_date_of_use': time_now,
-        'last_datetime_of_use': time_now,
-        'number_of_checks': token_record.number_of_checks + 1,
-    }
-    # Add first_datetime_of_use if not already set
-    if not token_record.first_datetime_of_use:
-        token_values['first_datetime_of_use'] = time_now
-    # Write to the token
-    token_record.sudo().write(token_values)
+    if log_usage:
+        # TODO: log every use to a new model e.g.: res.partner.fstoken.usage
+        #       add a new kwarg to this function called "origin" and use this if filled for logging
+        #       token usage to res.partner.fstoken.usage
+        _logger.info("Log token usage for token with id %s" % token_record.id)
+        time_now = fields.datetime.now()
+        token_values = {
+            'last_date_of_use': time_now,
+            'last_datetime_of_use': time_now,
+            'number_of_checks': token_record.number_of_checks + 1,
+        }
+        # Add first_datetime_of_use if not already set
+        if not token_record.first_datetime_of_use:
+            token_values['first_datetime_of_use'] = time_now
+        # Write to the token
+        token_record.sudo().write(token_values)
 
     # Return fstoken record and the empty error-messages-list
     # ATTENTION: We pass the user on in case it was just created now and

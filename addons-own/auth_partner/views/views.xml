@@ -21,6 +21,7 @@
                         <field name="first_datetime_of_use"/>
                         <field name="last_datetime_of_use"/>
                         <field name="number_of_checks"/>
+                        <field name="max_checks"/>
                     </group>
                 </form>
             </field>
@@ -30,17 +31,18 @@
             <field name="model">res.partner.fstoken</field>
             <field name="arch" type="xml">
                 <tree string="FS Partner Tokens">
-                        <field name="name"/>
-                        <field name="partner_id"/>
-                        <field name="expiration_date"/>
-                        <field name="tfa_type"/>
-                        <field name="tfa_string"/>
-                        <field name="tfa_label"/>
-                        <field name="tfa_help"/>
-                        <field name="fs_origin"/>
-                        <field name="first_datetime_of_use"/>
-                        <field name="last_datetime_of_use"/>
-                        <field name="number_of_checks"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="expiration_date"/>
+                    <field name="tfa_type"/>
+                    <field name="tfa_string"/>
+                    <field name="tfa_label"/>
+                    <field name="tfa_help"/>
+                    <field name="fs_origin"/>
+                    <field name="first_datetime_of_use"/>
+                    <field name="last_datetime_of_use"/>
+                    <field name="number_of_checks"/>
+                    <field name="max_checks"/>
                 </tree>
             </field>
         </record>
@@ -49,18 +51,19 @@
             <field name="model">res.partner.fstoken</field>
             <field name="arch" type="xml">
                 <search string="FS Partner Tokens">
-                        <field name="name"/>
-                        <field name="partner_id"/>
-                        <field name="expiration_date"/>
-                        <field name="tfa_type"/>
-                        <field name="tfa_string"/>
-                        <field name="tfa_label"/>
-                        <field name="tfa_help"/>
-                        <field name="fs_origin"/>
-                        <field name="last_date_of_use"/>
-                        <field name="first_datetime_of_use"/>
-                        <field name="last_datetime_of_use"/>
-                        <field name="number_of_checks"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="expiration_date"/>
+                    <field name="tfa_type"/>
+                    <field name="tfa_string"/>
+                    <field name="tfa_label"/>
+                    <field name="tfa_help"/>
+                    <field name="fs_origin"/>
+                    <field name="last_date_of_use"/>
+                    <field name="first_datetime_of_use"/>
+                    <field name="last_datetime_of_use"/>
+                    <field name="number_of_checks"/>
+                    <field name="max_checks"/>
                 </search>
             </field>
         </record>

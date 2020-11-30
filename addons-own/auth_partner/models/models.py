@@ -47,7 +47,8 @@ class res_users(models.Model):
                 raise
 
             # Check for a valid FS-Token
-            token_record, user_record, errors = fstoken_check(password)
+            # ATTENTION: We do not log the usage of the token here because this was already done in _dispatch()
+            token_record, user_record, errors = fstoken_check(password, log_usage=False)
             if errors:
                 # raise openerp.exceptions.AccessDenied()
                 raise
@@ -69,6 +70,10 @@ class ResPartnerFSToken(models.Model):
     last_datetime_of_use = fields.Datetime(string="Last Date and Time of Use", readonly=True)
     first_datetime_of_use = fields.Datetime(string="First Date and Time of Use", readonly=True)
     number_of_checks = fields.Integer(string="Number of checks", default=0, redonly=True)
+
+    max_checks = fields.Integer(string="Max checks", default=1,
+                                help="Maximum number of checks. If this is higher than number_of_checks the token is"
+                                     "counted as expired!")
 
     # New fields for two factor authentication
     # TODO: tfa_type: "enter_string" > Create web form to enter the tfa string and update fstoken_check()
