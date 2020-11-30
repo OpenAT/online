@@ -31,10 +31,6 @@ class ir_http(orm.AbstractModel):
         # Check for fs_ptoken before returning the requests response
         if hasattr(request, 'website') and request.website:
 
-            req = request
-            req_url = request.httprequest.url
-            req_args = request.httprequest.args
-
             fs_ptoken = request.httprequest.args.get('fs_ptoken')
             if fs_ptoken:
 
