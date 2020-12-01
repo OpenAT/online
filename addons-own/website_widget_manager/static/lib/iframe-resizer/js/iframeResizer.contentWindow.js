@@ -456,7 +456,8 @@
 
 	function setupAddUrlParams(){
 		
-		function addParamsToUrl(){	
+		function addParamsToUrl(){
+			log('Start of addParamsToUrl()');
 			var baseUrl = window.location.hostname;
 			var anchors = document.getElementsByTagName("a");
 			var i,j;
@@ -467,9 +468,11 @@
 						if (addUrlParams != ''){
 					    	if(linkHref.indexOf('&') > -1 || linkHref.indexOf('?') > -1){
 					    		var newHref = linkHref + "&" + addUrlParams;
+					    		log('addUrlParams ENABLED! newHref: ', newHref)
 					    		anchors[i].setAttribute("href", newHref);
 					    	} else {
 					    		var newHref = linkHref + "?" + addUrlParams;
+					    		log('addUrlParams DISABLED! newHref: ', newHref);
 					    		anchors[i].setAttribute("href", newHref);
 					    	}
 				    	}
@@ -480,7 +483,7 @@
 		
 		function enableAddUrlParams(){
 			if(Array.prototype.forEach && document.querySelectorAll){
-				log('Adding Url Params');
+				log('Adding Url Params! addUrlParams =', addUrlParams);
 				addParamsToUrl();
 			} else {
 				warn('Adding Url Params not fully supported in this browser!');
@@ -490,7 +493,7 @@
 		if(addUrlParams != ''){
 			enableAddUrlParams();
 		} else {
-			log('Adding Url Params not Enabled');
+			log('Adding Url Params not Enabled! addUrlParams = ', addUrlParams);
 		}
 
 		return {};

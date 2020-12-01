@@ -57,7 +57,8 @@ class ir_http(orm.AbstractModel):
                         request.session.context['fs_ptoken'] = token_record.name
                 else:
                     _logger.info('Invalid or expired fs_ptoken given: %s!' % fs_ptoken)
-                    # DISABLED BY MIKE because too aggressive
+                    # DISABLED BY MIKE because too aggressive - would kick logged in user just because they reuse an
+                    #                  an expired token link in one of their valid e-mails
                     # request.session.logout(keep_db=True)
                     if hasattr(request, 'session') and hasattr(request.session, 'context') and request.session.context:
                         request.session.context.pop('fs_ptoken', False)

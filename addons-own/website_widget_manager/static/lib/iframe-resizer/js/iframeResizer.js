@@ -125,6 +125,8 @@
 	}
 
  	function URLToArray() {
+		log('Start URLToArray()')
+		log('Start URLToArray() window.location: ', window.location);
 		var request = {};
 		var pairs = window.location.search.substring(1).split('&');
 		for (var i = 0; i < pairs.length; i++) {
@@ -132,10 +134,12 @@
 			var pair = pairs[i].split('=')
 			request[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
 		}
+		log('Start URLToArray() request: ', request);
 		return request;
 	}
 
-	function updateUrl(iframeId,path){
+	function updateUrl(iframeId, path){
+		log(iframeId, 'Start updateUrl() iframeId: ', iframeId, ' path: ' + path);
 		var newParams = [];
 		var getParams = URLToArray();
 		var iframeMessage = path;
@@ -151,6 +155,7 @@
 		};
 		var siteUrl = window.location.protocol + "//" + window.location.hostname + window.location.pathname;
 		var newUrl = siteUrl + "?" + newParams.join("&");
+		log(iframeId, 'updateUrl() newUrl: ' + newUrl);
 	    history.pushState('', 'New Page Title', newUrl);
 	    	   
 	}
@@ -786,6 +791,7 @@
 		}
 		
 	 	function checkForIframeGetParam() {
+			log(iframeId, 'Start checkForIframeGetParam()!');
 			var getParams = URLToArray();
 			if (typeof getParams[iframeId] !== 'undefined' && getParams[iframeId] !== null){	
 				if (iframeId in getParams){
@@ -795,17 +801,19 @@
 		}	
 
 	 	function checkGetParam() {
+			log(iframeId, 'Start checkGetParam()!');
 			var getParams = URLToArray();
 			var iframeParams = URLToArray();
 			var getAllIframes = document.getElementsByTagName("iframe");
 			var newParams = [];
 			var iframe = document.getElementById(iframeId)
 			var newUrl = iframe.src;
-			
+
+			log(iframeId, 'checkGetParam() getParams: ' + JSON.stringify(getParams));
+
 			for (var i = 0; i < getAllIframes.length; i++){
 				if (getParams.hasOwnProperty(getAllIframes[i].id)) delete getParams[getAllIframes[i].id];	
 			}
-			console.log(getParams);
 			for (var prop in getParams){
 				newParams.push(encodeURIComponent(prop) + "=" + encodeURIComponent(getParams[prop]));
 			}
@@ -821,12 +829,45 @@
 			} else {
 				newUrl = newUrl + "?" + newParams.join("&");
 			}
+			log(iframeId, 'checkGetParam() set iframe.src to: ' + newUrl);
 			iframe.src = newUrl;
+
+			// REMOVE fs_ptoken from host url to prevent sharing the token with the url (e.g. on social media)
+			function removeParam(key, sourceURL) {
+				var rtn = sourceURL.split("?")[0],
+					param,
+					params_arr = [],
+					queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+				if (queryString !== "") {
+					params_arr = queryString.split("&");
+					for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+						param = params_arr[i].split("=")[0];
+						if (param === key) {
+							params_arr.splice(i, 1);
+						}
+					}
+					rtn = rtn + "?" + params_arr.join("&");
+				}
+				return rtn;
+			}
+
+			if (window.location.search.includes('fs_ptoken')) {
+				log(iframeId, "Remove fs_ptoken url attribute from url of parent (host) page!");
+				log(iframeId, 'window.location.href before fs_ptoken was removed: ' + window.location.href);
+				let clean_host_page_url = new URL(removeParam('fs_ptoken', window.location.href));
+				log(iframeId, 'New url for the host page: clean_host_page_url: ' + clean_host_page_url.href);
+				let new_url_without_domain = clean_host_page_url.pathname + clean_host_page_url.search;
+				log(iframeId, 'New destination for the host page: new_url_without_domain: ' + new_url_without_domain);
+				window.history.replaceState({}, document.title, new_url_without_domain);
+			}
+
 		}
-			
+
 		function useGetParam(){
+			log(iframeId, 'Start useGetParam()!');
 			if (settings[iframeId].useGetParam === true ){
-				checkGetParam();	
+				log(iframeId, 'useGetParam is enabled! ' + settings[iframeId] + '.useGetParam: ' + settings[iframeId].useGetParam);
+				checkGetParam();
 			}
 		}
 		
