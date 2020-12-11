@@ -1,0 +1,32 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h2 class="oe_slogan" style="color:#875A7B;">REST API/OpenAPI/Swagger UI</h2>
+            <h3 class="oe_slogan">Host Swagger UI for displaying API documentation.</h3>
+        </div>
+    </div>
+</section>
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <p>
+                Creates a public endpoint to serve the official Swagger UI.
+                Index HTML is modified via a GET parameter <strong>api</strong>
+                in order to directly show documentation for a given API.
+            </p>
+            <h5>Example</h5>
+            <p>
+                <span style="color: red;">&lt;base address&gt;</span>/api/swagger-ui?api=<span style="color: blue;">http%3A%2F%2Fserver.com%2Fapi%2Fv1%2Fswagger.json</span>
+            </p>
+            <h5>Security</h5>
+            <ul>
+                <li>API URLs are checked to be valid urls</li>
+                <li>API URL must match the controller request
+                    <ul>
+                        <li>Means external APIs will be refused by default</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>

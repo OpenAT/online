@@ -1,0 +1,7 @@
+/* Stylesheet is added to Swagger UI document.
+   Override desired Swagger UI styles here.
+*/
+
+.swagger-ui .topbar {
+    display: none;
+}
