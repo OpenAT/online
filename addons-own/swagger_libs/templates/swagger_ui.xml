@@ -22,11 +22,14 @@
                     <link rel="icon" type="image/png" href="/swagger_libs/static/src/lib/swagger-ui-dist/favicon-32x32.png" sizes="32x32"/>
                     <link rel="icon" type="image/png" href="/swagger_libs/static/src/lib/swagger-ui-dist/favicon-16x16.png" sizes="16x16"/>
 
-                    <!-- Load swagger ui assets -->
-                    <t t-call-assets="swagger_libs.swagger_ui_assets" />
+                    <!-- Load swagger ui css assets -->
+                    <t t-call-assets="swagger_libs.swagger_ui_assets" t-js="false" />
                 </head>
 
                 <body>
+                    <!-- Load swagger ui js assets -->
+                    <t t-call-assets="swagger_libs.swagger_ui_assets" t-css="false" />
+
                     <!-- SWAGGER UI -->
                     <div id="swagger-ui"></div>
                     <script>
