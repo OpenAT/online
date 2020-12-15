@@ -54,7 +54,7 @@ class MailMassMailingContact(models.Model):
 
     # ATTENTION: This is not available in Fundrasing Studio!
     pe_partner_id = fields.Many2one(string="Partner der PersonEmail", comodel_name='res.partner',
-                                    related="personemail_id.partner_id", store=False, readonly=True,
+                                    related="personemail_id.partner_id", store=True, readonly=True,
                                     help="Shows the partner of the linked PersonEmail. It's only for convenience!")
 
     # Log additional subscriptions after the record was created
@@ -72,10 +72,6 @@ class MailMassMailingContact(models.Model):
     def _post_update_check(self):
         for r in self:
             if r.personemail_id:
-                if not r.pe_partner_id:
-                    raise ValidationError('PersonEmail is set but Partner is missing!')
-                if r.personemail_id.partner_id.id != r.pe_partner_id.id:
-                    raise ValidationError('The Partner and the Partner from PersonEmail do not match!')
                 if r.email and r.email.lower() != r.personemail_id.email.lower():
                     raise ValidationError('The email is not matching the already linked PartnerEmail!')
             if r.list_id.partner_mandatory:
@@ -112,163 +108,120 @@ class MailMassMailingContact(models.Model):
             r.write({'renewed_subscription_date': now, 'renewed_subscription_log': log})
 
     @api.multi
-    def link_personemail(self, create_vals=None):
-        create_vals = {} if create_vals is None else create_vals
-        recordset_to_return = self.env['mail.mass_mailing.contact']
+    def _update_existing_contact_on_create(self, vals):
+        self.ensure_one()
+
+        # Skipp if partner_mandatory is not set on the mass mailing list
+        if not self.list_id.partner_mandatory:
+            _logger.info("Skipp _renew_subscription_on_create() for mass mailing contact (id %s) because "
+                         "partner_mandatory is not enabled for mass mailing list (id %s)" % (self.id, self.list_id.id))
+            return None
+
+        # Search for an existing list contact
+        existing = self.search([
+            ('list_id', '=', self.list_id.id),
+            ('email', '=', self.email)
+        ], limit=2, order='id')
+
+        # Skipp if none or more than one list contact is found
+        if len(existing) != 1:
+            if len(existing) > 1:
+                _logger.error("Skipp _renew_subscription_on_create() for mass mailing contact (id %s) because %s "
+                              "records where found in mass mailing list (id %s) for email %s"
+                              "" % (self.id, len(existing), self.list_id.id, self.email))
+            return None
+
+        # Check if a user is logged in
+        user = self.env.user
+        default_website_user = self.sudo().env.ref('base.public_user', raise_if_not_found=True)
+
+        # Update existing record values if a user is logged in
+        if user.id != default_website_user.id:
+            existing.write(vals)
+
+        # Only update the renew log fields if no user is logged in
+        else:
+            existing.append_renewed_subscription_log(vals)
+
+        # Delete the created (but not yet committed-to-db) list contact
+        self.unlink()
+
+        # Return the updated list contact
+        return existing
+
+    @api.multi
+    def compute_personemail_id(self):
+        """ Link the mass mailing contact to a Fundraising Studio PersonEmail and it's related res.partner if
+        partner_mandatory is enabled on the mass mailing list.
+        """
         for r in self:
-            # ALWAYS LINK TO PERSONEMAIL IF 'partner_mandatory' is set for the list
-            # ---------------------------------------------------------------------
-            if r.list_id.partner_mandatory and not r.personemail_id:
-                assert not r.pe_partner_id, "pe_partner_id can not be set if personemail_id is not set!"
-                assert not create_vals.get('personemail_id'), "personemail_id can not be in create_vals"
-                assert not create_vals.get('pe_partner_id'), "pe_partner_id can not be in create_vals"
-                if create_vals.get('email'):
-                    assert create_vals['email'].lower() == r.email.lower(), \
-                        "email in create_vals must match email of list contact"
-                if create_vals.get('list_id'):
-                    assert create_vals['list_id'] == r.list_id.id, \
-                        "list_id in create_vals must match list_id of list contact"
+            # Skipp if already linked to a PersonEmail
+            if r.personemail_id:
+                _logger.info("Skipp compute_personemail_id() because mass mailing contact (id %s) is already linked to"
+                             " a frst.personemail (id %s)" % (r.id, r.personemail_id.id))
+                continue
 
-                # Check if a Website-User is logged in
-                # HINT: field 'share' on res.users is a computed field and will be set if the user is not in
-                #       the 'base.group_user' group (see odoo/addons/share/res_users.py). So basically this means
-                #       that we can see every user that is not in 'base.group_user' as an external user.
-                user = self.env.user
-                public_website_user_id = self.sudo().env.ref('base.public_user', raise_if_not_found=True).id
-                if user.id not in (SUPERUSER_ID, public_website_user_id) and not user.has_group('base.group_user'):
-                    websiteuser_partner = user.partner_id
-                else:
-                    websiteuser_partner = None
+            # Skipp if partner_mandatory is not set on the mass mailing list
+            if not r.list_id.partner_mandatory:
+                _logger.info("Skipp compute_personemail_id() for mass mailing contact (id %s) because partner_mandatory"
+                             " is not enabled for mass mailing list (id %s)" % (r.id, r.list_id.id))
+                continue
 
-                # Case insensitive search domain for PartnerEmail
-                pe_domain = [('email', '=ilike', r.email)]
+            # E-Mail search domain
+            # HINT: '=ilike' case insensitive exact search
+            domain = [('email', '=ilike', r.email)]
 
-                # Only search for PersonEmail records of the website-user
-                if websiteuser_partner:
-                    pe_domain += [('partner_id', '=', websiteuser_partner.id)]
+            # Limit search domain for logged-in non-regular-users (portal/public users)
+            user = self.env.user
+            default_website_user = self.sudo().env.ref('base.public_user', raise_if_not_found=True)
+            logged_in_partner = None
+            if user.id not in (SUPERUSER_ID, default_website_user.id) and not user.has_group('base.group_user'):
+                logged_in_partner = user.partner_id
+                domain += [('partner_id', '=', user.partner_id.id)]
 
-                # Search case insensitive for PersonEmails with the email of this list contact
-                pe_records = self.env['frst.personemail'].sudo().search(pe_domain)
+            # Search for existing frst.personemail with the same email than the list contact
+            person_emails = self.env['frst.personemail'].sudo().search(domain, limit=2)
 
-                # All matching non-subscribed PersonEmail records
-                # ATTENTION: !!! .filtered would honor the domain on the field definition !!!
-                pe_free = pe_records.filtered(
-                    lambda pe: r.list_id.id not in pe.mapped('mass_mailing_contact_ids.list_id').ids
-                )
+            p_email_to_set = None
 
-                # All matching subscribed PersonEmail records
-                pe_subscribed = pe_records - pe_free
+            # A) USE EXITING-PERSON-EMAIL IF EXACTLY ONE WAS FOUND WITH NO LINKED LIST CONTACTS FOR THIS LIST
+            if len(person_emails) == 1:
+                if all(p_email_lc.list_id.id != r.list_id.id for p_email_lc in person_emails.mass_mailing_contact_ids):
+                    p_email_to_set = person_emails
 
-                # Update existing subscriptions
-                # -----------------------------
-                if pe_subscribed:
-                    # Get the subscriptions
-                    lc_subscribed = pe_subscribed.mapped('mass_mailing_contact_ids')
+            # B) CREATE A NEW PERSON EMAIL FOR THE PARTNER OF THE LOGGED IN USER
+            if not p_email_to_set and logged_in_partner:
+                new_pe_vals = {'email': r.email,
+                               'partner_id': logged_in_partner.id}
 
-                    if create_vals:
+                # Do not replace the current main e-mail of a logged in partner (create an "older" personemail)
+                if logged_in_partner.main_personemail_id:
+                    if logged_in_partner.main_personemail_id.last_email_update:
+                        main_email_leu = logged_in_partner.main_personemail_id.last_email_update
+                        main_email_leu = fields.datetime.strptime(main_email_leu, DEFAULT_SERVER_DATETIME_FORMAT)
+                        new_pe_vals['last_email_update'] = main_email_leu - timedelta(days=1)
 
-                        # Update records if a user is logged in
-                        if websiteuser_partner:
-                            lc_subscribed.write(create_vals)
+                p_email_to_set = self.env['frst.personemail'].sudo().create(new_pe_vals)
 
-                        # Only update the renewed subscription fields for public users
-                        else:
-                            lc_subscribed.append_renewed_subscription_log(create_vals)
+            # C) CREATE A NEW PARTNER WITH A NEW PERSON EMAIL
+            if not p_email_to_set:
+                # Get the values for the new partner
+                partner_vals = r.new_partner_vals()
 
-                    # Stop here if no non subscribed PartnerEmails where found
-                    if not pe_free:
-                        recordset_to_return = recordset_to_return | lc_subscribed
-                        r.sudo().unlink()
-                        continue
+                # Avoid mail.thread auto subscription for the public-website-user
+                partner_obj_sudo = self.env['res.partner'].sudo().with_context(mail_create_nolog=True)
 
-                # Create new subscriptions for existing PersonEmail(s)
-                # ----------------------------------------------------
-                if pe_free:
-                    # Link current list contact to first non linked PersonEmail
-                    pe_free_first = pe_free[0]
-                    r.write({'personemail_id': pe_free_first.id})
-                    recordset_to_return = recordset_to_return | r
+                # Create the new partner which will automatically create a new person email
+                new_partner = partner_obj_sudo.create(partner_vals)
 
-                    # Avoid mail.thread auto subscription for the public-website-user
-                    # TODO: Maybe this is inconsistent because we do not suppress mail.thread for pe_free_first
-                    lc_obj_sudo = self.env['mail.mass_mailing.contact'].sudo()
-                    if user.id == public_website_user_id:
-                        lc_obj_sudo = lc_obj_sudo.with_context(mail_create_nolog=True)
+                # Make sure the main PersonEmail matches the list contact email
+                if new_partner.main_personemail_id.email.lower() != r.email.lower():
+                    raise ValueError("compute_personemail_id() for mass mailing contact (id %s) failed because ")
 
-                    # Create list contacts for all remaining non linked PersonEmails
-                    for pe in pe_free - pe_free_first:
+                p_email_to_set = new_partner.main_personemail_id
 
-                        # Prepare values
-                        lc_vals = create_vals.copy()
-                        lc_vals['email'] = r.email
-                        lc_vals['list_id'] = r.list_id.id
-                        lc_vals['personemail_id'] = pe.id
-
-                        # Create new list contact
-                        lc_new = lc_obj_sudo.create(lc_vals)
-
-                        # Add the record to the recordset that will be returned
-                        recordset_to_return = recordset_to_return | lc_new
-
-                    # Move on to the next list contact record
-                    continue
-
-                # Create a new subscription for a new PersonEmail
-                # -----------------------------------------------
-                # a) Create a new PersonEmail for the existing logged-in Person and link it to the current record
-                # ATTENTION: We do not change the main email to avoid an email move!
-                if websiteuser_partner:
-                    last_email_update = fields.datetime.now()
-
-                    # Make sure the new PersonEmail is not the new main email
-                    if websiteuser_partner.main_personemail_id:
-                        current_leu = websiteuser_partner.main_personemail_id.last_email_update
-                        current_leu_dt = fields.datetime.strptime(current_leu, DEFAULT_SERVER_DATETIME_FORMAT)
-                        last_email_update = current_leu_dt - timedelta(days=1)
-
-                    # Create a new personemail which is not the new main email
-                    pe = self.env['frst.personemail'].sudo().create(
-                        {'email': r.email,
-                         'partner_id': websiteuser_partner.id,
-                         'last_email_update': last_email_update})
-
-                    # Update the list contact record
-                    r.write({'personemail_id': pe.id})
-
-                    # Add the record to the recordset that will be returned
-                    recordset_to_return = recordset_to_return | r
-
-                    # Move on to the next list contact record
-                    continue
-
-                # b) Create a new PersonEmail and a new Person and link it to the current record
-                else:
-                    # Get the values for the new partner
-                    partner_vals = r.new_partner_vals()
-
-                    # Avoid mail.thread auto subscription for the public-website-user
-                    partner_obj_sudo = self.env['res.partner'].sudo()
-                    if user.id == public_website_user_id:
-                        partner_obj_sudo = partner_obj_sudo.with_context(mail_create_nolog=True)
-
-                    # Create the new partner and related PersonEmail
-                    partner = partner_obj_sudo.create(partner_vals)
-
-                    # Make sure the main PersonEmail matches the list contact email
-                    assert partner.main_personemail_id.email.lower() == r.email.lower(), _(
-                        "Emails (%s, %s) do not match after partner creation!"
-                        "" % (partner.main_personemail_id.email, r.email))
-
-                    # Update the list contact record
-                    r.write({'personemail_id': partner.main_personemail_id.id})
-
-                    # Add the record to the recordset that will be returned
-                    recordset_to_return = recordset_to_return | r
-
-                    # Move on to the next list contact record
-                    continue
-
-        return recordset_to_return
+            # UPDATE LIST CONTACT WITH PERSONEMAIL_ID
+            r.write({'personemail_id': p_email_to_set.id})
 
     @api.model
     def create(self, vals):
@@ -279,34 +232,33 @@ class MailMassMailingContact(models.Model):
         # Create the new record
         res = super(MailMassMailingContact, self).create(vals)
 
-        # Link PersonEmail
-        # HINT: Executes only if not already linked
-        res_pe = None
+        # Update existing list contact instead of creating a new one if partner mandatory is enabled
+        # HINT: This will also unlink the 'res' record if an existing record to update is found!
         if res:
-            res_pe = res.link_personemail(create_vals=vals)
+            existing = res._update_existing_contact_on_create(vals)
+            if existing:
+                return existing
 
-        # In case we deleted the record we use one of the remaining records
-        if not res.exists() and res_pe:
-            res = res_pe[0]
+        # Link PersonEmail if partner mandatory is enabled
+        if res and not vals.get('personemail_id'):
+            res.compute_personemail_id()
 
-        # Check if everything is ok
-        res._post_update_check()
+        self._post_update_check()
 
         return res
 
     @api.multi
     def write(self, vals):
-        # Make sure no email change is happening if already linked to PersonEmail
-        self._pre_update_check(vals)
+        self._pre_update_check(vals=vals)
 
         # Update the records
         res = super(MailMassMailingContact, self).write(vals)
 
         # Link PersonEmail
         # HINT: Executes only if not already linked
-        self.link_personemail()
+        if res and not vals.get('personemail_id'):
+            self.compute_personemail_id()
 
-        # Check if everything is ok
         self._post_update_check()
 
         return res

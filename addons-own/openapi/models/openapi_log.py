@@ -13,5 +13,6 @@ class Log(models.Model):
     request = fields.Char("Request")
     request_data = fields.Text("Request Data")
     response_data = fields.Text("Response Data")
+
     # create_uid -- auto field
     # create_date -- auto field

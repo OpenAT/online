@@ -50,7 +50,7 @@ class FRSTPersonEmailGruppe(models.Model):
         if r.partner_frst_blocked_email != partner_frst_blocked_email:
             r.partner_frst_blocked_email = partner_frst_blocked_email
 
-    @api.multi
+    @api.model
     def scheduled_compute_state(self):
         super(FRSTPersonEmailGruppe, self).scheduled_compute_state()
 

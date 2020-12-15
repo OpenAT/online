@@ -107,14 +107,14 @@ class FRSTGruppeState(models.AbstractModel):
             r._compute_state()
         return True
 
-    @api.multi
+    @api.model
     def compute_all_states(self):
         subscriptions = self.search([])
         logger.info("Found %s %s to recompute the state for!" % (len(subscriptions), self._name))
         subscriptions.compute_state()
         logger.info("Status was recomputed for %s %s records!" % (len(subscriptions), self._name))
         
-    @api.multi
+    @api.model
     def scheduled_compute_state(self):
         logger.info('Start scheduled_compute_state() for group subscription model %s' % self._name)
 
