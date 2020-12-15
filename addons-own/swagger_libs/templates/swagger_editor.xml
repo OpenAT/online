@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="swagger_editor_assets">
+            <link rel='stylesheet' href='/swagger_libs/static/src/lib/swagger-editor-dist/swagger-editor.css' />
+            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser.css' />
+
+            <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-editor-dist/swagger-editor-bundle.js"/>
+            <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-editor-dist/swagger-editor-standalone-preset.js"/>
+        </template>
+
+        <!-- Swagger UI index.html -->
+        <template id="swagger_editor_index_html"
+                  name="Swagger Editor index.html">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+            <html lang="en">
+
+                <head>
+                    <meta charset="UTF-8"/>
+                    <title>Swagger Editor</title>
+
+                    <link rel="icon" type="image/png" href="/swagger_libs/static/src/lib/swagger-ui-dist/favicon-32x32.png" sizes="32x32"/>
+                    <link rel="icon" type="image/png" href="/swagger_libs/static/src/lib/swagger-ui-dist/favicon-16x16.png" sizes="16x16"/>
+
+                    <!-- Load swagger editor css assets -->
+                    <t t-call-assets="swagger_libs.swagger_editor_assets" t-js="false" />
+                </head>
+
+                <body>
+                    <!-- Load swagger editor js assets -->
+                    <t t-call-assets="swagger_libs.swagger_editor_assets" t-css="false" />
+
+                    <!-- SWAGGER EDITOR -->
+                    <div id="swagger-editor"></div>
+                    <script>
+                        window.onload = function() {
+                          // Build a system
+                          const editor = SwaggerEditorBundle({
+                            url: '<t t-raw="swagger_spec_url"/>',
+                            dom_id: '#swagger-editor',
+                            layout: 'StandaloneLayout',
+                            presets: [
+                              SwaggerEditorStandalonePreset
+                            ]
+                          })
+
+                          window.editor = editor
+                        }
+                    </script>
+                </body>
+
+            </html>
+        </template>
+
+    </data>
+</openerp>
