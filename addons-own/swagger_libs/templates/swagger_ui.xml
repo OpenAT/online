@@ -3,8 +3,8 @@
     <data>
 
         <template id="swagger_ui_assets">
-            <link rel='stylesheet' href='/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui.css' t-ignore="true"/>
-            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser.css' t-ignore="true"/>
+            <link rel='stylesheet' href='/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui.css' />
+            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser.css' />
 
             <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui-bundle.js"/>
             <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui-standalone-preset.js"/>
@@ -22,13 +22,11 @@
                     <link rel="icon" type="image/png" href="/swagger_libs/static/src/lib/swagger-ui-dist/favicon-32x32.png" sizes="32x32"/>
                     <link rel="icon" type="image/png" href="/swagger_libs/static/src/lib/swagger-ui-dist/favicon-16x16.png" sizes="16x16"/>
 
-                    <!-- Load swagger ui css -->
-                    <t t-call-asset="swagger_libs.swagger_ui_assets"/>
-                    <t t-call-asset="swagger_libs.swagger_ui_assets" t-css="false"/>
+                    <!-- Load swagger ui assets -->
+                    <t t-call-assets="swagger_libs.swagger_ui_assets" />
                 </head>
 
                 <body>
-
                     <!-- SWAGGER UI -->
                     <div id="swagger-ui"></div>
                     <script>
