@@ -36,7 +36,12 @@
                         window.onload = function() {
                           // Build a system
                           const editor = SwaggerEditorBundle({
+                            <t t-if="swagger_spec_url">
                             url: '<t t-raw="swagger_spec_url"/>',
+                            </t>
+                            <t t-if="not swagger_spec_url">
+                            spec: JSON.parse(`<t t-call="swagger_libs.swagger_demo_spec_asset" />`),
+                            </t>
                             dom_id: '#swagger-editor',
                             layout: 'StandaloneLayout',
                             presets: [
