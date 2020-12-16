@@ -41,5 +41,6 @@ would be nice :)
     'data': [
         'templates/swagger_ui.xml',
         'templates/swagger_editor.xml',
+        'templates/swagger_demo_spec.xml',
     ],
 }
