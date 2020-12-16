@@ -23,11 +23,7 @@
 {
     'name': "swagger_libs",
     'summary': """swagger_libs Libs for Swagger UI and Swagger Editor""",
-    'description': """
-
-would be nice :)
-
-    """,
+    # 'description': """""", # See static/description
     'author': "Datadialog - Martin Kaip, Michael Karrer",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',

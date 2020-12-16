@@ -1,0 +1,33 @@
+<section>
+    <h1>Description</h1>
+    <p>Provides static assets and routes for Swagger UI and Swagger Editor.</p>
+    <h2>Usage</h2>
+    <p>
+        Simply call the desired endpoint for only the UI or the Editor.
+        Via GET parameter, send the URL to the specification file to be
+        displayed.
+    </p>
+    <p>
+        Examples
+        <ul>
+            <li>/swagger-ui/index.html?swagger_spec_url=<span style="color: blue;">(URL encoded URL to spec file)</span></li>
+            <li>/swagger-editor/index.html?swagger_spec_url=<span style="color: blue;">(URL encoded URL to spec file)</span></li>
+            <li>Without a spec URL, a static pet store demo asset is displayed.</li>
+        </ul>
+    </p>
+    <h2>Updating Swagger libraries</h2>
+    <p>
+        Locally download new Swagger packages via <strong>npm</strong>. Use
+        the dist-packages, e.g. <strong>swagger-ui-dist</strong> or
+        <strong>swagger-editor-dist</strong>.
+    </p>
+    <p>
+        Within <strong>node_modules</strong> rename the downloaded package
+        folder to include the version number, e.g. <strong>swagger-ui-dist_x_xx_x</strong>
+    </p>
+    <p>
+        Copy the new folder into the module under <strong>static/src/lib</strong>.
+        Adjust the symbolic link, to point to the new version, e.g. have the link
+        <strong>swagger-ui-dist</strong> point to <strong>swagger-ui-dist_x_xx_x</strong>.
+    </p>
+</section>
