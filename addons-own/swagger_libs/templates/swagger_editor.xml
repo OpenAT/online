@@ -4,7 +4,7 @@
 
         <template id="swagger_editor_assets">
             <link rel='stylesheet' href='/swagger_libs/static/src/lib/swagger-editor-dist/swagger-editor.css' />
-            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser.css' />
+            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser_editor.css' />
 
             <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-editor-dist/swagger-editor-bundle.js"/>
             <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-editor-dist/swagger-editor-standalone-preset.js"/>

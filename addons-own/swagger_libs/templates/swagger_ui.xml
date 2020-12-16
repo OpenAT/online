@@ -4,7 +4,7 @@
 
         <template id="swagger_ui_assets">
             <link rel='stylesheet' href='/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui.css' />
-            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser.css' />
+            <link rel='stylesheet' href='/swagger_libs/static/src/css/reset_browser_ui.css' />
 
             <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui-bundle.js"/>
             <script type="text/javascript" src="/swagger_libs/static/src/lib/swagger-ui-dist/swagger-ui-standalone-preset.js"/>
