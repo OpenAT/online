@@ -13,11 +13,15 @@ import urllib
 class SwaggerUIDist(http.Controller):
     @staticmethod
     def api_url_valid(api_url):
-        return api_url\
-               and api_url.startswith(request.httprequest.host_url)\
+        return api_url.startswith(request.httprequest.host_url)\
                and validators.url(api_url)
 
     def raise_on_invalid_api_url(self, api_url):
+        # Empty URL is valid
+        if not api_url:
+            return
+
+        # Other URLs are checked
         if not self.api_url_valid(api_url):
             raise Exception("swagger_spec_url not allowed")
 
