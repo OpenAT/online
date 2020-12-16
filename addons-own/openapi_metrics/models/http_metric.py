@@ -12,7 +12,7 @@ class HttpMetric(models.Model):
     ]
 
     day = fields.Datetime(
-        string="Day of the response.",
+        string="Day of the request.",
         readonly=True)
 
     request_count = fields.Integer(
