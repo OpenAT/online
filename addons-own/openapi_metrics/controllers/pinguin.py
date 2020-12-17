@@ -24,6 +24,8 @@ def create_log_and_metrics_record(**kwargs):
 
 
 def _create_metric_record(cr, uid):
+    uid = int(uid)
+
     # Use raw SQL in order to utilize postgres UPSERT,
     # for fastest possible insert/update.
     query = """
