@@ -7,7 +7,7 @@ import validators
 import datetime
 
 from openerp.tools.mail import html_sanitize
-import urllib
+from urllib2 import unquote
 
 
 class SwaggerUIDist(http.Controller):
