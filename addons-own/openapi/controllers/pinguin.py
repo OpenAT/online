@@ -311,6 +311,8 @@ def create_log_record(**kwargs):
 def _create_log_record(
     env,
     namespace_id=None,
+    namespace=None,
+    model=None,
     namespace_log_request=None,
     namespace_log_response=None,
     user_id=None,
@@ -383,6 +385,8 @@ def route(*args, **kwargs):
             )
             data_for_log = {
                 "namespace_id": namespace.id,
+                "namespace": namespace.name,
+                "model": ikwargs["model"],
                 "namespace_log_request": namespace.log_request,
                 "namespace_log_response": namespace.log_response,
                 "user_id": authenticated_user.id,
