@@ -37,5 +37,6 @@
         'openapi',
     ],
     'data': [
+        "security/ir.model.access.csv",
     ],
 }
