@@ -38,5 +38,6 @@
     ],
     'data': [
         "security/ir.model.access.csv",
+        "views/http_metric_view.xml",
     ],
 }
