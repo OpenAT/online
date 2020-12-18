@@ -8,7 +8,11 @@ class HttpMetric(models.Model):
     _order = "create_date desc"
     _description = "OpenAPI HTTP Metric"
     _sql_constraints = [
-        ('day_unique', 'unique(day)', "Metrics for this day already exist."),
+        (
+            'namespace_id_day_model_unique',
+            'unique(namespace_id, day, model)',
+            "Metrics for this integration, day and model already exist."
+        ),
     ]
 
     namespace_id = fields.Integer(
