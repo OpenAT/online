@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp><data>
+
+        <record model="ir.ui.view" id="namespace_form_view_swagger_gui">
+            <field name="name">namespace_form_view_swagger_gui</field>
+            <field name="model">openapi.namespace</field>
+            <field name="inherit_id" ref="openapi.namespace_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='spec_url']" position="after">
+                    <field name="spec_editor_url" widget="url" readonly="1" />
+                    <field name="spec_ui_url" widget="url" readonly="1" />
+                </xpath>
+            </field>
+        </record>
+
+</data></openerp>
