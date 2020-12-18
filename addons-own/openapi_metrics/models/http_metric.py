@@ -16,7 +16,7 @@ class HttpMetric(models.Model):
     ]
 
     namespace_id = fields.Integer(
-        string="The OpenAPI Integration",
+        string="The OpenAPI Integration ID",
         readonly=True)
 
     namespace_name = fields.Char(
