@@ -11,8 +11,20 @@ class HttpMetric(models.Model):
         ('day_unique', 'unique(day)', "Metrics for this day already exist."),
     ]
 
+    namespace_id = fields.Integer(
+        string="The OpenAPI Integration",
+        readonly=True)
+
+    namespace_name = fields.Char(
+        string="The OpenAPI Integration name",
+        readonly=True)
+
     day = fields.Datetime(
         string="Day of the request.",
+        readonly=True)
+
+    model = fields.Char(
+        string="Model name",
         readonly=True)
 
     request_count = fields.Integer(
