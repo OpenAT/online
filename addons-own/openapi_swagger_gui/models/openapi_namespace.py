@@ -20,8 +20,8 @@ class Namespace(models.Model):
                 full_spec_url = urls.url_join(base_url, record.spec_url)
                 quoted_full_spec_url = quote(full_spec_url, safe="")
 
-                editor_url_part = "/swagger-ui/index.html?swagger_spec_url={}".format(quoted_full_spec_url)
-                ui_url_part = "/swagger-editor/index.html?swagger_spec_url={}".format(quoted_full_spec_url)
+                ui_url_part = "/swagger-ui/index.html?swagger_spec_url={}".format(quoted_full_spec_url)
+                editor_url_part = "/swagger-editor/index.html?swagger_spec_url={}".format(quoted_full_spec_url)
 
                 record.spec_editor_url = urls.url_join(base_url, editor_url_part)
                 record.spec_ui_url = urls.url_join(base_url, ui_url_part)
