@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<openerp><data>
+
+    <record id="openapi_http_metric_view_tree" model="ir.ui.view">
+        <field name="name">openapi.http_metric.tree.view</field>
+        <field name="model">openapi.http_metric</field>
+        <field name="arch" type="xml">
+            <tree string="OpenAPI HTTP Metrics">
+                <field name="day" widget="date"/>
+                <field name="namespace_id"/>
+                <field name="namespace_name"/>
+                <field name="model"/>
+                <field name="request_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="openapi_http_metric_view_graph" model="ir.ui.view">
+        <field name="name">openapi.http_metric.graph.view</field>
+        <field name="model">openapi.http_metric</field>
+        <field name="arch" type="xml">
+            <graph string="OpenAPI HTTP Metrics" type="bar">
+                <field name="day" group="True" interval="day"/>
+                <field name="namespace_name" group="True" stacked="True"/>
+                <field name="request_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="http_metrics_view_search" model="ir.ui.view">
+        <field name="name">openapi.http_metric.graph.search</field>
+        <field name="model">openapi.http_metric</field>
+        <field name="arch" type="xml">
+            <search string="OpenAPI HTTP Metrics" type="bar">
+                <field name="day" interval="day"/>
+                <field name="namespace_id"/>
+                <field name="namespace_name"/>
+                <field name="model"/>
+                <group expanded="0" string="Group by">
+                    <filter name="group_day" string="Day" context="{'group_by':'day'}" help="Day of the request"/>
+                    <filter name="group_namespace_id" string="Integration ID" context="{'group_by':'namespace_id'}" help="Integration ID"/>
+                    <filter name="group_namespace_name" string="Integration name" context="{'group_by':'namespace_name'}" help="Integration name"/>
+                    <filter name="group_model" string="Model" context="{'group_by':'model'}" help="Model name"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="http_metrics_graph_action" model="ir.actions.act_window">
+        <field name="name">Accesses</field>
+        <field name="res_model">openapi.http_metric</field>
+        <field name="view_mode">graph,tree</field>
+        <field name="search_view_id" ref="http_metrics_view_search"/>
+    </record>
+
+    <menuitem
+        id="http_metrics_graph_menu"
+        name="HTTP Metrics"
+        parent="openapi.openapi_menu"
+        action="http_metrics_graph_action"
+        />
+
+</data></openerp>

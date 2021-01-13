@@ -16,7 +16,7 @@ class HttpMetric(models.Model):
     ]
 
     namespace_id = fields.Integer(
-        string="The OpenAPI Integration",
+        string="The OpenAPI Integration ID",
         readonly=True)
 
     namespace_name = fields.Char(
@@ -24,7 +24,7 @@ class HttpMetric(models.Model):
         readonly=True)
 
     day = fields.Datetime(
-        string="Day of the request.",
+        string="Day of the request",
         readonly=True)
 
     model = fields.Char(
@@ -32,5 +32,5 @@ class HttpMetric(models.Model):
         readonly=True)
 
     request_count = fields.Integer(
-        string="Number of requests for the given day.",
+        string="Number of requests for the given day",
         readonly=True)
