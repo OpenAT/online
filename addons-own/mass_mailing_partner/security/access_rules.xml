@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.rule" id="rule_restrict_public_group_own_mass_mailing_contact_only">
+            <field name="name">Public Group: Own Mailing Contacts only</field>
+            <field name="model_id" ref="mass_mailing.model_mail_mass_mailing_contact"/>
+            <field name="domain_force">[('personemail_id.partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_public'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record model="ir.rule" id="rule_restrict_public_group_own_frst_personemail_only">
+            <field name="name">Public Group: Own Personemails only</field>
+            <field name="model_id" ref="fso_frst_personemail.model_frst_personemail"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_public'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+    </data>
+</openerp>

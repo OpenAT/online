@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mass_mailing_contact_public,access_mass_mailing_contact_public,model_mail_mass_mailing_contact,base.group_public,1,1,1,1
+access_frst_personemail_public,access_frst_personemail_public,model_frst_personemail,base.group_public,1,0,0,0

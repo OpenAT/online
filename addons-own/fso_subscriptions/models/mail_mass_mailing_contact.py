@@ -96,24 +96,24 @@ class MailMassMailingContact(models.Model):
     pf_mandatsid = fields.Char("MandatsID")
     pf_emaildatum = fields.Char("Emaildatum")
 
-    @api.multi
-    def new_partner_vals(self):
-        partner_vals = super(MailMassMailingContact, self).new_partner_vals()
+    @api.model
+    def new_partner_vals(self, list_contact_vals):
+        partner_vals = super(MailMassMailingContact, self).new_partner_vals(list_contact_vals)
         partner_vals.update({
-            'gender': self.gender,
-            'anrede_individuell': self.anrede_individuell,
-            'title_web': self.title_web,
-            'birthdate_web': self.birthdate_web,
-            'newsletter_web': self.newsletter_web,
-            'phone': self.phone,
-            'mobile': self.mobile,
-            'street': self.street,
-            'street2': self.street2,
-            'street_number_web': self.street_number_web,
-            'zip': self.zip,
-            'city': self.city,
-            'state_id': self.state_id,
-            'country_id': self.country_id})
+            'gender': list_contact_vals.get('gender', False),
+            'anrede_individuell': list_contact_vals.get('anrede_individuell', False),
+            'title_web': list_contact_vals.get('title_web', False),
+            'birthdate_web': list_contact_vals.get('birthdate_web', False),
+            'newsletter_web': list_contact_vals.get('newsletter_web', False),
+            'phone': list_contact_vals.get('phone', False),
+            'mobile': list_contact_vals.get('mobile', False),
+            'street': list_contact_vals.get('street', False),
+            'street2': list_contact_vals.get('street2', False),
+            'street_number_web': list_contact_vals.get('street_number_web', False),
+            'zip': list_contact_vals.get('zip', False),
+            'city': list_contact_vals.get('city', False),
+            'state_id': list_contact_vals.get('state_id', False),
+            'country_id': list_contact_vals.get('country_id', False)})
         return partner_vals
 
     @api.depends('opt_out', 'list_id.bestaetigung_erforderlich', 'bestaetigt_am_um')

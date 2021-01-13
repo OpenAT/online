@@ -461,7 +461,7 @@ msgstr "Zielbalken anzeigen"
 #: field:mail.mass_mailing.contact,state:0
 #: field:mail.mass_mailing.contact,state_id:0
 msgid "State"
-msgstr "Status"
+msgstr "Bundesland"
 
 #. module: fso_subscriptions
 #: field:mail.mass_mailing.contact,street:0
