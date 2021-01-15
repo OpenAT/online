@@ -1,0 +1,20 @@
+@charset "utf-8";
+
+/* Narrow ON LARGE SCREENS */
+@media (min-width: 992px){
+    #wrap.tlf_wrap .container.tlf_container {
+        width: 68%;
+    }
+}
+
+/* JQUERY VALIDATE */
+/*.apf_container .has-feedback label ~ .form-control-feedback {*/
+/*    top: initial;*/
+/*}*/
+/*.apf_container .form-control-feedback {*/
+/*    right: 18px;*/
+/*    bottom: -1px;*/
+/*}*/
+/*.apf_container .large-input .form-control-feedback {*/
+/*    bottom: 5px;*/
+/*}*/

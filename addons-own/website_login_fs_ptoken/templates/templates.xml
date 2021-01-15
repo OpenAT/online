@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- Load custom js and css for the token login form -->
+        <template id="assets_frontend" inherit_id="website.assets_frontend" name="website_login_fs_ptoken Frontend Assets">
+            <xpath expr="//script[last()]" position="after">
+                <link rel="stylesheet" href='/website_login_fs_ptoken/static/src/css/website_login_fs_ptoken.css'/>
+
+                <script type="text/javascript" src="/website_login_fs_ptoken/static/src/js/tlf_format_fs_ptoken_input.js"/>
+                <script type="text/javascript" src="/website_login_fs_ptoken/static/src/js/tlf_validate_and_submit_button.js"/>
+            </xpath>
+        </template>
+
+
+        <!-- TEMPLATE token_login_form -->
+        <template id="token_login_form" name="Token Login Form" page="True">
+            <t t-call="website.layout">
+                <t t-set="title">Token Login Form</t>
+                <div id="wrap" class="tlf_wrap">
+                    <div class="container tlf_container">
+
+                        <!-- Top snippet area -->
+                        <t t-if="tlf_record and tlf_record.tlf_top_snippets">
+                            <div class="row tlf_top_snippets_row">
+                                <div class="col-lg-12">
+                                    <div t-field="tlf_record.tlf_top_snippets" class="oe_structure"/>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Top messages -->
+                        <t t-if="not hide_tlf_messages_top">
+                            <t t-call="website_login_fs_ptoken.tlf_messages">
+                                <t t-set="tlf_messages_id" t-value="'tlf_messages_top'"/>
+                            </t>
+                        </t>
+
+                        <!-- TOKEN LOGIN FORM -->
+                        <div class="row tlf_token_input">
+                            <div class="col-lg-12">
+                                <form id="token_login_form"
+                                      action="/web/login/fs_ptoken"
+                                      method="post"
+                                      autocomplete="off">
+
+                                    <div class="row tlf_token_data">
+                                        <div class="col-lg-12">
+
+                                            <!-- Headline -->
+                                            <t t-if="tlf_record and tlf_record.tlf_headline">
+                                                <h2 class="tlf_headline">
+                                                    <span t-field="tlf_record.tlf_headline"/>
+                                                </h2>
+                                            </t>
+
+                                            <!-- Input field for fs_ptoken -->
+                                            <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + field_errors.get('fs_ptoken')) if field_errors.get('fs_ptoken') else '')">
+
+                                                <label class="control-label f-fs_ptoken mandatory text-danger"
+                                                       for="fs_ptoken">
+                                                    <t t-if="tlf_record and tlf_record.tlf_label">
+                                                        <span t-field="tlf_record.tlf_label"/>
+                                                    </t>
+                                                    <t t-if="not tlf_record or not tlf_record.tlf_label">
+                                                        <span>Token</span>
+                                                    </t>
+                                                </label>
+
+                                                <input id="fs_ptoken"
+                                                       name="fs_ptoken"
+                                                       type="text"
+                                                       class="form-control input-lg"
+                                                       autocomplete="off"
+                                                       t-att-value="fs_ptoken"
+                                                       t-att-placeholder="fs_ptoken_placeholder if fs_ptoken_placeholder else 'A4C-B13-4F5-7XH'"
+                                                       t-att-readonly="website.user_id != user_id"
+                                                />
+
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="clearfix tlf_token_data_clearfix"/>
+                                    </div>
+
+                                    <!-- Logout Button (e.g. to enter a new Token -->
+                                    <t t-if="not hide_tlf_logout_button">
+                                        <t t-if="website.user_id != user_id">
+                                            <div class="row tlf_logout_button_row">
+                                                <div class="col-lg-12">
+                                                    <t t-call="website_login_fs_ptoken.tlf_logout_button"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+
+                                    <!-- Spam Protection Honeypot Field -->
+                                    <t t-if="not hide_tlf_honeypot_field">
+                                        <t t-call="website_login_fs_ptoken.tlf_honeypot_field"/>
+                                    </t>
+
+                                    <!-- Redirect URL after token login -->
+                                    <input type="hidden" name="redirect_url_after_token_login" t-att-value="redirect_url_after_token_login"/>
+
+                                    <!-- Submit Button -->
+                                    <div class="row tlf_submit_button_row">
+                                        <div class="col-lg-12">
+                                            <a id="tlf_submit_button" class="btn btn-primary btn-lg a-submit">
+                                                <t t-if="tlf_record and tlf_record.tlf_submit_button">
+                                                    <span t-field="tlf_record.tlf_submit_button"/>
+                                                </t>
+                                                <t t-if="not tlf_record or not tlf_record.tlf_submit_button">
+                                                    <span>Submit</span>
+                                                </t>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Bottom messages -->
+                        <t t-if="not hide_tlf_messages_bottom">
+                            <t t-call="website_login_fs_ptoken.tlf_messages">
+                                <t t-set="tlf_messages_id" t-value="'tlf_messages_bottom'"/>
+                            </t>
+                        </t>
+                        
+                        <!-- Bottom snippet area -->
+                        <t t-if="tlf_record and tlf_record.tlf_bottom_snippets">
+                            <div class="row tlf_bottom_snippets_row">
+                                <div class="col-lg-12">
+                                    <div t-field="tlf_record.tlf_bottom_snippets" class="oe_structure"/>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- SUBTEMPLATE: Logout Button -->
+        <template id="tlf_logout_button" name="Token Login Form Logout Button">
+            <t t-if="website.user_id != user_id">
+                <a id="tlf_logout_button"
+                   class="btn btn-primary"
+                   t-att-href="'/web/session/logout?redirect=' + (redirect_url_after_token_login or '/web/login/fs_ptoken')">
+                    <t t-if="tlf_record and tlf_record.tlf_logout_button">
+                        <span t-esc="website.apf_logout_button"/>
+                    </t>
+                    <t t-if="not tlf_record or not tlf_record.tlf_logout_button">
+                        <span>
+                            Logout
+                            <t t-esc="user_id.partner_id.name"/>
+                            to enter a new code
+                        </span>
+                    </t>
+                </a>
+            </t>
+        </template>
+        
+        <!-- SUBTEMPLATE: Honeypot Field -->
+        <template id="tlf_honeypot_field" name="Token Login Form Honeypot Field">
+            <div class="row tlf_hpf_row" style="position: absolute; left: -99999px; top: -99999px;">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label class="control-label tlf_hpf_label" for="tlf_hpf">
+                            <span>Do not enter data here please!</span>
+                        </label>
+                        <input id="tlf_hpf"
+                               name="tlf_hpf"
+                               type="text"
+                               class="form-control"
+                               placeholder="Do not enter data here please!"
+                               autocomplete="off"
+                        />
+                    </div>
+                </div>
+                <div class="clearfix tlf_hpf_clearfix"/>
+            </div>
+        </template>        
+
+        <!-- SUBTEMPLATE: Message Display -->
+        <template id="tlf_messages" name="Token Login Form Messages Subtemplate">
+            <t t-if="tlf_error_messages or tlf_warning_messages or tlf_messages">
+                <div t-att-id="tlf_messages_id" class="row tlf_messages">
+                    <div class="col-lg-12">
+
+                        <!-- Error Messages -->
+                        <t t-foreach="tlf_error_messages" t-as="error">
+                            <div class="alert alert-danger" role="alert">
+                                <t t-raw="error"/>
+                            </div>
+                        </t>
+
+                        <!-- Warning Messages -->
+                        <t t-foreach="tlf_warning_messages" t-as="warning">
+                            <div class="alert alert-warning" role="alert">
+                                <t t-raw="warning"/>
+                            </div>
+                        </t>
+
+                        <!-- Messages -->
+                        <t t-foreach="tlf_messages" t-as="message">
+                            <div class="alert alert-success" role="alert">
+                                <t t-raw="message"/>
+                            </div>
+                        </t>
+
+                    </div>
+                    <div class="clearfix tlf_messages_clearfix"/>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</openerp>
