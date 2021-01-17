@@ -36,8 +36,10 @@
                     <group>
                         <group>
                             <field name="gruppe_lang"/>
+                            <!--<field name="zgruppe_id"-->
+                            <!--       domain="['|', '|', ('gruppe_lang', 'ilike', 'email'), ('gruppe_lang', 'ilike', 'newsletter'), ('gruppe_lang', 'ilike', 'petition')]"-->
+                            <!--       options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>-->
                             <field name="zgruppe_id"
-                                   domain="['|', '|', ('gruppe_lang', 'ilike', 'email'), ('gruppe_lang', 'ilike', 'newsletter'), ('gruppe_lang', 'ilike', 'petition')]"
                                    options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                             <field name="geltungsbereich"/>
                         </group>

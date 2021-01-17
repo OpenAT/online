@@ -167,6 +167,33 @@ class FRSTGruppeState(models.AbstractModel):
 
         logger.info('Done scheduled_compute_state() group subscription model %s' % self._name)
 
+    # ------
+    # HELPER
+    # ------
+    @api.multi
+    def activate(self):
+        for r in self:
+            vals = {
+                'gueltig_von': fields.datetime.now(),
+                'gueltig_bis': fields.date(2099, 12, 31)
+            }
+
+            # Approval pending
+            if not r.bestaetigt_am_um:
+                group = r[self._group_model_field]
+                if group and group.bestaetigung_erforderlich:
+                    vals['gueltig_von'] = self._approval_pending_date
+                    vals['gueltig_bis'] = self._approval_pending_date
+
+            # Opt Out
+            if hasattr(r, 'steuerung_bit'):
+                vals['steuerung_bit'] = True
+
+            r.write(vals)
+
+    # ----
+    # CRUD
+    # ----
     @api.model
     def create(self, vals):
 

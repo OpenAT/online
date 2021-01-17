@@ -49,6 +49,7 @@ TODO:
         #'fso_base',
         # To use the jquery validation and other tools
         'fso_base_website',
+        'website_login_fs_ptoken',
     ],
     'data': [
         'security/fso_forms_usergroup.xml',

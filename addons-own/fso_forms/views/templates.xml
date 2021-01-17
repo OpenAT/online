@@ -355,15 +355,28 @@
                                     <!-- Get options for many2one fields -->
                                     <t t-if="f_type == 'many2one'">
                                         <!-- Loop through all records of the many2one field model -->
-                                        <!-- TODO: There will be an error if the many2one field has no field 'name' -->
                                         <t t-set="m2o_records" t-value="request.env[field.field_id.relation].search([])"/>
-                                        <t t-set="m2o_records_sorted" t-value="m2o_records.sorted(key=lambda r: r.name)"/>
-                                        <t t-foreach="m2o_records_sorted" t-as="m2o_field_record">
-                                            <t t-set="item_id" t-value="m2o_field_record.id"/>
-                                            <t t-set="item_name" t-value="m2o_field_record.name"/>
-                                            <!-- Add to options list -->
-                                            <t t-set="options" t-value="options + [{'item_id': item_id, 'item_name': item_name}]"/>
+
+                                        <t t-if="'name' in request.env[field.field_id.relation]._fields">
+                                            <t t-set="m2o_records_sorted" t-value="m2o_records.sorted(key=lambda r: r.name)"/>
+                                            <t t-foreach="m2o_records_sorted" t-as="m2o_field_record">
+                                                <t t-set="item_id" t-value="m2o_field_record.id"/>
+                                                <t t-set="item_name" t-value="m2o_field_record.name"/>
+                                                <!-- Add to options list -->
+                                                <t t-set="options" t-value="options + [{'item_id': item_id, 'item_name': item_name}]"/>
+                                            </t>
                                         </t>
+
+                                        <t t-if="'name' not in request.env[field.field_id.relation]._fields">
+                                            <t t-set="m2o_records_sorted" t-value="m2o_records.sorted(key=lambda r: r)"/>
+                                            <t t-foreach="m2o_records_sorted" t-as="m2o_field_record">
+                                                <t t-set="item_id" t-value="m2o_field_record.id"/>
+                                                <t t-set="item_name" t-value="m2o_field_record"/>
+                                                <!-- Add to options list -->
+                                                <t t-set="options" t-value="options + [{'item_id': item_id, 'item_name': item_name}]"/>
+                                            </t>
+                                        </t>
+
                                     </t>
 
                                     <!-- List Style -->

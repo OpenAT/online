@@ -34,11 +34,14 @@ class AuthPartnerForm(http.Controller):
 
     @http.route(['/web/login/fs_ptoken'], auth='public', website=True)
     def web_login_fs_ptoken(self, **kwargs):
-        fs_ptoken = kwargs.get('fs_ptoken', '')
-        redirect_url_after_token_login = kwargs.get('redirect_url_after_token_login', '')
-
         # Form Template
         form_template = 'website_login_fs_ptoken.token_login_form'
+
+        # Form Data from kwargs
+        fs_ptoken = kwargs.get('fs_ptoken', '')
+        token_data_submission_url = kwargs.get('token_data_submission_url', '/web/login/fs_ptoken')
+        redirect_url_after_token_login = kwargs.get('redirect_url_after_token_login', '')
+        tlf_record = kwargs.get('tlf_record', None)
 
         # Messages
         tlf_messages = list()
@@ -46,17 +49,14 @@ class AuthPartnerForm(http.Controller):
         tlf_error_messages = list()
 
         # Field Errors
-        field_errors = dict()
+        tlf_field_errors = dict()
 
         # Honey Pot Field Test
         if kwargs.get('tlf_hpf'):
             if request.uid != request.website.user_id.id:
                 tlf_error_messages.append(_('Data found in field with label: "Do not enter data here please!"'))
-            return http.request.render(form_template, {
-                'kwargs': dict(),
-                'fs_ptoken': '',
-                'redirect_url_after_token_login': urllib2.quote(redirect_url_after_token_login),
-            })
+                fs_ptoken = None
+                kwargs = dict()
 
         # Check Token
         if fs_ptoken:
@@ -79,19 +79,27 @@ class AuthPartnerForm(http.Controller):
                                           redirect_url=redirect_url)
             # INVALID TOKEN
             if token_error:
-                field_errors['fs_ptoken'] = 'invalid_fs_ptoken'
+                tlf_field_errors['fs_ptoken'] = 'invalid_fs_ptoken'
                 tlf_error_messages += token_error
 
         return http.request.render(form_template,
-                                   {'kwargs': kwargs,
-                                    'fs_ptoken': fs_ptoken,
-                                    'redirect_url_after_token_login': urllib2.quote(redirect_url_after_token_login),
+                                   {'fs_ptoken': fs_ptoken,
+                                    'token_data_submission_url': token_data_submission_url,
+                                    'redirect_url_after_token_login': redirect_url_after_token_login,
+                                    # Form t-fields
+                                    'tlf_record': tlf_record,
+                                    # 'tlf_record.tlf_top_snippets': kwargs.get('tlf_top_snippets', None),
+                                    # 'tlf_record.tlf_headline': kwargs.get('tlf_headline', None),
+                                    # 'tlf_record.tlf_label': kwargs.get('tlf_label', None),
+                                    # 'tlf_record.tlf_submit_button': kwargs.get('tlf_submit_button', None),
+                                    # 'tlf_record.tlf_logout_button': kwargs.get('tlf_logout_button', None),
+                                    # 'tlf_record.tlf_bottom_snippets': kwargs.get('tlf_bottom_snippets', None),
                                     # Messages
                                     'tlf_messages': tlf_messages,
                                     'tlf_warning_messages': tlf_warning_messages,
                                     'tlf_error_messages': tlf_error_messages,
                                     # Field Errors
-                                    'field_errors': field_errors,
+                                    'tlf_field_errors': tlf_field_errors,
+                                    # All other kwargs
+                                    'kwargs': kwargs,
                                     })
-
-

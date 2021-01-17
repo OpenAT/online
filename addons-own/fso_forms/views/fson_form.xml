@@ -15,19 +15,29 @@
                                 <field name="model_id"/>
                                 <field name="create_as_user"/>
                                 <field name="submit_button_text"/>
-                                <field name="logout_button_text"/>
+
                                 <field name="clear_session_data_after_submit"/>
-                                <field name="edit_existing_record_if_logged_in"/>
-                                <field name="email_only"/>
-                                <field name="confirmation_email_template"/>
-                                <field name="information_email_receipients" widget="many2many_tags"/>
-                                <field name="information_email_template"/>
+
                             </group>
                             <group name="system_data">
                                 <field name="website_url" widget="url" readonly="1"/>
                                 <field name="id" readonly="True"/>
                                 <field name="create_date" readonly="True"/>
                                 <field name="write_date" readonly="True"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group name="email" string="E-Mail">
+                                <field name="email_only"/>
+                                <field name="confirmation_email_template"/>
+                                <field name="information_email_receipients" widget="many2many_tags"/>
+                                <field name="information_email_template"/>
+                            </group>
+                            <group name="login" string="Login">
+                                <field name="edit_existing_record_if_logged_in"/>
+                                <field name="logout_button_text"/>
+                                <field name="login_required"/>
+                                <field name="show_token_login_form"/>
                             </group>
                         </group>
                         <notebook>
@@ -69,6 +79,11 @@
                                         <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
                                         <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
                                         <field name="honeypot"/>
+                                        <!--<button class="oe_inline"-->
+                                        <!--        type="action"-->
+                                        <!--        name="%(fso_forms.fson_form_field_action)d"-->
+                                        <!--        string="Edit"-->
+                                        <!--        icon="fa-envelope-o"/>-->
                                         <!-- <button type="object" name="button_open_field_form_view" string="Edit" class="oe_link" /> -->
                                     </tree>
                                 </field>
@@ -85,6 +100,18 @@
                                     <field name="redirect_after_submit"/>
                                     <field name="thank_you_page_edit_data_button" attrs="{'readonly': [('email_only','=',True)]}"/>
                                     <field name="thank_you_page_snippets"/>
+                                </group>
+                            </page>
+                            <page string="Token Login Form">
+                                <group>
+                                    <field name="tlf_headline"/>
+                                    <field name="tlf_label"/>
+                                    <field name="tlf_submit_button"/>
+                                    <field name="tlf_logout_button"/>
+                                </group>
+                                <group string="Token Login Form Snippet Areas">
+                                    <field name="tlf_top_snippets" readonly="1"/>
+                                    <field name="tlf_bottom_snippets" readonly="1"/>
                                 </group>
                             </page>
                             <page string="Danger Zone">

@@ -26,6 +26,7 @@ from openerp.tools.translate import _
 import base64
 import datetime
 from collections import namedtuple
+from copy import deepcopy
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -38,6 +39,8 @@ except ImportError:
     _logger.warning("Could not import 'mako_template_env' or 'format_tz'! "
                     "E-mail rendering without a record will not work!")
 
+# Token login Form
+from openerp.addons.website_login_fs_ptoken.controllers.controller import AuthPartnerForm
 
 class FsoForms(http.Controller):
 
@@ -558,6 +561,13 @@ class FsoForms(http.Controller):
             self.send_mail(template=form.confirmation_email_template, record=record, template_values=template_values,
                            email_to=email_to)
 
+    def is_logged_in(self):
+        # The default website user does not count as a logged in user
+        default_website_user = request.env.ref('base.public_user', raise_if_not_found=True)
+        if not request.env.user or (default_website_user and default_website_user.id == request.env.user.id):
+            return False
+        return True
+
     @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
     def fso_form(self, form_id=None, render_form_only=False, lazy=True, **kwargs):
         form_id = int(form_id)
@@ -582,7 +592,36 @@ class FsoForms(http.Controller):
             _logger.error("NO USER IN request.env.uid! REDIRECTING TO: %s" % redirect_url)
             return request.redirect(redirect_url)
 
+        # Login handling
+        # --------------
+        # TODO: This seems to be a bad solution because it may loose all kwargs for the fso_form
+        #       Check that the kwargs are already "stored" by url attribs in request.httprequest.url
+        if form.login_required and not self.is_logged_in():
+            _logger.info("FSO_Form %s render token login form!" % form.id)
+            if form.show_token_login_form:
+                tlf_kwargs = deepcopy(kwargs)
+                tlf_kwargs.pop('token_data_submission_url', None)
+                tlf_kwargs.pop('redirect_url_after_token_login', None)
+                tlf_kwargs.pop('tlf_record', None)
+                token_login_form = AuthPartnerForm().web_login_fs_ptoken(
+                    token_data_submission_url=request.httprequest.url,
+                    redirect_url_after_token_login=request.httprequest.url,
+                    tlf_record=form,
+                    # tlf_top_snippets=form.tlf_top_snippets,
+                    # tlf_headline=form.tlf_headline,
+                    # tlf_label=form.tlf_label,
+                    # tlf_submit_button=form.tlf_submit_button,
+                    # tlf_logout_button=form.tlf_logout_button,
+                    # tlf_bottom_snippets=form.tlf_bottom_snippets,
+                    **tlf_kwargs
+                )
+                return token_login_form
+            else:
+                # TODO: Change template to render just this message in the errors box but with full website template
+                return "Login required!"
+
         # Get the form and session related record
+        # ---------------------------------------
         # HINT: This will either return a single record or an empty recordset (= form.model_id.model object)
         record = self.get_fso_form_record(form)
         if record:
@@ -695,7 +734,7 @@ class FsoForms(http.Controller):
                                                    {'redirect_url': redirect_url,
                                                     'redirect_target': redirect_target})
 
-                    return request.redirect("/fso/form/thanks/"+str(form.id))
+                    return request.redirect(redirect_url)
 
         # FINALLY RENDER THE FORM
         # -----------------------

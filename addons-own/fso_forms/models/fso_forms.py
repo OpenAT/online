@@ -111,6 +111,21 @@ class FSONForm(models.Model):
     website_url = fields.Char(compute="_cmp_website_url", string="Website URL")
     website_url_thanks = fields.Char(compute="_cmp_website_url_thanks", string="Website URL Thank you Page")
 
+    # Login
+    # -----
+    login_required = fields.Boolean("Login required", help="If set you can only access the form if logged in.")
+    show_token_login_form = fields.Boolean("Show Token Login Form",
+                                           help="A form to enter the fs_ptoken will show up if not logged in when "
+                                                "accessing the form!")
+
+    # fs_ptoken login form
+    tlf_top_snippets = fields.Html("TLF Top Snippets", help="Token Login Form Top Snippets", translate=True)
+    tlf_headline = fields.Char("Token Login Form Headline", translate=True)
+    tlf_label = fields.Char("Token Login Form Label", translate=True)
+    tlf_submit_button = fields.Char("Token Login Form Submit Button", translate=True)
+    tlf_logout_button = fields.Char("Token Login Form Logout Button", translate=True)
+    tlf_bottom_snippets = fields.Html("TLF Bottom Snippets", translate=True, help="Token Login Form Top Snippets")
+
     @api.depends('name')
     def _cmp_website_url(self):
         for r in self:
@@ -281,7 +296,8 @@ class FSONFormField(models.Model):
                 if r.field_id.ttype not in self._allowed_field_types:
                     raise ValidationError('Field type %s is not supported in form fields!' % r.field_id.ttype)
                 # Check required fields
-                if r.field_id.required and (not r.mandatory or not r.show):
+                #if r.field_id.required and (not r.mandatory or not r.show):
+                if r.field_id.required and not r.mandatory:
                     raise ValueError('System-Required fields must have show and mandatory set to True in the form!')
                 # Check binary_name_field_id
                 if r.field_id.ttype != 'binary' and r.binary_name_field_id:
@@ -312,7 +328,7 @@ class FSONFormField(models.Model):
             self.mandatory = False
         if self.field_id:
             if self.field_id.required:
-                self.show = True
+                #self.show = True
                 self.mandatory = True
             if self.field_id.ttype != 'binary':
                 self.binary_name_field_id = False

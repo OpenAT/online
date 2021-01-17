@@ -15,13 +15,14 @@
 
         <!-- TEMPLATE token_login_form -->
         <template id="token_login_form" name="Token Login Form" page="True">
+
             <t t-call="website.layout">
                 <t t-set="title">Token Login Form</t>
                 <div id="wrap" class="tlf_wrap">
                     <div class="container tlf_container">
 
-                        <!-- Top snippet area -->
-                        <t t-if="tlf_record and tlf_record.tlf_top_snippets">
+                         <!-- Top snippet area -->
+                        <t t-if="tlf_record and tlf_record.tlf_top_snippets != 'Disabled'">
                             <div class="row tlf_top_snippets_row">
                                 <div class="col-lg-12">
                                     <div t-field="tlf_record.tlf_top_snippets" class="oe_structure"/>
@@ -40,7 +41,7 @@
                         <div class="row tlf_token_input">
                             <div class="col-lg-12">
                                 <form id="token_login_form"
-                                      action="/web/login/fs_ptoken"
+                                      t-att-action="token_data_submission_url"
                                       method="post"
                                       autocomplete="off">
 
@@ -48,21 +49,21 @@
                                         <div class="col-lg-12">
 
                                             <!-- Headline -->
-                                            <t t-if="tlf_record and tlf_record.tlf_headline">
+                                            <t t-if="tlf_record and tlf_record.tlf_headline != 'Disabled'">
                                                 <h2 class="tlf_headline">
                                                     <span t-field="tlf_record.tlf_headline"/>
                                                 </h2>
                                             </t>
 
                                             <!-- Input field for fs_ptoken -->
-                                            <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + field_errors.get('fs_ptoken')) if field_errors.get('fs_ptoken') else '')">
+                                            <div t-att-class="'form-group has-feedback ' + ' f-type-char' + ((' has-error ' + tlf_field_errors.get('fs_ptoken')) if tlf_field_errors.get('fs_ptoken') else '')">
 
                                                 <label class="control-label f-fs_ptoken mandatory text-danger"
                                                        for="fs_ptoken">
-                                                    <t t-if="tlf_record and tlf_record.tlf_label">
+                                                    <t t-if="tlf_record and tlf_record.tlf_label != 'Disabled'">
                                                         <span t-field="tlf_record.tlf_label"/>
                                                     </t>
-                                                    <t t-if="not tlf_record or not tlf_record.tlf_label">
+                                                    <t t-if="not tlf_record or tlf_record.tlf_label == 'Default'">
                                                         <span>Token</span>
                                                     </t>
                                                 </label>
@@ -73,7 +74,7 @@
                                                        class="form-control input-lg"
                                                        autocomplete="off"
                                                        t-att-value="fs_ptoken"
-                                                       t-att-placeholder="fs_ptoken_placeholder if fs_ptoken_placeholder else 'A4C-B13-4F5-7XH'"
+                                                       t-att-placeholder="fs_ptoken_placeholder if fs_ptoken_placeholder is not None else 'A4C-B13-4F5-7XH-537'"
                                                        t-att-readonly="website.user_id != user_id"
                                                 />
 
@@ -84,15 +85,7 @@
                                     </div>
 
                                     <!-- Logout Button (e.g. to enter a new Token -->
-                                    <t t-if="not hide_tlf_logout_button">
-                                        <t t-if="website.user_id != user_id">
-                                            <div class="row tlf_logout_button_row">
-                                                <div class="col-lg-12">
-                                                    <t t-call="website_login_fs_ptoken.tlf_logout_button"/>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </t>
+                                    <t t-call="website_login_fs_ptoken.tlf_logout_button"/>
 
                                     <!-- Spam Protection Honeypot Field -->
                                     <t t-if="not hide_tlf_honeypot_field">
@@ -106,10 +99,10 @@
                                     <div class="row tlf_submit_button_row">
                                         <div class="col-lg-12">
                                             <a id="tlf_submit_button" class="btn btn-primary btn-lg a-submit">
-                                                <t t-if="tlf_record and tlf_record.tlf_submit_button">
+                                                <t t-if="tlf_record or tlf_record.tlf_submit_button != 'Default'">
                                                     <span t-field="tlf_record.tlf_submit_button"/>
                                                 </t>
-                                                <t t-if="not tlf_record or not tlf_record.tlf_submit_button">
+                                                <t t-if="not tlf_record or tlf_record.tlf_submit_button == 'Default'">
                                                     <span>Submit</span>
                                                 </t>
                                             </a>
@@ -128,7 +121,7 @@
                         </t>
                         
                         <!-- Bottom snippet area -->
-                        <t t-if="tlf_record and tlf_record.tlf_bottom_snippets">
+                        <t t-if="tlf_record and tlf_record.tlf_bottom_snippets != 'Disabled'">
                             <div class="row tlf_bottom_snippets_row">
                                 <div class="col-lg-12">
                                     <div t-field="tlf_record.tlf_bottom_snippets" class="oe_structure"/>
@@ -143,21 +136,27 @@
 
         <!-- SUBTEMPLATE: Logout Button -->
         <template id="tlf_logout_button" name="Token Login Form Logout Button">
-            <t t-if="website.user_id != user_id">
-                <a id="tlf_logout_button"
-                   class="btn btn-primary"
-                   t-att-href="'/web/session/logout?redirect=' + (redirect_url_after_token_login or '/web/login/fs_ptoken')">
-                    <t t-if="tlf_record and tlf_record.tlf_logout_button">
-                        <span t-esc="website.apf_logout_button"/>
-                    </t>
-                    <t t-if="not tlf_record or not tlf_record.tlf_logout_button">
-                        <span>
-                            Logout
-                            <t t-esc="user_id.partner_id.name"/>
-                            to enter a new code
-                        </span>
-                    </t>
-                </a>
+            <t t-if="not tlf_record or (tlf_record and tlf_record.tlf_logout_button != 'Disabled')">
+                <t t-if="website.user_id != user_id">
+                    <div class="row tlf_logout_button_row">
+                        <div class="col-lg-12">
+                            <a id="tlf_logout_button"
+                               class="btn btn-primary"
+                               t-att-href="token_data_submission_url">
+                                <t t-if="tlf_record and tlf_record.tlf_logout_button != 'Default'">
+                                    <span t-field="tlf_logout_button"/>
+                                </t>
+                                <t t-if="not tlf_record or tlf_record.tlf_logout_button == 'Default'">
+                                    <span>
+                                        Logout
+                                        <t t-esc="user_id.partner_id.name"/>
+                                        to enter a new code
+                                    </span>
+                                </t>
+                            </a>
+                        </div>
+                    </div>
+                </t>
             </t>
         </template>
         
