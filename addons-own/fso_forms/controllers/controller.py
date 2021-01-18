@@ -27,6 +27,7 @@ import base64
 import datetime
 from collections import namedtuple
 from copy import deepcopy
+import ast
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -750,6 +751,8 @@ class FsoForms(http.Controller):
                            'errors': errors,
                            'warnings': warnings,
                            'messages': messages,
+                           # To export the ast lib
+                           'ast': ast,
                            }
         return http.request.render('fso_forms.form', template_kwargs, lazy=lazy)
 

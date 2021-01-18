@@ -355,7 +355,7 @@
                                     <!-- Get options for many2one fields -->
                                     <t t-if="f_type == 'many2one'">
                                         <!-- Loop through all records of the many2one field model -->
-                                        <t t-set="m2o_records" t-value="request.env[field.field_id.relation].search([])"/>
+                                        <t t-set="m2o_records" t-value="request.env[field.field_id.relation].search(ast.literal_eval(field.domain) if field.domain else [], limit=200)"/>
 
                                         <t t-if="'name' in request.env[field.field_id.relation]._fields">
                                             <t t-set="m2o_records_sorted" t-value="m2o_records.sorted(key=lambda r: r.name)"/>

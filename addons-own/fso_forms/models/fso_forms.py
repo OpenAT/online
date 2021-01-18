@@ -7,6 +7,7 @@ from openerp.tools import SUPERUSER_ID
 from openerp.models import MAGIC_COLUMNS
 
 from lxml import etree
+import ast
 
 import logging
 logger = logging.getLogger(__name__)
@@ -262,7 +263,11 @@ class FSONFormField(models.Model):
     information = fields.Html(string='Information', help='Information Text or Snippet Area if no field is selected!',
                               translate=True)
 
-    default = fields.Char(string="Default", help="For Many2one fields simply use the id or the XMLID of the record")
+    default = fields.Char(string="Default",
+                          help="For Many2one or selection fields simply use the id or the XMLID of the record")
+
+    domain = fields.Char(string="Domain",
+                         help="For Many2one fields to filter the records")
 
     honeypot = fields.Boolean(string="Honeypot", help="This field is a honeypot field to detect SPAM. "
                                                       "It must be invisible in the form! If it is filled it means"

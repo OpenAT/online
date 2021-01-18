@@ -30,6 +30,7 @@
                         <field name="style"/>
                         <field name="information"/>
                         <field name="default"/>
+                        <field name="domain"/>
                         <field name="honeypot"/>
                     </group>
                 </form>
@@ -54,6 +55,7 @@
                         <field name="nodata"/>
                         <field name="readonly"/>
                         <field name="default"/>
+                        <field name="domain"/>
                         <field name="login"/>
                         <field name="confirmation_email"/>
                         <field name="validation_rule"/>
