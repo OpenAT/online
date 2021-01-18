@@ -501,7 +501,7 @@
                 <t t-call="website.layout">
                     <t t-set="title"><t t-esc="form.name"/></t>
 
-                    <div id="wrap" t-att-class="'fso_form_wrap fso_form_wrap_'+str(form.id)">
+                    <div id="wrap" t-att-class="'fso_form_wrap fso_form_wrap_'+str(form.id)" t-att-data-model="form.model_id.name">
                         <div class="container fsoforms_container">
 
                             <!-- TOP SNIPPETS ON FORM PAGE -->
