@@ -107,6 +107,25 @@
                                     </group>
                                 </form>
                             </field>
+                            <field
+                                name="allowed_fields_id"
+                                attrs="{'readonly': [('model_id', '=', False)]}"
+                                context="{'default_resource': model, 'default_name': context.get('parent_name', '&lt;parent_namespace_name&gt;') + ' / ' + model + ' / allowed_fields'}"
+                            >
+                                <form string="Allowed Fields">
+                                    <group>
+                                        <field name="name" />
+                                        <field name="resource" />
+                                        <field name="export_fields">
+                                            <form string="Export Fields">
+                                                <group>
+                                                    <field name="name" />
+                                                </group>
+                                            </form>
+                                        </field>
+                                    </group>
+                                </form>
+                            </field>
                         </group>
                     </div>
                     <notebook attrs="{'invisible': [('api_create', '=', False)]}">
@@ -185,6 +204,11 @@
                                 <tree>
                                     <field name="active" />
                                     <field name="model_id" />
+                                    <field name="model" />
+                                    <field name="api_create" />
+                                    <field name="api_read" />
+                                    <field name="api_update" />
+                                    <field name="api_delete" />
                                 </tree>
                             </field>
                         </page>

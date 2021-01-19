@@ -71,6 +71,12 @@ class Access(models.Model):
         help="Fields to return on reading via non one-record endpoint",
         domain="[('resource', '=', model)]",
     )
+    allowed_fields_id = fields.Many2one(
+        "ir.exports",
+        "Allowed Fields",
+        help="If set fields shown by the integration are limited to these fields!",
+        domain="[('resource', '=', model)]",
+    )
     create_context_ids = fields.Many2many(
         "openapi.access.create.context",
         "openapi_access_context_rel",
@@ -155,6 +161,25 @@ class Access(models.Model):
                 _('You must select at least one API method for "%s" model.')
                 % self.model
             )
+
+    @api.multi
+    @api.constrains('allowed_fields_id', 'read_one_id', 'read_many_id')
+    def constrain_allowed_fields_id(self):
+        for r in self:
+            if r.allowed_fields_id:
+                allowed_field_names = r.allowed_fields_id.export_fields.mapped('name')
+                if r.read_one_id:
+                    read_one_field_names = r.read_one_id.export_fields.mapped('name')
+                    blocked = set(read_one_field_names) - set(allowed_field_names)
+                    if blocked:
+                        raise exceptions.ValidationError(
+                            "Field(s) %s in read_one_id are not allowed by 'allowed_fields_id'" % blocked)
+                if r.read_many_id:
+                    read_many_field_names = r.read_many_id.export_fields.mapped('name')
+                    blocked = set(read_many_field_names) - set(allowed_field_names)
+                    if blocked:
+                        raise exceptions.ValidationError(
+                            "Field(s) %s in read_many_id are not allowed by 'allowed_fields_id'" % blocked)
 
     @api.multi
     def name_get(self):
@@ -294,11 +319,10 @@ class Access(models.Model):
         if self.api_public_methods or self.public_methods or self.private_methods:
             allowed_methods = []
             if self.api_public_methods:
-                allowed_methods += [
-                    m for m in self._get_method_list() if not m.startswith("_")
-                ]
-            elif self.public_methods:
-                allowed_methods += [m for m in self.public_methods.split("\n") if m]
+                if self.public_methods:
+                    allowed_methods += [m for m in self.public_methods.split("\n") if m]
+                else:
+                    allowed_methods += [m for m in self._get_method_list() if not m.startswith("_")]
             if self.private_methods:
                 allowed_methods += [m for m in self.private_methods.split("\n") if m]
 
@@ -404,11 +428,17 @@ class Access(models.Model):
             )
         )
         if self.api_create or self.api_update:
-            all_fields = pinguin.transform_strfields_to_dict(
-                related_model.fields_get_keys()
-            )
+
+            if self.allowed_fields_id:
+                allowed_field_names = self.allowed_fields_id.export_fields.mapped('name')
+                allowed_field_names = [f_name.split("/")[0] for f_name in allowed_field_names]
+            else:
+                allowed_field_names = related_model.fields_get_keys()
+
+            definition_fields = pinguin.transform_strfields_to_dict(allowed_field_names)
+
             definitions.update(
-                pinguin.get_OAS_definitions_part(related_model, all_fields)
+                pinguin.get_OAS_definitions_part(related_model, definition_fields)
             )
 
         if self.api_public_methods or self.private_methods:
@@ -417,11 +447,8 @@ class Access(models.Model):
                     pinguin.get_definition_name(self.model, "", "patch"): {
                         "type": "object",
                         "example": {
-                            "args": [],
-                            "kwargs": {
-                                "body": "Message is posted via API by calling message_post method",
-                                "subject": "Test API",
-                            },
+                            "args": ["Add positional arguments of the called method to 'args'"],
+                            "kwargs": {"keyword_argument": "and add keyword arguments to 'kwargs'"},
                         },
                     }
                 }
