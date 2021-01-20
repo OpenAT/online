@@ -239,6 +239,12 @@ class EmailTemplate(models.Model):
                 email_body_css_inline_soup_anchors = email_body_css_inline_soup.find_all('a')
                 for a in email_body_css_inline_soup_anchors:
                     href = a.get('href', '').strip()
+                    # Escaped print fields in href
+                    # e.g.: "%redirect%https://www.test.com%%%spendenlink%%%" will be converted to "%spendenlink%"
+                    escaped_pf = re.findall(ur"%%%(.*?)%%%", href, re.MULTILINE)
+                    if escaped_pf and len(escaped_pf) == 1:
+                        a['href'] = '%'+escaped_pf[0]+'%'
+                        continue
                     # Handle and fix '%open_browser%' FRST-Multimailer links
                     if '%open_browser%' in href:
                         a['href'] = '%open_browser%'
