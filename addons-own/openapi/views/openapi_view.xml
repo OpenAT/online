@@ -219,6 +219,14 @@
                                 </tree>
                             </field>
                         </page>
+                        <page string="Info">
+                            <group>
+                                <field name="contact_name"/>
+                                <field name="contact_url" widget="url"/>
+                                <field name="contact_email" widget="email"/>
+                                <field name="description_markdown"/>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
             </form>

@@ -32,6 +32,12 @@ class Namespace(models.Model):
         The name is used in api endpoint""",
     )
     description = fields.Char("Description")
+
+    description_markdown = fields.Text("Description Markdown")
+    contact_name = fields.Char("Contact Name")
+    contact_url = fields.Char("Contact URL")
+    contact_email = fields.Char("Contact E-Mail")
+
     log_ids = fields.One2many("openapi.log", "namespace_id", string="Logs")
     log_count = fields.Integer("Log count", compute="_compute_log_count")
     log_request = fields.Selection(
@@ -137,14 +143,21 @@ class Namespace(models.Model):
         spec = collections.OrderedDict(
             [
                 ("swagger", "2.0"),
-                ("info", {"title": self.name, "version": self.write_date}),
+                ("info", {"title": self.name,
+                          "description": self.description_markdown or self.description,
+                          "version": self.write_date,
+                          "contact": {
+                              "name": self.contact_name,
+                              "url": self.contact_url,
+                              "email": self.contact_email
+                          }
+                          }
+                 ),
                 ("host", parsed_current_host.netloc),
                 ("basePath", "/api/v1/%s" % self.name),
                 ("schemes", [parsed_current_host.scheme]),
-                (
-                    "consumes",
-                    ["multipart/form-data", "application/x-www-form-urlencoded"],
-                ),
+                ("consumes",
+                    ["multipart/form-data", "application/x-www-form-urlencoded"],),
                 ("produces", ["application/json"]),
                 (
                     "paths",
