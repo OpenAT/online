@@ -145,9 +145,17 @@ class ApiV1Controller(http.Controller):
     )
     def update_one__PUT(self, namespace, model, id, **data):
         conf = pinguin.get_model_openapi_access(namespace, model)
+
         pinguin.method_is_allowed(
             "api_update", conf["method"], main=True, raise_exception=True
         )
+
+        # By mike: Check if the fields are allowed
+        # TODO: Test this part!
+        pinguin.fields_are_allowed(
+            "api_update", data, conf["in_fields_api_update_blacklist"],
+        )
+
         return pinguin.wrap__resource__update_one(
             modelname=model, id=id, success_code=pinguin.CODE__ok_no_content, data=data
         )
