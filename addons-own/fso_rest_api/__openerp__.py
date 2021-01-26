@@ -24,15 +24,15 @@
     'name': "FS-Online fso_rest_api",
     'summary': """FS-Online Rest API for Fundraising Studio""",
     'description': """
-Create an openapi integration for the Fundrasing Studio Models and Methods.
+Create an openapi integration for the Fundraising Studio models and methods.
 
-Includes a Documentation based on Restructured Text Files and Sphinx
+Includes a documentation based on restructured text and Sphinx
 
     """,
     'author': "Datadialog - Michael Karrer, Martin Kaip",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2.0',
     'installable': True,
     'application': False,
     'auto_install': False,
@@ -42,6 +42,8 @@ Includes a Documentation based on Restructured Text Files and Sphinx
         'fsonline',
     ],
     'data': [
-        # 'data/frst_rest_api.xml'
+        'data/frst_api_user.xml',
+        'data/frst_rest_api.xml',
+        'data/res_partner.xml',
     ],
 }

@@ -7,10 +7,12 @@ Welcome to Fundraising Studio REST API's documentation!
 =======================================================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   basics/basics_toc
-
+   basics/index
+   models/index
+   searching/index
+   use_cases/index
 
 Indices and tables
 ==================

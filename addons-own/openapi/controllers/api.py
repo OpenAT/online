@@ -81,9 +81,18 @@ class ApiV1Controller(http.Controller):
     )
     def create_one__POST(self, namespace, model, **data):
         conf = pinguin.get_model_openapi_access(namespace, model)
+
+        # Check if the method is allowed
         pinguin.method_is_allowed(
             "api_create", conf["method"], main=True, raise_exception=True
         )
+
+        # By mike: Check if the fields are allowed
+        # TODO: Test this part!
+        pinguin.fields_are_allowed(
+            "api_create", data, conf["in_fields_api_create_blacklist"],
+        )
+
         # FIXME: What is contained in context and for what?
         # # If context is not a python dict
         # # TODO unwrap

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- frst_api_user PARTNER -->
+        <record id="frst_api_user_partner" model="res.partner">
+            <field name="firstname">Fundraising Studio</field>
+            <field name="lastname">API Demo User</field>
+            <!-- field name="company_id" ref="base.main_company"/ -->
+            <field name="customer" eval="False"/>
+            <field name="email">frst_api_user@datadialog.net</field>
+        </record>
+
+        <!-- frst_api_user USER -->
+        <record id="frst_api_user" model="res.users">
+            <field name="firstname">Fundraising Studio</field>
+            <field name="lastname">API Demo User</field>
+            <field name="login">frst_api_user@datadialog.net</field>
+            <field name="partner_id" ref="fso_rest_api.frst_api_user_partner"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
+        </record>
+
+        <!-- frst_api_user GROUP -->
+        <record id="frst_api_user_group" model="res.groups">
+            <field name="name">Fundraising Studio REST API user group</field>
+            <field name="comment">
+                The only member of this group is the default Fundraising Studio Rest API user.
+                All rights are inherited from the group "base.studio" and then narrowed down by
+                ir.rules
+            </field>
+            <!-- Add user(s) to group -->
+            <field name="users" eval="[(4, ref('fso_rest_api.frst_api_user'))]"/>
+            <!-- Inherited Groups -->
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('base.studio')),
+                   ]"/>
+        </record>
+
+    </data>
+</openerp>

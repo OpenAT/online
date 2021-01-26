@@ -77,6 +77,12 @@ class Access(models.Model):
         help="If set fields shown by the integration are limited to these fields!",
         domain="[('resource', '=', model)]",
     )
+    readonly_fields_id = fields.Many2one(
+        "ir.exports",
+        "Readonly Fields",
+        help="If set these fields are not allowed in create or update (write) routes!",
+        domain="[('resource', '=', model)]",
+    )
     create_context_ids = fields.Many2many(
         "openapi.access.create.context",
         "openapi_access_context_rel",
@@ -410,33 +416,52 @@ class Access(models.Model):
 
     def get_OAS_definitions_part(self):
         related_model = self.env[self.model]
+
+        # Get fields list from linked ir.export records
         export_fields_read_one = pinguin.transform_strfields_to_dict(
             self.read_one_id.export_fields.mapped("name") or ("id",)
         )
         export_fields_read_many = pinguin.transform_strfields_to_dict(
             self.read_many_id.export_fields.mapped("name") or ("id",)
         )
+
         definitions = {}
+
+        # Append read_one fields
         definitions.update(
             pinguin.get_OAS_definitions_part(
                 related_model, export_fields_read_one, definition_postfix="read_one"
             )
         )
+
+        # Append read_many fields
         definitions.update(
             pinguin.get_OAS_definitions_part(
                 related_model, export_fields_read_many, definition_postfix="read_many"
             )
         )
+
+        # Append field definitions for create and update
         if self.api_create or self.api_update:
 
+            # Use only the allowed fields
             if self.allowed_fields_id:
                 allowed_field_names = self.allowed_fields_id.export_fields.mapped('name')
                 allowed_field_names = [f_name.split("/")[0] for f_name in allowed_field_names]
+
+            # Use all fields of the model
             else:
                 allowed_field_names = related_model.fields_get_keys()
 
+            # Remove readonly fields from the definition (they should still appear in read_one and read_many)
+            if self.readonly_fields_id:
+                readonly_field_names = self.readonly_fields_id.export_fields.mapped('name')
+                readonly_field_names = [f_name.split("/")[0] for f_name in readonly_field_names]
+                allowed_field_names = list(set(allowed_field_names) - set(readonly_field_names))
+
             definition_fields = pinguin.transform_strfields_to_dict(allowed_field_names)
 
+            # Append the field definitions
             definitions.update(
                 pinguin.get_OAS_definitions_part(related_model, definition_fields)
             )

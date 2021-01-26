@@ -3,24 +3,18 @@
 <openerp>
     <data noupdate="0">
 
-        <!-- !!! CHECK THE OPENAPI DEMO DATA openapi_demo.xml FOR AN EXAMPLE !!! -->
-
-        <!-- NAMESPACE -->
+        <!-- NAMESPACE (Integration) -->
         <record id="frst_rest_api_namespace" model="openapi.namespace" >
             <field name="name">frst</field>
+            <field name="log_request">debug</field>
+            <field name="log_response">debug</field>
             <field name="description">Fundraising Studio Rest API</field>
             <field name="description_markdown">#Fundraising Studio Rest API</field>
             <field name="contact_name">Datadialog</field>
-            <field name="contact_url">/addons/openapi/doc/index.html</field>
+            <field name="contact_url">/addons/fso_rest_api/static/src/html/index.html</field>
             <field name="contact_email">support@datadialog.net</field>
-            <field name="user_ids" eval="[(4, ref('base.user_root'))]"/>
+            <field name="user_ids" eval="[(4, ref('fso_rest_api.frst_api_user'))]"/>
         </record>
-
-        <!-- TODO: ACCESS -->
-        <record id="frst_rest_api_access" model="openapi.access" >
-
-        </record>
-
 
     </data>
 </openerp>

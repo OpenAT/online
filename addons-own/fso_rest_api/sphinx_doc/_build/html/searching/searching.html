@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Searching &mdash; Fundraising Studio REST API o8 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Search Domain" href="search_domain.html" />
+    <link rel="prev" title="Searching" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Fundraising Studio REST API
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basics/index.html">Basics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../basics/introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/introduction.html#where-to-start">Where to start?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#swagger-ui">Swagger UI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../basics/tutorial.html#authorize-yourself">1. Authorize yourself</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../basics/tutorial.html#try-the-routes">2. Try the routes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#calling-methods">Calling Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../models/index.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../models/models_overview.html">Models Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/models_overview.html#partner">Partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/models_overview.html#email-addresses">Email Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/models_overview.html#groups">Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/models_overview.html#group-subscriptions">Group Subscriptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/models_overview.html#fundraising-studio-cds">Fundraising Studio CDS</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models/res_partner.html">res.partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_personemail.html">frst.personemail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_personemail.html#required-fields">Required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_personemail.html#non-obvious-behaviours">Non obvious behaviours</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_personemail.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_personemail.html#last-email-update"><code class="docutils literal notranslate"><span class="pre">last_email_update</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_personemail.html#forced-main-address"><code class="docutils literal notranslate"><span class="pre">forced_main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_personemail.html#main-address"><code class="docutils literal notranslate"><span class="pre">main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_personemail.html#gueltig-von-gueltig-bis"><code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code>, <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Non obvious behaviours</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_group_subscriptions.html">frst.persongruppe, frst.personemailgruppe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_group_subscriptions.html#common-fields">Common fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_group_subscriptions.html#common-required-fields">Common required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_group_subscriptions.html#frst-persongruppe">frst.persongruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_group_subscriptions.html#required-fields">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_group_subscriptions.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_group_subscriptions.html#frst-personemailgruppe">frst.personemailgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_group_subscriptions.html#id3">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_group_subscriptions.html#id4">Non obvious behaviours</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Searching</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#search-examples">Search Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#partner-search">Partner search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#combining-criteria-with-or">Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#negate-an-operator">Negate an operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#searching-for-related-data">Searching for related data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="search_domain.html">Search Domain</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Fundraising Studio REST API</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Searching</a> &raquo;</li>
+        
+      <li>Searching</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/searching/searching.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="search_domain.html" class="btn btn-neutral float-right" title="Search Domain" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Searching" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="searching">
+<span id="id1"></span><h1>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h1>
+<p>To search for records can be done by the search method. Any available model has a search method.
+It can be called by the api via routes with <code class="docutils literal notranslate"><span class="pre">.../call/search/...</span></code> in them.</p>
+<p>The search method needs at least a <a class="reference internal" href="search_domain.html#search-domain"><span class="std std-ref">Search Domain</span></a> for the current model. Such a search domain consists of
+any number of search criteria each made up of three arguments:</p>
+<p><code class="docutils literal notranslate"><span class="pre">(&quot;field_name&quot;,</span> <span class="pre">&quot;operator&quot;,</span> <span class="pre">&quot;search_value&quot;)</span></code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If not otherwise stated all search criteria are combined as <code class="docutils literal notranslate"><span class="pre">AND</span></code>.</p>
+</div>
+<div class="section" id="search-examples">
+<span id="id2"></span><h2>Search Examples<a class="headerlink" href="#search-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="partner-search">
+<h3>Partner search<a class="headerlink" href="#partner-search" title="Permalink to this headline">¶</a></h3>
+<p>To search for a partner where the string “ax” is anywhere in the field <code class="docutils literal notranslate"><span class="pre">firstname</span></code> and the lastname is
+exactly “Mustermann” we could use a search domain like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[(</span><span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;ilike&#39;</span><span class="p">,</span> <span class="s1">&#39;ax&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lastname&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>This will find partner like e.g. “Max Mustermann”, “Axel Mustermann” and alike.</p>
+</div>
+<div class="section" id="combining-criteria-with-or">
+<h3>Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code><a class="headerlink" href="#combining-criteria-with-or" title="Permalink to this headline">¶</a></h3>
+<p>If we wanted to search for “Mustermann” <code class="docutils literal notranslate"><span class="pre">OR</span></code> “Musterfrau” the domain would look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#               A                                 B                                C</span>
+<span class="p">[(</span><span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;ilike&#39;</span><span class="p">,</span> <span class="s1">&#39;ax&#39;</span><span class="p">),</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;lastname&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lastname&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;Musterfrau&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">'|'</span></code> operator combines the next two search criteria as <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">OR</span> <span class="pre">C</span></code> So the full <a class="reference internal" href="search_domain.html#search-domain"><span class="std std-ref">Search Domain</span></a> reads like
+<code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">AND</span> <span class="pre">(B</span> <span class="pre">OR</span> <span class="pre">C)</span></code></p>
+</div>
+<div class="section" id="negate-an-operator">
+<h3>Negate an operator<a class="headerlink" href="#negate-an-operator" title="Permalink to this headline">¶</a></h3>
+<p>Most operators of the search criterias can be negated by an <code class="docutils literal notranslate"><span class="pre">!</span></code> or the word <code class="docutils literal notranslate"><span class="pre">not</span></code>.
+E.g. <strong>not equals to</strong> would be <code class="docutils literal notranslate"><span class="pre">!=</span></code> and <strong>case insensitive not like</strong> would be <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">ilike</span></code></p>
+</div>
+<div class="section" id="searching-for-related-data">
+<h3>Searching for related data<a class="headerlink" href="#searching-for-related-data" title="Permalink to this headline">¶</a></h3>
+<p>TODO</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="search_domain.html" class="btn btn-neutral float-right" title="Search Domain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Searching" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Michael Karrer, Martin Kaip.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

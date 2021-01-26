@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" type="text/css" />
   <link rel="stylesheet" href="_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" type="text/css" />
   <link rel="stylesheet" href="_static/sphinx_tabs/tabs.css" type="text/css" />
+  <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
 
   
   
@@ -38,6 +39,8 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.js"></script>
         <script src="_static/sphinx_tabs/tabs.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -89,21 +92,107 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="basics/basics_toc.html">Basics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="basics/basics/introduction.html">Introduction</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="basics/basics/introduction.html#where-to-start">Where to start?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics/index.html">Basics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basics/introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="basics/introduction.html#where-to-start">Where to start?</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="basics/basics/tutorial.html">Basics Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="basics/basics/tutorial.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l3"><a class="reference internal" href="basics/basics/tutorial.html#swagger-ui">Swagger UI</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="basics/basics/tutorial.html#authorize-yourself">1. Authorize yourself</a></li>
-<li class="toctree-l4"><a class="reference internal" href="basics/basics/tutorial.html#try-the-routes">2. Try the routes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="basics/tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basics/tutorial.html#swagger-ui">Swagger UI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="basics/tutorial.html#authorize-yourself">1. Authorize yourself</a></li>
+<li class="toctree-l4"><a class="reference internal" href="basics/tutorial.html#try-the-routes">2. Try the routes</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="basics/basics/tutorial.html#calling-methods">Calling Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basics/tutorial.html#calling-methods">Calling Methods</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models/index.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models/models_overview.html">Models Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models/models_overview.html#partner">Partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/models_overview.html#email-addresses">Email Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/models_overview.html#groups">Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/models_overview.html#group-subscriptions">Group Subscriptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/models_overview.html#fundraising-studio-cds">Fundraising Studio CDS</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models/res_partner.html">res.partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models/res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/res_partner.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models/res_partner.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/res_partner.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models/frst_personemail.html">frst.personemail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_personemail.html#required-fields">Required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_personemail.html#non-obvious-behaviours">Non obvious behaviours</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_personemail.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_personemail.html#last-email-update"><code class="docutils literal notranslate"><span class="pre">last_email_update</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_personemail.html#forced-main-address"><code class="docutils literal notranslate"><span class="pre">forced_main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_personemail.html#main-address"><code class="docutils literal notranslate"><span class="pre">main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_personemail.html#gueltig-von-gueltig-bis"><code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code>, <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models/frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_groups.html#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_groups.html#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_groups.html#methods">Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_groups.html#id3">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_groups.html#id4">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_groups.html#id5">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models/frst_group_subscriptions.html">frst.persongruppe, frst.personemailgruppe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_group_subscriptions.html#common-fields">Common fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_group_subscriptions.html#common-required-fields">Common required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_group_subscriptions.html#frst-persongruppe">frst.persongruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_group_subscriptions.html#required-fields">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_group_subscriptions.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models/frst_group_subscriptions.html#frst-personemailgruppe">frst.personemailgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_group_subscriptions.html#id3">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models/frst_group_subscriptions.html#id4">Non obvious behaviours</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models/frst_zverzeichnis.html">frst.zverzeichnis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="searching/index.html">Searching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="searching/searching.html">Searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="searching/searching.html#search-examples">Search Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="searching/searching.html#partner-search">Partner search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="searching/searching.html#combining-criteria-with-or">Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="searching/searching.html#negate-an-operator">Negate an operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="searching/searching.html#searching-for-related-data">Searching for related data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="searching/search_domain.html">Search Domain</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases/index.html">Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/managing_partner.html">Managing Partner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="use_cases/email_subscriptions.html">Email Subscriptions</a></li>
 </ul>
 </li>
 </ul>

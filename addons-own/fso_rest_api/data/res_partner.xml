@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- =========== -->
+        <!-- res.partner -->
+        <!-- =========== -->
+
+        <record id="frst_rest_api_res_partner_export" model="ir.exports">
+            <field name="name">frst_rest_api_res_partner_read_one</field>
+            <field name="resource">res.partner</field>
+            <field
+                name="export_fields"
+                eval="[
+                    (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'active'}),
+
+                    (0, 0, {'name': 'firstname'}),
+                    (0, 0, {'name': 'lastname'}),
+                    (0, 0, {'name': 'name_zwei'}),
+
+                    (0, 0, {'name': 'company_name_web'}),
+
+                    (0, 0, {'name': 'birthdate_web'}),
+
+                    (0, 0, {'name': 'gender'}),
+                    (0, 0, {'name': 'anrede_individuell'}),
+                    (0, 0, {'name': 'title_web'}),
+
+                    (0, 0, {'name': 'email'}),
+                    (0, 0, {'name': 'newsletter_web'}),
+
+                    (0, 0, {'name': 'phone'}),
+                    (0, 0, {'name': 'mobile'}),
+                    (0, 0, {'name': 'fax'}),
+
+                    (0, 0, {'name': 'street'}),
+                    (0, 0, {'name': 'street_number_web'}),
+                    (0, 0, {'name': 'city'}),
+                    (0, 0, {'name': 'zip'}),
+                    (0, 0, {'name': 'country_id'}),
+
+                    (0, 0, {'name': 'donation_deduction_optout_web'}),
+                    (0, 0, {'name': 'bpk_forced_firstname'}),
+                    (0, 0, {'name': 'bpk_forced_lastname'}),
+                    (0, 0, {'name': 'bpk_forced_birthdate'}),
+                    (0, 0, {'name': 'bpk_forced_zip'}),
+                    (0, 0, {'name': 'bpk_forced_street'}),
+
+                    (0, 0, {'name': 'frst_zverzeichnis_id'}),
+
+                    (0, 0, {'name': 'gdpr_accepted'}),
+                    ]"
+            />
+        </record>
+
+        <record id="frst_rest_api_res_partner_context" model="openapi.access.create.context">
+            <field name="name">frst_rest_api_res_partner_context</field>
+            <field name="model_id" ref="base.model_res_partner" />
+            <field name="context">{"lang": "DE_de"}</field>
+        </record>
+
+        <record id="frst_rest_api_res_partner_access" model="openapi.access">
+            <field name="namespace_id" ref="frst_rest_api_namespace" />
+            <field name="model_id" ref="base.model_res_partner" />
+
+            <field name="api_create" eval="True" />
+            <field name="api_read" eval="True" />
+            <field name="api_update" eval="True" />
+            <field name="api_delete" eval="True" />
+
+            <field name="api_public_methods" eval="True" />
+            <field name="public_methods">
+                search
+            </field>
+            <field name="private_methods" eval="" />
+
+            <field name="allowed_fields_id" ref="fso_rest_api.frst_rest_api_res_partner_export" />
+            <field name="read_one_id" ref="fso_rest_api.frst_rest_api_res_partner_export" />
+            <field name="read_many_id" ref="fso_rest_api.frst_rest_api_res_partner_export" />
+
+            <field
+                name="create_context_ids"
+                eval="[(4, ref('fso_rest_api.frst_rest_api_res_partner_access'))]"
+            />
+        </record>
+
+
+    </data>
+</openerp>
