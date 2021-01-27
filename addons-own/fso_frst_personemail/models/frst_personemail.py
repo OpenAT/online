@@ -148,17 +148,24 @@ class FRSTPersonEmail(models.Model):
     # Anrede Lang
     anrede_lang = fields.Char(string="Anrede Lang", readonly=True)
 
+    # ----------
+    # CONSTRAINS
+    # ----------
+    # ATTENTION: This check is not really needed because it is done in compute_main_address() also!
+    #            Check ... assert len(p_emails_active_forced) <= 1 ... in compute_main_address()
+    @api.constrains('forced_main_address')
+    def constrain_forced_main_address(self):
+        partner_to_check = self.mapped('partner_id')
+        for partner in partner_to_check:
+            partner_pe_forced_main_address = partner.frst_personemail_ids.filtered(lambda p: p.forced_main_address)
+            if len(partner_pe_forced_main_address) >= 2:
+                raise ValidationError(_("More than one email address with forced_main_address found (id %s)! "
+                                        "You must unset forced_main_address before setting a new one!"
+                                        "" % partner_pe_forced_main_address.ids))
+
     # -------
     # METHODS
     # -------
-    @api.multi
-    def get_forced(self):
-        """ returns a recordset with all forced main email addresses for the partners of the given personemail
-        recordset
-        """
-        partner_to_check = self.mapped('partner_id')
-        return self.search([('partner_id', 'in', partner_to_check.ids), ('forced_main_address', '=', True)])
-
     @api.multi
     def compute_state(self):
         """ Will only update the 'state' field of frst.personemail """
@@ -330,14 +337,6 @@ class FRSTPersonEmail(models.Model):
         # Compute 'last_email_update' and 'gueltig_bis' values
         values = self.compute_last_email_update_gueltig_bis(values)
 
-        # Check that no other personemail for this person exists where forced_main_address is set
-        if values.get('forced_main_address', None):
-            forced = self.get_forced()
-            if forced:
-                raise ValidationError(_("Another forced main email address (id %s) exists for this partner (id %s)! "
-                                        "You must unset the other forced_main_address before setting a new one!"
-                                        "" % (forced.ids, values['partner_id'])))
-
         # Create record in the current environment (memory only right now i guess)
         # ATTENTION: self is still empty but the new record exits in the 'res' recordset already
         res = super(FRSTPersonEmail, self).create(values)
@@ -361,13 +360,6 @@ class FRSTPersonEmail(models.Model):
 
         # Compute 'last_email_update' and 'gueltig_bis' values
         values = self.compute_last_email_update_gueltig_bis(values)
-
-        if values.get('forced_main_address', None):
-            forced = self.get_forced()
-            if forced:
-                raise ValidationError(_("Other forced main email address (id %s) exists already! "
-                                        "You must unset other forced_main_address before setting a new one!"
-                                        "" % forced.ids))
 
         # Update (write to) the recordset 'self'
         # ATTENTION: After super 'self' is changed 'res' is only a boolean !
