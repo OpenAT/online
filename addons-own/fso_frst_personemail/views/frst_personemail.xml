@@ -12,7 +12,7 @@
                     <group>
                         <field name="email"/>
                         <field name="partner_id"/>
-                        <!--<field name="forced_main_address"/>-->
+                        <field name="forced_main_address"/>
                     </group>
                     <group>
                         <field name="state"/>
@@ -22,7 +22,6 @@
                         <field name="bestaetigt_typ"/>
                         <field name="bestaetigt_herkunft"/>
                         <field name="anrede_lang"/>
-                        <!--<field name="last_forced_main_address_set"/>-->
                     </group>
                 </group>
                 <group string="Aktiv">
@@ -81,7 +80,7 @@
                 <field name="bestaetigt_am_um"/>
                 <field name="bestaetigt_typ"/>
                 <field name="bestaetigt_herkunft"/>
-                <!--<field name="forced_main_address"/>-->
+                <field name="forced_main_address"/>
             </search>
         </field>
     </record>
