@@ -1149,6 +1149,7 @@ def fields_are_allowed(method, data, fields_blacklist):
         )
     return True
 
+
 ###############
 # Pinguin OAS #
 ###############
