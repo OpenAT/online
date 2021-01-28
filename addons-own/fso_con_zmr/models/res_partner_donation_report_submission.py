@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import openerp
 from openerp import api, models, fields
 from openerp.tools.translate import _
 from openerp.exceptions import Warning, ValidationError
@@ -54,7 +55,7 @@ class DonationReportSubmission(models.Model):
                             readonly=True, states={'new': [('readonly', False)], 'error': [('readonly', False)]})
     force_submission = fields.Boolean(compute='compute_force_submission', store=True,
                                       string="Force Submission", readonly=True,
-                                      help="Will be submitted to FinazOnline by scheduler even if outside of automatic "
+                                      help="Will be submitted to FinanzOnline by scheduler even if outside of automatic "
                                            " submission range! (Meldezeitraum)")
 
     # Error fields for states 'error'
@@ -543,7 +544,7 @@ class DonationReportSubmission(models.Model):
 
             # COMPUTE THE SUBMISSION VALUES
             # -----------------------------
-            logger.info("prepare() Computing sumbission values!")
+            logger.info("prepare() Computing submission values!")
             try:
                 vals = r.compute_submission_values()
             except Exception as e:
@@ -569,262 +570,387 @@ class DonationReportSubmission(models.Model):
             continue
 
     @api.multi
-    def submit(self):
-        for r in self:
-            logger.info("Donation report submission (ID %s) is going to be submitted!" % r.id)
-            # Check the state of the submission:
-            assert r.state in ['new', 'prepared', 'error'], _("(Re)Submission to FinanzOnline is not allowed in state "
-                                                              "%s") % r.state
+    def _submission_data_up_to_date(self):
+        self.ensure_one()
 
-            # Only allow production submission if we are on a production server
-            if r.submission_env != 'T' and not is_production_server():
-                dev_srv_error_msg = ("Submission of production (P) donation report submissions is only allowed on "
-                                     "production servers!")
-                logger.error(dev_srv_error_msg)
-                raise ValidationError(dev_srv_error_msg)
+        vals = self.compute_submission_values()
+        if not vals:
+            return False
 
-            # Check that a maximum of 10000 donation reports is not exceeded
-            if len(r.donation_report_ids) > 10000:
-                r.update_submission(state='error', error_type='donation_report_limit',
-                                    error_code='',
-                                    error_detail="A maximum of 10000 donation reports are allowed per submission!")
-                continue
+        # Check submission fields
+        changed_submission_fields = [k for k in vals
+                                     if k not in ['donation_report_ids',
+                                                  'submission_content',
+                                                  'submission_timestamp'] and vals[k] != self[k]]
+        if changed_submission_fields:
+            return False
 
-            # Check that no reports are included where prevent_donation_deduction is set on the partner
-            if r.donation_report_ids:
-                partner = r.donation_report_ids.mapped('partner_id')
-                for p in partner:
-                    assert not p.prevent_donation_deduction, _(
-                        "Submission %s contains reports where prevent_donation_deduction is set on partner with id %s)!"
-                        "" % (p.id, r.id))
+        # Check submission content
+        # HINT: This is an indirect check if the donation_report_ids stayed the same
+        submission_content_old = re.sub(r'\<Timestamp\>.*\<\/Timestamp\>', '', self.submission_content)
+        submission_content_new = re.sub(r'\<Timestamp\>.*\<\/Timestamp\>', '', vals['submission_content'])
+        if submission_content_old != submission_content_new:
+            return False
 
-            # Check if the submission values have changed
-            # -------------------------------------------
+        return True
+
+    @api.multi
+    def _pre_submission_error_check(self):
+        self.ensure_one()
+
+        # Check: Submission state
+        if self.state not in ['new', 'prepared', 'error']:
+            err_msg = "Submission to FinanzOnline is not allowed in state '%s'!" % self.state
+            return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
+
+        # Check: Not on development machine
+        if self.submission_env != 'T' and not is_production_server():
+            err_msg = "Submission on a development machine is not permitted!"
+            return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
+
+        # Check: donation reports maximum
+        if len(self.donation_report_ids) > 10000:
+            err_msg = "A maximum of 10000 donation reports are allowed per submission!"
+            return {'state': 'error', 'error_type': 'donation_report_limit', 'error_code': '', 'error_detail': err_msg}
+
+        # Check: partner.prevent_donation_deduction
+        blocked_reports = self.donation_report_ids.filtered(lambda dr: dr.partner_id.prevent_donation_deduction)
+        if blocked_reports:
+            err_msg = "Submission contains donation reports where prevent_donation_deduction is set at the partner! " \
+                      "(blocking donation report ids: '%s')" % blocked_reports.ids
+            return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
+
+        # Check: Are the computed submission values still up to date
+        if not self._submission_data_up_to_date:
+            err_msg = "Submission data is not up to date! Please prepare the submission again before submission"
+            return {'state': 'error',
+                    'error_type': 'changes_after_prepare',
+                    'error_code': 'submission_information_changed',
+                    'error_detail': err_msg}
+
+        # No errors found
+        return None
+
+    @api.multi
+    def _get_session_id(self):
+        self.ensure_one()
+
+        session_id = None
+        error_msg = None
+
+        try:
+            session_id = self.bpk_company_id.finanz_online_login()
+        except Exception as e:
+            error_msg = _('Login to FinanzOnline failed!')
+            error_msg += "\n%s" % repr(e)
+            logger.error(error_msg)
+
+        return session_id, error_msg
+
+    @api.multi
+    def _get_submission_request_data(self, session_id):
+        self.ensure_one()
+        request_data = self.submission_content.replace('###SessionID###', session_id, 1)
+        assert request_data, "Request data missing!"
+        return request_data
+
+    @api.multi
+    def _pre_submission_lock(self, submission_datetime):
+        """ Set the submission and attached reports state to 'submitted' to prevent data loss or resubmission in
+            case of unexpected exception and related rollback.
+        """
+        self.ensure_one()
+        logger.info("Set donation report(s) state to 'submitted' for donation-report-submission (ID %s) before request!"
+                    "" % self.id)
+
+        with openerp.api.Environment.manage():
+            with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+
+                # Update the state of the donation reports attached to the submission
+                boolean_result = self.donation_report_ids.with_env(new_env).write(
+                    {'state': 'submitted', 'submission_id_datetime': submission_datetime}
+                )
+                assert boolean_result, "Could not set state to 'submitted' for the donation reports"
+
+                # Update the state of the donation report submission
+                vals = {'submission_datetime': submission_datetime,
+                        'submission_log': 'Lock submission before sending the request.',
+                        'response_http_code': '',
+                        'response_content': '',
+                        'response_content_parsed': '',
+                        'request_duration': '',
+                        }
+                self.with_env(new_env).update_submission(state='submitted', **vals)
+                assert self.state == 'submitted'
+
+                # Commit the changes in the new environment to make sure all donation reports stay in the state
+                # 'submitted' even if an exception occurs at the FinanzOnline request or after
+                new_env.cr.commit()
+
+        return True
+    
+    @api.multi
+    def _upload_reports_to_finanzonline_databox(self, request_data, submission_datetime, timeout=60*8):
+        self.ensure_one()
+        start_time = time.time()
+
+        def duration(start):
             try:
-                vals = r.compute_submission_values()
-            except Exception as e:
-                r.update_submission(state='error', error_type='changes_after_prepare',
-                                    error_code='compute_submission_values_exception', error_detail=repr(e))
-                continue
-            if not vals:
-                r.update_submission(state='error', error_type='changes_after_prepare',
-                                    error_code='compute_submission_values_empty',
-                                    error_detail="Could not compute submission values! "
-                                                 "Maybe there where no donation reports found?")
-                continue
-            # Compare most fields
-            changed_submission_fields = [k for k in vals
-                                         if k not in ['donation_report_ids',
-                                                      'submission_content',
-                                                      'submission_timestamp'] and vals[k] != r[k]]
-            # Compare submission_content (which will indirectly shows if the donation_report_ids stayed the same)
-            submission_content_old = re.sub(r'\<Timestamp\>.*\<\/Timestamp\>', '', r.submission_content)
-            submission_content_new = re.sub(r'\<Timestamp\>.*\<\/Timestamp\>', '', vals['submission_content'])
-            if submission_content_old != submission_content_new:
-                changed_submission_fields += ['submission_content']
-            if changed_submission_fields:
-                r.update_submission(state='error', error_type='changes_after_prepare',
-                                    error_code='submission_information_changed',
-                                    error_detail="Submission Data has changed!\n"
-                                                 "Please prepare the report again before submission!\n"
-                                                 "Fields changed: %s" % changed_submission_fields)
-                continue
-
-            # Login to FinanzOnline to get the session id
-            # -------------------------------------------
-            # HINT: Login will automatically do a logout first!
-            error_detail = _('Login to FinanzOnline failed!')
-            try:
-                fo_session_id = r.bpk_company_id.finanz_online_login()
-            except Exception as e:
-                error_detail += "\n%s" % repr(e)
-                logger.warning(error_detail)
-                fo_session_id = False
-            if not fo_session_id:
-                r.update_submission(state='error', error_type='submission_exception', error_code='login_failed',
-                                    error_detail=error_detail)
-                continue
-
-            # Prepare Request body(Replace placeholder ###SessionID### with real session id)
-            # -------------------------------------------------------------------------------
-            request_data = r.submission_content.replace('###SessionID###', fo_session_id, 1)
-
-            # Prepare submission time and log
-            # HINT: update_submission() will always append the submission_log to any existing submission_log
-            # -------------------------------
-            submission_datetime = fields.datetime.now()
-            submission_log = "Submission Request on %s:\n" % submission_datetime
-
-            # -------------------------------------------------------------------------------------------------
-            # Set all donation reports to state 'submitted' so that they can not be removed from the submission
-            # -------------------------------------------------------------------------------------------------
-            # HINT: Nothing else needs to be done because we know all reports have the correct infos by
-            #       compute_submission_values() above.
-            logger.info("Set donation report(s) state to 'submitted' for donation-report-submission (ID %s)!" % r.id)
-            r.donation_report_ids.write({'state': 'submitted', 'submission_id_datetime': submission_datetime})
-
-            # -----------------------------------------------------
-            # Submit the report to FinanzOnline File Upload Service
-            # -----------------------------------------------------
-            start_time = time.time()
-            try:
-                http_header = {
-                    'content-type': 'text/xml; charset=utf-8',
-                    'SOAPAction': 'upload'
-                }
-                response = soap_request(url=r.submission_url,
-                                        crt_pem=r.bpk_company_id.fa_crt_pem_path,
-                                        prvkey_pem=r.bpk_company_id.fa_prvkey_pem_path,
-                                        http_header=http_header,
-                                        request_data=request_data,
-                                        timeout=60*8)
-            except Timeout as e:
-                logger.error(_("Donation report submission (ID %s) timeout exception!\n%s") % (r.id, repr(e)))
-                r.update_submission(state='unexpected_response',
-                                    response_error_type='unexpected_no_response',
-                                    response_error_code='timeout',
-                                    submission_datetime=submission_datetime,
-                                    submission_log=submission_log,
-                                    request_duration='480')
-                continue
-            except Exception as e:
-                # ATTENTION: Maybe this should be an 'unexpected_response' error instead of 'error'
-                #            but i think that if there es an exception in 99.9% the file never reached FinanzOnline?
-                logger.error(_("Donation report submission (ID %s) exception!\n%s") % (r.id, repr(e)))
-                r.update_submission(state='error',
-                                    error_type='submission_exception',
-                                    error_code='submission_exception',
-                                    error_detail="Soap Request Exception!\n%s" % repr(e),
-                                    submission_log=submission_log)
-                continue
-
-            # Calculate request time
-            try:
-                request_duration = "%.3f" % (time.time() - start_time)
+                d = "%.3f" % (time.time() - start)
             except:
-                request_duration = False
+                d = ""
+            return d
 
-            # ---------------------
-            # Evaluate the response
-            # ---------------------
+        response = None
+        submission_error = None
 
-            # Check for an empty response object
-            # ----------------------------------
-            # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
-            # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
-            #            exist in the DataBox 48 hours after the submission_datetime
-            if not response:
-                submission_log += "EMPTY RESPONSE OBJECT!\n"
-                r.update_submission(state='unexpected_response',
-                                    response_error_type='unexpected_no_response',
-                                    response_error_code='empty_response_object',
-                                    submission_datetime=submission_datetime,
-                                    submission_log=submission_log,
-                                    request_duration=request_duration)
-                continue
+        try:
+            response = soap_request(url=self.submission_url,
+                                    crt_pem=self.bpk_company_id.fa_crt_pem_path,
+                                    prvkey_pem=self.bpk_company_id.fa_prvkey_pem_path,
+                                    http_header={
+                                        'content-type': 'text/xml; charset=utf-8',
+                                        'SOAPAction': 'upload'
+                                    },
+                                    request_data=request_data,
+                                    timeout=timeout)
+        except Timeout as e:
+            msg = "Donation report submission (ID %s) submission timeout exception!\n%s" % (self.id, repr(e))
+            logger.error(msg)
+            submission_error = {'state': 'unexpected_response',
+                     'response_error_type': 'unexpected_no_response',
+                     'response_error_code': 'timeout',
+                     'submission_datetime': submission_datetime,
+                     'submission_log': msg,
+                     'request_duration': duration(start_time) or str(timeout)}
+        except Exception as e:
+            msg = "Donation report submission (ID %s) submission exception!\n%s" % (self.id, repr(e))
+            logger.error(msg)
+            submission_error = {'state': 'error',
+                     'error_type': 'submission_exception',
+                     'error_code': 'submission_exception',
+                     'error_detail': msg,
+                     'submission_log': msg}
 
-            # Prepare submission values
-            # -------------------------
-            # Get response code and answer
-            response_http_code = response.status_code
-            response_content = response.content
+        # Return the response or error
+        return response, duration(start_time), submission_error
 
-            # Update submission log with response information
-            submission_log += "Response HTTP Status Code: %s\n" % response_http_code
-            submission_log += "Response Content:\n%s\n" % response_content
+    @api.multi
+    def _parse_response_content(self, response):
+        self.ensure_one()
 
-            # Prepare the submission values
-            vals = {'submission_datetime': submission_datetime,
-                    'submission_log': submission_log,
-                    #
-                    'response_http_code': response_http_code,
-                    'response_content': response_content,
-                    'response_content_parsed': False,
-                    #
+        content = ""
+        returncode = ""
+        returnmsg = ""
+        error = ""
+
+        try:
+            parser = etree.XMLParser(remove_blank_text=True)
+            response_etree = etree.fromstring(response.content, parser=parser)
+
+            content = etree.tostring(response_etree, pretty_print=True)
+
+            returncode_etree = response_etree.find(".//{*}rc")
+            returncode = returncode_etree.text if returncode_etree is not None else False
+
+            returnmsg_etree = response_etree.find(".//{*}msg")
+            returnmsg = returnmsg_etree.text if returnmsg_etree is not None else content
+
+        except Exception as e:
+            return "", "", "", {
+                'state': 'unexpected_response',
+                'response_error_type': 'unexpected_parser',
+                'response_error_detail': 'Content could not be parsed:\n%s' % repr(e)
+            }
+
+        return content, returncode, returnmsg, error
+
+    @api.multi
+    def _get_update_submission_values_by_response(self, response, request_duration="", submission_datetime=""):
+        self.ensure_one()
+
+        # Check for an empty response object
+        # ----------------------------------
+        # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+        # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+        #            exist in the DataBox 48 hours after the submission_datetime
+        if not response:
+            return {'state': 'unexpected_response',
+                    'response_error_type': 'unexpected_no_response',
+                    'response_error_code': 'empty_response_object',
+                    'submission_datetime': submission_datetime,
+                    'submission_log': 'EMPTY RESPONSE OBJECT!',
                     'request_duration': request_duration,
                     }
 
-            # Response with error from FinanzOnline
-            # -------------------------------------
-            # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
-            # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
-            if response_http_code != 200:
-                r.update_submission(state='error',
-                                    error_type='http_code_not_200',
-                                    error_code=response_http_code,
-                                    error_detail=response_content,
-                                    **vals)
-                continue
+        # ---------------------------------------------
+        # Prepare common values for update_submission()
+        # ---------------------------------------------
+        submission_log = "Response HTTP Status Code: %s\n" % response.status_code
+        submission_log += "Response Content:\n%s\n" % response.content
+        common_update_submission_vals = {'submission_datetime': submission_datetime,
+                                         'submission_log': submission_log,
+                                         #
+                                         'response_http_code': response.status_code,
+                                         'response_content': response.content,
+                                         'response_content_parsed': False,
+                                         #
+                                         'request_duration': request_duration,
+                                         }
 
-            # Response http code IS 200 but no content
-            # ----------------------------------------
-            # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
-            # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
-            #            exist in the DataBox 48 hours after the submission_datetime
-            if not response.content:
-                r.update_submission(state='unexpected_response',
-                                    response_error_type='unexpected_no_content',
-                                    response_error_code='no_response_content',
-                                    **vals)
-                continue
+        # Response with http error from FinanzOnline
+        # ------------------------------------------
+        # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
+        # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
+        if response.status_code != 200:
+            return common_update_submission_vals.update({
+                'state': 'error',
+                'error_type': 'http_code_not_200',
+                'error_code': response.status_code,
+                'error_detail': response.content,
+            })
+        # Response http code IS 200 but no response content
+        # -------------------------------------------------
+        # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+        # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+        #            exist in the DataBox 48 hours after the submission_datetime
+        elif not response.content:
+            return common_update_submission_vals.update({
+                'state': 'unexpected_response',
+                'response_error_type': 'unexpected_no_content',
+                'response_error_code': 'no_response_content',
+            })
 
-            # Evaluate the response content
-            # -----------------------------
-            try:
-                # Try to Parse the content as xml
-                parser = etree.XMLParser(remove_blank_text=True)
-                response_etree = etree.fromstring(response.content, parser=parser)
-                response_pprint = etree.tostring(response_etree, pretty_print=True)
-            except Exception as e:
-                # Answer could not be parsed
-                # --------------------------
-                # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
-                # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
-                #            exist in the DataBox 48 hours after the submission_datetime
-                r.update_submission(state='unexpected_response',
-                                    response_error_type='unexpected_parser',
-                                    response_error_detail='Content could not be parsed:\n%s' % repr(e),
-                                    **vals)
-                continue
+        # ------------------------------------------------
+        # Parse and extract data from the response content
+        # ------------------------------------------------
+        content_pretty, returncode, returnmsg, error = self._parse_response_content(response)
+        if error:
+            return common_update_submission_vals.update(error)
 
-            # Add the pretty printed answer to the submission values
-            vals['response_content_parsed'] = response_pprint
+        # Add the pretty printed content to the common vals
+        common_update_submission_vals['response_content_parsed'] = content_pretty
 
-            # Search for a return code of the file upload service
-            returncode = response_etree.find(".//{*}rc")
-            returncode = returncode.text if returncode is not None else False
-            returnmsg = response_etree.find(".//{*}msg")
-            returnmsg = returnmsg.text if returnmsg is not None else response_pprint
+        # No FinanzOnline return code found in content
+        # --------------------------------------------
+        # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
+        # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
+        #            exist in the DataBox 48 hours after the submission_datetime
+        if not returncode:
+            return common_update_submission_vals.update({
+                'state': 'unexpected_response',
+                'response_error_type': 'unexpected_parser',
+                'response_error_detail': 'No return code in response content!',
+            })
+        # FinanzOnline File Upload known error
+        # ------------------------------------
+        # HINT: In this case we expect that the submission was rejected by FinanzOnline
+        # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
+        elif returncode != '0':
+            return common_update_submission_vals.update({
+                'state': 'error',
+                'error_type': self.file_upload_error_return_codes().get(returncode, 'file_upload_error'),
+                'error_code': returncode,
+                'error_detail': returnmsg,
+            })
 
-            # No return code found in answer
-            # ------------------------------
-            # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
-            # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
-            #            exist in the DataBox 48 hours after the submission_datetime
-            if not returncode:
-                r.update_submission(state='unexpected_response',
-                                    response_error_type='unexpected_parser',
-                                    response_error_detail='Found no return code in answer:\n%s' % response_pprint,
-                                    **vals)
-                continue
+        # -----------------------------------------------
+        # FileUpload was successful (The normal response)
+        # -----------------------------------------------
+        return common_update_submission_vals.update({
+            'state': 'submitted',
+        })
 
-            # FinanzOnline File Upload known ERROR
-            # ------------------------------------
-            # HINT: In this case we expect that the submission was rejected by FinanzOnline
-            # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
-            elif returncode != '0':
-                r.update_submission(state='error',
-                                    error_type=r.file_upload_error_return_codes().get(returncode, 'file_upload_error'),
-                                    error_code=returncode,
-                                    error_detail=returnmsg,
-                                    **vals)
-                continue
+    @api.multi
+    def _update_submission_by_response(self, response, request_duration="", submission_datetime=""):
+        self.ensure_one()
+        logger.info("Response from FinanzOnline for Submission (ID %s):\n%s"
+                    "" % (self.id, response.content if response else ""))
 
-            # FileUpload was successful (The normal response)
-            # -----------------------------------------------
-            else:
-                r.update_submission(state='submitted', **vals)
-                continue
+        with openerp.api.Environment.manage():
+            with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                subm = self.with_env(new_env)
+
+                update_submission_vals = subm._get_update_submission_values_by_response(response,
+                                                                                        request_duration,
+                                                                                        submission_datetime)
+                subm.update_submission(update_submission_vals)
+
+                # Commit the changes in the new environment to make sure not to loose the response data
+                new_env.cr.commit()
+
+        return True
+
+    @api.multi
+    def _submit(self):
+        self.ensure_one()
+        logger.info("Donation report submission (ID %s) is going to be submitted!" % self.id)
+        submission_datetime = fields.datetime.now()
+        
+        # Check the submission data before submission
+        pre_submission_error = self._pre_submission_error_check()
+        if pre_submission_error:
+            self.update_submission(**pre_submission_error)
+            return False
+        
+        # Get the session id
+        session_id, error_msg = self._get_session_id()
+        if error_msg or not session_id:
+            self.update_submission(state='error', error_type='submission_exception', error_code='login_failed',
+                                   error_detail=error_msg)
+            return False
+        
+        # Get the request data
+        request_data = self._get_submission_request_data(session_id)
+        
+        # Lock submission and donation reports before request (set state to 'submitted')
+        # ATTENTION: A commit is done in this method to prevent data loss
+        self._pre_submission_lock(submission_datetime)
+        
+        # Upload the donation reports to the FinanzOnline DataBox
+        response, duration, submission_error = self._upload_reports_to_finanzonline_databox(request_data,
+                                                                                            submission_datetime)
+        if submission_error:
+            self.update_submission(**submission_error)
+            return False
+
+        # Update the submission based on the response data
+        # ATTENTION: A commit is done in this method to prevent data loss
+        self._update_submission_by_response(response, duration)
+
+        # Return the updated submission
+        return self
+
+    @api.multi
+    def batch_submit(self, raise_exception=False):
+        logger.info("Batch submit '%s' donation report submissions!" % self.ids)
+        for submission in self:
+            logger.info("Donation report submission (ID %s) is going to be submitted!" % submission.id)
+
+            with openerp.api.Environment.manage():
+                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+
+                    try:
+                        submission.with_env(new_env)._submit()
+                        # Commit the changes in the new environment to make sure no data is lost if any exception
+                        # happens at subsequent submissions
+                        new_env.cr.commit()
+                    except Exception as e:
+                        msg = "Donation report submission (ID %s) submission failed!\n%s" % (submission.id, repr(e))
+                        logger.error(msg)
+                        send_internal_email(odoo_env_obj=self.env, subject=msg, body=msg)
+                        if raise_exception:
+                            raise e
+                        else:
+                            # Continue with next submission
+                            continue
+
+    @api.multi
+    def submit(self):
+        self.batch_submit(raise_exception=True)
 
     @api.multi
     def process_response_file(self):
@@ -1237,6 +1363,84 @@ class DonationReportSubmission(models.Model):
     # ------------------------------------------
     # SCHEDULER ACTIONS FOR AUTOMATED PROCESSING
     # ------------------------------------------
+    @api.model
+    def save_create_submission(self, new_submission_vals):
+        with openerp.api.Environment.manage():
+            with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                new_submission = self.with_env(new_env).create(new_submission_vals)
+                new_submission.ensure_one()
+                # Commit the changes in the new environment
+                new_env.cr.commit()
+                return new_submission
+
+    @api.multi
+    def _send_mail_scheduled_submission(self, step="", success_msg="", error_msg=""):
+        if not self or len(self) != 1:
+            return
+        if not step:
+            return
+        if not success_msg and not error_msg:
+            return
+
+        reports_count = 0 if not self.donation_report_ids else len(self.donation_report_ids)
+        info = "ID='%s', NAME='%s', REPS='%s'" % (self.id, self.name, str(reports_count))
+
+        if error_msg:
+            subject = "scheduled_submission() ERROR: %s (%s)" % (step, info)
+            body = error_msg
+        elif success_msg:
+            subject = "scheduled_submission() SUCCESS: %s (%s)" % (step, info)
+            body = success_msg
+
+        send_internal_email(odoo_env_obj=self.env, subject=subject, body=body)
+
+    @api.multi
+    def save_prepare_and_submit(self):
+        for submission in self:
+
+            # Prepare
+            with openerp.api.Environment.manage():
+                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                    try:
+                        submission.with_env(new_env).prepare()
+                    except Exception as e:
+                        msg = "Could not prepare submission! (ID %s)\n%s" % (submission.id, repr(e))
+                        logger.error(msg)
+                        submission._send_mail_scheduled_submission(step="PREPARE", error_msg=msg)
+                        continue
+
+                    # Commit the preparation changes
+                    new_env.cr.commit()
+
+            if submission.state != 'prepared':
+                submission._send_mail_scheduled_submission(step="PREPARE", error_msg="Submission preparation failed!")
+                # No point in continuing so go on to next submission
+                continue
+            else:
+                submission._send_mail_scheduled_submission(step="PREPARE", success_msg="Submission preparation done")
+
+            # Submit
+            with openerp.api.Environment.manage():
+                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                    try:
+                        submission.with_env(new_env).batch_submit()
+                    except Exception as e:
+                        msg = "Could not submit submission! (ID %s)\n%s" % (submission.id, repr(e))
+                        logger.error(msg)
+                        self._send_mail_scheduled_submission(step="SUBMIT", error_msg=msg)
+                        continue
+
+                    # Commit the submission changes
+                    new_env.cr.commit()
+
+            if submission.state != 'submitted' or not submission.response_content:
+                submission._send_mail_scheduled_submission(step="SUBMIT", error_msg="Submission failed!")
+            else:
+                submission._send_mail_scheduled_submission(step="SUBMIT", success_msg="Submission done!")
+
     # HINT: This should be started every day and then get the Meldezeitraum from the account.fiscalyear!
     #       It checks if it needs to be run at all (inside Meldezeitraum) for every possible
     #       Meldejahr (now - 6 Years) and if the current day is the correct Meldetag for this instance
@@ -1244,68 +1448,6 @@ class DonationReportSubmission(models.Model):
     def scheduled_submission(self):
         logger.info("scheduled_submission() START")
         now = fields.datetime.utcnow()
-
-        def prepare(subm):
-            subm_info = "ID='%s', NAME='%s'" % (subm.id, subm.name)
-            logger.info("scheduled_submission() Prepare donation-report-submission %s" % subm_info)
-
-            # Prepare messages
-            msg_error = "scheduled_submission() ERROR: Prepare donation-report-submission failed! %s" % subm_info
-
-            try:
-                subm.prepare()
-            except Exception as e:
-                msg = "%s\n\n%s" % (msg_error, repr(e))
-                logger.error(msg)
-                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg)
-                return False
-
-            if subm.state != 'prepared':
-                logger.error(msg_error)
-                body = "%s\n\n%s\n\n%s\n\n%s\n\n" % (msg_error, subm.error_type, subm.error_code, subm.error_detail)
-                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=body)
-                return False
-
-            rep_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
-            subm_info = "ID='%s', NAME='%s', REPS='%s'" % (subm.id, subm.name, rep_count)
-            msg_success = "scheduled_submission() SUCCESS: Prepared donation-report-submission! %s" % subm_info
-            send_internal_email(odoo_env_obj=subm.env, subject=msg_success, body=msg_success)
-            logger.info(msg_success)
-            return True
-
-        def submit(subm):
-            report_count = 0 if not subm.donation_report_ids else len(subm.donation_report_ids)
-            subm_info = "ID='%s', NAME='%s', REPS='%s'" % (subm.id, subm.name, report_count)
-            logger.info("scheduled_submission() Submit donation-report-submission %s to FinanzOnline" % subm_info)
-
-            # ATTENTION: Do NOT send the submission if we are on a dev server!
-            if not is_production_server():
-                logger.warning("Will not auto-submit donation-report-submission (ID %s) on a development server!"
-                               "" % subm.id)
-                return False
-
-            # Prepare messages
-            msg_error = "scheduled_submission() ERROR: Submission to FinanzOnline FAILED! %s " % subm_info
-            msg_success = "scheduled_submission() SUCCESS: Submitted %s to FinanzOnline!" % subm_info
-
-            # Submit the donation report submission to FinanzOnline
-            try:
-                subm.submit()
-            except Exception as e:
-                msg = "%s\n\n%s" % (msg_error, repr(e))
-                logger.error(msg)
-                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=msg)
-                return False
-
-            if subm.state != 'submitted':
-                logger.error(msg_error)
-                body = "%s\n\n%s\n\n%s\n\n%s\n\n" % (msg_error, subm.error_type, subm.error_code, subm.error_detail)
-                send_internal_email(odoo_env_obj=subm.env, subject=msg_error, body=body)
-                return False
-
-            send_internal_email(odoo_env_obj=subm.env, subject=msg_success)
-            logger.info(msg_success)
-            return True
 
         # Search for fiscal years
         # HINT: This will get all configured fiscal years for all companies
@@ -1379,9 +1521,7 @@ class DonationReportSubmission(models.Model):
             if existing_forced:
                 logger.info('scheduled_submission(): %s "donation report submission(s)" with force_submission found!'
                             % len(existing_forced))
-            for s in existing_forced:
-                if prepare(s):
-                    submit(s)
+            existing_forced.save_prepare_and_submit()
 
             # Check if there are any donation reports with attribute force_submission set
             force_submission_reports = self.env['res.partner.donation_report'].sudo().search([
@@ -1398,7 +1538,7 @@ class DonationReportSubmission(models.Model):
                 # Create a new empty MANUAL submission
                 # HINT: Since it is a manual submission it is no problem for the checks below!
                 # ATTENTION: Amount of reports is not checked here
-                new_manual_subm = self.sudo().create(
+                new_manual_subm = self.sudo().save_create_submission(
                     {'submission_env': 'P',
                      'bpk_company_id': y.company_id.id,
                      'meldungs_jahr': y.meldungs_jahr,
@@ -1408,8 +1548,7 @@ class DonationReportSubmission(models.Model):
                 # Prepare newly created submission and submit it to FinanzOnline if prepare was successful
                 logger.info('scheduled_submission(): Prepare and submit force_submission-donation-reports with manual'
                             'submission %s' % str(new_manual_subm.name))
-                if prepare(new_manual_subm):
-                    submit(new_manual_subm)
+                new_manual_subm.save_prepare_and_submit()
 
             # Check if at least one submittable donation report exists for this fiscal year
             # -----------------------------------------------------------------------------
@@ -1482,9 +1621,7 @@ class DonationReportSubmission(models.Model):
                 ('manual', '=', False),
                 ('submission_env', '=', 'P'),
             ])
-            for s in existing_error:
-                if prepare(s):
-                    submit(s)
+            existing_error.save_prepare_and_submit()
 
             # A) CHECK FOR EXISTING SUBMISSIONS NEWER THAN drg_last (Last donation report generation in FRST)
             # -----------------------------------------------------------------------------------------------
@@ -1572,9 +1709,7 @@ class DonationReportSubmission(models.Model):
                 ('manual', '=', False),
                 ('submission_env', '=', 'P'),
             ])
-            for s in existing:
-                if prepare(s):
-                    submit(s)
+            existing.save_prepare_and_submit()
 
             # AUTO-SUBMIT NON LINKED DONATION REPORTS
             # ---------------------------------------
@@ -1597,14 +1732,12 @@ class DonationReportSubmission(models.Model):
 
                 if reports:
                     # Create new submission
-                    new_subm = self.sudo().create(
+                    new_subm = self.sudo().save_create_submission(
                         {'submission_env': 'P',
                          'bpk_company_id': y.company_id.id,
                          'meldungs_jahr': y.meldungs_jahr,
                          })
-                    # Prepare newly created submission and submit it to FinanzOnline if prepare was successful
-                    if prepare(new_subm):
-                        submit(new_subm)
+                    new_subm.save_prepare_and_submit()
 
         logger.info("scheduled_submission() END")
         return True
