@@ -30,9 +30,10 @@
                 All rights are inherited from the group "base.studio" and then narrowed down by
                 ir.rules
             </field>
-            <!-- Add user(s) to group -->
+            <!-- Add user to group -->
             <field name="users" eval="[(4, ref('fso_rest_api.frst_api_user'))]"/>
-            <!-- Inherited Groups -->
+            <!-- Add the base.studio group for access to all relevant models -->
+            <!-- TODO: It would be better to assign the rights to this group manually base.studio is a bit too much ... -->
             <field name="implied_ids"
                    eval="[
                    (4, ref('base.studio')),
