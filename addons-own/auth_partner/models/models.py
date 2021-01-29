@@ -38,19 +38,13 @@ class res_users(models.Model):
             # Try regular or other auth methods
             return super(res_users, self).check_credentials(cr, uid, password)
         except AccessDenied:
-
             # In case there is no request yet (unbound object error catch)
             # https://github.com/OCA/e-commerce/issues/152
             # https://github.com/OCA/e-commerce/pull/190
             if not request:
-                #raise openerp.exceptions.AccessDenied()
                 raise
-
-            # Check for a valid FS-Token
-            # ATTENTION: We do not log the usage of the token here because this was already done in _dispatch()
             token_record, user_record, errors = fstoken_check(password, log_usage=False)
             if errors:
-                # raise openerp.exceptions.AccessDenied()
                 raise
 
 

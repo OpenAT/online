@@ -527,6 +527,8 @@ class DonationReportSubmission(models.Model):
     def prepare(self):
         for r in self:
             logger.info("prepare() START")
+            logger.info("prepare() for submission ID %s" % r.id)
+
             # CHECK the report state
             if r.state not in ['new', 'prepared', 'error']:
                 raise ValidationError(_("You can not prepare or update a submission in state %s!") % r.state)
@@ -572,6 +574,7 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _submission_data_up_to_date(self):
         self.ensure_one()
+        logger.info("_submission_data_up_to_date() for submission ID %s" % self.id)
 
         vals = self.compute_submission_values()
         if not vals:
@@ -597,6 +600,7 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _pre_submission_error_check(self):
         self.ensure_one()
+        logger.info("_pre_submission_error_check() for submission ID %s" % self.id)
 
         # Check: Submission state
         if self.state not in ['new', 'prepared', 'error']:
@@ -604,9 +608,9 @@ class DonationReportSubmission(models.Model):
             return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
 
         # Check: Not on development machine
-        if self.submission_env != 'T' and not is_production_server():
-            err_msg = "Submission on a development machine is not permitted!"
-            return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
+        # if self.submission_env != 'T' and not is_production_server():
+        #     err_msg = "Submission on a development machine is not permitted!"
+        #     return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
 
         # Check: donation reports maximum
         if len(self.donation_report_ids) > 10000:
@@ -634,6 +638,7 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _get_session_id(self):
         self.ensure_one()
+        logger.info("_get_session_id() for submission ID %s" % self.id)
 
         session_id = None
         error_msg = None
@@ -650,6 +655,7 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _get_submission_request_data(self, session_id):
         self.ensure_one()
+        logger.info("_get_submission_request_data() for submission ID %s" % self.id)
         request_data = self.submission_content.replace('###SessionID###', session_id, 1)
         assert request_data, "Request data missing!"
         return request_data
@@ -660,39 +666,39 @@ class DonationReportSubmission(models.Model):
             case of unexpected exception and related rollback.
         """
         self.ensure_one()
+        logger.info("_pre_submission_lock() for submission ID %s" % self.id)
         logger.info("Set donation report(s) state to 'submitted' for donation-report-submission (ID %s) before request!"
                     "" % self.id)
 
-        with openerp.api.Environment.manage():
-            with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
-                new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+        # Update reports
+        # --------------
+        boolean_result = self.donation_report_ids.write(
+            {'state': 'submitted', 'submission_id_datetime': submission_datetime}
+        )
+        assert boolean_result, "Could not set state to 'submitted' for the donation reports"
 
-                # Update the state of the donation reports attached to the submission
-                boolean_result = self.donation_report_ids.with_env(new_env).write(
-                    {'state': 'submitted', 'submission_id_datetime': submission_datetime}
-                )
-                assert boolean_result, "Could not set state to 'submitted' for the donation reports"
+        # Update submission
+        # -----------------
+        vals = {'submission_datetime': submission_datetime,
+                'submission_log': 'Lock submission before sending the request.',
+                'response_http_code': '',
+                'response_content': '',
+                'response_content_parsed': '',
+                'request_duration': '',
+                }
+        self.update_submission(state='submitted', **vals)
+        assert self.state == 'submitted'
 
-                # Update the state of the donation report submission
-                vals = {'submission_datetime': submission_datetime,
-                        'submission_log': 'Lock submission before sending the request.',
-                        'response_http_code': '',
-                        'response_content': '',
-                        'response_content_parsed': '',
-                        'request_duration': '',
-                        }
-                self.with_env(new_env).update_submission(state='submitted', **vals)
-                assert self.state == 'submitted'
-
-                # Commit the changes in the new environment to make sure all donation reports stay in the state
-                # 'submitted' even if an exception occurs at the FinanzOnline request or after
-                new_env.cr.commit()
+        # !!! COMMIT CHANGES TO MAKE SURE THIS IS IN THE DB BEFORE SUBMISSION TO FINANZONLINE !!!
+        # ---------------------------------------------------------------------------------------
+        self.env.cr.commit()
 
         return True
     
     @api.multi
     def _upload_reports_to_finanzonline_databox(self, request_data, submission_datetime, timeout=60*8):
         self.ensure_one()
+        logger.info("_upload_reports_to_finanzonline_databox() for submission ID %s" % self.id)
         start_time = time.time()
 
         def duration(start):
@@ -739,7 +745,8 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _parse_response_content(self, response):
         self.ensure_one()
-
+        logger.info("_parse_response_content() for submission ID %s" % self.id)
+        
         content = ""
         returncode = ""
         returnmsg = ""
@@ -769,6 +776,7 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _get_update_submission_values_by_response(self, response, request_duration="", submission_datetime=""):
         self.ensure_one()
+        logger.info("_get_update_submission_values_by_response() for submission ID %s" % self.id)
 
         # Check for an empty response object
         # ----------------------------------
@@ -865,27 +873,25 @@ class DonationReportSubmission(models.Model):
     @api.multi
     def _update_submission_by_response(self, response, request_duration="", submission_datetime=""):
         self.ensure_one()
+        logger.info("_update_submission_by_response() for submission ID %s" % self.id)
         logger.info("Response from FinanzOnline for Submission (ID %s):\n%s"
                     "" % (self.id, response.content if response else ""))
 
-        with openerp.api.Environment.manage():
-            with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
-                new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-                subm = self.with_env(new_env)
+        # Process the response and update the submission
+        update_submission_vals = self._get_update_submission_values_by_response(response,
+                                                                                request_duration,
+                                                                                submission_datetime)
+        self.update_submission(update_submission_vals)
 
-                update_submission_vals = subm._get_update_submission_values_by_response(response,
-                                                                                        request_duration,
-                                                                                        submission_datetime)
-                subm.update_submission(update_submission_vals)
-
-                # Commit the changes in the new environment to make sure not to loose the response data
-                new_env.cr.commit()
+        # Commit the changes to db make sure not to loose the response data
+        self.env.cr.commit()
 
         return True
 
     @api.multi
     def _submit(self):
         self.ensure_one()
+        logger.info("_submit() for submission ID %s" % self.id)
         logger.info("Donation report submission (ID %s) is going to be submitted!" % self.id)
         submission_datetime = fields.datetime.now()
         
@@ -913,44 +919,28 @@ class DonationReportSubmission(models.Model):
         response, duration, submission_error = self._upload_reports_to_finanzonline_databox(request_data,
                                                                                             submission_datetime)
         if submission_error:
+
+            # Update Submission with error
             self.update_submission(**submission_error)
+
+            # !!! COMMIT CHANGES TO DB MAKE SURE THE ANSWER FROM FINANZONLINE IS NOT LOST !!!
+            self.env.cr.commit
+
             return False
 
-        # Update the submission based on the response data
-        # ATTENTION: A commit is done in this method to prevent data loss
-        self._update_submission_by_response(response, duration)
+        else:
 
-        # Return the updated submission
-        return self
+            # Update the submission based on the response data
+            # ATTENTION: !!! A COMMIT IS ALREADY DONE IN THIS METHOD TO PREVENT DATA LOSS !!!
+            self._update_submission_by_response(response, duration)
 
-    @api.multi
-    def batch_submit(self, raise_exception=False):
-        logger.info("Batch submit '%s' donation report submissions!" % self.ids)
-        for submission in self:
-            logger.info("Donation report submission (ID %s) is going to be submitted!" % submission.id)
-
-            with openerp.api.Environment.manage():
-                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
-                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-
-                    try:
-                        submission.with_env(new_env)._submit()
-                        # Commit the changes in the new environment to make sure no data is lost if any exception
-                        # happens at subsequent submissions
-                        new_env.cr.commit()
-                    except Exception as e:
-                        msg = "Donation report submission (ID %s) submission failed!\n%s" % (submission.id, repr(e))
-                        logger.error(msg)
-                        send_internal_email(odoo_env_obj=self.env, subject=msg, body=msg)
-                        if raise_exception:
-                            raise e
-                        else:
-                            # Continue with next submission
-                            continue
+            # Return the updated submission
+            return self
 
     @api.multi
     def submit(self):
-        self.batch_submit(raise_exception=True)
+        for submission in self:
+            submission._submit()
 
     @api.multi
     def process_response_file(self):
@@ -1363,17 +1353,6 @@ class DonationReportSubmission(models.Model):
     # ------------------------------------------
     # SCHEDULER ACTIONS FOR AUTOMATED PROCESSING
     # ------------------------------------------
-    @api.model
-    def save_create_submission(self, new_submission_vals):
-        with openerp.api.Environment.manage():
-            with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
-                new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-                new_submission = self.with_env(new_env).create(new_submission_vals)
-                new_submission.ensure_one()
-                # Commit the changes in the new environment
-                new_env.cr.commit()
-                return new_submission
-
     @api.multi
     def _send_mail_scheduled_submission(self, step="", success_msg="", error_msg=""):
         if not self or len(self) != 1:
@@ -1397,49 +1376,60 @@ class DonationReportSubmission(models.Model):
 
     @api.multi
     def save_prepare_and_submit(self):
+        """
+        The goal is not to process all submissions but to save all changes until the first submission fails!
+        """
         for submission in self:
 
             # Prepare
-            with openerp.api.Environment.manage():
-                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
-                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-                    try:
-                        submission.with_env(new_env).prepare()
-                    except Exception as e:
-                        msg = "Could not prepare submission! (ID %s)\n%s" % (submission.id, repr(e))
-                        logger.error(msg)
-                        submission._send_mail_scheduled_submission(step="PREPARE", error_msg=msg)
-                        continue
+            # -------
+            step = "save_prepare_and_submit() PREPARE"
+            try:
+                submission.prepare()
+            except Exception as e:
+                msg = "Could not save_prepare_and_submit() submission! (ID %s)\n%s" \
+                      "" % (submission.id, repr(e))
+                logger.error(msg)
+                submission._send_mail_scheduled_submission(step=step, error_msg=msg)
+                raise
 
-                    # Commit the preparation changes
-                    new_env.cr.commit()
+            # Commit the changes in this env to the database
+            submission.env.cr.commit()
 
+            # Check if the preparation did work
             if submission.state != 'prepared':
-                submission._send_mail_scheduled_submission(step="PREPARE", error_msg="Submission preparation failed!")
-                # No point in continuing so go on to next submission
+                msg = "Could not prepare submission! (ID %s)" % submission.id
+                submission._send_mail_scheduled_submission(step=step, error_msg=msg)
                 continue
-            else:
-                submission._send_mail_scheduled_submission(step="PREPARE", success_msg="Submission preparation done")
 
             # Submit
-            with openerp.api.Environment.manage():
-                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
-                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
-                    try:
-                        submission.with_env(new_env).batch_submit()
-                    except Exception as e:
-                        msg = "Could not submit submission! (ID %s)\n%s" % (submission.id, repr(e))
-                        logger.error(msg)
-                        self._send_mail_scheduled_submission(step="SUBMIT", error_msg=msg)
-                        continue
+            # ------
+            step = "save_prepare_and_submit() SUBMIT"
+            try:
+                submission.submit()
+            except Exception as e:
+                msg = "Could not save_prepare_and_submit() submission! (ID %s)\n%s" % (submission.id, repr(e))
+                logger.error(msg)
+                submission._send_mail_scheduled_submission(step=step, error_msg=msg)
+                raise
 
-                    # Commit the submission changes
-                    new_env.cr.commit()
+            # Commit the changes in this env to the database
+            submission.env.cr.commit()
 
-            if submission.state != 'submitted' or not submission.response_content:
-                submission._send_mail_scheduled_submission(step="SUBMIT", error_msg="Submission failed!")
+            # Send Message
+            # ------------
+            if submission.state == 'submitted' and submission.response_content:
+                submission._send_mail_scheduled_submission(step=step, success_msg="save_prepare_and_submit() done!")
+
+            elif submission.state == 'submitted' and not submission.response_content:
+                submission._send_mail_scheduled_submission(step=step,
+                                                           error_msg="State is 'submitted' but no FinanzOnline "
+                                                                     "response content found!")
+
             else:
-                submission._send_mail_scheduled_submission(step="SUBMIT", success_msg="Submission done!")
+                submission._send_mail_scheduled_submission(step=step,
+                                                           error_msg="Failed to submit submission (ID %s)"
+                                                                     "" % submission.id)
 
     # HINT: This should be started every day and then get the Meldezeitraum from the account.fiscalyear!
     #       It checks if it needs to be run at all (inside Meldezeitraum) for every possible
@@ -1538,7 +1528,7 @@ class DonationReportSubmission(models.Model):
                 # Create a new empty MANUAL submission
                 # HINT: Since it is a manual submission it is no problem for the checks below!
                 # ATTENTION: Amount of reports is not checked here
-                new_manual_subm = self.sudo().save_create_submission(
+                new_manual_subm = self.sudo().create(
                     {'submission_env': 'P',
                      'bpk_company_id': y.company_id.id,
                      'meldungs_jahr': y.meldungs_jahr,
@@ -1713,31 +1703,43 @@ class DonationReportSubmission(models.Model):
 
             # AUTO-SUBMIT NON LINKED DONATION REPORTS
             # ---------------------------------------
-            reports = True
-            max_subm = 10
-            while reports and max_subm > 0:
-                max_subm -= 1
-                if max_subm <= 0:
-                    max_subm_msg = "scheduled_submission() ERROR! Max 'submission per run' limit of 9 exceeded!"
-                    logger.error(max_subm_msg)
-                    send_internal_email(odoo_env_obj=self.env, subject=max_subm_msg)
+            with openerp.api.Environment.manage():
+                with openerp.registry(self.env.cr.dbname).cursor() as new_cr:
+                    new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+                    isolated = self.with_env(new_env)
 
-                reports = self.env['res.partner.donation_report'].sudo().search([
-                    ('meldungs_jahr', '=', y.meldungs_jahr),
-                    ('bpk_company_id', '=', y.company_id.id),
-                    ('submission_id', '=', False),
-                    ('state', '=', 'new'),
-                    ('submission_env', '=', 'P'),
-                ])
+                    reports = True
+                    max_subm = 10
+                    while reports and max_subm > 0:
+                        max_subm -= 1
+                        if max_subm <= 0:
+                            max_subm_msg = "scheduled_submission() ERROR! Max 'submission per run' limit of 9 exceeded!"
+                            logger.error(max_subm_msg)
+                            send_internal_email(odoo_env_obj=self.env, subject=max_subm_msg)
 
-                if reports:
-                    # Create new submission
-                    new_subm = self.sudo().save_create_submission(
-                        {'submission_env': 'P',
-                         'bpk_company_id': y.company_id.id,
-                         'meldungs_jahr': y.meldungs_jahr,
-                         })
-                    new_subm.save_prepare_and_submit()
+                        reports = isolated.env['res.partner.donation_report'].sudo().search([
+                            ('meldungs_jahr', '=', y.meldungs_jahr),
+                            ('bpk_company_id', '=', y.company_id.id),
+                            ('submission_id', '=', False),
+                            ('state', '=', 'new'),
+                            ('submission_env', '=', 'P'),
+                        ])
+
+                        if reports:
+                            # Create new submission
+                            new_subm = isolated.sudo().create(
+                                {'submission_env': 'P',
+                                 'bpk_company_id': y.company_id.id,
+                                 'meldungs_jahr': y.meldungs_jahr,
+                                 })
+                            new_subm.save_prepare_and_submit()
+
+                        # Commit changes in the new environment
+                        new_env.cr.commit()
+
+                        # Signal changes to parent environment
+                        # TODO: Check if this would be  needed!
+                        # self.env.invalidate_all()
 
         logger.info("scheduled_submission() END")
         return True

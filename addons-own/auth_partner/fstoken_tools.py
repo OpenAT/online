@@ -11,35 +11,12 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def _delay_token_check(wrong_tries=6, delay=3, reset_time=1):
-
-    # First time a wrong token was given for this session
-    if not request.session.get('wrong_fstoken_date'):
-        request.session['wrong_fstoken_date'] = datetime.datetime.now()
-        request.session['wrong_fstoken_tries'] = 1
-
-    # Subsequent wrong token given for this session
-    else:
-        # Reset if last incorrect try is older than 1h
-        if datetime.datetime.now() > request.session['wrong_fstoken_date'] + datetime.timedelta(hours=reset_time):
-            request.session.pop('wrong_fstoken_date', False)
-            request.session.pop('wrong_fstoken_tries', False)
-        else:
-            # SECURITY: Add a delay (Todo: Maybe we should close the connection?)
-            if request.session['wrong_fstoken_tries'] > wrong_tries:
-                _logger.warning("Adding delay of %s sec. for session xx because of %s wrong FS-Token tries!"
-                                % (delay, request.session['wrong_fstoken_tries']))
-                time.sleep(delay)
-            request.session['wrong_fstoken_tries'] += 1
-
-
 def fstoken_sanitize(fs_ptoken):
     token = fs_ptoken
     errors = list()
 
     if not isinstance(token, basestring):
         errors.append(_('Your code is no string!'))
-        _delay_token_check()
         return False, errors
 
     # Remove non alphanumeric characters
@@ -48,7 +25,6 @@ def fstoken_sanitize(fs_ptoken):
     # Check minimum token length
     if len(token) < 9:
         errors.append(_('Your code is too short!'))
-        _delay_token_check()
         return False, errors
 
     # Return sanitized token-string and the empty error-messages-list
@@ -69,8 +45,8 @@ def fstoken_check(fs_ptoken, log_usage=True):
     ])
     if not token_record:
         errors.append(_('Wrong or expired code!'))
-        _delay_token_check()
         return False, False, errors
+
     # Check number of usages (max_checks)
     if token_record:
         # ATTENTION: Default to 1 if max_checks is not set or set to 0!
