@@ -784,13 +784,14 @@ class DonationReportSubmission(models.Model):
         # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
         #            exist in the DataBox 48 hours after the submission_datetime
         if not response:
-            return {'state': 'unexpected_response',
-                    'response_error_type': 'unexpected_no_response',
-                    'response_error_code': 'empty_response_object',
-                    'submission_datetime': submission_datetime,
-                    'submission_log': 'EMPTY RESPONSE OBJECT!',
-                    'request_duration': request_duration,
-                    }
+            result = {'state': 'unexpected_response',
+                      'response_error_type': 'unexpected_no_response',
+                      'response_error_code': 'empty_response_object',
+                      'submission_datetime': submission_datetime,
+                      'submission_log': 'EMPTY RESPONSE OBJECT!',
+                      'request_duration': request_duration,
+                      }
+            return result
 
         # ---------------------------------------------
         # Prepare common values for update_submission()
@@ -812,30 +813,35 @@ class DonationReportSubmission(models.Model):
         # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
         # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
         if response.status_code != 200:
-            return common_update_submission_vals.update({
+            result = common_update_submission_vals.update({
                 'state': 'error',
                 'error_type': 'http_code_not_200',
                 'error_code': response.status_code,
                 'error_detail': response.content,
             })
+            return result
+
         # Response http code IS 200 but no response content
         # -------------------------------------------------
         # HINT: In this case we do not know if the donation reports are submitted to FinanzOnline
         # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
         #            exist in the DataBox 48 hours after the submission_datetime
         elif not response.content:
-            return common_update_submission_vals.update({
+            result = common_update_submission_vals.update({
                 'state': 'unexpected_response',
                 'response_error_type': 'unexpected_no_content',
                 'response_error_code': 'no_response_content',
             })
+            return result
 
         # ------------------------------------------------
         # Parse and extract data from the response content
         # ------------------------------------------------
         content_pretty, returncode, returnmsg, error = self._parse_response_content(response)
         if error:
-            return common_update_submission_vals.update(error)
+            assert isinstance(error, dict), "'error' must be a dict! error: %s" % str(error)
+            result = common_update_submission_vals.update(error)
+            return result
 
         # Add the pretty printed content to the common vals
         common_update_submission_vals['response_content_parsed'] = content_pretty
@@ -846,29 +852,31 @@ class DonationReportSubmission(models.Model):
         # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
         #            exist in the DataBox 48 hours after the submission_datetime
         if not returncode:
-            return common_update_submission_vals.update({
+            result = common_update_submission_vals.update({
                 'state': 'unexpected_response',
                 'response_error_type': 'unexpected_parser',
                 'response_error_detail': 'No return code in response content!',
             })
+            return result
+
         # FinanzOnline File Upload known error
         # ------------------------------------
         # HINT: In this case we expect that the submission was rejected by FinanzOnline
         # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
         elif returncode != '0':
-            return common_update_submission_vals.update({
+            result = common_update_submission_vals.update({
                 'state': 'error',
                 'error_type': self.file_upload_error_return_codes().get(returncode, 'file_upload_error'),
                 'error_code': returncode,
                 'error_detail': returnmsg,
             })
+            return result
 
         # -----------------------------------------------
         # FileUpload was successful (The normal response)
         # -----------------------------------------------
-        return common_update_submission_vals.update({
-            'state': 'submitted',
-        })
+        result = common_update_submission_vals['state'] = 'submitted'
+        return result
 
     @api.multi
     def _update_submission_by_response(self, response, request_duration="", submission_datetime=""):
@@ -877,10 +885,13 @@ class DonationReportSubmission(models.Model):
         logger.info("Response from FinanzOnline for Submission (ID %s):\n%s"
                     "" % (self.id, response.content if response else ""))
 
-        # Process the response and update the submission
+        # Process the response and get dict for update_submission()
         update_submission_vals = self._get_update_submission_values_by_response(response,
                                                                                 request_duration,
                                                                                 submission_datetime)
+
+        # Update the submission
+        logger.info("_update_submission_by_response(): update_submission_vals: %s" % update_submission_vals)
         self.update_submission(**update_submission_vals)
 
         # Commit the changes to db make sure not to loose the response data
