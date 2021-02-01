@@ -93,7 +93,6 @@ class ResPartnerZMRGetBPK(models.Model):
     donation_report_ids = fields.One2many(string="Donation Reports", readonly=True,
                                           comodel_name="res.partner.donation_report", inverse_name="partner_id")
 
-
     @api.depends('donation_deduction_optout_web', 'donation_deduction_disabled')
     def _compute_bpk_disabled(self):
         for r in self:

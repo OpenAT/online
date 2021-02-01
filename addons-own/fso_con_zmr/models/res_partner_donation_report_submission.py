@@ -891,7 +891,7 @@ class DonationReportSubmission(models.Model):
                                                                                 submission_datetime)
 
         # Update the submission
-        logger.info("_update_submission_by_response(): update_submission_vals: %s" % update_submission_vals)
+        logger.info("_update_submission_by_response(): update_submission_vals: %s" % str(update_submission_vals))
         self.update_submission(**update_submission_vals)
 
         # Commit the changes to db make sure not to loose the response data
@@ -910,14 +910,14 @@ class DonationReportSubmission(models.Model):
         pre_submission_error = self._pre_submission_error_check()
         if pre_submission_error:
             self.update_submission(**pre_submission_error)
-            return False
+            return self
         
         # Get the session id
         session_id, error_msg = self._get_session_id()
         if error_msg or not session_id:
             self.update_submission(state='error', error_type='submission_exception', error_code='login_failed',
                                    error_detail=error_msg)
-            return False
+            return self
         
         # Get the request data
         request_data = self._get_submission_request_data(session_id)
@@ -929,24 +929,21 @@ class DonationReportSubmission(models.Model):
         # Upload the donation reports to the FinanzOnline DataBox
         response, duration, submission_error = self._upload_reports_to_finanzonline_databox(request_data,
                                                                                             submission_datetime)
+
+        # Update the submission with the result
         if submission_error:
-
             # Update Submission with error
+            # ATTENTION: !!! COMMIT CHANGES TO DB MAKE SURE THE ANSWER FROM FINANZONLINE IS NOT LOST !!!
             self.update_submission(**submission_error)
-
-            # !!! COMMIT CHANGES TO DB MAKE SURE THE ANSWER FROM FINANZONLINE IS NOT LOST !!!
-            self.env.cr.commit
-
-            return False
+            self.env.cr.commit()
 
         else:
-
             # Update the submission based on the response data
-            # ATTENTION: !!! A COMMIT IS ALREADY DONE IN THIS METHOD TO PREVENT DATA LOSS !!!
+            # ATTENTION: !!! A COMMIT IS ALREADY DONE IN _update_submission_by_response() TO PREVENT DATA LOSS !!!
             self._update_submission_by_response(response, duration)
 
-            # Return the updated submission
-            return self
+        # Return the updated submission
+        return self
 
     @api.multi
     def submit(self):
