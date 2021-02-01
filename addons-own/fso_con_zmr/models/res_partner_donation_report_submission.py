@@ -608,9 +608,9 @@ class DonationReportSubmission(models.Model):
             return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
 
         # Check: Not on development machine
-        # if self.submission_env != 'T' and not is_production_server():
-        #     err_msg = "Submission on a development machine is not permitted!"
-        #     return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
+        if self.submission_env != 'T' and not is_production_server():
+            err_msg = "Submission on a development machine is not permitted!"
+            return {'state': 'error', 'error_type': 'preparation_error', 'error_code': '', 'error_detail': err_msg}
 
         # Check: donation reports maximum
         if len(self.donation_report_ids) > 10000:
@@ -881,7 +881,7 @@ class DonationReportSubmission(models.Model):
         update_submission_vals = self._get_update_submission_values_by_response(response,
                                                                                 request_duration,
                                                                                 submission_datetime)
-        self.update_submission(update_submission_vals)
+        self.update_submission(**update_submission_vals)
 
         # Commit the changes to db make sure not to loose the response data
         self.env.cr.commit()
