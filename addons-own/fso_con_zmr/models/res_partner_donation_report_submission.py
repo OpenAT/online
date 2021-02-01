@@ -798,6 +798,7 @@ class DonationReportSubmission(models.Model):
         # ---------------------------------------------
         submission_log = "Response HTTP Status Code: %s\n" % response.status_code
         submission_log += "Response Content:\n%s\n" % response.content
+
         common_update_submission_vals = {'submission_datetime': submission_datetime,
                                          'submission_log': submission_log,
                                          #
@@ -875,7 +876,8 @@ class DonationReportSubmission(models.Model):
         # -----------------------------------------------
         # FileUpload was successful (The normal response)
         # -----------------------------------------------
-        result = common_update_submission_vals['state'] = 'submitted'
+        common_update_submission_vals['state'] = 'submitted'
+        result = common_update_submission_vals
         return result
 
     @api.multi
