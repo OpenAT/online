@@ -799,14 +799,28 @@ class DonationReportSubmission(models.Model):
         submission_log = "Response HTTP Status Code: %s\n" % response.status_code
         submission_log += "Response Content:\n%s\n" % response.content
 
-        common_update_submission_vals = {'submission_datetime': submission_datetime,
-                                         'submission_log': submission_log,
+        if submission_datetime and isinstance(submission_datetime, basestring):
+            try:
+                submission_datetime = fields.datetime.strptime(submission_datetime, DEFAULT_SERVER_DATETIME_FORMAT)
+            except:
+                submission_datetime = False
+                pass
+
+        response_http_code = False
+        if response.status_code:
+            try:
+                response_http_code = str(response.status_code)
+            except:
+                response_http_code = False
+
+        common_update_submission_vals = {'submission_datetime': submission_datetime or False,
+                                         'submission_log': submission_log or False,
                                          #
-                                         'response_http_code': response.status_code,
-                                         'response_content': response.content,
+                                         'response_http_code': response_http_code,
+                                         'response_content': response.content or False,
                                          'response_content_parsed': False,
                                          #
-                                         'request_duration': request_duration,
+                                         'request_duration': str(request_duration) if request_duration else False,
                                          }
 
         # Response with http error from FinanzOnline
@@ -942,7 +956,7 @@ class DonationReportSubmission(models.Model):
         else:
             # Update the submission based on the response data
             # ATTENTION: !!! A COMMIT IS ALREADY DONE IN _update_submission_by_response() TO PREVENT DATA LOSS !!!
-            self._update_submission_by_response(response, duration)
+            self._update_submission_by_response(response, duration, submission_datetime)
 
         # Return the updated submission
         return self
