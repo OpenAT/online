@@ -28,11 +28,16 @@ Create an openapi integration for the Fundraising Studio models and methods.
 
 Includes a documentation based on restructured text and Sphinx
 
+ATTENTION: !!! All changes to the 'frst' rest api integration will be removed on addon update !!!
+
+If you need to make local or manual changes create a new integration!
+
+
     """,
     'author': "Datadialog - Michael Karrer, Martin Kaip",
     'website': "http://www.datadialog.net/",
     'category': 'Uncategorized',
-    'version': '0.2.0',
+    'version': '0.3.0',
     'installable': True,
     'application': False,
     'auto_install': False,
@@ -42,6 +47,7 @@ Includes a documentation based on restructured text and Sphinx
         'fsonline',
     ],
     'data': [
+        'data/run_on_install_update.xml',
         'data/frst_api_user_group.xml',
         'data/frst_rest_api.xml',
         'data/res_partner.xml',

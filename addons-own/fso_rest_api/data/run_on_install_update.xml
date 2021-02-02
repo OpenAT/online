@@ -1,0 +1,8 @@
+<openerp>
+  <data>
+
+    <!-- Remove date before update to recreate them correctly -->
+    <function model="openapi.namespace" name="_clean_frst_api_data_before_update"/>
+
+  </data>
+</openerp>

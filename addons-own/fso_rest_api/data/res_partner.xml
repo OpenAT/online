@@ -9,7 +9,7 @@
 
         <!-- ir.export field list for openapi access -->
         <record id="frst_rest_api_res_partner_export" model="ir.exports">
-            <field name="name">frst_rest_api_res_partner_read_one</field>
+            <field name="name">Fundraising Studio Rest API Partner Fields</field>
             <field name="resource">res.partner</field>
             <field
                 name="export_fields"
@@ -93,7 +93,7 @@
         <record model="ir.rule" id="rule_restrict_delete_frst_api_group_res_partner">
             <field name="name">Fundraising Studio REST API Group: Delete own records only res.partner</field>
             <field name="model_id" ref="base.model_res_partner"/>
-            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="domain_force">[('create_uid.id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('fso_rest_api.frst_api_group'))]"/>
             <field name="perm_read" eval=""/>
             <field name="perm_write" eval=""/>

@@ -9,9 +9,14 @@
             <field name="log_request">debug</field>
             <field name="log_response">debug</field>
             <field name="description">Fundraising Studio Rest API</field>
-            <field name="description_markdown">#Fundraising Studio Rest API</field>
+            <field name="description_markdown">
+Fundraising Studio Rest API
+---------------------------
+
+Please make sure to read the documentation carefully!
+            </field>
             <field name="contact_name">Datadialog</field>
-            <field name="contact_url">/addons/fso_rest_api/static/src/html/index.html</field>
+            <field name="contact_url">http://www.datadialog.net</field>
             <field name="contact_email">support@datadialog.net</field>
             <field name="user_ids" eval="[(4, ref('fso_rest_api.frst_api_user'))]"/>
         </record>
