@@ -44,7 +44,7 @@ If only ``name`` is given at partner creation the string will be split at the fi
 string will be in ``firstname`` and the rest of the string in ``lastname``. If there is no space in the string the
 full string will go into ``lastname``.
 
-.. tip:: ``name`` can be very useful in :ref:`searching` for partners!
+.. tip:: ``name`` can be very handy in :ref:`searching` for partners!
 
 .. _res_partner_nob_email:
 

@@ -37,6 +37,8 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.js"></script>
+        <script src="../_static/sphinx_tabs/tabs.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
     
@@ -119,8 +121,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/res_partner.html">res.partner</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required fields</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special Fields</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
 </ul>
@@ -145,13 +147,15 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#methods">Methods</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id5">Methods</a></li>
 </ul>
 </li>
 </ul>
@@ -189,7 +193,12 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Use Cases</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Managing Partner</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Managing Partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#updating-partner-data">Updating partner data</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="email_subscriptions.html">Email Subscriptions</a></li>
 </ul>
 </li>
@@ -273,7 +282,225 @@
             
   <div class="section" id="managing-partner">
 <span id="id1"></span><h1>Managing Partner<a class="headerlink" href="#managing-partner" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
+<p>Please make sure to read the <a class="reference internal" href="../models/res_partner.html#res-partner"><span class="std std-ref">res.partner model documentation</span></a> carefully before
+you work through the partner management use cases.</p>
+<div class="section" id="search-for-partner">
+<h2>Search for partner<a class="headerlink" href="#search-for-partner" title="Permalink to this headline">¶</a></h2>
+<p>To search for partner we use a <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> request with the route <code class="docutils literal notranslate"><span class="pre">/res.partner/call/search</span></code> to call the
+<code class="docutils literal notranslate"><span class="pre">search</span></code> method and we provide a <a class="reference internal" href="../searching/search_domain.html#search-domain"><span class="std std-ref">search domain</span></a> as the first positional argument
+of the search method to specify our search conditions.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fundraising Studio REST API Examples</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;frst_api_user@datadialog.net&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Search case insensitive for partners with &#39;musterman&#39; in it&#39;s lastname</span>
+<span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;lastname&#39;</span><span class="p">,</span> <span class="s1">&#39;ilike&#39;</span><span class="p">,</span> <span class="s1">&#39;musterman&#39;</span><span class="p">)]</span>
+<span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner/call/search&#39;</span><span class="p">,</span>
+</span><span class="hll">                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                          <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">]},</span>
+</span><span class="hll">                          <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+<span class="c1"># Returns list of res.partner ids:</span>
+<span class="c1"># print(response.content)</span>
+<span class="c1"># &gt;&gt;&gt; b&#39;[1720, 1713, 1719]&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The json dictionary of the requests payload accepts two keywords. Use <code class="docutils literal notranslate"><span class="pre">args</span></code> to provide a list of
+positional arguments and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> to provide a dictionary (associative array) for the keyword arguments
+of the function.</p>
+</div>
+</div>
+<div class="section" id="read-the-partner-data">
+<h2>Read the partner data<a class="headerlink" href="#read-the-partner-data" title="Permalink to this headline">¶</a></h2>
+<p>To get the data for the found partner in the previous example we use a <code class="docutils literal notranslate"><span class="pre">GET</span></code> request with the
+route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+<div class="item sphinx-data-tab-RXhhbXBsZS1SZXNwb25zZS1Db250ZW50 docutils container">
+<div class="docutils container">
+<p>Example-Response-Content</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;frst_api_user@datadialog.net&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get partner data for partner with the id&#39;s 1720, 1713 and 1719</span>
+<span class="k">for</span> <span class="n">partner_id</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1720</span><span class="p">,</span> <span class="mi">1713</span><span class="p">,</span> <span class="mi">1719</span><span class="p">]:</span>
+<span class="hll">    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">partner_id</span><span class="p">),</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-RXhhbXBsZS1SZXNwb25zZS1Db250ZW50 docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>   <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;anrede_individuell&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;birthdate_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_birthdate&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_street&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_zip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;company_name_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country_id&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;donation_deduction_optout_web&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fax&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;Max&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;frst_zverzeichnis_id&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;gdpr_accepted&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1720</span><span class="p">,</span>
+    <span class="s1">&#39;lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mobile&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name_zwei&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;newsletter_web&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;phone&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;street&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;street_number_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;title_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;zip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+<span class="p">{</span>   <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;anrede_individuell&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;birthdate_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_birthdate&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_street&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_zip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;company_name_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country_id&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;donation_deduction_optout_web&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;max2@test.com&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fax&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;Max&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;frst_zverzeichnis_id&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;gdpr_accepted&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1713</span><span class="p">,</span>
+    <span class="s1">&#39;lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mobile&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name_zwei&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;newsletter_web&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;phone&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;street&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;street_number_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;title_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;zip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+<span class="p">{</span>   <span class="s1">&#39;active&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;anrede_individuell&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;birthdate_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_birthdate&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_street&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bpk_forced_zip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;company_name_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country_id&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;donation_deduction_optout_web&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fax&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;Maximilian&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;frst_zverzeichnis_id&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;gdpr_accepted&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1719</span><span class="p">,</span>
+    <span class="s1">&#39;lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mobile&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name_zwei&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;newsletter_web&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;phone&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;street&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;street_number_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;title_web&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;zip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="updating-partner-data">
+<h2>Updating partner data<a class="headerlink" href="#updating-partner-data" title="Permalink to this headline">¶</a></h2>
+<p>To change partner data we make a <code class="docutils literal notranslate"><span class="pre">PUT</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code> and provide the
+field data as the json payload of the request.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fundraising Studio REST API Examples</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;frst_api_user@datadialog.net&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update partner data</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner/1720&#39;</span><span class="p">,</span>
+                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+<span class="hll">                        <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;street&quot;</span><span class="p">:</span> <span class="s2">&quot;Main Street&quot;</span><span class="p">,</span>
+</span><span class="hll">                              <span class="s2">&quot;street_number_web&quot;</span><span class="p">:</span> <span class="s2">&quot;82&quot;</span><span class="p">,</span>
+</span><span class="hll">                              <span class="s2">&quot;newsletter_web&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span class="hll">                              <span class="p">},</span>
+</span>                        <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+<span class="c1"># &gt;&gt;&gt; 204</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You do NOT need to provide all the available fields of the record but just the fields that you want
+change!</p>
+</div>
+</div>
 </div>
 
 
