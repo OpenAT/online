@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-       <!-- FSON Forms: Create form, tree and list view for the checkout fields -->
+        <!-- FSON Forms: Create form, tree and list view for the checkout fields -->
         <record model="ir.ui.view" id="fson_form_form">
             <field name="name">fso_forms.fson_form form</field>
             <field name="model">fson.form</field>
@@ -79,12 +79,6 @@
                                         <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
                                         <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
                                         <field name="honeypot"/>
-                                        <!--<button class="oe_inline"-->
-                                        <!--        type="action"-->
-                                        <!--        name="%(fso_forms.fson_form_field_action)d"-->
-                                        <!--        string="Edit"-->
-                                        <!--        icon="fa-envelope-o"/>-->
-                                        <!-- <button type="object" name="button_open_field_form_view" string="Edit" class="oe_link" /> -->
                                     </tree>
                                 </field>
                             </page>
@@ -176,6 +170,7 @@
                 </form>
             </field>
         </record>
+
         <record model="ir.ui.view" id="fson_form_tree">
             <field name="name">fso_forms.fson_form tree</field>
             <field name="model">fson.form</field>
@@ -190,6 +185,7 @@
                 </tree>
             </field>
         </record>
+
         <record model="ir.ui.view" id="fson_form_search">
             <field name="name">fso_forms.fson_form search</field>
             <field name="model">fson.form</field>
@@ -203,6 +199,7 @@
                 </search>
             </field>
         </record>
+
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
         <record model="ir.actions.act_window" id="fson_form_action">
             <field name="name">FSON Forms</field>
@@ -212,6 +209,7 @@
             <field name="view_id" ref="fson_form_tree"/>
             <field name="search_view_id" ref="fson_form_search"/>
         </record>
+
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
         <menuitem action="fson_form_action" id="fson_form_menu" parent="base.menu_config" sequence="3400"/>
 

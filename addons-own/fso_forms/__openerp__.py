@@ -54,8 +54,8 @@ TODO:
     'data': [
         'security/fso_forms_usergroup.xml',
         'security/ir.model.access.csv',
-        'views/fson_form.xml',
         'views/fson_form_field.xml',
+        'views/fson_form.xml',
         'views/templates.xml',
         'views/fsonline_menu.xml',
     ],

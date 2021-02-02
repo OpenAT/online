@@ -94,6 +94,7 @@
                 </search>
             </field>
         </record>
+
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
         <record model="ir.actions.act_window" id="fson_form_field_action">
             <field name="name">FSON Forms Fields</field>
@@ -103,6 +104,7 @@
             <field name="view_id" ref="fson_form_field_tree"/>
             <field name="search_view_id" ref="fson_form_field_search"/>
         </record>
+
         <!-- And we add the Action to a Menu with the shortcut menuitem -->
         <menuitem action="fson_form_field_action" id="fson_form_field_menu" parent="base.menu_config" sequence="3401"/>
 
