@@ -42,7 +42,7 @@ Includes a documentation based on restructured text and Sphinx
         'fsonline',
     ],
     'data': [
-        'data/frst_api_user.xml',
+        'data/frst_api_user_group.xml',
         'data/frst_rest_api.xml',
         'data/res_partner.xml',
     ],
