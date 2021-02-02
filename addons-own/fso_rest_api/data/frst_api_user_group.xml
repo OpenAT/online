@@ -22,7 +22,7 @@
             <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
         </record>
 
-        <!-- GROUP: frst_api_user -->
+        <!-- GROUP: frst_api_group -->
         <record id="frst_api_group" model="res.groups">
             <field name="name">Fundraising Studio REST API Group</field>
             <field name="comment">
@@ -33,16 +33,15 @@
             <!-- Add the "frst_api_user" user to the "frst_api_user_group" group -->
             <field name="users" eval="[(4, ref('fso_rest_api.frst_api_user'))]"/>
 
-            <!-- Add the "base.studio" group for access to all relevant models -->
+            <!-- Add the "base.studio" group for access to all relevant models and "openapi.group_user" to create log entries -->
             <!-- TODO: It would be better to assign the rights for the "frst_api_user_group" group manually -->
             <field name="implied_ids"
                    eval="[
                    (4, ref('base.studio')),
+                   (4, ref('openapi.group_user')),
                    ]"/>
 
         </record>
-
-
 
     </data>
 </openerp>
