@@ -55,5 +55,6 @@ If you need to make local or manual changes create a new integration!
         'data/frst_zgruppe.xml',
         'data/frst_zgruppedetail.xml',
         'data/frst_persongruppe.xml',
+        'data/frst_personemailgruppe.xml',
     ],
 }
