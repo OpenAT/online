@@ -47,7 +47,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Models" href="../models/index.html" />
+    <link rel="next" title="Authorization" href="authorization.html" />
     <link rel="prev" title="Introduction" href="introduction.html" /> 
 </head>
 
@@ -109,6 +109,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#calling-methods">Calling Methods</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="authorization.html">Authorization</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../models/index.html">Models</a><ul>
@@ -121,8 +122,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/res_partner.html">res.partner</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required fields</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special Fields</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
 </ul>
@@ -147,13 +148,15 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#methods">Methods</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id5">Methods</a></li>
 </ul>
 </li>
 </ul>
@@ -173,7 +176,22 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#verzeichnistyp-id"><code class="docutils literal notranslate"><span class="pre">verzeichnistyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#bezeichnungstyp-id"><code class="docutils literal notranslate"><span class="pre">bezeichnungstyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#parent-id"><code class="docutils literal notranslate"><span class="pre">parent_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#startdatum"><code class="docutils literal notranslate"><span class="pre">startdatum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#endedatum"><code class="docutils literal notranslate"><span class="pre">endedatum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
@@ -191,7 +209,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#updating-partner-data">Updating partner data</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
 </ul>
 </li>
@@ -261,7 +284,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="../models/index.html" class="btn btn-neutral float-right" title="Models" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="authorization.html" class="btn btn-neutral float-right" title="Authorization" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
       
       
         <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
@@ -293,7 +316,7 @@ authenticate yourself at the system. If you miss any of those things please get 
 </dl>
 </li>
 <li><dl class="simple">
-<dt>API-User and Api-User-Token</dt><dd><p>e.g.: demo_api_user, 2c8628e4-6bd6-4c90-a6e7-8872afde8f39</p>
+<dt>Database-Name and Api-User-Token</dt><dd><p>e.g.: demo, 2c8628e4-6bd6-4c90-a6e7-8872afde8f39</p>
 </dd>
 </dl>
 </li>
@@ -308,8 +331,14 @@ web interface with the correct openapi json specification already loaded.</p>
 <div class="section" id="authorize-yourself">
 <h3>1. Authorize yourself<a class="headerlink" href="#authorize-yourself" title="Permalink to this headline">¶</a></h3>
 <p>Before you try any of the routes (functions) of the api you have to provide your credentials by pressing the button
-<span class="guilabel">Authorize</span> in the upper right corner and entering your <code class="docutils literal notranslate"><span class="pre">api-user</span></code> and <code class="docutils literal notranslate"><span class="pre">api-user-token</span></code>.</p>
+<span class="guilabel">Authorize</span> in the upper right corner and entering your <code class="docutils literal notranslate"><span class="pre">database-name</span></code> and <code class="docutils literal notranslate"><span class="pre">api-user-token</span></code>.</p>
 <img alt="../_images/swagger_ui_access.png" class="align-left" src="../_images/swagger_ui_access.png" />
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>You do NOT need to provide the login (name) of you api user but the <strong>name of the database</strong>!
+The database name may be something like <code class="docutils literal notranslate"><span class="pre">dadi</span></code>, <code class="docutils literal notranslate"><span class="pre">demo</span></code> or alike. The login of the user is already
+“baked” into the api token.</p>
+</div>
 <p>If you look closely you will see that the lock is now closed on all routes showing you that any further request will be
 done with the provided credentials:</p>
 <img alt="../_images/swagger_ui_authorized.png" class="align-left" src="../_images/swagger_ui_authorized.png" />
@@ -464,7 +493,7 @@ search non case sensitive for persons with <code class="docutils literal notrans
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../models/index.html" class="btn btn-neutral float-right" title="Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="authorization.html" class="btn btn-neutral float-right" title="Authorization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

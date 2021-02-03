@@ -7,3 +7,4 @@ Basics
 
     introduction
     tutorial
+    authorization

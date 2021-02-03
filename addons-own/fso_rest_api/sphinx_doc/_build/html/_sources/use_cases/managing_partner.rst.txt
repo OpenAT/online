@@ -28,7 +28,7 @@ of the search method to specify our search conditions.
         api_base_url = "http://demo.local.com/api/v1/frst"
 
         # Prepare Authorization
-        auth = HTTPBasicAuth('frst_api_user@datadialog.net', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
 
         # Search case insensitive for partners with 'musterman' in it's lastname
         search_domain = [('lastname', 'ilike', 'musterman')]
@@ -64,7 +64,7 @@ route ``/res.partner/{id}``.
         api_base_url = "http://demo.local.com/api/v1/frst"
 
         # Prepare Authorization
-        auth = HTTPBasicAuth('frst_api_user@datadialog.net', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
 
         # Get partner data for partner with the id's 1720, 1713 and 1719
         for partner_id in [1720, 1713, 1719]:
@@ -179,7 +179,7 @@ field data as the json payload of the request.
         api_base_url = "http://demo.local.com/api/v1/frst"
 
         # Prepare Authorization
-        auth = HTTPBasicAuth('frst_api_user@datadialog.net', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
 
         # Update partner data
         response = requests.put(api_base_url + '/res.partner/1720',

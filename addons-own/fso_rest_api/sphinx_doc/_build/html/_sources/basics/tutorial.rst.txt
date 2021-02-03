@@ -16,8 +16,8 @@ Prerequisites
     e.g.: http://demo.local.com/api/v1/frst/swagger.json?token=...
 * URL to the Swagger UI to explore and test the API
     e.g.: http://demo.local.com/swagger-ui/index.html?swagger_spec_url=...
-* API-User and Api-User-Token
-    e.g.: demo_api_user, 2c8628e4-6bd6-4c90-a6e7-8872afde8f39
+* Database-Name and Api-User-Token
+    e.g.: demo, 2c8628e4-6bd6-4c90-a6e7-8872afde8f39
 
 Swagger UI
 ----------
@@ -31,10 +31,14 @@ web interface with the correct openapi json specification already loaded.
 1. Authorize yourself
 """""""""""""""""""""
 Before you try any of the routes (functions) of the api you have to provide your credentials by pressing the button
-:guilabel:`Authorize` in the upper right corner and entering your ``api-user`` and ``api-user-token``.
+:guilabel:`Authorize` in the upper right corner and entering your ``database-name`` and ``api-user-token``.
 
 .. image:: /basics/images/swagger_ui_access.png
     :align: left
+
+.. attention:: You do NOT need to provide the login (name) of you api user but the **name of the database**!
+    The database name may be something like ``dadi``, ``demo`` or alike. The login of the user is already
+    "baked" into the api token.
 
 If you look closely you will see that the lock is now closed on all routes showing you that any further request will be
 done with the provided credentials:
