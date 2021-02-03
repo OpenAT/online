@@ -51,5 +51,6 @@ If you need to make local or manual changes create a new integration!
         'data/frst_api_user_group.xml',
         'data/frst_rest_api.xml',
         'data/res_partner.xml',
+        'data/frst_zverzeichnis.xml',
     ],
 }
