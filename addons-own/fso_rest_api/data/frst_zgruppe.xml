@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- ============ -->
+        <!-- frst.zgruppe -->
+        <!-- ============ -->
+
+        <!-- ir.export field list for openapi access -->
+        <record id="frst_rest_api_frst_zgruppe_export" model="ir.exports">
+            <field name="name">Fundraising Studio Rest API zGruppe Fields</field>
+            <field name="resource">frst.zgruppe</field>
+            <field
+                name="export_fields"
+                eval="[
+                    (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'tabellentyp_id'}),
+					(0, 0, {'name': 'geltungsbereich'}),
+
+                    (0, 0, {'name': 'gruppe_lang'}),
+                    (0, 0, {'name': 'gui_anzeigen'}),
+
+					(0, 0, {'name': 'ja_gui_anzeige'}),
+                    (0, 0, {'name': 'nein_gui_anzeige'}),
+                    ]"
+            />
+        </record>
+
+        <!-- "context" for openapi access -->
+        <record id="frst_rest_api_frst_zgruppe_context" model="openapi.access.create.context">
+            <field name="name">frst_rest_api_frst_zgruppe_context</field>
+            <field name="model_id" ref="fso_frst_groups.model_frst_zgruppe" />
+            <field name="context">{"lang": "DE_de"}</field>
+        </record>
+
+        <!-- openapi access -->
+        <record id="frst_rest_api_frst_zgruppe_access" model="openapi.access">
+            <field name="namespace_id" ref="frst_rest_api_namespace" />
+            <field name="model_id" ref="fso_frst_groups.model_frst_zgruppe" />
+
+            <field name="api_create" eval="False" />
+            <field name="api_read" eval="True" />
+            <field name="api_update" eval="False" />
+            <field name="api_delete" eval="False" />
+
+            <field name="api_public_methods" eval="True" />
+            <field name="public_methods" eval="'search\n'"/>
+            <field name="private_methods" eval="" />
+
+            <field name="allowed_fields_id" ref="fso_rest_api.frst_rest_api_frst_zgruppe_export" />
+            <field name="read_one_id" ref="fso_rest_api.frst_rest_api_frst_zgruppe_export" />
+            <field name="read_many_id" ref="fso_rest_api.frst_rest_api_frst_zgruppe_export" />
+
+            <field
+                name="create_context_ids"
+                eval="[(4, ref('fso_rest_api.frst_rest_api_frst_zgruppe_context'))]"
+            />
+        </record>
+
+    </data>
+</openerp>
