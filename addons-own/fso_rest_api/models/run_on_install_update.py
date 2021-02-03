@@ -16,7 +16,8 @@ class Namespace(models.Model):
         to_delete = ('fso_rest_api.frst_rest_api_res_partner_export',
                      'fso_rest_api.frst_rest_api_frst_zverzeichnis_export',
                      'fso_rest_api.frst_rest_api_frst_zgruppe_export',
-                     'fso_rest_api.frst_rest_api_frst_zgruppedetail_export',)
+                     'fso_rest_api.frst_rest_api_frst_zgruppedetail_export',
+                     'frst_rest_api_frst_persongruppe_export',)
 
         for xml_ref in to_delete:
             record = self.sudo().env.ref(xml_ref, raise_if_not_found=False)
