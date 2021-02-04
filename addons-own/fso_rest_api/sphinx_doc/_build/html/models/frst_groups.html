@@ -158,15 +158,27 @@
 </li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">frst.zgruppe, frst.zgruppedetail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#frst-zgruppe">frst.zgruppe</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#required-fields">Required Fields</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#special-fields">Special Fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gruppe-lang"><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabellentyp-id"><code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gui-anzeigen"><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#frst-zgruppedetail">frst.zgruppedetail</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id3">Required Fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4">Special Fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zgruppe-id"><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geltungsbereich"><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bestaetigung-erforderlich"><code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bestaetigung-typ"><code class="docutils literal notranslate"><span class="pre">bestaetigung_typ</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -320,38 +332,159 @@
             
   <div class="section" id="frst-zgruppe-frst-zgruppedetail">
 <span id="frst-groups"></span><h1>frst.zgruppe, frst.zgruppedetail<a class="headerlink" href="#frst-zgruppe-frst-zgruppedetail" title="Permalink to this headline">¶</a></h1>
-<p>Records of this models represent Fundraising Studio group folders <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> and
-groups <a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> inside (linked) to the group folders.</p>
+<p>These records represent Fundraising Studio group folders. It works similar
+to a tagging system, but has a start and end date associated, and a 1-deep
+hierarchy: <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> can
+be viewed as a container for multiple <a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a>.</p>
 <div class="section" id="frst-zgruppe">
 <span id="id1"></span><h2>frst.zgruppe<a class="headerlink" href="#frst-zgruppe" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
-<div class="section" id="required-fields">
-<h3>Required Fields<a class="headerlink" href="#required-fields" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p>Parent for <a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a>.</p>
+<p>Defines the meaning of groups contained and specifies if the groups within
+can be assigned to people, or emails, or contracts, etc..</p>
+<dl class="simple">
+<dt>Example:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> “Beruf” (occupation)</dt><dd><ul>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Angestellte/r” (employee)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Arbeiter/in” (laborer)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Pensionist/in” (retiree).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only reading is supported for this model.</p>
 </div>
 <div class="section" id="special-fields">
 <h3>Special Fields<a class="headerlink" href="#special-fields" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+</div>
+<div class="section" id="gruppe-lang">
+<h3><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code><a class="headerlink" href="#gruppe-lang" title="Permalink to this headline">¶</a></h3>
+<p>The name or title of the group.</p>
+</div>
+<div class="section" id="tabellentyp-id">
+<h3><code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code><a class="headerlink" href="#tabellentyp-id" title="Permalink to this headline">¶</a></h3>
+<p>Specifies the target type for the contained groups. It can be one of the
+following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">100100</span></code> group is for people, e.g.: occupation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">100110</span></code> groups is for email addresses, e.g.: newsetter</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There several more types, but only the the listed values are
+currently supported by the API.</p>
+</div>
+</div>
+<div class="section" id="gui-anzeigen">
+<h3><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code><a class="headerlink" href="#gui-anzeigen" title="Permalink to this headline">¶</a></h3>
+<p>Specifies whether the group is active for this organisation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a>, only use entries having the value <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</div>
+</div>
 </div>
 <div class="section" id="methods">
-<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="search">
+<h3><code class="docutils literal notranslate"><span class="pre">search</span></code><a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h3>
+<p>Only the <code class="docutils literal notranslate"><span class="pre">search</span></code> method is currently exposed by the api. See <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a> for more information about searching.</p>
 </div>
 </div>
 <div class="section" id="frst-zgruppedetail">
 <span id="id2"></span><h2>frst.zgruppedetail<a class="headerlink" href="#frst-zgruppedetail" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>Child of <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a>.</p>
+<p>Represents an actual value within a group. It could be a
+specific occupation, or a specific newsletter group.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> “Beruf” (occupation)</dt><dd><ul>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Angestellte/r” (employee)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Arbeiter/in” (laborer)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Pensionist/in” (retiree).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="required-fields">
+<h3>Required Fields<a class="headerlink" href="#required-fields" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>The minimum requirements for a new group entry are:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code> can only be <code class="docutils literal notranslate"><span class="pre">local</span></code> for new groups.
+<code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code>, otherwise the entry is
+considered to be not in use.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl class="simple">
+<dt>If not specified, the default values are:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">today</span></code> for <code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code> and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2099-12-31</span></code> (forever) for <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
 <div class="section" id="id3">
-<h3>Required Fields<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<h3>Special Fields<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="zgruppe-id">
+<h3><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code><a class="headerlink" href="#zgruppe-id" title="Permalink to this headline">¶</a></h3>
+<p>The foreign key to the parent <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> record.</p>
+</div>
+<div class="section" id="geltungsbereich">
+<h3><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code><a class="headerlink" href="#geltungsbereich" title="Permalink to this headline">¶</a></h3>
+<p>Differentiates between <code class="docutils literal notranslate"><span class="pre">system</span></code> groups, and <code class="docutils literal notranslate"><span class="pre">local</span></code> groups.
+Custom records must be <code class="docutils literal notranslate"><span class="pre">local</span></code>, anything else is invalid.</p>
+</div>
+<div class="section" id="bestaetigung-erforderlich">
+<h3><code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span></code><a class="headerlink" href="#bestaetigung-erforderlich" title="Permalink to this headline">¶</a></h3>
+<p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the group requires confirmation before beeing considered
+active.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Setting this to true will temporarily change the values for
+<code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code> and <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code> to <code class="docutils literal notranslate"><span class="pre">1999-09-09</span></code>. Upon
+confirmation, the dates will be set to actual values.</p>
+</div>
+</div>
+<div class="section" id="bestaetigung-typ">
+<h3><code class="docutils literal notranslate"><span class="pre">bestaetigung_typ</span></code><a class="headerlink" href="#bestaetigung-typ" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>Specifies the type of confirmation. It can be one of the following values:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">doubleoptin</span></code> group only activates upon confirmation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phone_call</span></code> a staffer confirmed the group in a phone call</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">workflow</span></code> confirmation is handled via Fundraising Studio workflow</p></li>
+</ul>
+</dd>
+</dl>
+</div>
 </div>
 <div class="section" id="id4">
-<h3>Special Fields<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
-</div>
+<h2>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id5">
-<h3>Methods<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<h3><code class="docutils literal notranslate"><span class="pre">search</span></code><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>Only the <code class="docutils literal notranslate"><span class="pre">search</span></code> method is currently exposed by the api. See <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a> for more information about searching.</p>
 </div>
 </div>
 </div>
