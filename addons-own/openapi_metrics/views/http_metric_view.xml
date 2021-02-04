@@ -55,7 +55,7 @@
 
     <menuitem
         id="http_metrics_graph_menu"
-        name="HTTP Metrics"
+        name="Usage Statistic"
         parent="openapi.openapi_menu"
         action="http_metrics_graph_action"
         />

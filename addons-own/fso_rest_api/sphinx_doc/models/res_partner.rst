@@ -11,21 +11,21 @@ of contact.
 
     Some of the records in this model may stand for special forms of partner data such as
         - rental addresses
-        - additional partner addresses
-            - invoice address
-            - delivery address
-        - deleted partners where some data must be kept for accounting reasons
+        - invoice partner/address
+        - delivery partner/address
+        - deleted partners (where some data must be kept for accounting reasons)
 
 .. attention::
 
     Currently the API is not supporting multiple (postal) addresses per partner. But you can set and manipulate the
-    *current* or *main address* by setting the corresponding fields of the :ref:`res_partner` record like ``street``,
-    ``country_id``, ``zip`` and so on!
+    *current address* or *main address* by setting the corresponding fields of the :ref:`res_partner` record like
+    ``street``, ``country_id``, ``zip`` and so on! Managing multiple addresses per partner  is therefore only
+    available through the Fundraising Studio GUI but may be added later to the REST API.
 
 .. attention::
 
     Currently the API is not able to set or read the relations between partner! This feature is therefore only
-    available through the Fundraising Studio GUI but may be added later.
+    available through the Fundraising Studio GUI but may be added later to the REST API.
 
 Required Fields
 ---------------
@@ -55,12 +55,12 @@ A partner in Fundraising Studio can have multiple email addresses stored in :ref
 partner by the field ``frst_personemail_ids``. These e-mail addresses are created and linked indirectly
 by the char field ``email`` of the partner.
 
-If a new email is entered in the field ``email`` of a partner a new
-:ref:`frst_personemail` will be created and linked automatically to the partner. The last email entered will be the
-so called *current* or *main email address*.
+If a new email is entered in the field ``email`` of the partner a new :ref:`frst_personemail` will be
+created and linked automatically to the partner. The last email entered will be the so called *current* or
+*main email address*.
 
 The *main email address* will always match the email found in the :ref:`res_partner` field ``email`` and is linked
-for convenience in the :ref:`res_partner` field ``main_personemail_id``
+for convenience only in the :ref:`res_partner` field ``main_personemail_id``
 
 Methods
 -------

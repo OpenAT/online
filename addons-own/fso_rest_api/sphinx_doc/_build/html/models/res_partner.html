@@ -107,6 +107,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#calling-methods">Calling Methods</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/authorization.html">Authorization</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Models</a><ul class="current">
@@ -173,7 +174,22 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="frst_zverzeichnis.html">frst.zverzeichnis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frst_zverzeichnis.html">frst.zverzeichnis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#verzeichnistyp-id"><code class="docutils literal notranslate"><span class="pre">verzeichnistyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#bezeichnungstyp-id"><code class="docutils literal notranslate"><span class="pre">bezeichnungstyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#parent-id"><code class="docutils literal notranslate"><span class="pre">parent_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#startdatum"><code class="docutils literal notranslate"><span class="pre">startdatum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#endedatum"><code class="docutils literal notranslate"><span class="pre">endedatum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
@@ -193,6 +209,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#updating-partner-data">Updating partner data</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
@@ -284,7 +302,7 @@ of contact.</p>
 <p class="admonition-title">Note</p>
 <dl class="simple">
 <dt>Some of the records in this model may stand for special forms of partner data such as</dt><dd><ul class="simple">
-<li><p>rental addresses</p></li>
+<li><p><strong>rental addresses</strong></p></li>
 <li><dl class="simple">
 <dt>additional partner addresses</dt><dd><ul>
 <li><p>invoice address</p></li>
@@ -293,7 +311,7 @@ of contact.</p>
 </dd>
 </dl>
 </li>
-<li><p>deleted partners where some data must be kept for accounting reasons</p></li>
+<li><p><strong>deleted partners</strong> where some data must be kept for accounting reasons</p></li>
 </ul>
 </dd>
 </dl>
@@ -302,12 +320,13 @@ of contact.</p>
 <p class="admonition-title">Attention</p>
 <p>Currently the API is not supporting multiple (postal) addresses per partner. But you can set and manipulate the
 <em>current</em> or <em>main address</em> by setting the corresponding fields of the <a class="reference internal" href="#res-partner"><span class="std std-ref">res.partner</span></a> record like <code class="docutils literal notranslate"><span class="pre">street</span></code>,
-<code class="docutils literal notranslate"><span class="pre">country_id</span></code>, <code class="docutils literal notranslate"><span class="pre">zip</span></code> and so on!</p>
+<code class="docutils literal notranslate"><span class="pre">country_id</span></code>, <code class="docutils literal notranslate"><span class="pre">zip</span></code> and so on! This feature is therefore only available through the Fundraising Studio GUI
+but may be added later to the REST API.</p>
 </div>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>Currently the API is not able to set or read the relations between partner! This feature is therefore only
-available through the Fundraising Studio GUI but may be added later.</p>
+available through the Fundraising Studio GUI but may be added later to the REST API.</p>
 </div>
 <div class="section" id="required-fields">
 <h2>Required Fields<a class="headerlink" href="#required-fields" title="Permalink to this headline">¶</a></h2>

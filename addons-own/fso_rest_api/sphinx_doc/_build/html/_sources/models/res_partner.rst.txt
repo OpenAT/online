@@ -10,22 +10,23 @@ of contact.
 .. note::
 
     Some of the records in this model may stand for special forms of partner data such as
-        - rental addresses
+        - **rental addresses**
         - additional partner addresses
             - invoice address
             - delivery address
-        - deleted partners where some data must be kept for accounting reasons
+        - **deleted partners** where some data must be kept for accounting reasons
 
 .. attention::
 
     Currently the API is not supporting multiple (postal) addresses per partner. But you can set and manipulate the
     *current* or *main address* by setting the corresponding fields of the :ref:`res_partner` record like ``street``,
-    ``country_id``, ``zip`` and so on!
+    ``country_id``, ``zip`` and so on! This feature is therefore only available through the Fundraising Studio GUI
+    but may be added later to the REST API.
 
 .. attention::
 
     Currently the API is not able to set or read the relations between partner! This feature is therefore only
-    available through the Fundraising Studio GUI but may be added later.
+    available through the Fundraising Studio GUI but may be added later to the REST API.
 
 Required Fields
 ---------------

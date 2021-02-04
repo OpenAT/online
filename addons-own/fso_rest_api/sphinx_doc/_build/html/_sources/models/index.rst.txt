@@ -2,6 +2,8 @@
 Models
 ============
 
+Please make sure to start with :ref:`models_overview` to get a basic understanding of the available models.
+
 .. toctree::
     :maxdepth: 1
 

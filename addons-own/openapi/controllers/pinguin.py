@@ -1136,7 +1136,6 @@ def method_is_allowed(method, methods_conf, main=False, raise_exception=False):
 
 
 # By Mike: Check that the fields are allowed
-# TODO: by mike: Check if the field names match the ir.export names - if not remap them!
 def fields_are_allowed(method, data, fields_blacklist):
     blocked = []
     for k in data.keys():
@@ -1171,7 +1170,7 @@ def get_definition_name(modelname, prefix="", postfix="", splitter="-"):
 
 # Get OAS definitions part for model and nested models
 def get_OAS_definitions_part(
-    model_obj, export_fields_dict, definition_prefix="", definition_postfix=""
+    model_obj, export_fields_dict, definition_prefix="", definition_postfix="",
 ):
     """Recursively gets definition parts of the OAS for model by export fields.
 

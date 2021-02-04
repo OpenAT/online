@@ -30,6 +30,8 @@
                     (0, 0, {'name': 'title_web'}),
 
                     (0, 0, {'name': 'email'}),
+                    (0, 0, {'name': 'main_personemail_id'}),
+                    (0, 0, {'name': 'frst_personemail_ids'}),
                     (0, 0, {'name': 'newsletter_web'}),
 
                     (0, 0, {'name': 'phone'}),
@@ -52,6 +54,19 @@
                     (0, 0, {'name': 'frst_zverzeichnis_id'}),
 
                     (0, 0, {'name': 'gdpr_accepted'}),
+                    ]"
+            />
+        </record>
+        <!-- ir.export READONLY field list for openapi access -->
+        <record id="frst_rest_api_res_partner_export_readonly" model="ir.exports">
+            <field name="name">Fundraising Studio Rest API Readonly Partner Fields</field>
+            <field name="resource">res.partner</field>
+            <field
+                name="export_fields"
+                eval="[
+                    (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'main_personemail_id'}),
+                    (0, 0, {'name': 'frst_personemail_ids'}),
                     ]"
             />
         </record>
@@ -78,6 +93,7 @@
             <field name="private_methods" eval="" />
 
             <field name="allowed_fields_id" ref="fso_rest_api.frst_rest_api_res_partner_export" />
+            <field name="readonly_fields_id" ref="fso_rest_api.frst_rest_api_res_partner_export_readonly" />
             <field name="read_one_id" ref="fso_rest_api.frst_rest_api_res_partner_export" />
             <field name="read_many_id" ref="fso_rest_api.frst_rest_api_res_partner_export" />
 

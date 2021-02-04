@@ -447,18 +447,18 @@ class Access(models.Model):
             # Use only the allowed fields
             if self.allowed_fields_id:
                 allowed_field_names = self.allowed_fields_id.export_fields.mapped('name')
-                allowed_field_names = [f_name.split("/")[0] for f_name in allowed_field_names]
 
             # Use all fields of the model
             else:
                 allowed_field_names = related_model.fields_get_keys()
 
-            # Remove readonly fields from the definition (they should still appear in read_one and read_many)
-            if self.readonly_fields_id:
-                readonly_field_names = self.readonly_fields_id.export_fields.mapped('name')
-                readonly_field_names = [f_name.split("/")[0] for f_name in readonly_field_names]
-                allowed_field_names = list(set(allowed_field_names) - set(readonly_field_names))
+            # TODO: Find a way that these fields are marked as "readonly" in get_OAS_definitions_part()
+            # readonly_fields_dict = {}
+            # if self.readonly_fields_id:
+            #     export_readonly_fields = self.readonly_fields_id.export_fields.mapped('name')
+            #     readonly_fields_dict = pinguin.transform_strfields_to_dict(export_readonly_fields)
 
+            # Convert the fields list e.g. ['name','bank_ids/bank_id/id', 'bank_ids/bank_name'] ,to a dict
             definition_fields = pinguin.transform_strfields_to_dict(allowed_field_names)
 
             # Append the field definitions

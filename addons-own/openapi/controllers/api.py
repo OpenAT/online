@@ -88,7 +88,6 @@ class ApiV1Controller(http.Controller):
         )
 
         # By mike: Check if the fields are allowed
-        # TODO: Test this part!
         pinguin.fields_are_allowed(
             "api_create", data, conf["in_fields_api_create_blacklist"],
         )
@@ -151,7 +150,6 @@ class ApiV1Controller(http.Controller):
         )
 
         # By mike: Check if the fields are allowed
-        # TODO: Test this part!
         pinguin.fields_are_allowed(
             "api_update", data, conf["in_fields_api_update_blacklist"],
         )
