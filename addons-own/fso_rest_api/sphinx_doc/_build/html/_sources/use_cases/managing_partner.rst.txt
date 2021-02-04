@@ -202,14 +202,52 @@ Creating a partner
 To create a new partner data we send a ``POST`` request to the route ``/res.partner/{id}`` and provide the
 field data as the json payload of the request.
 
-TODO: Code Example
+.. tabs::
+
+    .. code-tab:: python
+
+        # Fundraising Studio REST API Examples
+
+        import requests
+        from  requests.auth import HTTPBasicAuth
+
+        # API Base URL
+        api_base_url = "http://demo.local.com/api/v1/frst"
+
+        # Prepare Authorization
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+
+        # Create a partner
+        partner_data = {
+            'firstname': 'Max',
+            'lastname': 'Mustermann',
+            'email': 'max@mustermann.com'
+        }
+        response = requests.post(api_base_url + '/res.partner', auth=auth, json=partner_data)
+
 
 Deleting a partner
 ------------------
 
 To delete a new partner we send a ``DELETE`` request to the route ``/res.partner/{id}``.
 
-TODO: Code Example
+.. tabs::
+
+    .. code-tab:: python
+
+        # Fundraising Studio REST API Examples
+
+        import requests
+        from  requests.auth import HTTPBasicAuth
+
+        # API Base URL
+        api_base_url = "http://demo.local.com/api/v1/frst"
+
+        # Prepare Authorization
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+
+        # Update partner data
+        response = requests.delete(api_base_url + '/res.partner/1720', auth=auth)
 
 .. attention:: In general you may only be able to delete partners that where created by you! Deletion of other
     partners may fail with an access error.

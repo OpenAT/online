@@ -107,6 +107,19 @@
 <li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#calling-methods">Calling Methods</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/access_security.html">Access and Security</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#user-with-restricted-rights">User with restricted rights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#security-advisory">Security advisory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/usage_limits_logging.html">Limits, Costs, Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-limits">Usage Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-costs">Usage Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#repair-costs">Repair Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#logging">Logging</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../models/index.html">Models</a><ul>
@@ -119,8 +132,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/res_partner.html">res.partner</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required fields</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special Fields</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
 </ul>
@@ -145,13 +158,15 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#methods">Methods</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id5">Methods</a></li>
 </ul>
 </li>
 </ul>
@@ -171,25 +186,57 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#verzeichnistyp-id"><code class="docutils literal notranslate"><span class="pre">verzeichnistyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#bezeichnungstyp-id"><code class="docutils literal notranslate"><span class="pre">bezeichnungstyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#parent-id"><code class="docutils literal notranslate"><span class="pre">parent_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#startdatum"><code class="docutils literal notranslate"><span class="pre">startdatum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#endedatum"><code class="docutils literal notranslate"><span class="pre">endedatum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Searching</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Searching</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#search-examples">Search Examples</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#partner-search">Partner search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-basics">Search Basics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#name-search">Name search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#combining-criteria-with-or">Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#negate-an-operator">Negate an operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#searching-for-related-data">Searching for related data</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#search-method-options"><code class="docutils literal notranslate"><span class="pre">search</span></code> method options</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="search_domain.html">Search Domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_domain.html">Search Domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="search_domain.html#domain-criterion">domain criterion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="search_domain.html#field-name-str"><code class="docutils literal notranslate"><span class="pre">field_name</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="search_domain.html#operator-str"><code class="docutils literal notranslate"><span class="pre">operator</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="search_domain.html#value"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="search_domain.html#logical-operators">Logical Operators</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#updating-partner-data">Updating partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#creating-a-partner">Creating a partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#deleting-a-partner">Deleting a partner</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
 </ul>
 </li>
@@ -273,7 +320,7 @@
             
   <div class="section" id="searching">
 <span id="id1"></span><h1>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h1>
-<p>To search for records can be done by the search method. Any available model has a search method.
+<p>Searching for records can be done by the <code class="docutils literal notranslate"><span class="pre">search</span></code> method. Any available model has a search method.
 It can be called by the api via routes with <code class="docutils literal notranslate"><span class="pre">.../call/search/...</span></code> in them.</p>
 <p>The search method needs at least a <a class="reference internal" href="search_domain.html#search-domain"><span class="std std-ref">Search Domain</span></a> for the current model. Such a search domain consists of
 any number of search criteria each made up of three arguments:</p>
@@ -282,10 +329,10 @@ any number of search criteria each made up of three arguments:</p>
 <p class="admonition-title">Tip</p>
 <p>If not otherwise stated all search criteria are combined as <code class="docutils literal notranslate"><span class="pre">AND</span></code>.</p>
 </div>
-<div class="section" id="search-examples">
-<span id="id2"></span><h2>Search Examples<a class="headerlink" href="#search-examples" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="partner-search">
-<h3>Partner search<a class="headerlink" href="#partner-search" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="search-basics">
+<span id="search-examples"></span><h2>Search Basics<a class="headerlink" href="#search-basics" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="name-search">
+<h3>Name search<a class="headerlink" href="#name-search" title="Permalink to this headline">¶</a></h3>
 <p>To search for a partner where the string “ax” is anywhere in the field <code class="docutils literal notranslate"><span class="pre">firstname</span></code> and the lastname is
 exactly “Mustermann” we could use a search domain like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[(</span><span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;ilike&#39;</span><span class="p">,</span> <span class="s1">&#39;ax&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;lastname&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">)]</span>
@@ -301,7 +348,10 @@ exactly “Mustermann” we could use a search domain like:</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">'|'</span></code> operator combines the next two search criteria as <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">OR</span> <span class="pre">C</span></code> So the full <a class="reference internal" href="search_domain.html#search-domain"><span class="std std-ref">Search Domain</span></a> reads like
-<code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">AND</span> <span class="pre">(B</span> <span class="pre">OR</span> <span class="pre">C)</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">AND</span> <span class="pre">(B</span> <span class="pre">OR</span> <span class="pre">C)</span></code>. This kind of notation is called <a class="reference external" href="https://en.wikipedia.org/wiki/Polish_notation">Polish notation</a>
+and is a mathematical notation in which operators precede their operands, in contrast to the more common infix notation.
+This notation may be familiar for you if you had an HP calculator. Mor information about it can be found
+<a class="reference external" href="https://en.wikipedia.org/wiki/Polish_notation">here</a>.</p>
 </div>
 <div class="section" id="negate-an-operator">
 <h3>Negate an operator<a class="headerlink" href="#negate-an-operator" title="Permalink to this headline">¶</a></h3>
@@ -310,7 +360,43 @@ E.g. <strong>not equals to</strong> would be <code class="docutils literal notra
 </div>
 <div class="section" id="searching-for-related-data">
 <h3>Searching for related data<a class="headerlink" href="#searching-for-related-data" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<p>If you want to search for all partners linked to a country with the name “Österreich” you could directly use
+the data of the related record by dot notation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;country_id.name&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;Österreich&#39;</span><span class="p">)]</span>
+
+<span class="c1"># Full request</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;http://demo.local.com/api/v1/frst/res.partner/call/search&#39;</span><span class="p">,</span>
+                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+                          <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">]</span>
+                                <span class="p">},</span>
+                          <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="search-method-options">
+<h2><code class="docutils literal notranslate"><span class="pre">search</span></code> method options<a class="headerlink" href="#search-method-options" title="Permalink to this headline">¶</a></h2>
+<p>The search method provides additional keyword arguments for limiting the search result or to realise pagination.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">offset</span></code> (int) – number of results to ignore (default: none)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">limit</span></code> (int) – maximum number of records to return (default: all)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code> (str) – sort string</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">count</span></code> (bool) – if True, only counts and returns the number of matching records (default: False)</p></li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;country_id.name&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="s1">&#39;Österreich&#39;</span><span class="p">)]</span>
+
+<span class="c1"># Full request</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;http://demo.local.com/api/v1/frst/res.partner/call/search&#39;</span><span class="p">,</span>
+                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+                          <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">],</span>
+                                <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                                           <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;id desc&quot;</span><span class="p">}</span>
+                                <span class="p">},</span>
+                          <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 </div>

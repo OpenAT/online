@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Introduction &mdash; Fundraising Studio REST API o8 documentation</title>
+  <title>Access and Security &mdash; Fundraising Studio REST API o8 documentation</title>
   
 
   
@@ -45,8 +45,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial" href="tutorial.html" />
-    <link rel="prev" title="Basics" href="index.html" /> 
+    <link rel="next" title="Limits, Costs, Logging" href="usage_limits_logging.html" />
+    <link rel="prev" title="Authorization" href="authorization.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,8 +93,8 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Basics</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#where-to-start">Where to start?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#where-to-start">Where to start?</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
@@ -108,9 +108,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="authorization.html">Authorization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="access_security.html">Access and Security</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="access_security.html#user-with-restricted-rights">User with restricted rights</a></li>
-<li class="toctree-l3"><a class="reference internal" href="access_security.html#security-advisory">Security advisory</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Access and Security</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user-with-restricted-rights">User with restricted rights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#security-advisory">Security advisory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="usage_limits_logging.html">Limits, Costs, Logging</a><ul>
@@ -290,13 +290,13 @@
         
           <li><a href="index.html">Basics</a> &raquo;</li>
         
-      <li>Introduction</li>
+      <li>Access and Security</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/basics/introduction.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/basics/access_security.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -306,10 +306,10 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="usage_limits_logging.html" class="btn btn-neutral float-right" title="Limits, Costs, Logging" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Basics" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="authorization.html" class="btn btn-neutral float-left" title="Authorization" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
       
   </div>
   
@@ -318,43 +318,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="introduction">
-<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="../index.html#fundraising-studio-rest-api"><span class="std std-ref">Fundraising Studio Rest API</span></a> provides an interface to some of the most common
-models and methods of <a class="reference external" href="https://www.datadialog.net">Fundraising Studio</a>. We provide an openapi 2.0
-(former known as swagger) specification file in json format to make it easy for any developer to use the
-api with simple http requests. We also provide a “swagger ui” client where you can view the content of
-the specification file and execute http request directly.</p>
-<p>Areas of application:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Management of Partner (Contacts, Persons)</p></li>
-<li><p>Management of E-Mail Addresses</p></li>
-<li><p>Management of Groups and Group Subscriptions</p></li>
-<li><p>Management of Mailing Lists and Subscriptions</p></li>
-<li><p>Double-Opt-In Settings for Mailing List Subscriptions</p></li>
-</ul>
-</div></blockquote>
-<p>Areas of application in the near future:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Import of (online) donations</p></li>
-<li><p>Import and update of (online) payments</p></li>
-<li><p>Management of FS-Online Donation Forms</p></li>
-<li><p>Management of FS-Online E-Mail Templates</p></li>
-<li><p>Management of FS-Online Surveys</p></li>
-<li><p>Management of FS-Online Forms</p></li>
-<li><p>Management of the FS-Online E-Commerce Webshop</p></li>
-</ul>
-</div></blockquote>
-<div class="section" id="where-to-start">
-<h2>Where to start?<a class="headerlink" href="#where-to-start" title="Permalink to this headline">¶</a></h2>
-<p>If you are familiar with <a class="reference external" href="https://www.openapis.org/">openapi</a> (<a class="reference external" href="https://swagger.io/specification/v2/">swagger</a>)
-and REST API’s in common we recommend to jump right into the <a class="reference internal" href="tutorial.html#basic-tutorial"><span class="std std-ref">Tutorial</span></a>. Here you will find an example of how
-to authenticate at the system, send basic commands and interpreting the returning data as well as information about
-exceptions and gotchas. After the basic tutorial you may get your self an
-<a class="reference internal" href="../models/models_overview.html#models-overview"><span class="std std-ref">overview of the models and methods</span></a> and finally jump to the <a class="reference internal" href="../use_cases/index.html#use-cases"><span class="std std-ref">Use Cases</span></a> for some real
-world examples.</p>
+  <div class="section" id="access-and-security">
+<span id="access-security"></span><h1>Access and Security<a class="headerlink" href="#access-and-security" title="Permalink to this headline">¶</a></h1>
+<p>The API grants access to the <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">write</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code> and the <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">search</span></a> methods
+of the models described in this documentation.</p>
+<p>This global access can be further restricted by the user rights of the user linked to the <code class="docutils literal notranslate"><span class="pre">api-user-token</span></code>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>In most models you may only be able to delete records that where created by your user
+(user of your <code class="docutils literal notranslate"><span class="pre">api-user-token</span></code>)! Deletion of records created by other users will fail with an access error.</p>
+<p>In some cases you may not be able to delete records even if they where created by your api user. This is most
+likely due to some linked documents that must be deleted manually before the deletion of the record.</p>
+</div>
+<div class="section" id="user-with-restricted-rights">
+<h2>User with restricted rights<a class="headerlink" href="#user-with-restricted-rights" title="Permalink to this headline">¶</a></h2>
+<p>We <strong>strongly</strong> advise you to request a unique user (<code class="docutils literal notranslate"><span class="pre">api-user-token</span></code>) for different applications and usages
+scenarios with tailored user rights. This enhances the security and will prevent errors on the client side.</p>
+<p>We can even provide you with a custom API to enhance the security even further if only a very small
+subset of models or methods are needed in your application.</p>
+</div>
+<div class="section" id="security-advisory">
+<h2>Security advisory<a class="headerlink" href="#security-advisory" title="Permalink to this headline">¶</a></h2>
+<p>It is in your responsibility to protect the provided <code class="docutils literal notranslate"><span class="pre">api-user-tokens</span></code>. Never send them over any
+unprotected protocols or expose them unprotected. Tokens may be revoked by us at any time if suspicious
+traffic or usage is detected.</p>
+<p>As a rule of thumb tokens should be renewed at least every six months.</p>
 </div>
 </div>
 
@@ -364,8 +352,8 @@ world examples.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="index.html" class="btn btn-neutral float-left" title="Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage_limits_logging.html" class="btn btn-neutral float-right" title="Limits, Costs, Logging" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="authorization.html" class="btn btn-neutral float-left" title="Authorization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

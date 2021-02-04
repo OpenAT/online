@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Introduction &mdash; Fundraising Studio REST API o8 documentation</title>
+  <title>Limits, Costs, Logging &mdash; Fundraising Studio REST API o8 documentation</title>
   
 
   
@@ -45,8 +45,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial" href="tutorial.html" />
-    <link rel="prev" title="Basics" href="index.html" /> 
+    <link rel="next" title="Models" href="../models/index.html" />
+    <link rel="prev" title="Access and Security" href="access_security.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,8 +93,8 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Basics</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#where-to-start">Where to start?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#where-to-start">Where to start?</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
@@ -113,11 +113,11 @@
 <li class="toctree-l3"><a class="reference internal" href="access_security.html#security-advisory">Security advisory</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="usage_limits_logging.html">Limits, Costs, Logging</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="usage_limits_logging.html#usage-limits">Usage Limits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage_limits_logging.html#usage-costs">Usage Costs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage_limits_logging.html#repair-costs">Repair Costs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="usage_limits_logging.html#logging">Logging</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Limits, Costs, Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage-limits">Usage Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-costs">Usage Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#repair-costs">Repair Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a></li>
 </ul>
 </li>
 </ul>
@@ -290,13 +290,13 @@
         
           <li><a href="index.html">Basics</a> &raquo;</li>
         
-      <li>Introduction</li>
+      <li>Limits, Costs, Logging</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/basics/introduction.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/basics/usage_limits_logging.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -306,10 +306,10 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../models/index.html" class="btn btn-neutral float-right" title="Models" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Basics" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="access_security.html" class="btn btn-neutral float-left" title="Access and Security" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
       
   </div>
   
@@ -318,43 +318,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="introduction">
-<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="../index.html#fundraising-studio-rest-api"><span class="std std-ref">Fundraising Studio Rest API</span></a> provides an interface to some of the most common
-models and methods of <a class="reference external" href="https://www.datadialog.net">Fundraising Studio</a>. We provide an openapi 2.0
-(former known as swagger) specification file in json format to make it easy for any developer to use the
-api with simple http requests. We also provide a “swagger ui” client where you can view the content of
-the specification file and execute http request directly.</p>
-<p>Areas of application:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Management of Partner (Contacts, Persons)</p></li>
-<li><p>Management of E-Mail Addresses</p></li>
-<li><p>Management of Groups and Group Subscriptions</p></li>
-<li><p>Management of Mailing Lists and Subscriptions</p></li>
-<li><p>Double-Opt-In Settings for Mailing List Subscriptions</p></li>
-</ul>
-</div></blockquote>
-<p>Areas of application in the near future:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Import of (online) donations</p></li>
-<li><p>Import and update of (online) payments</p></li>
-<li><p>Management of FS-Online Donation Forms</p></li>
-<li><p>Management of FS-Online E-Mail Templates</p></li>
-<li><p>Management of FS-Online Surveys</p></li>
-<li><p>Management of FS-Online Forms</p></li>
-<li><p>Management of the FS-Online E-Commerce Webshop</p></li>
-</ul>
-</div></blockquote>
-<div class="section" id="where-to-start">
-<h2>Where to start?<a class="headerlink" href="#where-to-start" title="Permalink to this headline">¶</a></h2>
-<p>If you are familiar with <a class="reference external" href="https://www.openapis.org/">openapi</a> (<a class="reference external" href="https://swagger.io/specification/v2/">swagger</a>)
-and REST API’s in common we recommend to jump right into the <a class="reference internal" href="tutorial.html#basic-tutorial"><span class="std std-ref">Tutorial</span></a>. Here you will find an example of how
-to authenticate at the system, send basic commands and interpreting the returning data as well as information about
-exceptions and gotchas. After the basic tutorial you may get your self an
-<a class="reference internal" href="../models/models_overview.html#models-overview"><span class="std std-ref">overview of the models and methods</span></a> and finally jump to the <a class="reference internal" href="../use_cases/index.html#use-cases"><span class="std std-ref">Use Cases</span></a> for some real
-world examples.</p>
+  <div class="section" id="limits-costs-logging">
+<span id="id1"></span><h1>Limits, Costs, Logging<a class="headerlink" href="#limits-costs-logging" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="usage-limits">
+<h2>Usage Limits<a class="headerlink" href="#usage-limits" title="Permalink to this headline">¶</a></h2>
+<p>There is no request limit per default. The API is therefore only restricted by the hardware resource limits.
+10000 requests per hour or more should be possible without any further tweaking.</p>
+<p>Higher request rates are possible by updating the hardware plan of your Fundraising Studio subscription.
+Please contact us at least a week before you need a higher request rate so that we can assign the needed hardware
+early enough for you.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>We may add a request limit at any time with no prior message if we detect any suspicious traffic.</p>
+</div>
+</div>
+<div class="section" id="usage-costs">
+<h2>Usage Costs<a class="headerlink" href="#usage-costs" title="Permalink to this headline">¶</a></h2>
+<p>Up to 10000 requests per month are free of charge. If you need more than that we will charge a small contribution
+for our expenses based on the total amount of requests per month. Please check your contract or quotation for
+pricing details.</p>
+<p>A report of the usage statistic can be provided if needed.</p>
+</div>
+<div class="section" id="repair-costs">
+<h2>Repair Costs<a class="headerlink" href="#repair-costs" title="Permalink to this headline">¶</a></h2>
+<p>Costs that may arise by misuse of the api will be charged to the api user.</p>
+</div>
+<div class="section" id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<p>The API logs every request with all the request data and may even collect data of the caller. This logging can be
+reduced to exclude request and caller data if needed e.g. by GPDR rules. We will keep the full log in case of
+suspicious activities or abuse to be able to track the source of a possible security breach.</p>
+<p>In addition a very basic usage statistic log will be kept for 14 months.</p>
+<p>These logs may be deleted by us at any time with no warning.</p>
 </div>
 </div>
 
@@ -364,8 +359,8 @@ world examples.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="index.html" class="btn btn-neutral float-left" title="Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../models/index.html" class="btn btn-neutral float-right" title="Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="access_security.html" class="btn btn-neutral float-left" title="Access and Security" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

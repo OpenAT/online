@@ -11,6 +11,9 @@ Welcome to Fundraising Studio REST API's documentation!
 Welcome to the documentation of the `Fundraising Studio <https://www.datadialog.net>`__ Rest API. To get an
 overview we suggest to jump right into the :ref:`introduction`!
 
+.. attention:: This documentation is in beta stage. Therefore some parts are still missing and details may change
+   in further releases!
+
 .. toctree::
    :maxdepth: 2
 

@@ -110,6 +110,18 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../basics/authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/access_security.html">Access and Security</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#user-with-restricted-rights">User with restricted rights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#security-advisory">Security advisory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/usage_limits_logging.html">Limits, Costs, Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-limits">Usage Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-costs">Usage Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#repair-costs">Repair Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#logging">Logging</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../models/index.html">Models</a><ul>
@@ -196,16 +208,26 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../searching/searching.html">Searching</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-examples">Search Examples</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#partner-search">Partner search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-basics">Search Basics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#name-search">Name search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#combining-criteria-with-or">Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#negate-an-operator">Negate an operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#searching-for-related-data">Searching for related data</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-method-options"><code class="docutils literal notranslate"><span class="pre">search</span></code> method options</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../searching/search_domain.html">Search Domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../searching/search_domain.html">Search Domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../searching/search_domain.html#domain-criterion">domain criterion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#field-name-str"><code class="docutils literal notranslate"><span class="pre">field_name</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#operator-str"><code class="docutils literal notranslate"><span class="pre">operator</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#value"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/search_domain.html#logical-operators">Logical Operators</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Use Cases</a><ul class="current">
@@ -523,12 +545,67 @@ change!</p>
 <h2>Creating a partner<a class="headerlink" href="#creating-a-partner" title="Permalink to this headline">¶</a></h2>
 <p>To create a new partner data we send a <code class="docutils literal notranslate"><span class="pre">POST</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code> and provide the
 field data as the json payload of the request.</p>
-<p>TODO: Code Example</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fundraising Studio REST API Examples</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create a partner</span>
+<span class="n">partner_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;firstname&#39;</span><span class="p">:</span> <span class="s1">&#39;Max&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lastname&#39;</span><span class="p">:</span> <span class="s1">&#39;Mustermann&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;max@mustermann.com&#39;</span>
+<span class="p">}</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">partner_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="deleting-a-partner">
 <h2>Deleting a partner<a class="headerlink" href="#deleting-a-partner" title="Permalink to this headline">¶</a></h2>
 <p>To delete a new partner we send a <code class="docutils literal notranslate"><span class="pre">DELETE</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code>.</p>
-<p>TODO: Code Example</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fundraising Studio REST API Examples</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update partner data</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner/1720&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>In general you may only be able to delete partners that where created by you! Deletion of other
