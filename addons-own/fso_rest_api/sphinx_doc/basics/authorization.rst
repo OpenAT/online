@@ -25,5 +25,5 @@ Example:
     of the expected error status code ``401``!
 
     This is due to security restrictions that may block the request under certain circumstances
-    long before it even comes to the REST API.
+    long before it even comes to the REST API module.
 

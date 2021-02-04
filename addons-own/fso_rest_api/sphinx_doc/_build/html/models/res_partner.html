@@ -302,16 +302,10 @@ of contact.</p>
 <p class="admonition-title">Note</p>
 <dl class="simple">
 <dt>Some of the records in this model may stand for special forms of partner data such as</dt><dd><ul class="simple">
-<li><p><strong>rental addresses</strong></p></li>
-<li><dl class="simple">
-<dt>additional partner addresses</dt><dd><ul>
-<li><p>invoice address</p></li>
-<li><p>delivery address</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p><strong>deleted partners</strong> where some data must be kept for accounting reasons</p></li>
+<li><p>rental addresses</p></li>
+<li><p>invoice partner/address</p></li>
+<li><p>delivery partner/address</p></li>
+<li><p>deleted partners (where some data must be kept for accounting reasons)</p></li>
 </ul>
 </dd>
 </dl>
@@ -319,9 +313,9 @@ of contact.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>Currently the API is not supporting multiple (postal) addresses per partner. But you can set and manipulate the
-<em>current</em> or <em>main address</em> by setting the corresponding fields of the <a class="reference internal" href="#res-partner"><span class="std std-ref">res.partner</span></a> record like <code class="docutils literal notranslate"><span class="pre">street</span></code>,
-<code class="docutils literal notranslate"><span class="pre">country_id</span></code>, <code class="docutils literal notranslate"><span class="pre">zip</span></code> and so on! This feature is therefore only available through the Fundraising Studio GUI
-but may be added later to the REST API.</p>
+<em>current address</em> or <em>main address</em> by setting the corresponding fields of the <a class="reference internal" href="#res-partner"><span class="std std-ref">res.partner</span></a> record like
+<code class="docutils literal notranslate"><span class="pre">street</span></code>, <code class="docutils literal notranslate"><span class="pre">country_id</span></code>, <code class="docutils literal notranslate"><span class="pre">zip</span></code> and so on! Managing multiple addresses per partner  is therefore only
+available through the Fundraising Studio GUI but may be added later to the REST API.</p>
 </div>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
@@ -351,11 +345,11 @@ full string will go into <code class="docutils literal notranslate"><span class=
 <p>A partner in Fundraising Studio can have multiple email addresses stored in <a class="reference internal" href="frst_personemail.html#frst-personemail"><span class="std std-ref">frst.personemail</span></a> and linked to the
 partner by the field <code class="docutils literal notranslate"><span class="pre">frst_personemail_ids</span></code>. These e-mail addresses are created and linked indirectly
 by the char field <code class="docutils literal notranslate"><span class="pre">email</span></code> of the partner.</p>
-<p>If a new email is entered in the field <code class="docutils literal notranslate"><span class="pre">email</span></code> of a partner a new
-<a class="reference internal" href="frst_personemail.html#frst-personemail"><span class="std std-ref">frst.personemail</span></a> will be created and linked automatically to the partner. The last email entered will be the
-so called <em>current</em> or <em>main email address</em>.</p>
+<p>If a new email is entered in the field <code class="docutils literal notranslate"><span class="pre">email</span></code> of the partner a new <a class="reference internal" href="frst_personemail.html#frst-personemail"><span class="std std-ref">frst.personemail</span></a> will be
+created and linked automatically to the partner. The last email entered will be the so called <em>current</em> or
+<em>main email address</em>.</p>
 <p>The <em>main email address</em> will always match the email found in the <a class="reference internal" href="#res-partner"><span class="std std-ref">res.partner</span></a> field <code class="docutils literal notranslate"><span class="pre">email</span></code> and is linked
-for convenience in the <a class="reference internal" href="#res-partner"><span class="std std-ref">res.partner</span></a> field <code class="docutils literal notranslate"><span class="pre">main_personemail_id</span></code></p>
+for convenience only in the <a class="reference internal" href="#res-partner"><span class="std std-ref">res.partner</span></a> field <code class="docutils literal notranslate"><span class="pre">main_personemail_id</span></code></p>
 </div>
 </div>
 <div class="section" id="methods">

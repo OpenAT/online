@@ -31,7 +31,7 @@
         <record id="frst_rest_api_frst_zgruppe_context" model="openapi.access.create.context">
             <field name="name">frst_rest_api_frst_zgruppe_context</field>
             <field name="model_id" ref="fso_frst_groups.model_frst_zgruppe" />
-            <field name="context">{"lang": "DE_de"}</field>
+            <field name="context">{"lang": "de_DE"}</field>
         </record>
 
         <!-- openapi access -->

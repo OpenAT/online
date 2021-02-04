@@ -107,6 +107,7 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#calling-methods">Calling Methods</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="authorization.html">Authorization</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../models/index.html">Models</a><ul>
@@ -119,8 +120,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/res_partner.html">res.partner</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required fields</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/res_partner.html#special-fields">Special Fields</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../models/res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
 </ul>
@@ -145,13 +146,15 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../models/frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#non-obvious-behaviours">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#methods">Methods</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../models/frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required fields</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Non obvious behaviours</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id3">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id4">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_groups.html#id5">Methods</a></li>
 </ul>
 </li>
 </ul>
@@ -171,7 +174,22 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/frst_zverzeichnis.html">frst.zverzeichnis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#verzeichnistyp-id"><code class="docutils literal notranslate"><span class="pre">verzeichnistyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#bezeichnungstyp-id"><code class="docutils literal notranslate"><span class="pre">bezeichnungstyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#parent-id"><code class="docutils literal notranslate"><span class="pre">parent_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#startdatum"><code class="docutils literal notranslate"><span class="pre">startdatum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#endedatum"><code class="docutils literal notranslate"><span class="pre">endedatum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../models/frst_zverzeichnis.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../models/frst_zverzeichnis.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
@@ -189,7 +207,14 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#updating-partner-data">Updating partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#creating-a-partner">Creating a partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#deleting-a-partner">Deleting a partner</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
 </ul>
 </li>
@@ -272,38 +297,42 @@
            <div itemprop="articleBody">
             
   <div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>The Fundraising Studio Rest API provides an interface to some of the most common models and methods of
-Fundraising Studio. We provide an openapi 2.0 (former known as swagger) specification file in json format to make
-it easy for any developer to use the api with simple http requests. We also provide a “swagger ui” client
-where you can view the content of the specification file and execute http request directly.</p>
-<p>Available Operations (Methods):</p>
-<ul class="simple">
-<li><p>create</p></li>
-<li><p>read</p></li>
-<li><p>write (update)</p></li>
-<li><p>delete</p></li>
-<li><p>search via <strong>call-method</strong></p></li>
-<li><p>additional methods via <strong>call-method</strong></p></li>
+<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="../index.html#fundraising-studio-rest-api"><span class="std std-ref">Fundraising Studio Rest API</span></a> provides an interface to some of the most common
+models and methods of <a class="reference external" href="https://www.datadialog.net">Fundraising Studio</a>. We provide an openapi 2.0
+(former known as swagger) specification file in json format to make it easy for any developer to use the
+api with simple http requests. We also provide a “swagger ui” client where you can view the content of
+the specification file and execute http request directly.</p>
+<p>Areas of application:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Management of Partner (Contacts, Persons)</p></li>
+<li><p>Management of E-Mail Addresses</p></li>
+<li><p>Management of Groups and Group Subscriptions</p></li>
+<li><p>Management of Mailing Lists and Subscriptions</p></li>
+<li><p>Double-Opt-In Settings for Mailing List Subscriptions</p></li>
 </ul>
-<p>Available Models:</p>
-<ul class="simple">
-<li><p>Contacts (Persons)</p></li>
-<li><p>E-Mail Addresses of Persons (PersonEmail)</p></li>
-<li><p>Group Folders</p></li>
-<li><p>Groups</p></li>
-<li><p>Group Assignments (Subscriptions)</p></li>
-<li><p>Products</p></li>
-<li><p>Donations and Sale Orders</p></li>
-<li><p>Payment Transactions</p></li>
+</div></blockquote>
+<p>Areas of application in the near future:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Import of (online) donations</p></li>
+<li><p>Import and update of (online) payments</p></li>
+<li><p>Management of FS-Online Donation Forms</p></li>
+<li><p>Management of FS-Online E-Mail Templates</p></li>
+<li><p>Management of FS-Online Surveys</p></li>
+<li><p>Management of FS-Online Forms</p></li>
+<li><p>Management of the FS-Online E-Commerce Webshop</p></li>
 </ul>
+</div></blockquote>
 <div class="section" id="where-to-start">
 <h2>Where to start?<a class="headerlink" href="#where-to-start" title="Permalink to this headline">¶</a></h2>
 <p>If you are familiar with <a class="reference external" href="https://www.openapis.org/">openapi</a> (<a class="reference external" href="https://swagger.io/specification/v2/">swagger</a>)
 and REST API’s in common we recommend to jump right into the <a class="reference internal" href="tutorial.html#basic-tutorial"><span class="std std-ref">Tutorial</span></a>. Here you will find an example of how
 to authenticate at the system, send basic commands and interpreting the returning data as well as information about
-exceptions and gotchas. After the basic tutorial you may get your self an overview of the models and methods available
-to you.</p>
+exceptions and gotchas. After the basic tutorial you may get your self an
+<a class="reference internal" href="../models/models_overview.html#models-overview"><span class="std std-ref">overview of the models and methods</span></a> and finally jump to the <a class="reference internal" href="../use_cases/index.html#use-cases"><span class="std std-ref">Use Cases</span></a> for some real
+world examples.</p>
 </div>
 </div>
 

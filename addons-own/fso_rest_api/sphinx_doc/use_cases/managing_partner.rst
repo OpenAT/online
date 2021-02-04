@@ -10,7 +10,7 @@ you work through the partner management use cases.
 Search for partner
 ------------------
 
-To search for partner we use a ``PATCH`` request with the route ``/res.partner/call/search`` to call the
+To search for partner we send a ``PATCH`` request to the route ``/res.partner/call/search`` to call the
 ``search`` method and we provide a :ref:`search domain <search_domain>` as the first positional argument
 of the search method to specify our search conditions.
 
@@ -48,7 +48,7 @@ of the search method to specify our search conditions.
 Read the partner data
 ---------------------
 
-To get the data for the found partner in the previous example we use a ``GET`` request with the
+To get the data for the found partner in the previous example we send a ``GET`` request to the
 route ``/res.partner/{id}``.
 
 .. tabs::
@@ -162,7 +162,7 @@ route ``/res.partner/{id}``.
 Updating partner data
 ---------------------
 
-To change partner data we make a ``PUT`` request to the route ``/res.partner/{id}`` and provide the
+To change partner data we send a ``PUT`` request to the route ``/res.partner/{id}`` and provide the
 field data as the json payload of the request.
 
 .. tabs::
@@ -195,3 +195,21 @@ field data as the json payload of the request.
 
 .. tip:: You do NOT need to provide all the available fields of the record but just the fields that you want
     change!
+
+Creating a partner
+------------------
+
+To create a new partner data we send a ``POST`` request to the route ``/res.partner/{id}`` and provide the
+field data as the json payload of the request.
+
+TODO: Code Example
+
+Deleting a partner
+------------------
+
+To delete a new partner we send a ``DELETE`` request to the route ``/res.partner/{id}``.
+
+TODO: Code Example
+
+.. attention:: In general you may only be able to delete partners that where created by you! Deletion of other
+    partners may fail with an access error.

@@ -34,7 +34,7 @@
         <record id="frst_rest_api_frst_zverzeichnis_context" model="openapi.access.create.context">
             <field name="name">frst_rest_api_frst_zverzeichnis_context</field>
             <field name="model_id" ref="fso_frst_cds.model_frst_zverzeichnis" />
-            <field name="context">{"lang": "DE_de"}</field>
+            <field name="context">{"lang": "de_DE"}</field>
         </record>
 
         <!-- openapi access -->

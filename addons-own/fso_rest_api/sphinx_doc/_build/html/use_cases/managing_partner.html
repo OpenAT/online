@@ -213,6 +213,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#search-for-partner">Search for partner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#read-the-partner-data">Read the partner data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#updating-partner-data">Updating partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-partner">Creating a partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deleting-a-partner">Deleting a partner</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="email_subscriptions.html">Email Subscriptions</a></li>
@@ -302,7 +304,7 @@
 you work through the partner management use cases.</p>
 <div class="section" id="search-for-partner">
 <h2>Search for partner<a class="headerlink" href="#search-for-partner" title="Permalink to this headline">¶</a></h2>
-<p>To search for partner we use a <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> request with the route <code class="docutils literal notranslate"><span class="pre">/res.partner/call/search</span></code> to call the
+<p>To search for partner we send a <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/call/search</span></code> to call the
 <code class="docutils literal notranslate"><span class="pre">search</span></code> method and we provide a <a class="reference internal" href="../searching/search_domain.html#search-domain"><span class="std std-ref">search domain</span></a> as the first positional argument
 of the search method to specify our search conditions.</p>
 <div class="sphinx-tabs docutils container">
@@ -348,7 +350,7 @@ of the function.</p>
 </div>
 <div class="section" id="read-the-partner-data">
 <h2>Read the partner data<a class="headerlink" href="#read-the-partner-data" title="Permalink to this headline">¶</a></h2>
-<p>To get the data for the found partner in the previous example we use a <code class="docutils literal notranslate"><span class="pre">GET</span></code> request with the
+<p>To get the data for the found partner in the previous example we send a <code class="docutils literal notranslate"><span class="pre">GET</span></code> request to the
 route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code>.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -474,7 +476,7 @@ route <code class="docutils literal notranslate"><span class="pre">/res.partner/
 </div>
 <div class="section" id="updating-partner-data">
 <h2>Updating partner data<a class="headerlink" href="#updating-partner-data" title="Permalink to this headline">¶</a></h2>
-<p>To change partner data we make a <code class="docutils literal notranslate"><span class="pre">PUT</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code> and provide the
+<p>To change partner data we send a <code class="docutils literal notranslate"><span class="pre">PUT</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code> and provide the
 field data as the json payload of the request.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
@@ -515,6 +517,22 @@ field data as the json payload of the request.</p>
 <p class="admonition-title">Tip</p>
 <p>You do NOT need to provide all the available fields of the record but just the fields that you want
 change!</p>
+</div>
+</div>
+<div class="section" id="creating-a-partner">
+<h2>Creating a partner<a class="headerlink" href="#creating-a-partner" title="Permalink to this headline">¶</a></h2>
+<p>To create a new partner data we send a <code class="docutils literal notranslate"><span class="pre">POST</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code> and provide the
+field data as the json payload of the request.</p>
+<p>TODO: Code Example</p>
+</div>
+<div class="section" id="deleting-a-partner">
+<h2>Deleting a partner<a class="headerlink" href="#deleting-a-partner" title="Permalink to this headline">¶</a></h2>
+<p>To delete a new partner we send a <code class="docutils literal notranslate"><span class="pre">DELETE</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/res.partner/{id}</span></code>.</p>
+<p>TODO: Code Example</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>In general you may only be able to delete partners that where created by you! Deletion of other
+partners may fail with an access error.</p>
 </div>
 </div>
 </div>
