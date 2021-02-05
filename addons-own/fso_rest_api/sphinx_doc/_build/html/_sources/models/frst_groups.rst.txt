@@ -109,13 +109,12 @@ Custom records must be ``local``, anything else is invalid.
 ``bestaetigung_erforderlich``
 """""""""""""""""""""""""""""
 
-If ``True``, the group requires confirmation before beeing considered
+If ``True``, the group requires confirmation before being considered
 active.
 
 .. attention::
-    Setting this to true will temporarily change the values for
-    ``gueltig_von`` and ``gueltig_bis`` to ``1999-09-09``. Upon
-    confirmation, the dates will be set to actual values.
+    Setting this to ``True`` affect s the behaviour for new subscriptions.
+    See :ref:`frst_group_subscriptions` for details.
 
 ``bestaetigung_typ``
 """""""""""""""""""""
