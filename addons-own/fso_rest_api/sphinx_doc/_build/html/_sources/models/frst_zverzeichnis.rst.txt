@@ -23,8 +23,6 @@ Required Fields
 ---------------
 The minimum requirements for a new CDS entry, are:
     - ``verzeichnisname``
-    - ``startdatum``
-    - ``endedatum``
 
 This will create a top level CDS folder by default.
 
