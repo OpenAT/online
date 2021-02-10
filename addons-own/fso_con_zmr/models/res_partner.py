@@ -1034,8 +1034,11 @@ class ResPartnerZMRGetBPK(models.Model):
         for p in self:
             errors[p.id] = ""
 
-            # TODO: If force_request is set to True we need to completely delete the BPK Request(s) before we compute
-            # TODO: the state
+            # If force_request is set to True we need to completely delete the BPK Request(s) before we compute
+            # the state
+            if force_request:
+                logger.info("Delete all bpk request of partner %s because 'force_request' is True!" % p.id)
+                p.bpk_request_ids.unlink()
 
             # Check if a BPK request is still needed/possible
             # HINT: This will update the partner bpk_state field
@@ -1416,7 +1419,8 @@ class ResPartnerZMRGetBPK(models.Model):
     #            or keyword arguments are used!
     # ATTENTION: Button actions must use the @api.multi decorator
     @api.multi
-    def action_set_bpk(self, force_request=False):
+    def action_set_bpk(self, force_request=True):
+        """ Will delete all bpk request of the partner and immediately create new ones """
         self.set_bpk(force_request=force_request)
 
     @api.multi
