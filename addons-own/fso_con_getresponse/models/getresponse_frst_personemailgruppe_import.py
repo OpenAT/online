@@ -377,7 +377,7 @@ class ContactImporter(GetResponseImporter):
 
         return peg_binding
 
-    def _update(self, binding, data):
+    def _update(self, binding, data, dry_run=False):
         # binding_no_export = binding.with_context(connector_no_export={binding._name: [binding.id]})
         binding_no_export = binding.with_context(connector_no_export=True)
 
@@ -403,6 +403,8 @@ class ContactImporter(GetResponseImporter):
 
                 # Compare the sets of ids for related fields or regular field data
                 if record_value != compare_value:
+                    _logger.info("Odoo record data '%s' does not match getresponse mapper data '%s' for '%s.%s'"
+                                 "" % (record_value, compare_value, record._name, f_name))
                     result[f_name] = update_value
 
             return result
@@ -413,7 +415,9 @@ class ContactImporter(GetResponseImporter):
         # ATTENTION: Remove simple char fields from the update if the data did not change. This will not work for
         #            any relation field.
         peg_binding_data = _remove_unchanged(peg_binding_mdata, peg_binding)
-        _logger.info("peg_binding_mdata: %s, peg_binding_data: %s" % (peg_binding_mdata, peg_binding_data))
+        if peg_binding_data:
+            _logger.info("peg_binding_mapper_data: %s" % peg_binding_mdata)
+            _logger.info("peg_binding_changed_data: %s" % peg_binding_data)
 
         # personemail
         personemail_mdata = data['frst.personemail']
@@ -422,7 +426,9 @@ class ContactImporter(GetResponseImporter):
         #            any relation field. The reason to remove unchanged data is to avoid e.g.: main email changes and
         #            alike!
         personemail_data = _remove_unchanged(personemail_mdata, personemail)
-        _logger.info("personemail_mdata: %s, personemail_data: %s" % (personemail_mdata, personemail_data))
+        if personemail_data:
+            _logger.info("personemail_mapper_data: %s," % personemail_mdata)
+            _logger.info("personemail_changed_data: %s" % personemail_data)
 
         # partner data
         partner_mdata = data['res.partner']
@@ -431,7 +437,9 @@ class ContactImporter(GetResponseImporter):
         #            any relation field. The reason to remove unchanged data is to avoid e.g.: bpk changes and
         #            alike!
         partner_data = _remove_unchanged(partner_mdata, partner)
-        _logger.info("partner_mdata: %s, partner_data: %s" % (partner_mdata, partner_data))
+        if partner_data:
+            _logger.info("partner_mapper_data: %s" % partner_mdata)
+            _logger.info("partner_changed_data: %s" % partner_data)
 
         assert personemail_mdata['email'] == personemail.email, "The email can not be changed! %s, %s" % (data, binding)
 
@@ -439,8 +447,8 @@ class ContactImporter(GetResponseImporter):
         # SKIPP THE ODOO RECORD UPDATE BECAUSE NO DATA CHANGED
         # ----------------------------------------------------
         if not partner_data and not personemail_data and not peg_binding_data:
-            _logger.info("SKIPP IMPORT of binding '%s' '%s' since no relevant data changed in GetResponse!"
-                         "" % (binding.id, binding._name))
+            _logger.info("SKIPP ContactImporter._update() for binding '%s' '%s' since no relevant data changed "
+                         "in GetResponse!" % (binding.id, binding._name))
             return True
 
         # ---------------------------------------------
@@ -448,16 +456,16 @@ class ContactImporter(GetResponseImporter):
         # ---------------------------------------------
         # UPDATE THE PERSON
         # ATTENTION: The partner should have already the context connector_no_export={binding._name: [binding.id]}
-        if partner_data:
+        if partner_data and not dry_run:
             assert partner.write(partner_data), "Could not update partner! %s" % partner
 
         # UPDATE THE PERSONEMAIL
         # ATTENTION: The personemail should have already the context connector_no_export={binding._name: [binding.id]}
-        if personemail_data:
+        if personemail_data and not dry_run:
             assert personemail.write(personemail_data), "Could not update personemail! %s" % personemail
 
         # UPDATE THE BINDING RECORD (and therefore the regular odoo record (delegation inheritance) also
-        if peg_binding_data:
+        if peg_binding_data and not dry_run:
             result = binding_no_export.write(peg_binding_data)
         else:
             result = True

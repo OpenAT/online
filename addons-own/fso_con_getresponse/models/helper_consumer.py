@@ -38,7 +38,9 @@ def prepare_binding(session, binding_model_name, unwrapped_record_id, vals, conn
         binder.prepare_bindings(domain=[('id', '=', unwrapped_record_id)], connector_no_export=connector_no_export)
 
 
-def export_binding(session, binding_model_name, binding_record_id, vals, delay=True):
+# ATTENTION: A delay (eta) of 5 seconds was added to export_binding to prevent errors based on uncommited odoo crud
+#            calls. This is just a test and may be removed if it has no or a negative effect
+def export_binding(session, binding_model_name, binding_record_id, vals, delay=True, eta=5):
     _logger.info("CONSUMER: EXPORT binding %s %s" % (binding_model_name, binding_record_id))
     # Prevent export of binding at binding import! (recursion switch)
     # if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
@@ -46,12 +48,14 @@ def export_binding(session, binding_model_name, binding_record_id, vals, delay=T
         return
 
     if delay:
-        export_record.delay(session, binding_model_name, binding_record_id)
+        export_record.delay(session, binding_model_name, binding_record_id, eta=eta)
     else:
         export_record(session, binding_model_name, binding_record_id)
 
 
-def export_delete(session, binding_model_name, binding_record_id, delay=True):
+# ATTENTION: A delay (eta) of 5 seconds was added to export_binding to prevent errors based on uncommited odoo crud
+#            calls. This is just a test and may be removed if it has no or a negative effect
+def export_delete(session, binding_model_name, binding_record_id, delay=True, eta=5):
     _logger.info("CONSUMER: EXPORT DELETE for binding %s, %s" % (binding_model_name, binding_record_id))
     # Prevent export of binding-deletion! (recursion switch)
     # if skipp_export_by_context(session.context, binding_model_name, binding_record_id):
@@ -71,7 +75,7 @@ def export_delete(session, binding_model_name, binding_record_id, delay=True):
     # Export the record delete
     if getresponse_id:
         if delay:
-            export_delete_record.delay(session, binding_model_name, backend_id, getresponse_id)
+            export_delete_record.delay(session, binding_model_name, backend_id, getresponse_id, eta=eta)
         else:
             export_delete_record(session, binding_model_name, backend_id, getresponse_id)
 

@@ -224,12 +224,12 @@ class GetResponseExporter(Exporter):
 
         # SKIPP EXPORT BECAUSE NO CHANGES WHERE MADE IN ODOO SINCE LAST EXPORT
         if cmp_payloads(last_sync_cmp_data, current_odoo_export_data) == 0:
-            _logger.info("SKIPP export of '%s'! Export data did not change since last sync for binding '%s', '%s'!"
-                         "" % (self.getresponse_id, binding._name, binding.id,))
+            msg = ("SKIPP export of '%s'! Export data did not change since last export for binding '%s', '%s'!"
+                   "\n\ncurrent_odoo_export_data:\n%s,\n\nlast_sync_cmp_data:\n%s"
+                   "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data, last_sync_cmp_data))
+            _logger.info(msg)
             # Skip the export by returning a message
-            return ("SKIPP export of '%s'! Export data did not change since last export for binding '%s', '%s'!"
-                    "\n\ncurrent_odoo_export_data:\n%s,\n\nlast_sync_cmp_data:\n%s"
-                    "" % (self.getresponse_id, binding._name, binding.id, current_odoo_export_data, last_sync_cmp_data))
+            return msg
 
         # CHECK FOR CHANGES IN GETRESPONSE SINCE THE LAST IMPORT
         # HINT: Right now this check will only trigger a log message and nothing else! The export will be done and may

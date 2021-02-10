@@ -303,6 +303,7 @@ class ContactAdapter(GetResponseCRUDAdapter):
         Returns:
             bool: True for success, False otherwise
         """
+        _logger.info("ADAPTER: CREATE GetResponse contact with data '%s'" % data)
         # ATTENTION: The contact may not be created immediately by GetResponse - Therefore we will only get a
         #            boolean result. Therefore we can not bind the contact immediately!!!
         boolean_result = self.getresponse_api_session.create_contact(data)
@@ -313,7 +314,7 @@ class ContactAdapter(GetResponseCRUDAdapter):
     def write(self, ext_id, data):
         # Update the contact in GetResponse
         # ATTENTION: !!! This will replace the custom fields and the tags completely in GetResponse !!!
-
+        _logger.info("ADAPTER: Update GetResponse contact '%s' with data '%s'" % (ext_id, data))
         try:
             contact = self.getresponse_api_session.update_contact(ext_id, body=data)
         except NotFoundError as e:
@@ -331,6 +332,7 @@ class ContactAdapter(GetResponseCRUDAdapter):
         Returns:
             bool: True for success, False otherwise
         """
+        _logger.info("ADAPTER: DELETE GetResponse contact '%s'" % ext_id)
         try:
             result = self.getresponse_api_session.delete_contact(ext_id)
         except NotFoundError as e:
