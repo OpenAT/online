@@ -1,0 +1,558 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>frst.zgruppe, frst.zgruppedetail &mdash; Fundraising Studio REST API o8 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="frst.persongruppe, frst.personemailgruppe" href="frst_group_subscriptions.html" />
+    <link rel="prev" title="frst.personemail" href="frst_personemail.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Fundraising Studio REST API
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basics/index.html">Basics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../basics/introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/introduction.html#where-to-start">Where to start?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#swagger-ui">Swagger UI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../basics/tutorial.html#authorize-yourself">1. Authorize yourself</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../basics/tutorial.html#try-the-routes">2. Try the routes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#calling-methods">Calling Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/access_security.html">Access and Security</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#user-with-restricted-rights">User with restricted rights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#security-advisory">Security advisory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/gotchas_conventions.html">Gotchas and Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#charset">Charset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#content-type">Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#date-and-datetime-fields">Date and Datetime Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#locale">Locale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#language">Language</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/usage_limits_logging.html">Limits, Costs, Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-limits">Usage Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-costs">Usage Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#repair-costs">Repair Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="models_overview.html">Models Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#partner">Partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#email-addresses">Email Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#groups">Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#group-subscriptions">Group Subscriptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#fundraising-studio-cds">Fundraising Studio CDS</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="res_partner.html">res.partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="res_partner.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="res_partner.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_partner.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_personemail.html">frst.personemail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_personemail.html#required-fields">Required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frst_personemail.html#non-obvious-behaviours">Non obvious behaviours</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#last-email-update"><code class="docutils literal notranslate"><span class="pre">last_email_update</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#forced-main-address"><code class="docutils literal notranslate"><span class="pre">forced_main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#main-address"><code class="docutils literal notranslate"><span class="pre">main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#gueltig-von-gueltig-bis"><code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code>, <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">frst.zgruppe, frst.zgruppedetail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frst-zgruppe">frst.zgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gruppe-lang"><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tabellentyp-id"><code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gui-anzeigen"><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frst-zgruppedetail">frst.zgruppedetail</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zgruppe-id"><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geltungsbereich"><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bestaetigung-erforderlich"><code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bestaetigung-typ"><code class="docutils literal notranslate"><span class="pre">bestaetigung_typ</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_group_subscriptions.html">frst.persongruppe, frst.personemailgruppe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#common-fields">Common fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#steuerung-bit"><code class="docutils literal notranslate"><span class="pre">steuerung_bit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#gueltig-von-gueltig-bis"><code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code>, <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#bestaetigt-am-um"><code class="docutils literal notranslate"><span class="pre">bestaetigt_am_um</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#bestaetigt-typ"><code class="docutils literal notranslate"><span class="pre">bestaetigt_typ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#bestaetigt-herkunft"><code class="docutils literal notranslate"><span class="pre">bestaetigt_herkunft</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#common-required-fields">Common required fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#zgruppedetail-id"><code class="docutils literal notranslate"><span class="pre">zgruppedetail_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#frst-persongruppe">frst.persongruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#required-fields">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#partner-id"><code class="docutils literal notranslate"><span class="pre">partner_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#frst-personemailgruppe">frst.personemailgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#id4">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#frst-personemail-id"><code class="docutils literal notranslate"><span class="pre">frst_personemail_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_zverzeichnis.html">frst.zverzeichnis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#verzeichnistyp-id"><code class="docutils literal notranslate"><span class="pre">verzeichnistyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#bezeichnungstyp-id"><code class="docutils literal notranslate"><span class="pre">bezeichnungstyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#parent-id"><code class="docutils literal notranslate"><span class="pre">parent_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#startdatum"><code class="docutils literal notranslate"><span class="pre">startdatum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#endedatum"><code class="docutils literal notranslate"><span class="pre">endedatum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../searching/searching.html">Searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-basics">Search Basics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#name-search">Name search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#combining-criteria-with-or">Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#negate-an-operator">Negate an operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#searching-for-related-data">Searching for related data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-method-options"><code class="docutils literal notranslate"><span class="pre">search</span></code> method options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../searching/search_domain.html">Search Domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../searching/search_domain.html#domain-criterion">domain criterion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#field-name-str"><code class="docutils literal notranslate"><span class="pre">field_name</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#operator-str"><code class="docutils literal notranslate"><span class="pre">operator</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#value"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/search_domain.html#logical-operators">Logical Operators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#updating-partner-data">Updating partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#creating-a-partner">Creating a partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#deleting-a-partner">Deleting a partner</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Fundraising Studio REST API</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Models</a> &raquo;</li>
+        
+      <li>frst.zgruppe, frst.zgruppedetail</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/models/frst_groups.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="frst_group_subscriptions.html" class="btn btn-neutral float-right" title="frst.persongruppe, frst.personemailgruppe" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="frst_personemail.html" class="btn btn-neutral float-left" title="frst.personemail" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="frst-zgruppe-frst-zgruppedetail">
+<span id="frst-groups"></span><h1>frst.zgruppe, frst.zgruppedetail<a class="headerlink" href="#frst-zgruppe-frst-zgruppedetail" title="Permalink to this headline">¶</a></h1>
+<p>These records represent Fundraising Studio group folders. It works similar
+to a tagging system, but has a start and end date associated, and a 1-deep
+hierarchy: <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> can
+be viewed as a container for multiple <a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a>.</p>
+<div class="section" id="frst-zgruppe">
+<span id="id1"></span><h2>frst.zgruppe<a class="headerlink" href="#frst-zgruppe" title="Permalink to this headline">¶</a></h2>
+<p>Parent for <a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a>.</p>
+<p>Defines the meaning of groups contained and specifies if the groups within
+can be assigned to people, or emails, or contracts, etc..</p>
+<dl class="simple">
+<dt>Example:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> “Beruf” (occupation)</dt><dd><ul>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Angestellte/r” (employee)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Arbeiter/in” (laborer)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Pensionist/in” (retiree).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only reading is supported for this model.</p>
+</div>
+<div class="section" id="special-fields">
+<h3>Special Fields<a class="headerlink" href="#special-fields" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="gruppe-lang">
+<h3><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code><a class="headerlink" href="#gruppe-lang" title="Permalink to this headline">¶</a></h3>
+<p>The name or title of the group.</p>
+</div>
+<div class="section" id="tabellentyp-id">
+<h3><code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code><a class="headerlink" href="#tabellentyp-id" title="Permalink to this headline">¶</a></h3>
+<p>Specifies the target type for the contained groups. It can be one of the
+following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">100100</span></code> group is for people, e.g.: occupation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">100110</span></code> groups is for email addresses, e.g.: newsetter</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There several more types, but only the the listed values are
+currently supported by the API.</p>
+</div>
+</div>
+<div class="section" id="gui-anzeigen">
+<h3><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code><a class="headerlink" href="#gui-anzeigen" title="Permalink to this headline">¶</a></h3>
+<p>Specifies whether the group is active for this organisation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a>, only use entries having the value <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="search">
+<h3><code class="docutils literal notranslate"><span class="pre">search</span></code><a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h3>
+<p>Only the <code class="docutils literal notranslate"><span class="pre">search</span></code> method is currently exposed by the api. See <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a> for more information about searching.</p>
+</div>
+</div>
+<div class="section" id="frst-zgruppedetail">
+<span id="id2"></span><h2>frst.zgruppedetail<a class="headerlink" href="#frst-zgruppedetail" title="Permalink to this headline">¶</a></h2>
+<p>Child of <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a>.</p>
+<p>Represents an actual value within a group. It could be a
+specific occupation, or a specific newsletter group.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> “Beruf” (occupation)</dt><dd><ul>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Angestellte/r” (employee)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Arbeiter/in” (laborer)</p></li>
+<li><p><a class="reference internal" href="#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> “Pensionist/in” (retiree).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="required-fields">
+<h3>Required Fields<a class="headerlink" href="#required-fields" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>The minimum requirements for a new group entry are:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code> can only be <code class="docutils literal notranslate"><span class="pre">local</span></code> for new groups.
+<code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code>, otherwise the entry is
+considered to be not in use.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl class="simple">
+<dt>If not specified, the default values are:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">today</span></code> for <code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code> and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2099-12-31</span></code> (forever) for <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Special Fields<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="zgruppe-id">
+<h3><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code><a class="headerlink" href="#zgruppe-id" title="Permalink to this headline">¶</a></h3>
+<p>The foreign key to the parent <a class="reference internal" href="#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a> record.</p>
+</div>
+<div class="section" id="geltungsbereich">
+<h3><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code><a class="headerlink" href="#geltungsbereich" title="Permalink to this headline">¶</a></h3>
+<p>Differentiates between <code class="docutils literal notranslate"><span class="pre">system</span></code> groups, and <code class="docutils literal notranslate"><span class="pre">local</span></code> groups.
+Custom records must be <code class="docutils literal notranslate"><span class="pre">local</span></code>, anything else is invalid.</p>
+</div>
+<div class="section" id="bestaetigung-erforderlich">
+<h3><code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span></code><a class="headerlink" href="#bestaetigung-erforderlich" title="Permalink to this headline">¶</a></h3>
+<p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the group requires confirmation before being considered
+active.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Setting this to <code class="docutils literal notranslate"><span class="pre">True</span></code> affect s the behaviour for new subscriptions.
+See <a class="reference internal" href="frst_group_subscriptions.html#frst-group-subscriptions"><span class="std std-ref">frst.persongruppe, frst.personemailgruppe</span></a> for details.</p>
+</div>
+</div>
+<div class="section" id="bestaetigung-typ">
+<h3><code class="docutils literal notranslate"><span class="pre">bestaetigung_typ</span></code><a class="headerlink" href="#bestaetigung-typ" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>Specifies the type of confirmation. It can be one of the following values:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">doubleoptin</span></code> group only activates upon confirmation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phone_call</span></code> a staffer confirmed the group in a phone call</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">workflow</span></code> confirmation is handled via Fundraising Studio workflow</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">search</span></code><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>Only the <code class="docutils literal notranslate"><span class="pre">search</span></code> method is currently exposed by the api. See <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a> for more information about searching.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="frst_group_subscriptions.html" class="btn btn-neutral float-right" title="frst.persongruppe, frst.personemailgruppe" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="frst_personemail.html" class="btn btn-neutral float-left" title="frst.personemail" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Michael Karrer, Martin Kaip.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

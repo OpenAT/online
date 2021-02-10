@@ -240,7 +240,7 @@ def api_get_request(self, httprequest):
 
     if (
         "authorization" in httprequest.headers
-        and httprequest.headers.get("content-type", "") == "application/json"
+        and "application/json" in httprequest.headers.get("content-type", "")
     ):
         return ApiJsonRequest(httprequest)
 

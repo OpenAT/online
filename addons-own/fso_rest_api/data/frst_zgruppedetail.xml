@@ -15,6 +15,11 @@
                 name="export_fields"
                 eval="[
                     (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'create_uid'}),
+                    (0, 0, {'name': 'create_date'}),
+                    (0, 0, {'name': 'write_uid'}),
+                    (0, 0, {'name': 'write_date'}),
+
                     (0, 0, {'name': 'zgruppe_id'}),
                     (0, 0, {'name': 'geltungsbereich'}),
 
