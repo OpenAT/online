@@ -78,40 +78,50 @@ class GetResponseBinder(Binder):
         #             getattr(binding, backend_field).id == backend_id for binding in binding_records):
         #         unbound_unwrapped_records = unbound_unwrapped_records | r
 
+        # DISABLED: Because this takes way to much time
+        # # Get all records bound to this backend
+        # # HINT: If we test for a x2many field the test will return TRUE if it matches any (one or more) of the records
+        # #       (this is just like any() in python)
+        # bound_unwrapped_records_domain = [(backend_id_search_path, '=', backend_id)]
+        # _logger.info("Search for bound_unwrapped_records: %s" % bound_unwrapped_records_domain)
+        # bound_unwrapped_records = self.env[unwrapped_odoo_model].search(bound_unwrapped_records_domain)
+        # _logger.info("Found %s bound_unwrapped_records" % len(bound_unwrapped_records))
+        #
+        # # Get all records without any binding or without any binding for the current backend
+        # unbound_domain = domain + ['|',
+        #                            (self._inverse_binding_ids_field, '=', False),
+        #                            ('id', 'not in', bound_unwrapped_records.ids)
+        #                            ]
+        # _logger.info("Search for unbound_unwrapped_records: %s ..." % str(unbound_domain)[:1024])
+        # unbound_unwrapped_records = self.env[unwrapped_odoo_model].search(unbound_domain, limit=limit)
+        # _logger.info("Found %s unbound_unwrapped_records" % len(unbound_unwrapped_records))
+
+        # Get unbound records (fast)
+        # Example Domain:
+        # exam = [
+        #         ('zgruppedetail_id.sync_with_getresponse', '=', True),
+        #         ('state', 'in', _sync_allowed_states),
+        #         ('partner_frst_blocked', '=', False),
+        #         ('partner_frst_blocked_email', '=', False),
+        #         '|',
+        #             (self._inverse_binding_ids_field, '=', False),
+        #             '!', (backend_id_search_path, '=', backend_id),
+        #         ]
         # Path to the backend id field of the bindings
         backend_id_search_path = self._inverse_binding_ids_field + '.' + self._backend_field + '.id'
 
-        # Get all records bound to this backend
-        # HINT: If we test for a x2many field the test will return TRUE if it matches any (one or more) of the records
-        #       (this is just like any() in python)
-        bound_unwrapped_records_domain = [(backend_id_search_path, '=', backend_id)]
-        _logger.info("Search for bound_unwrapped_records: %s" % bound_unwrapped_records_domain)
-        bound_unwrapped_records = self.env[unwrapped_odoo_model].search(bound_unwrapped_records_domain)
-        _logger.info("Found %s bound_unwrapped_records" % len(bound_unwrapped_records))
+        # Include records without any binding at all OR Include records if no binding exist for current backend
+        # and append the given domain (which normally just excludes records based on states or Opt-Out fields)
+        get_unbound_domain = ['|',
+                                (self._inverse_binding_ids_field, '=', False),
+                                '!', (backend_id_search_path, '=', backend_id)
+                             ]
+        get_unbound_domain += domain
 
-        # Get all records without any binding or without any binding for the current backend
-        unbound_domain = domain + ['|',
-                                   (self._inverse_binding_ids_field, '=', False),
-                                   ('id', 'not in', bound_unwrapped_records.ids)
-                                   ]
-        _logger.info("Search for unbound_unwrapped_records: %s ..." % str(unbound_domain)[:1024])
-        unbound_unwrapped_records = self.env[unwrapped_odoo_model].search(unbound_domain, limit=limit)
-        _logger.info("Found %s unbound_unwrapped_records" % len(unbound_unwrapped_records))
-
-        # TODO: Remove this when tested or replace the upper method with this if no difference is found!
-        # TEST if this gives the same result and if it would be faster
-        # 1. Exclude already bound records for the current backend
-        test_domain = ['!', (backend_id_search_path, '=', backend_id)]
-        # 2. Include records without any binding at all
-        test_domain += [(self._inverse_binding_ids_field, '=', False)]
-        # 3. Append the given domain
-        test_domain += domain
-        _logger.info("TEST: Alternative search test for unbound_unwrapped_records: %s ..." % str(test_domain)[:1024])
-        test_unbound_search = self.env[unwrapped_odoo_model].search(test_domain, limit=limit)
-        _logger.info("TEST: Found %s records for test_unbound_search" % len(test_unbound_search))
-        difference = set(test_unbound_search.ids) - set(unbound_unwrapped_records.ids)
-        if difference:
-            _logger.error("TEST ERROR: DOMAINS DO NOT PROVIDE THE SAME RESULT!")
+        # Search for unbound records
+        _logger.info("Search for unbound_unwrapped_records: %s" % str(get_unbound_domain)[:1024])
+        unbound_unwrapped_records = self.env[unwrapped_odoo_model].search(get_unbound_domain, limit=limit)
+        _logger.info("Found %s unbound records" % len(unbound_unwrapped_records))
 
         return unbound_unwrapped_records
 

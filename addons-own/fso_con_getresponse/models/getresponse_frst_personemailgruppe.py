@@ -156,6 +156,8 @@ class ContactBinder(GetResponseBinder):
     _model_name = ['getresponse.frst.personemailgruppe']
 
     _sync_allowed_states = ['subscribed', 'approved']
+
+    # ATTENTION: This is the domain for the unwrapped_odoo_model (in this case for frst.personemailgruppe)
     _bindings_domain = [('zgruppedetail_id.sync_with_getresponse', '=', True),
                         ('state', 'in', _sync_allowed_states),
                         # FRST Sperrgruppen
