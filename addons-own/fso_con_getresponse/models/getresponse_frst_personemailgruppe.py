@@ -171,6 +171,7 @@ class ContactBinder(GetResponseBinder):
         domain = domain if domain else []
         domain += self._bindings_domain
         start = time.time()
+        # Limit the logged domain to 1024 chars
         domain_str = str(domain)[:1024]
         _logger.info("get_unbound() start for domain: %s" % domain_str)
         unbound = super(ContactBinder, self).get_unbound(domain=domain, limit=limit)
