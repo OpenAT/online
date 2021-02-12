@@ -140,6 +140,31 @@ class ResPartnerBPK(models.Model):
                 # HINT: This will run update_state_and_submission_information()
                 donation_reports.write({})
 
+    @api.model
+    def scheduled_unlink_bpk_request(self):
+        """ Unlink BPK requests in some specific error states so that they are re-requested (retried) """
+        logger.info("Start scheduled_unlink_bpk_request()")
+        # Unlink BPK-Requests with unknown errors
+        # False         May indicate an unknown exception
+        # 404           Non XML Response
+        # p344:F506     ZMR backend server connection error
+        # p344:F502     ZMR internal error
+        # pvp:F404      nicht gefunden
+        bpk_to_unlink = self.search([('state', '=', 'error'),
+                                     ('partner_state', '=', 'error'),
+                                     '|',
+                                         ('bpk_error_code', '=', False),
+                                         ('bpk_error_code', 'in', ['BPK Request Exception',
+                                                                   '404',
+                                                                   'pvp:F404',
+                                                                   'p344:F506',
+                                                                   'p344:F502']
+                                          )
+                                     ])
+        logger.info("Found %s bpk requests to unlink for retry" % len(bpk_to_unlink))
+        bpk_to_unlink.unlink()
+        return True
+
     # ----
     # CRUD
     # ----

@@ -80,4 +80,18 @@
         <field name="args" eval="'()'"/>
     </record>
 
+    <!-- Scheduled unlink BPK Records to retry them -->
+    <record id="ir_cron_scheduled_unlink_bpk_request" model="ir.cron" forcecreate="1">
+        <field name="name">BPK: Scheduled unlink BPK Records to retry them</field>
+        <field name="priority" eval="2210" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">res.partner.bpk</field>
+        <field name="function">scheduled_unlink_bpk_request</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
 </data></openerp>
