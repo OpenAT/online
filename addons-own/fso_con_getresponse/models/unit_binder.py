@@ -114,8 +114,7 @@ class GetResponseBinder(Binder):
         # and append the given domain (which normally just excludes records based on states or Opt-Out fields)
         get_unbound_domain = ['|',
                                 (self._inverse_binding_ids_field, '=', False),
-                                '!', (backend_id_search_path, '=', backend_id)
-                             ]
+                                '!', (backend_id_search_path, '=', backend_id)]
         get_unbound_domain += domain
 
         # Search for unbound records

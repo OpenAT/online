@@ -55,7 +55,7 @@ class DonationReportSubmission(models.Model):
                             readonly=True, states={'new': [('readonly', False)], 'error': [('readonly', False)]})
     force_submission = fields.Boolean(compute='compute_force_submission', store=True,
                                       string="Force Submission", readonly=True,
-                                      help="Will be submitted to FinanzOnline by scheduler even if outside of automatic "
+                                      help="Will be submitted to FinanzOnline by scheduler even if outside of automatic"
                                            " submission range! (Meldezeitraum)")
 
     # Error fields for states 'error'
@@ -1328,7 +1328,7 @@ class DonationReportSubmission(models.Model):
                 # HINT: If we can not find a response file for a submission in state 'unexpected_response'
                 #       24 Hours after it's submission we consider it as not received by FinanzOnline and therefore
                 #       change the state to 'error'
-                if s.state == 'unexpected_response':
+                if s.state == 'unexpected_response' or (s.state == 'submitted' and not s.response_http_code):
                     if datetime.datetime.now() > submission_datetime + datetime.timedelta(hours=24):
                         msg = "No response file found after 24 hours for donation report submission in state " \
                               "'unexpected_response'! Setting state of submission to 'error'!"
