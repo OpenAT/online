@@ -22,7 +22,8 @@ class FSONForm(models.Model):
     name = fields.Char(string="Form Name", required=True)
 
     model_id = fields.Many2one(string="Model", comodel_name="ir.model", required=True)
-    field_ids = fields.One2many(string="Fields", comodel_name="fson.form_field", inverse_name="form_id")
+    field_ids = fields.One2many(string="Fields", comodel_name="fson.form_field", inverse_name="form_id",
+                                copy=True)
 
     create_as_user = fields.Many2one(string="Create as user", comodel_name="res.users",
                                      help="ALWAYS create new records with this user!")
@@ -84,15 +85,18 @@ class FSONForm(models.Model):
     confirmation_email_template = fields.Many2one(string='Confirmation Email Template',
                                                   comodel_name='email.template',
                                                   inverse_name="confirmation_email_template_fso_forms",
-                                                  index=True)
+                                                  index=True,
+                                                  copy=True)
     information_email_template = fields.Many2one(string='Information Email Template',
                                                  comodel_name='email.template',
                                                  inverse_name="information_email_template_fso_forms",
-                                                 index=True)
+                                                 index=True,
+                                                 copy=True)
     # TODO: Add an domain to only show partners with e-mails and no opt-out setting!
     information_email_receipients = fields.One2many(string='Information E-Mail Receipients',
                                                     comodel_name='res.partner',
-                                                    inverse_name="information_email_receipient_fso_form")
+                                                    inverse_name="information_email_receipient_fso_form",
+                                                    copy=True)
 
     # Thank you page after submit
     redirect_after_submit = fields.Boolean(string="Redirect after successful submit!", default=True,
@@ -292,11 +296,11 @@ class FSONFormField(models.Model):
                     raise ValidationError("Honeypot fields can not have a default value!")
             if r.field_id:
                 # Check readonly
-                if r.field_id.readonly and r.show:
-                    raise ValidationError('You can not add readonly fields that you show on the form!')
+                if not r.default and r.field_id.readonly and r.show:
+                    raise ValidationError('You can not add readonly fields that you show on the form! %s' % r.field_id)
                 # Check protected fields
                 if r.field_id.name in self._protected_fields:
-                    raise ValidationError('Protected and system fields are not allowed!')
+                    raise ValidationError('Protected and system fields are not allowed! %s' % r.field_id)
                 # Check field ttype
                 if r.field_id.ttype not in self._allowed_field_types:
                     raise ValidationError('Field type %s is not supported in form fields!' % r.field_id.ttype)
