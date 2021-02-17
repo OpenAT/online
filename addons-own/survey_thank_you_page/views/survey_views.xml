@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Extend res.partner form to include extra fields -->
+        <record model="ir.ui.view" id="survey_custom_thank_you_page">
+            <field name="name">survey_custom_thank_you_page</field>
+            <field name="model">survey.survey</field>
+            <field name="inherit_id" ref="survey.survey_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Select Options']" position="after">
+                    <page string="Thank You Page">
+                        <group colspan="4">
+                            <field name="thank_you_url" widget="url"/>
+                            <field name="blank_thank_you_page"/>
+                            <field name="thank_you_message"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

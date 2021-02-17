@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <template id="sfinished_custom" name="Custom Survey Thank You page">
+            <t t-if="survey.blank_thank_you_page">
+                <t t-call="website.layout">
+                    <div class="wrap">
+                        <div class="container">
+                             <div t-field="survey.thank_you_message" class="oe_no_empty" />
+                        </div>
+                    </div>
+                </t>
+            </t>
+            <t t-if="not survey.blank_thank_you_page">
+                <t t-call="survey.sfinished"/>
+            </t>
+        </template>
+
+    </data>
+</openerp>
