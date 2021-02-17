@@ -386,12 +386,29 @@ class FsoForms(http.Controller):
         return values
 
     def _prepare_kwargs_for_form(self, form, record=None, **kwargs):
-        # Remove binary fields (e.g. images) from kwargs before rendering the form
+
         if kwargs:
             for f in form.field_ids:
+
+                # Remove binary fields (e.g. images) from kwargs before rendering the form
                 if f.field_id and f.field_id.ttype == 'binary':
                     if f.field_id.name in kwargs:
                         kwargs.pop(f.field_id.name)
+
+                # Convert german date strings '%d.%m.%Y' to the default odoo datetime string format %Y-%m-%d
+                # because the are expected like this in the template 'form_fields'
+                # TODO: Localization - !!! Right now we expect DE values from the forms !!!
+                if f.field_id and f.field_id.ttype == 'date':
+                    date_string = kwargs.get(f.field_id.name, '')
+                    if date_string:
+                        try:
+                            date = datetime.datetime.strptime(date_string, '%d.%m.%Y')
+                            date_odoo_format = datetime.datetime.strftime(date, '%Y-%m-%d')
+                            kwargs[f.field_id.name] = date_odoo_format
+                        except Exception as e:
+                            _logger.error("Could not convert german date string to odoo format! %s" % date_string)
+                            pass
+
         return kwargs
 
     def _prepare_kwargs_for_mail(self, form, **kwargs):
@@ -569,6 +586,37 @@ class FsoForms(http.Controller):
             return False
         return True
 
+    def _redirect_after_form_submit(self, form, record, forced_redirect_url='', forced_redirect_target=''):
+        redirect_target = ''
+
+        # Compute the redirect url
+        if forced_redirect_url:
+            redirect_url = forced_redirect_url
+            redirect_target = forced_redirect_target
+        else:
+            # Thank you page
+            redirect_url = "/fso/form/thanks/" + str(form.id)
+
+            # Logged in
+            if form.redirect_url_if_logged_in and request.website.user_id.id != request.uid:
+                redirect_url = form.redirect_url_if_logged_in
+                redirect_target = form.redirect_url_if_logged_in_target or ""
+
+            # Not logged in
+            elif form.redirect_url:
+                redirect_url = form.redirect_url
+                redirect_target = form.redirect_url_target or ""
+
+        # redirect_target
+        # HINT: If redirect_target is set we need to redirect by java script therefore we render a page with js in it
+        if redirect_target in ['_parent', '_blank']:
+            return http.request.render('fso_forms.thank_you_redirect',
+                                       {'redirect_url': redirect_url,
+                                        'redirect_target': redirect_target})
+        # Regular redirect
+        else:
+            return request.redirect(redirect_url)
+
     @http.route(['/fso/form/<int:form_id>'], methods=['POST', 'GET'], type='http', auth="public", website=True)
     def fso_form(self, form_id=None, render_form_only=False, lazy=True, **kwargs):
         form_id = int(form_id)
@@ -715,27 +763,7 @@ class FsoForms(http.Controller):
                 # HINT: The Thank You Page the only page where you could edit the data again if not logged in
                 #       by pressing the edit button
                 if form.redirect_after_submit and not warnings and not errors:
-                    # Thank you page
-                    redirect_url = "/fso/form/thanks/"+str(form.id)
-                    redirect_target = ""
-
-                    # Logged in
-                    if form.redirect_url_if_logged_in and request.website.user_id.id != request.uid:
-                        redirect_url = form.redirect_url_if_logged_in
-                        redirect_target = form.redirect_url_if_logged_in_target or ""
-
-                    # Not logged in
-                    elif form.redirect_url:
-                        redirect_url = form.redirect_url
-                        redirect_target = form.redirect_url_target or ""
-
-                    # If redirect_target is set we need to redirect by java script.
-                    if redirect_target in ['_parent', '_blank']:
-                        return http.request.render('fso_forms.thank_you_redirect',
-                                                   {'redirect_url': redirect_url,
-                                                    'redirect_target': redirect_target})
-
-                    return request.redirect(redirect_url)
+                    return self._redirect_after_form_submit(form, record)
 
         # FINALLY RENDER THE FORM
         # -----------------------
