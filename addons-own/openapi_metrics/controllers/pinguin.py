@@ -6,7 +6,6 @@ import openerp
 from openerp.addons.openapi.controllers import pinguin
 from openerp.http import request
 
-
 _logger = logging.getLogger(__name__)
 _super_create_log_record = pinguin.create_log_record
 
@@ -36,40 +35,39 @@ _SQL_UPSERT = """
     """
 
 _SQL_UPSERT_FALLBACK = """
-    WITH upsert AS (
+    DO $$
+    BEGIN
+        INSERT INTO openapi_http_metric (
+            namespace_id,
+            namespace_name,
+            day,
+            model,
+            request_count,
+            create_uid,
+            create_date
+            )
+        SELECT
+            %(namespace_id)s,           -- namespace_id
+            %(namespace_name)s,         -- namespace_name
+            current_date,               -- day
+            %(model)s,                  -- model
+            1,                          -- request_count
+            %(uid)s,                    -- create_uid
+            now() at time zone 'utc'    -- create_date
+        ;
+    EXCEPTION WHEN unique_violation THEN
         UPDATE
             openapi_http_metric
         SET
-            request_count = request_count + 1
-            , write_date = now() at time zone 'utc'
-            , write_uid = %(uid)s
+            request_count = request_count + 1,
+            write_date = now() at time zone 'utc',
+            write_uid = %(uid)s
         WHERE
             namespace_id = %(namespace_id)s
-            AND day = current_date
             AND model = %(model)s
-        RETURNING *
-    )
-    INSERT INTO openapi_http_metric (
-        namespace_id,
-        namespace_name,
-        day,
-        model,
-        request_count,
-        create_uid,
-        create_date
-        )
-    SELECT
-        %(namespace_id)s,           -- namespace_id
-        %(namespace_name)s,         -- namespace_name
-        current_date,               -- day
-        %(model)s,                  -- model
-        1,                          -- request_count
-        %(uid)s,                    -- create_uid
-        now() at time zone 'utc'    -- create_date
-    FROM
-        upsert
-    WHERE
-        NOT EXISTS (SELECT * FROM upsert);
+            AND day = current_date
+        ;
+    END $$;
     """
 
 
