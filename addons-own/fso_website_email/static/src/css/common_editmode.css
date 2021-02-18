@@ -195,3 +195,11 @@ body #oe_snippets .nav > li.active {
 #wrapwrap.cke_editable .email_template_settings_content .edit_info * {
     display: none;
 }
+
+
+/* Image Dialogue */
+#image_data {
+    padding: 12px;
+    margin: 12px;
+    border: 1px dotted grey;
+}

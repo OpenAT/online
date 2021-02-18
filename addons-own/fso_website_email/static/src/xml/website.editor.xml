@@ -48,5 +48,33 @@
             </div>
         </t>
     </t>
+
+    <!-- Image Dialog ALT Text extension -->
+    <t t-extend="website.editor.dialog.image">
+        <t t-jquery="form:first" t-operation="before">
+
+            <div id="image_data">
+                <div class="row">
+
+                    <!-- Image on the left -->
+                    <div class="col-sm-2">
+                        <img id="wedi_selected_image" src="/fso_website_email/static/src/images/x.png" title="x" class="img img-responsive"/>
+                    </div>
+
+                    <!-- Alt Text input field on the right -->
+                    <div class="col-sm-10">
+                        <div class="form-group">
+                            <label for="input_img_alt_text" class="col-sm-2 control-label">
+                                alt text
+                            </label>
+                          <input type="text" class="form-control" id="input_img_alt_text" placeholder=""/>
+                      </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </t>
+    </t>
     
 </templates>
