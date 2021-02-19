@@ -203,3 +203,21 @@ body #oe_snippets .nav > li.active {
 /*    margin: 12px;*/
 /*    border: 1px dotted grey;*/
 /*}*/
+
+/* TEXT Edit */
+#email_designer_text_tools {
+    padding: 12px;
+    text-align: right;
+    display: none;
+}
+#email_designer_text_content {
+    padding: 6px;
+}
+#fso_email_text {
+    padding: 6px 12px;
+    background-color: white;
+    border: 1px dotted grey;
+    min-height: 6em;
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+}

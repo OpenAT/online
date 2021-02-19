@@ -124,6 +124,8 @@ class EmailTemplate(models.Model):
                                         help="E-Mail body HTML to be used by Fundraising Studio 'Multimailer'!\n"
                                              " - URL's rewritten to FRST-Multimailer format\n")
 
+    fso_email_text = fields.Text(string='E-Mail body FSON TEXT only', readonly=True, translate=True,)
+
     # Compute e-mail screenshot
     screenshot = fields.Binary(string="Screenshot", readonly=True, translate=False)
     screenshot_pending = fields.Boolean(string="Screenshot pending", readonly=True,

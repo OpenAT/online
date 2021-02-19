@@ -133,12 +133,16 @@
                                 <!-- email_from -->
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">From:</label>
-                                    <div class="col-sm-7"><span t-field="record.email_from" class="form-control input-sm ckediting_enabled"/></div>
+                                    <div class="col-sm-7">
+                                        <span t-field="record.email_from" class="form-control input-sm ckediting_enabled"/>
+                                    </div>
                                 </div>
                                 <!-- reply_to -->
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Reply To:</label>
-                                    <div class="col-sm-7"><span t-field="record.reply_to" class="form-control input-sm ckediting_enabled"/></div>
+                                    <div class="col-sm-7">
+                                        <span t-field="record.reply_to" class="form-control input-sm ckediting_enabled"/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-horizontal">
@@ -155,17 +159,49 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Enable TABS -->
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#email_designer" aria-controls="email_designer" role="tab" data-toggle="tab">HTML</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#email_designer_text" aria-controls="email_designer_text" role="tab" data-toggle="tab">TEXT</a>
+                        </li>
+                    </ul>
                     
-                    <!-- Email Designer -->
-                    <div id="email_designer">
-                        <div class="col">
-                            
-                            <!-- TEMPLATE HTML
-                                Must include 'body_html' field loaded by template 'fso_website_email.content'
-                            -->
-                            <t t-raw="0"/>
-                            
+
+                    <div class="tab-content">
+
+                        <!-- Email Designer HTML -->
+                        <div id="email_designer" role="tabpanel" class="tab-pane active">
+                            <div class="col">
+
+                                <!-- TEMPLATE HTML
+                                    Must include 'body_html' field loaded by template 'fso_website_email.content'
+                                -->
+                                <t t-raw="0"/>
+
+                            </div>
                         </div>
+
+                        <!-- E-Mail Designer TEXT -->
+                        <div id="email_designer_text" role="tabpanel" class="tab-pane">
+                            <div class="container">
+                                <!--<div id="email_designer_text_tools" class="row css_editable_mode_display">-->
+                                <!--    <div class="col-xs-12">-->
+                                <!--        <button id="get_text_from_html" class="btn btn-primary">Get text from HTML</button>-->
+                                <!--    </div>-->
+                                <!--</div>-->
+                                <div class="row" id="email_designer_text_content">
+                                    <div class="col-xs-12">
+                                        <div t-field="record.fso_email_text" id="fso_email_text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             <!--</main>-->

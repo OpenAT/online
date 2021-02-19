@@ -17,6 +17,9 @@
         
         <!-- Mobile Modal Box Preview Fix -->
         <script type="text/javascript" src="/fso_website_email/static/src/js/website.mobile.js"/>
+
+        <!-- Copy Text from html -->
+        <script type="text/javascript" src="/fso_website_email/static/src/js/get_text_from_html.js"/>
     </template>
 
     <!-- COMMON ASSETS EDIT MODE (JS AND CSS) -->
