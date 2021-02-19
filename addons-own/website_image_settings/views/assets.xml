@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <template id="assets_editor_image_settings" inherit_id="website.assets_editor" name="Editor Assets Image Settings">
+
+            <xpath expr='//script[@src="/website/static/src/js/website.translator.js"]' position="after">
+
+                <!-- Load additional editor templates -->
+                <script type="text/javascript" src="/website_image_settings/static/src/js/load_templates.js"/>
+
+                <!-- Load image dialogue extensions -->
+                <script type="text/javascript" src="/website_image_settings/static/src/js/image_dialogue.js"/>
+
+                <!-- Load css for the image dialogue -->
+                <link href='/website_image_settings/static/src/css/image_dialogue.css' type='text/css' rel='stylesheet' t-ignore="true"/>
+
+            </xpath>
+
+        </template>
+
+    </data>
+</openerp>

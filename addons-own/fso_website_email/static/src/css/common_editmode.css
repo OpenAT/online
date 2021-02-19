@@ -197,9 +197,9 @@ body #oe_snippets .nav > li.active {
 }
 
 
-/* Image Dialogue */
-#image_data {
-    padding: 12px;
-    margin: 12px;
-    border: 1px dotted grey;
-}
+/*!* Image Dialogue *!*/
+/*#image_data {*/
+/*    padding: 12px;*/
+/*    margin: 12px;*/
+/*    border: 1px dotted grey;*/
+/*}*/
