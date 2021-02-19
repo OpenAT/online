@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    openerp.website.editor.RTEImageDialog = openerp.website.editor.RTEImageDialog.extend({
+    openerp.website.editor.RTEImageDialog.include({
         start: function () {
             console.log('ImageDialog start()', this.media);
             $('input#input_img_alt_text').val($(this.media).attr('alt'))
