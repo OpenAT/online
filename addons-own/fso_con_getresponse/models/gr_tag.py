@@ -50,8 +50,8 @@ class GrTag(models.Model):
             # HINT: The Getresponse API would allow uppercase letters but would convert them to lowercases
             #       anyway. This means tag names are case insensitive. For that reason we only allow lowercase in
             #       in the first place!
-            assert re.match(r"(?:[a-z0-9_]+)\Z", r.name, flags=0), _(
-                                "Only a-z, 0-9 and _ is allowed for the Tag name: '{}'! ").format(r.name)
+            assert re.match(r"(?:[A-Za-z0-9_]+)\Z", r.name, flags=0), _(
+                                "Only A-Z, a-z, 0-9 and _ is allowed for the Tag name: '{}'! ").format(r.name)
 
     @api.constrains('cds_id')
     def _constrain_cds_id(self):
