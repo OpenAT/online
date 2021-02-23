@@ -403,8 +403,11 @@ class ContactImporter(GetResponseImporter):
 
                 # Compare the sets of ids for related fields or regular field data
                 if record_value != compare_value:
-                    _logger.info("Odoo record data '%s' does not match getresponse mapper data '%s' for '%s.%s'"
-                                 "" % (record_value, compare_value, record._name, f_name))
+                    _logger.warning("Odoo record data '%s' does not match getresponse mapper data '%s' for '%s.%s' "
+                                    "for binding '%s' '%s' GR-ID '%s'"
+                                    "" % (record_value, compare_value, record._name, f_name,
+                                          binding.id, binding._name, binding.getresponse_id)
+                                    )
                     result[f_name] = update_value
 
             return result
