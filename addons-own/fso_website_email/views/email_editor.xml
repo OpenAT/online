@@ -189,11 +189,11 @@
                         <!-- E-Mail Designer TEXT -->
                         <div id="email_designer_text" role="tabpanel" class="tab-pane">
                             <div class="container">
-                                <!--<div id="email_designer_text_tools" class="row css_editable_mode_display">-->
-                                <!--    <div class="col-xs-12">-->
-                                <!--        <button id="get_text_from_html" class="btn btn-primary">Get text from HTML</button>-->
-                                <!--    </div>-->
-                                <!--</div>-->
+                                <div id="email_designer_text_tools" class="row css_editable_mode_display">
+                                    <div class="col-xs-12">
+                                        <button id="get_text_from_html" class="btn btn-primary">Get text from HTML</button>
+                                    </div>
+                                </div>
                                 <div class="row" id="email_designer_text_content">
                                     <div class="col-xs-12">
                                         <div t-field="record.fso_email_text" id="fso_email_text"/>

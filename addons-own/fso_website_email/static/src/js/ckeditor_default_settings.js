@@ -3,9 +3,10 @@
 
     // Overwrite class method of website/static/src/js/website.editor.js@839
     // to append/set/override CKEDITOR.config for wrapwrap editor
-    openerp.website.RTE = openerp.website.RTE.extend({
+    openerp.website.RTE.include({
 
         _config: function () {
+            // console.log('Custom config for CK-Editor for email templates with BRANGEL addon :)')
             // Run the original method to modify it's result
             var config = this._super();
 
@@ -19,6 +20,9 @@
             // Filler text (non-breaking space entity — &nbsp;) will be inserted into empty block elements
             config.fillEmptyBlocks = true;
 
+            // ATTENTION: Can not work because ck-editor plugin 'enterkey' ist not loaded on purpose by odoo!
+            //config.enterMode = CKEDITOR.ENTER_P
+
             // Enable Force Paste As Plain Text
             config.forcePasteAsPlainText = true;
 
@@ -27,7 +31,8 @@
 
             // Add Plugin for print_field snippet
             // config.extraPlugins = 'sharedspace,customdialogs,tablebutton,oeref';
-            config.extraPlugins = 'printfield,sharedspace,customdialogs,tablebutton,oeref';
+            // ATTENTION: the brangel addon protects <br> from beeing removed!
+            config.extraPlugins = 'brangel,printfield,sharedspace,customdialogs,tablebutton,oeref';
 
             // Set custom toolbar
             // https://docs.ckeditor.com/ckeditor4/latest/guide/dev_toolbar.html
@@ -66,6 +71,10 @@
             //         {name: "Normal", element: 'p'},
             //         {name: "Heading 1", element: 'h1'}
             //     ];
+
+            //console.log('config.allowedContent', config.allowedContent);
+            //console.log('config.disallowedContent', config.disallowedContent);
+            console.log('CKE config', config);
 
             // return the config
             return config;
