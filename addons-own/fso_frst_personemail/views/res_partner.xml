@@ -20,5 +20,17 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_res_partner_filter_fso_frst_personemail" model="ir.ui.view">
+        <field name="name">view_res_partner_filter_fso_frst_personemail</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field string="E-Mail-Adressen" name="frst_personemail_ids"/>
+                <field string="Haupt-E-Mail-Adresse" name="main_personemail_id"/>
+            </field>
+        </field>
+    </record>
     
 </data></openerp>

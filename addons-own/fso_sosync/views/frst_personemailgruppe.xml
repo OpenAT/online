@@ -7,7 +7,7 @@
         <field name="model">frst.personemailgruppe</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
         <field name="arch" type="xml">
-            <field name="gueltig_bis" position="after">
+            <field name="write_date" position="after">
                 <field name="sosync_fs_id"/>
                 <field name="sosync_write_date"/>
                 <field name="sosync_synced_version"/>

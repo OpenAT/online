@@ -7,8 +7,13 @@
             <field name="model">frst.personemailgruppe</field>
             <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='gueltig_bis']" position="after">
-                    <field name="mass_mailing_list_contact_ids"/>
+                <xpath expr="//page[@name='locks']" position="after">
+                    <page string="Mailing List Contacts" name="mailing_list_contacts">
+                        <group>
+                            <p colspan="2">Connected Mass Mailing List Contacts:</p>
+                            <field name="mass_mailing_list_contact_ids"/>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>

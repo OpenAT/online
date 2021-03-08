@@ -7,13 +7,21 @@
         <field name="model">frst.personemailgruppe</field>
         <field name="inherit_id" ref="fso_frst_groups.frst_personemailgruppe_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header//field[@name='state']" position="before">
-                <button name="prepare_getresponse_binding"
-                        type="object"
-                        class="oe_button oe_form_button"
-                        style="margin-right:1em;"
-                        string="Prepare GetResponse Binding"/>
+            <xpath expr="//page[@name='locks']" position="after">
+                <page string="GetResponse">
+                    <group>
+                        <button name="prepare_getresponse_binding"
+                                type="object"
+                                class="oe_button oe_form_button"
+                                style="margin-right:1em;"
+                                string="Prepare GetResponse Binding"
+                                colspan="2"
+                        />
+                        <field name="getresponse_bind_ids"/>
+                    </group>
+                </page>
             </xpath>
+
         </field>
     </record>
 

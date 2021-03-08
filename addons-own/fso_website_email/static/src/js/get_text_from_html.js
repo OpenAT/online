@@ -19,7 +19,7 @@ $( document ).ready(function() {
                     })
             }
 
-            // Anotate the print fields with data-fs-email-placeholder-active
+            // Annotate the print fields with data-fs-email-placeholder-active
             anotate_print_fields($('#email_body_html'));
 
             // Copy the html to replace the print fields with its placeholder

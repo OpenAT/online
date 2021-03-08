@@ -17,4 +17,35 @@
             </field>
         </record>
 
+        <record id="view_res_partner_filter_fso_base" model="ir.ui.view">
+            <field name="name">view_res_partner_filter_fso_base</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="firstname"/>
+                    <field name="lastname"/>
+                    <field name="email"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="street"/>
+                    <field name="street_number_web"/>
+                    <field name="city"/>
+                    <field name="zip"/>
+                    <field name="country_id"/>
+                    <field name="newsletter_web"/>
+                    <field name="birthdate_web"/>
+                </field>
+                <filter string="Salesperson" position="before">
+                    <filter string="Anrede" context="{'group_by': 'gender'}"/>
+                    <filter string="CDS-Ursprung" context="{'group_by': 'frst_zverzeichnis_id'}"/>
+                </filter>
+                <filter string="Country" position="after">
+                    <filter string="city" context="{'group_by': 'city'}"/>
+                    <filter string="zip" context="{'group_by': 'zip'}"/>
+                </filter>
+
+            </field>
+        </record>
+
 </data></openerp>

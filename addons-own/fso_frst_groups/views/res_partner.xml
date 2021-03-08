@@ -39,5 +39,18 @@
 
         </field>
     </record>
-    
+
+    <record id="view_res_partner_filter_fso_frst_groups" model="ir.ui.view">
+        <field name="name">view_res_partner_filter_fso_base</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field string="Personen-Gruppen" name="persongruppe_ids"/>
+                <field string="Haupt-E-Mail-Gruppen" name="main_email_personemailgruppe_ids"/>
+            </field>
+        </field>
+    </record>
+
+
 </data></openerp>

@@ -14,7 +14,7 @@
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
-                    <group>
+                    <group name="base_data">
                         <field name="zgruppedetail_id"/>
                         <field name="partner_id"/>
                         <field name="steuerung_bit"/>
@@ -25,6 +25,17 @@
                         <field name="bestaetigt_typ"/>
                         <field name="bestaetigt_herkunft"/>
                     </group>
+                    <notebook>
+                        <page string="System" name="system">
+                            <group>
+                                <field name="id"/>
+                                <field name="create_uid"/>
+                                <field name="create_date"/>
+                                <field name="write_uid"/>
+                                <field name="write_date"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

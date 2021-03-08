@@ -86,12 +86,12 @@
                 <menuitem id="menu_frst_settings_print_fields" action="fso_print_fields.fso_print_field_action" parent="fso_base.menu_frst_settings" sequence="2100"/>
                 <menuitem id="menu_frst_settings_print_field_groups" action="fso_print_fields.fso_print_field_group_action" parent="fso_base.menu_frst_settings" sequence="2110"/>
                 <!-- e-mail -->
-                <menuitem id="menu_frst_setting_personemail" action="fso_frst_personemail.frst_personemail_action" parent="fso_base.menu_frst_settings" sequence="2200"/>
+                <menuitem id="menu_frst_setting_personemail" string="E-Mail Adressen" action="fso_frst_personemail.frst_personemail_action" parent="fso_base.menu_frst_settings" sequence="2200"/>
                 <!-- Gruppen -->
-                <menuitem id="menu_frst_setting_zgruppe" action="fso_frst_groups.frst_zgruppe_action" parent="fso_base.menu_frst_settings" sequence="2300"/>
-                <menuitem id="menu_frst_setting_zgruppedetail" action="fso_frst_groups.frst_zgruppedetail_action" parent="fso_base.menu_frst_settings" sequence="2310"/>
-                <menuitem id="menu_frst_setting_persongruppe" action="fso_frst_groups.frst_persongruppe_action" parent="fso_base.menu_frst_settings" sequence="2320"/>
-                <menuitem id="menu_frst_setting_personemailgruppe" action="fso_frst_groups.frst_personemailgruppe_action" parent="fso_base.menu_frst_settings" sequence="2330"/>
+                <menuitem id="menu_frst_setting_zgruppe" string="Gruppenordner" action="fso_frst_groups.frst_zgruppe_action" parent="fso_base.menu_frst_settings" sequence="2300"/>
+                <menuitem id="menu_frst_setting_zgruppedetail" string="Gruppen" action="fso_frst_groups.frst_zgruppedetail_action" parent="fso_base.menu_frst_settings" sequence="2310"/>
+                <menuitem id="menu_frst_setting_persongruppe" string="Personen-Gruppen Anmeldungen" action="fso_frst_groups.frst_persongruppe_action" parent="fso_base.menu_frst_settings" sequence="2320"/>
+                <menuitem id="menu_frst_setting_personemailgruppe" string="E-Mail-Gruppen Anmeldungen" action="fso_frst_groups.frst_personemailgruppe_action" parent="fso_base.menu_frst_settings" sequence="2330"/>
                 <!-- DEPRICATED: -->
                 <!--<menuitem id="menu_frst_fs_group_depricated" name="DEPRICATED FSGroups" action="fso_base.fs_group_action" parent="fso_base.menu_frst_settings" sequence="2340"/>-->
             

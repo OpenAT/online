@@ -14,7 +14,7 @@
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
-                    <group>
+                    <group name="base_data">
                         <group>
                             <field name="zgruppedetail_id"/>
                             <field name="frst_personemail_id"/>
@@ -23,14 +23,28 @@
                             <field name="gueltig_bis"/>
                         </group>
                         <group>
-                            <field name="partner_frst_blocked"/>
-                            <field name="partner_frst_blocked_email"/>
-
                             <field name="bestaetigt_am_um"/>
                             <field name="bestaetigt_typ"/>
                             <field name="bestaetigt_herkunft"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Locks" name="locks">
+                            <group>
+                                <field name="partner_frst_blocked"/>
+                                <field name="partner_frst_blocked_email"/>
+                            </group>
+                        </page>
+                        <page string="System" name="system">
+                            <group>
+                                <field name="id"/>
+                                <field name="create_uid"/>
+                                <field name="create_date"/>
+                                <field name="write_uid"/>
+                                <field name="write_date"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
