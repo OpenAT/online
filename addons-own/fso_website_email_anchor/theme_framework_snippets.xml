@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="theme_framework_snippets" inherit_id="fso_website_email.theme_framework_snippets">
+            <xpath expr="//div[@data-snippet-option-id='dadi_sb_bg_width']" position="after">
+                <!-- Snippet anchor -->
+                <div data-snippet-option-id="anchor"
+                     data-selector=".snippet_block">
+                    <li>
+                        <a class="js_anchor"
+                           title="Use anchors to go directly to a section of your page, appending #anchor to the URL">
+                            Set anchor
+                        </a>
+                    </li>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</openerp>
