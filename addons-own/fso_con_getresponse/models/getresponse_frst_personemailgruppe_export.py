@@ -218,7 +218,10 @@ class ContactExportMapper(ExportMapper):
         # -----------------------------------
         # "DO NOT MERGE EXTERNAL DATA" SWITCH
         # -----------------------------------
-        if hasattr(self.options, 'no_external_data'):
+        # !!! PARTNER DATA MERGE DISABLED TEMPORARILY BECAUSE OF GETRESPONSE ERROR !!!
+        _logger.warning("GR-CUSTOM-FIELD-DATA-MERGE IS DISABLED TEMPORARILY BECAUSE OF ERROR IN GETRESPONSE!")
+        # if hasattr(self.options, 'no_external_data'):
+        if True:
             payload = {'customFieldValues': [{'customFieldId': key,
                                               'value': val if isinstance(val, list) else [val]}
                                              for key, val in current_odoo_mapped_field_data.iteritems() if val]}
@@ -439,8 +442,8 @@ class ContactExporter(GetResponseExporter):
     # ATTENTION: !!! Changes are no longer really written to the records because dry_run=True !!!
     #            It is still enabled for some time to search for bugs in the comparison of the data but
     #            this method may be removed entirely in the future!
-    def _update_odoo_record_data_after_export(self, *args, **kwargs):
-        _logger.info("EXPORT: _update_odoo_record_data_after_export()")
+    def _check_data_in_gr_after_export(self, *args, **kwargs):
+        _logger.info("EXPORT: _check_data_in_gr_after_export()")
         # Update the odoo records with the getresponse record data after the export because data may have been
         # merged or added by the export mapper or getresponse
         binding = self.binding_record
@@ -462,7 +465,7 @@ class ContactExporter(GetResponseExporter):
 
         # Log the update and return the result
         _logger.info('DRY-RUN-ONLY (data will NOT be written to records!): '
-                     'Updated odoo record data (for binding %s, %s) after export!' % (binding._name, binding.id))
+                     '_check_data_in_gr_after_export (for binding %s, %s) after export!' % (binding._name, binding.id))
         return result
 
     def _export_related_bindings(self, *args, **kwargs):

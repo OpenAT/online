@@ -452,7 +452,7 @@ class GetResponseExporter(Exporter):
     def skipp_after_export_methods(self):
         return False
 
-    def _update_odoo_record_data_after_export(self, *args, **kwargs):
+    def _check_data_in_gr_after_export(self, *args, **kwargs):
         return
 
     def _export_related_bindings(self, *args, **kwargs):
@@ -561,11 +561,9 @@ class GetResponseExporter(Exporter):
             return _("Binding '%s', '%s' was exported to GetResponse '%s' without after export methods."
                      ) % (self.binding_record._name, self.binding_record.id, self.getresponse_id)
 
-        # UPDATE ODOO RECORD DATA BY GETRESPONSE DATA AFTER EXPORT TO 'IMPORT' POTENTIALLY MERGED OR COMPUTED DATA
-        # --------------------------------------------------------------------------------------------------------
-        # ATTENTION: The export mapper may have merged getresponse data - Therefore we need to update the odoo record
-        #            even on an export to store potential data change by the data merge to the odoo record
-        self._update_odoo_record_data_after_export(*args, **kwargs)
+        # CHECK DATA IN GETRESPONSE AFTER THE EXPORT
+        # ------------------------------------------
+        self._check_data_in_gr_after_export(*args, **kwargs)
 
         # EXPORT RELATED BINDINGS AFTER AN EXPORT
         # ---------------------------------------

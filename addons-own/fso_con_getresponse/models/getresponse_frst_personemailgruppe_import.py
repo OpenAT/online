@@ -460,7 +460,9 @@ class ContactImporter(GetResponseImporter):
         # UPDATE THE PERSON
         # ATTENTION: The partner should have already the context connector_no_export={binding._name: [binding.id]}
         if partner_data and not dry_run:
-            assert partner.write(partner_data), "Could not update partner! %s" % partner
+            # !!! PARTNER DATA IMPORT DISABLED TEMPORARILY BECAUSE OF GETRESPONSE ERROR !!!
+            # assert partner.write(partner_data), "Could not update partner! %s" % partner
+            _logger.warning("GR-PARTNER-DATA-IMPORT IS DISABLED TEMPORARILY BECAUSE OF ERROR IN GETRESPONSE!")
 
         # UPDATE THE PERSONEMAIL
         # ATTENTION: The personemail should have already the context connector_no_export={binding._name: [binding.id]}
