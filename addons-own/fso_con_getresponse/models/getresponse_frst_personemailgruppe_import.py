@@ -461,8 +461,12 @@ class ContactImporter(GetResponseImporter):
         # ATTENTION: The partner should have already the context connector_no_export={binding._name: [binding.id]}
         if partner_data and not dry_run:
             # !!! PARTNER DATA IMPORT DISABLED TEMPORARILY BECAUSE OF GETRESPONSE ERROR !!!
+            _logger.warning("GR-PARTNER-DATA-IMPORT IS DISABLED EXCEPT FOR TAGS BECAUSE OF ERROR IN GETRESPONSE!")
+            if 'getresponse_tag_ids' in partner_data:
+                # Remove all partner data except for gr-tags
+                partner_data_tags_only = {'getresponse_tag_ids': partner_data.get('getresponse_tag_ids')}
+                assert partner.write(partner_data_tags_only), "Could not update gr-tags of partner! %s" % partner
             # assert partner.write(partner_data), "Could not update partner! %s" % partner
-            _logger.warning("GR-PARTNER-DATA-IMPORT IS DISABLED TEMPORARILY BECAUSE OF ERROR IN GETRESPONSE!")
 
         # UPDATE THE PERSONEMAIL
         # ATTENTION: The personemail should have already the context connector_no_export={binding._name: [binding.id]}

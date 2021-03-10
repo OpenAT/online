@@ -124,7 +124,7 @@ class ContactExportMapper(ExportMapper):
         # -----------------------------------
         # "DO NOT MERGE EXTERNAL DATA" SWITCH
         # -----------------------------------
-        if hasattr(self.options, 'no_external_data'):
+        if 'no_external_data' in self.options:
             payload = {'tags': [{'tagId': tag_id} for tag_id in odoo_tags_ext_ids]}
             return payload
 
@@ -220,7 +220,7 @@ class ContactExportMapper(ExportMapper):
         # -----------------------------------
         # !!! PARTNER DATA MERGE DISABLED TEMPORARILY BECAUSE OF GETRESPONSE ERROR !!!
         _logger.warning("GR-CUSTOM-FIELD-DATA-MERGE IS DISABLED TEMPORARILY BECAUSE OF ERROR IN GETRESPONSE!")
-        # if hasattr(self.options, 'no_external_data'):
+        # if 'no_external_data' in self.options::
         if True:
             payload = {'customFieldValues': [{'customFieldId': key,
                                               'value': val if isinstance(val, list) else [val]}
