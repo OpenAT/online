@@ -34,6 +34,7 @@ class FRSTzGruppe(models.Model):
     gruppe_kurz = fields.Char(string="GruppeKurz", required=True, help="Interne Bezeichnung")
     gruppe_lang = fields.Char(string="GruppeLang", required=True, help="Anzeige fuer den Kunden und im GUI")
     gui_anzeigen = fields.Boolean(string="GuiAnzeigen")
+    active = fields.Boolean(string="Active", compute="_compute_active", store=True)
 
     zgruppedetail_ids = fields.One2many(comodel_name="frst.zgruppedetail", inverse_name='zgruppe_id',
                                         string="zGruppeDetail IDS")
@@ -61,6 +62,10 @@ class FRSTzGruppe(models.Model):
     # TODO: Nur eine zGruppeDetail im Gruppenordner darf gueltig sein
     #       INFO: Ist nur sinnhaft für 'Status' oder 'Statistikgruppen' z.B.: 'Daten sind aktuell', 'inaktiv', ...
 
+    @api.depends('gui_anzeigen')
+    def _compute_active(self):
+        for r in self:
+            r.active = r.gui_anzeigen
 
     @api.model
     def create(self, vals):

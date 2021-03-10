@@ -151,7 +151,7 @@
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
     <record id="frst_personemailgruppe_action" model="ir.actions.act_window" >
-        <field name="name">PersonEmailGruppe</field>
+        <field name="name">E-Mail-Gruppen Anmeldungen</field>
         <field name="res_model">frst.personemailgruppe</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>

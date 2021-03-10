@@ -37,7 +37,7 @@ class BaseSosync(models.AbstractModel):
                         'frst_create_date', 'frst_write_date')
 
     # NEW COMMON FIELDS
-    sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True, index=True)
+    sosync_fs_id = fields.Integer(string="Fundraising Studio ID", readonly=True, index=True, group_operator="count")
     sosync_write_date = fields.Char(string="Sosync Write Date", readonly=True, index=True,
                                     help="Last change of one or more sosync-tracked-fields. This is just like a "
                                          "'record version'! Could be replaced by a uniqe hash of the field data in the"

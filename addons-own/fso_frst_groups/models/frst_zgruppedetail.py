@@ -9,15 +9,21 @@ logger = logging.getLogger(__name__)
 # Fundraising Studio groups
 class FRSTzGruppeDetail(models.Model):
     _name = "frst.zgruppedetail"
-    _rec_name = "display_name"
+    _rec_name = "gruppe_lang"
 
     # Compute a name based on <frst_id> - <zgruppe_id.tabelentyp_id> - <gruppe_lang>
-    display_name = fields.Char(string="Group Name", compute="_compute_display_name", search="_search_display_name",
-                               readonly=True, store=False)
+    # display_name = fields.Char(string="Group Name",
+    #                            compute="_compute_display_name",
+    #                            search="_search_display_name",
+    #                            readonly=True,
+    #                            store=False)
 
     zgruppe_id = fields.Many2one(comodel_name="frst.zgruppe", inverse_name='zgruppedetail_ids',
-                                 string="zGruppeID",
+                                 string="Gruppenordner",
                                  required=True, ondelete="cascade", index=True)
+
+    tabellentyp_id = fields.Selection(related="zgruppe_id.tabellentyp_id", readonly=True, store=True)
+
     geltungsbereich = fields.Selection(string="Geltungsbereich",
                                        selection=[('local', 'Local Group'),
                                                   ('system', 'System Group')],
@@ -32,6 +38,7 @@ class FRSTzGruppeDetail(models.Model):
     gruppe_lang = fields.Char(string="GruppeLang", required=True)
     gui_anzeigen = fields.Boolean("GuiAnzeigen",
                                   help="If set this group is available for this instance")
+    active = fields.Boolean(string="Active", compute="_compute_active", store=True)
 
     # ATTENTION: "gueltig_von" und "gueltig_bis" is NOT IN USE for zGruppeDetail and may be removed in the future!
     #
@@ -74,16 +81,21 @@ class FRSTzGruppeDetail(models.Model):
                                                    ],
                                         string="Approval Type", default='doubleoptin')
 
-    @api.multi
-    @api.depends('gruppe_lang', 'zgruppe_id')
-    def _compute_display_name(self):
-        tabellentyp_dict = dict(self.env['frst.zgruppe']._fields['tabellentyp_id'].selection)
+    # @api.multi
+    # @api.depends('gruppe_lang', 'zgruppe_id')
+    # def _compute_display_name(self):
+    #     tabellentyp_dict = dict(self.env['frst.zgruppe']._fields['tabellentyp_id'].selection)
+    #     for r in self:
+    #         r.display_name = "%s (%s, %s)" % (
+    #             r.gruppe_lang or r.gruppe_kurz,
+    #             tabellentyp_dict.get(r.zgruppe_id.tabellentyp_id, _('unknown')).upper() if r.zgruppe_id else _('unknown'),
+    #             r.sosync_fs_id if 'sosync_fs_id' in r._fields else _('unknown')
+    #         )
+
+    @api.depends('gui_anzeigen')
+    def _compute_active(self):
         for r in self:
-            r.display_name = "%s (%s, %s)" % (
-                r.gruppe_lang or r.gruppe_kurz,
-                tabellentyp_dict.get(r.zgruppe_id.tabellentyp_id, _('unknown')).upper() if r.zgruppe_id else _('unknown'),
-                r.sosync_fs_id if 'sosync_fs_id' in r._fields else _('unknown')
-            )
+            r.active = r.gui_anzeigen
 
     def _search_display_name(self, operator, value):
         return ['|',

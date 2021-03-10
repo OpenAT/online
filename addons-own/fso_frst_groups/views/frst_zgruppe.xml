@@ -74,6 +74,11 @@
                 <field name="ja_gui_anzeige"/>
                 <field name="nein_gui_anzeige"/>
                 <field name="zgruppedetail_ids" invisible="1"/>
+                <separator/>
+                <filter string="Aktiv" name="gui_anzeigen_true" domain="[('gui_anzeigen', '!=', False)]"/>
+                <group string="Group by">
+                    <filter string="Gruppentyp" name="group_tabellentyp_id" context="{'group_by':'tabellentyp_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -82,12 +87,14 @@
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
     <record id="frst_zgruppe_action" model="ir.actions.act_window" >
-        <field name="name">zGruppe</field>
+        <field name="name">FRST-Gruppenordner</field>
         <field name="res_model">frst.zgruppe</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="frst_zgruppe_search"/>
+        <!--<field name="domain">[('gui_anzeigen', '!=', False)]</field>-->
+        <field name="context">{"search_default_group_tabellentyp_id":1}</field>
     </record>
     <record id="frst_zgruppe_tree_viewaction" model="ir.actions.act_window.view">
         <field name="sequence" eval="10"/>
