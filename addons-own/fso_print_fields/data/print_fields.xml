@@ -233,8 +233,37 @@
             <field name="group_ids"
                    eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
         </record>
-        
-        
+
+        <!--  pfg_person_online  -->
+        <record id="pf_onlinespendenbetrag" model="fso.print_field">
+            <field name="sequence" eval="401"/>
+            <field name="name">OnlineSpendenbetrag</field>
+            <field name="fs_email_placeholder">%OnlineSpendenbetrag%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_online')),]"/>
+        </record>
+        <record id="pf_onlinereferenz" model="fso.print_field">
+            <field name="sequence" eval="402"/>
+            <field name="name">OnlineReferenz</field>
+            <field name="fs_email_placeholder">%OnlineReferenz%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_online')),]"/>
+        </record>
+        <record id="pf_onlinezahlungsstatus" model="fso.print_field">
+            <field name="sequence" eval="403"/>
+            <field name="name">OnlineZahlungsstatus</field>
+            <field name="fs_email_placeholder">%OnlineZahlungsstatus%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_online')),]"/>
+        </record>
+        <record id="pf_onlinezahlungsintervall" model="fso.print_field">
+            <field name="sequence" eval="404"/>
+            <field name="name">OnlineZahlungsintervall</field>
+            <field name="fs_email_placeholder">%OnlineZahlungsintervall%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_online')),]"/>
+        </record>
+
         <!--  pfg_person_extra  -->
         <record id="pf_jahr" model="fso.print_field">
             <field name="sequence" eval="105"/>

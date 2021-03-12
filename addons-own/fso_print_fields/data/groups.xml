@@ -15,6 +15,11 @@
             <field name="sequence" eval="20"/>
             <field name="name">Person Monetär</field>
         </record>
+
+        <record id="pfg_person_online" model="fso.print_field.group">
+            <field name="sequence" eval="25"/>
+            <field name="name">Person Online</field>
+        </record>
     
         <record id="pfg_person_extra" model="fso.print_field.group">
             <field name="sequence" eval="30"/>
