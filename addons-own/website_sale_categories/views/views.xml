@@ -10,6 +10,7 @@
                 <attribute name="class"></attribute>
             </xpath>
             <field name="sequence" position="after">
+                <field name="cat_website_url" readonly="1" widget="url"/>
                 <field name="cat_root_id" readonly="1"/>
                 <field name="cat_root"/>
                 <field name="redirect_url_after_form_feedback" attrs="{'invisible': [('cat_root','=', False)]}"/>
@@ -91,6 +92,7 @@
                     <field name="name"/>
                     <field name="parent_id"/>
                     <field name="sequence"/>
+                    <field name="cat_website_url" readonly="1" widget="url"/>
                 </group>
                 <group string="Root Category (Start new shop)">
                     <field name="cat_root"/>

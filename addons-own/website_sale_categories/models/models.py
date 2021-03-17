@@ -69,6 +69,7 @@ class product_public_category_menu(models.Model):
     # Sales Team for Sales Orders
     cat_section_id = fields.Many2one(comodel_name='crm.case.section', string='Sales Team', index=True)
 
+    cat_website_url = fields.Char(string="Category Page URL", compute="compute_cat_website_url")
 
     # Update the field cat_root_id at addon installation or update
     def init(self, cr, context=None):
@@ -78,6 +79,11 @@ class product_public_category_menu(models.Model):
             cat = self.browse(cr, SUPERUSER_ID, catid)
             # To set the parent_id will trigger the recalculation of cat_root_id in the write method
             cat.write({"parent_id": cat.parent_id.id or None})
+
+    @api.depends('name')
+    def compute_cat_website_url(self):
+        for r in self:
+            r.cat_website_url = '/shop/category/'+str(r.id)
 
     @api.onchange('cat_hide')
     def set_cat_root(self):
