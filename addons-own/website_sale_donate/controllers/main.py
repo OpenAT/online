@@ -499,7 +499,7 @@ class website_sale_donate(website_sale):
 
     # Add Shipping and Billing Fields to values (= the qcontext for the checkout template)
     # HINT: The calculated values for the fields can be found in the qcontext dict in key 'checkout'
-    def checkout_values(self, data=None):
+    def checkout_values(self, data=None, product=None):
         # Add geoip to session if not there
         if 'geoip' not in request.session:
             request.session['geoip'] = {}
@@ -515,7 +515,7 @@ class website_sale_donate(website_sale):
             values['states'] = states
 
         # Add billing fields from the product linked fson.form (fso_forms)
-        fso_forms_billing_fields = self.get_fso_forms_billing_fields()
+        fso_forms_billing_fields = self.get_fso_forms_billing_fields(product=product)
         if fso_forms_billing_fields:
             values['fso_forms_billing_fields'] = fso_forms_billing_fields
 
@@ -966,6 +966,12 @@ class website_sale_donate(website_sale):
         # Checkout-Page was called for the first time
         # -------------------------------------------
         if request.httprequest.method != 'POST':
+
+            # FSO_forms Custom Checkout Fields: Run checkout_values again but with the product to get the correct fields
+            opc_checkout_vals = self.checkout_values(product=post.get('product', None))
+            checkout_page.qcontext.update(opc_checkout_vals)
+
+            # Add Payment page qcontext
             payment_page = self.opc_payment()
             checkout_page.qcontext.update(payment_page.qcontext)
             _logger.warning("checkout(): END, GET request (without post data)")
