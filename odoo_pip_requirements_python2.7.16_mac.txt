@@ -69,7 +69,7 @@ orderedmultidict==0.7.11
 packaging==16.8
 passlib==1.6.2
 pbr==3.0.0
-Pillow==2.5.1
+Pillow==8.1.1
 pkgconfig==1.2.2
 ply==3.4
 premailer==3.2.0
