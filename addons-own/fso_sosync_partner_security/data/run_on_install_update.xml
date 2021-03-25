@@ -1,0 +1,7 @@
+<openerp>
+  <data>
+
+    <function model="res.partner" name="compute_security_fields_for_all_partner"/>
+
+  </data>
+</openerp>
