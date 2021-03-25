@@ -11,12 +11,12 @@ class ResPartner(models.Model):
 
     # Link all PersonEmails
     frst_personemail_ids = fields.One2many(comodel_name="frst.personemail", inverse_name='partner_id',
-                                           string="FRST PersonEmail IDS")
+                                           string="FRST E-Mail Adressen")
 
     # Link the main PersonEmail
     main_personemail_id = fields.Many2one(comodel_name="frst.personemail", inverse_name='partner_main_email_ids',
                                           index=True,
-                                          string="Main Email", readonly=True,
+                                          string="FRST Haupt-E-Mail", readonly=True,
                                           track_visibility='onchange', ondelete='set null')
 
     frst_personemail_count = fields.Integer(string="Number of E-Mail Addresses",
