@@ -46,8 +46,8 @@
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <field string="Personen-Gruppen" name="persongruppe_ids"/>
-                <field string="Haupt-E-Mail-Gruppen" name="main_email_personemailgruppe_ids"/>
+                <field string="Personen-Gruppen" name="persongruppe_ids" domain="[('persongruppe_ids.zgruppedetail_id', 'ilike', self)]"/>
+                <field string="Haupt-E-Mail-Gruppen" name="main_email_personemailgruppe_ids" invisible="1"/>
             </field>
         </field>
     </record>
