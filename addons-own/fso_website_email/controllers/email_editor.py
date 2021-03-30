@@ -1,13 +1,34 @@
 # -*- coding: utf-8 -*-
+import werkzeug
+import datetime
+import urllib
+from urllib import urlencode
 
 from openerp import http
 from openerp.http import request
-
-import datetime
-
 from openerp.tools.mail import html_sanitize
-import urllib
-from urllib import urlencode
+
+
+class QueryURL(object):
+    def __init__(self, path='', **args):
+        self.path = path
+        self.args = args
+
+    def __call__(self, path=None, **kw):
+        if not path:
+            path = self.path
+        for k,v in self.args.items():
+            kw.setdefault(k,v)
+        l = []
+        for k,v in kw.items():
+            if v:
+                if isinstance(v, list) or isinstance(v, set):
+                    l.append(werkzeug.url_encode([(k,i) for i in v]))
+                else:
+                    l.append(werkzeug.url_encode([(k,v)]))
+        if l:
+            path += '?' + '&'.join(l)
+        return path
 
 
 class FSOEmailEditor(http.Controller):
@@ -26,8 +47,10 @@ class FSOEmailEditor(http.Controller):
     @http.route(['/fso/email/select',
                  '/fso/email/select/page/<int:page>'],
                 type='http', auth="user", website=True)
-    def email_select(self, page=0, **kw):
+    def email_select(self, page=0, search='', **kw):
         """ Overview of email templates to create, edit or copy email templates"""
+
+        keep = QueryURL('/fso/email/select', search=search)
 
         # Update the e-mail template (email.template) or the theme (ir.ui.view)
         # HINT: This is used for name or theme changes right now
@@ -49,6 +72,8 @@ class FSOEmailEditor(http.Controller):
         # E-Mail template domain
         template_domain = [('fso_email_template', '=', True),
                            ('fso_template_view_id', '!=', False)]
+        if search:
+            template_domain += [('name', 'ilike', search)]
 
         # Order by
         # template_order = "write_date DESC"
@@ -77,6 +102,8 @@ class FSOEmailEditor(http.Controller):
                                'templates': templates,
                                'print_fields': request.env['fso.print_field'].search([]),
                                'return_url': urllib.unquote(kw.get('return_url', '')),
+                               'search': search,
+                               'keep': keep,
                                })
 
     # EMAIL-EDITOR

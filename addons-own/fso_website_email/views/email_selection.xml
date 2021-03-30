@@ -2,6 +2,21 @@
 <openerp>
 <data>
 
+    <template id="search" name="Search hidden fields">
+      <form t-att-action="keep('/fso/email/select', search=0)" method="get" t-att-class="search_class">
+
+          <div class="input-group">
+              <input type="text" name="search" class="search-query form-control" placeholder="Search..." t-att-value="search"/>
+              <span class="input-group-btn">
+                  <a class="btn btn-default a-submit">
+                      <i class="fa fa-search"/>
+                  </a>
+              </span>
+          </div>
+
+      </form>
+    </template>
+
     <!-- E-MAIL TEMPLATE SELECTION LAYOUT -->
     <!-- Stripped down version of website.layout -->
     <template id="layout" name="FS-Online E-Mail Selection Website Layout">
@@ -101,6 +116,7 @@
                     <!-- pager for email templates (from website_sale template with id="products") -->
                     <div class="email_templates_pager">
                         <div class="row" style="width: 100%;">
+                            <t t-call="fso_website_email.search"><t t-set="search_class">pagination form-inline col-md-3</t></t>
                             <t t-call="website.pager"/>
                         </div>
                     </div>
