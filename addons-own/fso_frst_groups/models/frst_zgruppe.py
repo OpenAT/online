@@ -52,6 +52,13 @@ class FRSTzGruppe(models.Model):
                                                   ('system', 'System Group')],
                                        default='system')
 
+    gui_gruppen_bearbeiten_moeglich = fields.Boolean(
+        string="Bearbeitung durch Sachbearbeiter",
+        default="True",
+        readonly=True,
+        help="Wenn False, können zGruppeDetail bzw. frst.zgruppedetail in dieser Gruppe weder zugewiesen noch "
+             "entfernt oder geändert werden")
+
     # ATTENTION: Diese Felder sind nur in FRST vorhanden und werden beim FSRT-Merge beruecksichtigt:
     #
     # TODO: Nur eine zGruppeDetail im Gruppenordner darf einem Datensatz zugeordnet werden (z.B. Person)

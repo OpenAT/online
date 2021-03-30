@@ -3,6 +3,7 @@
 import frst_gruppestate_abstract
 import frst_checkboxmodel_abstract
 import frst_checkboxbridgemodel_abstract
+import frst_gruppesecurity_abstract
 
 import frst_zgruppe
 import frst_zgruppedetail

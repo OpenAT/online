@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 # PersonGruppe: FRST groups for res.partner
 class FRSTPersonGruppe(models.Model):
     _name = "frst.persongruppe"
-    _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel", "fso.merge"]
+    _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel", "fso.merge", "frst.gruppesecurity"]
 
     _rec_name = "zgruppedetail_id"
 
