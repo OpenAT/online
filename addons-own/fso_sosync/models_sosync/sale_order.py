@@ -16,3 +16,5 @@ class SaleOrderSosync(models.Model):
     date_order = fields.Datetime(sosync="fson-to-frst")
     amount_total = fields.Float(sosync="fson-to-frst")
     state = fields.Selection(sosync="fson-to-frst")
+
+    giftee_partner_id = fields.Many2one(sosync="fson-to-frst")
