@@ -95,3 +95,6 @@ class ResPartnerSosync(models.Model):
 
     # GDPR
     gdpr_accepted = fields.Boolean(sosync="True")
+
+    # Notizen in FRST / 'comment' in FSON
+    comment = fields.Text(sosync="True")
