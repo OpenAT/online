@@ -2,7 +2,7 @@
 
 from openerp import fields
 from openerp.tests import common
-from openerp.exceptions import AccessError
+from openerp.exceptions import AccessError, ValidationError
 
 from datetime import datetime
 from datetime import timedelta
@@ -24,6 +24,7 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
             'geltungsbereich': 'local',
             # Only users in the sosync usergroup are able to create, modify or unlink group subscriptions
             'gui_gruppen_bearbeiten_moeglich': False,
+            'nur_eine_gruppe_anmelden': True,
         })
 
         # Create a local Group: group_newsletter
@@ -31,6 +32,14 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
             'zgruppe_id': self.groupfolder_email.id,
             'gruppe_kurz': 'Group Newsletter',
             'gruppe_lang': 'Group Newsletter',
+            'gui_anzeigen': True,
+            'geltungsbereich': 'local',
+        })
+
+        self.group_newsletter_b = self.env['frst.zgruppedetail'].create({
+            'zgruppe_id': self.groupfolder_email.id,
+            'gruppe_kurz': 'Group Newsletter B',
+            'gruppe_lang': 'Group Newsletter B',
             'gui_anzeigen': True,
             'geltungsbereich': 'local',
         })
@@ -109,4 +118,30 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
         subscription.unlink()
         self.assertFalse(subscription.exists())
 
+    def test_05_restrict_multiple_assignments_for_groups_in_same_groupfolder(self):
+        """ Restrict multiple group assignments for groups in a group folder with nur_eine_gruppe_anmelden = True """
+        subscription_a = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
+            'zgruppedetail_id': self.group_newsletter.id,
+            'frst_personemail_id': self.partner_max1.main_personemail_id.id,
+        })
+        self.assertTrue(subscription_a.exists())
+        self.assertTrue(self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden)
+        with self.assertRaises(ValidationError):
+            subscription_b = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
+                'zgruppedetail_id': self.group_newsletter_b.id,
+                'frst_personemail_id': self.partner_max1.main_personemail_id.id,
+            })
 
+    def test_06_allow_multiple_assignments_for_groups_in_same_groupfolder(self):
+        self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden = False
+        self.assertFalse(self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden)
+        subscription_a = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
+            'zgruppedetail_id': self.group_newsletter.id,
+            'frst_personemail_id': self.partner_max1.main_personemail_id.id,
+        })
+        self.assertTrue(subscription_a.exists())
+        subscription_b = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
+            'zgruppedetail_id': self.group_newsletter_b.id,
+            'frst_personemail_id': self.partner_max1.main_personemail_id.id,
+        })
+        self.assertTrue(subscription_b.exists())

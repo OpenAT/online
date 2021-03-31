@@ -54,10 +54,17 @@ class FRSTzGruppe(models.Model):
 
     gui_gruppen_bearbeiten_moeglich = fields.Boolean(
         string="Bearbeitung durch Sachbearbeiter",
-        default="True",
+        default=True,
         readonly=True,
-        help="Wenn False, können zGruppeDetail bzw. frst.zgruppedetail in dieser Gruppe weder zugewiesen noch "
-             "entfernt oder geändert werden")
+        help="Wenn nicht gesetzt, können Gruppenzuweisungen für Gruppen in diesem Gruppenordner nicht von "
+             "Sachbearbeitern zugewiesen, entfernt oder geändert werden.")
+
+    nur_eine_gruppe_anmelden = fields.Boolean(
+        string="Exklusive Gruppenanmeldung",
+        default=False,
+        readonly=True,
+        help="Wenn gesetzt kann nur eine Gruppe des Gruppenordners zugeordnet werden. Wird eine andere Gruppe aus dem"
+             "Ordner zugeordnet wird die vorangegangene Gruppenzuordnung gelöscht.")
 
     # ATTENTION: Diese Felder sind nur in FRST vorhanden und werden beim FSRT-Merge beruecksichtigt:
     #
