@@ -95,3 +95,13 @@ class ResPartnerSosync(models.Model):
 
     # GDPR
     gdpr_accepted = fields.Boolean(sosync="True")
+
+    # Notizen in FRST / 'comment' in FSON
+    comment = fields.Text(sosync="True")
+
+    # Security Fields
+    fson_sosync_user = fields.Boolean(sosync="fson-to-frst")
+    fson_system_user = fields.Boolean(sosync="fson-to-frst")
+    fson_admin_user = fields.Boolean(sosync="fson-to-frst")
+    fson_donor_user = fields.Boolean(sosync="fson-to-frst")
+

@@ -16,11 +16,17 @@ class ResPartnerFRSTSecurity(models.Model):
     @api.multi
     def compute_security_fields(self):
         logger.info("Compute security fields for %s res.partner" % (len(self) if self else 'all'))
-        ref = self.env.ref
 
         def update_field(self, field_name, group_xml_ids):
             logger.info("Update field %s" % field_name)
-            group_ids = [self.env.ref(xml_gid).id for xml_gid in group_xml_ids]
+
+            group_ids = list()
+            for xml_gid in group_xml_ids:
+                group = self.env.ref(xml_gid, raise_if_not_found=False)
+                if group:
+                    group_ids.append(group.id)
+            if not group_ids:
+                logger.error("Groups %s not found" % group_xml_ids)
 
             set_domain = [('user_ids.groups_id', 'in', group_ids), (field_name, '=', False)]
             if self:

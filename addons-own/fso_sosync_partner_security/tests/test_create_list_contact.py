@@ -36,13 +36,17 @@ class TestResPartnerSecurityFields(common.TransactionCase):
 
         # Add groups
         for group_xml_id in group_xml_ids:
-            self.user1.write({"groups_id": [(4, self.env.ref(group_xml_id).id, "")]})
-            self.assertTrue(self.partner1.fson_system_user)
+            group = self.env.ref(group_xml_id, raise_if_not_found=False)
+            if group:
+                self.user1.write({"groups_id": [(4, group.id, "")]})
+                self.assertTrue(self.partner1.fson_system_user)
 
         # Remove groups
         for group_xml_id in group_xml_ids:
-            self.user1.write({"groups_id": [(3, self.env.ref(group_xml_id).id, "")]})
-            if self.user1.groups_id:
-                self.assertTrue(self.partner1.fson_system_user)
-            else:
-                self.assertFalse(self.partner1.fson_system_user)
+            group = self.env.ref(group_xml_id, raise_if_not_found=False)
+            if group:
+                self.user1.write({"groups_id": [(3, group.id, "")]})
+                if self.user1.groups_id:
+                    self.assertTrue(self.partner1.fson_system_user)
+                else:
+                    self.assertFalse(self.partner1.fson_system_user)

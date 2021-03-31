@@ -439,12 +439,6 @@ class sale_order(osv.Model):
 
         return res
 
-    _columns = {
-        'has_recurring': fields.function(_has_recurring,
-                                         type='boolean',
-                                         string='Has order lines with recurring transactions'),
-    }
-
     # Use a custom e-mail template from fso_base if it exists for the send quotation e-mail wizard.
     # HINT: action_quotation_send is already overwritten by addon "website_quote" and "portal_sale"!
     def action_quotation_send(self, cr, uid, ids, context=None,
@@ -466,6 +460,16 @@ class sale_order(osv.Model):
             pass
 
         return action_dict
+
+    # Giftee addon preparation
+    _columns = {
+        'has_recurring': fields.function(_has_recurring,
+                                         type='boolean',
+                                         string='Has order lines with recurring transactions'),
+        'giftee_partner_id': fields.many2one('res.partner', inverse_name="giftee_sale_order_ids",
+                                             string="Giftee", copy=False,
+                                             help="Products in this sale order are a gift for this partner"),
+    }
 
 
 # CROWD FUNDING EXTENSIONS

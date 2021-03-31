@@ -122,6 +122,7 @@ TODO (must be done manually right now):
         # We may remove this again in the future to make it an optional addon
         'need_action_menu_disabled',
         'fso_gdpr',
+        'fso_sosync_partner_security',
     ],
     'data': [
         #

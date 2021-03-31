@@ -38,7 +38,7 @@ linked to an FS-Online Administration- or System-User.
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'contacts',
     ],
     'data': [
         'data/run_on_install_update.xml',
