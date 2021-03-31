@@ -87,6 +87,21 @@ class website_sale_donate(website_sale):
 
         return fso_forms_billing_fields
 
+    # Get custom giftee fields from product of current product page or from product in sale.order
+    def get_fso_forms_giftee_fields(self, product=None):
+        fso_forms_giftee_fields = None
+
+        if product:
+            fso_forms_giftee_fields = product.giftee_form_id.field_ids if product.giftee_form_id else None
+        else:
+            order = request.website.sale_get_order()
+            if order and order.website_order_line:
+                for line in order.website_order_line:
+                    if line.product_id and line.product_id.giftee_form_id:
+                        fso_forms_giftee_fields = line.product_id.giftee_form_id.field_ids
+
+        return fso_forms_giftee_fields
+
     def _get_payment_interval_id(self, product):
         payment_interval_id = False
 
@@ -578,6 +593,30 @@ class website_sale_donate(website_sale):
                     field_data['data-shipping_' + f_name] = shipping[f_name]
                 shippings_selector_attrs[shipping.id] = field_data
             values['shippings_selector_attrs'] = shippings_selector_attrs
+
+        # Add Giftee Fields to values dict
+        # --------------------------------
+        # HINT: The field prefix is set by the template: <t t-set="field_name_prefix" t-value="gifting_"/>
+        fso_forms_giftee_fields = self.get_fso_forms_giftee_fields(product=product)
+        if fso_forms_giftee_fields:
+            # Append the field definitions for form rendering
+            values['fso_forms_giftee_fields'] = fso_forms_giftee_fields
+
+            # Get giftee data from the 'checkout' dict in values
+            gf_checkout_data = {}
+            for gf_field in fso_forms_giftee_fields:
+                f_name = gf_field.field_id.name
+                gf_name = 'giftee_' + f_name
+                gf_checkout_data[f_name] = values['checkout'].get(gf_name, None)
+
+            # Parse the form data
+            fso_forms_obj = FsoForms()
+            parsed_gf_form_field_data = fso_forms_obj._prepare_field_data(
+                form=fso_forms_giftee_fields[0].form_id, form_field_data=gf_checkout_data)
+
+            # Append the parsed giftee data to values
+            giftee_data = {'giftee_'+k: v for k, v in parsed_gf_form_field_data.iteritems()}
+            values['checkout'].update(giftee_data)
 
         return values
 

@@ -44,7 +44,12 @@ class ProductTemplate(models.Model):
     # Custom Checkout Fields by product
     checkout_form_id = fields.Many2one(string="Checkout Fields Form", comodel_name='fson.form',
                                        domain="[('product_template_ids', '!=', False)]",
-                                       help="Set custom checkout fields for this form")
+                                       help="Set custom checkout fields for this product")
+
+    # Custom Checkout Giftee Fields by product
+    giftee_form_id = fields.Many2one(string="Giftee Fields Form", comodel_name='fson.form',
+                                     domain="[('ptemplate_giftee_ids', '!=', False)]",
+                                     help="Set custom giftee fields for this product")
 
     # Custom donation input template (arbitrary price and donation buttons in checkout box)
     # HINT: dit stands for donation input template
@@ -188,5 +193,71 @@ class ProductTemplate(models.Model):
                                                           ('name', '=', f)]).id
                     form_field_obj.create(vals)
 
-                # Add this form to the record
+                # Add this form to the product template
                 r.write({'checkout_form_id': form.id})
+
+
+    @api.multi
+    def create_giftee_fields_form(self):
+        for r in self:
+            if not r.giftee_form_id:
+                # Create the fso form
+                res_partner_model = self.env['ir.model'].search([('model', '=', 'res.partner')])
+
+                form_vals = {'name': _('Giftee fields form for product %s (id %s)') % (r.name, r.id),
+                             'model_id': res_partner_model.id,
+                             'submit_button_text': _('Continue'),
+                             'clear_session_data_after_submit': True,
+                             'edit_existing_record_if_logged_in': False,
+                             'email_only': False,
+                             'thank_you_page_edit_data_button': False,
+                             #'thank_you_page_edit_redirect': '/fso/subscription/%s' % r.id,
+                             #'submission_url': '/fso/subscription/%s' % r.id
+                             }
+
+                form = self.env['fson.form'].create(form_vals)
+
+                # Create the fso form fields
+                f_fields = {'firstname': {'sequence': 10,
+                                          'show': True,
+                                          'label': _('Firstname'),
+                                          'mandatory': False,
+                                          'css_classes': 'col-sm-6 col-md-6 col-lg-6',
+                                          'clearfix': False},
+                            'lastname': {'sequence': 20,
+                                         'show': True,
+                                         'label': _('Lastname'),
+                                         'mandatory': True,
+                                         'css_classes': 'col-sm-6 col-md-6 col-lg-6',
+                                         'clearfix': True},
+                            'email': {'sequence': 30,
+                                      'label': _('E-Mail'),
+                                      'show': True,
+                                      'mandatory': True,
+                                      'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                      'clearfix': True},
+                            'birthdate_web': {'sequence': 40,
+                                              'label': _('Birthdate'),
+                                              'show': True,
+                                              'mandatory': False,
+                                              'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                              'clearfix': True,
+                                              'information': """ Um ihre Spenden von der Steuer absetzten zu können 
+                                                                 ist die Angabe ihres Geburtsdatums erforderlich. """},
+                            'country_id': {'sequence': 50,
+                                           'label': _('Country'),
+                                           'show': True,
+                                           'mandatory': True,
+                                           'css_classes': 'col-sm-12 col-md-12 col-lg-12',
+                                           'clearfix': True},
+                            }
+                fields_obj = self.env['ir.model.fields']
+                form_field_obj = self.env['fson.form_field']
+                for f, vals in f_fields.iteritems():
+                    vals['form_id'] = form.id
+                    vals['field_id'] = fields_obj.search([('model_id', '=', res_partner_model.id),
+                                                          ('name', '=', f)]).id
+                    form_field_obj.create(vals)
+
+                # Add this form to the product template
+                r.write({'giftee_form_id': form.id})

@@ -117,7 +117,8 @@
 
                         <!-- GET REGULAR FIELD DATA -->
                         <!-- ====================== -->
-                        <t t-set="f_name" t-value="field.field_id.name"/>
+                        <t t-set="field_name_prefix" t-value="field_name_prefix if field_name_prefix else ''"/>
+                        <t t-set="f_name" t-value="field_name_prefix + field.field_id.name"/>
                         <t t-set="f_type" t-value="field.field_id.ttype"/>
                         <t t-set="f_style" t-value="field.style or 'none'"/>
                         <t t-set="f_required" t-value="field.mandatory"/>
