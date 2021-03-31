@@ -215,6 +215,13 @@ class sale_order_line(osv.Model):
 class sale_order(osv.Model):
     _inherit = "sale.order"
 
+    # Giftee addon preparation
+    _columns = {
+        'giftee_partner_id': fields.many2one(comodel_name='res.partner', inverse_name="giftee_sale_order_ids",
+                                             string="Giftee",
+                                             help="Products in this sale order are a gift for this partner")
+    }
+
     # Todo extend _prepare_invoice to add extra fields for reports and statistics
     def _prepare_invoice(self, cr, uid, order, lines, context=None):
         res = super(sale_order, self)._prepare_invoice( cr=cr, uid=uid, order=order, lines=lines, context=context)
