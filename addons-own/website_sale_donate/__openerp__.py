@@ -132,6 +132,7 @@ To solve this we did:
         'views/views.xml',
         'views/sale_order_line.xml',
         'views/website.xml',
+        'views/sale_order.xml',
         #'views/fsonline_menu.xml', # Moved to fsonline addon
         'data/run_on_install_update.xml'        # Update xml_id field on update and install
     ],

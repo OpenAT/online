@@ -215,13 +215,6 @@ class sale_order_line(osv.Model):
 class sale_order(osv.Model):
     _inherit = "sale.order"
 
-    # Giftee addon preparation
-    _columns = {
-        'giftee_partner_id': fields.many2one(comodel_name='res.partner', inverse_name="giftee_sale_order_ids",
-                                             string="Giftee",
-                                             help="Products in this sale order are a gift for this partner")
-    }
-
     # Todo extend _prepare_invoice to add extra fields for reports and statistics
     def _prepare_invoice(self, cr, uid, order, lines, context=None):
         res = super(sale_order, self)._prepare_invoice( cr=cr, uid=uid, order=order, lines=lines, context=context)
@@ -400,6 +393,13 @@ class sale_order(osv.Model):
                     if product.checkout_form_id != l.product_id.checkout_form_id:
                         _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
                                      'checkout fields configurations do not match' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
+                    # Giftee fields form mismatch (giftee fields)
+                    if product.giftee_form_id != l.product_id.giftee_form_id:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'giftee fields configurations do not match' % (l.id, order.id))
                         sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
                         continue
 

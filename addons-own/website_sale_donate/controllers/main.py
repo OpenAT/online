@@ -534,8 +534,12 @@ class website_sale_donate(website_sale):
         if fso_forms_billing_fields:
             values['fso_forms_billing_fields'] = fso_forms_billing_fields
 
-            # TODO: prepare form data if any (values['checkout']) maybe by fso.form._prepare_field_data()?!?
-            # Parse form data to match odoo field types
+            # Parse form data to match odoo field data types
+            # TODO: Maybe this is wrong because _prepare_field_data() should be used to transform the send form data
+            #       to valid odoo field data,
+            #       All the field validation is done by website_sale_donate in e.g. checkout_form_validate() and
+            #       checkout_parse() and alike therefore it may not be necessary to run the fso_forms methods
+            #       validate_fields() and _prepare_kwargs_for_form()?
             if values.get('checkout') and data:
                 fso_forms_obj = FsoForms()
                 parsed_form_values = fso_forms_obj._prepare_field_data(form=fso_forms_billing_fields[0].form_id,
@@ -596,7 +600,8 @@ class website_sale_donate(website_sale):
 
         # Add Giftee Fields to values dict
         # --------------------------------
-        # HINT: The field prefix is set by the template: <t t-set="field_name_prefix" t-value="gifting_"/>
+        # HINT: The field prefix is set by the template: wsd_checkout_form_gifting_fields
+        #       <t t-set="field_name_prefix" t-value="giftee_"/>
         fso_forms_giftee_fields = self.get_fso_forms_giftee_fields(product=product)
         if fso_forms_giftee_fields:
             # Append the field definitions for form rendering
@@ -610,6 +615,7 @@ class website_sale_donate(website_sale):
                 gf_checkout_data[f_name] = values['checkout'].get(gf_name, None)
 
             # Parse the form data
+            # TODO: I guess _prepare_field_data() is wrong and _prepare_kwargs_for_form() should be used instead
             fso_forms_obj = FsoForms()
             parsed_gf_form_field_data = fso_forms_obj._prepare_field_data(
                 form=fso_forms_giftee_fields[0].form_id, form_field_data=gf_checkout_data)
@@ -619,6 +625,34 @@ class website_sale_donate(website_sale):
             values['checkout'].update(giftee_data)
 
         return values
+
+    def checkout_form_save(self, checkout):
+        super(website_sale_donate, self).checkout_form_save(checkout)
+
+        # Process giftee fields
+        # ---------------------
+        order = request.website.sale_get_order(force_create=1, context=request.env.context)
+
+        giftee_fields = self.get_fso_forms_giftee_fields(product=None)
+        if giftee_fields:
+            giftee_form = giftee_fields[0].form_id
+            giftee_data = {k.strip('giftee_'): v for k, v in checkout.iteritems() if k.startswith('giftee_')}
+            odoo_ready_giftee_data = giftee_form._prepare_field_data(form=giftee_form, form_field_data=giftee_data)
+
+            partner_lang = request.lang if request.lang in [lang.code for lang in request.website.language_ids] else None
+            if odoo_ready_giftee_data and partner_lang:
+                odoo_ready_giftee_data['lang'] = partner_lang
+
+            giftee = order.giftee_partner_id
+            if giftee:
+                giftee.sudo().write(odoo_ready_giftee_data)
+                _logger.info("Update giftee %s of sale order %s with data %s"
+                             % (giftee.id, order.id, odoo_ready_giftee_data))
+            else:
+                giftee = request.env['res.partner'].sudo().create(odoo_ready_giftee_data)
+                order.sudo().write({'giftee_partner_id': giftee.id})
+                _logger.info("Created giftee %s for sale order %s with data %s"
+                             % (giftee.id, order.id, odoo_ready_giftee_data))
 
     # Set mandatory billing and shipping fields
     def _get_mandatory_billing_fields(self):

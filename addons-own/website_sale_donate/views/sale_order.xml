@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data> 
+
+    <!-- Extend sale.order form to include giftee -->
+    <record model="ir.ui.view" id="sale_order_form_giftee">
+        <field name="name">sale_order_form_giftee</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_shipping_id']" position="after">
+                <field name="giftee_partner_id" context="{'show_address': 1}" options='{"always_reload": True}'/>
+            </xpath>
+        </field>
+    </record>
+    
+</data></openerp>
