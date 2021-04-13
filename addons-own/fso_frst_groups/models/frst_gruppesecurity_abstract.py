@@ -54,9 +54,14 @@ class FRSTGruppeSecurity(models.AbstractModel):
                 ],
                 limit=2)
             if len(active) >= 2:
-                raise ValidationError("Only one group can have an active subscription for groups in the group folder %s"
-                                      " ! Active subscriptions: %s" % (r.zgruppedetail_id.zgruppe_id,
-                                                                       active))
+                # WARNING: Temporarily switched to a log message because nur_eine_gruppe_anmelden is syncned wrong
+                #          as a consequence test will fail right now - must be enabled again as soon as possible
+                # raise ValidationError("Only one group can have an active subscription for groups in the group folder %s"
+                #                       " ! Active subscriptions: %s" % (r.zgruppedetail_id.zgruppe_id,
+                #                                                        active))
+                logger.error("Only one group can have an active subscription for groups in the group folder %s"
+                             " ! Active subscriptions: %s" % (r.zgruppedetail_id.zgruppe_id,
+                                                              active))
             # TODO: Performance optimization: We may remove all other subscriptions for this subscription target
             #                                 in subscriptions_to_check if they are for groups_in_folder
 
