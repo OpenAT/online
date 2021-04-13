@@ -15,8 +15,10 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
     def setUp(self):
         super(TestFRSTSubscriptionSecurity, self).setUp()
 
-        def reset():
-            super(TestFRSTSubscriptionSecurity, self).reset()
+        # ATTENTION: It is necessary to clean the ir.model.data cache or fragments will remain between tests which
+        #            would lead to wrong results for self.env.ref()
+        @self.addCleanup
+        def reset_model_data_cache():
             self.env.invalidate_all()
             self.env['ir.model.data'].clear_caches()
             self.env['res.groups'].clear_caches()
@@ -77,9 +79,10 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
         # Create a sosync user
         group_sosync = self.env.ref('base.sosync', raise_if_not_found=False)
         if not group_sosync:
-            #self.env.invalidate_all()
-            self.env['ir.model.data'].clear_caches()
-            self.env['res.groups'].clear_caches()
+            # ATTENTION: It is necessary to clean the ir.model.data cache or fragments will remain between tests
+            #            Was moved to reset_model_data_cache()
+            # self.env['ir.model.data'].clear_caches()
+            # self.env['res.groups'].clear_caches()
             group_sosync = self.env['res.groups'].create({
                 'name': 'Sosync User Group for unit tests',
                 'implied_ids': [
@@ -108,6 +111,8 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
         """ Create subscription for group in restricted group folder as backend user and admin user """
         self.groupfolder_email.gui_gruppen_bearbeiten_moeglich = False
         self.assertFalse(self.groupfolder_email.gui_gruppen_bearbeiten_moeglich)
+        # ATTENTION: Try to avoid multiple with self.assertRaises in one test especially with create or write since
+        #            the create or write will be done because the exception is not raised!!!
         with self.assertRaises(AccessError):
             new_subscription = self.env['frst.personemailgruppe'].sudo(user=self.backend_user).create({
                 'zgruppedetail_id': self.group_newsletter.id,
@@ -125,6 +130,8 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
         # Restrict editing to the base.sosync user group
         self.groupfolder_email.gui_gruppen_bearbeiten_moeglich = False
         self.assertFalse(self.groupfolder_email.gui_gruppen_bearbeiten_moeglich)
+        # ATTENTION: Try to avoid multiple with self.assertRaises in one test expecially with create or write since
+        #            the create or write will be done because the exception is not raised!!!
         # Backend User
         with self.assertRaises(AccessError):
             self.subscription.sudo(user=self.backend_user).write({'gueltig_von': fields.datetime.now()})
@@ -138,6 +145,8 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
         # Restrict editing to the base.sosync user group
         self.groupfolder_email.gui_gruppen_bearbeiten_moeglich = False
         self.assertFalse(self.groupfolder_email.gui_gruppen_bearbeiten_moeglich)
+        # ATTENTION: Try to avoid multiple with self.assertRaises in one test especially with create or write since
+        #            the create or write will be done because the exception is not raised!!!
         # Backend User
         with self.assertRaises(AccessError):
             self.subscription.sudo(user=self.backend_user).unlink()
@@ -158,21 +167,12 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
         subscription.unlink()
         self.assertFalse(subscription.exists())
 
-    def test_05_restrict_multiple_active_subscriptions_for_groups_in_same_groupfolder(self):
-        """ Restrict multiple active group assignments for groups in a group folder with
+    def test_05_allow_multiple_inactive_subscriptions_for_groups_in_same_groupfolder(self):
+        """ Allow multiple inactive group assignments for groups in a group folder with
             nur_eine_gruppe_anmelden = True
         """
         self.assertTrue(self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden)
-        # Create an active subscription (which should fail)
-        # TODO: ATTENTION: This will create the subscription - i guess because the exception is suppressed ...
-        #                  !!! Therefore i need to write smaller tests with only one with self.assertRaises ... !!!
-        with self.assertRaises(ValidationError):
-            subscription_b = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
-                'zgruppedetail_id': self.group_newsletter_b.id,
-                'frst_personemail_id': self.partner_max1.main_personemail_id.id,
-            })
         # Create an inactive subscription (which should work)
-        # TODO: This fails! Debug this!
         yesterday = fields.datetime.now() - timedelta(days=1)
         subscription_b_inactive = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
             'zgruppedetail_id': self.group_newsletter_b.id,
@@ -180,11 +180,27 @@ class TestFRSTSubscriptionSecurity(common.TransactionCase):
             'gueltig_von': yesterday,
             'gueltig_bis': yesterday
         })
+        # ATTENTION: Try to avoid multiple with self.assertRaises in one test especially with create or write since
+        #            the create or write will be done because the exception is not raised!!!
         # Activate the inactive subscription (which should fail)
         with self.assertRaises(ValidationError):
             subscription_b_inactive.activate()
 
-    def test_06_allow_multiple_subscriptions_for_groups_in_same_groupfolder(self):
+    def test_06_restrict_multiple_active_subscriptions_for_groups_in_same_groupfolder(self):
+        """ Restrict multiple active group assignments for groups in a group folder with
+            nur_eine_gruppe_anmelden = True
+        """
+        self.assertTrue(self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden)
+        # ATTENTION: Try to avoid multiple with self.assertRaises in one test especially with create or write since
+        #            the create or write will be done because the exception is not raised!!!
+        # Create an active subscription (which should fail)
+        with self.assertRaises(ValidationError):
+            subscription_b = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
+                'zgruppedetail_id': self.group_newsletter_b.id,
+                'frst_personemail_id': self.partner_max1.main_personemail_id.id,
+            })
+
+    def test_07_allow_multiple_active_subscriptions_for_groups_in_same_groupfolder(self):
         self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden = False
         self.assertFalse(self.group_newsletter_b.zgruppe_id.nur_eine_gruppe_anmelden)
         subscription_a = self.env['frst.personemailgruppe'].sudo(user=self.sosync_user).create({
