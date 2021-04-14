@@ -14,3 +14,6 @@ class FRSTzGruppeSosync(models.Model):
     nein_gui_anzeige = fields.Char(sosync="True")
 
     geltungsbereich = fields.Selection(sosync="True")
+
+    gui_gruppen_bearbeiten_moeglich = fields.Boolean(sosync="frst-to-fson")
+    nur_eine_gruppe_anmelden = fields.Boolean(sosync="frst-to-fson")
