@@ -18,6 +18,13 @@ class FSOCrmFacebookForm(models.Model):
                                                "Fundraising Studio where a partner is needed to create the lead as an"
                                                "'Aktion'")
 
+    # fso_lead_type
+    frst_import_type = fields.Selection(string="Fundraising Studio Type",
+                                        selection=[('email', 'E-Mail Subscription/Petition'),
+                                                   ('phone', 'Phone Subscription/Petition'),
+                                                   ('', 'No Fundraising Studio Type')],
+                                        default='email')
+
     # HINT: "tabellentyp_id = 100110" means e-mail which in fact stands for PersonEmailGruppe stuff
     zgruppedetail_id = fields.Many2one(string="Fundraising Studio Group",
                                        comodel_name="frst.zgruppedetail", inverse_name='crm_fb_form_ids',
@@ -37,7 +44,7 @@ class FSOCrmFacebookForm(models.Model):
                                                 "Fundraising Studio Group CDS setting but this may change in the "
                                                 "future")
 
-    @api.onchange('zgruppedetail_id', 'frst_zverzeichnis_id', 'frst_zverzeichnis_id')
+    @api.onchange('frst_import_type', 'zgruppedetail_id', 'frst_zverzeichnis_id', 'force_create_partner')
     def forms_onchange(self):
         for r in self:
             # Make sure a new partner will be created on lead creation if a group or cds is set
@@ -46,18 +53,43 @@ class FSOCrmFacebookForm(models.Model):
             # Sync the FRST cds setting from the group if not set already
             if not r.frst_zverzeichnis_id and r.zgruppedetail_id and r.zgruppedetail_id.frst_zverzeichnis_id:
                 r.frst_zverzeichnis_id = r.zgruppedetail_id.frst_zverzeichnis_id
+            # Remove group if FRST type other than email
+            if not r.frst_import_type == 'email':
+                r.zgruppedetail_id = False
 
-    @api.constrains('zgruppedetail_id', 'frst_zverzeichnis_id', 'force_create_partner', 'state', 'activated')
+    @api.constrains('frst_import_type', 'zgruppedetail_id', 'frst_zverzeichnis_id', 'force_create_partner',
+                    'state', 'activated')
     def forms_constrains(self):
         for r in self:
+            # Fundraising Studio import type is set:
+            if r.frst_import_type:
+                if not r.force_create_partner:
+                    raise ValidationError(
+                        _("Force create partner must be checked if a Fundraising Studio import type is set!"))
+                if not r.frst_zverzeichnis_id:
+                    raise ValidationError(_("A CDS-Record must be set if a Fundraising Studio import type is set!"))
+                if r.frst_import_type != 'email' and r.zgruppedetail_id:
+                    raise ValidationError(_("The Fundraising Studio import type must be e-mail if a group is set!"
+                                            "Please change the import type or remove the Fundraising Studio group."))
+
+            # Fundraising Studio import type is not set
+            if not r.frst_import_type:
+                if r.zgruppedetail_id:
+                    raise ValidationError(_("You must set the Fundraising Studio import type if a group is set!"
+                                            "Please set the import type or remove the Fundraising Studio group."))
+                if r.frst_zverzeichnis_id:
+                    raise ValidationError(_("You must set the Fundraising Studio import type if a CDS-Record is set!"
+                                            "Please set the import type or remove the CDS-Record."))
+
             # Make sure force create partner is set!
-            if (r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
+            if (r.frst_import_type or r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
                 raise ValidationError(
                     _("force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"))
-            # Make sure the fields 'zgruppedetail_id' and 'frst_zverzeichnis_id' are set for the state 'active'
-            if r.state == 'active' and (not r.zgruppedetail_id or not r.frst_zverzeichnis_id):
+
+            # Make sure the fields 'frst_import_type' and 'frst_zverzeichnis_id' are set for the state 'active'
+            if r.state == 'active' and not r.frst_import_type and (not r.zgruppedetail_id or not r.frst_zverzeichnis_id):
                 raise ValidationError(
-                    _("You must set a Group and a CDS-Record before you can approve/enable the form!"))
+                    _("You must set at least an import type and a CDS-Record before you can approve/enable the form!"))
 
     @api.multi
     def cmp_personemailgruppe_count(self):
@@ -87,8 +119,33 @@ class FSOCrmFacebookForm(models.Model):
     # Add the frst_zverzeichnis_id to the lead creation values
     @api.multi
     def facebook_data_to_lead_data(self, facebook_lead_data=None):
-        res = super(FSOCrmFacebookForm, self).facebook_data_to_lead_data(facebook_lead_data=facebook_lead_data)
-        if res and self.frst_zverzeichnis_id:
-            logger.info("Adding 'frst_zverzeichnis_id' of the facebook form to the create-lead values!")
-            res['frst_zverzeichnis_id'] = self.frst_zverzeichnis_id.id
-        return res
+        lead_vals = super(FSOCrmFacebookForm, self).facebook_data_to_lead_data(facebook_lead_data=facebook_lead_data)
+
+        if lead_vals and self.frst_import_type:
+            logger.debug("Adding 'frst_import_type' of the facebook form to the create-lead values!")
+            lead_vals['frst_import_type'] = self.frst_import_type
+
+        if lead_vals and self.frst_zverzeichnis_id:
+            logger.debug("Adding 'frst_zverzeichnis_id' of the facebook form to the create-lead values!")
+            lead_vals['frst_zverzeichnis_id'] = self.frst_zverzeichnis_id.id
+
+        # Try to find a matching partner if this is a phone petition
+        # This will set the partner_id at lead creation so that the _find_matching_partner() method of the wizzards
+        # in the odoo addon 'crm' will already use this partner instead of searching or creating one.
+        if lead_vals.get('frst_import_type', '') == 'phone':
+            partner_obj = self.env['res.partner']
+            found_partners = dict()
+            lead_phone_fields = ('phone', 'mobile')
+            for pfield in lead_phone_fields:
+                lead_phone_number = lead_vals.get(pfield, '')
+                if lead_phone_number:
+                    found = partner_obj.search_phone_fuzzy(lead_phone_number)
+                    if found:
+                        found_partners.update(found)
+            if len(found_partners) == 1:
+                partner_id = found_partners.keys()[0]
+                logger.info("Append found partner %s to facebook_data_to_lead_data and Fundraising Studio import "
+                            "type 'phone'! (found_partners: %s)" % (partner_id, found_partners))
+                lead_vals['partner_id'] = partner_id
+
+        return lead_vals
