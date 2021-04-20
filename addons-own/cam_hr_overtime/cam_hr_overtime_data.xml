@@ -11,13 +11,23 @@
             <field name="color_name">blue</field>
         </record>
 
+        <!-- Krankenstand -->
         <record model="hr.holidays.status" id="holiday_status_krankenstand">
             <field name="name">Krankenstand</field>
             <field name="code">illness</field>
             <field name="limit">True</field>
             <field name="color_name">red</field>
-        </record>   
-        
+        </record>
+
+        <!-- Zeitausgleich -->
+        <record model="hr.holidays.status" id="holiday_status_zeitausgleich">
+            <field name="name">Zeitausgleich</field>
+            <field name="code">zeitausgleich</field>
+            <field name="limit">True</field>
+            <field name="color_name">blue</field>
+        </record>
+
+        <!-- Feiertage -->
         <record model="hr.holidays.status" id="holiday_status_feiertag">
             <field name="name">Feiertage</field>
             <field name="code">legal</field>
