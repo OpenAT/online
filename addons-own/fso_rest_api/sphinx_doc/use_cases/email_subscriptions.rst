@@ -118,3 +118,66 @@ of the search method to specify our search conditions.
         # >>> 30104: Newsletter
         # >>> 30208: Kinder-Newsletter
         # >>> 30221: Notfall-Newsletter
+
+
+Subsribe to a newsletter
+------------------------
+
+Assuming a simple web form that captures **first name**, **last name** and **email**, subscribing to a newsletter
+consists of two ``POST`` requests:
+    1) Create ``res.partner`` (be sure to include ``email``)
+    2) Create ``frst.personemailgruppe`` using the IDs from the first request
+
+See `Search for email groups`_ on how to obtain possible values for ``zgruppedetail_id``. The example
+just uses a hard coded value.
+
+.. tabs::
+
+    .. code-tab:: python
+        :emphasize-lines: 18-22, 36-40
+
+        import json
+        import requests
+        from  requests.auth import HTTPBasicAuth
+
+        # API Base URL
+        api_base_url = "http://demo.local.com/api/v1/frst"
+
+        # Prepare Authorization
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+
+        # Prepare partner data, including E-Mail
+        partner_data = {
+            "firstname": "Maxime",
+            "lastname": "Muster",
+            "email": "maxime.muster@datadialog.net"
+        }
+
+        # Create the partner
+        response = requests.post(api_base_url + '/res.partner',
+                                headers={'accept': 'application/json'},
+                                auth=auth,
+                                json=partner_data)
+
+        # Parse the JSON response so we can fetch ID values
+        created_partner = json.loads(response.content)
+        partner_id = created_partner["id"]
+        personemail_id = created_partner["main_personemail_id"]
+
+        # Prepare subscription data
+        subscription_data = {
+            "partner_id": partner_id,
+            "frst_personemail_id": personemail_id,
+            "zgruppedetail_id": 30221 # Notfall-Newsletter
+        }
+
+        # Create the subscription by creating ``frst.personemailgruppe``
+        response = requests.post(api_base_url + '/frst.personemailgruppe',
+                                headers={'accept': 'application/json'},
+                                auth=auth,
+                                json=subscription_data)
+
+        subscription = json.loads(response.content)
+        print("Subscription state: %s" % subscription["state"])
+        # Example 1: >>> Subscription state: approval_pending
+        # Example 2: >>> Subscription state: subscribed
