@@ -130,8 +130,8 @@ of the search method to specify our search conditions.
         # >>> 30221: Notfall-Newsletter
 
 
-Subsribe to a newsletter
-------------------------
+Subscribe to a newsletter
+-------------------------
 
 Assuming a simple web form that captures **first name**, **last name** and **email**, subscribing to a newsletter
 consists of two ``POST`` requests:
