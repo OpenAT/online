@@ -130,6 +130,66 @@ of the search method to specify our search conditions.
         # >>> 30221: Notfall-Newsletter
 
 
+Create email groups
+-------------------
+
+.. attention::
+    Implement this in your management backend and simply cache the data locally.
+
+You first need the ID of a group folder (``frst.zgruppe``) with ``tabellentyp_id`` of ``100110``.
+See `Search for email group folders`_ on how to obtain possible values.
+
+.. note::
+    You can only create ``frst.zgruppedetail``. Group folders (``frst.zgruppe``) are read only.
+
+Once you have the desired ``frst.zgruppe`` ID, send a ``POST`` request for the model ``frst.zgruppedetail``
+with the desired values.
+
+Use the ``bestaetigung_*`` fields to specify how the confirmation is handled. If you handle confirmation
+yourself, you can use ``bestaetigung_erforderlich = False``. If you need **Fundraising Studio** to
+handle double opt in, use ``True``, and specify the confirmation type via the ``bestaetigung_typ`` field.
+
+.. note::
+    If ``bestaetigung_erforderlich = True``, The ID value for ``bestaetigung_email`` must be
+    requested from the organisation or DataDialog. It is not currently queryable by the API.
+
+.. tabs::
+
+    .. code-tab:: python
+        :emphasize-lines: 22-26
+
+        import json
+        import requests
+        from  requests.auth import HTTPBasicAuth
+
+        # API Base URL
+        api_base_url = "http://demo.local.com/api/v1/frst"
+
+        # Prepare Authorization
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+
+        groupdetail_data = {
+            "zgruppe_id": 30200,                        # Newsletter
+            "geltungsbereich": "local",                 # fixed
+            "gui_anzeigen": True,                       # fixed
+            "gruppe_lang": "Special Newsletter Topic",  # Actual newsletter name
+            "gruppe_kurz": "Special Newsletter Topic",  # Same as "gruppe_lang"
+            "bestaetigung_erforderlich": True,          # True, if confirmation is required for this newsletter
+            "bestaetigung_typ": "doubleoptin",          # Confirmation type DOI email
+            "bestaetigung_email": 33                    # Confirmation email template ID
+        }
+
+        # Create the new newsletter group
+        response = requests.post(api_base_url + '/frst.zgruppedetail',
+                                  headers={'accept': 'application/json'},
+                                  auth=auth,
+                                  json=groupdetail_data)
+
+        groupdetail = json.loads(response.content)
+
+        print("Created new newsletter ID %s: %s" % (groupdetail["id"], groupdetail["gruppe_lang"]))
+
+
 Subscribe to a newsletter
 -------------------------
 
