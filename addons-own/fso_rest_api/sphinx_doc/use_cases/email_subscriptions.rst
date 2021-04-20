@@ -201,6 +201,12 @@ consists of two ``POST`` requests:
 See `Search for email groups`_ on how to obtain possible values for ``zgruppedetail_id``. The example
 just uses a hard coded value.
 
+.. note::
+    The resulting subscription state depends on the referenced ``frst.zgruppedetail``.
+    For example, if double opt in is enabled for the group, the subscription state would
+    be ``approval_pending`` instead of ``subscribed``. Confirmation would finally result
+    in the sate ``approved``.
+
 .. tabs::
 
     .. code-tab:: python
