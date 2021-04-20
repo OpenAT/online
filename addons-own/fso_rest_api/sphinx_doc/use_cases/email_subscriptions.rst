@@ -6,6 +6,11 @@ Email Subscriptions
 
 Search for email group folders
 ------------------------------
+
+.. attention::
+    This should not be done from web forms directly. Implement this in your management backend and
+    simply cache the data locally.
+
 To search for email group folders we send a ``PATCH`` request to the route ``/frst.zgruppe/call/search`` to call the
 ``search`` method and we provide a :ref:`search domain <search_domain>` as the first positional argument
 of the search method to specify our search conditions.
@@ -63,6 +68,11 @@ contain groups that are applicable for email addresses.
 
 Search for email groups
 -----------------------
+
+.. attention::
+    This should not be done from web forms directly. Implement this in your management backend and
+    simply cache the data locally.
+
 Once you have picked a desired group folder, for example ``30200`` (``Newsletter``), you can search for
 actual groups inside the group folder.
 
