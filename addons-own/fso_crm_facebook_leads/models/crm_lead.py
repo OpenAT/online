@@ -50,7 +50,7 @@ class CrmLead(models.Model):
                     'name': 'convert',
                     'action': 'create',
                     'opportunity_ids': False,
-                    'partner_id': lead.partner_id if lead.partner_id else False,
+                    'partner_id': lead.partner_id.id if lead.partner_id else False,
                 })
 
                 wizard.action_apply()
