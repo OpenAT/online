@@ -124,6 +124,7 @@
                 <menuitem id="menu_fso_organizer_hrtime_mytimesheet" action="hr_timesheet_sheet.ir_actions_server_timsheet_sheet" name="Mein Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3010"/>
                 <menuitem id="menu_fso_organizer_hrtime_timesheet" action="hr_timesheet_sheet.act_hr_timesheet_sheet_form" name="Alle Stundenzettel" parent="menu_fso_organizer_hrtime" sequence="3015"/>
                 <menuitem id="menu_fso_organizer_hrtime_leave" action="cam_hr.hr_alle_urlaubsantraege_action" name="Urlaubseinträge" parent="menu_fso_organizer_hrtime" sequence="3020"/>
+                <menuitem id="menu_fso_organizer_hrtime_za" action="cam_hr.hr_zeitausgleich_action" name="Zeitausgleich" parent="menu_fso_organizer_hrtime" sequence="3024"/>
                 <menuitem id="menu_fso_organizer_hrtime_sick" action="cam_hr.hr_krankenstaende_action" name="Krankenstände" parent="menu_fso_organizer_hrtime" sequence="3025"/>
                 <menuitem id="menu_fso_organizer_hrtime_leavereq" action="cam_hr.hr_urlaubsanspruch_action" name="Urlaubsanspruch erfassen" parent="menu_fso_organizer_hrtime" sequence="3030"/>
     
