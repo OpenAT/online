@@ -4,6 +4,19 @@
 Email Subscriptions
 ====================
 
+Overview
+--------
+Relevant models:
+    - ``frst.zgruppe``: group folder, consider it like a category. Only type **email** (``tabellentyp_id = 100110``)
+      is relevant in this section. It contains multiple groups.
+    - ``frst.zgruppedetail``: actual email group or list. A group belongs to exactly one ``frst.zgruppe``.
+    - ``frst.personemail``: email address
+    - ``frst.personemailgruppe``: subscription or assignment of an email to a group
+
+.. note::
+    Groups are not limited to newsletter groups. They can also be qualifications or classifications used in statistics.
+    In this section however, the focus is on newsletter groups.
+
 Search for email group folders
 ------------------------------
 
