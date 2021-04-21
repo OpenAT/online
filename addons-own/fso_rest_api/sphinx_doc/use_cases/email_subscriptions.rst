@@ -10,7 +10,7 @@ Relevant models:
     - ``frst.zgruppe``: group folder, consider it like a category. Only type **email** (``tabellentyp_id = 100110``)
       is relevant in this section. It contains multiple groups.
     - ``frst.zgruppedetail``: actual email group or list. A group belongs to exactly one ``frst.zgruppe``.
-    - ``frst.personemail``: email address
+    - ``res.partner``: person, it contains the main email address and foreign key
     - ``frst.personemailgruppe``: subscription or assignment of an email to a group
 
 .. note::
