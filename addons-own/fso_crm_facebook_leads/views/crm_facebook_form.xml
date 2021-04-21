@@ -18,6 +18,7 @@
 
             <xpath expr="//group[@string='Tracking Info']" position="before">
                 <group string="Fundraising Studio">
+                    <field name="frst_import_type"/>
                     <field name="force_create_partner"/>
                     <field name="zgruppedetail_id"
                            options="{'no_quick_create': True}"

@@ -3,14 +3,15 @@ from copy import deepcopy
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 import time
+from datetime import timedelta
 import logging
 logger = logging.getLogger(__name__)
 
 
 class FRSTGruppeState(models.AbstractModel):
     """
-    This model is added to the groupbridgemodels e.g.: frst.personemailgruppe and extends them with a state
-    and various other fields
+    This model is added to the subscription/groupbridgemodels e.g.: frst.personemailgruppe and extends them with a state
+    and various other fields. Therefore the naming is missleading! Should be named frst_subscription_state_abstract!
 
     State Descriptions
     ------------------
@@ -173,6 +174,10 @@ class FRSTGruppeState(models.AbstractModel):
     @api.multi
     def activate(self):
         for r in self:
+            # Skipp if already active
+            if r.state not in ['unsubscribed', 'expired']:
+                continue
+
             vals = {
                 'gueltig_von': fields.datetime.now(),
                 'gueltig_bis': fields.date(2099, 12, 31)
@@ -188,6 +193,21 @@ class FRSTGruppeState(models.AbstractModel):
             # Opt Out
             if hasattr(r, 'steuerung_bit'):
                 vals['steuerung_bit'] = True
+
+            r.write(vals)
+
+    @api.multi
+    def deactivate(self):
+        yesterday = fields.datetime.now() - timedelta(days=1)
+        for r in self:
+            # Skipp if already inactive
+            if r.state in ['unsubscribed', 'expired']:
+                continue
+
+            vals = {'gueltig_bis': yesterday}
+            gueltig_von = fields.datetime.strptime(r.gueltig_von, DEFAULT_SERVER_DATE_FORMAT)
+            if gueltig_von > fields.datetime.now():
+                vals['gueltig_von'] = yesterday
 
             r.write(vals)
 

@@ -11,6 +11,7 @@ class CrmLead(models.Model):
 
     # Add additional fields
     # HINT: 'partner_' fields are for the company! 'contact_' fields for the person in crm.lead
+    #       but this seem sonly true for the name :( ... phone is even defined twice in crm.lead :(
     # ATTENTION: firstname and lastname fields are covered by the OCA addon 'crm_lead_firstname'
     contact_street_number_web = fields.Char(string='Street Number Web')
     contact_anrede_individuell = fields.Char(string='Individuelle Anrede')

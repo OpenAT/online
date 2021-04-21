@@ -26,6 +26,14 @@ class CrmLead(models.Model):
                                            readonly=True, ondelete='set null', index=True,
                                            track_visibility='onchange')
 
+    # Will copy the import type to crm.lead at lead creation: Done in facebook_data_to_lead_data()
+    frst_import_type = fields.Selection(string="Fundraising Studio Type",
+                                        selection=[('email', 'E-Mail Subscription/Petition'),
+                                                   ('phone', 'Phone Subscription/Petition'),
+                                                   ('', 'No Fundraising Studio Type')],
+                                        readonly=True,
+                                        track_visibility='onchange')
+
     @api.model
     def create(self, vals):
         lead = super(CrmLead, self).create(vals)
@@ -42,7 +50,7 @@ class CrmLead(models.Model):
                     'name': 'convert',
                     'action': 'create',
                     'opportunity_ids': False,
-                    'partner_id': False,
+                    'partner_id': lead.partner_id.id if lead.partner_id else False,
                 })
 
                 wizard.action_apply()

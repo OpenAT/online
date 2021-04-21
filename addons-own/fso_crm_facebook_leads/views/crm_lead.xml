@@ -10,6 +10,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='crm_page_id']" position="after">
+                <field name="frst_import_type"/>
                 <field name="frst_zverzeichnis_id"/>
                 <field name="personemailgruppe_id"/>
             </xpath>
@@ -24,6 +25,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='crm_form_id']" position="after">
+                <field name="frst_import_type"/>
                 <field name="frst_zverzeichnis_id"/>
                 <field name="personemailgruppe_id"/>
             </xpath>
@@ -38,6 +40,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='crm_page_id']" position="after">
+                <field name="frst_import_type"/>
                 <field name="frst_zverzeichnis_id"/>
                 <field name="personemailgruppe_id"/>
             </xpath>
@@ -53,12 +56,14 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="frst_import_type"/>
                 <field name="frst_zverzeichnis_id"/>
                 <field name="personemailgruppe_id"/>
             </xpath>
 
             <xpath expr="//group[@string='Group By']" position="after">
                 <group expand="1" string="Group By" colspan="16" name="group_by_facebook_fso">
+                    <filter string="Fundraising Studio Import Type" context="{'group_by':'frst_import_type'}"/>
                     <filter string="CDS-Ursprungsaktion" context="{'group_by':'frst_zverzeichnis_id'}"/>
                     <filter string="Gruppe" context="{'group_by':'personemailgruppe_id'}"/>
                 </group>

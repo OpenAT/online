@@ -15,10 +15,10 @@ class ResPartnerFRSTSecurity(models.Model):
 
     @api.multi
     def compute_security_fields(self):
-        logger.info("Compute security fields for %s res.partner" % (len(self) if self else 'all'))
+        logger.info("Compute sosync/frst security fields for %s res.partner" % (len(self) if self else 'all'))
 
         def update_field(self, field_name, group_xml_ids):
-            logger.info("Update field %s" % field_name)
+            logger.debug("Update field %s" % field_name)
 
             group_ids = list()
             for xml_gid in group_xml_ids:
@@ -33,14 +33,14 @@ class ResPartnerFRSTSecurity(models.Model):
                 set_domain += [('id', 'in', self.ids)]
             to_set = self.search(set_domain)
             to_set.write({field_name: True})
-            logger.info("Set %s=True for %s records found by %s" % (field_name, len(to_set), set_domain))
+            logger.debug("Set %s=True for %s records found by %s" % (field_name, len(to_set), set_domain))
 
             unset_domain = [('user_ids.groups_id', 'not in', group_ids), (field_name, '=', True)]
             if self:
                 unset_domain += [('id', 'in', self.ids)]
             to_unset = self.search(unset_domain)
             to_unset.write({field_name: False})
-            logger.info("Set %s=False for %s records found by %s" % (field_name, len(to_unset), unset_domain))
+            logger.debug("Set %s=False for %s records found by %s" % (field_name, len(to_unset), unset_domain))
 
         update_field(self, 'fson_sosync_user', ['base.sosync'])
         update_field(self, 'fson_system_user', ['base.group_no_one', 'fso_base.instance_system_user', 'base.studio',

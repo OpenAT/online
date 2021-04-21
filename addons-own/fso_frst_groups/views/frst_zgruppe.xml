@@ -17,6 +17,8 @@
                         </group>
                         <group>
                             <field name="gui_anzeigen"/>
+                            <field name="gui_gruppen_bearbeiten_moeglich" readonly="1"/>
+                            <field name="nur_eine_gruppe_anmelden" readonly="1"/>
                         </group>
                     </group>
                     <notebook>

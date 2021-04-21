@@ -54,3 +54,5 @@ class CrmLeadSosync(models.Model):
     payment_mode = fields.Many2one(sosync="True")
 
     type = fields.Selection(sosync="True")
+
+    frst_import_type = fields.Selection(sosync="True")
