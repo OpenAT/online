@@ -208,8 +208,9 @@ Subscribe to a newsletter
 
 Assuming a simple web form that captures **first name**, **last name** and **email**, subscribing to a newsletter
 consists of two ``POST`` requests:
-    1) Create ``res.partner`` (be sure to include ``email``)
-    2) Create ``frst.personemailgruppe`` using the IDs from the first request
+
+1) Create ``res.partner`` (be sure to include ``email``)
+2) Create ``frst.personemailgruppe`` using the IDs from the first request
 
 See `Search for email groups`_ on how to obtain possible values for ``zgruppedetail_id``. The example
 just uses a hard coded value.
@@ -274,10 +275,11 @@ just uses a hard coded value.
 Unsubscribe from a newsletter
 -----------------------------
 Four requests are required to unsubscribe:
-    1) Find partner via email address
-    2) Read partner data
-    3) Search for subscriptions via ``main_personemail_id`` from partner data
-    4) Call ``deactivate`` and supply all subscription IDs in a single request
+
+1) Find partner via email address
+2) Read partner data
+3) Search for subscriptions via ``main_personemail_id`` from partner data
+4) Call ``deactivate`` and supply all subscription IDs in a single request
 
 .. tabs::
 
