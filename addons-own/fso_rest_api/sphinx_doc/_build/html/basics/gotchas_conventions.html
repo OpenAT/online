@@ -37,6 +37,8 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.js"></script>
+        <script src="../_static/sphinx_tabs/tabs.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
     
@@ -116,6 +118,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Gotchas and Conventions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#charset">Charset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#content-type">Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#calling-model-methods">Calling model methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#date-and-datetime-fields">Date and Datetime Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#locale">Locale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#language">Language</a></li>
@@ -268,7 +271,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#deleting-a-partner">Deleting a partner</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#search-for-email-group-folders">Search for email group folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#search-for-email-groups">Search for email groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#create-email-groups">Create email groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#subscribe-to-a-newsletter">Subscribe to a newsletter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#unsubscribe-from-a-newsletter">Unsubscribe from a newsletter</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -363,10 +374,43 @@ or in <strong>Content-Type</strong> <code class="docutils literal notranslate"><
 <p>The content type is always <code class="docutils literal notranslate"><span class="pre">application/json</span></code> no matter what you set in the header or elsewhere. If you try
 to set an other content type you will get an error in return.</p>
 </div>
+<div class="section" id="calling-model-methods">
+<h2>Calling model methods<a class="headerlink" href="#calling-model-methods" title="Permalink to this headline">¶</a></h2>
+<p>Some methods require no parameters. In those cases, be sure to provide an empty
+dictionary in the request.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># This is fine</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.personemailgruppe/call/deactivate/43,88,120&#39;</span><span class="p">,</span>
+                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+<span class="hll">                            <span class="n">json</span><span class="o">=</span><span class="p">{},</span>
+</span>                            <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+
+    <span class="c1"># This will fail</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.personemailgruppe/call/deactivate/43,88,120&#39;</span><span class="p">,</span>
+                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+                            <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you do not send an empty dictionary, you will get an error like this:</p>
+<div class="admonition error">
+<p class="admonition-title">Error</p>
+<p>Function declared as capable of handling request of type ‘apijson’ but called with a request of type ‘http’</p>
+</div>
+</div>
 <div class="section" id="date-and-datetime-fields">
 <h2>Date and Datetime Fields<a class="headerlink" href="#date-and-datetime-fields" title="Permalink to this headline">¶</a></h2>
 <p>All date and datetime fields are of type “string” and not of type date or datetime. This is due to historical reasons.
-Such fields are marked in the json specification with <em>$date</em> like <code class="docutils literal notranslate"><span class="pre">string($date)</span></code>. You have to use
+Such fields are marked in the json specification with <em>$date</em> or <strong>$datetime</strong> like <code class="docutils literal notranslate"><span class="pre">string($date)</span></code>. You have to use
 the following format for all fields marked with $date or $datetime:</p>
 <blockquote>
 <div><div class="line-block">
