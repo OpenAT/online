@@ -4,6 +4,19 @@
 Email Subscriptions
 ====================
 
+Overview
+--------
+Relevant models:
+    - ``frst.zgruppe``: group folder, consider it like a category. Only type **email** (``tabellentyp_id = 100110``)
+      is relevant in this section. It contains multiple groups. See :ref:`frst_groups` for details.
+    - ``frst.zgruppedetail``: actual email group or list. A group belongs to exactly one ``frst.zgruppe``.
+    - ``res.partner``: person, it contains the main email address and foreign key
+    - ``frst.personemailgruppe``: subscription or assignment of an email to a group
+
+.. note::
+    Groups are not limited to newsletter groups. They can also be qualifications or classifications used in statistics.
+    In this section however, the focus is on newsletter groups.
+
 Search for email group folders
 ------------------------------
 
@@ -195,8 +208,9 @@ Subscribe to a newsletter
 
 Assuming a simple web form that captures **first name**, **last name** and **email**, subscribing to a newsletter
 consists of two ``POST`` requests:
-    1) Create ``res.partner`` (be sure to include ``email``)
-    2) Create ``frst.personemailgruppe`` using the IDs from the first request
+
+1) Create ``res.partner`` (be sure to include ``email``)
+2) Create ``frst.personemailgruppe`` using the IDs from the first request
 
 See `Search for email groups`_ on how to obtain possible values for ``zgruppedetail_id``. The example
 just uses a hard coded value.
@@ -257,3 +271,70 @@ just uses a hard coded value.
         print("Subscription state: %s" % subscription["state"])
         # Example 1: >>> Subscription state: approval_pending
         # Example 2: >>> Subscription state: subscribed
+
+Unsubscribe from a newsletter
+-----------------------------
+Four requests are required to unsubscribe:
+
+1) Find partner via email address
+2) Read partner data
+3) Search for subscriptions via ``main_personemail_id`` from partner data
+4) Call ``deactivate`` and supply all subscription IDs in a single request
+
+.. tabs::
+
+    .. code-tab:: python
+        :emphasize-lines: 13-18, 26-29, 34-39, 46-51
+
+        import json
+        import requests
+        from  requests.auth import HTTPBasicAuth
+
+        # API Base URL
+        api_base_url = "http://demo.local.com/api/v1/frst"
+
+        # Prepare Authorization
+        auth = HTTPBasicAuth('demo', 'bb3479ed-2193-47ac-8a41-3122344dd89e')
+
+        email = "maxime.muster@datadialog.net"
+
+        # Search for partners with the given email
+        search_domain = [('email', '=ilike', email)]
+        response = requests.patch(api_base_url + '/res.partner/call/search',
+                                    headers={'accept': 'application/json'},
+                                    json={"args": [search_domain]},
+                                    auth=auth)
+
+        partner_id_list = json.loads(response.content)
+        partner_id = partner_id_list[0] if partner_id_list else None
+
+        if not partner_id:
+            print("No partner found.")
+        else:
+            # Read partner data to obtain main email address ID
+            response = requests.get(api_base_url + '/res.partner/%s' % partner_id,
+                                        headers={'accept': 'application/json'},
+                                        auth=auth)
+
+            partner = json.loads(response.content)
+            email_id = partner["main_personemail_id"]
+
+            # Search subscriptions for the given email ID
+            search_domain = [('frst_personemail_id', '=', email_id)]
+            response = requests.patch(api_base_url + '/frst.personemailgruppe/call/search',
+                                        headers={'accept': 'application/json'},
+                                        json={"args": [search_domain]},
+                                        auth=auth)
+
+            personemailgroup_id_list = map(str, json.loads(response.content))
+
+            if not personemailgroup_id_list:
+                print("No subscription found.")
+            else:
+                # Deactivate all subscriptions in a single request
+                deactivate_data = {} # Use empty dict!
+                response = requests.patch(api_base_url + '/frst.personemailgruppe/call/deactivate/%s' % ",".join(personemailgroup_id_list),
+                                            headers={'accept': 'application/json'},
+                                            json=deactivate_data,
+                                            auth=auth)
+                # print(response.content) # Empty content if successful

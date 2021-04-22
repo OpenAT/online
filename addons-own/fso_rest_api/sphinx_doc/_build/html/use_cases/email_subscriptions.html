@@ -37,6 +37,8 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.js"></script>
+        <script src="../_static/sphinx_tabs/tabs.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
     
@@ -267,7 +269,15 @@
 <li class="toctree-l3"><a class="reference internal" href="managing_partner.html#deleting-a-partner">Deleting a partner</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Email Subscriptions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Email Subscriptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-for-email-group-folders">Search for email group folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-for-email-groups">Search for email groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-email-groups">Create email groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subscribe-to-a-newsletter">Subscribe to a newsletter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unsubscribe-from-a-newsletter">Unsubscribe from a newsletter</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -348,7 +358,378 @@
             
   <div class="section" id="email-subscriptions">
 <span id="id1"></span><h1>Email Subscriptions<a class="headerlink" href="#email-subscriptions" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Relevant models:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">frst.zgruppe</span></code>: group folder, consider it like a category. Only type <strong>email</strong> (<code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span> <span class="pre">=</span> <span class="pre">100110</span></code>)
+is relevant in this section. It contains multiple groups. See <a class="reference internal" href="../models/frst_groups.html#frst-groups"><span class="std std-ref">frst.zgruppe, frst.zgruppedetail</span></a> for details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frst.zgruppedetail</span></code>: actual email group or list. A group belongs to exactly one <code class="docutils literal notranslate"><span class="pre">frst.zgruppe</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">res.partner</span></code>: person, it contains the main email address and foreign key</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frst.personemailgruppe</span></code>: subscription or assignment of an email to a group</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Groups are not limited to newsletter groups. They can also be qualifications or classifications used in statistics.
+In this section however, the focus is on newsletter groups.</p>
+</div>
+</div>
+<div class="section" id="search-for-email-group-folders">
+<h2>Search for email group folders<a class="headerlink" href="#search-for-email-group-folders" title="Permalink to this headline">¶</a></h2>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>This should not be done from web forms directly. Implement this in your management backend and
+simply cache the data locally.</p>
+</div>
+<p>To search for email group folders we send a <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/frst.zgruppe/call/search</span></code> to call the
+<code class="docutils literal notranslate"><span class="pre">search</span></code> method and we provide a <a class="reference internal" href="../searching/search_domain.html#search-domain"><span class="std std-ref">search domain</span></a> as the first positional argument
+of the search method to specify our search conditions.</p>
+<p>The example searches for group folders of <code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code> with value <code class="docutils literal notranslate"><span class="pre">100110</span></code>, returning all folders that
+contain groups that are applicable for email addresses.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fundraising Studio REST API Examples</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Search for group folders that are applicable for emails (tabellentyp_id = 100110)</span>
+<span class="hll"><span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;tabellentyp_id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">100110</span><span class="p">)]</span>
+</span><span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.zgruppe/call/search&#39;</span><span class="p">,</span>
+</span><span class="hll">                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                          <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">]},</span>
+</span><span class="hll">                          <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+<span class="c1"># Returns list of frst.zgruppe ids:</span>
+<span class="c1"># print(response.content)</span>
+<span class="c1"># &gt;&gt;&gt; b&#39;[30150, 30200]&#39;</span>
+
+<span class="c1"># Parse the JSON response into an object</span>
+<span class="n">group_id_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># Cycle all IDs and request the full object</span>
+<span class="k">for</span> <span class="n">group_id</span> <span class="ow">in</span> <span class="n">group_id_list</span><span class="p">:</span>
+<span class="hll">    <span class="c1"># Request the group with the current ID</span>
+</span><span class="hll">    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.zgruppe/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">group_id</span><span class="p">,</span>
+</span><span class="hll">                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                            <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+    <span class="c1"># Parse the response into an object</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="c1"># Print the name of the group</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;gruppe_lang&quot;</span><span class="p">]))</span>
+
+<span class="c1"># The loop prints the group folders, for example:</span>
+<span class="c1"># &gt;&gt;&gt; 30150: Herkunft</span>
+<span class="c1"># &gt;&gt;&gt; 30200: Newsletter</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="search-for-email-groups">
+<h2>Search for email groups<a class="headerlink" href="#search-for-email-groups" title="Permalink to this headline">¶</a></h2>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>This should not be done from web forms directly. Implement this in your management backend and
+simply cache the data locally.</p>
+</div>
+<p>Once you have picked a desired group folder, for example <code class="docutils literal notranslate"><span class="pre">30200</span></code> (<code class="docutils literal notranslate"><span class="pre">Newsletter</span></code>), you can search for
+actual groups inside the group folder.</p>
+<p>To search for email groups we send a <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> request to the route <code class="docutils literal notranslate"><span class="pre">/frst.zgruppedetail/call/search</span></code> to call the
+<code class="docutils literal notranslate"><span class="pre">search</span></code> method and we provide a <a class="reference internal" href="../searching/search_domain.html#search-domain"><span class="std std-ref">search domain</span></a> as the first positional argument
+of the search method to specify our search conditions.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fundraising Studio REST API Examples</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Search for groups in group folder id 30200</span>
+<span class="hll"><span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;zgruppe_id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">30200</span><span class="p">)]</span>
+</span><span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.zgruppedetail/call/search&#39;</span><span class="p">,</span>
+</span><span class="hll">                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                          <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">]},</span>
+</span><span class="hll">                          <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+<span class="c1"># Returns list of frst.zgruppe ids:</span>
+<span class="c1"># print(response.content)</span>
+<span class="c1"># &gt;&gt;&gt; b&#39;[30104, 30208, 30221]&#39;</span>
+
+<span class="c1"># Parse the JSON response into an object</span>
+<span class="n">group_id_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># Cycle all IDs and request the full object</span>
+<span class="k">for</span> <span class="n">group_id</span> <span class="ow">in</span> <span class="n">group_id_list</span><span class="p">:</span>
+<span class="hll">    <span class="c1"># Request the group with the current ID</span>
+</span><span class="hll">    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.zgruppedetail/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">group_id</span><span class="p">,</span>
+</span><span class="hll">                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                            <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+    <span class="c1"># Parse the response into an object</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="c1"># Print the name of the group</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;gruppe_lang&quot;</span><span class="p">]))</span>
+
+<span class="c1"># The loop prints the group folders, for example:</span>
+<span class="c1"># &gt;&gt;&gt; 30104: Newsletter</span>
+<span class="c1"># &gt;&gt;&gt; 30208: Kinder-Newsletter</span>
+<span class="c1"># &gt;&gt;&gt; 30221: Notfall-Newsletter</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="create-email-groups">
+<h2>Create email groups<a class="headerlink" href="#create-email-groups" title="Permalink to this headline">¶</a></h2>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Implement this in your management backend and simply cache the data locally.</p>
+</div>
+<p>You first need the ID of a group folder (<code class="docutils literal notranslate"><span class="pre">frst.zgruppe</span></code>) with <code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code> of <code class="docutils literal notranslate"><span class="pre">100110</span></code>.
+See <a class="reference internal" href="#search-for-email-group-folders">Search for email group folders</a> on how to obtain possible values.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can only create <code class="docutils literal notranslate"><span class="pre">frst.zgruppedetail</span></code>. Group folders (<code class="docutils literal notranslate"><span class="pre">frst.zgruppe</span></code>) are read only.</p>
+</div>
+<p>Once you have the desired <code class="docutils literal notranslate"><span class="pre">frst.zgruppe</span></code> ID, send a <code class="docutils literal notranslate"><span class="pre">POST</span></code> request for the model <code class="docutils literal notranslate"><span class="pre">frst.zgruppedetail</span></code>
+with the desired values.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">bestaetigung_*</span></code> fields to specify how the confirmation is handled. If you handle confirmation
+yourself, you can use <code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span> <span class="pre">=</span> <span class="pre">False</span></code>. If you need <strong>Fundraising Studio</strong> to
+handle double opt in, use <code class="docutils literal notranslate"><span class="pre">True</span></code>, and specify the confirmation type via the <code class="docutils literal notranslate"><span class="pre">bestaetigung_typ</span></code> field.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span> <span class="pre">=</span> <span class="pre">True</span></code>, The ID value for <code class="docutils literal notranslate"><span class="pre">bestaetigung_email</span></code> must be
+requested from the organisation or DataDialog. It is not currently queryable by the API.</p>
+</div>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="n">groupdetail_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;zgruppe_id&quot;</span><span class="p">:</span> <span class="mi">30200</span><span class="p">,</span>                        <span class="c1"># Newsletter</span>
+    <span class="s2">&quot;geltungsbereich&quot;</span><span class="p">:</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>                 <span class="c1"># fixed</span>
+    <span class="s2">&quot;gui_anzeigen&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>                       <span class="c1"># fixed</span>
+    <span class="s2">&quot;gruppe_lang&quot;</span><span class="p">:</span> <span class="s2">&quot;Special Newsletter Topic&quot;</span><span class="p">,</span>  <span class="c1"># Actual newsletter name</span>
+    <span class="s2">&quot;gruppe_kurz&quot;</span><span class="p">:</span> <span class="s2">&quot;Special Newsletter Topic&quot;</span><span class="p">,</span>  <span class="c1"># Same as &quot;gruppe_lang&quot;</span>
+    <span class="s2">&quot;bestaetigung_erforderlich&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>          <span class="c1"># True, if confirmation is required for this newsletter</span>
+    <span class="s2">&quot;bestaetigung_typ&quot;</span><span class="p">:</span> <span class="s2">&quot;doubleoptin&quot;</span><span class="p">,</span>          <span class="c1"># Confirmation type DOI email</span>
+    <span class="s2">&quot;bestaetigung_email&quot;</span><span class="p">:</span> <span class="mi">33</span>                    <span class="c1"># Confirmation email template ID</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="c1"># Create the new newsletter group</span>
+</span><span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.zgruppedetail&#39;</span><span class="p">,</span>
+</span><span class="hll">                          <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                          <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span>
+</span><span class="hll">                          <span class="n">json</span><span class="o">=</span><span class="n">groupdetail_data</span><span class="p">)</span>
+</span>
+<span class="n">groupdetail</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created new newsletter ID </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">groupdetail</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">groupdetail</span><span class="p">[</span><span class="s2">&quot;gruppe_lang&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="subscribe-to-a-newsletter">
+<h2>Subscribe to a newsletter<a class="headerlink" href="#subscribe-to-a-newsletter" title="Permalink to this headline">¶</a></h2>
+<p>Assuming a simple web form that captures <strong>first name</strong>, <strong>last name</strong> and <strong>email</strong>, subscribing to a newsletter
+consists of two <code class="docutils literal notranslate"><span class="pre">POST</span></code> requests:</p>
+<ol class="arabic simple">
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">res.partner</span></code> (be sure to include <code class="docutils literal notranslate"><span class="pre">email</span></code>)</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">frst.personemailgruppe</span></code> using the IDs from the first request</p></li>
+</ol>
+<p>See <a class="reference internal" href="#search-for-email-groups">Search for email groups</a> on how to obtain possible values for <code class="docutils literal notranslate"><span class="pre">zgruppedetail_id</span></code>. The example
+just uses a hard coded value.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The resulting subscription state depends on the referenced <code class="docutils literal notranslate"><span class="pre">frst.zgruppedetail</span></code>.
+For example, if double opt in is enabled for the group, the subscription state would
+be <code class="docutils literal notranslate"><span class="pre">approval_pending</span></code> instead of <code class="docutils literal notranslate"><span class="pre">subscribed</span></code>. Confirmation would finally result
+in the sate <code class="docutils literal notranslate"><span class="pre">approved</span></code>.</p>
+</div>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="c1"># Prepare partner data, including E-Mail</span>
+<span class="n">partner_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Maxime&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Muster&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;maxime.muster@datadialog.net&quot;</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="c1"># Create the partner</span>
+</span><span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner&#39;</span><span class="p">,</span>
+</span><span class="hll">                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                        <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span>
+</span><span class="hll">                        <span class="n">json</span><span class="o">=</span><span class="n">partner_data</span><span class="p">)</span>
+</span>
+<span class="c1"># Parse the JSON response so we can fetch ID values</span>
+<span class="n">created_partner</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">partner_id</span> <span class="o">=</span> <span class="n">created_partner</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">personemail_id</span> <span class="o">=</span> <span class="n">created_partner</span><span class="p">[</span><span class="s2">&quot;main_personemail_id&quot;</span><span class="p">]</span>
+
+<span class="c1"># Prepare subscription data</span>
+<span class="n">subscription_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;partner_id&quot;</span><span class="p">:</span> <span class="n">partner_id</span><span class="p">,</span>
+    <span class="s2">&quot;frst_personemail_id&quot;</span><span class="p">:</span> <span class="n">personemail_id</span><span class="p">,</span>
+    <span class="s2">&quot;zgruppedetail_id&quot;</span><span class="p">:</span> <span class="mi">30221</span> <span class="c1"># Notfall-Newsletter</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="c1"># Create the subscription by creating ``frst.personemailgruppe``</span>
+</span><span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.personemailgruppe&#39;</span><span class="p">,</span>
+</span><span class="hll">                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                        <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span>
+</span><span class="hll">                        <span class="n">json</span><span class="o">=</span><span class="n">subscription_data</span><span class="p">)</span>
+</span>
+<span class="n">subscription</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Subscription state: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">subscription</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">])</span>
+<span class="c1"># Example 1: &gt;&gt;&gt; Subscription state: approval_pending</span>
+<span class="c1"># Example 2: &gt;&gt;&gt; Subscription state: subscribed</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="unsubscribe-from-a-newsletter">
+<h2>Unsubscribe from a newsletter<a class="headerlink" href="#unsubscribe-from-a-newsletter" title="Permalink to this headline">¶</a></h2>
+<p>Four requests are required to unsubscribe:</p>
+<ol class="arabic simple">
+<li><p>Find partner via email address</p></li>
+<li><p>Read partner data</p></li>
+<li><p>Search for subscriptions via <code class="docutils literal notranslate"><span class="pre">main_personemail_id</span></code> from partner data</p></li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">deactivate</span></code> and supply all subscription IDs in a single request</p></li>
+</ol>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-UHl0aG9u docutils container">
+<div class="docutils container">
+<p>Python</p>
+</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-UHl0aG9u active docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span>  <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+
+<span class="c1"># API Base URL</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="s2">&quot;http://demo.local.com/api/v1/frst&quot;</span>
+
+<span class="c1"># Prepare Authorization</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;bb3479ed-2193-47ac-8a41-3122344dd89e&#39;</span><span class="p">)</span>
+
+<span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;maxime.muster@datadialog.net&quot;</span>
+
+<span class="hll"><span class="c1"># Search for partners with the given email</span>
+</span><span class="hll"><span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;=ilike&#39;</span><span class="p">,</span> <span class="n">email</span><span class="p">)]</span>
+</span><span class="hll"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner/call/search&#39;</span><span class="p">,</span>
+</span><span class="hll">                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                            <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">]},</span>
+</span><span class="hll">                            <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+<span class="n">partner_id_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">partner_id</span> <span class="o">=</span> <span class="n">partner_id_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">partner_id_list</span> <span class="k">else</span> <span class="kc">None</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">partner_id</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No partner found.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+<span class="hll">    <span class="c1"># Read partner data to obtain main email address ID</span>
+</span><span class="hll">    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/res.partner/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">partner_id</span><span class="p">,</span>
+</span><span class="hll">                                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                                <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+    <span class="n">partner</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">email_id</span> <span class="o">=</span> <span class="n">partner</span><span class="p">[</span><span class="s2">&quot;main_personemail_id&quot;</span><span class="p">]</span>
+
+<span class="hll">    <span class="c1"># Search subscriptions for the given email ID</span>
+</span><span class="hll">    <span class="n">search_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;frst_personemail_id&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="n">email_id</span><span class="p">)]</span>
+</span><span class="hll">    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.personemailgruppe/call/search&#39;</span><span class="p">,</span>
+</span><span class="hll">                                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                                <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">search_domain</span><span class="p">]},</span>
+</span><span class="hll">                                <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>
+    <span class="n">personemailgroup_id_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">personemailgroup_id_list</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No subscription found.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+<span class="hll">        <span class="c1"># Deactivate all subscriptions in a single request</span>
+</span><span class="hll">        <span class="n">deactivate_data</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Use empty dict!</span>
+</span><span class="hll">        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s1">&#39;/frst.personemailgruppe/call/deactivate/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">personemailgroup_id_list</span><span class="p">),</span>
+</span><span class="hll">                                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+</span><span class="hll">                                    <span class="n">json</span><span class="o">=</span><span class="n">deactivate_data</span><span class="p">,</span>
+</span><span class="hll">                                    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</span>        <span class="c1"># print(response.content) # Empty content if successful</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 
