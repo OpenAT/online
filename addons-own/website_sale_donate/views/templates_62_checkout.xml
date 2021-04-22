@@ -464,7 +464,7 @@
                     <t t-set="field_name_prefix" t-value="'giftee_'"/>
                     <t t-set="fso_form_fields" t-value="fso_forms_giftee_fields"/>
                     <t t-set="kwargs" t-value="checkout"/>
-                    <t t-set="record" t-value="None"/>
+                    <t t-set="record" t-value="giftee_partner_id"/>
                     <t t-set="form_field_errors" t-value="error"/>
                 </t>
             </t>

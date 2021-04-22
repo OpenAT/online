@@ -26,7 +26,7 @@ class FSONForm(models.Model):
 
             # Add additional checks for products that are linked to fso_subscriptions (product.template)
             if r.product_template_ids:
-                assert not r.ptemplate_giftee_ids, "This form is already uses for giftee fields"
+                assert not r.ptemplate_giftee_ids, "Form already in use as giftee fields by other product(s)!"
 
                 # Check the form model
                 if r.model_id.model != 'res.partner':
@@ -41,7 +41,7 @@ class FSONForm(models.Model):
 
             # Add additional checks for products that are linked to fso_subscriptions (product.template)
             if r.ptemplate_giftee_ids:
-                assert not r.product_template_ids, "This form is already uses for custom checkout fields"
+                assert not r.product_template_ids, "Form already in use for custom checkout fields by other product(s)"
 
                 # Check the form model
                 if r.model_id.model != 'res.partner':

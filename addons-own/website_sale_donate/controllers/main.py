@@ -534,12 +534,7 @@ class website_sale_donate(website_sale):
         if fso_forms_billing_fields:
             values['fso_forms_billing_fields'] = fso_forms_billing_fields
 
-            # Parse form data to match odoo field data types
-            # TODO: Maybe this is wrong because _prepare_field_data() should be used to transform the send form data
-            #       to valid odoo field data,
-            #       All the field validation is done by website_sale_donate in e.g. checkout_form_validate() and
-            #       checkout_parse() and alike therefore it may not be necessary to run the fso_forms methods
-            #       validate_fields() and _prepare_kwargs_for_form()?
+            # Parse form data to match odoo field data types  = preparation for checkout_form_save()
             if values.get('checkout') and data:
                 fso_forms_obj = FsoForms()
                 parsed_form_values = fso_forms_obj._prepare_field_data(form=fso_forms_billing_fields[0].form_id,
@@ -598,56 +593,68 @@ class website_sale_donate(website_sale):
                 shippings_selector_attrs[shipping.id] = field_data
             values['shippings_selector_attrs'] = shippings_selector_attrs
 
-        # Add Giftee Fields to values dict
+        # Add values['fso_forms_giftee_fields'] for form rendering
+        # Add giftee fields to values['checkout'] for checkout_form_save()
         # --------------------------------
         # HINT: The field prefix is set by the template: wsd_checkout_form_gifting_fields
         #       <t t-set="field_name_prefix" t-value="giftee_"/>
         fso_forms_giftee_fields = self.get_fso_forms_giftee_fields(product=product)
         if fso_forms_giftee_fields:
-            # Append the field definitions for form rendering
+            # Append the fso_forms giftee field definitions for form rendering
             values['fso_forms_giftee_fields'] = fso_forms_giftee_fields
 
-            # Get giftee data from the 'checkout' dict in values
-            gf_checkout_data = {}
-            for gf_field in fso_forms_giftee_fields:
-                f_name = gf_field.field_id.name
-                gf_name = 'giftee_' + f_name
-                gf_checkout_data[f_name] = values['checkout'].get(gf_name, None)
+            # Prepare and append giftee form data to values['checkout']
+            if data:
+                # Extract giftee data from the form data
+                giftee_form_data = {}
+                for gf_field in fso_forms_giftee_fields:
+                    f_name = gf_field.field_id.name
+                    gf_name = 'giftee_' + f_name
+                    giftee_form_data[f_name] = data.get(gf_name, None)
 
-            # Parse the form data
-            # TODO: I guess _prepare_field_data() is wrong and _prepare_kwargs_for_form() should be used instead
-            fso_forms_obj = FsoForms()
-            parsed_gf_form_field_data = fso_forms_obj._prepare_field_data(
-                form=fso_forms_giftee_fields[0].form_id, form_field_data=gf_checkout_data)
+                # Prepare the giftee form data for the odoo record
+                fso_forms_obj = FsoForms()
+                odoo_ready_giftee_form_data = fso_forms_obj._prepare_field_data(
+                    form=fso_forms_giftee_fields[0].form_id,
+                    form_field_data=giftee_form_data)
 
-            # Append the parsed giftee data to values
-            giftee_data = {'giftee_'+k: v for k, v in parsed_gf_form_field_data.iteritems()}
-            values['checkout'].update(giftee_data)
+                # Add the prefix again and add the giftee field data to the checkout dict in the values
+                giftee_data = {'giftee_'+k: v for k, v in odoo_ready_giftee_form_data.iteritems()}
+                values['checkout'].update(giftee_data)
 
         return values
 
     def checkout_form_save(self, checkout):
         super(website_sale_donate, self).checkout_form_save(checkout)
 
-        # Process giftee fields
-        # ---------------------
+        # Save giftee data to giftee partner and update sale order
+        # --------------------------------------------------------
         order = request.website.sale_get_order(force_create=1, context=request.env.context)
 
         giftee_fields = self.get_fso_forms_giftee_fields(product=None)
         if giftee_fields:
-            giftee_form = giftee_fields[0].form_id
-            giftee_data = {k.strip('giftee_'): v for k, v in checkout.iteritems() if k.startswith('giftee_')}
-            odoo_ready_giftee_data = giftee_form._prepare_field_data(form=giftee_form, form_field_data=giftee_data)
+            # Extract the giftee data from the checkout dict
+            odoo_ready_giftee_data = {k.replace('giftee_', '', 1): v for k, v in checkout.iteritems()
+                                      if k.startswith('giftee_')}
 
+            # Remove the giftee from the sale order if no giftee data is available!
+            # and return
+            if not odoo_ready_giftee_data:
+                if order.giftee_partner_id:
+                    order.sudo().write({'giftee_partner_id': False})
+                return 
+
+            # Append the lang
             partner_lang = request.lang if request.lang in [lang.code for lang in request.website.language_ids] else None
             if odoo_ready_giftee_data and partner_lang:
                 odoo_ready_giftee_data['lang'] = partner_lang
 
-            giftee = order.giftee_partner_id
-            if giftee:
-                giftee.sudo().write(odoo_ready_giftee_data)
+            # TODO: Append the FRST CDS (origin) if any to the partner
+
+            if order.giftee_partner_id:
+                order.giftee_partner_id.sudo().write(odoo_ready_giftee_data)
                 _logger.info("Update giftee %s of sale order %s with data %s"
-                             % (giftee.id, order.id, odoo_ready_giftee_data))
+                             % (order.giftee_partner_id.id, order.id, odoo_ready_giftee_data))
             else:
                 giftee = request.env['res.partner'].sudo().create(odoo_ready_giftee_data)
                 order.sudo().write({'giftee_partner_id': giftee.id})
@@ -1041,7 +1048,8 @@ class website_sale_donate(website_sale):
         if request.httprequest.method != 'POST':
 
             # FSO_forms Custom Checkout Fields: Run checkout_values again but with the product to get the correct fields
-            opc_checkout_vals = self.checkout_values(product=post.get('product', None))
+            product = post.get('product', None)
+            opc_checkout_vals = self.checkout_values(product=product)
             checkout_page.qcontext.update(opc_checkout_vals)
 
             # Add Payment page qcontext
