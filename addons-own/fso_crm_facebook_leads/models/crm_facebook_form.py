@@ -23,7 +23,7 @@ class FSOCrmFacebookForm(models.Model):
                                         selection=[('email', 'E-Mail Subscription/Petition'),
                                                    ('phone', 'Phone Subscription/Petition'),
                                                    ('', 'No Fundraising Studio Type')],
-                                        default='email')
+                                        default='')
 
     # HINT: "tabellentyp_id = 100110" means e-mail which in fact stands for PersonEmailGruppe stuff
     zgruppedetail_id = fields.Many2one(string="Fundraising Studio Group",
