@@ -23,3 +23,4 @@ class EmailTemplateSosync(models.Model):
 
     fso_email_text = fields.Text(sosync="fson-to-frst")            # e-mail text only version
 
+    active = fields.Boolean(sosync="fson-to-frst")
