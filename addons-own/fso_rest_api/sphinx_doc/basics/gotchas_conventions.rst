@@ -18,6 +18,32 @@ Content-Type
 The content type is always ``application/json`` no matter what you set in the header or elsewhere. If you try
 to set an other content type you will get an error in return.
 
+Calling model methods
+---------------------
+Some methods require no parameters. In those cases, be sure to provide an empty
+dictionary in the request.
+
+.. tabs::
+
+    .. code-tab:: python
+        :emphasize-lines: 4
+
+            # This is fine
+            response = requests.patch(api_base_url + '/frst.personemailgruppe/call/deactivate/43,88,120',
+                                    headers={'accept': 'application/json'},
+                                    json={},
+                                    auth=auth)
+
+            # This will fail
+            response = requests.patch(api_base_url + '/frst.personemailgruppe/call/deactivate/43,88,120',
+                                    headers={'accept': 'application/json'},
+                                    auth=auth)
+
+If you do not send an empty dictionary, you will get an error like this:
+
+.. error::
+    Function declared as capable of handling request of type 'apijson' but called with a request of type 'http'
+
 Date and Datetime Fields
 ------------------------
 

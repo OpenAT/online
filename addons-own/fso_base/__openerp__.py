@@ -102,6 +102,10 @@ TODO (must be done manually right now):
         'mail_delete_sent_by_footer',
         #'smile_web_search_range', # DISABLED because of JS View errors in Backend
         #'smile_web_search_timedelta', Disabled because of ParseError: "External ID not found in the system: web.assets_backend" while parsing None:5, near <data inherit_id="web.assets_backend">
+        'base_user_role',
+        'base_export_manager',
+        'base_concurrency',
+        'web_dashboard_open_action',
         # ---
         # Default addons-own (not FS-Online specific)
         # ---
