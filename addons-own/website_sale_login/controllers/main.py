@@ -85,7 +85,7 @@ class website_sale_login(website_sale):
 
         return values
 
-    def checkout_values(self, data=None):
+    def checkout_values(self, data=None, **kwargs):
         values = super(website_sale_login, self).checkout_values(data)
         values = self.check_user(values)
         return values
