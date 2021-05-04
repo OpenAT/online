@@ -7,9 +7,9 @@
             <field name="model">project.task</field>
             <field name="inherit_id" ref="project_task_subtask.view_task_form2"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree[@string='Task Work']" position="attributes">
-                    <attribute name="default_order">sequence</attribute>
-                </xpath>
+                <!--<xpath expr="//tree[@string='Task Work']" position="attributes">-->
+                <!--    <attribute name="default_order">sequence</attribute>-->
+                <!--</xpath>-->
                 <xpath expr="//field[@name='default_user']" position="before">
                     <group>
                         <group>
@@ -20,9 +20,9 @@
                         </group>
                     </group>
                 </xpath>
-                <xpath expr="//tree[@string='Task Work']/field[@name='name']" position="before">
-                    <field name="sequence" widget="handle"/>
-                </xpath>
+                <!--<xpath expr="//tree[@string='Task Work']/field[@name='name']" position="before">-->
+                <!--    <field name="sequence" widget="handle"/>-->
+                <!--</xpath>-->
                 <xpath expr="//field[@name='write_date']" position="after">
                     <button type="object" name="button_open_subtask_popup" icon="gtk-info" string="Open"/>
                 </xpath>
