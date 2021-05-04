@@ -61,35 +61,32 @@ class FSOCrmFacebookForm(models.Model):
                     'state', 'activated')
     def forms_constrains(self):
         for r in self:
-            # Fundraising Studio import type is set:
-            if r.frst_import_type:
-                if not r.force_create_partner:
+            # Only check the settings of the form when the form is enabled (active)
+            if r.state == 'active':
+
+                # Fundraising Studio import type is set:
+                if r.frst_import_type:
+                    if not r.frst_zverzeichnis_id:
+                        raise ValidationError(_("A CDS-Record must be set if a Fundraising Studio import type is set!"))
+                    if r.frst_import_type != 'email' and r.zgruppedetail_id:
+                        raise ValidationError(_("The Fundraising Studio import type must be e-mail if a group is set!"
+                                                "Please change the import type or remove the Fundraising Studio group.")
+                                              )
+
+                # Fundraising Studio import type is not set
+                if not r.frst_import_type:
+                    if r.zgruppedetail_id:
+                        raise ValidationError(_("You must set the Fundraising Studio import type to e-mail if a group "
+                                                "is set! Please set the import type or remove the "
+                                                "Fundraising Studio group."))
+                    if r.frst_zverzeichnis_id:
+                        raise ValidationError(_("You must set the Fundraising Studio import type if a CDS-Record is "
+                                                "set! Please set the import type or remove the CDS-Record."))
+
+                # Make sure force create partner is set!
+                if (r.frst_import_type or r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
                     raise ValidationError(
-                        _("Force create partner must be checked if a Fundraising Studio import type is set!"))
-                if not r.frst_zverzeichnis_id:
-                    raise ValidationError(_("A CDS-Record must be set if a Fundraising Studio import type is set!"))
-                if r.frst_import_type != 'email' and r.zgruppedetail_id:
-                    raise ValidationError(_("The Fundraising Studio import type must be e-mail if a group is set!"
-                                            "Please change the import type or remove the Fundraising Studio group."))
-
-            # Fundraising Studio import type is not set
-            if not r.frst_import_type:
-                if r.zgruppedetail_id:
-                    raise ValidationError(_("You must set the Fundraising Studio import type if a group is set!"
-                                            "Please set the import type or remove the Fundraising Studio group."))
-                if r.frst_zverzeichnis_id:
-                    raise ValidationError(_("You must set the Fundraising Studio import type if a CDS-Record is set!"
-                                            "Please set the import type or remove the CDS-Record."))
-
-            # Make sure force create partner is set!
-            if (r.frst_import_type or r.zgruppedetail_id or r.frst_zverzeichnis_id) and not r.force_create_partner:
-                raise ValidationError(
-                    _("force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"))
-
-            # Make sure the fields 'frst_import_type' and 'frst_zverzeichnis_id' are set for the state 'active'
-            if r.state == 'active' and not r.frst_import_type and (not r.zgruppedetail_id or not r.frst_zverzeichnis_id):
-                raise ValidationError(
-                    _("You must set at least an import type and a CDS-Record before you can approve/enable the form!"))
+                        _("force_create_partner must be checked if a Fundraising Studio Group or the CDS is set!"))
 
     @api.multi
     def cmp_personemailgruppe_count(self):
