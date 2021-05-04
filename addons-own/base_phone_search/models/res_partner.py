@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 class ResPartnerFRSTSecurity(models.Model):
     _inherit = "res.partner"
 
-    def init(self, cr):
+    @api.model
+    def create_or_update_phone_index(self):
+        cr = self.env.cr
         # Create a function to remove 000* at start, keep only digits, reverse the number and keep only the last 6 chars
         logger.info("Create or replace postgresql function phone_clean_reverse_6()")
         cr.execute("CREATE OR REPLACE FUNCTION phone_clean_reverse_6(text) RETURNS text AS $$"

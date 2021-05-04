@@ -49,5 +49,6 @@
         'contacts',
     ],
     'data': [
+        'run_on_install_update.xml',
     ],
 }
