@@ -17,7 +17,7 @@
                         <field name="tfa_label"/>
                         <field name="tfa_help"/>
                         <field name="fs_origin"/>
-                        <field name="last_date_of_use"/>
+                        <!--<field name="last_date_of_use"/>-->
                         <field name="first_datetime_of_use"/>
                         <field name="last_datetime_of_use"/>
                         <field name="number_of_checks"/>
@@ -59,7 +59,7 @@
                     <field name="tfa_label"/>
                     <field name="tfa_help"/>
                     <field name="fs_origin"/>
-                    <field name="last_date_of_use"/>
+                    <!--<field name="last_date_of_use"/>-->
                     <field name="first_datetime_of_use"/>
                     <field name="last_datetime_of_use"/>
                     <field name="number_of_checks"/>

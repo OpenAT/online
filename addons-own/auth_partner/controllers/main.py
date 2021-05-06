@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import http
-from openerp.http import request
+from openerp.http import request, OpenERPSession
 from openerp.osv import orm
 from openerp.addons.auth_partner.fstoken_tools import fstoken_check
 from openerp.addons.web.controllers.main import login_and_redirect
@@ -12,6 +12,13 @@ from urlparse import urlparse, parse_qs, urlunparse
 
 import logging
 _logger = logging.getLogger(__name__)
+
+
+class OpenERPSessionFSPtoken(OpenERPSession):
+    
+    def authenticate(self, db, login=None, password=None, uid=None):
+        # TODO: Try to find the password by the token kwarg of the request
+        return super(OpenERPSessionFSPtoken, self).authenticate(db, login=login, password=password, uid=uid)
 
 
 # add fs_ptoken to the session if in URL or post args
@@ -65,7 +72,7 @@ class ir_http(orm.AbstractModel):
                         request.session.context.pop('fs_origin', False)
 
                 # Login and redirect if needed
-                if token_record and user and user.id != request.uid:
+                if token_record and user and user.id != request.session.uid:
                     _logger.info('Login by FS-Token (%s) for res.user with login %s (%s) and redirect to %s'
                                  % (token_record.id, user.login, user.id, request.httprequest.url))
                     # ATTENTION: !!! It is VERY important to logout before any login to destroy the old session !!!

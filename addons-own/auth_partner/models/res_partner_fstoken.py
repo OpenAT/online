@@ -15,37 +15,9 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-import datetime
 from datetime import timedelta
-import time
-
-import openerp
 from openerp import api, models, fields
-from openerp.exceptions import ValidationError, AccessDenied
-from openerp.http import request
-from openerp.tools.translate import _
-from openerp.addons.auth_partner.fstoken_tools import fstoken_check
-from openerp.exceptions import Warning
-
-
-class res_users(models.Model):
-    _inherit = 'res.users'
-
-    # Extend the check_credentials method to work with FS-Tokens also
-    # HINT: check openerp/addons/base/res/res_users.py for more info
-    def check_credentials(self, cr, uid, password):
-        try:
-            # Try regular or other auth methods
-            return super(res_users, self).check_credentials(cr, uid, password)
-        except AccessDenied:
-            # In case there is no request yet (unbound object error catch)
-            # https://github.com/OCA/e-commerce/issues/152
-            # https://github.com/OCA/e-commerce/pull/190
-            if not request:
-                raise
-            token_record, user_record, errors = fstoken_check(password, log_usage=False)
-            if errors:
-                raise
+from openerp.exceptions import ValidationError
 
 
 class ResPartnerFSToken(models.Model):
@@ -60,16 +32,20 @@ class ResPartnerFSToken(models.Model):
                                   default=fields.datetime.now() + timedelta(days=14),
                                   index=True)
     fs_origin = fields.Char(string="FS Origin", help="The Fundraising Studio activity ID")
-    last_date_of_use = fields.Date(string="DEPRICATED: Last Date of Use", readonly=True)
-    last_datetime_of_use = fields.Datetime(string="Last Date and Time of Use", readonly=True)
-    first_datetime_of_use = fields.Datetime(string="First Date and Time of Use", readonly=True)
-    number_of_checks = fields.Integer(string="Number of checks", default=0, redonly=True)
-
     max_checks = fields.Integer(string="Max checks", default=1,
                                 help="Maximum number of checks. If this is higher than number_of_checks the token is"
                                      "counted as expired!")
 
-    # New fields for two factor authentication
+    # Usage statistics from the fs_ptkone usage log
+    log_ids = fields.One2many(comodel_name='res.partner.fstoken.log', inverse_name='fs_ptoken_id')
+    last_datetime_of_use = fields.Datetime(string="Last Date and Time of Use",
+                                           compute="_compute_usage_statistic")
+    first_datetime_of_use = fields.Datetime(string="First Date and Time of Use",
+                                            compute="_compute_usage_statistic")
+    number_of_checks = fields.Integer(string="Number of checks",
+                                      compute="_compute_usage_statistic")
+
+    # Two factor authentication
     # TODO: tfa_type: "enter_string" > Create web form to enter the tfa string and update fstoken_check()
     tfa_type = fields.Selection(selection=[('approved_partner_email', 'Approved Partner E-Mail'),
                                            ('enter_string', 'Enter String')],
@@ -104,51 +80,16 @@ class ResPartnerFSToken(models.Model):
                 if not record.tfa_string:
                     raise ValidationError("Two Factor Authentication 'tfa_type' is set but 'tfa_string' is missing!")
 
+    @api.multi
+    def _compute_usage_statistic(self):
+        for token in self:
+            token.number_of_checks = len(token.log_ids) or 0
+
+            sorted_logs = token.log_ids.sorted()
+            token.last_datetime_of_use = sorted_logs[0].log_date if sorted_logs else False
+            token.first_datetime_of_use = sorted_logs[-1].log_date if sorted_logs else False
+
     # https://www.postgresql.org/docs/9.3/static/ddl-constraints.html
     _sql_constraints = [
         ('name_unique', 'UNIQUE(name)', "FS Tokens must be unique!"),
     ]
-
-
-class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
-    fstoken_ids = fields.One2many(string='FS Partner Tokens', comodel_name='res.partner.fstoken',
-                                  inverse_name='partner_id')
-
-
-class FSTokenWizard(models.TransientModel):
-    _name = 'res.partner.fstoken.wizard'
-
-    expiration_date = fields.Date(string="Expiration Date", required=True,
-                                  default=fields.datetime.now() + timedelta(days=14))
-
-    @api.multi
-    def set_expiration_date(self):
-        # Get context
-        ctx = self.env.context
-        if not ctx:
-            return {}
-        if ctx.get('active_model') != 'res.partner.fstoken':
-            raise Warning(_("Active model must be res.partner.fstoken!"))
-
-        # Check expiration date set in wizard form view
-        expiration_date = fields.datetime.strptime(self.expiration_date, "%Y-%m-%d")
-        max_date = fields.datetime.now() + timedelta(weeks=30)
-
-        if expiration_date > max_date:
-            raise Warning(_("Expiration Date is not allowed to be more than 7 months (30 weeks) in the future!"))
-
-        # Get res.parter.fstoken ids
-        fstokens = self.env['res.partner.fstoken']
-        if ctx.get('active_domain'):
-            fstokens = fstokens.search(ctx['active_domain'])
-        elif ctx.get('active_ids'):
-            fstokens = fstokens.browse(ctx['active_ids'])
-
-        # Set expiration_date for fstoken(s)
-        if fstokens:
-            fstokens.write({'expiration_date': self.expiration_date})
-
-        # TODO: I think this should return True instead of a dict?
-        return {}
