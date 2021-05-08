@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import werkzeug
+
 from urllib import urlencode
 from urlparse import urlparse, parse_qs, urlunparse
 
 from openerp.osv import orm
-from openerp.http import request
+from openerp.http import request, local_redirect
 from openerp.addons.auth_partner.fstoken_tools import fstoken_check, log_token_usage, store_token_usage
 from openerp.addons.web.controllers.main import login_and_redirect, set_cookie_and_redirect
 
@@ -22,35 +24,27 @@ class ir_http(orm.AbstractModel):
     _inherit = 'ir.http'
 
     def _dispatch(self):
-        # Call website._dispatch()
-        response = super(ir_http, self)._dispatch()
-        if not request or not hasattr(request, 'website') or not request.website:
-            return response
+        if not request or not request.httprequest:
+            return super(ir_http, self)._dispatch()
 
         # Get fs_ptoken from url arguments
         fs_ptoken = request.httprequest.args.get('fs_ptoken', None)
         if not fs_ptoken:
-            return response
+            return super(ir_http, self)._dispatch()
 
         # Clean the url from the fs_ptoken parameter
         url_no_fs_ptoken = clean_url_from_fs_ptoken(request.httprequest.url)
-        redirect_no_fs_ptoken = set_cookie_and_redirect(url_no_fs_ptoken)
-
-        # TODO: Remove after Test
-        # url_no_fs_ptoken = request.httprequest.url
-        # redirect_no_fs_ptoken = response
+        # redirect_no_fs_ptoken = set_cookie_and_redirect(url_no_fs_ptoken)
+        redirect_no_fs_ptoken = werkzeug.utils.redirect(url_no_fs_ptoken, '303')
 
         # Check the fs_ptoken
         token_record, token_user, token_errors = fstoken_check(fs_ptoken)
         if not token_record or token_errors:
             # Log the token access error
             log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)
-
             # Remove token and token-fs-origin from context
             request.context.pop('fs_ptoken', False)
             request.context.pop('fs_origin', False)
-            request.website = request.website.with_context(request.context)
-
             return redirect_no_fs_ptoken
 
         # Do nothing if the token_user is already logged in
@@ -68,7 +62,6 @@ class ir_http(orm.AbstractModel):
         # Add token and token-fs-origin to the context (after login_and_redirect because it may change the env)
         request.context['fs_ptoken'] = token_record.name
         request.context['fs_origin'] = token_record.fs_origin or False
-        request.website = request.website.with_context(request.context)
 
         # Log successful token usage
         log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)

@@ -65,7 +65,7 @@ partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=kwargs
     'application': False,
     'auto_install': False,
     'depends': [
-        'web',
+        'website',
     ],
     'data': [
         'security/fs_token_security.xml',
