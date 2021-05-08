@@ -50,7 +50,7 @@ def fstoken_check(fs_ptoken, log_usage=True):
     # Check number of usages (max_checks)
     if token_record:
         # ATTENTION: Default to 10 if max_checks is not set or set to 0!
-        max_checks = token_record.max_checks or 10
+        max_checks = token_record.max_checks or 20
         if token_record.number_of_checks > max_checks:
             max_checks_msg = _('Token %s is expired because token was checked more than allowed by max_checks!'
                                '' % fs_ptoken)
@@ -150,6 +150,6 @@ def store_token_usage(fs_ptoken, token_record, token_user, httprequest):
         'user_id': token_user.id,
         'partner_id': token_user.partner_id.id,
         'url': httprequest.url,
-        'ip': False,
-        'device': False,
+        'ip': httprequest.remote_addr,
+        'device': httprequest.user_agent,
     })
