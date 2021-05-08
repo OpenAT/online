@@ -49,8 +49,8 @@ def fstoken_check(fs_ptoken, log_usage=True):
 
     # Check number of usages (max_checks)
     if token_record:
-        # ATTENTION: Default to 1 if max_checks is not set or set to 0!
-        max_checks = token_record.max_checks or 3
+        # ATTENTION: Default to 10 if max_checks is not set or set to 0!
+        max_checks = token_record.max_checks or 10
         if token_record.number_of_checks > max_checks:
             max_checks_msg = _('Token %s is expired because token was checked more than allowed by max_checks!'
                                '' % fs_ptoken)

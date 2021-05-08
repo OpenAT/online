@@ -32,7 +32,7 @@ class ResPartnerFSToken(models.Model):
                                   default=fields.datetime.now() + timedelta(days=14),
                                   index=True)
     fs_origin = fields.Char(string="FS Origin", help="The Fundraising Studio activity ID")
-    max_checks = fields.Integer(string="Max checks", default=1,
+    max_checks = fields.Integer(string="Max checks", default=20,
                                 help="Maximum number of checks. If this is higher than number_of_checks the token is"
                                      "counted as expired!")
 
