@@ -32,6 +32,7 @@ class cam_hr_ovetime_config_settings(osv.osv_memory):
         'lunch_duration': fields.integer('Lunch Duration', help='Lunch duration in minutes (used for Lunch-button)'),
         'vacation_type_id': fields.many2one('hr.holidays.status', 'Holiday state of vacation', index=True),
         'illness_type_id': fields.many2one('hr.holidays.status', 'Holiday state of illness', index=True,),
+        'zeitausgleich_type_id': fields.many2one('hr.holidays.status', 'Holiday state of Zeitausgleich', index=True, ),
     }
     
     def get_default_overtime_values(self, cr, uid, fields, context=None):
@@ -41,7 +42,8 @@ class cam_hr_ovetime_config_settings(osv.osv_memory):
             'max_difference_day': user.company_id.max_difference_day,
             'lunch_duration': user.company_id.lunch_duration,
             'vacation_type_id': user.company_id.vacation_type_id and user.company_id.vacation_type_id.id or False,   
-            'illness_type_id': user.company_id.illness_type_id and user.company_id.illness_type_id.id or False,                                                                     
+            'illness_type_id': user.company_id.illness_type_id and user.company_id.illness_type_id.id or False,
+            'zeitausgleich_type_id': user.company_id.zeitausgleich_type_id and user.company_id.zeitausgleich_type_id.id or False,
         }
 
     def set_default_timesheet(self, cr, uid, ids, context=None):
@@ -54,7 +56,8 @@ class cam_hr_ovetime_config_settings(osv.osv_memory):
             'max_difference_day': config.max_difference_day,
             'lunch_duration': config.lunch_duration,
             'vacation_type_id': config.vacation_type_id and config.vacation_type_id.id,
-            'illness_type_id': config.illness_type_id and config.illness_type_id.id,  
+            'illness_type_id': config.illness_type_id and config.illness_type_id.id,
+            'zeitausgleich_type_id': config.zeitausgleich_type_id and config.zeitausgleich_type_id.id,
         })    
 
 cam_hr_ovetime_config_settings()

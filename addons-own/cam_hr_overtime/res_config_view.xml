@@ -27,7 +27,11 @@
                     <div>
                     	<label for="illness_type_id"/>
                         <field name="illness_type_id" class="oe_inline"/>                        
-                    </div>                                                                                                                                       
+                    </div>
+                    <div>
+                    	<label for="zeitausgleich_type_id"/>
+                        <field name="zeitausgleich_type_id" class="oe_inline"/>
+                    </div>
                  </xpath>
             </field>
         </record>

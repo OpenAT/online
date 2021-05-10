@@ -23,7 +23,7 @@
         <record model="hr.holidays.status" id="holiday_status_zeitausgleich">
             <field name="name">Zeitausgleich</field>
             <field name="code">zeitausgleich</field>
-            <field name="limit">True</field>
+            <field name="limit">False</field>
             <field name="color_name">blue</field>
         </record>
 
@@ -39,6 +39,7 @@
             <field name="timesheet_range">month</field>
             <field name="vacation_type_id" ref="holiday_status_vacation"/>
             <field name="illness_type_id" ref="holiday_status_krankenstand"/>
+            <field name="zeitausgleich_type_id" ref="holiday_status_zeitausgleich"/>
         </record>
         
 	</data>
