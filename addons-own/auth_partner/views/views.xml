@@ -17,11 +17,23 @@
                         <field name="tfa_label"/>
                         <field name="tfa_help"/>
                         <field name="fs_origin"/>
-                        <field name="last_date_of_use"/>
+                        <!--<field name="last_date_of_use"/>-->
                         <field name="first_datetime_of_use"/>
                         <field name="last_datetime_of_use"/>
                         <field name="number_of_checks"/>
                         <field name="max_checks"/>
+                        <field name="log_ids">
+                            <tree string="Token Usage Log">
+                                <field name="log_date"/>
+                                <field name="fs_ptoken"/>
+                                <field name="fs_ptoken_id"/>
+                                <field name="user_id"/>
+                                <field name="partner_id"/>
+                                <field name="url"/>
+                                <field name="ip"/>
+                                <field name="device"/>
+                            </tree>
+                        </field>
                     </group>
                 </form>
             </field>
@@ -59,7 +71,7 @@
                     <field name="tfa_label"/>
                     <field name="tfa_help"/>
                     <field name="fs_origin"/>
-                    <field name="last_date_of_use"/>
+                    <!--<field name="last_date_of_use"/>-->
                     <field name="first_datetime_of_use"/>
                     <field name="last_datetime_of_use"/>
                     <field name="number_of_checks"/>

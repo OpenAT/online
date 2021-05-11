@@ -49,8 +49,8 @@ def fstoken_check(fs_ptoken, log_usage=True):
 
     # Check number of usages (max_checks)
     if token_record:
-        # ATTENTION: Default to 1 if max_checks is not set or set to 0!
-        max_checks = token_record.max_checks or 1
+        # ATTENTION: Default to 10 if max_checks is not set or set to 0!
+        max_checks = token_record.max_checks or 20
         if token_record.number_of_checks > max_checks:
             max_checks_msg = _('Token %s is expired because token was checked more than allowed by max_checks!'
                                '' % fs_ptoken)
@@ -125,24 +125,31 @@ def fstoken_check(fs_ptoken, log_usage=True):
                                                                                          token_record.id))
             return False, False, errors
 
-    # Update token statistic fields
-    if log_usage:
-        # TODO: log every use to a new model e.g.: res.partner.fstoken.usage
-        #       add a new kwarg to this function called "origin" and use this if filled for logging
-        #       token usage to res.partner.fstoken.usage
-        _logger.info("Log token usage for token with id %s" % token_record.id)
-        time_now = fields.datetime.now()
-        token_values = {
-            'last_date_of_use': time_now,
-            'last_datetime_of_use': time_now,
-            'number_of_checks': token_record.number_of_checks + 1,
-        }
-        # Add first_datetime_of_use if not already set
-        if not token_record.first_datetime_of_use:
-            token_values['first_datetime_of_use'] = time_now
-        # Write to the token
-        token_record.sudo().write(token_values)
-
     # Return fstoken record and the empty error-messages-list
     # ATTENTION: We pass the user on in case it was just created now and
     return token_record, user, errors
+
+
+def log_token_usage(fs_ptoken, token_record, token_user, token_errors, httprequest):
+    url = httprequest.url
+    prefix = "fs_ptoken usage:"
+    token_info = "fs_ptoken: '%s', token_record: '%s', token_user '%s', token_errors '%s', url: '%s'" \
+                 "" % (fs_ptoken, token_record, token_user, token_errors, url)
+    if token_errors:
+        _logger.warning("%s ERROR %s" % (prefix, token_info))
+    else:
+        _logger.info("%s SUCCESS %s" % (prefix, token_info))
+
+
+def store_token_usage(fs_ptoken, token_record, token_user, httprequest):
+    token_log_obj = token_record.env['res.partner.fstoken.log'].sudo()
+    token_log_obj.create({
+        'log_date': datetime.datetime.now(),
+        'fs_ptoken': fs_ptoken,
+        'fs_ptoken_id': token_record.id,
+        'user_id': token_user.id,
+        'partner_id': token_user.partner_id.id,
+        'url': httprequest.url,
+        'ip': httprequest.remote_addr,
+        'device': httprequest.user_agent,
+    })

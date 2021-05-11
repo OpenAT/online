@@ -86,12 +86,12 @@ class website_sale_login(website_sale):
         return values
 
     def checkout_values(self, data=None, **kwargs):
-        values = super(website_sale_login, self).checkout_values(data=data, **kwargs)
+        values = super(website_sale_login, self).checkout_values(data)
         values = self.check_user(values)
         return values
 
-    def checkout_form_validate(self, data, **kwargs):
-        error = super(website_sale_login, self).checkout_form_validate(data, **kwargs)
+    def checkout_form_validate(self, data):
+        error = super(website_sale_login, self).checkout_form_validate(data)
         if data.get('userid_by_email') or data.get('partnerid_by_email'):
             error.update({'email_changed': True})
         return error

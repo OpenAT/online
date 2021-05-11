@@ -103,7 +103,7 @@ TODO (must be done manually right now):
         #'smile_web_search_range', # DISABLED because of JS View errors in Backend
         #'smile_web_search_timedelta', Disabled because of ParseError: "External ID not found in the system: web.assets_backend" while parsing None:5, near <data inherit_id="web.assets_backend">
         'base_user_role',
-        'base_export_manager',
+        #'base_export_manager',     # DISABLED! Prevents restore of bird db! no colum .id in survey.survey ?!?!?
         'base_concurrency',
         'web_dashboard_open_action',
         # ---

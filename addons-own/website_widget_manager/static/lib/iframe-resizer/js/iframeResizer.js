@@ -806,7 +806,7 @@
 			var iframeParams = URLToArray();
 			var getAllIframes = document.getElementsByTagName("iframe");
 			var newParams = [];
-			var iframe = document.getElementById(iframeId)
+			var iframe = document.getElementById(iframeId);
 			var newUrl = iframe.src;
 
 			log(iframeId, 'checkGetParam() getParams: ' + JSON.stringify(getParams));
@@ -831,35 +831,6 @@
 			}
 			log(iframeId, 'checkGetParam() set iframe.src to: ' + newUrl);
 			iframe.src = newUrl;
-
-			// REMOVE fs_ptoken from host url to prevent sharing the token with the url (e.g. on social media)
-			function removeParam(key, sourceURL) {
-				var rtn = sourceURL.split("?")[0],
-					param,
-					params_arr = [],
-					queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-				if (queryString !== "") {
-					params_arr = queryString.split("&");
-					for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-						param = params_arr[i].split("=")[0];
-						if (param === key) {
-							params_arr.splice(i, 1);
-						}
-					}
-					rtn = rtn + "?" + params_arr.join("&");
-				}
-				return rtn;
-			}
-
-			if (window.location.search.includes('fs_ptoken')) {
-				log(iframeId, "Remove fs_ptoken url attribute from url of parent (host) page!");
-				log(iframeId, 'window.location.href before fs_ptoken was removed: ' + window.location.href);
-				let clean_host_page_url = new URL(removeParam('fs_ptoken', window.location.href));
-				log(iframeId, 'New url for the host page: clean_host_page_url: ' + clean_host_page_url.href);
-				let new_url_without_domain = clean_host_page_url.pathname + clean_host_page_url.search;
-				log(iframeId, 'New destination for the host page: new_url_without_domain: ' + new_url_without_domain);
-				window.history.replaceState({}, document.title, new_url_without_domain);
-			}
 
 		}
 
@@ -1101,6 +1072,37 @@
 			default:
 				throw new TypeError('Unexpected data type ('+typeof(target)+')');
 			}
+
+			// By Mike: Remove fs_ptoken from host url after all iframes are initialized to prevent sharing the
+			// 			token with the url (e.g. on social media)
+			function removeParam(key, sourceURL) {
+				var rtn = sourceURL.split("?")[0],
+					param,
+					params_arr = [],
+					queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+				if (queryString !== "") {
+					params_arr = queryString.split("&");
+					for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+						param = params_arr[i].split("=")[0];
+						if (param === key) {
+							params_arr.splice(i, 1);
+						}
+					}
+					rtn = rtn + "?" + params_arr.join("&");
+				}
+				return rtn;
+			}
+
+			if (window.location.search.includes('fs_ptoken')) {
+				log("Remove fs_ptoken url attribute from url of parent (host) page!");
+				log('window.location.href before fs_ptoken was removed: ' + window.location.href);
+				let clean_host_page_url = new URL(removeParam('fs_ptoken', window.location.href));
+				log('New url for the host page: clean_host_page_url: ' + clean_host_page_url.href);
+				let new_url_without_domain = clean_host_page_url.pathname + clean_host_page_url.search;
+				log('New destination for the host page: new_url_without_domain: ' + new_url_without_domain);
+				window.history.replaceState({}, document.title, new_url_without_domain);
+			}
+			// By Mike End
 
 			return iFrames;
 		};

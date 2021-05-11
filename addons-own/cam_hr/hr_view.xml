@@ -10,7 +10,7 @@
 	
 	<menuitem name="Invisible" id="hr_invisible" parent="hr.menu_hr_root" groups="group_invisible" sequence="100"/>
 	<menuitem id="hr_holidays.menu_open_ask_holidays" parent="hr_invisible"/>
-	<menuitem id="hr_holidays.menu_open_view_holiday_status" parent="hr_invisible"/>
+	<!--<menuitem id="hr_holidays.menu_open_view_holiday_status" parent="hr_invisible"/>-->
 	<menuitem id="hr.menu_hr_job" parent="hr_invisible"/>
 	<menuitem id="hr.menu_view_employee_category_form" parent="hr_invisible"/>
 	<menuitem id="hr.menu_hr_department_tree" parent="hr_invisible"/>

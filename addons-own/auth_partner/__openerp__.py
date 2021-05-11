@@ -65,13 +65,12 @@ partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=kwargs
     'application': False,
     'auto_install': False,
     'depends': [
-        'base',
-        'base_setup',
-        'web',
+        'website',
     ],
     'data': [
         'security/fs_token_security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
+        'views/res_partner_fstoken_log.xml',
     ],
 }

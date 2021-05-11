@@ -1,0 +1,7 @@
+<openerp>
+  <data>
+
+    <function model="res.partner" name="create_or_update_phone_index"/>
+
+  </data>
+</openerp>
