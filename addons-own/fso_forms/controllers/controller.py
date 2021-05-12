@@ -20,6 +20,7 @@ from openerp import http
 from openerp.http import request
 from openerp import tools
 from openerp.tools.translate import _
+from openerp.exceptions import AccessError
 
 # import locale
 # import urllib2
@@ -177,7 +178,16 @@ class FsoForms(http.Controller):
         # ---------------------------------------------------
         form_sdata = self.get_fso_form_session_data(form)
         if form_sdata:
-            record = form_model_obj.browse([form_sdata['form_record_id']])
+            session_record = form_model_obj.browse([form_sdata['form_record_id']])
+            # Check if we have at least read access to the record
+            # HINT: Could not use session_record.check_access_rights('read', raise_exception=False) because it will
+            #       simply not work correctly for the default public/website user (uid 3)
+            try:
+                session_record[session_record._fields.keys()[0]]
+                record = session_record
+            except AccessError:
+                _logger.error("No read access for the current fso_forms session record! %s" % session_record)
+                pass
 
         # TRY TO FIND A FORM-RELATED-RECORD BASED ON THE LOGGED IN USER AND THE LOGIN-MARKED-FIELD
         # ----------------------------------------------------------------------------------------
@@ -200,7 +210,16 @@ class FsoForms(http.Controller):
 
                 # Return a record only if exactly ONE record was found else we return an empty recordset
                 if form_records_by_user and len(form_records_by_user) == 1:
-                    record = form_records_by_user
+                    user_record = form_records_by_user
+                    # Check if we have at least read access to the record
+                    # HINT: Could not use user_record.check_access_rights('read', raise_exception=False) because it
+                    #       will simply not work correctly for the default public/website user (uid 3)
+                    try:
+                        user_record[user_record._fields.keys()[0]]
+                        record = user_record
+                    except AccessError:
+                        _logger.error("No read access for the current fso_forms user_record! %s" % user_record)
+                        pass
                 else:
                     record = request.env[form_model_name]
 
@@ -716,6 +735,8 @@ class FsoForms(http.Controller):
                             if not record:
                                 if form.create_as_user:
                                     record = record.sudo(form.create_as_user.id).create(values)
+                                elif form.create_as_user_nologin and not self.is_logged_in():
+                                    record = record.sudo(form.create_as_user_nologin.id).create(values)
                                 else:
                                     # TODO: Check why we can't create that record as the public user with mail_thread
                                     #       enabled for the record model!!!
