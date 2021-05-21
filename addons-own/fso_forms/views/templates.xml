@@ -117,6 +117,7 @@
 
                         <!-- GET REGULAR FIELD DATA -->
                         <!-- ====================== -->
+                        <t t-set="record_f_name" t-value="field.field_id.name"/>
                         <t t-set="field_name_prefix" t-value="field_name_prefix if field_name_prefix else ''"/>
                         <t t-set="f_name" t-value="field_name_prefix + field.field_id.name"/>
                         <t t-set="f_type" t-value="field.field_id.ttype"/>
@@ -130,7 +131,7 @@
                         <!-- Readonly if logged in: Only set the field to readonly if a record exists and a user is logged in! -->
                         <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
                         <!-- Field content -->
-                        <t t-set="f_value" t-value="(kwargs.get(f_name, '') if f_name in kwargs else field.default) if (field.nodata or not record) else (str(record[f_name].id) if record and record[f_name] and f_type == 'many2one' else record[f_name] if record else '')"/>
+                        <t t-set="f_value" t-value="(kwargs.get(f_name, '') if f_name in kwargs else field.default) if (field.nodata or not record) else (str(record[record_f_name].id) if record and record[record_f_name] and f_type == 'many2one' else record[record_f_name] if record else '')"/>
                         <t t-set="f_checked" t-value="True if f_value else None"/>
                         <!-- ====================== -->
 
@@ -325,7 +326,7 @@
 
                                     <!-- Handle image previews (fso-form-widget-image) -->
                                     <!-- ATTENTION: Request user must have access to the image field ! -->
-                                    <t t-if="record and record[f_name]">
+                                    <t t-if="record and record[record_f_name]">
                                         <t t-if="'fso-form-widget-image' in css_classes">
                                             <div class="widget-image-container">
                                                 <img class="widget-image-image" t-att-src="'/website/image/'+form.model_id.model+'/'+str(record.id)+'/'+f_name"/>
@@ -412,7 +413,7 @@
                                                            t-att-id="f_name + '_noselection'"
                                                            t-att-name="f_name"
                                                            value=""
-                                                           t-att-checked="True if not record[f_name] and not kwargs.get(f_name) else None"
+                                                           t-att-checked="True if not record[record_f_name] and not kwargs.get(f_name) else None"
                                                            t-att-disabled="f_readonly"
                                                            t-att-required="f_required"
                                                     />

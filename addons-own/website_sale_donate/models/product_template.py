@@ -51,6 +51,11 @@ class ProductTemplate(models.Model):
                                      domain="[('ptemplate_giftee_ids', '!=', False)]",
                                      help="Set custom giftee fields for this product")
 
+    giftee_email_template = fields.Many2one(string="Giftee Info E-Mail",
+                                            comodel_name='email.template',
+                                            inverse_name="giftee_product_template_ids",
+                                            copy=True)
+
     # Custom donation input template (arbitrary price and donation buttons in checkout box)
     # HINT: dit stands for donation input template
     donation_input_template = fields.Selection(string="Donation Input Template",

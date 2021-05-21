@@ -186,13 +186,14 @@
                                             attrs="{'invisible': [('checkout_form_id', '!=', False)]}"
                                     />
                                 </group>
-                                <group colspan="2" string="Webshop: Enable Gifting Feature">
+                                <group string="Webshop: Enable Gifting Feature">
                                     <field name="giftee_form_id" readonly="1"/>
                                     <button name="create_giftee_fields_form" type="object"
                                             string="Enable Giftee Fields"
                                             colspan="2"
                                             attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
                                     />
+                                    <field name="giftee_email_template" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
                                 </group>
                             </group>
                             <group string="Übersichtsseiten (Produktkacheln)">

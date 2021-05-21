@@ -603,11 +603,16 @@ class website_sale_donate(website_sale):
             # Append the fso_forms giftee field definitions for form rendering
             values['fso_forms_giftee_fields'] = fso_forms_giftee_fields
 
-            # Prepare and append giftee form data to values['checkout']
-            if data:
+            # Prepare and append giftee form data to values['checkout'] if the giftee checkbox is enabled
+            if data and data.get('enable_giftee_checkbox', None):
+                #values['enable_giftee_checkbox'] = data.get('enable_giftee_checkbox', None)
+
                 # Extract giftee data from the form data
                 giftee_form_data = {}
+
                 for gf_field in fso_forms_giftee_fields:
+                    if not gf_field.field_id:
+                        continue
                     f_name = gf_field.field_id.name
                     gf_name = 'giftee_' + f_name
                     giftee_form_data[f_name] = data.get(gf_name, None)
@@ -637,12 +642,18 @@ class website_sale_donate(website_sale):
             odoo_ready_giftee_data = {k.replace('giftee_', '', 1): v for k, v in checkout.iteritems()
                                       if k.startswith('giftee_')}
 
-            # Remove the giftee from the sale order if no giftee data is available!
-            # and return
+            # Remove the giftee from the sale order if no giftee data is available and return!
             if not odoo_ready_giftee_data:
                 if order.giftee_partner_id:
+                    # giftee = order.giftee_partner_id
                     order.sudo().write({'giftee_partner_id': False})
-                return 
+                    # if giftee.fs_origin == 'giftee order id: ' + order.id:
+                    #     try:
+                    #         giftee.sudo().unlink()
+                    #     except:
+                    #         _logger.info("Could not delete giftee %s" % giftee.id)
+                    #         pass
+                return
 
             # Append the lang
             partner_lang = request.lang if request.lang in [lang.code for lang in request.website.language_ids] else None
@@ -656,6 +667,8 @@ class website_sale_donate(website_sale):
                 _logger.info("Update giftee %s of sale order %s with data %s"
                              % (order.giftee_partner_id.id, order.id, odoo_ready_giftee_data))
             else:
+                # if order:
+                #     odoo_ready_giftee_data['fs_origin'] = 'giftee order id: ' + order.id
                 giftee = request.env['res.partner'].sudo().create(odoo_ready_giftee_data)
                 order.sudo().write({'giftee_partner_id': giftee.id})
                 _logger.info("Created giftee %s for sale order %s with data %s"

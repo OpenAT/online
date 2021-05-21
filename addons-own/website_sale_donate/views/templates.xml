@@ -14,6 +14,7 @@
             <xpath expr="//link[last()]" position="after">
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css'/>
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/donation_buttons.css'/>
+                <link rel="stylesheet" href='/website_sale_donate/static/src/css/giftee.css'/>
             </xpath>
         </template>
 

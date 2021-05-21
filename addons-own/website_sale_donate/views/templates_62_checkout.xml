@@ -456,17 +456,42 @@
         <template id="wsd_checkout_form_gifting_fields" name="wsd checkout-form-gifting-fields">
             <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
 
-            <!-- FSO_FORMS ADDON GIFTING FIELDS RENDERER
-                 TODO:  - Add a field to enable or disable a gifted person for this order which will be used to show or hide the fields for the giftee
-            -->
             <t t-if="fso_forms_giftee_fields">
-                <t t-call="fso_forms.form_fields">
-                    <t t-set="field_name_prefix" t-value="'giftee_'"/>
-                    <t t-set="fso_form_fields" t-value="fso_forms_giftee_fields"/>
-                    <t t-set="kwargs" t-value="checkout"/>
-                    <t t-set="record" t-value="giftee_partner_id"/>
-                    <t t-set="form_field_errors" t-value="error"/>
-                </t>
+                <t t-set="giftee_enabled" t-value="True if (enable_giftee_checkbox or website_sale_order.giftee_partner_id) else ''"/>
+                <div t-att-class="'giftee-column col-sm-12 col-md-12 col-lg-12'">
+                    <div class="giftee-row">
+
+                        <div class="giftee-checkbox form-group col-sm-12- col-md-12 col-lg-12">
+                            <!-- LABEL for all fields -->
+                            <label class="control-label h3"
+                                   for="enable_giftee">
+                                <!-- BOOLEAN FIELDS -->
+                                <input type="checkbox"
+                                       id="giftee-checkbox"
+                                       data-toggle="collapse"
+                                       data-target="#giftee-fields"
+                                       t-att-checked="giftee_enabled"
+                                       aria-expanded="false"
+                                       aria-controls="collapseExample"
+                                       name="enable_giftee_checkbox"/>
+                                <t t-esc="giftee_checkbox_text or 'Diese Spende ist ein Geschenk'"/>
+                            </label>
+                        </div>
+
+                        <div id="giftee-fields"
+                             t-att-class="'collapse' + (' in' if giftee_enabled else '')">
+                            <t t-call="fso_forms.form_fields">
+                                <t t-set="field_name_prefix" t-value="'giftee_'"/>
+                                <t t-set="fso_form_fields" t-value="fso_forms_giftee_fields"/>
+                                <t t-set="kwargs" t-value="checkout"/>
+                                <t t-set="record" t-value="giftee_partner_id or website_sale_order.giftee_partner_id"/>
+                                <t t-set="form_field_errors" t-value="error"/>
+                            </t>
+                        </div>
+
+                    </div>
+                </div>
+
             </t>
 
         </template>
@@ -528,17 +553,7 @@
                     </div>
 
                     <!-- Giftee Fields (data of gifted person) -->
-                    <div t-att-class="'gifting col-md-12'">
-                        <div class="row js_gifting gifting-fields">
-                            <t t-call="website_sale_donate.wsd_checkout_form_gifting_fields"/>
-                        </div>
-                        <!--<div class="row js_gifting gifting-fields"-->
-                        <!--     t-att-style="'display:none' if (not gifting_id) or (website_sale_order and (website_sale_order.partner_gifting_id.id == website_sale_order.partner_invoice_id.id)) else ''">-->
-                        <!--    &lt;!&ndash; HINT: the divs for the bootstrap columns are the field div's &ndash;&gt;-->
-                        <!--    <t t-call="website_sale_donate.wsd_checkout_form_gifting_fields"/>-->
-                        <!--</div>-->
-                    </div>
-
+                    <t t-call="website_sale_donate.wsd_checkout_form_gifting_fields"/>
 
                 </div>
 
