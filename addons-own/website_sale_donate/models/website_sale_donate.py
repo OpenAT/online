@@ -396,6 +396,13 @@ class sale_order(osv.Model):
                         sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
                         continue
 
+                    # Giftee fields form mismatch (giftee fields)
+                    if product.giftee_form_id != l.product_id.giftee_form_id:
+                        _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
+                                     'giftee fields configurations do not match' % (l.id, order.id))
+                        sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
+                        continue
+
                     # Acquirer config mismatch
                     if product.product_acquirer_lines_ids != l.product_id.product_acquirer_lines_ids:
                         product_acquirer_ids = [] if not product.product_acquirer_lines_ids \

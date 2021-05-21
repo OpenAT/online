@@ -1,0 +1,30 @@
+.giftee-row {
+    border-top: 1px dotted lightgray;
+    border-bottom: 1px dotted lightgray;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    margin-bottom: 2em;
+}
+
+.giftee-checkbox.form-group {
+    margin-bottom: 0;
+}
+
+.giftee-checkbox label {
+    line-height: 44px;
+}
+.giftee-checkbox label.h3 {
+    margin: 0;
+}
+
+input#giftee-checkbox {
+    width: 32px;
+    height: 32px;
+    display: block;
+    float: left;
+    margin-right: 10px;
+}
+
+#giftee-fields {
+    /*margin-top: 2em;*/
+}

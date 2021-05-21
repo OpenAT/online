@@ -72,3 +72,5 @@ class ProductTemplateSosync(models.Model):
     # Berechnetes Feld auf der Basis von website_published, website_published_start und website_published_end
     website_visible = fields.Boolean(sosync="fson-to-frst")
 
+    giftee_form_id = fields.Many2one(sosync="fson-to-frst")
+    giftee_email_template = fields.Many2one(sosync="fson-to-frst")
