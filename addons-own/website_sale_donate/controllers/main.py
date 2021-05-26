@@ -490,8 +490,10 @@ class website_sale_donate(website_sale):
             _logger.warning("cart_update(): END, EXIT A) Simple Checkout, redirect to /shop/checkout")
             return request.redirect('/shop/checkout')
 
-        # EXIT B) Stay on the current page if "Add to cart and stay on current page" is set
-        if request.website['add_to_cart_stay_on_page']:
+        # EXIT B) Stay on the current page if "Add to cart and stay on current page" is set AND
+        #         we come from a category page (product listing page)
+        #         TODO: Check what happens if we come from a category page where the URL was changed by SEO URL!!
+        if kw.get('add_to_cart_stay_on_page', False):
             _logger.warning("cart_update(): END, EXIT B) Stay on the current page")
             return request.redirect(referrer)
 

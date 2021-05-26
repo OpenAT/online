@@ -18,3 +18,4 @@ import frst_zgruppedetail
 import fso_forms
 import sale_order_line
 import email_template
+import product_public_category

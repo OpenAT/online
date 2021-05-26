@@ -20,6 +20,13 @@
             </xpath>
         </template>
 
+        <!-- INHERIT SUB-TEMPLATE products_item: Add global or category setting 'add_to_cart_stay_on_page' -->
+        <template id="wsd_products_item_add_to_cart_stay_on_page" inherit_id="website_sale.products_item" name="INPUT add_to_cart_stay_on_page">
+            <xpath expr="//div[@class='product_price']" position="before">
+                <input name="add_to_cart_stay_on_page" t-att-value="category.add_to_cart_stay_on_page or website.add_to_cart_stay_on_page" type="hidden"/>
+            </xpath>
+        </template>
+
         <!-- TEMPLATE products_direct_download: Direct Download link if no variants -->
         <template id="products_direct_download" inherit_id="website_sale.products_item" active="True"
                   customize_show="True" name="Download Link">

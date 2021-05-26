@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="product_public_category_form_extras_add_to_cart_stay_on_page" model="ir.ui.view">
+        <field name="name">product_public_category_form_extras_add_to_cart_stay_on_page</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="website_sale_categories.product_public_category_form_view_extras"/>
+        <field name="arch" type="xml">
+            <field name="one_page_checkout" position="after">
+                <field name="add_to_cart_stay_on_page"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_public_category_form_add_to_cart_stay_on_page" model="ir.ui.view">
+        <field name="name">product_public_category_form_add_to_cart_stay_on_page</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="website_sale_categories.product_public_category_form"/>
+        <field name="arch" type="xml">
+            <field name="one_page_checkout" position="after">
+                <field name="add_to_cart_stay_on_page"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_public_category_tree_add_to_cart_stay_on_page" model="ir.ui.view">
+        <field name="name">product_public_category_tree_add_to_cart_stay_on_page</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="website_sale_categories.product_public_category_tree"/>
+        <field name="arch" type="xml">
+            <field name="one_page_checkout" position="after">
+                <field name="add_to_cart_stay_on_page"/>
+            </field>
+        </field>
+    </record>
+
+</data></openerp>
