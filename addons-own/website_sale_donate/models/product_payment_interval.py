@@ -19,6 +19,10 @@ class payment_interval(models.Model):
                          compute="compute_xml_id", store=True,
                          help="To match correct payment interval in FRST we need an unique string")
 
+    # Factor to convert between different intervals
+    length_in_months = fields.Char(string="Interval length in months",
+                                   help="This is used to convert the amounts between the intervals")
+
     @api.multi
     def compute_xml_id(self):
         records = self or self.search([])

@@ -62,6 +62,9 @@ class ProductTemplate(models.Model):
                                                selection=[('website_sale_donate.dit_advanced', 'Advanced'),
                                                           ])
 
+    auto_recompute_price_donate = fields.Boolean(string="Auto recompute Price Donate",
+                                                 help="Recompute price-donate value on payment interval change")
+
     # Custom page themes
     # ATTENTION: The name of the theme will be added to the <body> tag if you are on the product page
     #            or a product is in the sale order (check templates.xml)

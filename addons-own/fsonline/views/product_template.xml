@@ -79,6 +79,7 @@
                                 </div>
                                 <group>
                                     <field name="payment_interval_default" string="Standard Zahlungsinterval"/>
+                                    <field name="auto_recompute_price_donate"/>
                                 </group>
                                 <group>
                                     <label colspan="2" for="payment_interval_lines_ids" string="Auswählbare Zahlungsintervalle"/>

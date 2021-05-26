@@ -9,7 +9,7 @@ $(document).ready(function () {
 
     $price_suggested.on("click", function (ev1) {
         // Copy the button value to the <input id="price_donate"> value
-        $price_donate.val( $(this).data("price") );
+        $price_donate.val( $(this).data("price") ).trigger('change');
 
         // ACTIVE BUTTON FOR THE NEW DONATION BUTTON LAYOUTS
 
@@ -33,6 +33,77 @@ $(document).ready(function () {
     });
     // ------------------------------
 
+
+    // START: RECOMPUTE PRICE SUGGESTED FOR PAYMENT INTERVALS
+    if ($("#payment_intervals").data('auto-recompute-price-donate')) {
+
+        // RADIO BUTTONS
+        $("input[name='payment_interval_id']").on("click", function (ev) {
+            if ($(this).attr('data-checked-before') === '1') {
+                // console.log('INTERVAL ALREADY CHECKED')
+            } else {
+                let former_payment_interval = $("input[name='payment_interval_id'][data-checked-before='1']");
+                let former_months = parseInt(former_payment_interval.attr('data-payment-interval-length-in-months'));
+                let $price_donate = $("input#price_donate");
+                let former_price_donate_value = parseFloat($price_donate.attr('data-value-float'));
+                if (!former_price_donate_value) {
+                    // console.log('Fallback to price_donate value');
+                    former_price_donate_value = parseFloat($("input#price_donate").val());
+                }
+                let current_months = parseInt($(this).attr('data-payment-interval-length-in-months'));
+                former_payment_interval.removeAttr('data-checked-before');
+                // console.log('former_payment_interval: ', former_payment_interval.attr('data-payment-interval-external-id'));
+                // console.log('former_months', former_months, 'former_price_donate_value', former_price_donate_value, 'current_months', current_months);
+                if (former_months && former_price_donate_value && current_months) {
+                    let current_price_donate_value = former_price_donate_value / former_months * current_months;
+                    // console.log('current_price_donate_value', current_price_donate_value);
+                    let current_price_donate_value_rounded = Math.round((current_price_donate_value + Number.EPSILON) * 100) / 100
+                    $("input#price_donate").val(current_price_donate_value_rounded).trigger("change");
+                    $("input#price_donate").attr('data-value-float', current_price_donate_value);
+                }
+            }
+            $(this).attr('data-checked-before', '1');
+            // console.log('current_payment_interval: ', $(this).attr('data-payment-interval-external-id'));
+        })
+
+        // SELECTION LIST
+        $("select[name='payment_interval_id']").on("click change input", function (ev) {
+            let $selected_option = $("select[name='payment_interval_id'] option:selected")
+            if ($selected_option.attr('data-checked-before') === '1') {
+                // console.log('INTERVAL ALREADY SELECTED')
+            } else {
+                let former_payment_interval = $("select[name='payment_interval_id'] option[data-checked-before='1']");
+                let former_months = parseInt(former_payment_interval.attr('data-payment-interval-length-in-months'));
+                let $price_donate = $("input#price_donate");
+                let former_price_donate_value = parseFloat($price_donate.attr('data-value-float'));
+                if (!former_price_donate_value) {
+                    // console.log('Fallback to price_donate value');
+                    former_price_donate_value = parseFloat($("input#price_donate").val());
+                }
+                let current_months = parseInt($selected_option.attr('data-payment-interval-length-in-months'));
+                former_payment_interval.removeAttr('data-checked-before');
+                // console.log('former_payment_interval: ', former_payment_interval.attr('data-payment-interval-external-id'));
+                // console.log('former_months', former_months, 'former_price_donate_value', former_price_donate_value, 'current_months', current_months);
+                if (former_months && former_price_donate_value && current_months) {
+                    let current_price_donate_value = former_price_donate_value / former_months * current_months;
+                    // console.log('current_price_donate_value', current_price_donate_value);
+                    let current_price_donate_value_rounded = Math.round((current_price_donate_value + Number.EPSILON) * 100) / 100
+                    $("input#price_donate").val(current_price_donate_value_rounded).trigger("change");
+                    $("input#price_donate").attr('data-value-float', current_price_donate_value);
+                }
+            }
+            $selected_option.attr('data-checked-before', '1');
+            // console.log('current_payment_interval: ', $(this).attr('data-payment-interval-external-id'));
+        })
+
+        // REMOVE THE FLOAT VALUE ON CHANGES OF THE price-donate value
+        // HINT: Make sure all .val(xxx) calls are changed to .val(xxx).trigger("change") to make this work
+        $("input#price_donate").on("propertychange change click keyup input paste", function (ev) {
+            $(this).removeAttr('data-value-float');
+            // console.log('REMOVE data-value-float');
+        })
+    }
+    // END: RECOMPUTE PRICE SUGGESTED FOR PAYMENT INTERVALS
 
     // Click radio input of the selected payment interval on first load of the page
     $("input[name='payment_interval_id'][checked]").ready(function () {

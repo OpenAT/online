@@ -106,6 +106,7 @@ To solve this we did:
     'installable': True,
     'data': [
         'data/data.xml',
+        'data/payment_intervals.xml',
         #'data/email_template_data.xml', # moved to fso_base
         'security/ir.model.access.csv',
         'views/payment_acquirer.xml',
