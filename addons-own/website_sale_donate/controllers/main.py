@@ -1201,6 +1201,12 @@ class website_sale_donate(website_sale):
                 and tx.sale_order_id.cat_root_id.redirect_url_after_form_feedback:
             redirect_url_after_form_feedback = tx.sale_order_id.cat_root_id.redirect_url_after_form_feedback
 
+        # Update redirect_url_after_form_feedback from the sale_order_line (by product)
+        if tx and tx.sale_order_id and tx.sale_order_id.website_order_line:
+            for line in tx.sale_order_id.website_order_line:
+                if line.product_id and line.product_id.redirect_url_after_form_feedback:
+                    redirect_url_after_form_feedback = line.product_id.redirect_url_after_form_feedback
+
         # Find sale order (from current session)
         if sale_order_id is None:
             order = request.website.sale_get_order(context=context)

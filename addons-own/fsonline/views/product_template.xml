@@ -40,6 +40,7 @@
                                    options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                             <field name="product_page_template" string="Webseitenvorlage (Struktur)"/>
                             <field name="clear_cart"/>
+                            <field name="redirect_url_after_form_feedback"/>
                         </group>
                         <group>
                             <field name="type"/>

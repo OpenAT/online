@@ -81,6 +81,14 @@ class ProductTemplate(models.Model):
                                 help="Clear all other products from the shopping cart (sale order) when this "
                                      "product is added")
 
+    # Thank you page per product
+    redirect_url_after_form_feedback = fields.Char(string='Redirect URL after PP Form-Feedback',
+                                                   help='Redirect to this URL after processing the Answer of the '
+                                                        'Payment Provider instead of /shop/confirmation_static. '
+                                                        '(This is the thank you page after a successful '
+                                                        'donation/purchase)',
+                                                   translate=True)
+
     @api.constrains('website_theme', 'public_categ_ids')
     def contraint_website_theme(self):
         for r in self:
