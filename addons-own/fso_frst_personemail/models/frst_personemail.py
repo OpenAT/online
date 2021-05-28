@@ -198,7 +198,7 @@ class FRSTPersonEmail(models.Model):
         emails = self.env['frst.personemail'] + self
         while len(emails):
 
-            # Find all PersonEmail addresses for this partner
+            # Find all PersonEmail addresses for this partner in the right order to choose the correct address later
             p_id = emails[0].partner_id.id
             p_emails = emails.search([('partner_id', '=', p_id)], order='last_email_update desc, create_date desc')
 

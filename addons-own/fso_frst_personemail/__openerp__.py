@@ -42,5 +42,8 @@ FS-Online Fundraising Studio PersonEmail implementation
         #
         'views/frst_personemail.xml',
         'views/res_partner.xml',
+        #
+        'data/server_actions.xml',
+        'data/scheduled_actions.xml',
     ],
 }

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import openerp
 from openerp import models, fields, api
 from datetime import timedelta
 import logging
@@ -68,6 +69,32 @@ class ResPartner(models.Model):
                 if main_address:
                     yesterday = fields.datetime.now() - timedelta(days=1)
                     main_address.write({'gueltig_bis': yesterday})
+
+    @api.multi
+    def compute_main_address(self):
+        for r in self:
+            if r.frst_personemail_ids:
+                r.frst_personemail_ids[0].compute_main_address()
+
+    @api.multi
+    def scheduled_compute_main_address(self):
+        all_partner_ids = self.search([['frst_personemail_ids', '!=', False]]).ids
+        logger.info("Run scheduled_compute_main_address() for %s parnter" % len(all_partner_ids))
+        batch_partner = True
+        batch_size = 5000
+        offset = 0
+        while batch_partner:
+            with openerp.api.Environment.manage():
+                # You don't need close your cr because is closed when finish "with"
+                with openerp.registry(self.env.cr.dbname).cursor() as batch_cr:
+                    batch_env = api.Environment(batch_cr, self.env.uid, self.env.context)
+                    batch_partner = self.with_env(batch_env).browse(all_partner_ids[offset:offset + batch_size])
+                    offset += batch_size
+
+                    logger.info("Run batch of scheduled_compute_main_address() for %s parnter" % len(batch_partner))
+                    batch_partner.compute_main_address()
+
+                    batch_env.cr.commit()
 
     # ----
     # CRUD

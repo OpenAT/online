@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data noupdate="0">
+
+    <!-- =========== -->
+    <!-- res.partner -->
+    <!-- =========== -->
+
+    <!-- Server Action to run frst.personemail.compute_main_address() from res.partner -->
+    <record id="server_action_compute_main_address" model="ir.actions.server" forcecreate="1">
+        <field name="name">Compute Main-E-Mail-Address</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            <![CDATA[
+            if context.get('active_model') == 'res.partner':
+
+                # Find ids
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+
+
+                # Call button action action_set_bpk
+                if ids:
+                    assert len(ids) <= 2000, _("Max 2000 partner at once are allowed for manually started compute_main_address()! Please use Schedule compute_main_address instead!")
+                    self.compute_main_address(cr, uid, ids, context=context)
+            ]]>
+        </field>
+    </record>
+    <!-- Add to more menu -->
+    <record id="ir_server_action_compute_main_address" model="ir.values" forcecreate="1">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner'"/>
+        <field name="name">Compute Main-E-Mail-Address</field>
+        <field name="value" eval="'ir.actions.server,%d'%server_action_compute_main_address"/>
+    </record>
+
+</data></openerp>
