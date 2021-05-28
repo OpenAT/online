@@ -189,7 +189,11 @@ class MailMassMailingContact(models.Model):
             if existing_contact:
                 existing_contact.append_renewed_subscription_log(vals)
                 if self._is_logged_in():
-                    existing_contact.write(vals)
+                    # HINT: on create all values are given (even the unset/False ones) but if we make an update
+                    #       we for an existing contact we must remove all unset/False vals or e.g. personemail would
+                    #       be deleted
+                    vals_changes = {k: v for k, v in vals.iteritems() if v}
+                    existing_contact.write(vals_changes)
                 existing_contact._post_update_check()
                 return existing_contact
 
