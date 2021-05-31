@@ -234,7 +234,7 @@
                                                         <input type="radio" name="payment_interval_id"
                                                                t-att-value="payint.id"
                                                                t-att-checked="'checked' if payint.id == payment_interval_id else ''"
-                                                               t-att-data-payment-interval-length-in-months="payint.length_in_months or '0'"
+                                                               t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
                                                                t-att-data-payment-interval-external-id="payint.get_external_id().get(payint.id)"
                                                         />
                                                         <t t-esc="payint.name"/>
@@ -247,7 +247,7 @@
                                                     <t t-foreach="product.payment_interval_ids" t-as="payint">
                                                         <option t-att-value="payint.id"
                                                                 t-att-selected="'True' if payint.id == payment_interval_id else ''"
-                                                                t-att-data-payment-interval-length-in-months="payint.length_in_months or '0'"
+                                                                t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
                                                                 t-att-data-payment-interval-external-id="payint.get_external_id().get(payint.id)">
                                                             <t t-esc="payint.name"/>
                                                         </option>
@@ -266,7 +266,7 @@
                                                         <input type="radio" name="payment_interval_id"
                                                                t-att-value="payint.payment_interval_id.id"
                                                                t-att-checked="'checked' if payint.payment_interval_id.id == payment_interval_id else ''"
-                                                               t-att-data-payment-interval-length-in-months="payint.length_in_months or '0'"
+                                                               t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
                                                                t-att-data-payment-interval-external-id="payint.payment_interval_id.get_external_id().get(payint.payment_interval_id.id)"
                                                         />
                                                         <t t-esc="payint.payment_interval_id.name"/>
@@ -279,7 +279,7 @@
                                                     <t t-foreach="product.payment_interval_lines_ids" t-as="payint">
                                                         <option t-att-value="payint.payment_interval_id.id"
                                                                 t-att-selected="'True' if payint.payment_interval_id.id == payment_interval_id else ''"
-                                                                t-att-data-payment-interval-length-in-months="payint.length_in_months or '0'"
+                                                                t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
                                                                 t-att-data-payment-interval-external-id="payint.payment_interval_id.get_external_id().get(payint.payment_interval_id.id)">
                                                             <t t-esc="payint.payment_interval_id.name"/>
                                                         </option>
