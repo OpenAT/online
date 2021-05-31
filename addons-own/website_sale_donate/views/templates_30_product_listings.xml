@@ -23,7 +23,7 @@
         <!-- INHERIT SUB-TEMPLATE products_item: Add global or category setting 'add_to_cart_stay_on_page' -->
         <template id="wsd_products_item_add_to_cart_stay_on_page" inherit_id="website_sale.products_item" name="INPUT add_to_cart_stay_on_page">
             <xpath expr="//div[@class='product_price']" position="before">
-                <input name="add_to_cart_stay_on_page" t-att-value="category.add_to_cart_stay_on_page or website.add_to_cart_stay_on_page" type="hidden"/>
+                <input name="add_to_cart_stay_on_page" t-att-value="(category.add_to_cart_stay_on_page if category else False) or (website.add_to_cart_stay_on_page if website else False)" type="hidden"/>
             </xpath>
         </template>
 
