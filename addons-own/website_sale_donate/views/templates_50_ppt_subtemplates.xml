@@ -234,7 +234,7 @@
                                                         <input type="radio" name="payment_interval_id"
                                                                t-att-value="payint.id"
                                                                t-att-checked="'checked' if payint.id == payment_interval_id else ''"
-                                                               t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
+                                                               t-att-data-payment-interval-length-in-months="payint.length_in_months or '0'"
                                                                t-att-data-payment-interval-external-id="payint.get_external_id().get(payint.id)"
                                                         />
                                                         <t t-esc="payint.name"/>
@@ -247,7 +247,7 @@
                                                     <t t-foreach="product.payment_interval_ids" t-as="payint">
                                                         <option t-att-value="payint.id"
                                                                 t-att-selected="'True' if payint.id == payment_interval_id else ''"
-                                                                t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
+                                                                t-att-data-payment-interval-length-in-months="payint.length_in_months or '0'"
                                                                 t-att-data-payment-interval-external-id="payint.get_external_id().get(payint.id)">
                                                             <t t-esc="payint.name"/>
                                                         </option>
@@ -261,27 +261,27 @@
                                         <t t-if="product.payment_interval_lines_ids">
                                             <!-- radio buttons -->
                                             <t t-if="not payment_interval_as_selection">
-                                                <div class="radio" t-foreach="product.payment_interval_lines_ids" t-as="payint">
+                                                <div class="radio" t-foreach="product.payment_interval_lines_ids" t-as="payint_line">
                                                     <label>
                                                         <input type="radio" name="payment_interval_id"
-                                                               t-att-value="payint.payment_interval_id.id"
-                                                               t-att-checked="'checked' if payint.payment_interval_id.id == payment_interval_id else ''"
-                                                               t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
-                                                               t-att-data-payment-interval-external-id="payint.payment_interval_id.get_external_id().get(payint.payment_interval_id.id)"
+                                                               t-att-value="payint_line.payment_interval_id.id"
+                                                               t-att-checked="'checked' if payint_line.payment_interval_id.id == payment_interval_id else ''"
+                                                               t-att-data-payment-interval-length-in-months="payint_line.payment_interval_id.length_in_months or '0'"
+                                                               t-att-data-payment-interval-external-id="payint_line.payment_interval_id.get_external_id().get(payint_line.payment_interval_id.id)"
                                                         />
-                                                        <t t-esc="payint.payment_interval_id.name"/>
+                                                        <t t-esc="payint_line.payment_interval_id.name"/>
                                                     </label>
                                                 </div>
                                             </t>
                                             <!-- selection list -->
                                             <t t-if="payment_interval_as_selection">
                                                 <select name="payment_interval_id" class="form-control">
-                                                    <t t-foreach="product.payment_interval_lines_ids" t-as="payint">
-                                                        <option t-att-value="payint.payment_interval_id.id"
-                                                                t-att-selected="'True' if payint.payment_interval_id.id == payment_interval_id else ''"
-                                                                t-att-data-payment-interval-length-in-months="payint.payment_interval_id.length_in_months or '0'"
-                                                                t-att-data-payment-interval-external-id="payint.payment_interval_id.get_external_id().get(payint.payment_interval_id.id)">
-                                                            <t t-esc="payint.payment_interval_id.name"/>
+                                                    <t t-foreach="product.payment_interval_lines_ids" t-as="payint_line">
+                                                        <option t-att-value="payint_line.payment_interval_id.id"
+                                                                t-att-selected="'True' if payint_line.payment_interval_id.id == payment_interval_id else ''"
+                                                                t-att-data-payment-interval-length-in-months="payint_line.payment_interval_id.length_in_months or '0'"
+                                                                t-att-data-payment-interval-external-id="payint_line.payment_interval_id.get_external_id().get(payint_line.payment_interval_id.id)">
+                                                            <t t-esc="payint_line.payment_interval_id.name"/>
                                                         </option>
                                                     </t>
                                                 </select>
