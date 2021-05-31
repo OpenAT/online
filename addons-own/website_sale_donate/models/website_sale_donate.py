@@ -417,9 +417,9 @@ class sale_order(osv.Model):
                             continue
 
                     # Redirect URL after payment provider mismatch
-                    if product.redirect_url_after_form_feedback != l.product.redirect_url_after_form_feedback:
+                    if product.redirect_url_after_form_feedback != l.product_id.redirect_url_after_form_feedback:
                         _logger.info('_cart_update(): Remove sale order line (ID: %s) from SO (ID: %s) because '
-                                     'redirect_url_after_form_feedback do not match' % (l.id, order.id))
+                                     'redirect_url_after_form_feedback of the products do not match' % (l.id, order.id))
                         sol_obj.unlink(cr, SUPERUSER_ID, [l.id], context=context)
                         continue
 
