@@ -66,7 +66,7 @@ class MailMassMailingContact(models.Model):
                 else:
 
                     # Transfer opt_out
-                    if lc.opt_out:
+                    if lc.opt_out and pegroup.state not in ('unsubscribed', 'expired'):
                         # ATTENTION: It would be more precise to set 'steuerung_bit': False but since Fundraising
                         #            Studio is inconsistent in this respect we simply do the same than FRST when
                         #            someone clicked on the 'abmelden' link in an email
