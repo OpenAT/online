@@ -189,12 +189,13 @@
                                     />
                                 </group>
                                 <group string="Webshop: Enable Gifting Feature">
-                                    <field name="giftee_form_id" readonly="1"/>
+                                    <field name="giftee_form_id"/>
                                     <button name="create_giftee_fields_form" type="object"
                                             string="Enable Giftee Fields"
                                             colspan="2"
                                             attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
                                     />
+                                    <field name="giftee_checkbox_text" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
                                     <field name="giftee_email_template" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
                                 </group>
                             </group>

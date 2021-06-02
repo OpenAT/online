@@ -56,6 +56,8 @@ class ProductTemplate(models.Model):
                                             inverse_name="giftee_product_template_ids",
                                             copy=True)
 
+    giftee_checkbox_text = fields.Char(string="Giftee-Checkbox Text", translate=True)
+
     # Custom donation input template (arbitrary price and donation buttons in checkout box)
     # HINT: dit stands for donation input template
     donation_input_template = fields.Selection(string="Donation Input Template",

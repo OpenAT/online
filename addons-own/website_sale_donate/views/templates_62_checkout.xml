@@ -455,6 +455,7 @@
         <!-- SUBTEMPLATE Gifting Fields Renderer -->
         <template id="wsd_checkout_form_gifting_fields" name="wsd checkout-form-gifting-fields">
             <t t-set="website_sale_order" t-value="website.sale_get_order()"/>
+            <t t-set="giftee_product" t-value="product if product else website_sale_order.website_order_line[-1].product_id if website_sale_order and website_sale_order.website_order_line else False"/>
 
             <t t-if="fso_forms_giftee_fields">
                 <t t-set="giftee_enabled" t-value="True if (enable_giftee_checkbox or website_sale_order.giftee_partner_id) else ''"/>
@@ -474,7 +475,7 @@
                                        aria-expanded="false"
                                        aria-controls="collapseExample"
                                        name="enable_giftee_checkbox"/>
-                                <t t-esc="giftee_checkbox_text or 'Diese Spende ist ein Geschenk'"/>
+                                <t t-esc="giftee_product.giftee_checkbox_text if giftee_product else False or 'Diese Spende ist ein Geschenk'"/>
                             </label>
                         </div>
 
