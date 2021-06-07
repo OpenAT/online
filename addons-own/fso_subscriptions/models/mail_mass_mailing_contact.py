@@ -130,6 +130,13 @@ class MailMassMailingContact(models.Model):
             if r.state != state:
                 r.state = state
 
+    @api.model
+    def create(self, vals):
+        if 'email' in vals:
+            vals['email'] = vals['email'].strip() if vals['email'] else vals['email']
+
+        return super(MailMassMailingContact, self).create(vals)
+
     @api.multi
     def write(self, vals):
         if 'email' in vals:
