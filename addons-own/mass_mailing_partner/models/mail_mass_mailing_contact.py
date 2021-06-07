@@ -51,7 +51,7 @@ class MailMassMailingContact(models.Model):
             for r in self.sudo():
                 new_email = vals.get('email')
                 if r.personemail_id:
-                    if not new_email or new_email.lower() != r.personemail_id.email.lower():
+                    if not new_email or new_email.lower().strip() != r.personemail_id.email.lower().strip():
                         raise Warning(_("You can not update the email to '%s' for record %s because it is "
                                         "already linked to PersonEmail %s with email %s!"
                                         % (new_email, r.id, r.personemail_id.id, r.personemail_id.email)))
@@ -60,7 +60,7 @@ class MailMassMailingContact(models.Model):
     def _post_update_check(self):
         for r in self.sudo():
             if r.personemail_id:
-                if r.email and r.email.lower() != r.personemail_id.email.lower():
+                if r.email and r.email.lower().strip() != r.personemail_id.email.lower().strip():
                     raise ValidationError(_('The email is not matching the linked PartnerEmail!'))
             if r.list_id.partner_mandatory:
                 if not r.personemail_id:
