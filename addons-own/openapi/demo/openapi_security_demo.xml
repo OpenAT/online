@@ -1,7 +1,26 @@
 <!-- Copyright 2019 Anvar Kildebekov <https://it-projects.info/team/fedoranvar>
      License LGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).-->
 <openerp><data>
+    <record model="res.partner" id="openapi_demo_user_partner">
+        <field name="name">OpenAPI Demo Partner</field>
+        <field name="email">openapi@dummy.dummy</field>
+    </record>
+    <record model="res.users" id="openapi_demo_user">
+        <field name="name">OpenAPI Demo User</field>
+        <field name="login">open_api_demo</field>
+        <field name="partner_id" ref="openapi.openapi_demo_user_partner"/>
+    </record>
     <record model="res.groups" id="group_user">
-        <field name="users" eval="[(4, ref('base.user_demo'))]" />
+        <field name="name">OpenAPI Users</field>
+        <field name="users" eval="[(4, ref('openapi.openapi_demo_user'))]" />
+        <field name="implied_ids"
+               eval="[
+               (4, ref('base.group_erp_manager')),
+               (4, ref('base.group_system')),
+               (4, ref('base.group_user')),
+               (4, ref('base.group_sale_manager')),
+               (4, ref('base.group_no_one'))
+               ]"/>
     </record>
 </data></openerp>
+
