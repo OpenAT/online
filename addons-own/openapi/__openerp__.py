@@ -21,6 +21,8 @@
         "bin": [],
     },
     "data": [
+        "demo/openapi_demo.xml",
+        "demo/openapi_security_demo.xml",
         "security/openapi_security.xml",
         "security/ir.model.access.csv",
         "security/res_users_token.xml",
