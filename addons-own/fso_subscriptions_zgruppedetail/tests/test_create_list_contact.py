@@ -61,7 +61,7 @@ class TestMailMassMailingContact(common.TransactionCase):
             'gender': u"male",
             'anrede_individuell': u"anrede_individuell",
             'title_web': u"title_web",
-            'birthdate_web': u"01.01.1981",
+            'birthdate_web': datetime(1981, 1, 1),
             'newsletter_web': True,
             'phone': u"+43 123456789",
             'mobile': u"+43 660 123456789",
