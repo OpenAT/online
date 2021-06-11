@@ -231,4 +231,9 @@ header, main, footer {
     padding: 0 12px;
 }
 
+#email_template .search-query.form-control {
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
 /* TODO: Submit Button v2 */
