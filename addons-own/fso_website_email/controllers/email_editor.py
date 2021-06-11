@@ -72,8 +72,18 @@ class FSOEmailEditor(http.Controller):
         # E-Mail template domain
         template_domain = [('fso_email_template', '=', True),
                            ('fso_template_view_id', '!=', False)]
-        if search:
-            template_domain += [('name', 'ilike', search)]
+
+        if search and hasattr(template_obj, 'sosync_fs_id'):
+            # Include sosync_fs_id in search, if it exists
+            template_domain += ['|',
+                                '|',
+                                ('name', 'ilike', search),
+                                ('id', '=', search),
+                                ('sosync_fs_id', '=', search)]
+        elif search:
+            template_domain += ['|',
+                                ('name', 'ilike', search),
+                                ('id', '=', search)]
 
         # Order by
         # template_order = "write_date DESC"
