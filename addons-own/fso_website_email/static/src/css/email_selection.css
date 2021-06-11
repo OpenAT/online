@@ -236,4 +236,22 @@ header, main, footer {
     font-size: 14px;
 }
 
+#email_template .email_template_id_display {
+    position: absolute;
+    left: 16px;
+    top: 1px;
+    z-index: 1900;
+    padding: 2 4;
+    background: rgba(255,255,255,0.5);
+    font-size: 1px;
+    color: #888;
+}
+#email_template .email_preview_border .email_template_id_display {
+    -webkit-transition: font-size 160ms;/* Safari */
+    transition: font-size 160ms;
+}
+#email_template .email_preview_border:hover .email_template_id_display {
+    font-size: 14px;
+}
+
 /* TODO: Submit Button v2 */
