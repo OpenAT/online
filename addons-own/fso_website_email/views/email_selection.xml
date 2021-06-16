@@ -8,9 +8,9 @@
           <div class="input-group">
               <input type="text" name="search" class="search-query form-control" placeholder="Search..." t-att-value="search"/>
               <span class="input-group-btn">
-                  <a class="btn btn-default a-submit">
+                  <button type="send" class="btn btn-default a-submit">
                       <i class="fa fa-search"/>
-                  </a>
+                  </button>
               </span>
           </div>
 
@@ -127,7 +127,9 @@
                         <div t-foreach="templates" t-as="template" class="email_template_box col-lg-2 col-md-3 col-sm-6 text-center">
 
                             <div class="email_preview_border">
-
+                                <div class="email_template_id_display">
+                                    <t t-esc="template.id" />
+                                </div>
                                 <div class="email_template_delete">
                                     <a class="btn-danger fso_wem_delete_template" t-att-data-template-id="template.id">
                                         Delete
@@ -204,6 +206,7 @@
                                                   placeholder="E-Mail-Template Name"><t t-esc="template.name"/></textarea>
                                     </div>
                                 </div>
+
                                 <!-- Submit Button -->
                                 <div class="submit-button">
                                     <button type="submit" class="btn btn-link" value="Save"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"/></button>

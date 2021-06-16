@@ -43,8 +43,9 @@ class ir_http(orm.AbstractModel):
             # Log the token access error
             log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)
             # Remove token and token-fs-origin from context
-            request.context.pop('fs_ptoken', False)
-            request.context.pop('fs_origin', False)
+            if hasattr(request, 'session') and hasattr(request.session, 'context'):
+                request.session.context.pop('fs_ptoken', False)
+                request.session.context.pop('fs_origin', False)
             return redirect_no_fs_ptoken
 
         # Do nothing if the token_user is already logged in
@@ -60,8 +61,9 @@ class ir_http(orm.AbstractModel):
         redirect = login_and_redirect(request.db, login, password, redirect_url=url_no_fs_ptoken)
 
         # Add token and token-fs-origin to the context (after login_and_redirect because it may change the env)
-        request.context['fs_ptoken'] = token_record.name
-        request.context['fs_origin'] = token_record.fs_origin or False
+        if hasattr(request, 'session') and hasattr(request.session, 'context'):
+            request.session.context['fs_ptoken'] = token_record.name
+            request.session.context['fs_origin'] = token_record.fs_origin or False
 
         # Log successful token usage
         log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)

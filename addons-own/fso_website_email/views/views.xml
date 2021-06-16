@@ -58,5 +58,15 @@
         </field>
     </record>
 
+    <record id="fso_view_email_template_search" model="ir.ui.view">
+        <field name="name">Email Theme Search</field>
+        <field name="model">email.template</field>
+        <field name="inherit_id" ref="email_template.view_email_template_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='model_id']" position="after">
+                <field name="id"/>
+            </xpath>
+        </field>
+    </record>
 </data>
 </openerp>

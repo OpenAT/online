@@ -13,7 +13,7 @@ from ..controllers import pinguin
 
 _logger = logging.getLogger(__name__)
 
-USER_DEMO = "base.user_demo"
+USER_DEMO = "openapi.openapi_demo_user"
 USER_ADMIN = "base.user_root"
 MESSAGE = "message is posted from API"
 
@@ -34,10 +34,11 @@ class TestAPI(HttpCase):
         self.demo_user = self.phantom_env.ref(USER_DEMO)
         self.admin_user = self.phantom_env.ref(USER_ADMIN)
         self.model_name = "res.partner"
+        self.api_namespace = self.phantom_env.ref('openapi.namespace_demo')
 
     def request(self, method, url, auth=None, **kwargs):
         kwargs.setdefault("model", self.model_name)
-        kwargs.setdefault("namespace", "demo")
+        kwargs.setdefault("namespace", self.api_namespace.name)
         url = ("http://localhost:%d/api/v1/{namespace}" % PORT + url).format(**kwargs)
         self.opener = requests.Session()
         self.opener.cookies["session_id"] = self.session_id

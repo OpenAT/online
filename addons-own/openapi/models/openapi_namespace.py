@@ -86,6 +86,10 @@ class Namespace(models.Model):
         )
     ]
 
+    @staticmethod
+    def format_string(value):
+        return value if value else ""
+
     @api.multi
     def name_get(self):
         return [
@@ -143,13 +147,13 @@ class Namespace(models.Model):
         spec = collections.OrderedDict(
             [
                 ("swagger", "2.0"),
-                ("info", {"title": self.name,
-                          "description": self.description_markdown or self.description,
+                ("info", {"title": self.format_string(self.name),
+                          "description": self.format_string(self.description_markdown or self.description),
                           "version": self.write_date,
                           "contact": {
-                              "name": self.contact_name,
-                              "url": self.contact_url,
-                              "email": self.contact_email
+                              "name": self.format_string(self.contact_name),
+                              "url": self.format_string(self.contact_url),
+                              "email": self.format_string(self.contact_email)
                           }
                           }
                  ),

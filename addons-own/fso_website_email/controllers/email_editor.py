@@ -72,8 +72,25 @@ class FSOEmailEditor(http.Controller):
         # E-Mail template domain
         template_domain = [('fso_email_template', '=', True),
                            ('fso_template_view_id', '!=', False)]
-        if search:
-            template_domain += [('name', 'ilike', search)]
+
+        # Searching for sosync ID should be its own addon
+        # but it seemed overkill just for the ID for now
+        if search and hasattr(template_obj, 'sosync_fs_id'):
+            # Include sosync_fs_id in search, if it exists
+            search_id = 0
+
+            if search.isdigit():
+                search_id = int(search)
+
+            template_domain += ['|',
+                                '|',
+                                ('name', 'ilike', search),
+                                ('id', '=', search_id),
+                                ('sosync_fs_id', '=', search_id)]
+        elif search:
+            template_domain += ['|',
+                                ('name', 'ilike', search),
+                                ('id', '=', search)]
 
         # Order by
         # template_order = "write_date DESC"
