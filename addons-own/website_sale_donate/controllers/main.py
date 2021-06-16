@@ -680,7 +680,9 @@ class website_sale_donate(website_sale):
     def _get_mandatory_billing_fields(self):
         fso_forms_billing_fields = self.get_fso_forms_billing_fields()
         if fso_forms_billing_fields:
-            return [field.field_id.name for field in fso_forms_billing_fields if field.mandatory]
+            mandatory_enabled_mapped_form_fields = fso_forms_billing_fields.filtered(
+                lambda f: f.show and f.field_id and f.mandatory)
+            return [field.field_id.name for field in mandatory_enabled_mapped_form_fields]
         else:
             billing_fields = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
@@ -691,7 +693,9 @@ class website_sale_donate(website_sale):
     def _get_optional_billing_fields(self):
         fso_forms_billing_fields = self.get_fso_forms_billing_fields()
         if fso_forms_billing_fields:
-            return [field.field_id.name for field in fso_forms_billing_fields if not field.mandatory]
+            nonmandatory_enabled_mapped_form_fields = fso_forms_billing_fields.filtered(
+                lambda f: f.show and f.field_id and not f.mandatory)
+            return [field.field_id.name for field in nonmandatory_enabled_mapped_form_fields]
         else:
             billing_fields = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
