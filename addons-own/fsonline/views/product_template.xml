@@ -7,7 +7,7 @@
             <field name="name">FS-Online Product Template Form</field>
             <field name="model">product.template</field>
             <field name="arch" type="xml">
-                <form string="Spenden, Artikel, Patenschaften, Events, Mitgliedschaften">
+                <form string="Donations, Products, Sponsorships, Events, Memberships">
                     <!-- Technical fields -->
                     <field name="is_product_variant" invisible="1"/>
                     <field name='product_variant_count' invisible='1'/>
@@ -29,7 +29,7 @@
                                     <field name="name" required="True"/>
                                 </h1>
                                 <div class="oe_edit_only">
-                                    <label for="description_sale" string="Kurztext / Kurzbeschreibung"/>
+                                    <label for="description_sale" string="Short Description"/>
                                 </div>
                                 <h3>
                                     <field name="description_sale"/>
@@ -39,23 +39,23 @@
 
                         <group name="Basic Settings">
                             <group>
-                                <field name="fs_product_type" string="Fundraising Studio Typ"/>
+                                <field name="fs_product_type" string="Fundraising Studio Type"/>
                                 <field name="website_theme" string="Website Theme (CSS)"/>
                                 <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
                                 <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
-                                <field name="zgruppedetail_ids" string="Fundraising Studio Gruppen"
+                                <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
                                        widget="many2many_tags"
                                        options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                                <field name="product_page_template" string="Webseitenvorlage (Struktur)"/>
+                                <field name="product_page_template" string="Website Theme (Structure)"/>
                                 <field name="clear_cart"/>
                                 <field name="redirect_url_after_form_feedback"/>
                             </group>
                             <group>
                                 <field name="type"/>
-                                <field name="uom_id" string="Mengeneinheit"/>
-                                <field name="seo_url" string="Erzwungene URL (SEO)"/>
+                                <field name="uom_id" string="Unit of Measure"/>
+                                <field name="seo_url" string="Forced SEO URL"/>
                                 <field name="website_url" invisible="0" widget="url" readonly="1"
-                                       string="Standard URL"/>
+                                       string="Default URL"/>
                             </group>
                         </group>
 
@@ -77,35 +77,35 @@
 
                         <!-- TABS -->
                         <notebook>
-                            <page string="Steuerung">
+                            <page string="Control">
                                 <group>
                                     <group>
-                                        <field name="website_published" string="Webfreigabe"/>
-                                        <field name="website_published_start" string="Webanzeige Start"/>
-                                        <field name="website_published_end" string="Webanzeige Ende"/>
+                                        <field name="website_published" string="Published"/>
+                                        <field name="website_published_start" string="Publish Start"/>
+                                        <field name="website_published_end" string="Publish End"/>
                                     </group>
                                     <group>
-                                        <field name="website_visible" string="Webanzeige (berechnet)" readonly="1"/>
+                                        <field name="website_visible" string="Visible (computed)" readonly="1"/>
                                     </group>
                                 </group>
-                                <group string="Spendenkorbeinstellungen (Warenkorb)">
-                                    <field name="simple_checkout" string="Spendenkorbseite überspringen"/>
-                                    <field name="accessory_product_ids" string="Zugehörige Spenden und Artikel"
+                                <group string="Donation Cart Settings (Shopping Cart)">
+                                    <field name="simple_checkout" string="Skip Donation Cart"/>
+                                    <field name="accessory_product_ids" string="Accessory Donations and Products"
                                            widget="many2many_tags"/>
                                 </group>
                             </page>
 
-                            <page string="Zahlung">
+                            <page string="Payment">
                                 <group>
-                                    <group string="Betrag" col="2">
-                                        <field name="list_price" string="Standard Betrag"/>
-                                        <field name="price_donate" string="Betrag frei wählbar"/>
-                                        <field name="price_donate_min" string="Mindestbetrag"
+                                    <group string="Amount" col="2">
+                                        <field name="list_price" string="Default Amount"/>
+                                        <field name="price_donate" string="Arbitrary Amount"/>
+                                        <field name="price_donate_min" string="Minimal Amount"
                                                attrs="{'invisible': [('price_donate','=', False)]}"/>
                                     </group>
                                     <group col="2">
-                                        <field name="donation_input_template" string="Spendenbuttons Template"/>
-                                        <field name="price_suggested_ids" string="Betragsvorschläge (Spendenbuttons)"
+                                        <field name="donation_input_template" string="Donation Buttons Template"/>
+                                        <field name="price_suggested_ids" string="Suggested Values (Donation Buttons)"
                                                attrs="{'invisible': [('price_donate','=', False)]}" colspan="2">
                                             <tree string="Suggested Donation-Values" default_order="sequence"
                                                   editable="bottom">
@@ -120,19 +120,18 @@
                                     </group>
                                 </group>
 
-                                <group string="Zahlungsinterval" attrs="{'invisible': [('price_donate','=', False)]}">
+                                <group string="Payment Interval" attrs="{'invisible': [('price_donate','=', False)]}">
                                     <div colspan="2" class="backend-help oe_edit_only">
-                                        <p>Die Felder bitte leer lassen wenn diese Spende / dieser Artikel
-                                            ausschließlich einmalig bezahlt werden soll
+                                        <p>Leave this empty for non-recurring donations or products.
                                         </p>
                                     </div>
                                     <group>
-                                        <field name="payment_interval_default" string="Standard Zahlungsinterval"/>
+                                        <field name="payment_interval_default" string="Default Payment Interval"/>
                                         <field name="auto_recompute_price_donate"/>
                                     </group>
                                     <group>
                                         <label colspan="2" for="payment_interval_lines_ids"
-                                               string="Auswählbare Zahlungsintervalle"/>
+                                               string="Payment Interval Choices"/>
                                         <field colspan="2" name="payment_interval_lines_ids" nolabel="1">
                                             <tree string="Payment Intervals" default_order="sequence" editable="bottom">
                                                 <field name="sequence" widget="handle"/>
@@ -143,13 +142,12 @@
                                 </group>
 
                                 <!-- group string="Zahlungsmethoden" attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}" -->
-                                <group string="Zahlungsmethoden">
+                                <group string="Payment Methods">
                                     <div colspan="2" class="backend-help oe_edit_only">
                                         <p>
-                                            Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende /
-                                            diesen Artikel überschreiben.
-                                            Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout
-                                            Webseitenvorlage funktioniert!
+                                            Override global payment configuration for this donation or product.
+                                            Note that this only works if "Website Theme (Structure)" is set to
+                                            "Donation One-Page-Checkout".
                                         </p>
                                     </div>
                                     <!-- label colspan="2" for="product_acquirer_lines_ids" class="oe_edit_only"/ -->
@@ -164,54 +162,54 @@
                                 </group>
                             </page>
 
-                            <page string="Vorlageeinstellungen">
+                            <page string="Template Settings">
                                 <notebook>
-                                    <page string="Allgemein">
-                                        <group string="Spendenseite (Artikelseite)">
-                                            <group string="Seiteneinstellungen" class="fso_backend_separator">
+                                    <page string="General">
+                                        <group string="Donation Page (Product Page)">
+                                            <group string="Page Settings" class="fso_backend_separator">
                                                 <!-- h3 colspan="2" class="fso_backend_separator">Seiteneinstellungen</h3 -->
-                                                <field name="hide_categories" string="Kategorienavigation ausblenden"/>
-                                                <field name="hide_search" string="Suchfeld ausblenden"/>
-                                                <field name="show_desctop" string="Extra Widget-Bereich am Seitenbeginn"/>
-                                                <field name="show_descbottom" string="Extra Widget-Bereich am Seitenende"/>
-                                                <field name="hide_salesdesc" string="Kurzbeschreibung ausblenden"/>
+                                                <field name="hide_categories" string="Hide Category Navigation"/>
+                                                <field name="hide_search" string="Hide Search"/>
+                                                <field name="show_desctop" string="Extra Widget Area at Page Start"/>
+                                                <field name="show_descbottom" string="Extra Widget Area at Page End"/>
+                                                <field name="hide_salesdesc" string="Hide Short Description"/>
                                                 <field name="format"
                                                        attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_ahch')]}"/>
                                                 <field name="alternative_product_ids"
-                                                       string="Verlinke Spenden- oder Artikelseiten" widget="many2many_tags"/>
-                                                <field name="parallax_image_medium" string="Seitenhintergrung" widget="image"
+                                                       string="Linked Donation or Product pages" widget="many2many_tags"/>
+                                                <field name="parallax_image_medium" string="Page Background" widget="image"
                                                        class="oe_avatar oe_left"/>
-                                                <field name="parallax_speed" string="Hintergrungdbewegung beim Scrollen"
+                                                <field name="parallax_speed" string="Background Scroll Speed (Parallax)"
                                                        attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
                                             </group>
-                                            <group string="Spendenbox auf der Seite" class="fso_backend_separator">
+                                            <group string="Donation Box on the Side" class="fso_backend_separator">
                                                 <!-- h3 colspan="2" class="fso_backend_separator">Spendenbox auf der Seite</h3 -->
-                                                <field name="hide_payment" string="Spendenbox ausblenden"/>
-                                                <field name="hide_image" string="Bild ausblenden"/>
+                                                <field name="hide_payment" string="Hide Donation Box"/>
+                                                <field name="hide_image" string="Hide Image"/>
                                                 <!-- field name="image_square" string="Bild (autom. quadratisch zugeschnitten)" widget="image" class="oe_avatar oe_left" attrs="{'readonly': True, 'invisible': [('hide_image','=', True)]}"/ -->
                                                 <field name="variants_as_list"
-                                                       string="Artikelvarianten als Auswahlliste darstellen"/>
+                                                       string="Show Product Variants as Selection List"/>
                                                 <field name="payment_interval_as_selection"
-                                                       string="Zahlungsintervalle als Auswahlliste darstellen"/>
-                                                <field name="hide_quantity" string="Stückzahlauswahl ausblenden"/>
-                                                <field name="hide_amount_title" string="Betragsüberschrift ausblenden"/>
-                                                <field name="amount_title" string="Abweichende Betragsüberschrift"
+                                                       string="Show Payment Intervals as Selection List"/>
+                                                <field name="hide_quantity" string="Hide Quantity Selection"/>
+                                                <field name="hide_amount_title" string="Hide Amount Title"/>
+                                                <field name="amount_title" string="Differing Amount Title"
                                                        attrs="{'invisible': [('hide_amount_title','=', True)]}"/>
                                                 <field name="button_addtocart_text" string="Button Text"/>
-                                                <field name="hide_panelfooter" string="Globalen Footer Ausblenden"/>
+                                                <field name="hide_panelfooter" string="Hide Global Footer"/>
                                             </group>
                                             <div colspan="4" class="backend-help oe_edit_only">
                                                 <p>
-                                                    Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite
-                                                    sondern auch über die verfügbaren Funktionen!
+                                                    Template settings define the look and feel of the website
+                                                    as well as the the available features!
                                                 </p>
                                             </div>
                                         </group>
                                     </page>
 
-                                    <page string="Spendenziel"
+                                    <page string="Donation Target"
                                           attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
-                                        <group string="Spendenziel"
+                                        <group string="Donation Target"
                                                attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
                                             <group>
                                                 <field name="funding_goal"/>
@@ -221,22 +219,22 @@
                                                 <field name="funding_reached" readonly="1"/>
                                             </group>
                                         </group>
-                                        <group string="Webseiteneinstellungen">
-                                            <group string="Spendenseite (Artikelseite)" class="fso_backend_separator">
-                                                <field name="hide_fundingtext" string="Kurztext ausblenden"/>
-                                                <field name="hide_fundingbar" string="Zielbalken ausblenden"/>
-                                                <field name="hide_fundingdesc" string="Beschreibung ausblenden"/>
-                                                <field name="funding_desc" string="Beschreibung"/>
+                                        <group string="Website Settings">
+                                            <group string="Donation Page (Product Page)" class="fso_backend_separator">
+                                                <field name="hide_fundingtext" string="Hide Short Description"/>
+                                                <field name="hide_fundingbar" string="Hide Progress Bar"/>
+                                                <field name="hide_fundingdesc" string="Hide Description"/>
+                                                <field name="funding_desc" string="Description"/>
                                             </group>
-                                            <group string="Spendenbox auf der Seite" class="fso_backend_separator">
-                                                <field name="hide_fundingtextincp" string="Text ausblenden"/>
-                                                <field name="hide_fundingbarincp" string="Zielbalken ausblenden"/>
+                                            <group string="Donation Box on the Side" class="fso_backend_separator">
+                                                <field name="hide_fundingtextincp" string="Hide Text"/>
+                                                <field name="hide_fundingbarincp" string="Hide Progress Bar"/>
                                             </group>
                                         </group>
-                                        <group string="Artikelübersichtsseiten">
+                                        <group string="Product Overview Pages">
                                             <group>
-                                                <field name="hide_fundingtextinlist" string="Text ausblenden"/>
-                                                <field name="hide_fundingbarinlist" string="Zielbalken ausblenden"/>
+                                                <field name="hide_fundingtextinlist" string="Hide Text"/>
+                                                <field name="hide_fundingbarinlist" string="Hide Progress Bar"/>
                                             </group>
                                             <group>
 
@@ -244,7 +242,7 @@
                                         </group>
                                     </page>
 
-                                    <page string="Geschenkspenden">
+                                    <page string="Gift Donations">
                                         <group string="Webshop: Enable Gifting Feature">
                                             <field name="giftee_form_id"/>
                                             <button name="create_giftee_fields_form" type="object"
@@ -259,7 +257,7 @@
                                         </group>
                                     </page>
 
-                                    <page string="Schritte"
+                                    <page string="Step Indicator"
                                           attrs="{'invisible':[('product_page_template', '=', 'website_sale_donate.ppt_opc')]}">
                                         <group name="steps_and_donation_buttons">
                                             <group string="Step Indicator">
@@ -300,28 +298,28 @@
                                 </notebook>
                             </page>
 
-                            <page string="Übersichten">
-                                <group string="Übersichtsseiten (Produktkacheln)">
-                                    <field name="website_sequence" string="Reihung"/>
-                                    <field name="public_categ_ids" string="Angezeigt in den Kategorien"
+                            <page string="Shop Categories">
+                                <group string="Shop Categories (Product Tiles)">
+                                    <field name="website_sequence" string="Sequence"/>
+                                    <field name="public_categ_ids" string="Show in Categories"
                                            widget="many2many_tags"/>
-                                    <field name="website_style_ids" string="Design (Extra CSS Klassen)"
+                                    <field name="website_style_ids" string="Design (Additional CSS Classes)"
                                            widget="many2many_tags"/>
-                                    <field name="do_not_link" string="Keine Verlinkung zur Spendenseite"/>
-                                    <field name="hide_price" string="Betrag nicht anzeigen"/>
+                                    <field name="do_not_link" string="Do not Link to Donation Page"/>
+                                    <field name="hide_price" string="Hide Amount"/>
                                 </group>
                             </page>
 
-                            <page string="Digitale Inhalte">
-                                <group string="Digitale Inhalte"
+                            <page string="Digital Contents">
+                                <group string="Digital Contents"
                                        attrs="{'invisible': [('product_page_template','==', 'website_sale.product')]}">
-                                    <field name="webshop_download_file" string="Download-Datei" widget="binary"
+                                    <field name="webshop_download_file" string="Download File" widget="binary"
                                            filename="webshop_download_file_name"/>
-                                    <field name="webshop_download_file_name" string="Download-Datei Name"/>
+                                    <field name="webshop_download_file_name" string="Download Filename"/>
                                 </group>
                             </page>
 
-                            <page name="variants" string="Varianten">
+                            <page name="variants" string="Variants">
                                 <div class="oe_right">
                                     <button class="oe_inline oe_stat_button" string="Variant Prices"
                                             name="%(product.variants_template_action)d" type="action"
@@ -356,8 +354,8 @@
                                         <field name="state"/>
                                         <field name="product_manager"/>
                                         <field name="ean13"/>
-                                        <field name="default_code" string="Interner Code"/>
-                                        <field name="description" string="Interne Beschreibung"/>
+                                        <field name="default_code" string="Internal Code"/>
+                                        <field name="description" string="Internal Description"/>
                                     </group>
                                     <group>
                                         <field name="id" readonly="True"/>
@@ -370,15 +368,14 @@
                                     </group>
                                 </group>
 
-                                <group string="Buchhaltung">
+                                <group string="Accounting">
                                     <group>
                                         <field name="categ_id"/>
                                         <div colspan="2" class="backend-help oe_edit_only">
                                             <p>
-                                                Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der
-                                                Buchhaltung sofern diese nicht explizit für dieses Produkt
-                                                gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der
-                                                Webseite zu tun.
+                                                This category specifies the target account in accounting, unless
+                                                this product has an explicit accounts set. This category is unrelated
+                                                to website categories.
                                             </p>
                                         </div>
                                     </group>
@@ -396,7 +393,7 @@
                                     </group>
                                 </group>
 
-                                <group string="Einkauf (Beschaffung)">
+                                <group string="Procurement">
                                     <group name="Supply Chain Information">
                                         <field name="standard_price"/>
                                         <field name="description_purchase"/>
@@ -407,8 +404,8 @@
                                     </group>
                                 </group>
 
-                                <group string="Lager" attrs="{'invisible':[('type','=','service')]}">
-                                    <group name="Lagerstandsbewertung" class="fso_backend_separator"
+                                <group string="Stock" attrs="{'invisible':[('type','=','service')]}">
+                                    <group name="Inventory Assessment" class="fso_backend_separator"
                                            groups="base.group_user">
                                         <label for="qty_available"/>
                                         <div>
@@ -460,7 +457,7 @@
             <field name="name">FS-Online Product Template Tree</field>
             <field name="model">product.template</field>
             <field name="arch" type="xml">
-                <tree string="Spenden und Artikel"
+                <tree string="Donations and Products"
                       default_order="website_sequence"
                       colors="red:not fs_product_type and website_published;
                           grey:not fs_product_type;
@@ -469,25 +466,25 @@
                           grey:not website_published;">
                     <field name="website_sequence" widget="handle"/>
                     <field name="name"/>
-                    <field name="fs_product_type" string="FS Typ"/>
+                    <field name="fs_product_type" string="FS Type"/>
                     <field name="website_theme" string="Theme"/>
-                    <field name="price_donate" string="Freier Betrag"/>
-                    <field name="list_price" string="Betrag"/>
-                    <field name="payment_interval_default" string="Std. Interv."/>
+                    <field name="price_donate" string="Arbitrary Amount"/>
+                    <field name="list_price" string="Amount"/>
+                    <field name="payment_interval_default" string="Def. Interv."/>
                     <!-- WARNING: fs_group_ids is deprecated !"-->
                     <!--<field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>-->
-                    <field name="zgruppedetail_ids" string="FS Gruppen" widget="many2many_tags"/>
-                    <field name="product_page_template" string="Webvorlage"/>
-                    <field name="website_published" string="WebFreig."/>
-                    <field name="website_published_start" string="Start"/>
-                    <field name="website_published_end" string="Ende"/>
-                    <field name="website_visible" string="Sichtb."/>
+                    <field name="zgruppedetail_ids" string="FS Groups" widget="many2many_tags"/>
+                    <field name="product_page_template" string="Web template"/>
+                    <field name="website_published" string="Published"/>
+                    <field name="website_published_start" string="Pub. Start"/>
+                    <field name="website_published_end" string="Pub. Ende"/>
+                    <field name="website_visible" string="Visible"/>
                 </tree>
             </field>
         </record>
 
         <record model="ir.actions.act_window" id="fso_product_template_viewaction">
-            <field name="name">Spenden und Artikel</field>
+            <field name="name">Donations and Products</field>
             <field name="res_model">product.template</field>
             <field name="view_mode">tree, form</field>
             <field name="view_id" ref="fso_product_template_form"/>
