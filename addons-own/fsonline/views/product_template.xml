@@ -16,7 +16,7 @@
 
                         <!-- HEAD (Button Box Name and Image) -->
                         <div class="oe_right oe_button_box" style="width: 400px;" name="buttons">
-                            <p>Button Box Placeholder</p>
+                            <p style="display: none;">Button Box Placeholder</p>
                         </div>
 
                         <div class="oe_left" style="width: calc(100% - 430px);">
@@ -34,46 +34,25 @@
                                 <h3>
                                     <field name="description_sale"/>
                                 </h3>
+                                <div class="oe_edit_only">
+                                    <label for="website_url" string="Default URL"/>
+                                </div>
+                                <h4>
+                                    <field name="website_url" invisible="0" widget="url" readonly="1"
+                                           string="Default URL"/>
+                                </h4>
                             </div>
                         </div>
 
                         <group name="Basic Settings">
                             <group>
                                 <field name="fs_product_type" string="Fundraising Studio Type"/>
-                                <field name="website_theme" string="Website Theme (CSS)"/>
-                                <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
-                                <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
-                                <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
-                                       widget="many2many_tags"
-                                       options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                                <field name="product_page_template" string="Website Theme (Structure)"/>
-                                <field name="clear_cart"/>
-                                <field name="redirect_url_after_form_feedback"/>
+                                <field name="type"/>
                             </group>
                             <group>
-                                <field name="type"/>
                                 <field name="uom_id" string="Unit of Measure"/>
-                                <field name="seo_url" string="Forced SEO URL"/>
-                                <field name="website_url" invisible="0" widget="url" readonly="1"
-                                       string="Default URL"/>
                             </group>
                         </group>
-
-                        <div colspan="4" class="text-center oe_edit_only">
-                            <p>
-                                <img src="/fsonline/static/src/img/ppt_donate.jpg"
-                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
-
-                                <img src="/fsonline/static/src/img/ppt_opc.jpg"
-                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
-
-                                <img src="/fsonline/static/src/img/ppt_ahch.jpg"
-                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
-
-                                <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
-                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
-                            </p>
-                        </div>
 
                         <!-- TABS -->
                         <notebook>
@@ -83,12 +62,22 @@
                                         <field name="website_published" string="Published"/>
                                         <field name="website_published_start" string="Publish Start"/>
                                         <field name="website_published_end" string="Publish End"/>
+                                        <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
+                                        <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
+                                        <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
+                                               widget="many2many_tags"
+                                               options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                                     </group>
                                     <group>
                                         <field name="website_visible" string="Visible (computed)" readonly="1"/>
                                     </group>
                                 </group>
+                                <group string="Thank You Page">
+                                    <field name="redirect_url_after_form_feedback"/>
+                                    <field name="seo_url" string="Forced SEO URL"/>
+                                </group>
                                 <group string="Donation Cart Settings (Shopping Cart)">
+                                    <field name="clear_cart" string="Remove other Products"/>
                                     <field name="simple_checkout" string="Skip Donation Cart"/>
                                     <field name="accessory_product_ids" string="Accessory Donations and Products"
                                            widget="many2many_tags"/>
@@ -163,10 +152,37 @@
                             </page>
 
                             <page string="Template Settings">
+                                <group>
+                                    <group>
+                                        <field name="website_theme" string="Design Template"/>
+                                        <field name="product_page_template" string="Structural Template"/>
+                                    </group>
+                                    <group>
+                                        <div class="text-center oe_edit_only">
+                                            <div style="display: inline-block; max-width: 300px;">
+                                                <img src="/fsonline/static/src/img/ppt_donate.jpg"
+                                                     class="img-responsive"
+                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
+
+                                                <img src="/fsonline/static/src/img/ppt_opc.jpg"
+                                                     class="img-responsive"
+                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
+
+                                                <img src="/fsonline/static/src/img/ppt_ahch.jpg"
+                                                     class="img-responsive"
+                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
+
+                                                <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
+                                                     class="img-responsive"
+                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
+                                            </div>
+                                        </div>
+                                    </group>
+                                </group>
                                 <notebook>
-                                    <page string="General">
-                                        <group string="Donation Page (Product Page)">
-                                            <group string="Page Settings" class="fso_backend_separator">
+                                    <page string="Page Settings">
+                                        <group>
+                                            <group class="fso_backend_separator">
                                                 <!-- h3 colspan="2" class="fso_backend_separator">Seiteneinstellungen</h3 -->
                                                 <field name="hide_categories" string="Hide Category Navigation"/>
                                                 <field name="hide_search" string="Hide Search"/>
@@ -182,7 +198,7 @@
                                                 <field name="parallax_speed" string="Background Scroll Speed (Parallax)"
                                                        attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
                                             </group>
-                                            <group string="Donation Box on the Side" class="fso_backend_separator">
+                                            <group string="Donation Box Settings" class="fso_backend_separator">
                                                 <!-- h3 colspan="2" class="fso_backend_separator">Spendenbox auf der Seite</h3 -->
                                                 <field name="hide_payment" string="Hide Donation Box"/>
                                                 <field name="hide_image" string="Hide Image"/>
@@ -207,6 +223,48 @@
                                         </group>
                                     </page>
 
+                                    <page string="Form Fields">
+                                        <group string="Custom Checkout Fields">
+                                            <field name="checkout_form_id"/>
+                                            <button name="create_checkout_fields_form" type="object"
+                                                    string="Setup custom Checkout Fields"
+                                                    colspan="2"
+                                                    attrs="{'invisible': [('checkout_form_id', '!=', False)]}"
+                                            />
+                                        </group>
+                                    </page>
+
+                                    <page string="Shop Steps"
+                                          attrs="{'invisible':[('product_page_template', '=', 'website_sale_donate.ppt_opc')]}">
+                                        <group name="steps_and_donation_buttons">
+                                            <group string="Shop Steps">
+                                                <group colspan="2" name="step_indicator_setup">
+                                                    <field name="step_indicator_setup"/>
+                                                </group>
+                                                <group colspan="2" name="step_indicator_setup_settings"
+                                                       attrs="{'invisible': [('step_indicator_setup','=', False)]}">
+                                                    <field name="step_indicator_ul_class"/>
+
+                                                    <field name="hide_cart_indicator"/>
+                                                    <field name="cart_indicator_name"
+                                                           attrs="{'invisible': [('hide_cart_indicator','=', True)]}"/>
+                                                    <field name="hide_product_indicator"/>
+                                                    <field name="product_indicator_name"
+                                                           attrs="{'invisible': [('hide_product_indicator','=', True)]}"/>
+                                                    <field name="hide_checkout_indicator"/>
+                                                    <field name="checkout_indicator_name"
+                                                           attrs="{'invisible': [('hide_checkout_indicator','=', True)]}"/>
+                                                    <field name="hide_payment_indicator"/>
+                                                    <field name="payment_indicator_name"
+                                                           attrs="{'invisible': [('hide_payment_indicator','=', True)]}"/>
+                                                    <field name="hide_confirmation_indicator"/>
+                                                    <field name="confirmation_indicator_name"
+                                                           attrs="{'invisible': [('hide_confirmation_indicator','=', True)]}"/>
+                                                </group>
+                                            </group>
+                                        </group>
+                                    </page>
+
                                     <page string="Donation Target"
                                           attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
                                         <group string="Donation Target"
@@ -226,7 +284,7 @@
                                                 <field name="hide_fundingdesc" string="Hide Description"/>
                                                 <field name="funding_desc" string="Description"/>
                                             </group>
-                                            <group string="Donation Box on the Side" class="fso_backend_separator">
+                                            <group string="Donation Box Settings" class="fso_backend_separator">
                                                 <field name="hide_fundingtextincp" string="Hide Text"/>
                                                 <field name="hide_fundingbarincp" string="Hide Progress Bar"/>
                                             </group>
@@ -256,50 +314,11 @@
                                                    attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
                                         </group>
                                     </page>
-
-                                    <page string="Step Indicator"
-                                          attrs="{'invisible':[('product_page_template', '=', 'website_sale_donate.ppt_opc')]}">
-                                        <group name="steps_and_donation_buttons">
-                                            <group string="Step Indicator">
-                                                <group colspan="2" name="step_indicator_setup">
-                                                    <field name="step_indicator_setup"/>
-                                                </group>
-                                                <group colspan="2" name="step_indicator_setup_settings"
-                                                       attrs="{'invisible': [('step_indicator_setup','=', False)]}">
-                                                    <field name="step_indicator_ul_class"/>
-
-                                                    <field name="hide_cart_indicator"/>
-                                                    <field name="cart_indicator_name"
-                                                           attrs="{'invisible': [('hide_cart_indicator','=', True)]}"/>
-                                                    <field name="hide_product_indicator"/>
-                                                    <field name="product_indicator_name"
-                                                           attrs="{'invisible': [('hide_product_indicator','=', True)]}"/>
-                                                    <field name="hide_checkout_indicator"/>
-                                                    <field name="checkout_indicator_name"
-                                                           attrs="{'invisible': [('hide_checkout_indicator','=', True)]}"/>
-                                                    <field name="hide_payment_indicator"/>
-                                                    <field name="payment_indicator_name"
-                                                           attrs="{'invisible': [('hide_payment_indicator','=', True)]}"/>
-                                                    <field name="hide_confirmation_indicator"/>
-                                                    <field name="confirmation_indicator_name"
-                                                           attrs="{'invisible': [('hide_confirmation_indicator','=', True)]}"/>
-                                                </group>
-                                            </group>
-                                            <group string="Custom Checkout Fields">
-                                                <field name="checkout_form_id"/>
-                                                <button name="create_checkout_fields_form" type="object"
-                                                        string="Setup custom Checkout Fields"
-                                                        colspan="2"
-                                                        attrs="{'invisible': [('checkout_form_id', '!=', False)]}"
-                                                />
-                                            </group>
-                                        </group>
-                                    </page>
                                 </notebook>
                             </page>
 
                             <page string="Shop Categories">
-                                <group string="Shop Categories (Product Tiles)">
+                                <group string="Product Tiles">
                                     <field name="website_sequence" string="Sequence"/>
                                     <field name="public_categ_ids" string="Show in Categories"
                                            widget="many2many_tags"/>
