@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<templates xml:space="perserve">
+<templates xml:space="preserve">
     <t t-name="fso_wem_delete">
         <div id="fso_wem_delete_modal" class="modal fsoWemDeleteModal" tabindex="-1">
             <div class="modal-dialog modal-confirm">

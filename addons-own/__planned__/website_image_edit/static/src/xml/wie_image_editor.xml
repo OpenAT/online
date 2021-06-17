@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<templates xml:space="perserve">
+<templates xml:space="preserve">
     <t t-name="wie_image_editor" t-extend="website.editor.dialog.image.existing.content">
         <t t-jquery="i" t-operation="after">
             <span class="glyphicon glyphicon-pencil tryEdit" aria-hidden="true" t-att-data-id="attachment.id"></span>
