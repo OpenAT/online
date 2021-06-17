@@ -50,6 +50,22 @@
                         </group>
                     </group>
 
+                    <div colspan="4" class="text-center oe_edit_only">
+                        <p>
+                            <img src="/fsonline/static/src/img/ppt_donate.jpg"
+                                 attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}" />
+
+                            <img src="/fsonline/static/src/img/ppt_opc.jpg"
+                                 attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}" />
+
+                            <img src="/fsonline/static/src/img/ppt_ahch.jpg"
+                                 attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}" />
+
+                            <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
+                                 attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}" />
+                        </p>
+                    </div>
+
                     <!-- TABS -->
                     <notebook>
                         <page string="Zahlung">
@@ -149,11 +165,6 @@
                                     <field name="button_addtocart_text" string="Button Text"/>
                                     <field name="hide_panelfooter" string="Globalen Footer Ausblenden"/>
                                 </group>
-                                <div colspan="4" class="text-center oe_edit_only">
-                                    <p>
-                                        <img src="/fsonline/static/src/img/donation_layout_800x900_v2.png"/>
-                                    </p>
-                                </div>
                                 <div colspan="4" class="backend-help oe_edit_only">
                                     <p>
                                         Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!
