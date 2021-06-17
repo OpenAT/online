@@ -73,7 +73,7 @@
                                     </group>
                                 </group>
                                 <group string="Thank You Page">
-                                    <field name="redirect_url_after_form_feedback"/>
+                                    <field name="redirect_url_after_form_feedback" string="Redirect URL after PP Form-Feedback"/>
                                     <field name="seo_url" string="Forced SEO URL"/>
                                 </group>
                                 <group string="Donation Cart Settings (Shopping Cart)">
@@ -116,7 +116,7 @@
                                     </div>
                                     <group>
                                         <field name="payment_interval_default" string="Default Payment Interval"/>
-                                        <field name="auto_recompute_price_donate"/>
+                                        <field name="auto_recompute_price_donate" string="Auto recompute Price Donate"/>
                                     </group>
                                     <group>
                                         <label colspan="2" for="payment_interval_lines_ids"
@@ -225,7 +225,7 @@
 
                                     <page string="Form Fields">
                                         <group string="Custom Checkout Fields">
-                                            <field name="checkout_form_id"/>
+                                            <field name="checkout_form_id" string="Checkout Fields Form"/>
                                             <button name="create_checkout_fields_form" type="object"
                                                     string="Setup custom Checkout Fields"
                                                     colspan="2"
@@ -239,7 +239,7 @@
                                         <group name="steps_and_donation_buttons">
                                             <group string="Shop Steps">
                                                 <group colspan="2" name="step_indicator_setup">
-                                                    <field name="step_indicator_setup"/>
+                                                    <field name="step_indicator_setup" string="Individual Step-Indicator Setup"/>
                                                 </group>
                                                 <group colspan="2" name="step_indicator_setup_settings"
                                                        attrs="{'invisible': [('step_indicator_setup','=', False)]}">
@@ -302,7 +302,7 @@
 
                                     <page string="Gift Donations">
                                         <group string="Webshop: Enable Gifting Feature">
-                                            <field name="giftee_form_id"/>
+                                            <field name="giftee_form_id" string="Giftee Fields Form"/>
                                             <button name="create_giftee_fields_form" type="object"
                                                     string="Enable Giftee Fields"
                                                     colspan="2"
@@ -496,7 +496,7 @@
                     <field name="product_page_template" string="Web template"/>
                     <field name="website_published" string="Published"/>
                     <field name="website_published_start" string="Pub. Start"/>
-                    <field name="website_published_end" string="Pub. Ende"/>
+                    <field name="website_published_end" string="Pub. End"/>
                     <field name="website_visible" string="Visible"/>
                 </tree>
             </field>

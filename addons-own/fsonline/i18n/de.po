@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-31 18:26+0000\n"
-"PO-Revision-Date: 2020-03-31 18:26+0000\n"
+"POT-Creation-Date: 2021-06-17 18:55+0000\n"
+"PO-Revision-Date: 2021-06-17 18:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,16 +18,21 @@ msgstr ""
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid ": adding or deleting attributes\n"
-"                                will delete and recreate existing variants and lead\n"
-"                                to the loss of their possible customizations."
-msgstr ": adding or deleting attributes\n"
-"                                will delete and recreate existing variants and lead\n"
-"                                to the loss of their possible customizations."
+"                                    will delete and recreate existing variants and lead\n"
+"                                    to the loss of their possible customizations."
+msgstr ": Hinzufügen oder Löschen von Attributen\n"
+"                                    löscht bestehende Varianten und Leads.\n"
+"                                    Eventuelle Anpassungen gehen verloren."
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Abweichende Betragsüberschrift"
-msgstr "Abweichende Betragsüberschrift"
+msgid "Accessory Donations and Products"
+msgstr "Zugehörige Spenden und Artikel"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Accounting"
+msgstr "Finanzen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -36,23 +41,20 @@ msgstr "Zahlungsanbieter"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Angezeigt in den Kategorien"
-msgstr "Angezeigt in den Kategorien"
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Amount"
+msgstr "Betrag"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Artikelvarianten als Auswahlliste darstellen"
-msgstr "Artikelvarianten als Auswahlliste darstellen"
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Arbitrary Amount"
+msgstr "Betrag frei wählbar"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Artikelübersichtsseiten"
-msgstr "Artikelübersichtsseiten"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Auswählbare Zahlungsintervalle"
-msgstr "Auswählbare Zahlungsintervalle"
+msgid "Auto recompute Price Donate"
+msgstr "Betrag autom. berechnen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_bpk
@@ -61,54 +63,13 @@ msgstr "BPK Abfragen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Beschreibung"
-msgstr "Beschreibung"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Beschreibung ausblenden"
-msgstr "Beschreibung ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Betrag"
-msgstr "Betrag"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Betrag frei wählbar"
-msgstr "Betrag frei wählbar"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Betrag nicht anzeigen"
-msgstr "Betrag nicht anzeigen"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Betragsvorschläge (Spendenbuttons)"
-msgstr "Betragsvorschläge (Spendenbuttons)"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Betragsüberschrift ausblenden"
-msgstr "Betragsüberschrift ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Bild ausblenden"
-msgstr "Bild ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Buchhaltung"
-msgstr "Buchhaltung"
+msgid "Background Scroll Speed (Parallax)"
+msgstr "Hintergrungdbewegung beim Scrollen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Button Box Placeholder"
-msgstr "Button Box Placeholder"
+msgstr "Button-Platzhalter"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -122,42 +83,95 @@ msgstr "Kampagnen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Design (Extra CSS Klassen)"
-msgstr "Design (Extra CSS Klassen)"
+msgid "Checkout Fields Form"
+msgstr "Formular"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll"
-msgstr "Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll"
+msgid "Control"
+msgstr "Steuerung"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
-"                                            gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
-msgstr "Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
-"                                            gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
+msgid "Custom Checkout Fields"
+msgstr "Eigene Formularfelder"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Def. Interv."
+msgstr "Std. Interv."
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!"
-msgstr "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!"
+msgid "Default Amount"
+msgstr "Standardbetrag"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Digitale Inhalte"
+msgid "Default Payment Interval"
+msgstr "Standardzahlungsintervall"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Default URL"
+msgstr "Standard URL"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Description"
+msgstr "Beschreibung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Design (Additional CSS Classes)"
+msgstr "Design (Zusätzliche CSS Klassen)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Design Template"
+msgstr "Design-Vorlage"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Differing Amount Title"
+msgstr "Abweichende Betragsüberschrift"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Digital Contents"
 msgstr "Digitale Inhalte"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Do not Link to Donation Page"
+msgstr "Keine Verlinkung zur Spendenseite"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_domains
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_website_domains
 msgid "Domain Manager"
-msgstr "Domain Manager"
+msgstr "Domänenverwaltung"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_domain_templates
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_domain_templates
 msgid "Domain Templates"
-msgstr "Domain Templates"
+msgstr "Domänenvorlagen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Donation Box Settings"
+msgstr "Spendenbox-Einstellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Donation Buttons Template"
+msgstr "Spendenbuttons-Vorlage"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Donation Cart Settings (Shopping Cart)"
+msgstr "Spendenkorb-Einstellungen (Warenkorb)"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_cart
@@ -171,19 +185,42 @@ msgid "Donation Deduction"
 msgstr "Spendenabsetzbarkeit"
 
 #. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Donation Page (Product Page)"
+msgstr "Spendenseite (Produktseite)"
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop
 msgid "Donation Shop"
 msgstr "Spendenshop"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Download-Datei"
+msgid "Donation Target"
+msgstr "Spendenziel"
+
+#. module: fsonline
+#: model:ir.actions.act_window,name:fsonline.fso_product_template_viewaction
+#: model:ir.ui.menu,name:fsonline.fso_product_template_menu
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_product
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Donations and Products"
+msgstr "Spenden und Artikel"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Donations, Products, Sponsorships, Events, Memberships"
+msgstr "Spenden, Artikel, Patenschaften, Events, Mitglieder"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Download File"
 msgstr "Download-Datei"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Download-Datei Name"
-msgstr "Download-Datei Name"
+msgid "Download Filename"
+msgstr "Download-Dateiname"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm
@@ -193,12 +230,17 @@ msgstr "E-Mail"
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_statistics
 msgid "E-Mail Statistic"
-msgstr "E-Mail Statistic"
+msgstr "E-Mail Statistik"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_templates
 msgid "E-Mail Templates"
-msgstr "E-Mail Templates"
+msgstr "E-Mail Vorlagen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_personemailgruppe
+msgid "E-Mail-Gruppen Anmeldungen"
+msgstr "E-Mail-Gruppen Anmeldungen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_send
@@ -207,70 +249,138 @@ msgstr "E-Mails"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Einkauf (Beschaffung)"
-msgstr "Einkauf (Beschaffung)"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Ende"
-msgstr "Ende"
+msgid "Enable Giftee Fields"
+msgstr "Geschenksfelder aktivieren"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Extra Widget-Bereich am Seitenbeginn"
-msgstr "Extra Widget-Bereich am Seitenbeginn"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Extra Widget-Bereich am Seitenende"
+msgid "Extra Widget Area at Page End"
 msgstr "Extra Widget-Bereich am Seitenende"
 
 #. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "FS Gruppen"
-msgstr "FS Gruppen"
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Extra Widget Area at Page Start"
+msgstr "Extra Widget-Bereich am Seitenbeginn"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppedetail
+msgid "FRST-Gruppe"
+msgstr "FS-Gruppe"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppe
+msgid "FRST-Gruppenordner"
+msgstr "FRST-Gruppenordner"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
-msgid "FS Typ"
-msgstr "FS Typ"
+msgid "FS Groups"
+msgstr "FS-Gruppe"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "FS Type"
+msgstr "FS-Typ"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_submission
 msgid "FinanzOnline Uebertrag."
-msgstr "FinanzOnline Uebertrag."
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Freier Betrag"
-msgstr "Freier Betrag"
+msgstr "FinanzOnline Übertrag."
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Fundraising Studio Gruppen"
+msgid "Forced SEO URL"
+msgstr "Erzwungene SEO URL"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Form Fields"
+msgstr "Formularfelder"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Fundraising Studio Groups"
 msgstr "Fundraising Studio Gruppen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Fundraising Studio Typ"
+msgid "Fundraising Studio Type"
 msgstr "Fundraising Studio Typ"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Globalen Footer Ausblenden"
-msgstr "Globalen Footer Ausblenden"
+msgid "Gift Donations"
+msgstr "Geschenksspenden"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende / diesen Artikel überschreiben.\n"
-"                                        Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout Webseitenvorlage funktioniert!"
-msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende / diesen Artikel überschreiben.\n"
-"                                        Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout Webseitenvorlage funktioniert!"
+msgid "Giftee Fields Form"
+msgstr "Formular"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Hintergrungdbewegung beim Scrollen"
-msgstr "Hintergrungdbewegung beim Scrollen"
+msgid "Hide Amount"
+msgstr "Betrag ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Amount Title"
+msgstr "Betragsüberschrift ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Category Navigation"
+msgstr "Kategorienavigation ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Description"
+msgstr "Beschreibung ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Donation Box"
+msgstr "Spendenbox ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Global Footer"
+msgstr "Globalen Fußzeile ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Image"
+msgstr "Bild ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Progress Bar"
+msgstr "Fortschrittsbalken ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Quantity Selection"
+msgstr "Stückzahlauswahl ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Search"
+msgstr "Suche ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Short Description"
+msgstr "Kurztext ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Hide Text"
+msgstr "Text ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Individual Step-Indicator Setup"
+msgstr "Individuelle Shop-Schritte einrichten"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -279,43 +389,13 @@ msgstr "Information"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Interne Beschreibung"
-msgstr "Interne Beschreibung"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Interner Code"
+msgid "Internal Code"
 msgstr "Interner Code"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Kategorienavigation ausblenden"
-msgstr "Kategorienavigation ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Keine Verlinkung zur Spendenseite"
-msgstr "Keine Verlinkung zur Spendenseite"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Kurzbeschreibung ausblenden"
-msgstr "Kurzbeschreibung ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Kurztext (Kurzbeschreibung)"
-msgstr "Kurztext (Kurzbeschreibung)"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Kurztext ausblenden"
-msgstr "Kurztext ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Lager"
-msgstr "Lager"
+msgid "Internal Description"
+msgstr "Interne Beschreibung"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_landing_pages
@@ -325,9 +405,19 @@ msgid "LandingPage Manager"
 msgstr "LandingPage Manager"
 
 #. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Leave this empty for non-recurring donations or products."
+msgstr "Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll."
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_track_linktracker
 msgid "Link Tracker"
 msgstr "Link Tracker"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Linked Donation or Product pages"
+msgstr "Verlinke Spenden- oder Artikelseiten"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_contacts
@@ -342,7 +432,7 @@ msgstr "Variantenliste"
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_track_mm_campaigns
 msgid "Mailing Campaigns"
-msgstr "Mailing Campaigns"
+msgstr "Mailing-Kampagnen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_mm_lists
@@ -368,13 +458,13 @@ msgstr "Meine-Daten Formular"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Mengeneinheit"
-msgstr "Mengeneinheit"
+msgid "Minimal Amount"
+msgstr "Mindestbetrag"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Mindestbetrag"
-msgstr "Mindestbetrag"
+msgid "Name"
+msgstr "Name"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_order
@@ -384,8 +474,49 @@ msgstr "Aufträge"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
+msgid "Override global payment configuration for this donation or product.\n"
+"                                            Note that this only works if \"Website Theme (Structure)\" is set to\n"
+"                                            \"Donation One-Page-Checkout\"."
+msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende /\n"
+"                                            diesen Artikel überschreiben.\n"
+"\n"
+"                                            Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout\n"
+"                                            Webseitenvorlage funktioniert!"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Page Background"
+msgstr "Seitenhintergrund"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Page Settings"
+msgstr "Seiteneinstellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Payment"
+msgstr "Zahlung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Payment Interval"
+msgstr "Zahlungsintervall"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Payment Interval Choices"
+msgstr "Auswählbare Zahlungsintervalle"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
 msgid "Payment Intervals"
 msgstr "Zahlungsintervalle"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Payment Methods"
+msgstr "Zahlungsmethoden"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_payment
@@ -399,19 +530,14 @@ msgid "PersonEmail"
 msgstr "PersonEmail"
 
 #. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_frst_setting_personemailgruppe
-msgid "PersonEmailGruppe"
-msgstr "Gruppenzuweisung E-Mail"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_frst_setting_persongruppe
-msgid "PersonGruppe"
-msgstr "Gruppenzuweisung Person"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_partner
 msgid "Personen"
 msgstr "Personen"
+
+#. module: fsonline
+#: model:ir.ui.menu,name:fsonline.menu_frst_setting_persongruppe
+msgid "Personengruppen Anmeldungen"
+msgstr "Personengruppen Anmeldungen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_frst_settings_print_field_groups
@@ -425,23 +551,99 @@ msgstr "Seriendruckfelder"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Reihung"
-msgstr "Reihung"
+msgid "Procurement"
+msgstr "Einkauf (Beschaffung)"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Seiteneinstellungen"
-msgstr "Seiteneinstellungen"
+msgid "Product Overview Pages"
+msgstr "Artikelübersichtsseiten"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Seitenhintergrung"
-msgstr "Seitenhintergrung"
+msgid "Product Tiles"
+msgstr "Produktkacheln"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
-msgid "Sichtb."
-msgstr "Sichtb."
+msgid "Pub. End"
+msgstr "Ende"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Pub. Start"
+msgstr "Start"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Publish End"
+msgstr "Webanzeige Ende"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Publish Start"
+msgstr "Webanzeige Start"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Published"
+msgstr "Webfreigabe"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Redirect URL after PP Form-Feedback"
+msgstr "Weiterleitungs-URL nach Zahlungsanbieter-Feedback"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Remove other Products"
+msgstr "Andere Produkte entfernen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Sequence"
+msgstr "Reihenfolge"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Setup custom Checkout Fields"
+msgstr "Eigene Formularfelder einrichten"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Shop Categories"
+msgstr "Shop-Kategorien"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Shop Steps"
+msgstr "Shop-Schritte"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Short Description"
+msgstr "Kurzbeschreibung"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Show Payment Intervals as Selection List"
+msgstr "Zahlungsintervalle als Auswahlliste darstellen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Show Product Variants as Selection List"
+msgstr "Artikelvarianten als Auswahlliste darstellen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Show in Categories"
+msgstr "Angezeigt in den Kategorien"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Skip Donation Cart"
+msgstr "Spendenkorbseite überspringen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_track_utm
@@ -449,91 +651,25 @@ msgid "Sources"
 msgstr "Quelle"
 
 #. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Spenden und Artikel"
-msgstr "Spenden und Artikel"
-
-#. module: fsonline
-#: model:ir.actions.act_window,name:fsonline.fso_product_template_viewaction
-#: model:ir.ui.menu,name:fsonline.fso_product_template_menu
-#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_product
-msgid "Spenden und Artikel "
-msgstr "Spenden und Artikel "
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Spenden, Artikel, Patenschaften, Events, Mitgliedschaften"
-msgstr "Spenden, Artikel, Patenschaften, Events, Mitgliedschaften"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Spendenbox auf der Seite"
-msgstr "Spendenbox auf der Seite"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Spendenbox ausblenden"
-msgstr "Spendenbox ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Spendenkorbeinstellungen (Warenkorb)"
-msgstr "Spendenkorbeinstellungen (Warenkorb)"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Spendenkorbseite überspringen"
-msgstr "Spendenkorbseite überspringen"
-
-#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationdeduction_report
 msgid "Spendenmeldungen"
 msgstr "Spendenmeldungen"
 
 #. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Spendenseite (Artikelseite)"
-msgstr "Spendenseite (Artikelseite)"
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_sale_order_line
+#: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_sale_order_line
+msgid "Statistic"
+msgstr "Statistik"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Spendenziel"
-msgstr "Spendenziel"
+msgid "Stock"
+msgstr "Lager"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Standard Betrag"
-msgstr "Standard Betrag"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Standard URL"
-msgstr "Standard URL"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Standard Zahlungsinterval"
-msgstr "Standard Zahlungsinterval"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Start"
-msgstr "Start"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Std. Interv."
-msgstr "Std. Interv."
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Stückzahlauswahl ausblenden"
-msgstr "Stückzahlauswahl ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Suchfeld ausblenden"
-msgstr "Suchfeld ausblenden"
+msgid "Structural Template"
+msgstr "Strukturvorlage"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -542,13 +678,44 @@ msgstr "Vorgeschlagene Spendenbeträge"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
+msgid "Suggested Values (Donation Buttons)"
+msgstr "Vorgeschlagene Beträge (Spendenbuttons)"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
 msgid "System"
 msgstr "System"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Text ausblenden"
-msgstr "Text ausblenden"
+msgid "Template Settings"
+msgstr "Vorlageneinstellungen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Template settings define the look and feel of the website\n"
+"                                                    as well as the the available features!"
+msgstr "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite\n"
+"                                                    sondern auch über die verfügbaren Funktionen!"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Thank You Page"
+msgstr "Dankeseite"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Theme"
+msgstr "Theme"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "This category specifies the target account in accounting, unless\n"
+"                                                this product has an explicit accounts set. This category is unrelated\n"
+"                                                to website categories."
+msgstr "Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der\n"
+"                                                Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
+"                                                gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_track
@@ -557,13 +724,13 @@ msgstr "Tracking"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Variant Prices"
-msgstr "Preis der Variante"
+msgid "Unit of Measure"
+msgstr "Mengeneinheit"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Varianten"
-msgstr "Varianten"
+msgid "Variant Prices"
+msgstr "Preis der Variante"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -571,9 +738,14 @@ msgid "Variants"
 msgstr "Varianten"
 
 #. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree
+msgid "Visible"
+msgstr "Sichtbar"
+
+#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Verlinke Spenden- oder Artikelseiten"
-msgstr "Verlinke Spenden- oder Artikelseiten"
+msgid "Visible (computed)"
+msgstr "Sichtbar (berechnet)"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -582,43 +754,13 @@ msgstr "Warnung"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
-msgid "WebFreig."
-msgstr "WebFreig."
+msgid "Web template"
+msgstr "Web-Vorlage"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Webanzeige (berechnet)"
-msgstr "Webanzeige (berechnet)"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Webanzeige Ende"
-msgstr "Webanzeige Ende"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Webanzeige Start"
-msgstr "Webanzeige Start"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Webfreigabe"
-msgstr "Webfreigabe"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Webseite"
-msgstr "Webseite"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Webseiteneinstellungen"
-msgstr "Webseiteneinstellungen"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Webseitenvorlage"
-msgstr "Webseitenvorlage"
+msgid "Webshop: Enable Gifting Feature"
+msgstr "Webshop: Geschenke aktivieren"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_settings
@@ -632,9 +774,9 @@ msgid "Website Categories"
 msgstr "Webseitenkategorien"
 
 #. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree
-msgid "Webvorlage"
-msgstr "Webvorlage"
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Website Settings"
+msgstr "Webseiteneinstellungen"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_widget_manager
@@ -642,51 +784,6 @@ msgstr "Webvorlage"
 #: model:ir.ui.menu,name:fsonline.widget_manager_menu
 msgid "Widget Manager"
 msgstr "Widget Manager"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Zahlung"
-msgstr "Zahlung"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Zahlungsinterval"
-msgstr "Zahlungsinterval"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Zahlungsintervalle als Auswahlliste darstellen"
-msgstr "Zahlungsintervalle als Auswahlliste darstellen"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Zahlungsmethoden"
-msgstr "Zahlungsmethoden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Zielbalken ausblenden"
-msgstr "Zielbalken ausblenden"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Zugehörige Spenden und Artikel"
-msgstr "Zugehörige Spenden und Artikel"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppe
-msgid "zGruppe"
-msgstr "Gruppenordner (zGruppe)"
-
-#. module: fsonline
-#: model:ir.ui.menu,name:fsonline.menu_frst_setting_zgruppedetail
-msgid "zGruppeDetail"
-msgstr "Gruppe (zGruppeDetail)"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Übersichtsseiten (Artikellisten)"
-msgstr "Übersichtsseiten (Artikellisten)"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
