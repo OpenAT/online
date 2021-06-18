@@ -498,7 +498,32 @@
                     <field name="website_published_start" string="Pub. Start"/>
                     <field name="website_published_end" string="Pub. End"/>
                     <field name="website_visible" string="Visible"/>
+                    <field name="has_widget_manager" invisible="1" />
                 </tree>
+            </field>
+        </record>
+
+        <record id="fso_product_template_tree_inherited" model="ir.ui.view">
+            <field name="name">FS-Online Product Template Tree Inherited</field>
+            <field name="inherit_id" ref="fsonline.fso_product_template_tree"/>
+            <field name="model">product.template</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="website_visible" position="after">
+                    <button icon="STOCK_FILE"
+                            name="view_product_page"
+                            string="View Product Page"
+                            type="object"/>
+                    <button icon="stock_gantt"
+                            name="view_widget_manager"
+                            string="View Widget Manager"
+                            type="object"
+                            attrs="{'invisible': [('has_widget_manager', '=', False)]}"/>
+                    <button icon="stock_graph"
+                            name="view_product_statistics"
+                            string="View Product Statistics"
+                            type="object"/>
+                </field>
             </field>
         </record>
 
