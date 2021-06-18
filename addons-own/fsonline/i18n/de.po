@@ -475,13 +475,13 @@ msgstr "Aufträge"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Override global payment configuration for this donation or product.\n"
-"                                            Note that this only works if \"Website Theme (Structure)\" is set to\n"
+"                                            Note that this only works if \"Design Template\" (Template Settings) is set to\n"
 "                                            \"Donation One-Page-Checkout\"."
 msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende /\n"
 "                                            diesen Artikel überschreiben.\n"
 "\n"
 "                                            Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout\n"
-"                                            Webseitenvorlage funktioniert!"
+"                                            Strukturvorlage (Vorlageneinstellungen) funktioniert!"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form

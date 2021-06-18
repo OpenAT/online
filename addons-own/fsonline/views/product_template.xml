@@ -135,7 +135,7 @@
                                     <div colspan="2" class="backend-help oe_edit_only">
                                         <p>
                                             Override global payment configuration for this donation or product.
-                                            Note that this only works if "Website Theme (Structure)" is set to
+                                            Note that this only works if "Design Template" (Template Settings) is set to
                                             "Donation One-Page-Checkout".
                                         </p>
                                     </div>
