@@ -227,62 +227,62 @@ class ContactExportMapper(ExportMapper):
                                              for key, val in current_odoo_mapped_field_data.iteritems() if val]}
             return payload
 
-        # GET THE CURRENT GETRESPONSE CUSTOM FIELD DATA OF THE CONTACT
-        # ------------------------------------------------------------
-        current_getresponse_record = self._get_current_getresponse_record(bind_record)
-        gr_custom_field_values = current_getresponse_record['custom_field_values'] if current_getresponse_record else []
-        gr_custom_field_data = {f['customFieldId']: f['value'] for f in gr_custom_field_values}
-
-        # REMOVE FORMER MAPPED ODOO CUSTOM FIELDS FROM CURRENT GETRESPONSE FIELD DATA
-        # ---------------------------------------------------------------------------
-        # TODO: We may get all related bindings here and generate the complete list to not loose any data
-        # HINT: This would only remove custom fields that are no longer mapped in odoo or where removed in odoo
-        odoo_cf_prefix = custom_fields_obj._gr_field_prefix
-        field_exporter = self.unit_for(GetResponseExporter, model='getresponse.gr.custom_field')
-        field_definitions = field_exporter.backend_adapter.search_read()
-        cf_key_to_name = {cfd['id']: cfd['name'] for cfd in field_definitions}
-        for f_id in gr_custom_field_data:
-            if f_id not in current_odoo_mapped_field_data and cf_key_to_name[f_id].startswith(odoo_cf_prefix):
-                _logger.info("EXPORT MAPPER: Custom field '%s' was removed because it is no longer mapped" % f_id)
-                gr_custom_field_data.pop(f_id)
-
-        # COMBINE CURRENT ODOO CUSTOM FIELDS WITH CURRENT GETRESPONSE CUSTOM FIELDS
-        # -------------------------------------------------------------------------
-        # TODO: We may get all related bindings here and generate the complete list to not loose any data
-        # HINT: Odoo field values takes precedence on export over the GetResponse custom field values
-        # HINT: We do not remove GetResponse CF data here - If only changes in GetResponse where made since the last
-        #       sync we would do an import already instead of the export!
-        #       The danger here is that odoo may set cf data again that was already removed in GR if data
-        #       was changed in both system since the last export (FRST WINS)
-        gr_only_custom_fields = {key: val for key, val in gr_custom_field_data.iteritems()
-                                 if key not in current_odoo_mapped_field_data}
-        if gr_only_custom_fields:
-            _logger.info("EXPORT MAPPER: GR-only custom fields '%s' where merged for export" % gr_only_custom_fields)
-        result = gr_custom_field_data
-        result.update(current_odoo_mapped_field_data)
-
-        # REMOVE CUSTOM FIELDS THAT WHERE UNAMBIGUOUSLY REMOVED IN ODOO SINCE THE LAST SYNC
-        # ---------------------------------------------------------------------------------
-        # HINT: This would only remove custom fields that are still in GR but where removed in odoo
-        if bind_record.compare_data:
-            last_sync_cmp_data = json.loads(bind_record.compare_data, encoding='utf8')
-            if 'customFieldValues' in last_sync_cmp_data:
-                last_sync_custom_field_values = last_sync_cmp_data['customFieldValues']
-                last_sync_fields = {f['customFieldId']: f['value'] for f in last_sync_custom_field_values}
-                for f_id in result:
-                    # Remove fields that existed in the last sync but are no longer mapped (or existing) in odoo
-                    if f_id in last_sync_fields and f_id not in current_odoo_mapped_field_data:
-                        _logger.info("EXPORT MAPPER: CUSTOM FIELD %s UNAMBIGUOUSLY REMOVED IN ODOO" % f_id)
-                        result.pop(f_id)
-
-        # RETURN THE COMBINED RESULT
-        # --------------------------
-        # HINT: We remove fields if the val is missing because GetResponse may not accept custom fields
-        #       with empty values! (... if val)
-        payload = {'customFieldValues': [{'customFieldId': key,
-                                          'value': val if isinstance(val, list) else [val]}
-                                         for key, val in result.iteritems() if val]}
-        return payload
+        # # GET THE CURRENT GETRESPONSE CUSTOM FIELD DATA OF THE CONTACT
+        # # ------------------------------------------------------------
+        # current_getresponse_record = self._get_current_getresponse_record(bind_record)
+        # gr_custom_field_values = current_getresponse_record['custom_field_values'] if current_getresponse_record else []
+        # gr_custom_field_data = {f['customFieldId']: f['value'] for f in gr_custom_field_values}
+        #
+        # # REMOVE FORMER MAPPED ODOO CUSTOM FIELDS FROM CURRENT GETRESPONSE FIELD DATA
+        # # ---------------------------------------------------------------------------
+        # # TODO: We may get all related bindings here and generate the complete list to not loose any data
+        # # HINT: This would only remove custom fields that are no longer mapped in odoo or where removed in odoo
+        # odoo_cf_prefix = custom_fields_obj._gr_field_prefix
+        # field_exporter = self.unit_for(GetResponseExporter, model='getresponse.gr.custom_field')
+        # field_definitions = field_exporter.backend_adapter.search_read()
+        # cf_key_to_name = {cfd['id']: cfd['name'] for cfd in field_definitions}
+        # for f_id in gr_custom_field_data:
+        #     if f_id not in current_odoo_mapped_field_data and cf_key_to_name[f_id].startswith(odoo_cf_prefix):
+        #         _logger.info("EXPORT MAPPER: Custom field '%s' was removed because it is no longer mapped" % f_id)
+        #         gr_custom_field_data.pop(f_id)
+        #
+        # # COMBINE CURRENT ODOO CUSTOM FIELDS WITH CURRENT GETRESPONSE CUSTOM FIELDS
+        # # -------------------------------------------------------------------------
+        # # TODO: We may get all related bindings here and generate the complete list to not loose any data
+        # # HINT: Odoo field values takes precedence on export over the GetResponse custom field values
+        # # HINT: We do not remove GetResponse CF data here - If only changes in GetResponse where made since the last
+        # #       sync we would do an import already instead of the export!
+        # #       The danger here is that odoo may set cf data again that was already removed in GR if data
+        # #       was changed in both system since the last export (FRST WINS)
+        # gr_only_custom_fields = {key: val for key, val in gr_custom_field_data.iteritems()
+        #                          if key not in current_odoo_mapped_field_data}
+        # if gr_only_custom_fields:
+        #     _logger.info("EXPORT MAPPER: GR-only custom fields '%s' where merged for export" % gr_only_custom_fields)
+        # result = gr_custom_field_data
+        # result.update(current_odoo_mapped_field_data)
+        #
+        # # REMOVE CUSTOM FIELDS THAT WHERE UNAMBIGUOUSLY REMOVED IN ODOO SINCE THE LAST SYNC
+        # # ---------------------------------------------------------------------------------
+        # # HINT: This would only remove custom fields that are still in GR but where removed in odoo
+        # if bind_record.compare_data:
+        #     last_sync_cmp_data = json.loads(bind_record.compare_data, encoding='utf8')
+        #     if 'customFieldValues' in last_sync_cmp_data:
+        #         last_sync_custom_field_values = last_sync_cmp_data['customFieldValues']
+        #         last_sync_fields = {f['customFieldId']: f['value'] for f in last_sync_custom_field_values}
+        #         for f_id in result:
+        #             # Remove fields that existed in the last sync but are no longer mapped (or existing) in odoo
+        #             if f_id in last_sync_fields and f_id not in current_odoo_mapped_field_data:
+        #                 _logger.info("EXPORT MAPPER: CUSTOM FIELD %s UNAMBIGUOUSLY REMOVED IN ODOO" % f_id)
+        #                 result.pop(f_id)
+        #
+        # # RETURN THE COMBINED RESULT
+        # # --------------------------
+        # # HINT: We remove fields if the val is missing because GetResponse may not accept custom fields
+        # #       with empty values! (... if val)
+        # payload = {'customFieldValues': [{'customFieldId': key,
+        #                                   'value': val if isinstance(val, list) else [val]}
+        #                                  for key, val in result.iteritems() if val]}
+        # return payload
 
 
 # ---------------------------------------------------------------------------------------------------------------------
