@@ -162,21 +162,23 @@
                                     <group>
                                         <div class="text-center oe_edit_only">
                                             <div style="display: inline-block; max-width: 300px;">
-                                                <img src="/fsonline/static/src/img/ppt_donate.jpg"
-                                                     class="img-responsive"
-                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
+                                                <a data-toggle="modal" data-target="#modal_structure_info">
+                                                    <img src="/fsonline/static/src/img/ppt_donate.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
 
-                                                <img src="/fsonline/static/src/img/ppt_opc.jpg"
-                                                     class="img-responsive"
-                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
+                                                    <img src="/fsonline/static/src/img/ppt_opc.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
 
-                                                <img src="/fsonline/static/src/img/ppt_ahch.jpg"
-                                                     class="img-responsive"
-                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
+                                                    <img src="/fsonline/static/src/img/ppt_ahch.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
 
-                                                <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
-                                                     class="img-responsive"
-                                                     attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
+                                                    <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
+                                                </a>
                                             </div>
                                         </div>
                                     </group>
@@ -352,8 +354,10 @@
                                             <group>
                                                 <div class="text-center oe_edit_only">
                                                     <div style="display: inline-block; max-width: 300px;">
-                                                        <img src="/fsonline/static/src/img/gift_donations.jpg"
-                                                             class="img-responsive"/>
+                                                        <a data-toggle="modal" data-target="#modal_gift_donations_info">
+                                                            <img src="/fsonline/static/src/img/gift_donations.jpg"
+                                                                 class="img-responsive"/>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </group>
@@ -518,6 +522,75 @@
                             </page>
                         </notebook>
                     </sheet>
+
+                    <!-- MODAL DIALOGS -->
+                    <!--
+                        Keep them outside of sheets. Otherwise the modal backdrop will cover the modal,
+                        blocking the entire UI.
+                    -->
+
+                    <!-- Template Settings - Modal -->
+                    <div id="modal_structure_info"
+                         class="modal fade"
+                         role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div style="display: inline-block;">
+                                        <img src="/fsonline/static/src/img/ppt_donate.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
+
+                                        <img src="/fsonline/static/src/img/ppt_opc.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
+
+                                        <img src="/fsonline/static/src/img/ppt_ahch.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
+
+                                        <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- HTML-Buttons dot work in backend views, so link is used instead -->
+                                    <a class="oe_button"
+                                       data-dismiss="modal"
+                                       href="javascript:void(0)">
+                                        Close
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Template Settings - Gift Donations - Modal -->
+                    <div id="modal_gift_donations_info"
+                         class="modal fade"
+                         role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div style="display: inline-block;">
+                                        <img src="/fsonline/static/src/img/gift_donations.jpg"
+                                             class="img-responsive"/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- HTML-Buttons dot work in backend views, so link is used instead -->
+                                    <a class="oe_button"
+                                       data-dismiss="modal"
+                                       href="javascript:void(0)">
+                                        Close
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </form>
             </field>
