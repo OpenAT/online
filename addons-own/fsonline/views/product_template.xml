@@ -64,23 +64,25 @@
                                         <field name="website_published_end" string="Publish End"/>
                                         <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
                                         <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
-                                        <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
-                                               widget="many2many_tags"
-                                               options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                                     </group>
                                     <group>
                                         <field name="website_visible" string="Visible (computed)" readonly="1"/>
                                     </group>
                                 </group>
+                                <group string="Fundraising Studio Groups">
+                                    <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
+                                           widget="many2many_tags"
+                                           options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                                </group>
+                                <group string="Search Engine Optimization">
+                                    <field name="seo_url" string="Forced SEO URL"/>
+                                </group>
                                 <group string="Thank You Page">
                                     <field name="redirect_url_after_form_feedback" string="Redirect URL after PP Form-Feedback"/>
-                                    <field name="seo_url" string="Forced SEO URL"/>
                                 </group>
                                 <group string="Donation Cart Settings (Shopping Cart)">
                                     <field name="clear_cart" string="Remove other Products"/>
                                     <field name="simple_checkout" string="Skip Donation Cart"/>
-                                    <field name="accessory_product_ids" string="Accessory Donations and Products"
-                                           widget="many2many_tags"/>
                                 </group>
                             </page>
 
@@ -154,8 +156,8 @@
                             <page string="Template Settings">
                                 <group>
                                     <group>
-                                        <field name="website_theme" string="Design Template"/>
                                         <field name="product_page_template" string="Structural Template"/>
+                                        <field name="website_theme" string="Design Template"/>
                                     </group>
                                     <group>
                                         <div class="text-center oe_edit_only">
@@ -182,7 +184,7 @@
                                 <notebook>
                                     <page string="Page Settings">
                                         <group>
-                                            <group class="fso_backend_separator">
+                                            <group string="Page Settings" class="fso_backend_separator">
                                                 <!-- h3 colspan="2" class="fso_backend_separator">Seiteneinstellungen</h3 -->
                                                 <field name="hide_categories" string="Hide Category Navigation"/>
                                                 <field name="hide_search" string="Hide Search"/>
@@ -211,8 +213,10 @@
                                                 <field name="hide_amount_title" string="Hide Amount Title"/>
                                                 <field name="amount_title" string="Differing Amount Title"
                                                        attrs="{'invisible': [('hide_amount_title','=', True)]}"/>
-                                                <field name="button_addtocart_text" string="Button Text"/>
                                                 <field name="hide_panelfooter" string="Hide Global Footer"/>
+                                            </group>
+                                            <group string="Donation Button" colspan="2">
+                                                <field name="button_addtocart_text" string="Button Text"/>
                                             </group>
                                             <div colspan="4" class="backend-help oe_edit_only">
                                                 <p>
@@ -236,31 +240,62 @@
 
                                     <page string="Shop Steps"
                                           attrs="{'invisible':[('product_page_template', '=', 'website_sale_donate.ppt_opc')]}">
-                                        <group name="steps_and_donation_buttons">
-                                            <group string="Shop Steps">
-                                                <group colspan="2" name="step_indicator_setup">
-                                                    <field name="step_indicator_setup" string="Individual Step-Indicator Setup"/>
-                                                </group>
-                                                <group colspan="2" name="step_indicator_setup_settings"
-                                                       attrs="{'invisible': [('step_indicator_setup','=', False)]}">
-                                                    <field name="step_indicator_ul_class"/>
 
-                                                    <field name="hide_cart_indicator"/>
-                                                    <field name="cart_indicator_name"
-                                                           attrs="{'invisible': [('hide_cart_indicator','=', True)]}"/>
-                                                    <field name="hide_product_indicator"/>
-                                                    <field name="product_indicator_name"
-                                                           attrs="{'invisible': [('hide_product_indicator','=', True)]}"/>
-                                                    <field name="hide_checkout_indicator"/>
-                                                    <field name="checkout_indicator_name"
-                                                           attrs="{'invisible': [('hide_checkout_indicator','=', True)]}"/>
-                                                    <field name="hide_payment_indicator"/>
-                                                    <field name="payment_indicator_name"
-                                                           attrs="{'invisible': [('hide_payment_indicator','=', True)]}"/>
-                                                    <field name="hide_confirmation_indicator"/>
-                                                    <field name="confirmation_indicator_name"
-                                                           attrs="{'invisible': [('hide_confirmation_indicator','=', True)]}"/>
-                                                </group>
+                                        <group name="steps_and_donation_buttons" string="Shop Steps">
+                                            <group colspan="2" name="step_indicator_setup">
+                                                <field name="step_indicator_setup" string="Individual Step-Indicator Setup"/>
+                                            </group>
+                                            <group colspan="2" name="step_indicator_setup_settings"
+                                                   string="List Classes (UL Elements)"
+                                                   class="fso_backend_separator"
+                                                   attrs="{'readonly': [('step_indicator_setup','=', False)]}">
+                                                <field name="step_indicator_ul_class"
+                                                       string="CSS Classes"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                            </group>
+                                            <group colspan="2" string="Cart Indicator" class="fso_backend_separator">
+                                                <field name="hide_cart_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="cart_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_cart_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Product Indicator" class="fso_backend_separator">
+                                                <field name="hide_product_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="product_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_product_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Checkout Indicator" class="fso_backend_separator">
+                                                <field name="hide_checkout_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="checkout_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_checkout_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Payment Indicator" class="fso_backend_separator">
+                                                <field name="hide_payment_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="payment_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_payment_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Confirmation Indicator" class="fso_backend_separator">
+                                                <field name="hide_confirmation_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="confirmation_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_confirmation_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
                                             </group>
                                         </group>
                                     </page>
@@ -277,14 +312,14 @@
                                                 <field name="funding_reached" readonly="1"/>
                                             </group>
                                         </group>
-                                        <group string="Website Settings">
-                                            <group string="Donation Page (Product Page)" class="fso_backend_separator">
+                                        <group string="Page Settings">
+                                            <group string="Left Area" class="fso_backend_separator">
                                                 <field name="hide_fundingtext" string="Hide Short Description"/>
                                                 <field name="hide_fundingbar" string="Hide Progress Bar"/>
                                                 <field name="hide_fundingdesc" string="Hide Description"/>
                                                 <field name="funding_desc" string="Description"/>
                                             </group>
-                                            <group string="Donation Box Settings" class="fso_backend_separator">
+                                            <group string="Donation Box" class="fso_backend_separator">
                                                 <field name="hide_fundingtextincp" string="Hide Text"/>
                                                 <field name="hide_fundingbarincp" string="Hide Progress Bar"/>
                                             </group>
@@ -301,24 +336,34 @@
                                     </page>
 
                                     <page string="Gift Donations">
-                                        <group string="Webshop: Enable Gifting Feature">
-                                            <field name="giftee_form_id" string="Giftee Fields Form"/>
-                                            <button name="create_giftee_fields_form" type="object"
-                                                    string="Enable Giftee Fields"
-                                                    colspan="2"
-                                                    attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
-                                            />
-                                            <field name="giftee_checkbox_text"
-                                                   attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
-                                            <field name="giftee_email_template"
-                                                   attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
+                                        <group>
+                                            <group string="Webshop: Enable Gifting Feature">
+                                                <field name="giftee_form_id" string="Giftee Fields Form"/>
+                                                <button name="create_giftee_fields_form" type="object"
+                                                        string="Enable Giftee Fields"
+                                                        colspan="2"
+                                                        attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
+                                                />
+                                                <field name="giftee_checkbox_text"
+                                                       attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
+                                                <field name="giftee_email_template"
+                                                       attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
+                                            </group>
+                                            <group>
+                                                <div class="text-center oe_edit_only">
+                                                    <div style="display: inline-block; max-width: 300px;">
+                                                        <img src="/fsonline/static/src/img/gift_donations.jpg"
+                                                             class="img-responsive"/>
+                                                    </div>
+                                                </div>
+                                            </group>
                                         </group>
                                     </page>
                                 </notebook>
                             </page>
 
                             <page string="Shop Categories">
-                                <group string="Product Tiles">
+                                <group string="Product List Settings">
                                     <field name="website_sequence" string="Sequence"/>
                                     <field name="public_categ_ids" string="Show in Categories"
                                            widget="many2many_tags"/>
@@ -364,6 +409,13 @@
                                                context="{'default_attribute_id': attribute_id}"/>
                                     </tree>
                                 </field>
+                            </page>
+
+                            <page string="Accessory Products">
+                                <group>
+                                    <field name="accessory_product_ids" string="Accessory Donations and Products"
+                                           widget="many2many_tags"/>
+                                </group>
                             </page>
 
                             <page string="System">
