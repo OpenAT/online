@@ -12,7 +12,6 @@
                     <field name="is_product_variant" invisible="1"/>
                     <field name='product_variant_count' invisible='1'/>
                     <field name='widget_manager_ids' invisible='1'/>
-                    <field name='seo_relative_url' invisible='1'/>
                     <!-- PRODUCT SHEET -->
                     <sheet>
 

@@ -23,27 +23,17 @@ class ProductTemplateExtensions(models.Model):
                                           readonly=True,
                                           translate=True)
 
-    seo_relative_url = fields.Char(string="SEO Relative URL",
-                                   compute="_compute_seo_relative_url",
-                                   readonly=True,
-                                   translate=True)
-
-    @api.multi
-    @api.depends('seo_url')
-    def _compute_seo_relative_url(self):
-        for r in self:
-            r.seo_relative_url = '/shop/product/%s' % r.seo_url
-
     @api.multi
     @api.depends('website_url', 'seo_url')
     def _compute_widget_manager_ids(self):
         widget_manager_obj = self.env['website.widget_manager']
+
         for r in self:
-            widget_manager_rec = widget_manager_obj.search([
-                '|',
-                    ('source_page', '=', r.website_url),
-                    ('source_page', '=like', '%' + r.seo_relative_url )
-            ])
+            search_params = []
+            if r.seo_url:
+                search_params = ['|', ('source_page', '=like', '%' + r.seo_url)]
+            search_params.append(('source_page', '=', r.website_url))
+            widget_manager_rec = widget_manager_obj.search(search_params)
             r.widget_manager_ids = widget_manager_rec
 
     @api.multi
