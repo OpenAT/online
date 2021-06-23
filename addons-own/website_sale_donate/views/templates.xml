@@ -12,6 +12,7 @@
                 <script type="text/javascript" src="/website_sale_donate/static/src/js/website_sale_payment_opc.js"/>
             </xpath>
             <xpath expr="//link[last()]" position="after">
+                <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_fixes.css'/>
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/website_sale_donate.css'/>
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/donation_buttons.css'/>
                 <link rel="stylesheet" href='/website_sale_donate/static/src/css/giftee.css'/>

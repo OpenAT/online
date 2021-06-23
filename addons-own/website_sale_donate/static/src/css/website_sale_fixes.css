@@ -1,0 +1,4 @@
+/* Reset float from none to bootstrap default left */
+body .oe_website_sale .row .row .col-md-12 {
+  float: left;
+}
