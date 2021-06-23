@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-22 15:00+0000\n"
-"PO-Revision-Date: 2021-06-22 15:00+0000\n"
+"POT-Creation-Date: 2021-06-23 07:48+0000\n"
+"PO-Revision-Date: 2021-06-23 07:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -70,11 +70,6 @@ msgstr "BPK Abfragen"
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Background Scroll Speed (Parallax)"
 msgstr "Hintergrungdbewegung beim Scrollen"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
-msgid "Button Box Placeholder"
-msgstr "Button-Platzhalter"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -353,11 +348,6 @@ msgid "Giftee Fields Form"
 msgstr "Formular"
 
 #. module: fsonline
-#: field:product.template,has_widget_manager:0
-msgid "Has Widget Manager"
-msgstr "Hat Widget Manager"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Hide Amount"
 msgstr "Betrag ausblenden"
@@ -522,6 +512,21 @@ msgid "Name"
 msgstr "Name"
 
 #. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree_inherited
+msgid "Open Product Page"
+msgstr "Artikelseite öffnen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree_inherited
+msgid "Open Product Statistics"
+msgstr "Artikelstatistik öffnen"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_tree_inherited
+msgid "Open Widget Manager"
+msgstr "Widget Manager öffnen"
+
+#. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_order
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_order
 msgid "Orders"
@@ -671,6 +676,11 @@ msgid "Remove other Products"
 msgstr "Andere Produkte entfernen"
 
 #. module: fsonline
+#: field:product.template,seo_relative_url:0
+msgid "SEO Relative URL"
+msgstr "Relative SEO URL"
+
+#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Search Engine Optimization"
 msgstr "Suchmaschinen-Optimierung (SEO)"
@@ -818,21 +828,6 @@ msgid "Variants"
 msgstr "Varianten"
 
 #. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree_inherited
-msgid "View Product Page"
-msgstr "Spenden-/Produktseite anzeigen"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree_inherited
-msgid "View Product Statistics"
-msgstr "Spenden-/Produktstatistik anzeigen"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_tree_inherited
-msgid "View Widget Manager"
-msgstr "Widget Manager anzeigen"
-
-#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
 msgid "Visible"
 msgstr "Sichtbar"
@@ -874,6 +869,21 @@ msgstr "Webseitenkategorien"
 #: model:ir.ui.menu,name:fsonline.widget_manager_menu
 msgid "Widget Manager"
 msgstr "Widget Manager"
+
+#. module: fsonline
+#: field:product.template,widget_manager_count:0
+msgid "Widget Manager Count"
+msgstr "Widget Manager Anzahl"
+
+#. module: fsonline
+#: field:product.template,widget_manager_ids:0
+msgid "Widget Managers"
+msgstr "Widget Manager"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Widget Mgrs."
+msgstr "Widget Mgr."
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
