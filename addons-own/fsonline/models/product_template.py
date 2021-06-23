@@ -42,7 +42,7 @@ class ProductTemplateExtensions(models.Model):
             widget_manager_rec = widget_manager_obj.search([
                 '|',
                     ('source_page', '=', r.website_url),
-                    ('source_page', '=', r.seo_relative_url)
+                    ('source_page', '=like', '%' + r.seo_relative_url )
             ])
             r.widget_manager_ids = widget_manager_rec
 
@@ -75,11 +75,7 @@ class ProductTemplateExtensions(models.Model):
             'view_type': 'form',
             'view_mode': 'tree,form',
             'target': 'current',
-            'domain': [
-                '|',
-                   ('source_page', '=', active_product_template.website_url),
-                   ('source_page', '=', active_product_template.seo_relative_url)
-            ]
+            'domain': [('id', 'in', active_product_template.widget_manager_ids.ids)]
         }
 
     @api.multi
