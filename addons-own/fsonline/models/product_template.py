@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models
+from openerp.tools.translate import _
+
 
 import lxml.etree as et
 import logging
@@ -55,7 +57,7 @@ class ProductTemplateExtensions(models.Model):
         self.ensure_one()
         active_product_template = self
         return {
-            'name': 'Product Page',
+            'name': _('Product Page'),
             'type': 'ir.actions.act_url',
             'res_model': 'ir.actions.act_url',
             'target': 'new',
@@ -67,7 +69,7 @@ class ProductTemplateExtensions(models.Model):
         self.ensure_one()
         active_product_template = self
         return {
-            'name': 'Widget Manager',
+            'name': _('Widget Manager'),
             'type': 'ir.actions.act_window',
             'res_model': 'website.widget_manager',
             'view_type': 'form',
@@ -86,7 +88,7 @@ class ProductTemplateExtensions(models.Model):
         active_product_template = self
         product_ids = [variant.id for variant in active_product_template.product_variant_ids]
         return {
-            'name': 'Product Statistics',
+            'name': _('Product Statistics'),
             'type': 'ir.actions.act_window',
             'res_model': 'sale.order.line',
             'view_type': 'form',
