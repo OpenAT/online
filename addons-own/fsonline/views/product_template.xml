@@ -11,12 +11,22 @@
                     <!-- Technical fields -->
                     <field name="is_product_variant" invisible="1"/>
                     <field name='product_variant_count' invisible='1'/>
+                    <field name='widget_manager_ids' invisible='1'/>
+                    <field name='seo_relative_url' invisible='1'/>
                     <!-- PRODUCT SHEET -->
                     <sheet>
 
                         <!-- HEAD (Button Box Name and Image) -->
                         <div class="oe_right oe_button_box" style="width: 400px;" name="buttons">
-                            <p style="display: none;">Button Box Placeholder</p>
+                             <button class="oe_inline oe_stat_button"
+                                     type="object"
+                                     name="button_open_widget_manager"
+                                     icon="fa-puzzle-piece"
+                                     attrs="{'invisible':[('widget_manager_ids','=',[])]}">
+                                <field name="widget_manager_count"
+                                       widget="statinfo"
+                                       string="Widget Mgrs."/>
+                            </button>
                         </div>
 
                         <div class="oe_left" style="width: calc(100% - 430px);">
@@ -623,7 +633,6 @@
                     <field name="website_published_start" string="Pub. Start"/>
                     <field name="website_published_end" string="Pub. End"/>
                     <field name="website_visible" string="Visible"/>
-                    <field name="has_widget_manager" invisible="1" />
                 </tree>
             </field>
         </record>
@@ -635,18 +644,17 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <field name="website_visible" position="after">
-                    <button icon="STOCK_FILE"
-                            name="view_product_page"
-                            string="View Product Page"
+                    <button icon="gtk-find"
+                            name="button_open_product_page"
+                            string="Open Product Page"
                             type="object"/>
                     <button icon="stock_gantt"
-                            name="view_widget_manager"
-                            string="View Widget Manager"
-                            type="object"
-                            attrs="{'invisible': [('has_widget_manager', '=', False)]}"/>
+                            name="button_open_widget_manager"
+                            string="Open Widget Manager"
+                            type="object"/>
                     <button icon="stock_graph"
-                            name="view_product_statistics"
-                            string="View Product Statistics"
+                            name="button_open_product_statistics"
+                            string="Open Product Statistics"
                             type="object"/>
                 </field>
             </field>
