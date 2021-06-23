@@ -55,7 +55,7 @@ class ProductTemplateExtensions(models.Model):
         self.ensure_one()
         active_product_template = self
         return {
-            'name': 'Open Product Page',
+            'name': 'Product Page',
             'type': 'ir.actions.act_url',
             'res_model': 'ir.actions.act_url',
             'target': 'new',
@@ -67,7 +67,7 @@ class ProductTemplateExtensions(models.Model):
         self.ensure_one()
         active_product_template = self
         return {
-            'name': 'Open Widget Manager',
+            'name': 'Widget Manager',
             'type': 'ir.actions.act_window',
             'res_model': 'website.widget_manager',
             'view_type': 'form',
@@ -86,7 +86,7 @@ class ProductTemplateExtensions(models.Model):
         active_product_template = self
         product_ids = [variant.id for variant in active_product_template.product_variant_ids]
         return {
-            'name': 'Open Product Statistics',
+            'name': 'Product Statistics',
             'type': 'ir.actions.act_window',
             'res_model': 'sale.order.line',
             'view_type': 'form',
