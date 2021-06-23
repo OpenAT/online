@@ -27,12 +27,12 @@ msgstr ": Hinzufügen oder Löschen von Attributen\n"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Accessory Donations and Products"
-msgstr "Zugehörige Spenden und Artikel"
+msgstr "Zugehörige Spenden und Produkte"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Accessory Products"
-msgstr "Zugehörige Artikel"
+msgstr "Zugehörige Produkte"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -235,12 +235,12 @@ msgstr "Spendenziel"
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_product
 #: view:product.template:fsonline.fso_product_template_tree
 msgid "Donations and Products"
-msgstr "Spenden und Artikel"
+msgstr "Spenden und Produkte"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Donations, Products, Sponsorships, Events, Memberships"
-msgstr "Spenden, Artikel, Patenschaften, Events, Mitglieder"
+msgstr "Spenden, Produkte, Patenschaften, Events, Mitglieder"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -442,7 +442,7 @@ msgstr "LandingPage Manager"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Leave this empty for non-recurring donations or products."
-msgstr "Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll."
+msgstr "Die Felder bitte leer lassen wenn diese Spende / dieses Produkt ausschließlich einmalig bezahlt werden soll."
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -457,7 +457,7 @@ msgstr "Link Tracker"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Linked Donation or Product pages"
-msgstr "Verlinke Spenden- oder Artikelseiten"
+msgstr "Verlinke Spenden- oder Produktseiten"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -514,12 +514,12 @@ msgstr "Name"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree_inherited
 msgid "Open Product Page"
-msgstr "Artikelseite öffnen"
+msgstr "Produktseite öffnen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree_inherited
 msgid "Open Product Statistics"
-msgstr "Artikelstatistik öffnen"
+msgstr "Produktstatistik öffnen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree_inherited
@@ -538,7 +538,7 @@ msgid "Override global payment configuration for this donation or product.\n"
 "                                            Note that this only works if \"Design Template\" (Template Settings) is set to\n"
 "                                            \"Donation One-Page-Checkout\"."
 msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende /\n"
-"                                            diesen Artikel überschreiben.\n"
+"                                            dieses Produkt überschreiben.\n"
 "\n"
 "                                            Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout\n"
 "                                            Strukturvorlage (Vorlageneinstellungen) funktioniert!"
@@ -622,7 +622,7 @@ msgstr "Einkauf (Beschaffung)"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Product Indicator"
-msgstr "Schritt: Artikelseite"
+msgstr "Schritt: Produktseite"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -632,7 +632,7 @@ msgstr "Produktlisten-Einstellungen"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Product Overview Pages"
-msgstr "Artikelübersichtsseiten"
+msgstr "Produktübersichtsseiten"
 
 #. module: fsonline
 #: code:addons/fsonline/models/product_template.py:60
@@ -730,7 +730,7 @@ msgstr "Zahlungsintervalle als Auswahlliste darstellen"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Show Product Variants as Selection List"
-msgstr "Artikelvarianten als Auswahlliste darstellen"
+msgstr "Produktvarianten als Auswahlliste darstellen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -815,7 +815,7 @@ msgstr "Theme"
 msgid "This category specifies the target account in accounting, unless\n"
 "                                                this product has an explicit accounts set. This category is unrelated\n"
 "                                                to website categories."
-msgstr "Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der\n"
+msgstr "Die Kategorie des Produktes bestimmt die Zuordnung zu den Konten in der\n"
 "                                                Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
 "                                                gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
 
