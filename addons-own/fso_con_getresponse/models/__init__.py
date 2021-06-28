@@ -2,6 +2,9 @@
 
 # ATTENTION: Do not use from . import ... in __init__.py files or it may mess up odoo 8
 
+import queue_job
+import res_partner
+
 import helper_connector
 import helper_related_action
 import helper_consumer

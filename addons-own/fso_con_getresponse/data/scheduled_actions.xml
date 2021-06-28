@@ -31,4 +31,17 @@
         <field name="args" eval="'()'"/>
     </record>
 
+    <record id="ir_cron_batch_update_job_with_source_record_data" model="ir.cron" forcecreate="1">
+        <field name="name">GetResponse: Batch update of job-data with source-record-data</field>
+        <field name="priority" eval="5502" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">queue.job</field>
+        <field name="function">_batch_update_job_with_source_record_data</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
 </data></openerp>

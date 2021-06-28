@@ -48,17 +48,25 @@ def export_binding_on_contact_update(session, model_name, record_id, vals):
     # Get Watched fields
     watched_fields = []
     if model_name == 'res.partner':
-        watched_fields = ['name', 'firstname', 'lastname', 'getresponse_tag_ids']
+        watched_fields = ['active', 'name', 'firstname', 'lastname', 'getresponse_tag_ids']
         if watched_custom_fields_by_model.get(model_name, False):
             watched_fields += watched_custom_fields_by_model[model_name]
 
+    # ATTENTION: Computed fields like 'state' will not be in the vals and therefore would not trigger an export!
+    #            Use the depends on of the computed fields instead!
     elif model_name == 'frst.personemail':
-        watched_fields = ['email', 'partner_id', 'state']
+        watched_fields = ['active', 'email', 'partner_id',
+                          'gueltig_von', 'gueltig_bis', 'bestaetigt_am_um', 'steuerung_bit',
+                          'partner_frst_blocked', 'partner_frst_blocked_email']
         if watched_custom_fields_by_model.get(model_name, False):
             watched_fields += watched_custom_fields_by_model[model_name]
 
+    # ATTENTION: Computed fields like 'state' will not be in the vals and therefore would not trigger an export!
+    #            Use the depends on of the computed fields instead!
     elif model_name == 'frst.personemailgruppe':
-        watched_fields = ['zgruppedetail_id', 'frst_personemail_id', 'state']
+        watched_fields = ['active', 'zgruppedetail_id', 'frst_personemail_id',
+                          'gueltig_von', 'gueltig_bis', 'bestaetigt_am_um', 'steuerung_bit',
+                          'partner_frst_blocked', 'partner_frst_blocked_email']
         if watched_custom_fields_by_model.get(model_name, False):
             watched_fields += watched_custom_fields_by_model[model_name]
 

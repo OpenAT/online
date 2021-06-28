@@ -9,6 +9,8 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@name='locks']" position="after">
                 <page string="GetResponse">
+                    <!-- TODO: Add button to open GR-Contact binding! active or inactive! -->
+                    <!-- TODO: Add button to open related connector jobs! active and inactive! -->
                     <group>
                         <button name="prepare_getresponse_binding"
                                 type="object"

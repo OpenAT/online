@@ -19,6 +19,14 @@
                                 string="Import"/>
                     </header>
                     <sheet>
+                        <div class="oe_right oe_button_box" style="width: 100%;" name="buttons">
+                            <button name="button_open_getresponse_jobs"
+                                    type="object"
+                                    class="oe_inline oe_stat_button"
+                                    string="Open Sync-Jobs"
+                                    icon="fa-search-plus">
+                            </button>
+                        </div>
                         <label for="backend_id" class="oe_edit_only"/>
                         <h1>
                             <field name="backend_id" class="oe_inline" />

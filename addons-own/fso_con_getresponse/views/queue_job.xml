@@ -7,6 +7,12 @@
         <field name="inherit_id" ref="connector.view_queue_job_search"/>
 
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="unwrapped_model"/>
+                <field name="unwrapped_id"/>
+                <field name="binding_model"/>
+                <field name="binding_id"/>
+            </xpath>
             <xpath expr="//filter[@string='State']" position="after">
                 <!--<filter string="Error_Text" context="{'group_by': 'exc_info'}" />-->
                 <!--<filter string="Result_Text" context="{'group_by': 'result'}" />-->
@@ -18,7 +24,34 @@
                 <filter string="Date_Created" context="{'group_by': 'date_created'}" />
                 <filter string="Date_Started" context="{'group_by': 'date_started'}" />
                 <filter string="Date_Done" context="{'group_by': 'date_done'}" />
+            </xpath>
+        </field>
+    </record>
 
+    <record id="view_queue_job_form_extended" model="ir.ui.view">
+        <field name="name">queue.job.form</field>
+        <field name="model">queue.job</field>
+        <field name="inherit_id" ref="connector.view_queue_job_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="unwrapped_model"/>
+                <field name="unwrapped_id"/>
+                <field name="binding_model"/>
+                <field name="binding_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_queue_job_tree_extended" model="ir.ui.view">
+        <field name="name">queue.job.tree</field>
+        <field name="model">queue.job</field>
+        <field name="inherit_id" ref="connector.view_queue_job_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="unwrapped_model"/>
+                <field name="unwrapped_id"/>
+                <field name="binding_model" invisible="1"/>
+                <field name="binding_id" invisible="1"/>
             </xpath>
         </field>
     </record>
