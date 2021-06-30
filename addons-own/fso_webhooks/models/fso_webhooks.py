@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from requests import Session, codes
+import ast
 
 from openerp import models, fields, api, tools
+from openerp.tools.translate import _
 from openerp.addons.email_template.email_template import mako_template_env as jinja2_template_env, format_tz
 
 import logging
@@ -22,6 +24,8 @@ class FSONWebhookTarget(models.Model):
                                             ])
     # AUTH SECRETS
     user = fields.Char(string="User")
+    auth_header = fields.Char(string="Auth header", help="If set will be added to the request-headers in the form"
+                                                         "auth_header=password")
     password = fields.Char(string="API-Key or Password")
     # or
     crt_pem = fields.Binary(string="SSL-Cert (PEM)")
@@ -43,19 +47,16 @@ class FSONWebhooks(models.Model):
 
     name = fields.Char('Name', required=True)
     model_id = fields.Many2one(string="Model", comodel_name="ir.model", required=True)
-    description = fields.Text('Description')
+    description = fields.Text(string='Description')
 
     # TRIGGER (FIRE WEBHOOK ON)
     on_create = fields.Boolean("On Create")
     on_write = fields.Boolean("On Write")
     on_unlink = fields.Boolean("On Delete")
-    on_val_change = fields.Char(string="On Value Change",
-                                help="Only fire webhooks for records where the field value changes from old_val to "
-                                     "new_val. The format is a list of tuples e.g. "
-                                     "[('field_name', 'old_val', 'new_val'), ('field_name', 'old_val', 'new_val')] "
-                                     "Set old_val or new_val to None if the value does not matter")
 
     # FILTER
+    filter_domain_pre_update = fields.Text(string="Filter Domain before update",
+                                           help="Records are filtered by this domain only before a write (update).")
     filter_domain = fields.Text(string="Filter Domain", help="Records are filtered by this domain after an create "
                                                              "or update or before an unlink")
 
@@ -67,8 +68,8 @@ class FSONWebhooks(models.Model):
                                  selection=[('POST', 'POST')],
                                  default='POST', required=True)
     content_type = fields.Selection(string="Content Type",
-                                    selection=('application/json; charset=utf-8',
-                                               'application/json; charset=utf-8'),
+                                    selection=[('application/json; charset=utf-8',
+                                               'application/json; charset=utf-8')],
                                     default='application/json; charset=utf-8', required=True)
     one_request_per_record = fields.Boolean(string="One Request per Record", default=True,
                                             help="If NOT set only one request would be send for multiple records."
@@ -77,6 +78,20 @@ class FSONWebhooks(models.Model):
     req_payload = fields.Text(string="Payload",
                               help="Payload (body) of the request. Jinja 2 template can be used just like in "
                                    "e-mail templates")
+
+    # TODO: Add onchange for on_val_change to set on_write to true and test by constrain
+    @api.onchange('filter_domain_pre_update', 'on_write')
+    def onchange_filter_domain_pre_update(self):
+        for r in self:
+            if r.filter_domain_pre_update:
+                r.on_write = True
+
+    @api.constrains('filter_domain_pre_update', 'on_write')
+    def constrain_filter_domain_pre_update(self):
+        for r in self:
+            if r.filter_domain_pre_update:
+                assert r.on_write, _("Trigger 'on_write' must bes set if pre update filter is set or pre-update-filter"
+                                     "would have no effect!")
 
     @api.model
     def render_payload(self, recordset, post_process=False):
@@ -126,23 +141,28 @@ class FSONWebhooks(models.Model):
         session.verify = True
 
         # Authentication
+        headers = {}
         if tgt.auth_type == 'simple':
             session.auth = (tgt.user, tgt.password)
+            if tgt.auth_header:
+                headers[tgt.auth_header] = tgt.password
         elif tgt.auth_type == 'cert':
             session.cert = (tgt.crt_pem, tgt.crt_key)
 
         # Send request
         if w.http_type == 'POST':
             try:
+                headers['content-type'] = w.content_type
                 response = session.post(tgt.url,
                                         data=payload,
-                                        headers={'content-type': w.content_type},
+                                        headers=headers,
                                         timeout=tgt.timeout)
                 if response.status_code != codes.ok:
                     raise ValueError("Response status_code: %s, Response content: %s"
                                      "" % (response.status_code, response.content))
             except Exception as e:
-                logger.error("Could not send webhook (id %s)! %s" % (w.id, repr(e)))
+                logger.error("Could not send webhook (id %s) to %s with payload %s! %s"
+                             "" % (w.id, tgt.url, payload, repr(e)))
                 raise e
         else:
             raise NotImplementedError('Request type %s is not implemented!' % w.http_type)
@@ -150,13 +170,16 @@ class FSONWebhooks(models.Model):
         return response
 
     @api.multi
-    def _filter_records(self, recordset):
+    def _filter_records(self, recordset, filter_domain_field='filter_domain'):
         self.ensure_one()
-        if not self.filter_domain:
-            return recordset
 
-        filter_domain = [('id', 'in', recordset.ids)] + self.filter_domain
-        filtered_recordset = recordset.search(filter_domain)
+        filter_domain = ast.literal_eval(self[filter_domain_field])
+        if not filter_domain:
+            return recordset
+        assert isinstance(filter_domain, list), "The domain in the field '%s' must be a list!" % filter_domain_field
+
+        domain = [('id', 'in', recordset.ids)] + filter_domain
+        filtered_recordset = recordset.search(domain)
         return filtered_recordset
 
     @api.multi

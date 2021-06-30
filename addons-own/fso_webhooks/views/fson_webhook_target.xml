@@ -11,15 +11,17 @@
                 <group string="name">
                     <group>
                         <field name="id" readonly="True"/>
-                        <field name="url"/>
+                        <field name="url" widget="url"/>
                         <field name="timeout"/>
                     </group>
                     <group>
                         <field name="auth_type"/>
-                        <field name="user"/>
-                        <field name="password"/>
-                        <field name="crt_pem"/>
-                        <field name="crt_key"/>
+                        <!-- TODO: Show fields based on auth type -->
+                        <field name="user" attrs="{'invisible':[('auth_type', '!=', 'simple')]}"/>
+                        <field name="auth_header" attrs="{'invisible':[('auth_type', '!=', 'simple')]}"/>
+                        <field name="password" attrs="{'invisible':[('auth_type', '!=', 'simple')]}"/>
+                        <field name="crt_pem" attrs="{'invisible':[('auth_type', '!=', 'cert')]}"/>
+                        <field name="crt_key" attrs="{'invisible':[('auth_type', '!=', 'cert')]}"/>
                     </group>
                 </group>
                 <group string="Webhooks">
@@ -63,7 +65,7 @@
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
     <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
     <record id="fson_webhook_target_action" model="ir.actions.act_window" >
-        <field name="name">Webhook Target</field>
+        <field name="name">Webhook Targets</field>
         <field name="res_model">fson.webhook.target</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
@@ -82,7 +84,8 @@
         <field name="view_id" ref="fson_webhook_target_form"/>
         <field name="act_window_id" ref="fson_webhook_target_action"/>
     </record>
+
     <!-- And we add the Action to a Menu with the shortcut menuitem -->
-    <menuitem id="fson_webhook_target_menu" action="fson_webhook_target_action" parent="fso_Webhook Target.fso_webhooks.fson_webhook_main_menu" sequence="1010"/>
+    <menuitem id="fson_webhook_target_menu" action="fson_webhook_target_action" parent="fson_webhook_main_menu" sequence="1010"/>
 
 </data></openerp>
