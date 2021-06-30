@@ -3,19 +3,63 @@ import json
 
 from requests import Session, codes
 import ast
+from urllib import urlencode, quote as quote
+import datetime
+import dateutil.relativedelta as relativedelta
 
 from openerp import models, fields, api, tools
 from openerp.tools.translate import _
-from openerp.addons.email_template.email_template import mako_template_env as jinja2_template_env, format_tz
-from openerp.exceptions import Warning, ValidationError
+from openerp.addons.email_template.email_template import format_tz
+from openerp.exceptions import Warning
 
 import logging
 logger = logging.getLogger(__name__)
 
+try:
+    # We use a jinja2 sandboxed environment to render mako templates.
+    # Note that the rendering does not cover all the mako syntax, in particular
+    # arbitrary Python statements are not accepted, and not all expressions are
+    # allowed: only "public" attributes (not starting with '_') of objects may
+    # be accessed.
+    # This is done on purpose: it prevents incidental or malicious execution of
+    # Python code that may break the security of the server.
+    from jinja2.sandbox import SandboxedEnvironment
+    jinja2_template_env = SandboxedEnvironment(
+        block_start_string="<%",
+        block_end_string="%>",
+        variable_start_string="${",
+        variable_end_string="}",
+        comment_start_string="<%doc>",
+        comment_end_string="</%doc>",
+        line_statement_prefix="%",
+        line_comment_prefix="##",
+        trim_blocks=True,               # do not output newline after blocks
+        autoescape=False,
+    )
+    jinja2_template_env.globals.update({
+        'str': str,
+        'quote': quote,
+        'urlencode': urlencode,
+        'datetime': tools.wrap_module(datetime, []),
+        'len': len,
+        'abs': abs,
+        'min': min,
+        'max': max,
+        'sum': sum,
+        'filter': filter,
+        'reduce': reduce,
+        'map': map,
+        'round': round,
 
-jinja2_template_env.globals.update({
+        # dateutil.relativedelta is an old-style class and cannot be directly
+        # instanciated wihtin a jinja2 expression, so a lambda "proxy" is
+        # is needed, apparently.
+        'relativedelta': lambda *a, **kw : relativedelta.relativedelta(*a, **kw),
+
         'json_dumps': json.dumps,
     })
+except ImportError:
+    logger.warning("jinja2 not available, templating features will not work!")
 
 
 class FSONWebhookTarget(models.Model):
@@ -144,10 +188,8 @@ class FSONWebhooks(models.Model):
         """ returns all data for the request """
         w = self
         w.ensure_one()
-        tgt = w.target_id
 
         request_kwargs = {
-            'url': tgt.url,
             'headers': {'content-type': w.content_type}
         }
 
@@ -180,7 +222,10 @@ class FSONWebhooks(models.Model):
         session = Session()
         session.verify = True
 
-        # Authentication
+        # Target
+        request_kwargs['url'] = tgt.url
+
+        # Target Authentication
         if tgt.auth_type == 'simple':
             session.auth = (tgt.user, tgt.password)
             if tgt.auth_header:

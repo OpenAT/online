@@ -27,12 +27,10 @@ def fire_webhooks(webhooks, recordset):
         if webhook.one_request_per_record:
             for r in filtered_recordset:
                 request_kwargs = webhook.request_kwargs(r)
-                fire.delay(session, recordset._name, webhook.id, request_kwargs,
-                           webhook_id=webhook.id, recordset_ids=recordset.ids)
+                fire.delay(session, recordset._name, webhook.id, request_kwargs, recordset_ids=recordset.ids)
         else:
             request_kwargs = webhook.request_kwargs(recordset)
-            fire.delay(session, recordset._name, webhook.id, request_kwargs,
-                       webhook_id=webhook.id, recordset_ids=recordset.ids)
+            fire.delay(session, recordset._name, webhook.id, request_kwargs, recordset_ids=recordset.ids)
 
 
 # ------
