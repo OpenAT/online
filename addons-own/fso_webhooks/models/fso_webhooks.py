@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
+import json
+
 from requests import Session, codes
 import ast
 
 from openerp import models, fields, api, tools
 from openerp.tools.translate import _
 from openerp.addons.email_template.email_template import mako_template_env as jinja2_template_env, format_tz
+from openerp.exceptions import Warning, ValidationError
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+jinja2_template_env.globals.update({
+        'json_dumps': json.dumps,
+    })
 
 
 class FSONWebhookTarget(models.Model):
@@ -132,37 +140,63 @@ class FSONWebhooks(models.Model):
         return payload
 
     @api.multi
-    def fire(self, payload):
+    def request_kwargs(self, record):
+        """ returns all data for the request """
         w = self
         w.ensure_one()
         tgt = w.target_id
+
+        request_kwargs = {
+            'url': tgt.url,
+            'headers': {'content-type': w.content_type}
+        }
+
+        # Payload
+        payload = w.render_payload(record)
+        if w.content_type == 'application/json; charset=utf-8':
+            try:
+                payload_json = json.loads(payload)
+            except Exception as e:
+                logger.error("Payload could not be converted to json! %s" % repr(e))
+                raise e
+            request_kwargs['json'] = payload_json
+        else:
+            request_kwargs['data'] = payload
+
+        return request_kwargs
+
+    @api.multi
+    def fire(self, request_kwargs):
+        w = self
+        w.ensure_one()
+        tgt = w.target_id
+        tgt.ensure_one()
+        assert w.exists(), "Webhook %s no longer exits!" % w
+        assert tgt.exists(), "Webhook target %s no longer exists!" % tgt
+        assert isinstance(request_kwargs, dict), _("request_kwargs must be of type dict")
+        assert isinstance(request_kwargs.get('headers', None), dict), _(
+            "Key 'headers' missing in request_kwargs or not a dict!")
 
         session = Session()
         session.verify = True
 
         # Authentication
-        headers = {}
         if tgt.auth_type == 'simple':
             session.auth = (tgt.user, tgt.password)
             if tgt.auth_header:
-                headers[tgt.auth_header] = tgt.password
+                request_kwargs['headers'][tgt.auth_header] = tgt.password
         elif tgt.auth_type == 'cert':
             session.cert = (tgt.crt_pem, tgt.crt_key)
 
         # Send request
         if w.http_type == 'POST':
             try:
-                headers['content-type'] = w.content_type
-                response = session.post(tgt.url,
-                                        data=payload,
-                                        headers=headers,
-                                        timeout=tgt.timeout)
+                response = session.post(**request_kwargs)
                 if response.status_code != codes.ok:
                     raise ValueError("Response status_code: %s, Response content: %s"
                                      "" % (response.status_code, response.content))
             except Exception as e:
-                logger.error("Could not send webhook (id %s) to %s with payload %s! %s"
-                             "" % (w.id, tgt.url, payload, repr(e)))
+                logger.error("Could not send webhook (id: %s)! request_kwargs: %s" % (w.id, request_kwargs))
                 raise e
         else:
             raise NotImplementedError('Request type %s is not implemented!' % w.http_type)
@@ -183,14 +217,33 @@ class FSONWebhooks(models.Model):
         return filtered_recordset
 
     @api.multi
-    def fire_webhooks(self, recordset):
-        for webhook in self:
-            filtered_recordset = webhook._filter_records(recordset)
+    def test_webhook_config(self):
+        self.ensure_one()
 
-            if webhook.one_request_per_record:
-                for record in filtered_recordset:
-                    payload = webhook.render_payload(record)
-                    webhook.fire(payload=payload)
-            else:
-                payload = webhook.render_payload(filtered_recordset)
-                webhook.fire(payload=payload)
+        target_model_obj = self.env[self.model_id.model].sudo()
+
+        try:
+            # Test search domains
+            for f in ('filter_domain_pre_update', 'filter_domain'):
+                self._filter_records(target_model_obj, filter_domain_field=f)
+
+            # Test kwargs (and therefore payload)
+            record = target_model_obj.search([], limit=1)
+            if not record:
+                raise Warning(_("Can not test payload rendering because no record exists in target model!"))
+            self.request_kwargs(record)
+        except Exception as e:
+            raise e
+
+    @api.model
+    def create(self, vals):
+        record = super(FSONWebhooks, self).create(vals)
+        record.test_webhook_config()
+        return record
+
+    @api.multi
+    def write(self, vals):
+        result = super(FSONWebhooks, self).write(vals)
+        for r in self:
+            r.test_webhook_config()
+        return result
