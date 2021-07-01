@@ -184,9 +184,9 @@ class FSONWebhooks(models.Model):
             payload_unicode = self.env['email.template'].render_post_process(result=payload_unicode)
 
         # Encode to utf8
-        payload = payload_unicode.encode('utf-8')
+        payload_string_utf8 = payload_unicode.encode('utf-8')
 
-        return payload
+        return payload_string_utf8
 
     @api.multi
     def request_kwargs(self, record):
@@ -199,16 +199,24 @@ class FSONWebhooks(models.Model):
         }
 
         # Payload
-        payload = w.render_payload(record)
+        payload_string_utf8 = w.render_payload(record)
         if w.content_type == 'application/json; charset=utf-8':
             try:
-                payload_json = json.loads(payload)
+                # Deserialize a string (or unicode) containing a json object to a python object to test if it
+                # contains a valid json object
+                payload_json = json.loads(payload_string_utf8, encoding='utf-8')
             except Exception as e:
                 logger.error("Payload could not be converted to json! %s" % repr(e))
                 raise e
-            request_kwargs['json'] = payload_json
-        else:
-            request_kwargs['data'] = payload
+            # HINT: request.post(json=...) will serialize a python object to a valid json string
+            #
+            # FROM DOC: Instead of encoding the dict (python object) yourself, you can also pass it directly using
+            # the json parameter (added in version 2.4.2) and it will be encoded automatically. Note, the json
+            # parameter is ignored if either data or files is passed. Using the json parameter in the request will
+            # change the Content-Type in the header to application/json.
+            #request_kwargs['json'] = payload_json
+        # else:
+        request_kwargs['data'] = payload_string_utf8
 
         return request_kwargs
 
@@ -257,7 +265,7 @@ class FSONWebhooks(models.Model):
     def _filter_records(self, recordset, filter_domain_field='filter_domain'):
         self.ensure_one()
 
-        filter_domain = ast.literal_eval(self[filter_domain_field])
+        filter_domain = ast.literal_eval(self[filter_domain_field]) if self[filter_domain_field] else False
         if not filter_domain:
             return recordset
         assert isinstance(filter_domain, list), "The domain in the field '%s' must be a list!" % filter_domain_field
