@@ -17,20 +17,77 @@ def fire(session, recordset_model, webhook_id, request_kwargs, **kwargs):
 
 
 def fire_webhooks(webhooks, recordset):
-    session = ConnectorSession.from_env(recordset.env)
-    for webhook in webhooks:
+    try:
+        if not webhooks:
+            return
 
-        # Apply post update record-filter
-        filtered_recordset = webhook._filter_records(recordset)
+        if not recordset or not hasattr(recordset, 'env') or not hasattr(recordset, '_name'):
+            return
 
-        # Create a connector job for each request
-        if webhook.one_request_per_record:
-            for r in filtered_recordset:
-                request_kwargs = webhook.request_kwargs(r)
+        target_model = recordset._name
+        if not target_model or target_model == 'fson.webhook':
+            return
+
+        session = ConnectorSession.from_env(recordset.env)
+        for webhook in webhooks:
+
+            # Apply post update record-filter
+            filtered_recordset = webhook._filter_records(recordset)
+
+            # Create a connector job for each request
+            if webhook.one_request_per_record:
+                for r in filtered_recordset:
+                    request_kwargs = webhook.request_kwargs(r)
+                    fire.delay(session, recordset._name, webhook.id, request_kwargs, recordset_ids=recordset.ids)
+            else:
+                request_kwargs = webhook.request_kwargs(recordset)
                 fire.delay(session, recordset._name, webhook.id, request_kwargs, recordset_ids=recordset.ids)
-        else:
-            request_kwargs = webhook.request_kwargs(recordset)
-            fire.delay(session, recordset._name, webhook.id, request_kwargs, recordset_ids=recordset.ids)
+
+    except Exception as e:
+        logger.error("fire_webhooks failed for %s, %s! %s" % (webhooks, recordset, repr(e)))
+        pass
+
+
+def search_for_webhooks(recordset, crud_method, append_domain=None):
+    webhooks = dict()
+    try:
+        assert crud_method in ('create', 'write', 'unlink'), "unexpected crud_method %s" % crud_method
+
+        if not recordset or not hasattr(recordset, 'env') or not hasattr(recordset, '_name'):
+            return webhooks
+
+        target_model = recordset._name
+        if not target_model or target_model == 'fson.webhook' or target_model.startswith('ir.'):
+            return webhooks
+
+        # Search for webhooks
+        w_domain = [('model_id.model', '=', target_model), ('on_'+crud_method, '=', True)]
+        if append_domain:
+            w_domain.append(append_domain)
+        webhooks = recordset.env['fson.webhook'].sudo().search(w_domain)
+
+    except Exception as e:
+        logger.error("search_for_webhooks failed for %s, %s! %s" % (crud_method, recordset, repr(e)))
+        pass
+
+    return webhooks
+
+
+def filter_recordsets_pre_update(webhooks, recordset):
+    pre_update_recordsets = dict()
+    try:
+        if not webhooks or not recordset or not hasattr(recordset, 'env') or not hasattr(recordset, '_name'):
+            return pre_update_recordsets
+
+        for w in webhooks:
+            if w.filter_domain_pre_update:
+                pre_update_recordsets[w.id] = w._filter_records(recordset,
+                                                                filter_domain_field='filter_domain_pre_update')
+    except Exception as e:
+        logger.error("filter_recordsets_pre_update failed for %s, %s! %s" % (webhooks, recordset, repr(e)))
+        pass
+
+    return pre_update_recordsets
 
 
 # ------
@@ -43,15 +100,8 @@ create_original = models.BaseModel.create
 @openerp.api.returns('self', lambda value: value.id)
 def create(self, vals):
     record_id = create_original(self, vals)
-
-    webhooks = self.env['fson.webhook'].sudo().search([('model_id.model', '=', self._name), ('on_create', '=', True)])
-    try:
-        if webhooks:
-            fire_webhooks(webhooks, record_id)
-    except Exception as e:
-        logger.error("Could not process webhooks for %s record create! %s" % (self._name, repr(e)))
-        pass
-
+    webhooks = search_for_webhooks(record_id, 'create')
+    fire_webhooks(webhooks, recordset=record_id)
     return record_id
 
 
@@ -66,34 +116,20 @@ write_original = models.BaseModel.write
 
 @openerp.api.multi
 def write(self, vals):
-    webhooks = self.env['fson.webhook'].sudo().search([('model_id.model', '=', self._name),
-                                                       ('on_write', '=', True)])
-    pre_update_recordsets = dict()
-
-    try:
-        if webhooks:
-            for w in webhooks:
-                if w.filter_domain_pre_update:
-                    pre_update_recordsets[w.id] = w._filter_records(
-                        self, filter_domain_field='filter_domain_pre_update')
-    except Exception as e:
-        logger.error("Could not apply filter_domain_pre_update for webhooks for %s record write! %s"
-                     "" % (self._name, repr(e)))
-        pass
+    webhooks = search_for_webhooks(self, 'write')
+    pre_update_recordsets = filter_recordsets_pre_update(webhooks, self)
 
     # Update records
     result = write_original(self, vals)
 
-    try:
-        if webhooks:
-            for w in webhooks:
-                if w.id in pre_update_recordsets:
-                    fire_webhooks(w, pre_update_recordsets[w.id])
-                else:
-                    fire_webhooks(w, self)
-    except Exception as e:
-        logger.error("Could not process webhooks for %s record write! %s" % (self._name, repr(e)))
-        pass
+    for w in webhooks:
+        if w.id in pre_update_recordsets:
+            fire_webhooks(w, recordset=pre_update_recordsets[w.id])
+        elif not w.filter_domain_pre_update:
+            fire_webhooks(w, recordset=self)
+        else:
+            logger.error("Webhook %s has a filter_domain_pre_update but could not be found in pre_update_recordsets!"
+                         "" % w.id)
 
     return result
 
@@ -109,14 +145,8 @@ unlink_original = models.BaseModel.unlink
 
 @openerp.api.multi
 def unlink(self):
-    webhooks = self.env['fson.webhook'].sudo().search([('model_id.model', '=', self._name), ('on_create', '=', True)])
-    try:
-        if webhooks:
-            fire_webhooks(webhooks, self)
-    except Exception as e:
-        logger.error("Could not process webhooks for %s record unlink! %s" % (self._name, repr(e)))
-        pass
-
+    webhooks = search_for_webhooks(self, 'unlink')
+    fire_webhooks(webhooks, recordset=self)
     return unlink_original(self)
 
 

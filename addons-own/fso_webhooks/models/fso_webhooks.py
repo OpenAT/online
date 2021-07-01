@@ -131,7 +131,6 @@ class FSONWebhooks(models.Model):
                               help="Payload (body) of the request. Jinja 2 template can be used just like in "
                                    "e-mail templates")
 
-    # TODO: Add onchange for on_val_change to set on_write to true and test by constrain
     @api.onchange('filter_domain_pre_update', 'on_write')
     def onchange_filter_domain_pre_update(self):
         for r in self:
@@ -144,6 +143,12 @@ class FSONWebhooks(models.Model):
             if r.filter_domain_pre_update:
                 assert r.on_write, _("Trigger 'on_write' must bes set if pre update filter is set or pre-update-filter"
                                      "would have no effect!")
+
+    @api.constrains('model_id')
+    def constrain_model_id(self):
+        for r in self:
+            if r.model_id:
+                assert not r.model_id.model.startswith('ir.'), "ir.* models are not allowed for webhooks!"
 
     @api.model
     def render_payload(self, recordset, post_process=False):
