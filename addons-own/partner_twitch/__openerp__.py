@@ -27,7 +27,9 @@ Store the twitch user name for a partner.
     'author': "Datadialog, Martin Kaip",
     'website': "http://www.datadialog.net",
     'depends': ['base'],
-    'data': [],
+    'data': [
+        'views/res_partner.xml',
+    ],
     'installable': True,
     'auto_install': False,
     'application': False,

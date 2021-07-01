@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+<record id="view_partner_simple_form_twitch_username" model="ir.ui.view">
+    <field name="name">twitch_username</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_simple_form"/>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='category_id']" position="before">
+                <group>
+                    <field name="twitch_username"/>
+                </group>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="view_partner_form_twitch_username" model="ir.ui.view">
+    <field name="name">twitch_username</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='category_id']" position="before">
+                <group>
+                    <field name="twitch_username"/>
+                </group>
+            </xpath>
+        </data>
+  </field>
+</record>
+
+</data>
+</openerp>
