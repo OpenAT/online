@@ -4,7 +4,7 @@ from openerp import api, fields, models
 from openerp.tools.translate import _
 
 
-class ResPartnerTwitch(models.Model):
+class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     name_anonymized = fields.Char(string='Name Anonymized', compute="compute_name_anonymized")
