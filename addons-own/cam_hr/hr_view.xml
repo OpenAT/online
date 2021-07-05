@@ -48,7 +48,7 @@
                         <field name="holiday_status_id"
                                invisible="0"
                                context="{'employee_id':employee_id}"
-                               domain="[('code', 'in', ['vacation','illness','zeitausgleich'])]"
+                               domain="[('code', 'in', ['vacation','illness','zeitausgleich','homeoffice'])]"
                                options="{'no_open': True, 'no_edit': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                         <field name="leave_code"/>
                         <field name="name" attrs="{'readonly':[('state','!=','draft'),('state','!=','confirm')]}" invisible="1"/>
@@ -431,6 +431,39 @@
         id="hr_menu_za"
         parent="hr_menu_zeitausgleich"
         action="hr_zeitausgleich_action"/>
+        
+        <!-- Home-Office -->
+        <record model="ir.actions.act_window" id="hr_homeoffice_action">
+            <field name="name">Home-Office</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'leave_code':'homeoffice', 'default_leave_code':'homeoffice'}</field>
+            <field name="domain">[('leave_code','=','homeoffice')]</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="search_view_id" ref="holidays_filter"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_homeoffice_action_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="holidays_tree"/>
+            <field name="act_window_id" ref="hr_homeoffice_action"/>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="hr_homeoffice_action_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="edit_my_holiday_form"/>
+            <field name="act_window_id" ref="hr_homeoffice_action"/>
+        </record>
+
+        <menuitem name="Home-Office" id="hr_menu_homeoffice" parent="hr.menu_hr_root" groups="base.group_hr_manager" sequence="26"/>
+        
+        <menuitem name="Home-Office"
+        id="hr_menu_za"
+        parent="hr_menu_homeoffice"
+        action="hr_homeoffice_action"/>        
 
 
         <!-- FEIERTAGE -->

@@ -32,6 +32,10 @@
                     	<label for="zeitausgleich_type_id"/>
                         <field name="zeitausgleich_type_id" class="oe_inline"/>
                     </div>
+                    <div>
+                    	<label for="homeoffice_type_id"/>
+                        <field name="homeoffice_type_id" class="oe_inline"/>
+                    </div>
                  </xpath>
             </field>
         </record>

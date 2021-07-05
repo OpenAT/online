@@ -108,9 +108,11 @@ class FSONWebhooks(models.Model):
 
     # FILTER
     filter_domain_pre_update = fields.Text(string="Filter Domain before update",
-                                           help="Records are filtered by this domain only before a write (update).")
-    filter_domain = fields.Text(string="Filter Domain", help="Records are filtered by this domain after an create "
-                                                             "or update or before an unlink")
+                                           help="Conditions that must be met before an update to fire a webhook. \n"
+                                                "(Records are filtered by this domain only before an update).")
+    filter_domain = fields.Text(string="Filter Domain", help="Conditions that must be met to fire a webhook. \n"
+                                                             "(Records are filtered by this domain after an create "
+                                                             "or update or before an unlink)")
 
     # REQUEST
     target_id = fields.Many2one(string="Request Target",

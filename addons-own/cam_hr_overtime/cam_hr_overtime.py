@@ -428,6 +428,7 @@ class hr_timesheet_sheet_sheet_day_detail(osv.osv):
             vacation_type = -1
             illness_type = -2
             zeitausgleich_type = -3
+            homeoffice_type = -4
             if company:
                 if company.vacation_type_id:
                     vacation_type = company.vacation_type_id.id
@@ -435,6 +436,8 @@ class hr_timesheet_sheet_sheet_day_detail(osv.osv):
                     illness_type = company.illness_type_id.id
                 if company.zeitausgleich_type_id:
                     zeitausgleich_type = company.zeitausgleich_type_id.id
+                if company.homeoffice_type_id:
+                    homeoffice_type = company.homeoffice_type_id.id
             
             res[day_detail.id] = {}
             # Check leaves
@@ -457,6 +460,7 @@ class hr_timesheet_sheet_sheet_day_detail(osv.osv):
             res[day_detail.id]['illness'] = 0
             res[day_detail.id]['others'] = 0
             res[day_detail.id]['zeitausgleich'] = 0
+            res[day_detail.id]['homeoffice'] = 0
             #res[day_detail.id]['real_planned'] = planned
             
             for row in r:
@@ -473,6 +477,8 @@ class hr_timesheet_sheet_sheet_day_detail(osv.osv):
                     res[day_detail.id]['illness'] = (row[1] > 0 and 1 or 0) * planned
                 elif row[0] == zeitausgleich_type:
                     res[day_detail.id]['zeitausgleich'] = planned if row[1] > 0 else 0
+                elif row[0] == homeoffice_type:
+                    res[day_detail.id]['homeoffice'] = planned if row[1] > 0 else 0
                 else:
                     res[day_detail.id]['others'] = (row[1] > 0 and 1 or 0) * planned
             
@@ -509,6 +515,7 @@ class hr_timesheet_sheet_sheet_day_detail(osv.osv):
         'vacation': fields.function(_leaves, string='Vacation', type='float', multi='_leaves', readonly=True),
         'illness': fields.function(_leaves, string='Illness', type='float', multi='_leaves', readonly=True),
         'zeitausgleich': fields.function(_leaves, string='Zeitausgleich', type='float', multi='_leaves', readonly=True),
+        'homeoffice': fields.function(_leaves, string='Home-Office', type='float', multi='_leaves', readonly=True),
         'others': fields.function(_leaves, string='Other Leaves', type='float', multi='_leaves', readonly=True),
         'overtime': fields.function(_overtime, string='Overtime', type='float', readonly=True),
         'real_planned': fields.function(_leaves, string='Planned', type='float', multi='_leaves', readonly=True),
@@ -774,7 +781,7 @@ class res_company(osv.osv):
         'vacation_type_id': fields.many2one('hr.holidays.status', 'Holiday state of vacation'),
         'illness_type_id': fields.many2one('hr.holidays.status', 'Holiday state of illness'),
         'zeitausgleich_type_id': fields.many2one('hr.holidays.status', 'Holiday state of Zeitausgleich'),
-
+        'homeoffice_type_id': fields.many2one('hr.holidays.status', 'Holiday state of Home-Office'),
     }
     
     def _get_default_vacation_type(self, cr, uid, context=None):
@@ -795,15 +802,23 @@ class res_company(osv.osv):
                 cr, uid, 'cam_hr_overtime', 'holiday_status_zeitausgleich')[1]
         except ValueError:
             return False
+
+    def _get_default_homeoffice_type(self, cr, uid, context=None):
+        try:
+            return self.pool.get('ir.model.data').get_object_reference(
+                cr, uid, 'cam_hr_overtime', 'holiday_status_homeoffice')[1]
+        except ValueError:
+            return False
     
     _defaults = {
         'time_credit': 0,
         'max_difference_day':  0,
         'lunch_duration': 60,
-        'timesheet_range':'month',
+        'timesheet_range': 'month',
         'vacation_type_id': _get_default_vacation_type,
         'illness_type_id': _get_default_illness_type,
         'zeitausgleich_type_id': _get_default_zeitausgleich_type,
+        'homeoffice_type_id': _get_default_homeoffice_type,
     }
 res_company()
 
