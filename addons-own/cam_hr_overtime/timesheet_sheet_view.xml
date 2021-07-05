@@ -139,6 +139,7 @@
                                 <field name="vacation" widget="float_time" sum="Total Vacation"/>
                                 <field name="illness" widget="float_time" sum="Total Illness"/>
                                 <field name="zeitausgleich" widget="float_time" sum="ZA"/>
+                                <field name="homeoffice" widget="float_time" sum="HO"/>
                                 <field name="others" widget="float_time" sum="Total Others"/>
                                 <field name="attendance" widget="float_time" sum="Total Attendance" />
                                 <field name="overtime" widget="float_time" sum="Total Overtime"/>

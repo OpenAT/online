@@ -120,6 +120,24 @@ class GetResponseContact(models.Model):
             if binding.getresponse_id:
                 import_record(session, binding._name, binding.backend_id.id, binding.getresponse_id)
 
+    # -------------------
+    # VIEW ACTION BUTTONS
+    # -------------------
+    @api.multi
+    def button_open_getresponse_jobs(self):
+        assert self.ensure_one(), "Please select one Contact Binding only!"
+        # HINT: This will not overwrite the domain of the view because we do not use action.domain =
+        #       Maybe we should do a deepcopy and a convert to an dict to make this more obvious ;)
+        action = self.env['ir.actions.act_window'].for_xml_id('connector', 'action_queue_job')
+        action['domain'] = [('binding_id', '=', self.id),
+                            ('binding_model', '=', self._name),
+                            '|',
+                                ('active', '=', False),
+                                ('active', '=', True)
+                            ]
+        action['context'] = {}
+        return action
+
     # ------
     # WIZARD
     # ------

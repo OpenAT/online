@@ -76,10 +76,14 @@ class MailMassMailingList(models.Model):
     @api.depends('goal', 'goal_increase_at', 'contact_ids')
     def _cmp_goal_reached(self):
         for r in self:
-            if r.goal and r.contact_nbr:
+            # Initialize dynamic goal
+            goal_dynamic = r.goal_dynamic if r.goal_dynamic else r.goal
 
-                # Initialize dynamic goal
-                goal_dynamic = r.goal_dynamic if r.goal_dynamic else r.goal
+            # Initialize goal_reached
+            goal_reached = 0
+
+            # Compute percentage reached for field goal_reached
+            if r.goal and r.contact_nbr:
 
                 # Number of subscriptions (int)
                 contact_nbr = r.contact_nbr
@@ -88,22 +92,21 @@ class MailMassMailingList(models.Model):
                     return int(round(float(subscribers) / (float(goal) / 100)))
 
                 # Compute percentage reached based on list subscriptions
-                percentage_reached = pr(contact_nbr, goal_dynamic)
+                goal_reached = pr(contact_nbr, goal_dynamic)
 
                 # Compute new dynamic goal and percentage_reached
                 runs = 1
-                while r.goal_increase_step and percentage_reached >= r.goal_increase_at:
+                while r.goal_increase_step and goal_reached >= r.goal_increase_at:
                     goal_dynamic = goal_dynamic + r.goal_increase_step
-                    percentage_reached = pr(contact_nbr, goal_dynamic)
+                    goal_reached = pr(contact_nbr, goal_dynamic)
                     runs = runs + 1
                     if runs > 100:
                         logger.error("goal_dynamic still not high enough after 100 increments!")
                         break
 
-                r.goal_dynamic = goal_dynamic
-                r.goal_reached = percentage_reached
-            else:
-                r.goal_reached = 0
+            # Assign computed values to fields
+            r.goal_dynamic = goal_dynamic
+            r.goal_reached = goal_reached
 
     def _cmp_website_url(self):
         for r in self:
