@@ -21,10 +21,10 @@ msgstr ""
 msgid "\n"
 "    <h4>You will be redirect to our payment provider to safely finish your donation!</h4>\n"
 "    <p>If you are not redirected in a few seconds please click the button below.</p>\n"
-"                                              "
+""
 msgstr "\n"
-"    <h4>Sie werden in wenigen Sekunden zu unserem Zahlungsanbieter weitergeleitet bei dem Sie den Zahlungsvorgang sicher abschließen können!</h4>\n"
-"    <p>Falls Sie nicht in wenigen Sekunden automatisch weitergeleitet werden klicken Sie bitte auf den untenstehenden Knopf.</p>\n"
+"    <h4>Sie werden in wenigen Sekunden zu unserem Zahlungsanbieter weitergeleitet, bei dem Sie den Zahlungsvorgang sicher abschließen können!</h4>\n"
+"    <p>Falls Sie nicht in wenigen Sekunden automatisch weitergeleitet werden, klicken Sie bitte auf den untenstehenden Button.</p>\n"
 ""
 
 #. module: website_sale_donate
@@ -136,7 +136,7 @@ msgstr "1242"
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.monthly_2
 msgid "2-monthly"
-msgstr "2-monthly"
+msgstr "zwei-monatlich"
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.birthdate_web
@@ -146,7 +146,7 @@ msgstr "30.01.1980"
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.monthly_4
 msgid "4-monthly"
-msgstr "4-monthly"
+msgstr "vier-montalich"
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.street_number_web
@@ -157,8 +157,8 @@ msgstr "52a"
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,placeholder:website_sale_donate.zip
 #: model:website.checkout_shipping_fields,placeholder:website_sale_donate.shipping_zip
-msgid "56382"
-msgstr "56382"
+msgid "5638"
+msgstr "5638"
 
 #. module: website_sale_donate
 #: model:website.checkout_billing_fields,information:website_sale_donate.legal_terms_web
@@ -2035,7 +2035,7 @@ msgstr "_top"
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.annually
 msgid "annually"
-msgstr "annually"
+msgstr "jährlich"
 
 #. module: website_sale_donate
 #: view:website:website_sale.products
@@ -2105,7 +2105,7 @@ msgstr "am"
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.once_only
 msgid "once-only"
-msgstr "once-only"
+msgstr "einmalig"
 
 #. module: website_sale_donate
 #: view:website:website_sale.products_item
@@ -2120,7 +2120,7 @@ msgstr "pull-right"
 #. module: website_sale_donate
 #: model:product.payment_interval,name:website_sale_donate.quarterly
 msgid "quarterly"
-msgstr "quarterly"
+msgstr "viertel-jährlich"
 
 #. module: website_sale_donate
 #: field:website.checkout_billing_fields,res_partner_field_id:0
