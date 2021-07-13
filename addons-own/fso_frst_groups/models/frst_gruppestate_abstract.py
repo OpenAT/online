@@ -55,7 +55,7 @@ class FRSTGruppeState(models.AbstractModel):
                                         ('approved', 'Approved'),
                                         ('unsubscribed', 'Unsubscribed'),
                                         ('expired', 'Expired')],
-                             string="State", readonly=True, compute="compute_state", store=True)
+                             string="State", readonly=True, compute="compute_state", store=True, index=True)
 
     steuerung_bit = fields.Boolean(string="Steuerung Bit", default=True,
                                    help="If not set: Person is explicitly excluded/unsubscribed from this group!")

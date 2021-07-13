@@ -11,14 +11,31 @@
                     <field name="getresponse_tag_ids" widget="many2many_tags"/>
                 </field>
                 <xpath expr="//div[@name='buttons']" position="inside">
-                    <button name="button_open_getresponse_bindings"
+                    <button name="button_open_getresponse_contact_bindings"
                             type="object"
                             class="oe_inline oe_stat_button"
                             string="GR Contact Bindings"
                             icon="fa-search-plus">
                     </button>
+                    <button name="button_open_getresponse_tag_bindings"
+                            type="object"
+                            class="oe_inline oe_stat_button"
+                            string="GR Tag Bindings"
+                            icon="fa-search-plus">
+                    </button>
+                    <button name="button_open_getresponse_jobs"
+                            type="object"
+                            class="oe_inline oe_stat_button"
+                            string="GR Jobs"
+                            icon="fa-search-plus">
+                    </button>
                 </xpath>
             </field>
         </record>
+
+        <!-- TODO: inherit search view and create search filter for:
+                - GR-Contact Bindings Missing: get_unbound() for all personemailgruppe of the partner and bindings that are not active
+                - GR-Tag Bindings Missing: get_unbound() for all gr.tag of the partner and bindings that are not active
+        -->
 
 </data></openerp>

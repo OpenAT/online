@@ -9,6 +9,14 @@
         <field name="arch" type="xml">
             <form string="GetResponse Tag Definition">
                 <sheet>
+                    <group name="buttons">
+                        <button name="button_open_getresponse_tag_bindings"
+                                type="object"
+                                class="oe_inline oe_stat_button"
+                                string="GR Contact Bindings"
+                                icon="fa-search-plus">
+                        </button>
+                    </group>
                     <group>
                         <field name="name"/>
                         <field name="type"/>
@@ -17,6 +25,9 @@
                     <group string="Extra Information">
                         <field name="description"/>
                         <field name="origin"/>
+                    </group>
+                    <group string="GR Bindings">
+                        <field name="getresponse_bind_ids" domain="['|',('active', '=', False),('active', '=', True)]"/>
                     </group>
                     <group string="Partner with this Tag">
                         <field name="partner_ids">
@@ -74,6 +85,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
+        <field name="domain">['|', ('active', '=', False), ('active', '=', True)]</field>
         <field name="search_view_id" ref="gr_tag_search"/>
     </record>
     <record id="gr_tag_tree_viewaction" model="ir.actions.act_window.view">

@@ -36,8 +36,8 @@ class FRSTPersonEmailGruppe(models.Model):
                                           string="FRST E-Mail",
                                           required=True, ondelete='cascade', index=True)
 
-    partner_frst_blocked = fields.Boolean(string="Partner blocked", readonly=True)
-    partner_frst_blocked_email = fields.Boolean(string="Partner e-mail blocked", readonly=True)
+    partner_frst_blocked = fields.Boolean(string="Partner blocked", readonly=True, index=True)
+    partner_frst_blocked_email = fields.Boolean(string="Partner e-mail blocked", readonly=True, index=True)
 
     @api.multi
     def _compute_state(self):

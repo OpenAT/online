@@ -12,7 +12,7 @@
 import logging
 from getresponse.excs import NotFoundError
 
-from openerp import models, fields
+from openerp import models, fields, api
 
 from openerp.addons.connector.exception import IDMissingInBackend
 
@@ -68,6 +68,8 @@ class GetResponseGrTagBinding(models.Model):
         string='Last synchronization data to compare',
         readonly=True)
 
+    # log = fields.Text(string="Log", readonly=True)
+
     active = fields.Boolean(string="Active", default=True)
 
     # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
@@ -78,6 +80,24 @@ class GetResponseGrTagBinding(models.Model):
         ('odoo_uniq', 'unique(backend_id, odoo_id)',
          'A binding already exists for this odoo record and this GetResponse backend (Account).'),
     ]
+
+    # -------------------
+    # VIEW ACTION BUTTONS
+    # -------------------
+    @api.multi
+    def button_open_getresponse_jobs(self):
+        assert self.ensure_one(), "Please select one Tag Binding only!"
+        # HINT: This will not overwrite the domain of the view because we do not use action.domain =
+        #       Maybe we should do a deepcopy and a convert to an dict to make this more obvious ;)
+        action = self.env['ir.actions.act_window'].for_xml_id('connector', 'action_queue_job')
+        action['domain'] = [('binding_id', '=', self.id),
+                            ('binding_model', '=', self._name),
+                            '|',
+                                ('active', '=', False),
+                                ('active', '=', True)
+                            ]
+        action['context'] = {}
+        return action
 
 
 class GrTagGetResponse(models.Model):

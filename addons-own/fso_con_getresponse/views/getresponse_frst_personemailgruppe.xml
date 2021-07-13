@@ -64,10 +64,9 @@
                     <field name="getresponse_id"/>
                     <field name="sync_date"/>
                     <field name="display_name"/>
-
                     <field name="zgruppedetail_id" invisible="1"/>
                     <field name="frst_personemail_id" invisible="1"/>
-                    <field name="active" invisible="1"/>
+                    <field name="active" invisible="0"/>
                 </tree>
             </field>
         </record>
@@ -102,11 +101,28 @@
                         <filter name="filter_inactive" string="Inaktiv/Geloescht"
                                 domain="[('active', '=', False)]"/>
                     </group>
+                    <group expand="1" string="Check for Sync-Errors" name="sync_errors">
+                        <filter name="error_not_deleted_in_gr" string="Inactive or Blocked in FS-Online but Active-Binding"
+                                domain="[
+                                    ('active', '=', True),
+                                    '|', '|',
+                                        ('odoo_id.state', 'not in', ['subscribed', 'approved']),
+                                        ('odoo_id.partner_frst_blocked', '=', True),
+                                        ('odoo_id.partner_frst_blocked_email', '=', True),
+                                ]"/>
+                        <filter name="error_not_active_in_gr" string="Subscribed and not Blocked in FS-Online but Inactive-Binding"
+                                domain="[
+                                    ('active', '=', False),
+                                    ('odoo_id.state', 'in', ['subscribed', 'approved']),
+                                    ('odoo_id.partner_frst_blocked', '=', False),
+                                    ('odoo_id.partner_frst_blocked_email', '=', False),
+                                ]"/>
+                    </group>
                     <group expand="1" string="Group By..." name="group_by">
-                        <filter name="group_zgruppedetail_id" string="By FRST Group" domain="[]" context="{'group_by':'zgruppedetail_id'}"/>
-                        <filter name="group_backend_id" string="By Backend" domain="[]" context="{'group_by':'backend_id'}"/>
-                        <filter name="group_sync_date" string="By Sync Date" domain="[]" context="{'group_by':'sync_date'}"/>
-                        <filter name="group_active" string="By active" domain="[]" context="{'group_by':'active'}"/>
+                        <filter name="group_zgruppedetail_id" string="By FRST Group" context="{'group_by':'zgruppedetail_id'}"/>
+                        <filter name="group_backend_id" string="By Backend" context="{'group_by':'backend_id'}"/>
+                        <filter name="group_sync_date" string="By Sync Date" context="{'group_by':'sync_date'}"/>
+                        <filter name="group_active" string="By active" context="{'group_by':'active'}"/>
                     </group>
                 </search>
             </field>
@@ -118,6 +134,7 @@
             <field name="res_model">getresponse.frst.personemailgruppe</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">['|', ('active', '=', False), ('active', '=', True)]</field>
             <field name="view_id" ref="view_getresponse_frst_personemailgruppe_tree"/>
         </record>
 

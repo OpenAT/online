@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import logging
 from copy import deepcopy
 
@@ -57,7 +58,7 @@ class GetResponseBinder(Binder):
         ATTENTION: This method should be used to remove/filter out unwanted unbound records that should not get a
                    binding record at all (should not be exported)
         """
-        domain = domain if domain else []
+        domain = copy.deepcopy(domain) if domain else []
         unwrapped_odoo_model = self.unwrap_model()
         backend_id = self.backend_record.id
 
@@ -112,9 +113,15 @@ class GetResponseBinder(Binder):
 
         # Include records without any binding at all OR Include records if no binding exist for current backend
         # and append the given domain (which normally just excludes records based on states or Opt-Out fields)
-        get_unbound_domain = ['|',
-                                (self._inverse_binding_ids_field, '=', False),
-                                '!', (backend_id_search_path, '=', backend_id)]
+        # get_unbound_domain = ['|',
+        #                         (self._inverse_binding_ids_field, '=', False),
+        #                         '!', (backend_id_search_path, '=', backend_id)]
+        get_unbound_domain = [
+            '|',
+                '!', ('getresponse_bind_ids.active', '=', True),
+                '!', '&', ('getresponse_bind_ids.active', '=', True),
+                          ('getresponse_bind_ids.backend_id.id', '=', 1),
+        ]
         get_unbound_domain += domain
 
         # Search for unbound records
@@ -134,11 +141,22 @@ class GetResponseBinder(Binder):
             assert isinstance(append_vals, dict), "'append_vals' must be a dict!"
             binding_vals.update(append_vals)
 
+        # Delete deactivated bindings to avoid unique constraint errors
+        inactive_bindings = self.model.search([(self._backend_field, '=', backend_id),
+                                               (self._openerp_field, '=', unwrapped_record_id),
+                                               ('active', '=', False)
+                                               ])
+        if inactive_bindings:
+            unwrapped_odoo_model = self.unwrap_model()
+            _logger.warning("Inactive bindings %s will be deleted for record %s %s before creating a new binding!" %
+                            (inactive_bindings.ids, unwrapped_odoo_model, unwrapped_record_id))
+            inactive_bindings.unlink()
+
+        # Create the binding
+        binding_model = self.model
         if connector_no_export:
-            prepared_binding_record = self.model.with_context(
-                connector_no_export=connector_no_export).create(binding_vals)
-        else:
-            prepared_binding_record = self.model.create(binding_vals)
+            binding_model = self.model.with_context(connector_no_export=connector_no_export)
+        prepared_binding_record = binding_model.create(binding_vals)
 
         _logger.info("Prepared binding record '%s', '%s'" % (prepared_binding_record._name, prepared_binding_record.id))
 
@@ -148,19 +166,21 @@ class GetResponseBinder(Binder):
     def prepare_bindings(self, unbound_unwrapped_records=None, domain=None, append_vals=None, connector_no_export=None,
                          limit=None):
         """ Prepare (create) binding records for all unwrapped records without a binding record
-        ATTENTION: This method must be used by all methods and consumer that prepare (create) binding records!
+        ATTENTION: This method must be used by all methods and consumer that prepare (create) binding records to make
+                   sure the rules (domain) of get_unbound() are applied to filter out any invalid-unwrapped-records!
 
-        HINT: If you use unbound_unwrapped_records (recordset) instead of a domain the filters of get_unbound will not
-              apply. This is like a 'force' prepare binding!
+        ATTENTION: 'unbound_unwrapped_records' is deprecated! You can no longer force create a binding to avoid nasty
+                   side effects! get_unbound() must be used to filter out all records that are not allowed to be
+                   synced (e.g. blocked or deactivated records).
 
-          domain: an odoo domain for the unwrapped odoo model
+          domain: an odoo domain for the unwrapped odoo model that will be appended to the get_unbound() domain.
+                  e.g.: domain=[('id', '=', unwrapped_record.id)]. If no domain is given get_unbound() will search
+                  for all valid unbound records.
         """
-        assert not (unbound_unwrapped_records and domain), "Use 'domain' or 'unbound_unwrapped_records' but not both!"
-        assert not (unbound_unwrapped_records and limit), "Use 'limit' or 'unbound_unwrapped_records' but not both!"
+        assert not unbound_unwrapped_records, "'unbound_unwrapped_records' is deprecated!"
 
         # Get unbound records based on the domain
-        if not unbound_unwrapped_records:
-            unbound_unwrapped_records = self.get_unbound(domain=domain, limit=limit)
+        unbound_unwrapped_records = self.get_unbound(domain=domain, limit=limit)
 
         # Check the model of the recordset 'unbound_unwrapped_records'
         unwrapped_odoo_model = self.unwrap_model()

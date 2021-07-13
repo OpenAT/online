@@ -60,6 +60,7 @@
                     <field name="odoo_id"/>
                     <field name="sync_date"/>
                     <field name="backend_id"/>
+                    <field name="active"/>
                 </tree>
             </field>
         </record>
@@ -70,6 +71,7 @@
             <field name="res_model">getresponse.frst.zgruppedetail</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">['|', ('active', '=', False), ('active', '=', True)]</field>
             <field name="view_id" ref="view_getresponse_frst_zgruppedetail_tree"/>
         </record>
 

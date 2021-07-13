@@ -12,14 +12,26 @@
                     <!-- TODO: Add button to open GR-Contact binding! active or inactive! -->
                     <!-- TODO: Add button to open related connector jobs! active and inactive! -->
                     <group>
-                        <button name="prepare_getresponse_binding"
-                                type="object"
-                                class="oe_button oe_form_button"
-                                style="margin-right:1em;"
-                                string="Prepare GetResponse Binding"
-                                colspan="2"
-                        />
-                        <field name="getresponse_bind_ids"/>
+                        <group>
+                            <button name="prepare_getresponse_binding"
+                                    type="object"
+                                    class="oe_button oe_form_button"
+                                    style="margin-right:1em;"
+                                    string="Prepare GetResponse Binding"
+                                    colspan="2"
+                            />
+                        </group>
+                        <group>
+                            <button name="button_open_getresponse_bindings"
+                                    type="object"
+                                    class="oe_inline oe_stat_button"
+                                    string="GR Contact Bindings"
+                                    icon="fa-search-plus">
+                            </button>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="getresponse_bind_ids" domain="['|',('active', '=', False),('active', '=', True)]"/>
                     </group>
                 </page>
             </xpath>

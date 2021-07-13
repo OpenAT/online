@@ -68,6 +68,8 @@ class GetResponseCampaign(models.Model):
         string='Last synchronization data to compare',
         readonly=True)
 
+    # log = fields.Text(string="Log", readonly=True)
+
     active = fields.Boolean(string="Active", default=True)
 
     # ATTENTION: !!! THE 'getresponse_uniq' CONSTRAIN MUST EXISTS FOR EVERY BINDING MODEL !!!
