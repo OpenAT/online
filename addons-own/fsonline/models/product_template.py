@@ -65,7 +65,8 @@ class ProductTemplateExtensions(models.Model):
             'view_type': 'form',
             'view_mode': 'tree,form',
             'target': 'current',
-            'domain': [('id', 'in', active_product_template.widget_manager_ids.ids)]
+            'domain': [('id', 'in', active_product_template.widget_manager_ids.ids)],
+            'context': {'default_source_page': active_product_template.website_url}
         }
 
     @api.multi

@@ -17,14 +17,37 @@
 
                         <!-- HEAD (Button Box Name and Image) -->
                         <div class="oe_right oe_button_box" style="width: 400px;" name="buttons">
-                             <button class="oe_inline oe_stat_button"
-                                     type="object"
-                                     name="button_open_widget_manager"
-                                     icon="fa-puzzle-piece"
-                                     attrs="{'invisible':[('widget_manager_ids','=',[])]}">
+                            <button string="Open Webpage"
+                                    icon="fa-globe"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_product_page"/>
+                            <button
+                                    icon="fa-bar-chart-o"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_product_statistics">
+                                <field string="Statistic"
+                                       name="sold_total"
+                                       widget="statinfo" />
+                            </button>
+                            <button
+                                    class="oe_inline oe_stat_button"
+                                    name="action_view_sales_sold_total"
+                                    type="object"
+                                    icon="fa-euro">
+                                <field string="Sales"
+                                       name="sold_total"
+                                       widget="statinfo" />
+                            </button>
+                            <button
+                                    icon="fa-external-link"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_widget_manager">
                                 <field name="widget_manager_count"
                                        widget="statinfo"
-                                       string="Widget Mgrs."/>
+                                       string="Widgets"/>
                             </button>
                         </div>
 
@@ -79,18 +102,50 @@
                                     </group>
                                 </group>
                                 <group string="Fundraising Studio Groups">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            These Fundraising Studio groups are automatically assigned to the partner when a donation is made
+                                            (an order is accepted).
+                                        </p>
+                                    </div>
                                     <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
                                            widget="many2many_tags"
                                            options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                                 </group>
                                 <group string="Search Engine Optimization">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            This will be added to the product url instead of the product name. E.g. if the product name is
+                                            'standard-donation' and the 'seo_url' is 'we-help-now' the url will be changed from
+                                            <bold>'/shop/product/standard-donation-1'</bold> to <bold>'/shop/product/we-help-now'</bold>.
+                                        </p>
+                                    </div>
                                     <field name="seo_url" string="Forced SEO URL"/>
                                 </group>
                                 <group string="Thank You Page">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            What page to load after the payment provider! This is normally the default thank-you-page '/shop/confirmation_static' or a page
+                                            where the default FS-Online thank-you-page is embedded as an iframe. You may set this at multiple levels:
+                                            'Globally > by Payment Provider > by Category > by Product' where the later overrules the former.
+                                        </p>
+                                    </div>
                                     <field name="redirect_url_after_form_feedback" string="Redirect URL after PP Form-Feedback"/>
                                 </group>
                                 <group string="Donation Cart Settings (Shopping Cart)">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            Products with identical configurations (Theme, Checkout Fields, redirect_url, ...) will stay in the cart together by default.
+                                            If you wish to remove all other products from the cart when this product is added to the cart (regardless of the configuration)
+                                            you can tick this checkbox. This should be set for all products if you do not show the cart in your checkout process!
+                                        </p>
+                                    </div>
                                     <field name="clear_cart" string="Remove other Products"/>
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                           If set the cart page will be skipped!
+                                        </p>
+                                    </div>
                                     <field name="simple_checkout" string="Skip Donation Cart"/>
                                 </group>
                             </page>
@@ -106,7 +161,7 @@
                                     <group col="2">
                                         <field name="donation_input_template" string="Donation Buttons Template"/>
                                         <field name="price_suggested_ids" string="Suggested Values (Donation Buttons)"
-                                               attrs="{'invisible': [('price_donate','=', False)]}" colspan="2">
+                                               colspan="2">
                                             <tree string="Suggested Donation-Values" default_order="sequence"
                                                   editable="bottom">
                                                 <field name="sequence" widget="handle"/>
@@ -120,7 +175,7 @@
                                     </group>
                                 </group>
 
-                                <group string="Payment Interval" attrs="{'invisible': [('price_donate','=', False)]}">
+                                <group string="Payment Interval">
                                     <div colspan="2" class="backend-help oe_edit_only">
                                         <p>Leave this empty for non-recurring donations or products.
                                         </p>
@@ -632,6 +687,7 @@
                     <field name="website_published_start" string="Pub. Start"/>
                     <field name="website_published_end" string="Pub. End"/>
                     <field name="website_visible" string="Visible"/>
+
                 </tree>
             </field>
         </record>
