@@ -226,6 +226,7 @@
                                     <group>
                                         <div class="text-center oe_edit_only">
                                             <div style="display: inline-block; max-width: 300px;">
+                                                Click me to expand
                                                 <a data-toggle="modal" data-target="#modal_structure_info">
                                                     <img src="/fsonline/static/src/img/ppt_donate.jpg"
                                                          class="img-responsive"
@@ -260,8 +261,10 @@
                                                 <field name="format"
                                                        attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_ahch')]}"/>
                                                 <field name="alternative_product_ids"
-                                                       string="Linked Donation or Product pages" widget="many2many_tags"/>
-                                                <field name="parallax_image_medium" string="Page Background" widget="image"
+                                                       string="Linked Donation or Product pages"
+                                                       widget="many2many_tags"/>
+                                                <field name="parallax_image_medium" string="Page Background"
+                                                       widget="image"
                                                        class="oe_avatar oe_left"/>
                                                 <field name="parallax_speed" string="Background Scroll Speed (Parallax)"
                                                        attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
@@ -309,7 +312,8 @@
 
                                         <group name="steps_and_donation_buttons" string="Shop Steps">
                                             <group colspan="2" name="step_indicator_setup">
-                                                <field name="step_indicator_setup" string="Individual Step-Indicator Setup"/>
+                                                <field name="step_indicator_setup"
+                                                       string="Individual Step-Indicator Setup"/>
                                             </group>
                                             <group colspan="2" name="step_indicator_setup_settings"
                                                    string="List Classes (UL Elements)"
@@ -337,7 +341,8 @@
                                                                  ('step_indicator_setup','=', False)]}"/>
                                             </group>
 
-                                            <group colspan="2" string="Checkout Indicator" class="fso_backend_separator">
+                                            <group colspan="2" string="Checkout Indicator"
+                                                   class="fso_backend_separator">
                                                 <field name="hide_checkout_indicator" string="Hide Step"
                                                        attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
                                                 <field name="checkout_indicator_name" string="Step Name"
@@ -355,7 +360,8 @@
                                                                  ('step_indicator_setup','=', False)]}"/>
                                             </group>
 
-                                            <group colspan="2" string="Confirmation Indicator" class="fso_backend_separator">
+                                            <group colspan="2" string="Confirmation Indicator"
+                                                   class="fso_backend_separator">
                                                 <field name="hide_confirmation_indicator" string="Hide Step"
                                                        attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
                                                 <field name="confirmation_indicator_name" string="Step Name"
@@ -370,13 +376,34 @@
                                           attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
                                         <group string="Donation Target"
                                                attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
-                                            <group>
-                                                <field name="funding_goal"/>
-                                                <field name="funding_user"/>
-                                            </group>
-                                            <group>
-                                                <field name="funding_reached" readonly="1"/>
-                                            </group>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <group>
+
+                                                        <field name="funding_goal"/>
+                                                        <field name="funding_user"/>
+                                                    </group>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <group>
+                                                        <field name="funding_reached" readonly="1"/>
+                                                    </group>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <group>
+                                                        <div class="text-left oe_edit_only">
+                                                            <div style="display: inline-block; overflow: hidden; max-height: 150px; max-width: 300px;">
+                                                                Click me to expand
+                                                                <a data-toggle="modal"
+                                                                   data-target="#modal_goal_donations_progress_info">
+                                                                    <img src="/fsonline/static/src/img/ppt_opc_fortschrittsbalken.jpg"
+                                                                         class="img-responsive"/>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </group>
+                                                </div>
+                                            </div>
                                         </group>
                                         <group string="Page Settings">
                                             <group string="Left Area" class="fso_backend_separator">
@@ -641,6 +668,31 @@
                                 <div class="modal-body text-center">
                                     <div style="display: inline-block;">
                                         <img src="/fsonline/static/src/img/gift_donations.jpg"
+                                             class="img-responsive"/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- HTML-Buttons dot work in backend views, so link is used instead -->
+                                    <a class="oe_button"
+                                       data-dismiss="modal"
+                                       href="javascript:void(0)">
+                                        Close
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Template Settings - Goal Progress Bar - Modal -->
+                    <div id="modal_goal_donations_progress_info"
+                         class="modal fade"
+                         role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div style="display: inline-block;">
+                                        <img src="/fsonline/static/src/img/ppt_opc_fortschrittsbalken.jpg"
                                              class="img-responsive"/>
                                     </div>
                                 </div>

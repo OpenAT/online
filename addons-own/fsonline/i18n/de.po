@@ -344,6 +344,11 @@ msgstr "Geschenksspenden"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
+msgid "Click me to expand"
+msgstr "Klicken um zu vergrößern"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
 msgid "Giftee Fields Form"
 msgstr "Formular"
 
