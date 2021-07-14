@@ -146,7 +146,7 @@
                 <menuitem id="menu_fsonline_fstoken_menu" action="auth_partner.fstoken_action" parent="menu_fsonline_access" sequence="1300"/>
         
             <!-- FUNDRAISING STUDIO -->
-            <menuitem id="menu_frst_settings" parent="menu_fsonline_system" name="Fundrasing Studio" sequence="2000"/>
+            <menuitem id="menu_frst_settings" parent="menu_fsonline_system" name="Fundraising Studio" sequence="2000"/>
 
             <!-- SETTINGS -->
             <menuitem id="menu_fsonline_settings" parent="menu_fsonline_system" name="Settings" sequence="10000"/>

@@ -1,26 +1,40 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* fsonline
+# 	* fsonline
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-23 12:45+0000\n"
-"PO-Revision-Date: 2021-06-23 12:45+0000\n"
+"POT-Creation-Date: 2021-07-14 14:04+0000\n"
+"PO-Revision-Date: 2021-07-14 16:14+0200\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"Language: de\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid ": adding or deleting attributes\n"
+msgid "'/shop/product/standard-donation-1'"
+msgstr "'/shop/product/standard-donation-1'"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "'/shop/product/we-help-now'"
+msgstr "'/shop/product/we-help-now'"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid ""
+": adding or deleting attributes\n"
 "                                    will delete and recreate existing variants and lead\n"
 "                                    to the loss of their possible customizations."
-msgstr ": Hinzufügen oder Löschen von Attributen\n"
+msgstr ""
+": Hinzufügen oder Löschen von Attributen\n"
 "                                    löscht bestehende Varianten und Leads.\n"
 "                                    Eventuelle Anpassungen gehen verloren."
 
@@ -103,6 +117,11 @@ msgstr "Schritt: Kasse"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
+msgid "Click me to expand"
+msgstr "Klicken um zu vergrößern"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
 msgid "Close"
 msgstr "Schließen"
 
@@ -175,13 +194,13 @@ msgstr "Keine Verlinkung zur Spendenseite"
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_domains
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_website_domains
 msgid "Domain Manager"
-msgstr "Domänenverwaltung"
+msgstr "Domain Manager"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_domain_templates
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_domain_templates
 msgid "Domain Templates"
-msgstr "Domänenvorlagen"
+msgstr "Domain Templates"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -344,11 +363,6 @@ msgstr "Geschenksspenden"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Click me to expand"
-msgstr "Klicken um zu vergrößern"
-
-#. module: fsonline
-#: view:product.template:fsonline.fso_product_template_form
 msgid "Giftee Fields Form"
 msgstr "Formular"
 
@@ -416,6 +430,11 @@ msgstr "Ausblenden"
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Hide Text"
 msgstr "Text ausblenden"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "If set the cart page will be skipped!"
+msgstr "Warenkorbseite wird übersprungen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -527,6 +546,11 @@ msgid "Open Product Statistics"
 msgstr "Produktstatistik öffnen"
 
 #. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Open Webpage"
+msgstr "Öffne Spendenseite"
+
+#. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree_inherited
 msgid "Open Widget Manager"
 msgstr "Widget Manager öffnen"
@@ -539,10 +563,12 @@ msgstr "Aufträge"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Override global payment configuration for this donation or product.\n"
+msgid ""
+"Override global payment configuration for this donation or product.\n"
 "                                            Note that this only works if \"Design Template\" (Template Settings) is set to\n"
 "                                            \"Donation One-Page-Checkout\"."
-msgstr "Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende /\n"
+msgstr ""
+"Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende /\n"
 "                                            dieses Produkt überschreiben.\n"
 "\n"
 "                                            Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout\n"
@@ -640,13 +666,13 @@ msgid "Product Overview Pages"
 msgstr "Produktübersichtsseiten"
 
 #. module: fsonline
-#: code:addons/fsonline/models/product_template.py:60
+#: code:addons/fsonline/models/product_template.py:50
 #, python-format
 msgid "Product Page"
 msgstr "Produktseite"
 
 #. module: fsonline
-#: code:addons/fsonline/models/product_template.py:91
+#: code:addons/fsonline/models/product_template.py:78
 #, python-format
 msgid "Product Statistics"
 msgstr "Produktstatistik"
@@ -655,6 +681,14 @@ msgstr "Produktstatistik"
 #: model:ir.model,name:fsonline.model_product_template
 msgid "Product Template"
 msgstr "Produktvorlage"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid ""
+"Products with identical configurations (Theme, Checkout Fields, redirect_url, ...) will stay in the cart together by default.\n"
+"                                            If you wish to remove all other products from the cart when this product is added to the cart (regardless of the configuration)\n"
+"                                            you can tick this checkbox. This should be set for all products if you do not show the cart in your checkout process!"
+msgstr "Produkte mit identischer Konfiguration können gemeinsam in den Warenkorb gelegt werden. (Strukturvorlage, Theme, Personendatenfelder usw. müssen gleich sein). Wenn man diese Option aktiviert werden alle anderen Produkte beim Hinzufügen dieses Produktes aus dem Warenkorb entfernt selbst wenn die Konfiguration gleich ist. Dies ist besonders dann wichtig wenn der Warenkorb beim Checkout-Vorgang nicht angezeigt werden soll."
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_tree
@@ -693,9 +727,9 @@ msgid "Remove other Products"
 msgstr "Andere Produkte entfernen"
 
 #. module: fsonline
-#: field:product.template,seo_relative_url:0
-msgid "SEO Relative URL"
-msgstr "Relative SEO URL"
+#: view:product.template:fsonline.fso_product_template_form
+msgid "Sales"
+msgstr "Verkäufe"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -760,6 +794,7 @@ msgstr "Spendenmeldungen"
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_donationshop_sale_order_line
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_shop_sale_order_line
+#: view:product.template:fsonline.fso_product_template_form
 msgid "Statistic"
 msgstr "Statistik"
 
@@ -800,9 +835,11 @@ msgstr "Vorlageneinstellungen"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Template settings define the look and feel of the website\n"
+msgid ""
+"Template settings define the look and feel of the website\n"
 "                                                    as well as the the available features!"
-msgstr "Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite\n"
+msgstr ""
+"Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite\n"
 "                                                    sondern auch über die verfügbaren Funktionen!"
 
 #. module: fsonline
@@ -817,12 +854,28 @@ msgstr "Theme"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "This category specifies the target account in accounting, unless\n"
+msgid ""
+"These Fundraising Studio groups are automatically assigned to the partner when a donation is made\n"
+"                                            (an order is accepted)."
+msgstr "Diese Fundraising Studio Gruppen werden bei Spendenabschluss zur Person automatisch hinzugefügt oder reaktiviert."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid ""
+"This category specifies the target account in accounting, unless\n"
 "                                                this product has an explicit accounts set. This category is unrelated\n"
 "                                                to website categories."
-msgstr "Die Kategorie des Produktes bestimmt die Zuordnung zu den Konten in der\n"
+msgstr ""
+"Die Kategorie des Produktes bestimmt die Zuordnung zu den Konten in der\n"
 "                                                Buchhaltung sofern diese nicht explizit für dieses Produkt\n"
 "                                                gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun."
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid ""
+"This will be added to the product url instead of the product name. E.g. if the product name is\n"
+"                                            'standard-donation' and the 'seo_url' is 'we-help-now' the url will be changed from"
+msgstr "Wird statt des Produktnames in der Produkt-URL verwendet. Z.B.: Wenn das Produkt die id 1 hat und den name Spende würde die URL /shop/product/spende-1 lauten. Setzt man nun in diesem Feld den Werd ‚Meine Super Spende‘ dann lautet die URL /shop/product/meine-super-spende-1"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_channels_track
@@ -867,7 +920,7 @@ msgstr "Web-Vorlage"
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
 msgid "Webshop: Enable Gifting Feature"
-msgstr "Webshop: Geschenke aktivieren"
+msgstr "Webshop: Geschenkfunktion aktivieren"
 
 #. module: fsonline
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_website_settings
@@ -881,7 +934,15 @@ msgid "Website Categories"
 msgstr "Webseitenkategorien"
 
 #. module: fsonline
-#: code:addons/fsonline/models/product_template.py:72
+#: view:product.template:fsonline.fso_product_template_form
+msgid ""
+"What page to load after the payment provider! This is normally the default thank-you-page '/shop/confirmation_static' or a page\n"
+"                                            where the default FS-Online thank-you-page is embedded as an iframe. You may set this at multiple levels:\n"
+"                                            'Globally > by Payment Provider > by Category > by Product' where the later overrules the former."
+msgstr "Seite die nach der Zahlung beim PaymentProvider aufgerufen werden soll. (Dankesseite). Kann auch global, per Kategorie oder per Zahlungsmethode konfiguriert werden."
+
+#. module: fsonline
+#: code:addons/fsonline/models/product_template.py:62
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_settings_widget_manager
 #: model:ir.ui.menu,name:fsonline.menu_fsonline_web_widget_manager
 #: model:ir.ui.menu,name:fsonline.widget_manager_menu
@@ -901,8 +962,13 @@ msgstr "Widget Manager"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
-msgid "Widget Mgrs."
-msgstr "Widget Mgr."
+msgid "Widgets"
+msgstr "Widgets"
+
+#. module: fsonline
+#: view:product.template:fsonline.fso_product_template_form
+msgid "to"
+msgstr "to"
 
 #. module: fsonline
 #: view:product.template:fsonline.fso_product_template_form
@@ -913,4 +979,3 @@ msgstr "=> Beschaffung vorschlagen"
 #: view:product.template:fsonline.fso_product_template_form
 msgid "⇒ Update"
 msgstr "=> Aktualisieren"
-

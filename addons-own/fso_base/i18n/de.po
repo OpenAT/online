@@ -541,8 +541,8 @@ msgstr "Fundraising Studio Gruppen"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_frst_settings
-msgid "Fundrasing Studio"
-msgstr "Fundrasing Studio"
+msgid "Fundraising Studio"
+msgstr "Fundraising Studio"
 
 #. module: fso_base
 #: model:ir.ui.menu,name:fso_base.menu_fsonline_groups_menu
