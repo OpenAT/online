@@ -1,429 +1,793 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp><data>
+<openerp>
+    <data>
 
-    <!-- DONATION PRODUCT TEMPLATE FORM -->
-    <record model="ir.ui.view" id="fso_product_template_form">
-        <field name="name">FS-Online Product Template Form</field>
-        <field name="model">product.template</field>
-        <field name="arch" type="xml">
-            <form string="Spenden, Artikel, Patenschaften, Events, Mitgliedschaften">
-                <!-- Technical fields -->
-                <field name="is_product_variant" invisible="1"/>
-                <field name='product_variant_count' invisible='1'/>
-                <!-- PRODUCT SHEET -->
-                <sheet>
+        <!-- DONATION PRODUCT TEMPLATE FORM -->
+        <record model="ir.ui.view" id="fso_product_template_form">
+            <field name="name">FS-Online Product Template Form</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <form string="Donations, Products, Sponsorships, Events, Memberships">
+                    <!-- Technical fields -->
+                    <field name="is_product_variant" invisible="1"/>
+                    <field name='product_variant_count' invisible='1'/>
+                    <field name='widget_manager_ids' invisible='1'/>
+                    <!-- PRODUCT SHEET -->
+                    <sheet>
 
-                    <!-- HEAD (Button Box Name and Image) -->
-                    <div class="oe_right oe_button_box" style="width: 400px;" name="buttons">
-                        <p>Button Box Placeholder</p>
-                    </div>
+                        <!-- HEAD (Button Box Name and Image) -->
+                        <div class="oe_right oe_button_box" style="width: 400px;" name="buttons">
+                            <button string="Open Webpage"
+                                    icon="fa-globe"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_product_page"/>
+                            <button
+                                    icon="fa-bar-chart-o"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_product_statistics">
+                                <field string="Statistic"
+                                       name="sold_total"
+                                       widget="statinfo" />
+                            </button>
+                            <button
+                                    class="oe_inline oe_stat_button"
+                                    name="action_view_sales_sold_total"
+                                    type="object"
+                                    icon="fa-euro">
+                                <field string="Sales"
+                                       name="sold_total"
+                                       widget="statinfo" />
+                            </button>
+                            <button
+                                    icon="fa-external-link"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_widget_manager">
+                                <field name="widget_manager_count"
+                                       widget="statinfo"
+                                       string="Widgets"/>
+                            </button>
+                        </div>
 
-                    <div class="oe_left" style="width: calc(100% - 430px);">
-                        <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
-                        <div style="margin-left: 140px; margin-top: 12px;">
-                            <div class="oe_edit_only"><label for="name" string="Name"/></div>
-                            <h1><field name="name" required="True"/></h1>
-                            <div class="oe_edit_only"><label for="description_sale" string="Kurztext / Kurzbeschreibung"/></div>
-                            <h3><field name="description_sale"/></h3>
+                        <div class="oe_left" style="width: calc(100% - 430px);">
+                            <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
+                            <div style="margin-left: 140px; margin-top: 12px;">
+                                <div class="oe_edit_only">
+                                    <label for="name" string="Name"/>
+                                </div>
+                                <h1>
+                                    <field name="name" required="True"/>
+                                </h1>
+                                <div class="oe_edit_only">
+                                    <label for="description_sale" string="Short Description"/>
+                                </div>
+                                <h3>
+                                    <field name="description_sale"/>
+                                </h3>
+                                <div class="oe_edit_only">
+                                    <label for="website_url" string="Default URL"/>
+                                </div>
+                                <h4>
+                                    <field name="website_url" invisible="0" widget="url" readonly="1"
+                                           string="Default URL"/>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <group name="Basic Settings">
+                            <group>
+                                <field name="fs_product_type" string="Fundraising Studio Type"/>
+                                <field name="type"/>
+                            </group>
+                            <group>
+                                <field name="uom_id" string="Unit of Measure"/>
+                            </group>
+                        </group>
+
+                        <!-- TABS -->
+                        <notebook>
+                            <page string="Control">
+                                <group>
+                                    <group>
+                                        <field name="website_published" string="Published"/>
+                                        <field name="website_published_start" string="Publish Start"/>
+                                        <field name="website_published_end" string="Publish End"/>
+                                        <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
+                                        <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
+                                    </group>
+                                    <group>
+                                        <field name="website_visible" string="Visible (computed)" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group string="Fundraising Studio Groups">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            These Fundraising Studio groups are automatically assigned to the partner when a donation is made
+                                            (an order is accepted).
+                                        </p>
+                                    </div>
+                                    <field name="zgruppedetail_ids" string="Fundraising Studio Groups"
+                                           widget="many2many_tags"
+                                           options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                                </group>
+                                <group string="Search Engine Optimization">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            This will be added to the product url instead of the product name. E.g. if the product name is
+                                            'standard-donation' and the 'seo_url' is 'we-help-now' the url will be changed from
+                                            <bold>'/shop/product/standard-donation-1'</bold> to <bold>'/shop/product/we-help-now'</bold>.
+                                        </p>
+                                    </div>
+                                    <field name="seo_url" string="Forced SEO URL"/>
+                                </group>
+                                <group string="Thank You Page">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            What page to load after the payment provider! This is normally the default thank-you-page '/shop/confirmation_static' or a page
+                                            where the default FS-Online thank-you-page is embedded as an iframe. You may set this at multiple levels:
+                                            'Globally > by Payment Provider > by Category > by Product' where the later overrules the former.
+                                        </p>
+                                    </div>
+                                    <field name="redirect_url_after_form_feedback" string="Redirect URL after PP Form-Feedback"/>
+                                </group>
+                                <group string="Donation Cart Settings (Shopping Cart)">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            Products with identical configurations (Theme, Checkout Fields, redirect_url, ...) will stay in the cart together by default.
+                                            If you wish to remove all other products from the cart when this product is added to the cart (regardless of the configuration)
+                                            you can tick this checkbox. This should be set for all products if you do not show the cart in your checkout process!
+                                        </p>
+                                    </div>
+                                    <field name="clear_cart" string="Remove other Products"/>
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                           If set the cart page will be skipped!
+                                        </p>
+                                    </div>
+                                    <field name="simple_checkout" string="Skip Donation Cart"/>
+                                </group>
+                            </page>
+
+                            <page string="Payment">
+                                <group>
+                                    <group string="Amount" col="2">
+                                        <field name="list_price" string="Default Amount"/>
+                                        <field name="price_donate" string="Arbitrary Amount"/>
+                                        <field name="price_donate_min" string="Minimal Amount"
+                                               attrs="{'invisible': [('price_donate','=', False)]}"/>
+                                    </group>
+                                    <group col="2">
+                                        <field name="donation_input_template" string="Donation Buttons Template"/>
+                                        <field name="price_suggested_ids" string="Suggested Values (Donation Buttons)"
+                                               colspan="2">
+                                            <tree string="Suggested Donation-Values" default_order="sequence"
+                                                  editable="bottom">
+                                                <field name="sequence" widget="handle"/>
+                                                <field name="name"/>
+                                                <field name="amount"/>
+                                                <field name="css_classes"/>
+                                                <field name="clearfix"/>
+                                                <field name="arbitrary_price"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+
+                                <group string="Payment Interval">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>Leave this empty for non-recurring donations or products.
+                                        </p>
+                                    </div>
+                                    <group>
+                                        <field name="payment_interval_default" string="Default Payment Interval"/>
+                                        <field name="auto_recompute_price_donate" string="Auto recompute Price Donate"/>
+                                    </group>
+                                    <group>
+                                        <label colspan="2" for="payment_interval_lines_ids"
+                                               string="Payment Interval Choices"/>
+                                        <field colspan="2" name="payment_interval_lines_ids" nolabel="1">
+                                            <tree string="Payment Intervals" default_order="sequence" editable="bottom">
+                                                <field name="sequence" widget="handle"/>
+                                                <field name="payment_interval_id"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </group>
+
+                                <!-- group string="Zahlungsmethoden" attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}" -->
+                                <group string="Payment Methods">
+                                    <div colspan="2" class="backend-help oe_edit_only">
+                                        <p>
+                                            Override global payment configuration for this donation or product.
+                                            Note that this only works if "Design Template" (Template Settings) is set to
+                                            "Donation One-Page-Checkout".
+                                        </p>
+                                    </div>
+                                    <!-- label colspan="2" for="product_acquirer_lines_ids" class="oe_edit_only"/ -->
+                                    <field colspan="2" name="product_acquirer_lines_ids" nolabel="1"
+                                           attrs="{'readonly': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}">
+                                        <tree string="Acquirers" default_order="sequence" editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="acquirer_id"/>
+                                            <field name="acquirer_pre_msg"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+
+                            <page string="Template Settings">
+                                <group>
+                                    <group>
+                                        <field name="product_page_template" string="Structural Template"/>
+                                        <field name="website_theme" string="Design Template"/>
+                                    </group>
+                                    <group>
+                                        <div class="text-center oe_edit_only">
+                                            <div style="display: inline-block; max-width: 300px;">
+                                                Click me to expand
+                                                <a data-toggle="modal" data-target="#modal_structure_info">
+                                                    <img src="/fsonline/static/src/img/ppt_donate.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
+
+                                                    <img src="/fsonline/static/src/img/ppt_opc.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
+
+                                                    <img src="/fsonline/static/src/img/ppt_ahch.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
+
+                                                    <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
+                                                         class="img-responsive"
+                                                         attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </group>
+                                </group>
+                                <notebook>
+                                    <page string="Page Settings">
+                                        <group>
+                                            <group string="Page Settings" class="fso_backend_separator">
+                                                <!-- h3 colspan="2" class="fso_backend_separator">Seiteneinstellungen</h3 -->
+                                                <field name="hide_categories" string="Hide Category Navigation"/>
+                                                <field name="hide_search" string="Hide Search"/>
+                                                <field name="show_desctop" string="Extra Widget Area at Page Start"/>
+                                                <field name="show_descbottom" string="Extra Widget Area at Page End"/>
+                                                <field name="hide_salesdesc" string="Hide Short Description"/>
+                                                <field name="format"
+                                                       attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_ahch')]}"/>
+                                                <field name="alternative_product_ids"
+                                                       string="Linked Donation or Product pages"
+                                                       widget="many2many_tags"/>
+                                                <field name="parallax_image_medium" string="Page Background"
+                                                       widget="image"
+                                                       class="oe_avatar oe_left"/>
+                                                <field name="parallax_speed" string="Background Scroll Speed (Parallax)"
+                                                       attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
+                                            </group>
+                                            <group string="Donation Box Settings" class="fso_backend_separator">
+                                                <!-- h3 colspan="2" class="fso_backend_separator">Spendenbox auf der Seite</h3 -->
+                                                <field name="hide_payment" string="Hide Donation Box"/>
+                                                <field name="hide_image" string="Hide Image"/>
+                                                <!-- field name="image_square" string="Bild (autom. quadratisch zugeschnitten)" widget="image" class="oe_avatar oe_left" attrs="{'readonly': True, 'invisible': [('hide_image','=', True)]}"/ -->
+                                                <field name="variants_as_list"
+                                                       string="Show Product Variants as Selection List"/>
+                                                <field name="payment_interval_as_selection"
+                                                       string="Show Payment Intervals as Selection List"/>
+                                                <field name="hide_quantity" string="Hide Quantity Selection"/>
+                                                <field name="hide_amount_title" string="Hide Amount Title"/>
+                                                <field name="amount_title" string="Differing Amount Title"
+                                                       attrs="{'invisible': [('hide_amount_title','=', True)]}"/>
+                                                <field name="hide_panelfooter" string="Hide Global Footer"/>
+                                            </group>
+                                            <group string="Donation Button" colspan="2">
+                                                <field name="button_addtocart_text" string="Button Text"/>
+                                            </group>
+                                            <div colspan="4" class="backend-help oe_edit_only">
+                                                <p>
+                                                    Template settings define the look and feel of the website
+                                                    as well as the the available features!
+                                                </p>
+                                            </div>
+                                        </group>
+                                    </page>
+
+                                    <page string="Form Fields">
+                                        <group string="Custom Checkout Fields">
+                                            <field name="checkout_form_id" string="Checkout Fields Form"/>
+                                            <button name="create_checkout_fields_form" type="object"
+                                                    string="Setup custom Checkout Fields"
+                                                    colspan="2"
+                                                    attrs="{'invisible': [('checkout_form_id', '!=', False)]}"
+                                            />
+                                        </group>
+                                    </page>
+
+                                    <page string="Shop Steps"
+                                          attrs="{'invisible':[('product_page_template', '=', 'website_sale_donate.ppt_opc')]}">
+
+                                        <group name="steps_and_donation_buttons" string="Shop Steps">
+                                            <group colspan="2" name="step_indicator_setup">
+                                                <field name="step_indicator_setup"
+                                                       string="Individual Step-Indicator Setup"/>
+                                            </group>
+                                            <group colspan="2" name="step_indicator_setup_settings"
+                                                   string="List Classes (UL Elements)"
+                                                   class="fso_backend_separator"
+                                                   attrs="{'readonly': [('step_indicator_setup','=', False)]}">
+                                                <field name="step_indicator_ul_class"
+                                                       string="CSS Classes"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                            </group>
+                                            <group colspan="2" string="Cart Indicator" class="fso_backend_separator">
+                                                <field name="hide_cart_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="cart_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_cart_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Product Indicator" class="fso_backend_separator">
+                                                <field name="hide_product_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="product_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_product_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Checkout Indicator"
+                                                   class="fso_backend_separator">
+                                                <field name="hide_checkout_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="checkout_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_checkout_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Payment Indicator" class="fso_backend_separator">
+                                                <field name="hide_payment_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="payment_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_payment_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+
+                                            <group colspan="2" string="Confirmation Indicator"
+                                                   class="fso_backend_separator">
+                                                <field name="hide_confirmation_indicator" string="Hide Step"
+                                                       attrs="{'readonly': [('step_indicator_setup','=', False)]}"/>
+                                                <field name="confirmation_indicator_name" string="Step Name"
+                                                       attrs="{'readonly': ['|',
+                                                                 ('hide_confirmation_indicator','=', True),
+                                                                 ('step_indicator_setup','=', False)]}"/>
+                                            </group>
+                                        </group>
+                                    </page>
+
+                                    <page string="Donation Target"
+                                          attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
+                                        <group string="Donation Target"
+                                               attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <group>
+
+                                                        <field name="funding_goal"/>
+                                                        <field name="funding_user"/>
+                                                    </group>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <group>
+                                                        <field name="funding_reached" readonly="1"/>
+                                                    </group>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <group>
+                                                        <div class="text-left oe_edit_only">
+                                                            <div style="display: inline-block; overflow: hidden; max-height: 150px; max-width: 300px;">
+                                                                Click me to expand
+                                                                <a data-toggle="modal"
+                                                                   data-target="#modal_goal_donations_progress_info">
+                                                                    <img src="/fsonline/static/src/img/ppt_opc_fortschrittsbalken.jpg"
+                                                                         class="img-responsive"/>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </group>
+                                                </div>
+                                            </div>
+                                        </group>
+                                        <group string="Page Settings">
+                                            <group string="Left Area" class="fso_backend_separator">
+                                                <field name="hide_fundingtext" string="Hide Short Description"/>
+                                                <field name="hide_fundingbar" string="Hide Progress Bar"/>
+                                                <field name="hide_fundingdesc" string="Hide Description"/>
+                                                <field name="funding_desc" string="Description"/>
+                                            </group>
+                                            <group string="Donation Box" class="fso_backend_separator">
+                                                <field name="hide_fundingtextincp" string="Hide Text"/>
+                                                <field name="hide_fundingbarincp" string="Hide Progress Bar"/>
+                                            </group>
+                                        </group>
+                                        <group string="Product Overview Pages">
+                                            <group>
+                                                <field name="hide_fundingtextinlist" string="Hide Text"/>
+                                                <field name="hide_fundingbarinlist" string="Hide Progress Bar"/>
+                                            </group>
+                                            <group>
+
+                                            </group>
+                                        </group>
+                                    </page>
+
+                                    <page string="Gift Donations">
+                                        <group>
+                                            <group string="Webshop: Enable Gifting Feature">
+                                                <field name="giftee_form_id" string="Giftee Fields Form"/>
+                                                <button name="create_giftee_fields_form" type="object"
+                                                        string="Enable Giftee Fields"
+                                                        colspan="2"
+                                                        attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
+                                                />
+                                                <field name="giftee_checkbox_text"
+                                                       attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
+                                                <field name="giftee_email_template"
+                                                       attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
+                                            </group>
+                                            <group>
+                                                <div class="text-center oe_edit_only">
+                                                    <div style="display: inline-block; max-width: 300px;">
+                                                        <a data-toggle="modal" data-target="#modal_gift_donations_info">
+                                                            <img src="/fsonline/static/src/img/gift_donations.jpg"
+                                                                 class="img-responsive"/>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </group>
+                                        </group>
+                                    </page>
+                                </notebook>
+                            </page>
+
+                            <page string="Shop Categories">
+                                <group string="Product List Settings">
+                                    <field name="website_sequence" string="Sequence"/>
+                                    <field name="public_categ_ids" string="Show in Categories"
+                                           widget="many2many_tags"/>
+                                    <field name="website_style_ids" string="Design (Additional CSS Classes)"
+                                           widget="many2many_tags"/>
+                                    <field name="do_not_link" string="Do not Link to Donation Page"/>
+                                    <field name="hide_price" string="Hide Amount"/>
+                                </group>
+                            </page>
+
+                            <page string="Digital Contents">
+                                <group string="Digital Contents"
+                                       attrs="{'invisible': [('product_page_template','==', 'website_sale.product')]}">
+                                    <field name="webshop_download_file" string="Download File" widget="binary"
+                                           filename="webshop_download_file_name"/>
+                                    <field name="webshop_download_file_name" string="Download Filename"/>
+                                </group>
+                            </page>
+
+                            <page name="variants" string="Variants">
+                                <div class="oe_right">
+                                    <button class="oe_inline oe_stat_button" string="Variant Prices"
+                                            name="%(product.variants_template_action)d" type="action"
+                                            icon="fa-strikethrough"/>
+                                    <button class="oe_inline oe_stat_button" name="%(product.product_variant_action)d"
+                                            type="action" icon="fa-sitemap">
+                                        <field string="List of Variants" name="product_variant_count"
+                                               widget="statinfo"/>
+                                    </button>
+                                </div>
+                                <p class="oe_grey">
+                                    <strong>Warning</strong>: adding or deleting attributes
+                                    will delete and recreate existing variants and lead
+                                    to the loss of their possible customizations.
+                                </p>
+                                <field name="attribute_line_ids" widget="one2many_list"
+                                       context="{'show_attribute': False}">
+                                    <tree string="Variants" editable="bottom">
+                                        <field name="attribute_id"/>
+                                        <field name="value_ids" widget="many2many_tags"
+                                               options="{'no_create_edit': True}"
+                                               domain="[('attribute_id', '=', attribute_id)]"
+                                               context="{'default_attribute_id': attribute_id}"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Accessory Products">
+                                <group>
+                                    <field name="accessory_product_ids" string="Accessory Donations and Products"
+                                           widget="many2many_tags"/>
+                                </group>
+                            </page>
+
+                            <page string="System">
+                                <group string="Information">
+                                    <group>
+                                        <field name="active"/>
+                                        <field name="state"/>
+                                        <field name="product_manager"/>
+                                        <field name="ean13"/>
+                                        <field name="default_code" string="Internal Code"/>
+                                        <field name="description" string="Internal Description"/>
+                                    </group>
+                                    <group>
+                                        <field name="id" readonly="True"/>
+                                        <field name="create_date" readonly="True"/>
+                                        <field name="create_uid" readonly="True"/>
+                                        <field name="write_date" readonly="True"/>
+                                        <field name="write_uid" readonly="True"/>
+                                        <!-- WARNING: fs_workflow is deprecated use fs_product_type instead !-->
+                                        <!--<field name="fs_workflow" string="FS Workflow (veraltet)"/>-->
+                                    </group>
+                                </group>
+
+                                <group string="Accounting">
+                                    <group>
+                                        <field name="categ_id"/>
+                                        <div colspan="2" class="backend-help oe_edit_only">
+                                            <p>
+                                                This category specifies the target account in accounting, unless
+                                                this product has an explicit accounts set. This category is unrelated
+                                                to website categories.
+                                            </p>
+                                        </div>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="property_account_income" domain="[('type', '!=', 'view')]"/>
+                                        <field name="taxes_id" widget="many2many_tags"/>
+                                    </group>
+                                    <group>
+                                        <field name="property_account_expense" domain="[('type', '!=', 'view')]"/>
+                                        <field name="supplier_taxes_id" widget="many2many_tags"/>
+                                    </group>
+                                </group>
+
+                                <group string="Procurement">
+                                    <group name="Supply Chain Information">
+                                        <field name="standard_price"/>
+                                        <field name="description_purchase"/>
+                                    </group>
+                                    <group name="Supply Chain">
+                                        <field name="route_ids" widget="many2many_checkboxes"/>
+                                        <field name="seller_ids"/>
+                                    </group>
+                                </group>
+
+                                <group string="Stock" attrs="{'invisible':[('type','=','service')]}">
+                                    <group name="Inventory Assessment" class="fso_backend_separator"
+                                           groups="base.group_user">
+                                        <label for="qty_available"/>
+                                        <div>
+                                            <field name="qty_available" class="oe_inline"/>
+                                            <button name="%(stock.action_view_change_product_quantity)d"
+                                                    string="⇒ Update"
+                                                    type="action"
+                                                    class="oe_link"/>
+                                        </div>
+                                        <label for="incoming_qty"/>
+                                        <div>
+                                            <field name="incoming_qty" class="oe_inline"/>
+                                            <button string="⇒ Request Procurement" name="%(stock.act_make_procurement)d"
+                                                    type="action" class="oe_link"/>
+                                        </div>
+                                        <field name="virtual_available"/>
+                                    </group>
+                                    <group name="Counter-Part Locations Properties" groups="stock.group_locations"
+                                           class="fso_backend_separator">
+                                        <field name="property_stock_procurement"
+                                               domain="[('usage','=','procurement')]"/>
+                                        <field name="property_stock_production" domain="[('usage','=','production')]"/>
+                                        <field name="property_stock_inventory" domain="[('usage','=','inventory')]"/>
+                                    </group>
+                                </group>
+                                <group name="Lager_2" attrs="{'invisible':[('type','=','service')]}">
+                                    <group name="Volume and Weight" class="fso_backend_separator">
+                                        <field name="volume"/>
+                                        <field name="weight"/>
+                                        <field name="weight_net"/>
+                                    </group>
+                                    <group name="Storage Location" class="fso_backend_separator">
+                                        <field name="loc_rack"/>
+                                        <field name="loc_row"/>
+                                        <field name="loc_case"/>
+                                    </group>
+                                </group>
+
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <!-- MODAL DIALOGS -->
+                    <!--
+                        Keep them outside of sheets. Otherwise the modal backdrop will cover the modal,
+                        blocking the entire UI.
+                    -->
+
+                    <!-- Template Settings - Modal -->
+                    <div id="modal_structure_info"
+                         class="modal fade"
+                         role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div style="display: inline-block;">
+                                        <img src="/fsonline/static/src/img/ppt_donate.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_donate')]}"/>
+
+                                        <img src="/fsonline/static/src/img/ppt_opc.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_opc')]}"/>
+
+                                        <img src="/fsonline/static/src/img/ppt_ahch.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_ahch')]}"/>
+
+                                        <img src="/fsonline/static/src/img/ppt_inline_donation.jpg"
+                                             class="img-responsive"
+                                             attrs="{'invisible':[('product_page_template', '!=', 'website_sale_donate.ppt_inline_donation')]}"/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- HTML-Buttons dot work in backend views, so link is used instead -->
+                                    <a class="oe_button"
+                                       data-dismiss="modal"
+                                       href="javascript:void(0)">
+                                        Close
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <group name="Basic Settings">
-                        <group>
-                            <field name="fs_product_type" string="Fundraising Studio Typ"/>
-                            <field name="website_theme" string="Website Theme (CSS)"/>
-                            <!-- !!! WARNING: fs_group_ids is deprecated !!! -->
-                            <!--<field name="fs_group_ids" string="Fundraising Studio Gruppen" widget="many2many_tags"/>-->
-                            <field name="zgruppedetail_ids" string="Fundraising Studio Gruppen"
-                                   widget="many2many_tags"
-                                   options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                            <field name="product_page_template" string="Webseitenvorlage (Struktur)"/>
-                            <field name="clear_cart"/>
-                            <field name="redirect_url_after_form_feedback"/>
-                        </group>
-                        <group>
-                            <field name="type"/>
-                            <field name="uom_id" string="Mengeneinheit"/>
-                            <field name="seo_url" string="Erzwungene URL (SEO)"/>
-                            <field name="website_url" invisible="0" widget="url" readonly="1" string="Standard URL"/>
-                        </group>
-                    </group>
-
-                    <!-- TABS -->
-                    <notebook>
-                        <page string="Zahlung">
-                            <group>
-                                <group string="Betrag" col="2">
-                                    <field name="list_price" string="Standard Betrag"/>
-                                    <field name="price_donate" string="Betrag frei wählbar"/>
-                                    <field name="price_donate_min" string="Mindestbetrag" attrs="{'invisible': [('price_donate','=', False)]}"/>
-                                </group>
-                                <group col="2">
-                                    <field name="donation_input_template" string="Spendenbuttons Template"/>
-                                    <field name="price_suggested_ids" string="Betragsvorschläge (Spendenbuttons)" attrs="{'invisible': [('price_donate','=', False)]}" colspan="2">
-                                        <tree string="Suggested Donation-Values" default_order="sequence" editable="bottom">
-                                            <field name="sequence" widget="handle"/>
-                                            <field name="name"/>
-                                            <field name="amount"/>
-                                            <field name="css_classes"/>
-                                            <field name="clearfix"/>
-                                            <field name="arbitrary_price"/>
-                                        </tree>
-                                    </field>
-                                </group>
-                            </group>
-
-                            <group string="Zahlungsinterval" attrs="{'invisible': [('price_donate','=', False)]}">
-                                <div colspan="2" class="backend-help oe_edit_only">
-                                    <p>Die Felder bitte leer lassen wenn diese Spende / dieser Artikel ausschließlich einmalig bezahlt werden soll</p>
+                    <!-- Template Settings - Gift Donations - Modal -->
+                    <div id="modal_gift_donations_info"
+                         class="modal fade"
+                         role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div style="display: inline-block;">
+                                        <img src="/fsonline/static/src/img/gift_donations.jpg"
+                                             class="img-responsive"/>
+                                    </div>
                                 </div>
-                                <group>
-                                    <field name="payment_interval_default" string="Standard Zahlungsinterval"/>
-                                    <field name="auto_recompute_price_donate"/>
-                                </group>
-                                <group>
-                                    <label colspan="2" for="payment_interval_lines_ids" string="Auswählbare Zahlungsintervalle"/>
-                                    <field colspan="2" name="payment_interval_lines_ids" nolabel="1">
-                                        <tree string="Payment Intervals" default_order="sequence" editable="bottom">
-                                            <field name="sequence" widget="handle"/>
-                                            <field name="payment_interval_id"/>
-                                        </tree>
-                                    </field>
-                                </group>
-                            </group>
-
-                            <!-- group string="Zahlungsmethoden" attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}" -->
-                            <group string="Zahlungsmethoden">
-                                <div colspan="2" class="backend-help oe_edit_only">
-                                    <p>
-                                        Hier können Sie die globale Zahlungsartenkonfiguration für diese Spende / diesen Artikel überschreiben.
-                                        Bitte beachten Sie das dies nur in Kombination der One-Page-Checkout Webseitenvorlage funktioniert!
-                                    </p>
+                                <div class="modal-footer">
+                                    <!-- HTML-Buttons dot work in backend views, so link is used instead -->
+                                    <a class="oe_button"
+                                       data-dismiss="modal"
+                                       href="javascript:void(0)">
+                                        Close
+                                    </a>
                                 </div>
-                                <!-- label colspan="2" for="product_acquirer_lines_ids" class="oe_edit_only"/ -->
-                                <field colspan="2" name="product_acquirer_lines_ids" nolabel="1" attrs="{'readonly': [('product_page_template','!=', 'website_sale_donate.ppt_opc')]}">
-                                    <tree string="Acquirers" default_order="sequence" editable="bottom">
-                                        <field name="sequence" widget="handle"/>
-                                        <field name="acquirer_id"/>
-                                        <field name="acquirer_pre_msg"/>
-                                    </tree>
-                                </field>
-                            </group>
-                        </page>
-
-                        <page string="Webseite">
-                            <group>
-                                <group>
-                                    <field name="website_published" string="Webfreigabe"/>
-                                    <field name="website_published_start" string="Webanzeige Start"/>
-                                    <field name="website_published_end" string="Webanzeige Ende"/>
-                                </group>
-                                <group>
-                                    <field name="website_visible" string="Webanzeige (berechnet)" readonly="1"/>
-                                </group>
-                            </group>
-                            <group string="Spendenseite (Artikelseite)">
-                                <group string="Seiteneinstellungen" class="fso_backend_separator">
-                                    <!-- h3 colspan="2" class="fso_backend_separator">Seiteneinstellungen</h3 -->
-                                    <field name="hide_categories" string="Kategorienavigation ausblenden"/>
-                                    <field name="hide_search" string="Suchfeld ausblenden"/>
-                                    <field name="show_desctop" string="Extra Widget-Bereich am Seitenbeginn"/>
-                                    <field name="show_descbottom" string="Extra Widget-Bereich am Seitenende"/>
-                                    <field name="hide_salesdesc" string="Kurzbeschreibung ausblenden"/>
-                                    <field name="format" attrs="{'invisible': [('product_page_template','!=', 'website_sale_donate.ppt_ahch')]}"/>
-                                    <field name="alternative_product_ids" string="Verlinke Spenden- oder Artikelseiten" widget="many2many_tags"/>
-                                    <field name="parallax_image_medium" string="Seitenhintergrung" widget="image" class="oe_avatar oe_left"/>
-                                    <field name="parallax_speed" string="Hintergrungdbewegung beim Scrollen" attrs="{'invisible': [('parallax_image_medium','=', False)]}"/>
-                                </group>
-                                <group string="Spendenbox auf der Seite" class="fso_backend_separator">
-                                    <!-- h3 colspan="2" class="fso_backend_separator">Spendenbox auf der Seite</h3 -->
-                                    <field name="hide_payment" string="Spendenbox ausblenden"/>
-                                    <field name="hide_image" string="Bild ausblenden"/>
-                                    <!-- field name="image_square" string="Bild (autom. quadratisch zugeschnitten)" widget="image" class="oe_avatar oe_left" attrs="{'readonly': True, 'invisible': [('hide_image','=', True)]}"/ -->
-                                    <field name="variants_as_list" string="Artikelvarianten als Auswahlliste darstellen"/>
-                                    <field name="payment_interval_as_selection" string="Zahlungsintervalle als Auswahlliste darstellen"/>
-                                    <field name="hide_quantity" string="Stückzahlauswahl ausblenden"/>
-                                    <field name="hide_amount_title" string="Betragsüberschrift ausblenden"/>
-                                    <field name="amount_title" string="Abweichende Betragsüberschrift" attrs="{'invisible': [('hide_amount_title','=', True)]}"/>
-                                    <field name="button_addtocart_text" string="Button Text"/>
-                                    <field name="hide_panelfooter" string="Globalen Footer Ausblenden"/>
-                                </group>
-                                <div colspan="4" class="text-center oe_edit_only">
-                                    <p>
-                                        <img src="/fsonline/static/src/img/donation_layout_800x900_v2.png"/>
-                                    </p>
-                                </div>
-                                <div colspan="4" class="backend-help oe_edit_only">
-                                    <p>
-                                        Die Webseitenvorlage bestimmt nicht nur über die Darstellung in der Webseite sondern auch über die verfügbaren Funktionen!
-                                    </p>
-                                </div>
-                            </group>
-                            <group name="steps_and_donation_buttons">
-                                <group string="Step Indicator">
-                                    <group colspan="2" name="step_indicator_setup">
-                                        <field name="step_indicator_setup"/>
-                                    </group>
-                                    <group colspan="2" name="step_indicator_setup_settings" attrs="{'invisible': [('step_indicator_setup','=', False)]}">
-                                        <field name="step_indicator_ul_class"/>
-
-                                        <field name="hide_cart_indicator"/>
-                                        <field name="cart_indicator_name" attrs="{'invisible': [('hide_cart_indicator','=', True)]}"/>
-                                        <field name="hide_product_indicator"/>
-                                        <field name="product_indicator_name" attrs="{'invisible': [('hide_product_indicator','=', True)]}"/>
-                                        <field name="hide_checkout_indicator"/>
-                                        <field name="checkout_indicator_name" attrs="{'invisible': [('hide_checkout_indicator','=', True)]}"/>
-                                        <field name="hide_payment_indicator"/>
-                                        <field name="payment_indicator_name" attrs="{'invisible': [('hide_payment_indicator','=', True)]}"/>
-                                        <field name="hide_confirmation_indicator"/>
-                                        <field name="confirmation_indicator_name" attrs="{'invisible': [('hide_confirmation_indicator','=', True)]}"/>
-                                    </group>
-                                </group>
-                                <group string="Custom Checkout Fields">
-                                    <field name="checkout_form_id"/>
-                                    <button name="create_checkout_fields_form" type="object"
-                                            string="Setup custom Checkout Fields"
-                                            colspan="2"
-                                            attrs="{'invisible': [('checkout_form_id', '!=', False)]}"
-                                    />
-                                </group>
-                                <group string="Webshop: Enable Gifting Feature">
-                                    <field name="giftee_form_id"/>
-                                    <button name="create_giftee_fields_form" type="object"
-                                            string="Enable Giftee Fields"
-                                            colspan="2"
-                                            attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
-                                    />
-                                    <field name="giftee_checkbox_text" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
-                                    <field name="giftee_email_template" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
-                                </group>
-                            </group>
-                            <group string="Übersichtsseiten (Produktkacheln)">
-                                <field name="website_sequence" string="Reihung"/>
-                                <field name="public_categ_ids" string="Angezeigt in den Kategorien" widget="many2many_tags"/>
-                                <field name="website_style_ids" string="Design (Extra CSS Klassen)" widget="many2many_tags"/>
-                                <field name="do_not_link" string="Keine Verlinkung zur Spendenseite"/>
-                                <field name="hide_price" string="Betrag nicht anzeigen"/>
-                            </group>
-                            <group string="Spendenkorbeinstellungen (Warenkorb)">
-                                <field name="simple_checkout" string="Spendenkorbseite überspringen"/>
-                                <field name="accessory_product_ids" string="Zugehörige Spenden und Artikel" widget="many2many_tags"/>
-                            </group>
-                            <group>
-                                <group string="Digitale Inhalte" attrs="{'invisible': [('product_page_template','==', 'website_sale.product')]}">
-                                        <field name="webshop_download_file" string="Download-Datei" widget="binary" filename="webshop_download_file_name"/>
-                                        <field name="webshop_download_file_name" string="Download-Datei Name"/>
-                                </group>
-                                <group>
-
-                                </group>
-                            </group>
-                        </page>
-
-                        <page string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
-                            <group string="Spendenziel" attrs="{'invisible': [('fs_product_type','not in', ['donation', 'mediation'])]}">
-                                <group>
-                                    <field name="funding_goal"/>
-                                    <field name="funding_user"/>
-                                </group>
-                                <group>
-                                    <field name="funding_reached" readonly="1"/>
-                                </group>
-                            </group>
-                            <group string="Webseiteneinstellungen">
-                                <group string="Spendenseite (Artikelseite)" class="fso_backend_separator">
-                                        <field name="hide_fundingtext" string="Kurztext ausblenden"/>
-                                        <field name="hide_fundingbar" string="Zielbalken ausblenden"/>
-                                        <field name="hide_fundingdesc" string="Beschreibung ausblenden"/>
-                                        <field name="funding_desc" string="Beschreibung"/>
-                                </group>
-                                <group string="Spendenbox auf der Seite" class="fso_backend_separator">
-                                        <field name="hide_fundingtextincp" string="Text ausblenden"/>
-                                        <field name="hide_fundingbarincp" string="Zielbalken ausblenden"/>
-                                </group>
-                            </group>
-                            <group string="Artikelübersichtsseiten">
-                                <group>
-                                    <field name="hide_fundingtextinlist" string="Text ausblenden"/>
-                                    <field name="hide_fundingbarinlist" string="Zielbalken ausblenden"/>
-                                </group>
-                                <group>
-
-                                </group>
-                            </group>
-                        </page>
-
-                        <page name="variants" string="Varianten">
-                            <div class="oe_right">
-                                <button class="oe_inline oe_stat_button" string="Variant Prices"  name="%(product.variants_template_action)d" type="action" icon="fa-strikethrough"/>
-                                <button class="oe_inline oe_stat_button" name="%(product.product_variant_action)d" type="action" icon="fa-sitemap">
-                                    <field string="List of Variants" name="product_variant_count" widget="statinfo" />
-                                </button>
                             </div>
-                            <p class="oe_grey">
-                                <strong>Warning</strong>: adding or deleting attributes
-                                will delete and recreate existing variants and lead
-                                to the loss of their possible customizations.
-                            </p>
-                            <field name="attribute_line_ids" widget="one2many_list" context="{'show_attribute': False}">
-                                <tree string="Variants" editable="bottom">
-                                    <field name="attribute_id"/>
-                                    <field name="value_ids" widget="many2many_tags" options="{'no_create_edit': True}" domain="[('attribute_id', '=', attribute_id)]" context="{'default_attribute_id': attribute_id}"/>
-                                </tree>
-                            </field>
-                        </page>
+                        </div>
+                    </div>
 
-                        <page string="System">
-                            <group string="Information">
-                                <group>
-                                    <field name="active"/>
-                                    <field name="state"/>
-                                    <field name="product_manager"/>
-                                    <field name="ean13"/>
-                                    <field name="default_code" string="Interner Code"/>
-                                    <field name="description" string="Interne Beschreibung"/>
-                                </group>
-                                <group>
-                                    <field name="id" readonly="True"/>
-                                    <field name="create_date" readonly="True"/>
-                                    <field name="create_uid" readonly="True"/>
-                                    <field name="write_date" readonly="True"/>
-                                    <field name="write_uid" readonly="True"/>
-                                    <!-- WARNING: fs_workflow is deprecated use fs_product_type instead !-->
-                                    <!--<field name="fs_workflow" string="FS Workflow (veraltet)"/>-->
-                                </group>
-                            </group>
-
-                            <group string="Buchhaltung">
-                                <group>
-                                    <field name="categ_id"/>
-                                    <div colspan="2" class="backend-help oe_edit_only">
-                                        <p>
-                                            Die Kategorie des Artikels bestimmt die Zuordnung zu den Konten in der Buchhaltung sofern diese nicht explizit für dieses Produkt
-                                            gesetzt werden. Diese Kategorie hat nichts mit den Kategorien der Webseite zu tun.
-                                        </p>
+                    <!-- Template Settings - Goal Progress Bar - Modal -->
+                    <div id="modal_goal_donations_progress_info"
+                         class="modal fade"
+                         role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-body text-center">
+                                    <div style="display: inline-block;">
+                                        <img src="/fsonline/static/src/img/ppt_opc_fortschrittsbalken.jpg"
+                                             class="img-responsive"/>
                                     </div>
-                                </group>
-                                <group>
-                                </group>
-                            </group>
-                            <group>
-                                <group>
-                                    <field name="property_account_income" domain="[('type', '!=', 'view')]"/>
-                                    <field name="taxes_id" widget="many2many_tags"/>
-                                </group>
-                                <group>
-                                    <field name="property_account_expense" domain="[('type', '!=', 'view')]"/>
-                                    <field name="supplier_taxes_id" widget="many2many_tags"/>
-                                </group>
-                            </group>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- HTML-Buttons dot work in backend views, so link is used instead -->
+                                    <a class="oe_button"
+                                       data-dismiss="modal"
+                                       href="javascript:void(0)">
+                                        Close
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                            <group string="Einkauf (Beschaffung)">
-                                <group name="Supply Chain Information">
-                                    <field name="standard_price"/>
-                                    <field name="description_purchase"/>
-                                </group>
-                                <group name="Supply Chain">
-                                    <field name="route_ids" widget="many2many_checkboxes"/>
-                                    <field name="seller_ids"/>
-                                </group>
-                            </group>
+                </form>
+            </field>
+        </record>
 
-                            <group string="Lager" attrs="{'invisible':[('type','=','service')]}">
-                                <group name="Lagerstandsbewertung" class="fso_backend_separator" groups="base.group_user">
-                                    <label for="qty_available"/>
-                                    <div>
-                                        <field name="qty_available" class="oe_inline"/>
-                                        <button name="%(stock.action_view_change_product_quantity)d" string="⇒ Update"
-                                                type="action"
-                                                class="oe_link"/>
-                                    </div>
-                                    <label for="incoming_qty"/>
-                                    <div>
-                                        <field name="incoming_qty" class="oe_inline"/>
-                                        <button string="⇒ Request Procurement" name="%(stock.act_make_procurement)d"
-                                                type="action" class="oe_link"/>
-                                    </div>
-                                    <field name="virtual_available"/>
-                                </group>
-                                <group name="Counter-Part Locations Properties" groups="stock.group_locations" class="fso_backend_separator">
-                                    <field name="property_stock_procurement" domain="[('usage','=','procurement')]"/>
-                                    <field name="property_stock_production" domain="[('usage','=','production')]"/>
-                                    <field name="property_stock_inventory" domain="[('usage','=','inventory')]"/>
-                                </group>
-                            </group>
-                            <group name="Lager_2" attrs="{'invisible':[('type','=','service')]}">
-                                <group name="Volume and Weight" class="fso_backend_separator">
-                                    <field name="volume"/>
-                                    <field name="weight"/>
-                                    <field name="weight_net"/>
-                                </group>
-                                <group name="Storage Location" class="fso_backend_separator">
-                                    <field name="loc_rack"/>
-                                    <field name="loc_row"/>
-                                    <field name="loc_case"/>
-                                </group>
-                            </group>
-
-                        </page>
-                    </notebook>
-                </sheet>
-
-            </form>
-        </field>
-    </record>
-
-    <!-- DONATION PRODUCT TEMPLATE TREE -->
-    <record model="ir.ui.view" id="fso_product_template_tree">
-        <field name="name">FS-Online Product Template Tree</field>
-        <field name="model">product.template</field>
-        <field name="arch" type="xml">
-            <tree string="Spenden und Artikel"
-                  default_order="website_sequence"
-                  colors="red:not fs_product_type and website_published;
+        <!-- DONATION PRODUCT TEMPLATE TREE -->
+        <record model="ir.ui.view" id="fso_product_template_tree">
+            <field name="name">FS-Online Product Template Tree</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <tree string="Donations and Products"
+                      default_order="website_sequence"
+                      colors="red:not fs_product_type and website_published;
                           grey:not fs_product_type;
                           green:website_published and website_visible;
                           orange:website_published and not website_visible;
                           grey:not website_published;">
-                <field name="website_sequence" widget="handle"/>
-                <field name="name"/>
-                <field name="fs_product_type" string="FS Typ"/>
-                <field name="website_theme" string="Theme"/>
-                <field name="price_donate" string="Freier Betrag"/>
-                <field name="list_price" string="Betrag"/>
-                <field name="payment_interval_default" string="Std. Interv."/>
-                <!-- WARNING: fs_group_ids is deprecated !"-->
-                <!--<field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>-->
-                <field name="zgruppedetail_ids" string="FS Gruppen" widget="many2many_tags"/>
-                <field name="product_page_template" string="Webvorlage"/>
-                <field name="website_published" string="WebFreig."/>
-                <field name="website_published_start" string="Start"/>
-                <field name="website_published_end" string="Ende"/>
-                <field name="website_visible" string="Sichtb."/>
-            </tree>
-        </field>
-    </record>
+                    <field name="website_sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="fs_product_type" string="FS Type"/>
+                    <field name="website_theme" string="Theme"/>
+                    <field name="price_donate" string="Arbitrary Amount"/>
+                    <field name="list_price" string="Amount"/>
+                    <field name="payment_interval_default" string="Def. Interv."/>
+                    <!-- WARNING: fs_group_ids is deprecated !"-->
+                    <!--<field name="fs_group_ids" string="FS Gruppen" widget="many2many_tags"/>-->
+                    <field name="zgruppedetail_ids" string="FS Groups" widget="many2many_tags"/>
+                    <field name="product_page_template" string="Web template"/>
+                    <field name="website_published" string="Published"/>
+                    <field name="website_published_start" string="Pub. Start"/>
+                    <field name="website_published_end" string="Pub. End"/>
+                    <field name="website_visible" string="Visible"/>
 
-    <record model="ir.actions.act_window" id="fso_product_template_viewaction">
-        <field name="name">Spenden und Artikel </field>
-        <field name="res_model">product.template</field>
-        <field name="view_mode">tree, form</field>
-        <field name="view_id" ref="fso_product_template_form"/>
-    </record>
-    <record id="fso_product_template_form_viewaction" model="ir.actions.act_window.view">
-        <field name="sequence" eval="10"/>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="fso_product_template_tree"/>
-        <field name="act_window_id" ref="fso_product_template_viewaction"/>
-    </record>
-    <record id="fso_product_template_tree_viewaction" model="ir.actions.act_window.view">
-        <field name="sequence" eval="20"/>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="fso_product_template_form"/>
-        <field name="act_window_id" ref="fso_product_template_viewaction"/>
-    </record>
+                </tree>
+            </field>
+        </record>
 
-    <!--<menuitem action="fso_product_template_viewaction" id="fso_product_template_menu"-->
-              <!--parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" />-->
+        <record id="fso_product_template_tree_inherited" model="ir.ui.view">
+            <field name="name">FS-Online Product Template Tree Inherited</field>
+            <field name="inherit_id" ref="fsonline.fso_product_template_tree"/>
+            <field name="model">product.template</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="website_visible" position="after">
+                    <button icon="gtk-find"
+                            name="button_open_product_page"
+                            string="Open Product Page"
+                            type="object"/>
+                    <button icon="stock_gantt"
+                            name="button_open_widget_manager"
+                            string="Open Widget Manager"
+                            type="object"/>
+                    <button icon="stock_graph"
+                            name="button_open_product_statistics"
+                            string="Open Product Statistics"
+                            type="object"/>
+                </field>
+            </field>
+        </record>
 
-</data></openerp>
+        <record model="ir.actions.act_window" id="fso_product_template_viewaction">
+            <field name="name">Donations and Products</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">tree, form</field>
+            <field name="view_id" ref="fso_product_template_form"/>
+        </record>
+        <record id="fso_product_template_form_viewaction" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fso_product_template_tree"/>
+            <field name="act_window_id" ref="fso_product_template_viewaction"/>
+        </record>
+        <record id="fso_product_template_tree_viewaction" model="ir.actions.act_window.view">
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fso_product_template_form"/>
+            <field name="act_window_id" ref="fso_product_template_viewaction"/>
+        </record>
+
+        <!--<menuitem action="fso_product_template_viewaction" id="fso_product_template_menu"-->
+        <!--parent="website_sale_donate.menu_fsonline_donationshop" sequence="1" />-->
+
+    </data>
+</openerp>
