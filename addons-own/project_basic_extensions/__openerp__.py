@@ -43,7 +43,7 @@ Project, Task and Issues Extensions
     'depends': [
         'base',
         'project',
-        'pad',
+        # 'pad',    # DEPRECATED NO LONGER IN USE
         'project_issue',
         'project_task_subtask_template',
         'project_timesheet',
