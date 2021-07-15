@@ -38,6 +38,12 @@
         <field name="inherit_id" ref="connector.view_queue_job_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
+                <button name="update_job_with_source_record_data"
+                        type="object"
+                        class="oe_button oe_form_button"
+                        string="Extract Source Record Data"
+                        colspan="2"
+                />
                 <field name="unwrapped_model"/>
                 <field name="unwrapped_id"/>
                 <field name="binding_model"/>

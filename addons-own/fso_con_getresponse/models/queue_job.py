@@ -12,6 +12,7 @@ from openerp.addons.connector.session import ConnectorSession
 # from .worker import watcher
 # from ..connector import get_openerp_module, is_module_installed
 from openerp.addons.connector.connector import ConnectorEnvironment, Binder
+from helper_connector import get_environment
 
 _logger = logging.getLogger(__name__)
 
@@ -25,49 +26,63 @@ class QueueJob(models.Model):
     binding_id = fields.Char(string='binding_id', readonly=True, index=True)
 
     @api.multi
-    def get_job_record_data(self, raise_exception=False):
+    def get_job_record_data(self):
+        self.ensure_one()
         result = {'unwrapped_model': None,
                   'unwrapped_id': None,
                   'binding_model': None,
                   'binding_id': None}
+
         try:
-            self.ensure_one()
             session = ConnectorSession(self.env.cr,
                                        self.env.uid,
                                        context=self.env.context)
             storage = OpenERPJobStorage(session)
             job = storage.load(self.uuid)
 
-            # Get the binding
-            binding_model = job.args[0]
-            binding_id = job.args[1]
-            binding = session.env[binding_model].browse(binding_id)
+            # Get bindings based on the function in func_name
+            binding = None
+            if job.func_name in [
+                        u'openerp.addons.fso_con_getresponse.models.unit_export_delete.export_delete_record',
+                        u'openerp.addons.fso_con_getresponse.models.unit_import.import_record']:
+                result['binding_model'] = job.args[0]
+                binding_backend_id = job.args[1]
+                binding_getresponse_id = job.args[2]
 
-            if binding.exists():
-                result['binding_model'] = binding_model
-                result['binding_id'] = binding_id
-                # Try to get the unwrapped record also to append it to the job data
-                try:
-                    env = ConnectorEnvironment(binding.backend_id, session, binding_model)
-                    binder = env.get_connector_unit(Binder)
-                    unwrapped_model = binder.unwrap_model()
-                    unwrapped_id = binder.unwrap_binding(binding_id)
-                    if unwrapped_model and unwrapped_id:
-                        result['unwrapped_model'] = unwrapped_model
-                        result['unwrapped_id'] = unwrapped_id
-                except Exception as e:
-                    _logger.error("Could not unwrap binding to extend job data %s, %s! %s"
-                                  "" % (binding_model, binding_id, repr(e)))
-                    pass
+                con_env = get_environment(session, result['binding_model'], binding_backend_id)
+                binder = con_env.get_connector_unit(Binder)
+                binding = binder.to_openerp(binding_getresponse_id, unwrap=False)
+
+            elif job.func_name == u'openerp.addons.fso_con_getresponse.models.unit_export.export_record':
+                result['binding_model'] = job.args[0]
+                result['binding_id'] = job.args[1]
+                binding = session.env[result['binding_model']].browse([result['binding_id']])
+
+            else:
+                _logger.debug("%s ist not implemented to extract job data" % job.func_name)
+                return result
+
+            # Get job data from binding
+            if binding and binding.exists():
+                con_env = get_environment(session, binding._name, binding.backend_id.id)
+                binder = con_env.get_connector_unit(Binder)
+
+                result['unwrapped_model'] = binder.unwrap_model()
+                result['unwrapped_id'] = binder.unwrap_binding(binding.id)
+                result['binding_model'] = binding._name
+                result['binding_id'] = binding.id
+            else:
+                _logger.warning("Binding not found for job %s" % repr(self))
 
         except Exception as e:
-            if raise_exception:
-                raise e
+            _logger.error("Could not extract job record data %s! %s"
+                          "" % (repr(self), repr(e)))
+            pass
 
         return result
 
     @api.multi
-    def _update_job_with_source_record_data(self):
+    def update_job_with_source_record_data(self):
         for job in self:
             job_record_data = job.get_job_record_data()
             try:
@@ -92,7 +107,7 @@ class QueueJob(models.Model):
                     batch_jobs = self.with_env(batch_env).search(
                         [('binding_model', '=', False)], limit=batch_size, offset=search_offset)
                     search_offset += batch_size
-                    batch_jobs._update_job_with_source_record_data()
+                    batch_jobs.update_job_with_source_record_data()
                     duration = datetime.now() - batch_start
                     _logger.info("Done _batch_update_job_with_source_record_data for %s jobs in %.3f seconds"
                                  "" % (len(batch_jobs), duration.total_seconds()))
@@ -103,5 +118,5 @@ class QueueJob(models.Model):
     def create(self, vals):
         new_job = super(QueueJob, self).create(vals)
         if new_job:
-            new_job._update_job_with_source_record_data()
+            new_job.update_job_with_source_record_data()
         return new_job
