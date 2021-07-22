@@ -209,7 +209,16 @@
                    eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
             <field name="info">Datum des naechsten geplanten Einzuges</field>
         </record>
-        
+
+        <record id="pf_forderungdurchfuehrenbis" model="fso.print_field">
+            <field name="sequence" eval="103"/>
+            <field name="name">ForderungDurchfuehrenBis</field>
+            <field name="fs_email_placeholder">%ForderungDurchfuehrenBis%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_person_accounting')),]"/>
+            <field name="info">Forderung maximal bis zu diesem Datum durchfuehren.</field>
+        </record>
+
         <record id="pf_wunschspendenbetrag" model="fso.print_field">
             <field name="sequence" eval="104"/>
             <field name="name">WunschSpendenbetrag</field>
