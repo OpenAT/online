@@ -118,7 +118,7 @@ class GetResponseBinder(Binder):
         #                         '!', (backend_id_search_path, '=', backend_id)]
         get_unbound_domain = [
             '|',
-                '!', (self._inverse_binding_ids_field+'.active', '=', True),
+                (self._inverse_binding_ids_field, '=', False),
                 '!', '&', (self._inverse_binding_ids_field+'.active', '=', True),
                           (backend_id_search_path, '=', backend_id),
         ]
