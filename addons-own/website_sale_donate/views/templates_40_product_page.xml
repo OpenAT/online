@@ -101,7 +101,7 @@
 
         <!-- INHERIT PRODUCT PAGE product: hide full add-to-cart form if hide_payment is set -->
         <template id="wsd_product" inherit_id="website_sale.product" name="Product-Page Hide Payment Box">
-            <xpath expr="//form[@class='js_add_cart_variants']" position="attributes">
+            <xpath expr="//form[@method='POST']" position="attributes">
                 <attribute name="class"></attribute>
                 <attribute name="t-att-class">'js_add_cart_variants hidden' if product.hide_payment else 'js_add_cart_variants'</attribute>
             </xpath>
