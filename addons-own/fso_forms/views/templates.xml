@@ -77,43 +77,42 @@
                     <!-- Get field css classes -->
                     <t t-set="css_classes" t-value="field.css_classes"/>
 
-                    <!-- ============================== -->
-                    <!-- SNIPPET AREA OR HONEYPOT FIELD -->
-                    <!-- ============================== -->
-                    <t t-if="not field.field_id">
-                        <!-- Snippet Area -->
-                        <t t-if="not field.honeypot">
-                            <div t-att-class="css_classes if css_classes else 'col-lg-12'">
-                                <div t-field="field.information" class="oe_structure fsoforms_field_snippet"/>
-                                <t t-if="field.clearfix">
-                                    <div class="clearfix"/>
-                                </t>
-                            </div>
-                        </t>
-                        <!-- Honeypot field -->
-                        <t t-if="field.honeypot">
-                            <!-- ATTENTION: The field name must match the name in validate_fields()! -->
-                            <t t-set="f_name" t-value="'hpf-' + str(field.id)"/>
-                            <div t-att-class="'form-group has-feedback ' + css_classes">
-                                <label t-att-class="'control-label f-' + f_name" t-att-for="f_name"><t t-raw="field.label"/></label>
-                                <input type="text"
-                                       t-att-id="f_name"
-                                       t-att-name="f_name"
-                                       class="form-control"
-                                       value=""
-                                       t-att-placeholder="field.placeholder"
-                                       tabindex="-1"
-                                       autocomplete="off"
-                                />
-                            </div>
-                        </t>
+                    <!-- ============ -->
+                    <!-- SNIPPET AREA -->
+                    <!-- ============ -->
+                    <t t-if="field.type == 'snippet_area' and not field.field_id">
+                        <div t-att-class="css_classes if css_classes else 'col-lg-12'">
+                            <div t-field="field.information" class="oe_structure fsoforms_field_snippet"/>
+                            <t t-if="field.clearfix">
+                                <div class="clearfix"/>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- ============== -->
+                    <!-- HONEYPOT FIELD -->
+                    <!-- ============== -->
+                    <t t-if="field.type == 'honeypot' and not field.field_id">
+                        <!-- ATTENTION: The field-name-schema created here must match the field-name-schema in validate_fields()! -->
+                        <t t-set="f_name" t-value="'hpf-' + str(field.id)"/>
+                        <div t-att-class="'form-group has-feedback ' + css_classes">
+                            <label t-att-class="'control-label f-' + f_name" t-att-for="f_name"><t t-raw="field.label"/></label>
+                            <input type="text"
+                                   t-att-id="f_name"
+                                   t-att-name="f_name"
+                                   class="form-control"
+                                   value=""
+                                   t-att-placeholder="field.placeholder"
+                                   tabindex="-1"
+                                   autocomplete="off"
+                            />
+                        </div>
                     </t>
 
                     <!-- ============= -->
                     <!-- REGULAR FIELD -->
                     <!-- ============= -->
-                    <t t-if="field.field_id">
-
+                    <t t-if="field.type == 'model' and field.field_id">
 
                         <!-- GET REGULAR FIELD DATA -->
                         <!-- ====================== -->

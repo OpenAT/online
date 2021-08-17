@@ -52,6 +52,7 @@ TODO:
         'website_login_fs_ptoken',
     ],
     'data': [
+        'data/run_on_install_update.xml',
         'security/fso_forms_usergroup.xml',
         'security/ir.model.access.csv',
         'views/fson_form_field.xml',

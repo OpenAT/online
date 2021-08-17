@@ -247,7 +247,7 @@ class FsoForms(http.Controller):
         field_errors = dict()
 
         # SPAM detection by honeypot fields
-        honey_pot_fields = (f for f in form.field_ids if f.honeypot)
+        honey_pot_fields = (f for f in form.field_ids if f.type == 'honeypot')
         honey_pot_test = any(field_data.get('hpf-'+str(f.id), None) for f in honey_pot_fields)
         if honey_pot_test:
             return {'honey_pot_test': True}

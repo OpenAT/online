@@ -12,13 +12,9 @@
                         <group>
                             <group name="basic_form_data">
                                 <field name="name"/>
+                                <field name="type"/>
                                 <field name="model_id"/>
-                                <field name="create_as_user"/>
-                                <field name="create_as_user_nologin"/>
                                 <field name="submit_button_text"/>
-
-                                <field name="clear_session_data_after_submit"/>
-
                             </group>
                             <group name="system_data">
                                 <field name="website_url" widget="url" readonly="1"/>
@@ -28,58 +24,92 @@
                             </group>
                         </group>
                         <group>
-                            <group name="email" string="E-Mail">
+                            <group name="email" string="E-Mail Settings">
                                 <field name="email_only"/>
                                 <field name="confirmation_email_template"/>
                                 <field name="information_email_receipients" widget="many2many_tags"/>
                                 <field name="information_email_template"/>
                             </group>
-                            <group name="login" string="Login">
-                                <field name="edit_existing_record_if_logged_in"/>
-                                <field name="logout_button_text"/>
+                            <group name="login" string="Login Settings">
                                 <field name="login_required"/>
+                                <field name="logout_button_text"/>
+                                <field name="edit_existing_record_if_logged_in"/>
                                 <field name="show_token_login_form"/>
                             </group>
                         </group>
-                        <notebook>
+                        <notebook name="main_notebook">
                             <page string="Form Fields" name="form_fields">
                                 <!-- ATTENTION: We pass the current model_id to the context of the inner tree view!
                                                 This is the only way without saving first that i found -->
                                 <field name="field_ids"
                                        context="{'form_model_id': model_id, 'form_edit_existing_record_if_logged_in': edit_existing_record_if_logged_in}">
-                                    <tree string="Fields" editable="bottom">
-                                        <field name="sequence" widget="handle"/>
+                                    <tree string="Fields"
+                                          colors="lightgrey:not show;CornflowerBlue: type in ('snippet_area', 'honeypot');DodgerBlue: type == 'mail_message';FireBrick:default or login or confirmation_email"
+                                          editable="bottom">
+                                        <field name="sequence"
+                                               widget="handle"/>
+                                        <button name="button_open_field_form_view"
+                                                type="object"
+                                                icon="gtk-edit"
+                                                string="Edit"/>
                                         <field name="show"/>
-                                        <field name="form_model_name" invisible="1"/>
+                                        <field name="mandatory"/>
+                                        <field name="type"/>
+                                        <field name="form_model_name"
+                                               invisible="1"/>
                                         <!-- ATTENTION: The Domain for 'field_id' is also set dynamically by oc_field_id_dynamic_domain() -->
                                         <field name="field_id"
                                                domain="[('model_id','=',context.get('form_model_id'))]"
                                                options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                                        <field name="field_ttype" invisible="1"/>
-                                        <field name="field_model_name" invisible="1"/>
+                                        <field name="field_ttype"
+                                               invisible="1"/>
+                                        <field name="field_model_name"
+                                               invisible="1"/>
                                         <field name="binary_name_field_id"
                                                attrs="{'readonly': [('field_ttype','!=','binary')]}"
                                                domain="[('model_id','=',context.get('form_model_id')),
                                                         ('ttype','=','char'),
                                                         ('readonly','=',False)]"
-                                               options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                                               options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                                               invisible="1"/>
                                         <field name="label"/>
-                                        <field name="placeholder" attrs="{'readonly': [('field_ttype','in',['boolean',])]}"/>
-                                        <field name="information"/>
-                                        <field name="yes_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
-                                        <field name="no_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
-                                        <field name="mandatory"/>
-                                        <field name="nodata"/>
-                                        <field name="default"/>
-                                        <field name="readonly" readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"/>
-                                        <field name="login" attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"/>
-                                        <field name="confirmation_email" attrs="{'readonly': [('field_ttype','!=','char')]}"/>
-                                        <field name="validation_rule"/>
+                                        <field name="placeholder"
+                                               attrs="{'readonly': [('field_ttype','in',['boolean',])]}"/>
+                                        <field name="information"
+                                               invisible="1"/>
+                                        <field name="yes_text"
+                                               attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"
+                                               invisible="1"/>
+                                        <field name="no_text"
+                                               attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"
+                                               invisible="1"/>
+
+                                        <field name="nodata"
+                                               invisible="1"/>
+                                        <field name="default"
+                                               invisible="1"/>
+                                        <field name="readonly"
+                                               readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"
+                                               invisible="1"/>
+                                        <field name="login"
+                                               attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"
+                                               invisible="1"/>
+                                        <field name="confirmation_email"
+                                               attrs="{'readonly': [('field_ttype','!=','char')]}"
+                                               invisible="1"/>
+                                        <field name="validation_rule"
+                                               invisible="1"/>
                                         <field name="css_classes"/>
                                         <field name="clearfix"/>
-                                        <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
-                                        <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
-                                        <field name="honeypot"/>
+                                        <field name="style"
+                                               attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"
+                                               invisible="1"/>
+                                        <field name="force_selection"
+                                               attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"
+                                               invisible="1"/>
+                                        <field name="honeypot"
+                                               invisible="1"/>
+                                        <!--<button name="'%(fso_forms.fson_form_field_action)d'" type="action" icon="gtk-edit" string="Edit"/>-->
                                     </tree>
                                 </field>
                             </page>
@@ -110,60 +140,102 @@
                                 </group>
                             </page>
                             <page string="Danger Zone">
-                                <group>
+                                <group name="force_user" string="Force User">
+                                    <field name="create_as_user"/>
+                                    <field name="create_as_user_nologin"/>
+                                    <field name="custom_css" invisible="1"/>
+                                </group>
+                                <group name="frontend_validation" string="Frontend Validation">
                                     <field name="frontend_validation"/>
+                                </group>
+                                <group name="submission_settings" string="Submission Settings">
                                     <field name="submission_url"/>
+                                </group>
+                                <group name="redirect_after_form_submit_settings" string="After-Successful-Form-Submit Settings">
+                                    <field name="clear_session_data_after_submit"/>
                                     <field name="redirect_url"/>
                                     <field name="redirect_url_target"/>
                                     <field name="redirect_url_if_logged_in"/>
                                     <field name="redirect_url_if_logged_in_target"/>
                                     <field name="thank_you_page_edit_redirect" attrs="{'readonly': ['|',('thank_you_page_edit_data_button','=',False),('email_only','=',True)]}"/>
-                                    <field name="custom_css"/>
                                 </group>
                             </page>
                             <page string="Help">
-                                <!--<group>-->
                                 <p><br/></p>
+                                 <h1 style="color:darkred">Attention!</h1>
+                                <p>
+                                    Advanced settings of fields can only be edited (by clicking on the page-with-pencil icon) after the form was saved at
+                                    least once after adding the field to the form!
+                                </p>
+                                <p><br/></p>
+                                <notebook name="help">
+                                    <page string="Basics">
+                                        <p><br/></p>
+                                        <h1>Field color codes</h1>
+                                        <p><code style="color:LightGrey">LightGrey:</code> Disabled Form-Fields (show=False)</p>
+                                        <p><code style="color:CornflowerBlue">CornflowerBlue:</code> Form-Fields for Snippet Areas or Honeypot Fields</p>
+                                        <p><code style="color:DodgerBlue">DodgerBlue:</code> Form-Fields for Comments</p>
+                                        <p><code style="color:FireBrick">FireBrick:</code> Form-Fields with a default value or that mark a login or email-to field</p>
+                                        <p><br/></p>
 
-                                <h1>Special CSS widget classes</h1>
-                                <p><code>.hide_it</code> Hides a field by moving it offscreen</p>
-                                <p><code>.fso-form-widget-image</code> Displays a preview of the image for binary fields</p>
-                                <p><br/></p>
+                                        <h1>Special CSS classes</h1>
+                                        <p><code>.hide_it</code> Hides a field by moving it offscreen</p>
+                                        <p><code>.fso-form-widget-image</code> Displays a preview of the image for binary fields</p>
+                                        <p><br/></p>
+                                    </page>
+                                    <page string="Frontend Validation">
+                                        <p><br/></p>
 
-                                <h1>Frontend Validation Methods</h1>
-                                <p>Simple add a semicolon ";" seperated string of rules prefixed with "data-rule-".</p>
-                                <p>Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]</p>
-                                <p>Use the string "True" for [Value] if not otherwise specified!</p>
-                                <p>Example Usage: <code>data-rule-dateDEBirthdate=True </code></p>
-                                <p>Example Usage for combined rules: <code>data-rule-digits=True;data-rule-minlength=4</code></p>
-                                <p><br/></p>
+                                        <h1>Frontend Validation Methods</h1>
+                                        <p>Simple add a semicolon ";" seperated string of rules prefixed with "data-rule-".</p>
+                                        <p>Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]</p>
+                                        <p>Use the string "True" for [Value] if not otherwise specified!</p>
+                                        <p>Example Usage: <code>data-rule-dateDEBirthdate=True </code></p>
+                                        <p>Example Usage for combined rules: <code>data-rule-digits=True;data-rule-minlength=4</code></p>
+                                        <p><br/></p>
 
-                                <h4>Custom Frontend Validation Methods:</h4>
-                                <p><code>dateDEBirthdate=True</code> Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and "Now"</p>
-                                <p><code>floatDE=True</code> Check is the string has a valid German float number format like 124,56. A "," must be in the string for this validation!</p>
-                                <p><code>floatDEmin=12.05</code> Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a "." and not a ","</p>
-                                <p><code>force_selection=True</code> WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!</p>
-                                <p><br/></p>
+                                        <h4>Custom Frontend Validation Methods:</h4>
+                                        <p><code>dateDEBirthdate=True</code> Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and "Now"</p>
+                                        <p><code>floatDE=True</code> Check is the string has a valid German float number format like 124,56. A "," must be in the string for this validation!</p>
+                                        <p><code>floatDEmin=12.05</code> Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a "." and not a ","</p>
+                                        <p><code>force_selection=True</code> WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!</p>
+                                        <p><br/></p>
 
-                                <h4>Important Built In Frontend Validation Methods:</h4>
-                                <p><code>email=True</code> Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!</p>
-                                <p><code>digits=True</code> Only digits are allowed (0-9)</p>
-                                <p><code>minlength=[number of characters]</code> String must be at least [number of characters] long</p>
-                                <p><code>bic=True</code> BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.</p>
-                                <p><code>accept=True</code> Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg</p>
-                                <p><code>maxWords=[Number of Words]</code> Enter [Value] words or less.</p>
-                                <p><code>minWords=[Number of Words]</code> Enter [Value] words or more.</p>
-                                <p><code>rangeWords=[Number-of-Words-min Number-of-Words-max]</code> Enter between [min max] words.</p>
-                                <p><code>alphanumeric=True</code> Letters, numbers, and underscores only</p>
-                                <p><code>creditcard=True</code> Check if the string may be a credit card based on the Luhn algorithm</p>
-                                <p><code>creditcardtypes=[mastercard,visa]</code> Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all </p>
-                                <p><code>currency=€,false</code> Validates currencies with any given symbols </p>
-                                <p><code>extension=png,jpg</code> Older "accept" file extension method</p>
-                                <p><code>iban=True</code> Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself</p>
-                                <p><code>integer=True</code> A positive or negative non-decimal number</p>
-                                <p><code>nowhitespace=True</code> No white space allowed</p>
-                                <p><br/></p>
-                                <!--</group>-->
+                                        <h4>Important Built In Frontend Validation Methods:</h4>
+                                        <p><code>email=True</code> Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!</p>
+                                        <p><code>digits=True</code> Only digits are allowed (0-9)</p>
+                                        <p><code>minlength=[number of characters]</code> String must be at least [number of characters] long</p>
+                                        <p><code>bic=True</code> BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.</p>
+                                        <p><code>accept=True</code> Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg</p>
+                                        <p><code>maxWords=[Number of Words]</code> Enter [Value] words or less.</p>
+                                        <p><code>minWords=[Number of Words]</code> Enter [Value] words or more.</p>
+                                        <p><code>rangeWords=[Number-of-Words-min Number-of-Words-max]</code> Enter between [min max] words.</p>
+                                        <p><code>alphanumeric=True</code> Letters, numbers, and underscores only</p>
+                                        <p><code>creditcard=True</code> Check if the string may be a credit card based on the Luhn algorithm</p>
+                                        <p><code>creditcardtypes=[mastercard,visa]</code> Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all </p>
+                                        <p><code>currency=€,false</code> Validates currencies with any given symbols </p>
+                                        <p><code>extension=png,jpg</code> Older "accept" file extension method</p>
+                                        <p><code>iban=True</code> Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself</p>
+                                        <p><code>integer=True</code> A positive or negative non-decimal number</p>
+                                        <p><code>nowhitespace=True</code> No white space allowed</p>
+                                        <p><br/></p>
+                                    </page>
+                                    <page string="Danger Zone Settings">
+                                        <p><br/></p>
+
+                                        <h1>TODO</h1>
+                                    </page>
+                                    <page string="Advanced Field-Settings">
+                                        <p><br/></p>
+
+                                        <h1>TODO</h1>
+                                    </page>
+                                    <page string="Advanced Form-Use-Cases">
+                                        <p><br/></p>
+
+                                        <h1>TODO</h1>
+                                    </page>
+                                </notebook>
                             </page>
                         </notebook>
                         
@@ -178,6 +250,7 @@
             <field name="arch" type="xml">
                 <tree string="FSON Forms" default_order="sequence">
                     <field name="sequence" widget="handle"/>
+                        <field name="type"/>
                         <field name="name"/>
                         <field name="model_id"/>
                         <field name="frontend_validation"/>
@@ -193,6 +266,7 @@
             <field name="arch" type="xml">
                 <search string="FSON Forms Search">
                         <field name="name"/>
+                        <field name="type"/>
                         <field name="model_id"/>
                         <field name="frontend_validation"/>
                         <field name="submission_url"/>

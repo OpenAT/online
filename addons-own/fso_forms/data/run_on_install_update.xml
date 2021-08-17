@@ -1,0 +1,8 @@
+<openerp>
+  <data>
+
+    <!-- Compute the field 'type' for all fields on install update  -->
+    <function model="fson.form_field" name="compute_type_if_not_set"/>
+
+  </data>
+</openerp>
