@@ -92,10 +92,10 @@
                     <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
                     <!-- ================= -->
                     <!-- RESET model field values -->
-                    <t t-set="record_f_name" t-value=""/>
-                    <t t-set="f_type" t-value=""/>
-                    <t t-set="f_value" t-value=""/>
-                    <t t-set="f_checked" t-value=""/>
+                    <t t-set="record_f_name" t-value="str()"/>
+                    <t t-set="f_type" t-value="str()"/>
+                    <t t-set="f_value" t-value="str()"/>
+                    <t t-set="f_checked" t-value="None"/>
                     <!-- ================= -->
 
                     <!-- ============ -->
