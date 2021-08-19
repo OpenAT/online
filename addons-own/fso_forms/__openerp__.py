@@ -53,6 +53,7 @@ TODO:
     ],
     'data': [
         'data/run_on_install_update.xml',
+        'data/form_comment_mail_message_subtype.xml',
         'security/fso_forms_usergroup.xml',
         'security/ir.model.access.csv',
         'views/fson_form_field.xml',

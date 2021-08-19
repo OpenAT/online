@@ -23,6 +23,8 @@ class FSONFormField(models.Model):
                                                       ('snippet_area', 'Snippet Area'),
                                                       ('mail_message', 'Comment / Note'),
                                                       ])
+    mail_message_subtype = fields.Many2one(comodel_name='mail.message.subtype',
+                                           string="Comment Subtype")
 
     sequence = fields.Integer('Sequence', help='Sequence number for ordering', default=1000)
     show = fields.Boolean(string='Show', help='Show field in webpage', default=True)
@@ -87,13 +89,36 @@ class FSONFormField(models.Model):
                                                       "It must be invisible in the form! If it is filled it means"
                                                       "that this was a bot and we can dismiss the form input!")
 
+    @api.model
+    def form_field_name(self):
+        self.ensure_one()
+        form_field = self
+        if self.type == 'model':
+            f_name = form_field.field_id.name
+        elif self.type == 'honeypot':
+            f_name = "hpf-%s" % form_field.id
+        elif self.type == 'snippet_area':
+            f_name = "snippet-area-field-%s" % form_field.id
+        elif self.type == 'mail_message':
+            f_name = "comment-field-%s" % form_field.id
+        else:
+            raise ValueError("FS-Online Form-Field-Type %s is not supported" % form_field.type)
+        return f_name
+
     # TODO: Add file type or mime type restrictions for binary fields
     #       HINT: check html  parameter 'accept' and 'type'
-
     @api.constrains('field_id', 'binary_name_field_id', 'type', 'mandatory', 'readonly', 'default', 'show', 'login',
-                    'binary_name_field_id', 'information')
+                    'binary_name_field_id', 'information', 'mail_message_subtype')
     def constrain_field_id(self):
         for r in self:
+            # comment (mail_message) field
+            if r.type == 'mail_message':
+                if not r.mail_message_subtype:
+                    raise ValidationError('Fields of type mail_message require a mail message subtype!')
+                if r.mail_message_subtype.res_model \
+                        and r.mail_message_subtype.res_model not in [r.form_model_name, 'fson.form']:
+                    raise ValidationError('The mail_message_subtype.res_model is not suitable for this form model!')
+
             # honeypot field
             if r.type == 'honeypot':
                 if r.field_id:
@@ -106,6 +131,7 @@ class FSONFormField(models.Model):
                     raise ValidationError("Honeypot fields can not be readonly!")
                 if r.default:
                     raise ValidationError("Honeypot fields can not have a default value!")
+
             # model field
             if r.field_id:
                 # Check type

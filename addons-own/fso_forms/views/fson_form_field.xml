@@ -14,6 +14,11 @@
                             <field name="show"/>
                             <field name="mandatory"/>
                             <field name="type"/>
+                            <field name="mail_message_subtype"
+                                   attrs="{'invisible': [('type','!=','mail_message')], 'required': [('type','=','mail_message')]}"
+                                   domain="['|', '|', ('res_model', '=', False), ('res_model', '=', form_model_name), ('res_model', '=', 'fso_forms')]"
+                                   options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                            />
                             <field name="honeypot" invisible="1"/>
                         </group>
                         <group>
@@ -25,7 +30,9 @@
                            string="Model Field"
                            attrs="{'invisible': [('type','!=','model'), ('field_id','=',False)]}">
                         <group name="field_source">
-                            <field name="field_id"/>
+                            <field name="field_id"
+                                   attrs="{'required': [('type','=','model')]}"
+                            />
                             <field name="binary_name_field_id"
                                    attrs="{'invisible': [('field_ttype','!=','binary')]}"
                                    domain="[('model_id','=',context.get('form_model_id') or form_id.model_id.id),

@@ -55,10 +55,16 @@
                                         <field name="show"/>
                                         <field name="mandatory"/>
                                         <field name="type"/>
+                                        <field name="mail_message_subtype"
+                                               attrs="{'readonly': [('type','!=','mail_message')], 'required': [('type','=','mail_message')]}"
+                                               domain="['|', '|', ('res_model', '=', False), ('res_model', '=', form_model_name), ('res_model', '=', 'fso_forms')]"
+                                               options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                                        />
                                         <field name="form_model_name"
                                                invisible="1"/>
                                         <!-- ATTENTION: The Domain for 'field_id' is also set dynamically by oc_field_id_dynamic_domain() -->
                                         <field name="field_id"
+                                               attrs="{'readonly': [('type','!=','model')], 'required': [('type','=','model')]}"
                                                domain="[('model_id','=',context.get('form_model_id'))]"
                                                options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
                                         <field name="field_ttype"
