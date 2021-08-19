@@ -178,7 +178,7 @@
                                         <p><code style="color:FireBrick">FireBrick:</code> Form-Fields with a default value or that mark a login or email-to field</p>
                                         <p><br/></p>
 
-                                        <h1>Special CSS classes</h1>
+                                        <h1>Special CSS-classes for fields</h1>
                                         <p><code>.hide_it</code> Hides a field by moving it offscreen</p>
                                         <p><code>.fso-form-widget-image</code> Displays a preview of the image for binary fields</p>
                                         <p><br/></p>

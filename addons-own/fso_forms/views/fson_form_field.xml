@@ -82,7 +82,7 @@
                     </group>
 
                     <group name="field_marker"
-                           string="Use this field as:"
+                           string="Mark this field as:"
                            attrs="{'invisible': [('type','!=','model'), ('field_id','=',False)]}">
                         <field name="login"/>
                         <field name="confirmation_email"/>
