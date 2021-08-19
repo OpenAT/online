@@ -84,12 +84,18 @@
                     <t t-set="f_style" t-value="field.style or 'none'"/>
                     <t t-set="f_required" t-value="field.mandatory"/>
                     <!-- Jquery Validate Data Rules -->
-                    <t t-set="validation_rulevalidation_rule" t-value="{}"/>
+                    <t t-set="validation_rule" t-value="{}"/>
                     <t t-if="field.validation_rule">
                         <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
                     </t>
                     <!-- Readonly if logged in: Only set the field to readonly if a record exists and a user is logged in! -->
                     <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
+                    <!-- ================= -->
+                    <!-- RESET model field values -->
+                    <t t-set="record_f_name" t-value=""/>
+                    <t t-set="f_type" t-value=""/>
+                    <t t-set="f_value" t-value=""/>
+                    <t t-set="f_checked" t-value=""/>
                     <!-- ================= -->
 
                     <!-- ============ -->
@@ -146,16 +152,15 @@
                     <!-- ===================== -->
                     <!-- REGULAR (MODEL) FIELD -->
                     <!-- ===================== -->
-                    <t t-if="field.type == 'model' and field.field_id">
+                    <t t-if="field.type == 'model'">
 
                         <!-- ADDITIONAL MODEL FIELD DATA -->
                         <!-- =========================== -->
                         <t t-set="record_f_name" t-value="field.field_id.name"/>
                         <t t-set="f_type" t-value="field.field_id.ttype"/>
-                        <!-- Field content -->
                         <t t-set="f_value" t-value="(kwargs.get(f_name, '') if f_name in kwargs else field.default) if (field.nodata or not record) else (str(record[record_f_name].id) if record and record[record_f_name] and f_type == 'many2one' else record[record_f_name] if record else '')"/>
                         <t t-set="f_checked" t-value="True if f_value else None"/>
-                        <!-- ====================== -->
+                        <!-- =========================== -->
 
 
                         <!-- !!! LIMIT FIELD TYPES !!! -->
