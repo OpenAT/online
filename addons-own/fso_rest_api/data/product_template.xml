@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- ================ -->
+        <!-- product.template -->
+        <!-- ================ -->
+
+        <!-- ir.export field list for openapi access -->
+        <record id="frst_rest_api_product_template_export" model="ir.exports">
+            <field name="name">Fundraising Studio Rest API Product Template Fields</field>
+            <field name="resource">product.template</field>
+            <field
+                name="export_fields"
+                eval="[
+                    (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'create_uid'}),
+                    (0, 0, {'name': 'create_date'}),
+                    (0, 0, {'name': 'write_uid'}),
+                    (0, 0, {'name': 'write_date'}),
+
+                    (0, 0, {'name': 'name'}),
+                    (0, 0, {'name': 'fs_product_type'}),
+                    (0, 0, {'name': 'product_page_template'}),
+                    (0, 0, {'name': 'type'}),
+                    (0, 0, {'name': 'active'}),
+                    (0, 0, {'name': 'description_sale'}),
+                    (0, 0, {'name': 'website_url'}),
+                    (0, 0, {'name': 'list_price'}),
+                    (0, 0, {'name': 'price_donate'}),
+                    (0, 0, {'name': 'price_donate_min'}),
+                    (0, 0, {'name': 'website_published'}),
+                    (0, 0, {'name': 'website_published_start'}),
+                    (0, 0, {'name': 'website_published_end'}),
+                    (0, 0, {'name': 'website_visible'}),
+                    (0, 0, {'name': 'default_code'}),
+                    ]"
+            />
+        </record>
+
+        <!-- "context" for openapi access -->
+        <record id="frst_rest_api_product_template_context" model="openapi.access.create.context">
+            <field name="name">frst_rest_api_product_template_context</field>
+            <field name="model_id" ref="sale.model_product_template" />
+            <field name="context">{"lang": "de_DE"}</field>
+        </record>
+
+        <!-- openapi access -->
+        <record id="frst_rest_api_product_template_access" model="openapi.access">
+            <field name="namespace_id" ref="frst_rest_api_namespace" />
+            <field name="model_id" ref="sale.model_product_template" />
+
+            <field name="api_create" eval="True" />
+            <field name="api_read" eval="True" />
+            <field name="api_update" eval="True" />
+            <field name="api_delete" eval="False" />
+
+            <field name="api_public_methods" eval="True" />
+            <field name="public_methods" eval="'search\n'"/>
+            <field name="private_methods" eval="" />
+
+            <field name="allowed_fields_id" ref="fso_rest_api.frst_rest_api_product_template_export" />
+            <field name="read_one_id" ref="fso_rest_api.frst_rest_api_product_template_export" />
+            <field name="read_many_id" ref="fso_rest_api.frst_rest_api_product_template_export" />
+
+            <field
+                name="create_context_ids"
+                eval="[(4, ref('fso_rest_api.frst_rest_api_product_template_context'))]"
+            />
+        </record>
+
+        <!--    ACCESS RULE:
+                Restrict deletion of records for group "frst_api_group": Logged in user must be creator of the record!
+        -->
+        <!--
+        <record model="ir.rule" id="rule_restrict_delete_frst_api_group_product_template">
+            <field name="name">Fundraising Studio REST API Group: Delete own records only product.template</field>
+            <field name="model_id" ref="sale.model_product_template"/>
+            <field name="domain_force">[('create_uid.id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('fso_rest_api.frst_api_group'))]"/>
+            <field name="perm_read" eval=""/>
+            <field name="perm_write" eval=""/>
+            <field name="perm_create" eval=""/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+        -->
+    </data>
+</openerp>

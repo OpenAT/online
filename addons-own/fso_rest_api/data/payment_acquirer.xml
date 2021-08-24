@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- =================== -->
+        <!-- payment.acquirer -->
+        <!-- =================== -->
+
+        <!-- ir.export field list for openapi access -->
+        <record id="frst_rest_api_payment_acquirer_export" model="ir.exports">
+            <field name="name">Fundraising Studio Rest API Payment Acquirer Fields</field>
+            <field name="resource">payment.acquirer</field>
+            <field
+                name="export_fields"
+                eval="[
+                    (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'create_uid'}),
+                    (0, 0, {'name': 'create_date'}),
+                    (0, 0, {'name': 'write_uid'}),
+                    (0, 0, {'name': 'write_date'}),
+
+                    (0, 0, {'name': 'name'}),
+                    (0, 0, {'name': 'do_not_send_status_email'}),
+                    (0, 0, {'name': 'environment'}),
+                    (0, 0, {'name': 'globally_hidden'}),
+                    (0, 0, {'name': 'ogonedadi_brand'}),
+                    (0, 0, {'name': 'ogonedadi_pm'}),
+                    (0, 0, {'name': 'ogonedadi_userid'}),
+                    (0, 0, {'name': 'provider'}),
+                    (0, 0, {'name': 'recurring_transactions'}),
+                    (0, 0, {'name': 'redirect_url_after_form_feedback'}),
+                    (0, 0, {'name': 'validation'}),
+                    (0, 0, {'name': 'website_published'}),
+                    ]"
+            />
+        </record>
+
+        <!-- "context" for openapi access -->
+        <record id="frst_rest_api_payment_acquirer_context" model="openapi.access.create.context">
+            <field name="name">frst_rest_api_payment_acquirer_context</field>
+            <field name="model_id" ref="payment.model_payment_acquirer" />
+            <field name="context">{"lang": "de_DE"}</field>
+        </record>
+
+        <!-- openapi access -->
+        <record id="frst_rest_api_payment_acquirer_access" model="openapi.access">
+            <field name="namespace_id" ref="frst_rest_api_namespace" />
+            <field name="model_id" ref="payment.model_payment_acquirer" />
+
+            <field name="api_create" eval="False" />
+            <field name="api_read" eval="True" />
+            <field name="api_update" eval="False" />
+            <field name="api_delete" eval="False" />
+
+            <field name="api_public_methods" eval="True" />
+            <field name="public_methods" eval="'search\n'"/>
+            <field name="private_methods" eval="" />
+
+            <field name="allowed_fields_id" ref="fso_rest_api.frst_rest_api_payment_acquirer_export" />
+            <field name="read_one_id" ref="fso_rest_api.frst_rest_api_payment_acquirer_export" />
+            <field name="read_many_id" ref="fso_rest_api.frst_rest_api_payment_acquirer_export" />
+
+            <field
+                name="create_context_ids"
+                eval="[(4, ref('fso_rest_api.frst_rest_api_payment_acquirer_context'))]"
+            />
+        </record>
+
+    </data>
+</openerp>

@@ -56,5 +56,11 @@ If you need to make local or manual changes create a new integration!
         'data/frst_zgruppedetail.xml',
         'data/frst_persongruppe.xml',
         'data/frst_personemailgruppe.xml',
+        'data/product_template.xml',
+        'data/product_product.xml',
+        'data/sale_order.xml',
+        'data/sale_order_line.xml',
+        'data/payment_transaction.xml',
+        'data/payment_acquirer.xml',
     ],
 }
