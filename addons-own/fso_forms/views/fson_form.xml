@@ -14,6 +14,7 @@
                                 <field name="name"/>
                                 <field name="type"/>
                                 <field name="model_id"/>
+                                <field name="edit_existing_record_if_logged_in"/>
                                 <field name="submit_button_text"/>
                             </group>
                             <group name="system_data">
@@ -33,7 +34,6 @@
                             <group name="login" string="Login Settings">
                                 <field name="login_required"/>
                                 <field name="logout_button_text"/>
-                                <field name="edit_existing_record_if_logged_in"/>
                                 <field name="show_token_login_form"/>
                             </group>
                         </group>
@@ -48,10 +48,6 @@
                                           editable="bottom">
                                         <field name="sequence"
                                                widget="handle"/>
-                                        <button name="button_open_field_form_view"
-                                                type="object"
-                                                icon="gtk-edit"
-                                                string="Edit"/>
                                         <field name="show"/>
                                         <field name="mandatory"/>
                                         <field name="type"/>
@@ -115,6 +111,10 @@
                                                invisible="1"/>
                                         <field name="honeypot"
                                                invisible="1"/>
+                                        <button name="button_open_field_form_view"
+                                                type="object"
+                                                icon="gtk-edit"
+                                                string="Edit"/>
                                         <!--<button name="'%(fso_forms.fson_form_field_action)d'" type="action" icon="gtk-edit" string="Edit"/>-->
                                     </tree>
                                 </field>
