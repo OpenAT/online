@@ -18,7 +18,7 @@ function get_odoo_product_details_for_gtm (odoo_product_html) {
 
     return {
         'name': $odoo_product.find("[itemprop=name]").text(),                         // Name or ID is required.
-        // 'id': $odoo_product.find("div.js_product").data('product-template-id'),       // the product-template-id
+        'id': $odoo_product.find("div.js_product").data('product-template-id'),       // the product-template-id
         'price': $odoo_product.find("input[name=price_donate]").val() || $odoo_product.find("[itemprop=price]").text(),
         'category': $odoo_product.find("input[name=cat_id]").val(),
         'variant': $odoo_product.find("input[name=product_id]").val(),  // the selected product-variant-id
@@ -31,8 +31,7 @@ function push_to_datalayer (gtm_event_data) {
     if (Object.keys(gtm_event_data).length === 0) {
         console.log(`ERROR! gtm_event_data seems to be empty:\n${JSON.stringify(gtm_event_data, undefined, 2)}`)
     } else {
-        //console.log(`Push GTM Data Layer Event:\n${JSON.stringify(gtm_event_data, undefined, 2)}`);
-        console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data['event'], undefined, 2)}`);
+        console.log(`Push GTM Data Layer Event:\n${JSON.stringify(gtm_event_data, undefined, 2)}`);
         dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
         dataLayer.push(gtm_event_data);
     }
@@ -42,8 +41,6 @@ function push_to_datalayer (gtm_event_data) {
 // HELPER FUNCTIONS FOR THE DATALAYER EVENTS
 // --------------------------------------------------------------------------------------------------------------------
 function gtm_fsonline_product_detail () {
-    console.log('gtm_fsonline_product_detail');
-
     var $odoo_product_page = $("#product_detail");
     if ($odoo_product_page.length) {
         var odoo_product_detail = get_odoo_product_details_for_gtm($odoo_product_page);
@@ -63,8 +60,6 @@ function gtm_fsonline_product_detail () {
 }
 
 function gtm_fsonline_product_listing () {
-    console.log('gtm_fsonline_product_listing');
-
     var gtm_product_impressions = [];
     var $odoo_products = $("#products_grid .oe_product");
     if ($odoo_products.length) {
@@ -73,10 +68,11 @@ function gtm_fsonline_product_listing () {
         $odoo_products.each(function (i) {
             var odoo_product_detail = get_odoo_product_details_for_gtm($(this));
             odoo_product_detail['position'] = i+1;
+            console.log(`odoo_product_detail: ${odoo_product_detail}`);
             gtm_product_impressions.push(odoo_product_detail)
         });
     }
-    //console.log(`Product Impressions: ${JSON.stringify(gtm_product_impressions, undefined, 2)}`);
+    console.log(`Product Impressions: ${JSON.stringify(gtm_product_impressions, undefined, 2)}`);
     // Add the collected product data to the Google Tag Manager dataLayer object
     if (gtm_product_impressions.length) {
         let event_data = {
@@ -85,31 +81,20 @@ function gtm_fsonline_product_listing () {
                 'impressions': gtm_product_impressions
             }
         };
+        console.log('PUSH !!!')
         push_to_datalayer(event_data)
     }
 }
 
 function gtm_fsonline_add_remove_cart () {
-    console.log('gtm_fsonline_add_remove_cart');
-
     $(".oe_website_sale form[action='/shop/cart/update']").submit( function() {
-        // Quick add to cart on category page or regular product page
-        let odoo_product_detail
-        let quantity
-        if ($("#product_detail.oe_website_sale").length) {
-            odoo_product_detail = get_odoo_product_details_for_gtm($("#product_detail.oe_website_sale"));
-            quantity = $(this).find("input[name=add_qty]").val();
-        } else {
-            odoo_product_detail = get_odoo_product_details_for_gtm($(this));
-            quantity = "1"
-        }
+        let odoo_product_detail = get_odoo_product_details_for_gtm($("#product_detail.oe_website_sale"));
+        let quantity = $(this).find("input[name=add_qty]").val();
         odoo_product_detail['quantity'] = quantity;
-
-        console.log('gtm_fsonline_add_remove_cart: quantity: ', quantity);
 
         // Measure adding a product to a shopping cart by using an 'add' actionFieldObject
         // and a list of productFieldObjects.
-        if (parseInt(quantity) > 0) {
+        if (quantity > 0) {
             let event_data = {
                 'event': 'fsonline.addToCart',
                 'ecommerce': {
@@ -135,8 +120,6 @@ function gtm_fsonline_add_remove_cart () {
 }
 
 function gtm_fsonline_checkout_cart_step_1 () {
-    console.log('gtm_fsonline_checkout_cart_step_1');
-
     if ($("#wsd_cart_page").length) {
         openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
             if (gtm_sale_order_data && gtm_sale_order_data.products) {
@@ -153,16 +136,12 @@ function gtm_fsonline_checkout_cart_step_1 () {
                     },
                 }
                 push_to_datalayer(event_data)
-            } else {
-                console.log('gtm_fsonline_checkout_cart_step_1; NO DATA FROM /shop/sale_order_data_for_gtm');
             }
         });
     }
 }
 
 function gtm_fsonline_checkout_userdata_step_2 () {
-    console.log('gtm_fsonline_checkout_userdata_step_2');
-
     if ($("#wsd_checkout_form").length) {
         openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
             if (gtm_sale_order_data && gtm_sale_order_data.products) {
@@ -179,38 +158,8 @@ function gtm_fsonline_checkout_userdata_step_2 () {
                     },
                 }
                 push_to_datalayer(event_data)
-            } else {
-                console.log('gtm_fsonline_checkout_userdata_step_2; NO DATA FROM /shop/sale_order_data_for_gtm');
             }
         });
-    }
-}
-
-function gtm_fsonline_checkout_paymentmethod_step_3 () {
-    console.log('gtm_fsonline_checkout_paymentmethod_step_3');
-
-    if ($("#payment_method").length) {
-        openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
-            if (gtm_sale_order_data && gtm_sale_order_data.products) {
-                let active_acquirer = $('#payment_method li.active input[name=acquirer]').val() + '__' + $('#payment_method li.active .tab-acquirer-name').text();
-                let event_data = {
-                    'event': 'fsonline.checkout.paymentmethod',
-                    'ecommerce': {
-                        'checkout': {
-                            'actionField': {
-                                'step': 3,
-                                'option': active_acquirer
-                            },
-                            'products': gtm_sale_order_data.products
-                        }
-                    },
-                };
-                push_to_datalayer(event_data)
-            } else {
-                console.log('gtm_fsonline_checkout_paymentmethod_step_3; NO DATA FROM /shop/sale_order_data_for_gtm');
-            }
-        });
-
     }
     // TRACK PAYMENT METHOD CHANGES
     // ----------------------------
@@ -231,39 +180,59 @@ function gtm_fsonline_checkout_paymentmethod_step_3 () {
     });
 }
 
-function gtm_fsonline_purchase(){
-    console.log('gtm_fsonline_purchase');
-
-    openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
-        if (gtm_sale_order_data && gtm_sale_order_data.products) {
-
-            // For one-page-checkout pages
-            if ($("section[name=one-page-checkout]").length) {
-                console.log('gtm_fsonline_purchase: one-page-checkout page detected');
-                gtm_fsonline_checkout_cart_step_1();
-                gtm_fsonline_checkout_userdata_step_2 ();
-                gtm_fsonline_checkout_paymentmethod_step_3 ();
+function gtm_fsonline_checkout_paymentmethod_step_3 () {
+    if ($("#payment_method").length) {
+        openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
+            if (gtm_sale_order_data && gtm_sale_order_data.products) {
+                let active_acquirer = $('#payment_method li.active input[name=acquirer]').val() + '__' + $('#payment_method li.active .tab-acquirer-name').text();
+                let event_data = {
+                    'event': 'fsonline.checkout.paymentmethod',
+                    'ecommerce': {
+                        'checkout': {
+                            'actionField': {
+                                'step': 3,
+                                'option': active_acquirer
+                            },
+                            'products': gtm_sale_order_data.products
+                        }
+                    },
+                };
+                push_to_datalayer(event_data)
             }
+        });
 
-            let event_data = {
-                'event': 'fsonline.purchase',
-                'ecommerce': {
-                    'purchase': {
-                        'actionField': gtm_sale_order_data.order_data,
-                        'products': gtm_sale_order_data.products
+    }
+}
+
+function gtm_fsonline_purchase (one_page_checkout=false) {
+    function pushGTMPurchaseEventOnSubmit(message){
+        console.log('pushGTMPurchaseEventOnSubmit:', message);
+        openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
+            if (gtm_sale_order_data && gtm_sale_order_data.products) {
+                let event_data = {
+                    'event': 'fsonline.purchase',
+                    'ecommerce': {
+                        'purchase': {
+                            'actionField': gtm_sale_order_data.order_data,
+                            'products': gtm_sale_order_data.products
+                        }
                     }
                 }
+                push_to_datalayer(event_data)
             }
-            push_to_datalayer(event_data)
-        } else {
-            console.log('gtm_fsonline_purchase; NO DATA FROM /shop/sale_order_data_for_gtm');
+        });
+    }
+    $("#wsd_pp_auto_submit_form.js_auto_submit_form form").on('submit', function(){
+        if (one_page_checkout) {
+            gtm_fsonline_checkout_cart_step_1();
+            gtm_fsonline_checkout_userdata_step_2 ();
+            gtm_fsonline_checkout_paymentmethod_step_3 ();
         }
+        pushGTMPurchaseEventOnSubmit("#wsd_pp_auto_submit_form .js_auto_submit_form form");
     });
 }
 
 function gtm_fsonline_confirmation_page_after_purchase () {
-    console.log('gtm_fsonline_confirmation_page_after_purchase');
-
     if ($("div.wsd_confirmation_page").length) {
         let event_data = {
             'event': 'fsonline.confirmation_page_after_purchase',
@@ -279,41 +248,33 @@ function gtm_fsonline_confirmation_page_after_purchase () {
         push_to_datalayer(event_data)
     }
 }
-
-
 // --------------------------------------------------------------------------------------------------------------------
 // END: HELPER FUNCTIONS FOR THE DATALAYER EVENTS
 // --------------------------------------------------------------------------------------------------------------------
 
 
-// Add event handler to form submission
-$("#wsd_pp_auto_submit_form.js_auto_submit_form form").on('submit', function(){
-    gtm_fsonline_purchase();
-});
-
-
-
 $(document).ready(function () {
-
-    // Common GTM checks for opc and regular pages
-    gtm_fsonline_add_remove_cart();
-    gtm_fsonline_confirmation_page_after_purchase();
 
     gtm_fsonline_product_detail();
     gtm_fsonline_product_listing ();
+    gtm_fsonline_add_remove_cart();
 
-    // GTM checks for regular pages
-    // HINT: On OPC Pages these are executed in gtm_fsonline_purchase()
+    // Check if this page is a OPC Page
     let $opc_page = $("section[name=one-page-checkout]");
     if ($opc_page.length) {
-        console.log("GTM: one-page-checkout page detected!");
+        console.log("!!! OPC PAGE DETECTED !!!");
+        gtm_fsonline_purchase(true);
     } else {
-        console.log("GTM: regular page detected!");
+        console.log("!!! REGULAR PAGE DETECTED !!!");
         gtm_fsonline_checkout_cart_step_1();
         gtm_fsonline_checkout_userdata_step_2 ();
         gtm_fsonline_checkout_paymentmethod_step_3 ();
+        gtm_fsonline_purchase();
     }
 
-
+    gtm_fsonline_confirmation_page_after_purchase();
 
 });
+
+
+
