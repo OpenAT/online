@@ -82,7 +82,7 @@ class FsoRestApiTestCase(HttpCase):
         if not data:
             raise ArgumentError('Keyword argument "data" requires a value.')
 
-        create_url = self.get_model_url(self._model_name)
+        create_url = self.get_model_url(model)
         response = self.api_request("POST", create_url, auth=self.api_auth, json=data)
         return response
 
