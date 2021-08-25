@@ -62,5 +62,7 @@ If you need to make local or manual changes create a new integration!
         'data/sale_order_line.xml',
         'data/payment_transaction.xml',
         'data/payment_acquirer.xml',
+        'data/res_country.xml',
+        'data/res_currency.xml',
     ],
 }
