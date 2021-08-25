@@ -128,3 +128,10 @@ Sale orders & Donations
 ``sale.order`` represents and order, and ``sale.order.line`` represents an order line.
 
 An order can contain multiple lines.
+
+Payment acquirer
+--------------------------------------------------------------
+
+:ref:`payment_acquirer`
+
+Specifies how a payment was acquired.

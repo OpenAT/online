@@ -17,3 +17,4 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     frst_zverzeichnis
     products
     sale_orders
+    payment_acquirer
