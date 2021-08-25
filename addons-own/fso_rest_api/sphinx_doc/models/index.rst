@@ -8,6 +8,7 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     :maxdepth: 1
 
     models_overview
+    res_country
     res_partner
     frst_personemail
     frst_groups

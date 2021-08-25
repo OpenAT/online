@@ -13,6 +13,13 @@ The full list of available models with their fields and data types can be found 
 
 --------------------------------------------------------------------------------------------------------------------
 
+Country
+--------------------------------------------------------------
+
+:ref:`res_country`
+
+Countries known by the system.
+
 Partner
 --------------------------------------------------------------
 
