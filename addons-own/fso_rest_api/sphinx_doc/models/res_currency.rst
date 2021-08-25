@@ -6,6 +6,8 @@ res.currency
 
 Contains a list of known currencies in the system.
 
+.. note:: Only reading is supported for this model.
+
 Fields
 ------
 - ``id`` ID used as foreign key in other models
