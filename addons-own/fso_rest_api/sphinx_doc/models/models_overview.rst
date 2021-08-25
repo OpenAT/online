@@ -119,3 +119,12 @@ Products
 Most products (especially donations), are simply a template with an empty product variant.
 
 Multiple variants are currently not supported.
+
+Sale orders & Donations
+--------------------------------------------------------------
+
+:ref:`sale_orders`
+
+``sale.order`` represents and order, and ``sale.order.line`` represents an order line.
+
+An order can contain multiple lines.

@@ -16,3 +16,4 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     frst_group_subscriptions
     frst_zverzeichnis
     products
+    sale_orders
