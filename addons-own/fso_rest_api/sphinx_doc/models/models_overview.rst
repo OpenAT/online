@@ -20,6 +20,15 @@ Country
 
 Countries known by the system.
 
+
+Currency
+--------------------------------------------------------------
+
+:ref:`res_currency`
+
+Currencies known by the system.
+
+
 Partner
 --------------------------------------------------------------
 
@@ -98,3 +107,15 @@ and how accounting entries are handled.
 
     You are able to link actions (mail, email, sms, contracts) to a cds record for cumulative reporting and
     centralized monitoring.
+
+
+Products
+--------------------------------------------------------------
+
+:ref:`products`
+
+``product.template`` represents products, and ``product.product`` represents variant of that product.
+
+Most products (especially donations), are simply a template with an empty product variant.
+
+Multiple variants are currently not supported.
