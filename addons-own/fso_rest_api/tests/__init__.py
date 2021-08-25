@@ -8,3 +8,4 @@ from . import test_product_product
 from . import test_sale_order
 from . import test_sale_order_line
 from . import test_payment_transaction
+from . import test_res_country
