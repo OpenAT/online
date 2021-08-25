@@ -29,6 +29,8 @@ for one or more ``product_product`` entries (variants).
 
 .. WARNING:: Example 2 is for explanation only. Only donations (template 1:1 products) are currently supported.
 
+.. _product_template:
+
 =========================================
 product.template
 =========================================
@@ -83,6 +85,8 @@ Methods
 
 Only the ``search`` method is currently exposed by the api. See :ref:`searching` for more information about searching.
 
+
+.. _product_product:
 
 =========================================
 product.product
