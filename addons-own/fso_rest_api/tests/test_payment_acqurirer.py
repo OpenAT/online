@@ -31,3 +31,9 @@ class TestFsoRestApiPaymentAcquirer(FsoRestApiTestCase):
             "name": expected_name
         })
         self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
+
+    def test_delete_payment_acquirer_is_denied(self):
+        model = self.read_first_from_api()
+        response = self.delete_via_api(model["id"])
+        self.assertModel(model)
+        self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
