@@ -22,7 +22,6 @@
 
                     (0, 0, {'name': 'state'}),
                     (0, 0, {'name': 'frst_iban'}),
-                    (0, 0, {'name': 'frst_bic'}),
                     (0, 0, {'name': 'acquirer_reference'}),
                     (0, 0, {'name': 'esr_reference_number'}),
                     (0, 0, {'name': 'reference'}),
