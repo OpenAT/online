@@ -1,5 +1,14 @@
 // BEST TUTORIAL: https://www.simoahava.com/analytics/enhanced-ecommerce-guide-for-google-tag-manager
 
+
+function removeAllButLast(string, token) {
+    let parts = string.split(token);
+    if (parts[1]===undefined)
+        return string;
+    else
+        return parts.slice(0,-1).join('') + token + parts.slice(-1)
+}
+
 // HELPER FUNCTION TO READ PRODUCT DETAILS FROM PAGE HTML
 // ------------------------------------------------------
 function get_odoo_product_details_for_gtm (odoo_product_html) {
@@ -7,22 +16,47 @@ function get_odoo_product_details_for_gtm (odoo_product_html) {
         console.log('odoo_product_html is empty!');
         return {}
     }
-
     let $odoo_product = odoo_product_html;
     if (! $odoo_product instanceof jQuery) {
-        console.log('odoo_product_html is no a jquery object!');
+        console.log('odoo_product_html is not a jquery object!');
         $odoo_product = $(odoo_product_html)
     }
-
     // console.log(`odoo_product_html:\n${odoo_product_html.html()}`);
 
-    return {
-        'name': $odoo_product.find("[itemprop=name]").text(),                         // Name or ID is required.
+    let category = $odoo_product.find("input[name=cat_id]").val();
+    if ( category === 'False') { category = false}
+    let product_data = {
+        'name': $odoo_product.find("[itemprop=name]").text() || $odoo_product.find("a[name=product_name]").text() || $odoo_product.find(".js_product").data("product-name"),
         // 'id': $odoo_product.find("div.js_product").data('product-template-id'),       // the product-template-id
-        'price': $odoo_product.find("input[name=price_donate]").val() || $odoo_product.find("[itemprop=price]").text(),
-        'category': $odoo_product.find("input[name=cat_id]").val(),
-        'variant': $odoo_product.find("input[name=product_id]").val(),  // the selected product-variant-id
-    };
+        'price': $odoo_product.find("input[name=price_donate]").val() || $odoo_product.find("[itemprop=price]").text() || $odoo_product.find(".oe_currency_value").text(),
+        'category': category || 'no-category',
+        'variant': $odoo_product.find("input[name=product_id]").val() || $odoo_product.find("input.js_quantity").data("product-id"),  // the selected product-variant-id
+    }
+
+    for (let key in product_data) {
+        let val = product_data[key];
+        // console.log(`PARSE key: ${key}, val: ${val}`);
+
+        if (typeof val === 'string' || val instanceof String) {
+            // Remove whitespace and newlines from all strings
+            val = val.trim()
+            // Convert price to a string with two digits
+            if (val && key === 'price') {
+                val = val.replaceAll(',', '.');
+                val = removeAllButLast(val, '.');
+                val = parseFloat(val).toFixed(2);
+            }
+        }
+
+        if ( val && ['category', 'variant'].includes(key) && ! isNaN(parseInt(val)) ) {
+            val = parseInt(val).toFixed(0);
+        }
+
+        // Store cleaned value
+        product_data[key] = val;
+    }
+
+    return product_data;
 }
 
 // HELPER FUNCTION TO PUSH TO THE DATALAYER
@@ -31,11 +65,15 @@ function push_to_datalayer (gtm_event_data) {
     if (Object.keys(gtm_event_data).length === 0) {
         console.log(`ERROR! gtm_event_data seems to be empty:\n${JSON.stringify(gtm_event_data, undefined, 2)}`)
     } else {
-        //console.log(`Push GTM Data Layer Event:\n${JSON.stringify(gtm_event_data, undefined, 2)}`);
-        console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data['event'], undefined, 2)}`);
+        console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data, undefined, 2)}`);
+        //console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data['event'], undefined, 2)}`);
         dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
         dataLayer.push(gtm_event_data);
     }
+}
+
+function is_opc_page () {
+    return Boolean($("section[name=one-page-checkout]").length || $("#wrap.ppt_opc").length)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -89,49 +127,37 @@ function gtm_fsonline_product_listing () {
     }
 }
 
-function gtm_fsonline_add_remove_cart () {
-    console.log('gtm_fsonline_add_remove_cart');
+function gtm_fsonline_add_remove_cart (product_html, forced_quantity) {
+    console.log(`gtm_fsonline_add_remove_cart: \n${product_html.html()}`);
 
-    $(".oe_website_sale form[action='/shop/cart/update']").submit( function() {
-        // Quick add to cart on category page or regular product page
-        let odoo_product_detail
-        let quantity
-        if ($("#product_detail.oe_website_sale").length) {
-            odoo_product_detail = get_odoo_product_details_for_gtm($("#product_detail.oe_website_sale"));
-            quantity = $(this).find("input[name=add_qty]").val();
-        } else {
-            odoo_product_detail = get_odoo_product_details_for_gtm($(this));
-            quantity = "1"
-        }
-        odoo_product_detail['quantity'] = quantity;
+    let quantity = forced_quantity || product_html.find("input[name=add_qty]").val() || "1";
+    let odoo_product_detail = get_odoo_product_details_for_gtm(product_html);
+    odoo_product_detail['quantity'] = parseFloat(quantity).toFixed(0);
+    delete odoo_product_detail['category'];
 
-        console.log('gtm_fsonline_add_remove_cart: quantity: ', quantity);
-
-        // Measure adding a product to a shopping cart by using an 'add' actionFieldObject
-        // and a list of productFieldObjects.
-        if (parseInt(quantity) > 0) {
-            let event_data = {
-                'event': 'fsonline.addToCart',
-                'ecommerce': {
-                    'add': {
-                        'products': [odoo_product_detail]
-                    }
+    // Measure adding a product to a shopping cart by using an 'add' actionFieldObject
+    // and a list of productFieldObjects.
+    if (parseInt(quantity) > 0) {
+        let event_data = {
+            'event': 'fsonline.addToCart',
+            'ecommerce': {
+                'add': {
+                    'products': [odoo_product_detail]
                 }
-            };
-            push_to_datalayer(event_data)
-        } else {
-            let event_data = {
-                'event': 'fsonline.removeFromCart',
-                'ecommerce': {
-                    'remove': {
-                        'products': [odoo_product_detail]
-                    }
+            }
+        };
+        push_to_datalayer(event_data)
+    } else {
+        let event_data = {
+            'event': 'fsonline.removeFromCart',
+            'ecommerce': {
+                'remove': {
+                    'products': [odoo_product_detail]
                 }
-            };
-            push_to_datalayer(event_data)
-        }
-
-    });
+            }
+        };
+        push_to_datalayer(event_data)
+    }
 }
 
 function gtm_fsonline_checkout_cart_step_1 () {
@@ -238,7 +264,7 @@ function gtm_fsonline_purchase(){
         if (gtm_sale_order_data && gtm_sale_order_data.products) {
 
             // For one-page-checkout pages
-            if ($("section[name=one-page-checkout]").length) {
+            if ( is_opc_page() ) {
                 console.log('gtm_fsonline_purchase: one-page-checkout page detected');
                 gtm_fsonline_checkout_cart_step_1();
                 gtm_fsonline_checkout_userdata_step_2 ();
@@ -261,7 +287,7 @@ function gtm_fsonline_purchase(){
     });
 }
 
-function gtm_fsonline_confirmation_page_after_purchase () {
+function gtm_fsonline_confirmation_page_after_purchase_step_4 () {
     console.log('gtm_fsonline_confirmation_page_after_purchase');
 
     if ($("div.wsd_confirmation_page").length) {
@@ -285,35 +311,41 @@ function gtm_fsonline_confirmation_page_after_purchase () {
 // END: HELPER FUNCTIONS FOR THE DATALAYER EVENTS
 // --------------------------------------------------------------------------------------------------------------------
 
-
-// Add event handler to form submission
+// Add event handler to redirect-to-payment-provider-form submission
+// TODO: Check if this can be added to "$(document).ready(function () { ..." below
 $("#wsd_pp_auto_submit_form.js_auto_submit_form form").on('submit', function(){
     gtm_fsonline_purchase();
 });
 
 
-
 $(document).ready(function () {
 
-    // Common GTM checks for opc and regular pages
-    gtm_fsonline_add_remove_cart();
-    gtm_fsonline_confirmation_page_after_purchase();
+    // Regular add-to-cart handler
+    $(".oe_website_sale form[action='/shop/cart/update']").submit( function() {
+       gtm_fsonline_add_remove_cart($(this));
+    });
 
+    // Shopping-Cart-Changes event handling
+    $("input.js_quantity[data-line-id][data-product-id]").change( function() {
+        let product_quantity = $(this).val();
+        let $cart_line = $(this).closest("tr")
+        gtm_fsonline_add_remove_cart($cart_line, product_quantity);
+    })
+
+    // GTM-EVENT-CHECKS on all pages (regular and opc)
+    gtm_fsonline_confirmation_page_after_purchase_step_4();
     gtm_fsonline_product_detail();
     gtm_fsonline_product_listing ();
 
-    // GTM checks for regular pages
-    // HINT: On OPC Pages these are executed in gtm_fsonline_purchase()
-    let $opc_page = $("section[name=one-page-checkout]");
-    if ($opc_page.length) {
-        console.log("GTM: one-page-checkout page detected!");
-    } else {
+    // GTM-EVENT-CHECKS for regular pages only
+    // HINT: For OPC Pages these functions are called in gtm_fsonline_purchase() to only send gtm-checkout-events
+    //       when purchasing the product (and not just when viewing the page)
+    if ( ! is_opc_page() ) {
         console.log("GTM: regular page detected!");
         gtm_fsonline_checkout_cart_step_1();
         gtm_fsonline_checkout_userdata_step_2 ();
         gtm_fsonline_checkout_paymentmethod_step_3 ();
     }
-
 
 
 });

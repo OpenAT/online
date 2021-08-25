@@ -2,6 +2,7 @@
 from openerp import http
 from openerp.http import request
 from openerp.addons.website_sale_donate.controllers.main import website_sale_donate
+from openerp.tools.float_utils import float_repr
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,11 +18,11 @@ class WebsiteSaleDonateGTM(website_sale_donate):
                 products.append({
                     # 'id': line.product_tmpl_id.id,
                     'name': line.product_id.name,
-                    'price': line.price_unit,
+                    'price': float_repr(line.price_unit, 2),
                     # 'brand': 'Google',
-                    'category': line.cat_id.id if line.cat_id else 'no-category',
-                    'variant': line.product_id.id,
-                    'quantity': line.product_uos_qty,
+                    'category': str(line.cat_id.id) if line.cat_id else 'no-category',
+                    'variant': str(line.product_id.id),
+                    'quantity': str(line.product_uos_qty),
                     # 'coupon': ''
 
                     # Custom Dimensions
@@ -30,7 +31,7 @@ class WebsiteSaleDonateGTM(website_sale_donate):
                     'dimension1': line.product_id.fs_product_type or 'no-frst-product-type',
                     'dimension2': line.product_id.product_page_template or 'no-product-page-template',
                     'dimension3': line.product_id.website_theme or 'no-product-website-theme',
-                    'dimension4': line.payment_interval_id.id if line.payment_interval_id else 'no-payment-interval-id',
+                    'dimension4': str(line.payment_interval_id.id) if line.payment_interval_id else 'no-payment-interval-id',
                     'dimension5': line.payment_interval_name or 'no-payment-interval-name',
                     'dimension6': line.payment_interval_xmlid or 'no-payment-interval-xmlid',
                 })
@@ -43,8 +44,8 @@ class WebsiteSaleDonateGTM(website_sale_donate):
             'order_data': {
                 'id': str(order.id)+'__'+order.name,
                 'affiliation': 'Fundraising Studio Online',
-                'revenue': order.amount_total,
-                'tax': order.amount_tax,
+                'revenue': float_repr(order.amount_total, 2),
+                'tax': float_repr(order.amount_tax, 2),
                 # 'shipping': '5.99',
                 # 'coupon': 'SUMMER_SALE'
             },
@@ -62,3 +63,8 @@ class WebsiteSaleDonateGTM(website_sale_donate):
             gtm_data = self.order_2_gtm(order)
             logger.info('gtm_data %s' % gtm_data)
         return gtm_data
+
+    # @http.route(['/shop/product_name_for_gtm'], type='json', auth="public")
+    # def product_name_for_gtm(self, product_product_id, **post):
+    #     product = request.env['product.product'].sudo().search([('id', '=', product_product_id)])
+    #     return product.name
