@@ -125,7 +125,7 @@ Sale orders & Donations
 
 :ref:`sale_orders`
 
-``sale.order`` represents and order, and ``sale.order.line`` represents an order line.
+``sale.order`` represents an order, and ``sale.order.line`` represents an order line.
 
 An order can contain multiple lines.
 
