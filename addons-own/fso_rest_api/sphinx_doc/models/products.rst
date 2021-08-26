@@ -40,20 +40,25 @@ Special fields
 
 ``name``
 """""""""""""""""""""
-The name of the product or the donation.
+The name of the donation or product.
+
+``description_sale``
+"""""""""""""""""""""
+A short description of the donation or product.
+
 
 ``fs_product_type``
 """""""""""""""""""""
-The FundraisingStudio type of the product, can be either:
+The FundraisingStudio type of the donation or product, can be either:
 
-- ``donation`` Donations, Sponsorships
+- ``donation`` Donations, Sponsorships. **Use this for donations.**
 - ``product`` Physical products, e.g. event tickets
 - ``mediation`` E.g. pet adoptions
 
 
 ``type``
 """""""""""""""""""""
-The type of the product, can be either:
+The type of the donation or product, can be either:
 
 - ``service`` Services. **Use this for donations!**
 - ``product`` A stockable physical product
@@ -65,7 +70,6 @@ The type of the product, can be either:
 
     product_page_template
     active
-    description_sale
     website_url
     list_price
     price_donate
@@ -93,7 +97,7 @@ product.product
 =========================================
 
 Represents one variant of a product. Each variant is a separate entry, and multiple variants can
-reference the same :ref:`products`.
+reference the same ``product.template``.
 
 **Most donation products will only need an empty entry of this model, in order to generate an id, to use
 as a foreign key for other models.**
