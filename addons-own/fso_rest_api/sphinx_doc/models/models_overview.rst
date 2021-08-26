@@ -135,3 +135,11 @@ Payment acquirer
 :ref:`payment_acquirer`
 
 Specifies how a payment was acquired.
+
+
+Payment transaction
+--------------------------------------------------------------
+
+:ref:`payment_transaction`
+
+Represents an actual payment, including all the payment specific information.
