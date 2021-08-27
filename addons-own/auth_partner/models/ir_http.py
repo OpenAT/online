@@ -34,22 +34,29 @@ class ir_http(orm.AbstractModel):
 
         # Clean the url from the fs_ptoken parameter
         url_no_fs_ptoken = clean_url_from_fs_ptoken(request.httprequest.url)
+
+        # Prepare a redirect to the url-without-token
         # redirect_no_fs_ptoken = set_cookie_and_redirect(url_no_fs_ptoken)
         redirect_no_fs_ptoken = werkzeug.utils.redirect(url_no_fs_ptoken, '303')
 
         # Check the fs_ptoken
+        # ATTENTION: This will log the token check and store the token usage for valid tokens!
         token_record, token_user, token_errors = fstoken_check(fs_ptoken)
+
+        # Token error(s)
         if not token_record or token_errors:
-            # Log the token access error
-            log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)
             # Remove token and token-fs-origin from context
             if hasattr(request, 'session') and hasattr(request.session, 'context'):
                 request.session.context.pop('fs_ptoken', False)
                 request.session.context.pop('fs_origin', False)
             return redirect_no_fs_ptoken
 
-        # Do nothing if the token_user is already logged in
+        # User already logged in
         if token_user.id == request.session.uid:
+            # Store the token usage
+            # HINT: Token usage would only be stored if the user also get's logged in - to track also further attempts
+            #       we explicitly store the token at this place but with login=False
+            store_token_usage(fs_ptoken, token_record, token_user, request.httprequest, login=False)
             return redirect_no_fs_ptoken
 
         # Logout current user (to destroy the session and clean the cache)
@@ -64,11 +71,5 @@ class ir_http(orm.AbstractModel):
         if hasattr(request, 'session') and hasattr(request.session, 'context'):
             request.session.context['fs_ptoken'] = token_record.name
             request.session.context['fs_origin'] = token_record.fs_origin or False
-
-        # Log successful token usage
-        log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)
-
-        # Store successful token usage
-        store_token_usage(fs_ptoken, token_record, token_user, request.httprequest)
 
         return redirect

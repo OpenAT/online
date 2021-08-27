@@ -44,6 +44,7 @@ except ImportError:
 # Token login Form
 from openerp.addons.website_login_fs_ptoken.controllers.controller import AuthPartnerForm
 
+
 class FsoForms(http.Controller):
 
     # Allowed and necessary keys for a fso_form in request.session
@@ -247,20 +248,23 @@ class FsoForms(http.Controller):
         field_errors = dict()
 
         # SPAM detection by honeypot fields
-        honey_pot_fields = (f for f in form.field_ids if f.honeypot)
-        honey_pot_test = any(field_data.get('hpf-'+str(f.id), None) for f in honey_pot_fields)
+        honey_pot_fields = (f for f in form.field_ids if f.type == 'honeypot')
+        honey_pot_test = any(field_data.get(f.form_field_name(), None) for f in honey_pot_fields)
         if honey_pot_test:
             return {'honey_pot_test': True}
 
+        # Validate regular (model) fields
         for f in form.field_ids:
+            if not f.show:
+                continue
 
-            if f.field_id and f.show:
+            if f.type == 'model':
 
                 # ATTENTION: Skipp readonly fields if a user is logged in
                 if f.readonly and request.website.user_id.id != request.uid:
                     continue
 
-                f_name = f.field_id.name
+                f_name = f.form_field_name()
                 f_display_name = f.label if f.label else f_name
                 f_type = f.field_id.ttype
                 f_style = f.style
@@ -325,18 +329,24 @@ class FsoForms(http.Controller):
     def _prepare_field_data(self, form=None, form_field_data=None, record=None):
         form_field_data = form_field_data or {}
 
-        # Transform the form field data if needed
+        # Values dict with transformed field data
         values = {}
 
         # Loop through all the fields in the form
         for f in form.field_ids:
-            if f.field_id and f.show:
+            if not f.show:
+                continue
 
+            # Get the name of the field in the form
+            f_name = f.form_field_name()
+
+            # Regular Model Field
+            # -------------------
+            if f.type == 'model':
                 # ATTENTION: Skipp readonly fields if a user is logged in and a record was found
                 if f.readonly and request.website.user_id.id != request.uid and record:
                     continue
 
-                f_name = f.field_id.name
                 f_type = f.field_id.ttype
                 f_style = f.style
 
@@ -409,61 +419,78 @@ class FsoForms(http.Controller):
         if kwargs:
             for f in form.field_ids:
 
-                # Remove binary fields (e.g. images) from kwargs before rendering the form
-                if f.field_id and f.field_id.ttype == 'binary':
-                    if f.field_id.name in kwargs:
-                        kwargs.pop(f.field_id.name)
+                f_name = f.form_field_name()
 
-                # Convert german date strings '%d.%m.%Y' to the default odoo datetime string format %Y-%m-%d
-                # because the are expected like this in the template 'form_fields'
-                # TODO: Localization - !!! Right now we expect DE values from the forms !!!
-                if f.field_id and f.field_id.ttype == 'date':
-                    date_string = kwargs.get(f.field_id.name, '')
-                    if date_string:
-                        try:
-                            date = datetime.datetime.strptime(date_string, '%d.%m.%Y')
-                            date_odoo_format = datetime.datetime.strftime(date, '%Y-%m-%d')
-                            kwargs[f.field_id.name] = date_odoo_format
-                        except Exception as e:
-                            _logger.error("Could not convert german date string to odoo format! %s" % date_string)
-                            pass
+
+                # Regular model fields
+                if f.type == 'model':
+
+                    # Remove binary fields (e.g. images) from kwargs before rendering the form
+                    if f.field_id.ttype == 'binary':
+                        if f_name in kwargs:
+                            kwargs.pop(f_name)
+
+                    # Convert german date strings '%d.%m.%Y' to the default odoo datetime string format %Y-%m-%d
+                    # because the are expected like this in the template 'form_fields'
+                    # TODO: Localization - !!! Right now we expect DE values from the forms !!!
+                    if f.field_id.ttype == 'date':
+                        date_string = kwargs.get(f.form_field_name(), '')
+                        if date_string:
+                            try:
+                                date = datetime.datetime.strptime(date_string, '%d.%m.%Y')
+                                date_odoo_format = datetime.datetime.strftime(date, '%Y-%m-%d')
+                                kwargs[f_name] = date_odoo_format
+                            except Exception as e:
+                                _logger.error("Could not convert german date string to odoo format! %s" % date_string)
+                                pass
 
         return kwargs
 
     def _prepare_kwargs_for_mail(self, form, **kwargs):
+
+        # Result
         form_values = dict()
+
         if not kwargs:
             return form_values
 
         for f in form.field_ids:
-            if f.field_id and f.field_id.name in kwargs:
-                f_name = f.field_id.name
+            f_name = f.form_field_name()
 
-                # binary: Ignore binary fields
-                if f.field_id.ttype == 'binary':
-                    continue
+            if f_name in kwargs:
 
-                # selection: Replace selection value with the selection name
-                elif f.field_id.ttype == 'selection':
-                    item_id = kwargs[f_name]
-                    try:
-                        item_name = dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection']
-                                         )[item_id]
-                        form_values[f_name] = item_name
-                    except:
-                        form_values[f_name] = kwargs[f_name]
-
-                # many2one: Replace the id with the name of the record
-                elif f.field_id.ttype == 'many2one':
-                    try:
-                        item_name = request.env[f.field_id.relation].search([('id', '=', kwargs[f_name])]).name
-                        form_values[f_name] = item_name
-                    except:
-                        form_values[f_name] = kwargs[f_name]
-
-                # Include all other fields
-                else:
+                # Comment (Mail-Message-Field)
+                if f.type == 'mail_message':
                     form_values[f_name] = kwargs[f_name]
+
+                # Regular (model) fields
+                elif f.type == 'model':
+
+                    # binary: Ignore binary fields
+                    if f.field_id.ttype == 'binary':
+                        continue
+
+                    # selection: Replace selection value with the selection name
+                    elif f.field_id.ttype == 'selection':
+                        item_id = kwargs[f_name]
+                        try:
+                            item_name = dict(request.env[form.model_id.model].fields_get([f_name])[f_name]['selection']
+                                             )[item_id]
+                            form_values[f_name] = item_name
+                        except:
+                            form_values[f_name] = kwargs[f_name]
+
+                    # many2one: Replace the id with the name of the record
+                    elif f.field_id.ttype == 'many2one':
+                        try:
+                            item_name = request.env[f.field_id.relation].search([('id', '=', kwargs[f_name])]).name
+                            form_values[f_name] = item_name
+                        except:
+                            form_values[f_name] = kwargs[f_name]
+
+                    # Include all other fields
+                    else:
+                        form_values[f_name] = kwargs[f_name]
 
         return form_values
 
@@ -597,6 +624,20 @@ class FsoForms(http.Controller):
             email_to = record[email_field_name] if record else template_values.get(email_field_name)
             self.send_mail(template=form.confirmation_email_template, record=record, template_values=template_values,
                            email_to=email_to)
+
+    def post_messages(self, form, form_field_data, record):
+        for f in form.field_ids:
+            if f.type == 'mail_message':
+                f_name = f.form_field_name()
+                comment = form_field_data.get(f_name, None)
+                if comment:
+                    # ATTENTION: subtype must be text (will search for correct subtype by xmlref)
+                    subtype_xml_id_name = f.mail_message_subtype.get_external_id().get(f.mail_message_subtype.id)
+                    record.sudo().with_context(mail_post_autofollow=False).message_post(
+                        body=str(comment),
+                        type='notification',
+                        subtype=subtype_xml_id_name,
+                        content_sybtype="plaintext")
 
     def is_logged_in(self):
         # The default website user does not count as a logged in user
@@ -732,6 +773,8 @@ class FsoForms(http.Controller):
                     values = self._prepare_field_data(form=form, form_field_data=kwargs, record=record)
                     if values:
                         try:
+                            # Create record
+                            # -------------
                             if not record:
                                 if form.create_as_user:
                                     record = record.sudo(form.create_as_user.id).create(values)
@@ -742,8 +785,16 @@ class FsoForms(http.Controller):
                                     #       enabled for the record model!!!
                                     record = record.create(values)
                                 messages.append(_('Data was successfully submitted!'))
+
+                            # Update record
+                            # -------------
                             else:
-                                record.write(values)
+                                if form.update_as_user:
+                                    record.sudo(form.update_as_user.id).write(values)
+                                elif form.update_as_user_nologin and not self.is_logged_in():
+                                    record.sudo(form.update_as_user_nologin.id).write(values)
+                                else:
+                                    record.write(values)
                                 messages.append(_('Data was successfully updated!'))
                             # Update the session data
                             # HINT: If clear_session_data_after_submit is set the form will be empty at the next
@@ -770,14 +821,26 @@ class FsoForms(http.Controller):
                             _logger.error("FsoForms Exception: %s" % repr(e))
                             pass
 
-                        # Send emails
-                        # WARNING: If the records got created or updated but the e-mail(s) could not be send we will
-                        #          continue without raising an exception!
+                        # ADDITIONAL TASKS
+                        # ----------------
                         if record and not errors:
+
+                            # Send emails
+                            # -----------
+                            # WARNING: If the the e-mail(s) could not be send we continue without raising the exception!
                             try:
                                 self.send_form_emails(form=form, record=record)
                             except Exception as e:
                                 _logger.error("fso_forms: Could not send e-mail(s)!\n%s" % repr(e))
+                                pass
+
+                            # Post comments (chatter)
+                            # -----------------------
+                            # WARNING: If the comments can not be created we continue without raising the exception!
+                            try:
+                                self.post_messages(form=form, form_field_data=kwargs, record=record)
+                            except Exception as e:
+                                _logger.error("fso_forms: Could not post messages!\n%s" % repr(e))
                                 pass
 
                 # Redirect to Thank you Page if set by the form or to the url selected

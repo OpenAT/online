@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Form-related subtypes for messaging / Chatter -->
+        <record id="fso_forms.form_comment_subtype" model="mail.message.subtype">
+            <field name="name">FS-Online Form Comment</field>
+            <field name="res_model" eval="False"/>
+            <field name="default" eval="False"/>
+        </record>
+
+    </data>
+</openerp>

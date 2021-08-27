@@ -2,5 +2,9 @@
   <data>
     <!-- Compute xml_id field on every update of the addon -->
     <function model="product.payment_interval" name="compute_all_xml_id"/>
+
+    <!-- Compute the form 'type' if not set on install update (for giftee and checkout form field forms)  -->
+    <function model="fson.form" name="compute_type_if_not_set"/>
+
   </data>
 </openerp>

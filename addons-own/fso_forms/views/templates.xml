@@ -74,73 +74,116 @@
             <t t-foreach="fso_form_fields" t-as="field">
                 <t t-if="field.show">
 
-                    <!-- Get field css classes -->
+                    <!-- COMMON FIELD DATA -->
+                    <!-- ================= -->
+                    <!-- The calculated field name based on the field type -->
+                    <!-- INFO: The field_name_prefix might be set by xml-templates like the giftee fields in website_sale_donate where multiple fso_forms are rendered in one form -->
+                    <t t-set="field_name_prefix" t-value="field_name_prefix if field_name_prefix else ''"/>
+                    <t t-set="f_name" t-value="field_name_prefix + field.form_field_name()"/>
                     <t t-set="css_classes" t-value="field.css_classes"/>
+                    <t t-set="f_style" t-value="field.style or 'none'"/>
+                    <t t-set="f_required" t-value="field.mandatory"/>
+                    <!-- Jquery Validate Data Rules -->
+                    <t t-set="validation_rule" t-value="{}"/>
+                    <t t-if="field.validation_rule">
+                        <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
+                    </t>
+                    <!-- Readonly if logged in: Only set the field to readonly if a record exists and a user is logged in! -->
+                    <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
+                    <!-- ================= -->
+                    <!-- RESET model field values -->
+                    <t t-set="record_f_name" t-value="str()"/>
+                    <t t-set="f_type" t-value="str()"/>
+                    <t t-set="f_value" t-value="str()"/>
+                    <t t-set="f_checked" t-value="None"/>
+                    <!-- ================= -->
 
-                    <!-- ============================== -->
-                    <!-- SNIPPET AREA OR HONEYPOT FIELD -->
-                    <!-- ============================== -->
-                    <t t-if="not field.field_id">
-                        <!-- Snippet Area -->
-                        <t t-if="not field.honeypot">
-                            <div t-att-class="css_classes if css_classes else 'col-lg-12'">
-                                <div t-field="field.information" class="oe_structure fsoforms_field_snippet"/>
-                                <t t-if="field.clearfix">
-                                    <div class="clearfix"/>
-                                </t>
-                            </div>
-                        </t>
-                        <!-- Honeypot field -->
-                        <t t-if="field.honeypot">
-                            <!-- ATTENTION: The field name must match the name in validate_fields()! -->
-                            <t t-set="f_name" t-value="'hpf-' + str(field.id)"/>
-                            <div t-att-class="'form-group has-feedback ' + css_classes">
-                                <label t-att-class="'control-label f-' + f_name" t-att-for="f_name"><t t-raw="field.label"/></label>
-                                <input type="text"
-                                       t-att-id="f_name"
-                                       t-att-name="f_name"
-                                       class="form-control"
-                                       value=""
-                                       t-att-placeholder="field.placeholder"
-                                       tabindex="-1"
-                                       autocomplete="off"
-                                />
-                            </div>
-                        </t>
+                    <!-- ============ -->
+                    <!-- SNIPPET AREA -->
+                    <!-- ============ -->
+                    <t t-if="field.type == 'snippet_area'">
+                        <div t-att-class="css_classes if css_classes else 'col-lg-12'">
+                            <div t-field="field.information" class="oe_structure fsoforms_field_snippet"/>
+                            <t t-if="field.clearfix">
+                                <div class="clearfix"/>
+                            </t>
+                        </div>
                     </t>
 
-                    <!-- ============= -->
-                    <!-- REGULAR FIELD -->
-                    <!-- ============= -->
-                    <t t-if="field.field_id">
+                    <!-- ============== -->
+                    <!-- HONEYPOT FIELD -->
+                    <!-- ============== -->
+                    <t t-if="field.type == 'honeypot'">
+                        <div t-att-class="'form-group has-feedback ' + css_classes">
+                            <label t-att-class="'control-label f-' + f_name" t-att-for="f_name"><t t-raw="field.label"/></label>
+                            <input type="text"
+                                   t-att-id="f_name"
+                                   t-att-name="f_name"
+                                   class="form-control"
+                                   value=""
+                                   t-att-placeholder="field.placeholder"
+                                   tabindex="-1"
+                                   autocomplete="off"
+                            />
+                        </div>
+                    </t>
 
+                    <!-- ================== -->
+                    <!-- MAIL MESSAGE FIELD -->
+                    <!-- ================== -->
+                    <t t-if="field.type == 'mail_message'">
+                        <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
+                            <label t-att-class="'control-label f-' + f_name" t-att-for="f_name"><t t-raw="field.label"/></label>
+                            <t t-if="field.mail_message_style == 'textarea'">
+                                <textarea
+                                        t-att-id="f_name"
+                                        t-att-name="f_name"
+                                        class="form-control"
+                                        t-att-rows="field.mail_message_rows"
+                                        t-att-placeholder="field.placeholder"
+                                        t-att-disabled="f_readonly"
+                                        t-att-required="f_required"
+                                        t-att="validation_rule"
+                                        autocomplete="off"><t t-esc="f_value.strip() if f_value else ''"/></textarea>
+                            </t>
+                            <t t-if="field.mail_message_style == 'text'">
+                                <input
+                                        type="text"
+                                        t-att-id="f_name"
+                                        t-att-name="f_name"
+                                        class="form-control"
+                                        t-att-placeholder="field.placeholder"
+                                        t-att-disabled="f_readonly"
+                                        t-att-required="f_required"
+                                        t-att="validation_rule"
+                                        t-att-value="f_value"
+                                        autocomplete="off"/>
+                            </t>
+                        </div>
+                    </t>
 
-                        <!-- GET REGULAR FIELD DATA -->
-                        <!-- ====================== -->
+                    <!-- ===================== -->
+                    <!-- REGULAR (MODEL) FIELD -->
+                    <!-- ===================== -->
+                    <t t-if="field.type == 'model'">
+
+                        <!-- ADDITIONAL MODEL FIELD DATA -->
+                        <!-- =========================== -->
                         <t t-set="record_f_name" t-value="field.field_id.name"/>
-                        <t t-set="field_name_prefix" t-value="field_name_prefix if field_name_prefix else ''"/>
-                        <t t-set="f_name" t-value="field_name_prefix + field.field_id.name"/>
                         <t t-set="f_type" t-value="field.field_id.ttype"/>
-                        <t t-set="f_style" t-value="field.style or 'none'"/>
-                        <t t-set="f_required" t-value="field.mandatory"/>
-                        <!-- Jquery Validate Data Rules -->
-                        <t t-set="validation_rule" t-value="{}"/>
-                        <t t-if="field.validation_rule">
-                            <t t-set="validation_rule" t-value="dict(item.split('=') for item in field.validation_rule.split(';'))"/>
-                        </t>
-                        <!-- Readonly if logged in: Only set the field to readonly if a record exists and a user is logged in! -->
-                        <t t-set="f_readonly" t-value="'disabled' if field.readonly and record and user_is_logged_in else False"/>
-                        <!-- Field content -->
                         <t t-set="f_value" t-value="(kwargs.get(f_name, '') if f_name in kwargs else field.default) if (field.nodata or not record) else (str(record[record_f_name].id) if record and record[record_f_name] and f_type == 'many2one' else record[record_f_name] if record else '')"/>
                         <t t-set="f_checked" t-value="True if f_value else None"/>
-                        <!-- ====================== -->
+                        <!-- =========================== -->
 
 
                         <!-- !!! LIMIT FIELD TYPES !!! -->
                         <t t-if="f_type in request.env['fson.form_field']._allowed_field_types">
 
                             <!-- form group -->
-                            <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
+                            <div t-att-name="'form-group-'+f_name"
+                                 t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')"
+                                 t-att-style="'bob'"
+                            >
 
                                 <!-- ALL FIELD TYPES: LABEL -->
                                 <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if f_required and not f_readonly else '')"

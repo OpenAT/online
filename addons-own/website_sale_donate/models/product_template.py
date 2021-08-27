@@ -43,12 +43,12 @@ class ProductTemplate(models.Model):
 
     # Custom Checkout Fields by product
     checkout_form_id = fields.Many2one(string="Checkout Fields Form", comodel_name='fson.form',
-                                       domain="[('product_template_ids', '!=', False)]",
+                                       domain="[('type', '=', 'checkout')]",
                                        help="Set custom checkout fields for this product")
 
     # Custom Checkout Giftee Fields by product
     giftee_form_id = fields.Many2one(string="Giftee Fields Form", comodel_name='fson.form',
-                                     domain="[('ptemplate_giftee_ids', '!=', False)]",
+                                     domain="[('type', '=', 'giftee')]",
                                      help="Set custom giftee fields for this product")
 
     giftee_email_template = fields.Many2one(string="Giftee Info E-Mail",
@@ -136,7 +136,6 @@ class ProductTemplate(models.Model):
 
         return super(ProductTemplate, self).copy(default=default)
 
-
     # Custom Checkout Fields Form Button Action
     # -----------------------------------------
     # TODO: Add frontend validations
@@ -147,7 +146,8 @@ class ProductTemplate(models.Model):
                 # Create the fso form
                 res_partner_model = self.env['ir.model'].search([('model', '=', 'res.partner')])
 
-                form_vals = {'name': _('Checkout fields form for product %s (id %s)') % (r.name, r.id),
+                form_vals = {'type': 'checkout',
+                             'name': _('Checkout fields form for product %s (id %s)') % (r.name, r.id),
                              'model_id': res_partner_model.id,
                              'submit_button_text': _('Continue'),
                              'clear_session_data_after_submit': True,
@@ -222,7 +222,8 @@ class ProductTemplate(models.Model):
                 # Create the fso form
                 res_partner_model = self.env['ir.model'].search([('model', '=', 'res.partner')])
 
-                form_vals = {'name': _('Giftee fields form for product %s (id %s)') % (r.name, r.id),
+                form_vals = {'type': 'giftee',
+                             'name': _('Giftee fields form for product %s (id %s)') % (r.name, r.id),
                              'model_id': res_partner_model.id,
                              'submit_button_text': _('Continue'),
                              'clear_session_data_after_submit': True,

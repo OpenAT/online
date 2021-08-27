@@ -11,8 +11,10 @@
 
         <!-- Load google tag manager events  -->
         <!--<template id="google_tag_manager_events_webshop" inherit_id="fso_base_website.layout" name="Google Tag Manager Tracking">-->
-        <!--    <xpath expr="//meta[@name='google-tag-manager-start']" position="before">-->
-        <!--        <script type="text/javascript" src="/website_sale_donate_google_tag_manager/static/src/js/website_sale_donate_google_tag_manager.js"/>-->
+        <!--    <xpath expr="//script[last()]" position="after">-->
+        <!--        <t t-if="website and website.google_tag_manager_key">-->
+        <!--            <script type="text/javascript" src="/website_sale_donate_google_tag_manager/static/src/js/website_sale_donate_google_tag_manager.js"/>-->
+        <!--        </t>-->
         <!--    </xpath>-->
         <!--</template>-->
 

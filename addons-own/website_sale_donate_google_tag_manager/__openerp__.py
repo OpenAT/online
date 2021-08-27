@@ -29,6 +29,15 @@
 
 Create and send custom events for the google tag manager enhanced ecommerce tracking!
 https://developers.google.com/tag-manager/enhanced-ecommerce
+https://ga-dev-tools.web.app/enhanced-ecommerce/
+https://chrome.google.com/webstore/detail/tag-assistant-legacy-by-g/kejbdjndbnbjgmefkgdddjlbokphdefk
+
+Example shop from google showing the Universal Analytics (GTM) setup (GT4 and others are also shown here)
+https://enhancedecommerce.appspot.com/checkout#customerInfo!GA-checkoutStep:uaGtm
+
+
+https://www.analyticskiste.blog/analytics/ua-ga4-unterschiede-im-vergleich/#Aufgeklaert_Google_Analytics_4_8211_warum_4
+https://www.analyticskiste.blog/analytics/gtag-js/
 
 HINT: Some google tracking code is already prepared in the addon website_sale > website_sale_tracking.js but this seems 
       unfinished from odoo.

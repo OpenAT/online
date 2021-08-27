@@ -536,12 +536,19 @@ class website_sale_donate(website_sale):
         if fso_forms_billing_fields:
             values['fso_forms_billing_fields'] = fso_forms_billing_fields
 
-            # Parse form data to match odoo field data types  = preparation for checkout_form_save()
+            # Parse form data to match odoo field data types = preparation for checkout_form_save()
             if values.get('checkout') and data:
                 fso_forms_obj = FsoForms()
                 parsed_form_values = fso_forms_obj._prepare_field_data(form=fso_forms_billing_fields[0].form_id,
                                                                        form_field_data=data)
                 values['checkout'].update(parsed_form_values)
+
+                # Append the mail message fields and data
+                for f_field in fso_forms_billing_fields:
+                    if f_field.type == 'mail_message':
+                        f_name = f_field.form_field_name()
+                        if f_name in data:
+                            values['checkout'][f_name] = data[f_name]
 
         # Add billing fields from the website
         else:
@@ -611,13 +618,17 @@ class website_sale_donate(website_sale):
 
                 # Extract giftee data from the form data
                 giftee_form_data = {}
+                giftee_mail_message_form_data = {}
 
                 for gf_field in fso_forms_giftee_fields:
-                    if not gf_field.field_id:
+                    if gf_field.type not in ['model', 'mail_message']:
                         continue
-                    f_name = gf_field.field_id.name
+                    f_name = gf_field.form_field_name()
                     gf_name = 'giftee_' + f_name
-                    giftee_form_data[f_name] = data.get(gf_name, None)
+                    if gf_field.type == 'model':
+                        giftee_form_data[f_name] = data.get(gf_name, None)
+                    if gf_field.type == 'mail_message':
+                        giftee_mail_message_form_data[f_name] = data.get(gf_name, None)
 
                 # Prepare the giftee form data for the odoo record
                 fso_forms_obj = FsoForms()
@@ -627,6 +638,10 @@ class website_sale_donate(website_sale):
 
                 # Add the prefix again and add the giftee field data to the checkout dict in the values
                 giftee_data = {'giftee_'+k: v for k, v in odoo_ready_giftee_form_data.iteritems()}
+
+                # Add the giftee mail message data to checkout to be used in form_save
+                giftee_data.update({'giftee_'+k: v for k, v in giftee_mail_message_form_data.iteritems()})
+
                 values['checkout'].update(giftee_data)
 
         return values
@@ -634,15 +649,47 @@ class website_sale_donate(website_sale):
     def checkout_form_save(self, checkout):
         super(website_sale_donate, self).checkout_form_save(checkout)
 
-        # Save giftee data to giftee partner and update sale order
-        # --------------------------------------------------------
         order = request.website.sale_get_order(force_create=1, context=request.env.context)
 
+        # Post messages to the sale order for mail_message field types
+        # ------------------------------------------------------------
+        fso_form_checkout_fields = self.get_fso_forms_billing_fields()
+        if fso_form_checkout_fields:
+            mail_message_data = {}
+            for f_field in fso_form_checkout_fields:
+                if f_field.type == 'mail_message':
+                    f_name = f_field.form_field_name()
+                    form_f_name = f_name
+                    if form_f_name in checkout:
+                        mail_message_data[f_name] = checkout[form_f_name]
+
+            if mail_message_data:
+                checkout_form = fso_form_checkout_fields[0].form_id
+                try:
+                    FsoForms().post_messages(form=checkout_form, form_field_data=mail_message_data, record=order)
+                except Exception as e:
+                    _logger.error("Could not post messages %s to order %s:\n%s"
+                                  "" % (mail_message_data, order, repr(e)))
+                    pass
+
+        # Save giftee data to giftee partner, update sale order and post giftee mail_messages to sale order
+        # -------------------------------------------------------------------------------------------------
         giftee_fields = self.get_fso_forms_giftee_fields(product=None)
         if giftee_fields:
-            # Extract the giftee data from the checkout dict
-            odoo_ready_giftee_data = {k.replace('giftee_', '', 1): v for k, v in checkout.iteritems()
-                                      if k.startswith('giftee_')}
+
+            odoo_ready_giftee_data = {}
+            giftee_mail_message_data = {}
+
+            # Get the giftee data from the 'checkout' dict
+            for gf_field in giftee_fields:
+                if gf_field.type in ['model', 'mail_message']:
+                    f_name = gf_field.form_field_name()
+                    form_f_name = 'giftee_' + f_name
+                    if form_f_name in checkout:
+                        if gf_field.type == 'model':
+                            odoo_ready_giftee_data[f_name] = checkout[form_f_name]
+                        if gf_field.type == 'mail_message':
+                            giftee_mail_message_data[f_name] = checkout[form_f_name]
 
             # Remove the giftee from the sale order if no giftee data is available and return!
             if not odoo_ready_giftee_data:
@@ -676,13 +723,24 @@ class website_sale_donate(website_sale):
                 _logger.info("Created giftee %s for sale order %s with data %s"
                              % (giftee.id, order.id, odoo_ready_giftee_data))
 
+            # Post giftee messages to the sale order for mail_message field types
+            if giftee_mail_message_data:
+                giftee_form = giftee_fields[0].form_id
+                try:
+                    FsoForms().post_messages(form=giftee_form, form_field_data=giftee_mail_message_data,
+                                             record=order)
+                except Exception as e:
+                    _logger.error("Could not post giftee messages %s to order %s:\n%s"
+                                  "" % (giftee_mail_message_data, order, repr(e)))
+                    pass
+
     # Set mandatory billing and shipping fields
     def _get_mandatory_billing_fields(self):
         fso_forms_billing_fields = self.get_fso_forms_billing_fields()
         if fso_forms_billing_fields:
             mandatory_enabled_mapped_form_fields = fso_forms_billing_fields.filtered(
-                lambda f: f.show and f.field_id and f.mandatory)
-            return [field.field_id.name for field in mandatory_enabled_mapped_form_fields]
+                lambda f: f.show and f.type == 'model' and f.mandatory)
+            return [field.form_field_name() for field in mandatory_enabled_mapped_form_fields]
         else:
             billing_fields = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
@@ -694,8 +752,8 @@ class website_sale_donate(website_sale):
         fso_forms_billing_fields = self.get_fso_forms_billing_fields()
         if fso_forms_billing_fields:
             nonmandatory_enabled_mapped_form_fields = fso_forms_billing_fields.filtered(
-                lambda f: f.show and f.field_id and not f.mandatory)
-            return [field.field_id.name for field in nonmandatory_enabled_mapped_form_fields]
+                lambda f: f.show and f.type == 'model' and not f.mandatory)
+            return [field.form_field_name() for field in nonmandatory_enabled_mapped_form_fields]
         else:
             billing_fields = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),

@@ -12,13 +12,10 @@
                         <group>
                             <group name="basic_form_data">
                                 <field name="name"/>
+                                <field name="type"/>
                                 <field name="model_id"/>
-                                <field name="create_as_user"/>
-                                <field name="create_as_user_nologin"/>
-                                <field name="submit_button_text"/>
-
-                                <field name="clear_session_data_after_submit"/>
-
+                                <field name="edit_existing_record_if_logged_in" attrs="{'invisible': [('type','!=','standard')]}"/>
+                                <field name="submit_button_text" attrs="{'invisible': [('type','!=','standard')]}"/>
                             </group>
                             <group name="system_data">
                                 <field name="website_url" widget="url" readonly="1"/>
@@ -27,69 +24,117 @@
                                 <field name="write_date" readonly="True"/>
                             </group>
                         </group>
-                        <group>
-                            <group name="email" string="E-Mail">
+                        <group name="email_login" attrs="{'invisible': [('type','!=','standard')]}">
+                            <group name="email" string="E-Mail Settings">
                                 <field name="email_only"/>
                                 <field name="confirmation_email_template"/>
                                 <field name="information_email_receipients" widget="many2many_tags"/>
                                 <field name="information_email_template"/>
                             </group>
-                            <group name="login" string="Login">
-                                <field name="edit_existing_record_if_logged_in"/>
-                                <field name="logout_button_text"/>
+                            <group name="login" string="Login Settings">
                                 <field name="login_required"/>
+                                <field name="logout_button_text"/>
                                 <field name="show_token_login_form"/>
                             </group>
                         </group>
-                        <notebook>
+                        <h3 style="color:darkred" class="oe_edit_only">Attention!</h3>
+                        <p class="oe_edit_only">
+                            Please test every form extensively and with all targeted user roles (e.g. public-user, admin-user, backend-user) before using it in production! Use a incognito tab in your browser and clear all
+                            caches to make sure you are really using the correct user while testing the form!
+                        </p>
+                        <notebook name="main_notebook">
                             <page string="Form Fields" name="form_fields">
+                                <h3 style="color:darkred" class="oe_edit_only">Attention!</h3>
+                                <p class="oe_edit_only">
+                                    Advanced settings of newly added fields can only be edited (by clicking on the page-with-pencil icon) after the form was saved once after adding a new field to the form!
+                                </p>
                                 <!-- ATTENTION: We pass the current model_id to the context of the inner tree view!
                                                 This is the only way without saving first that i found -->
                                 <field name="field_ids"
                                        context="{'form_model_id': model_id, 'form_edit_existing_record_if_logged_in': edit_existing_record_if_logged_in}">
-                                    <tree string="Fields" editable="bottom">
-                                        <field name="sequence" widget="handle"/>
+                                    <tree string="Fields"
+                                          colors="lightgrey:not show;CornflowerBlue: type in ('snippet_area', 'honeypot');DodgerBlue: type == 'mail_message';FireBrick:default or login or confirmation_email"
+                                          editable="bottom">
+                                        <field name="sequence"
+                                               widget="handle"/>
                                         <field name="show"/>
-                                        <field name="form_model_name" invisible="1"/>
+                                        <field name="mandatory"/>
+                                        <field name="type"/>
+                                        <field name="mail_message_subtype"
+                                               attrs="{'readonly': [('type','!=','mail_message')], 'required': [('type','=','mail_message')]}"
+                                               domain="['|', '|', ('res_model', '=', False), ('res_model', '=', form_model_name), ('res_model', '=', 'fso_forms')]"
+                                               options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                                        />
+                                        <field name="form_model_name"
+                                               invisible="1"/>
                                         <!-- ATTENTION: The Domain for 'field_id' is also set dynamically by oc_field_id_dynamic_domain() -->
                                         <field name="field_id"
+                                               attrs="{'readonly': [('type','!=','model')], 'required': [('type','=','model')]}"
                                                domain="[('model_id','=',context.get('form_model_id'))]"
                                                options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
-                                        <field name="field_ttype" invisible="1"/>
-                                        <field name="field_model_name" invisible="1"/>
+                                        <field name="field_ttype"
+                                               invisible="1"/>
+                                        <field name="field_model_name"
+                                               invisible="1"/>
                                         <field name="binary_name_field_id"
                                                attrs="{'readonly': [('field_ttype','!=','binary')]}"
                                                domain="[('model_id','=',context.get('form_model_id')),
                                                         ('ttype','=','char'),
                                                         ('readonly','=',False)]"
-                                               options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"/>
+                                               options="{'no_create': True, 'no_create_edit': True, 'no_quick_create': True,}"
+                                               invisible="1"/>
                                         <field name="label"/>
-                                        <field name="placeholder" attrs="{'readonly': [('field_ttype','in',['boolean',])]}"/>
-                                        <field name="information"/>
-                                        <field name="yes_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
-                                        <field name="no_text" attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"/>
-                                        <field name="mandatory"/>
-                                        <field name="nodata"/>
-                                        <field name="default"/>
-                                        <field name="readonly" readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"/>
-                                        <field name="login" attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"/>
-                                        <field name="confirmation_email" attrs="{'readonly': [('field_ttype','!=','char')]}"/>
-                                        <field name="validation_rule"/>
+                                        <field name="placeholder"
+                                               attrs="{'readonly': [('field_ttype','in',['boolean',])]}"/>
+                                        <field name="information"
+                                               invisible="1"/>
+                                        <field name="yes_text"
+                                               attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"
+                                               invisible="1"/>
+                                        <field name="no_text"
+                                               attrs="{'readonly': ['|', ('field_ttype','!=','boolean'), ('style', 'not in', ['radio_selectnone', 'radio'])]}"
+                                               invisible="1"/>
+
+                                        <field name="nodata"
+                                               invisible="1"/>
+                                        <field name="default"
+                                               invisible="1"/>
+                                        <field name="readonly"
+                                               readonly="not bool(context.get('form_edit_existing_record_if_logged_in'))"
+                                               invisible="1"/>
+                                        <field name="login"
+                                               attrs="{'readonly': [('field_model_name', 'not in', ['res.partner','res.user']), ('field_ttype', '!=', 'many2one')]}"
+                                               invisible="1"/>
+                                        <field name="confirmation_email"
+                                               attrs="{'readonly': [('field_ttype','!=','char')]}"
+                                               invisible="1"/>
+                                        <field name="validation_rule"
+                                               invisible="1"/>
                                         <field name="css_classes"/>
                                         <field name="clearfix"/>
-                                        <field name="style" attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"/>
-                                        <field name="force_selection" attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"/>
-                                        <field name="honeypot"/>
+                                        <field name="style"
+                                               attrs="{'readonly': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}"
+                                               invisible="1"/>
+                                        <field name="force_selection"
+                                               attrs="{'readonly': [('style','=',False), ('field_ttype', 'not in', ['selection', 'many2one'])]}"
+                                               invisible="1"/>
+                                        <field name="honeypot"
+                                               invisible="1"/>
+                                        <button name="button_open_field_form_view"
+                                                type="object"
+                                                icon="gtk-edit"
+                                                string="Edit"/>
+                                        <!--<button name="'%(fso_forms.fson_form_field_action)d'" type="action" icon="gtk-edit" string="Edit"/>-->
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Form-Snippet-Areas" name="form_snippets">
+                            <page string="Form-Snippet-Areas" name="form_snippets" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="snippet_area_top"/>
                                     <field name="snippet_area_bottom"/>
                                 </group>
                             </page>
-                            <page string="Thank You Page">
+                            <page string="Thank You Page" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="website_url_thanks" widget="url" readonly="1"/>
                                     <field name="redirect_after_submit"/>
@@ -97,7 +142,7 @@
                                     <field name="thank_you_page_snippets"/>
                                 </group>
                             </page>
-                            <page string="Token Login Form">
+                            <page string="Token Login Form" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="tlf_headline"/>
                                     <field name="tlf_label"/>
@@ -110,60 +155,183 @@
                                 </group>
                             </page>
                             <page string="Danger Zone">
-                                <group>
+                                <group name="force_user" string="Force User" attrs="{'invisible': [('type','!=','standard')]}">
+                                    <field name="create_as_user"/>
+                                    <field name="create_as_user_nologin"/>
+                                    <field name="update_as_user"/>
+                                    <field name="update_as_user_nologin"/>
+                                    <field name="custom_css" invisible="1"/>
+                                </group>
+                                <group name="frontend_validation" string="Frontend Validation">
                                     <field name="frontend_validation"/>
+                                </group>
+                                <group name="submission_settings" string="Submission Settings" attrs="{'invisible': [('type','!=','standard')]}">
                                     <field name="submission_url"/>
+                                </group>
+                                <group name="redirect_after_form_submit_settings" string="After-Successful-Form-Submit Settings" attrs="{'invisible': [('type','!=','standard')]}">
+                                    <field name="clear_session_data_after_submit"/>
                                     <field name="redirect_url"/>
                                     <field name="redirect_url_target"/>
                                     <field name="redirect_url_if_logged_in"/>
                                     <field name="redirect_url_if_logged_in_target"/>
                                     <field name="thank_you_page_edit_redirect" attrs="{'readonly': ['|',('thank_you_page_edit_data_button','=',False),('email_only','=',True)]}"/>
-                                    <field name="custom_css"/>
                                 </group>
                             </page>
                             <page string="Help">
-                                <!--<group>-->
                                 <p><br/></p>
+                                 <h1 style="color:darkred">FS-Online Form Generator</h1>
+                                <p>
+                                    You can create forms to create or update records for <strong>any</strong> model in FS-Online. You may create forms to create or update partner data, to subscribe to your newsletter,
+                                    to subscribe for a petition, to create leads and many more. Creating an entirely new form for a model is a task for an administrator or an advanced FS-Online user because it requires
+                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be
+                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new
+                                    form extensively before enabling it on your website!
+                                </p>
+                                <p>
+                                    Besides regular forms for models you can also create special forms of type 'checkout' and 'giftee' to create forms for you donation forms (for the online-shop). These forms can than be set
+                                    in the product settings and will override the default set of field e.g. in the checkout process.
+                                </p>
+                                <p>
+                                    You may also create forms that do <strong>not</strong> store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a
+                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab.
+                                </p>
+                                <p><br/></p>
+                                <notebook name="help">
+                                    <page string="Basics">
+                                        <p><br/></p>
+                                        <h1>Field color codes</h1>
+                                        <p><code style="color:LightGrey">LightGrey:</code> Disabled Form-Fields (show=False)</p>
+                                        <p><code style="color:CornflowerBlue">CornflowerBlue:</code> Form-Fields for Snippet Areas or Honeypot Fields</p>
+                                        <p><code style="color:DodgerBlue">DodgerBlue:</code> Form-Fields for Comments</p>
+                                        <p><code style="color:FireBrick">FireBrick:</code> Form-Fields with a default value or that mark a login or email-to field</p>
+                                        <p><br/></p>
 
-                                <h1>Special CSS widget classes</h1>
-                                <p><code>.hide_it</code> Hides a field by moving it offscreen</p>
-                                <p><code>.fso-form-widget-image</code> Displays a preview of the image for binary fields</p>
-                                <p><br/></p>
+                                        <h1>Special CSS-classes for fields</h1>
+                                        <p><code>.hide_it</code> Hides a field by moving it offscreen</p>
+                                        <p><code>.fso-form-widget-image</code> Displays a preview of the image for binary fields</p>
+                                        <p><br/></p>
+                                    </page>
+                                    <page string="Frontend Validation">
+                                        <p><br/></p>
 
-                                <h1>Frontend Validation Methods</h1>
-                                <p>Simple add a semicolon ";" seperated string of rules prefixed with "data-rule-".</p>
-                                <p>Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]</p>
-                                <p>Use the string "True" for [Value] if not otherwise specified!</p>
-                                <p>Example Usage: <code>data-rule-dateDEBirthdate=True </code></p>
-                                <p>Example Usage for combined rules: <code>data-rule-digits=True;data-rule-minlength=4</code></p>
-                                <p><br/></p>
+                                        <h1>Frontend Validation Methods</h1>
+                                        <p>Simple add a semicolon ";" seperated string of rules prefixed with "data-rule-".</p>
+                                        <p>Format: data-rule-[validation rule name]=[Value];data-rule-[validation rule name]=[Value]</p>
+                                        <p>Use the string "True" for [Value] if not otherwise specified!</p>
+                                        <p>Example Usage: <code>data-rule-dateDEBirthdate=True </code></p>
+                                        <p>Example Usage for combined rules: <code>data-rule-digits=True;data-rule-minlength=4</code></p>
+                                        <p><br/></p>
 
-                                <h4>Custom Frontend Validation Methods:</h4>
-                                <p><code>dateDEBirthdate=True</code> Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and "Now"</p>
-                                <p><code>floatDE=True</code> Check is the string has a valid German float number format like 124,56. A "," must be in the string for this validation!</p>
-                                <p><code>floatDEmin=12.05</code> Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a "." and not a ","</p>
-                                <p><code>force_selection=True</code> WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!</p>
-                                <p><br/></p>
+                                        <h4>Custom Frontend Validation Methods:</h4>
+                                        <p><code>dateDEBirthdate=True</code> Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and "Now"</p>
+                                        <p><code>floatDE=True</code> Check is the string has a valid German float number format like 124,56. A "," must be in the string for this validation!</p>
+                                        <p><code>floatDEmin=12.05</code> Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a "." and not a ","</p>
+                                        <p><code>force_selection=True</code> WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!</p>
+                                        <p><br/></p>
 
-                                <h4>Important Built In Frontend Validation Methods:</h4>
-                                <p><code>email=True</code> Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!</p>
-                                <p><code>digits=True</code> Only digits are allowed (0-9)</p>
-                                <p><code>minlength=[number of characters]</code> String must be at least [number of characters] long</p>
-                                <p><code>bic=True</code> BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.</p>
-                                <p><code>accept=True</code> Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg</p>
-                                <p><code>maxWords=[Number of Words]</code> Enter [Value] words or less.</p>
-                                <p><code>minWords=[Number of Words]</code> Enter [Value] words or more.</p>
-                                <p><code>rangeWords=[Number-of-Words-min Number-of-Words-max]</code> Enter between [min max] words.</p>
-                                <p><code>alphanumeric=True</code> Letters, numbers, and underscores only</p>
-                                <p><code>creditcard=True</code> Check if the string may be a credit card based on the Luhn algorithm</p>
-                                <p><code>creditcardtypes=[mastercard,visa]</code> Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all </p>
-                                <p><code>currency=€,false</code> Validates currencies with any given symbols </p>
-                                <p><code>extension=png,jpg</code> Older "accept" file extension method</p>
-                                <p><code>iban=True</code> Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself</p>
-                                <p><code>integer=True</code> A positive or negative non-decimal number</p>
-                                <p><code>nowhitespace=True</code> No white space allowed</p>
-                                <p><br/></p>
-                                <!--</group>-->
+                                        <h4>Important Built In Frontend Validation Methods:</h4>
+                                        <p><code>email=True</code> Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!</p>
+                                        <p><code>digits=True</code> Only digits are allowed (0-9)</p>
+                                        <p><code>minlength=[number of characters]</code> String must be at least [number of characters] long</p>
+                                        <p><code>bic=True</code> BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.</p>
+                                        <p><code>accept=True</code> Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg</p>
+                                        <p><code>maxWords=[Number of Words]</code> Enter [Value] words or less.</p>
+                                        <p><code>minWords=[Number of Words]</code> Enter [Value] words or more.</p>
+                                        <p><code>rangeWords=[Number-of-Words-min Number-of-Words-max]</code> Enter between [min max] words.</p>
+                                        <p><code>alphanumeric=True</code> Letters, numbers, and underscores only</p>
+                                        <p><code>creditcard=True</code> Check if the string may be a credit card based on the Luhn algorithm</p>
+                                        <p><code>creditcardtypes=[mastercard,visa]</code> Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all </p>
+                                        <p><code>currency=€,false</code> Validates currencies with any given symbols </p>
+                                        <p><code>extension=png,jpg</code> Older "accept" file extension method</p>
+                                        <p><code>iban=True</code> Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself</p>
+                                        <p><code>integer=True</code> A positive or negative non-decimal number</p>
+                                        <p><code>nowhitespace=True</code> No white space allowed</p>
+                                        <p><br/></p>
+                                    </page>
+                                    <page string="Danger Zone Settings">
+                                        <p><br/></p>
+
+                                        <h1>Danger Zone Settings</h1>
+                                        <p> The settings in the danger zone are for advanced users. If you are not sure about a setting please contact our support!</p>
+                                        <p><br/></p>
+
+                                        <h2>Force user</h2>
+                                        <p>
+                                            It may be necessary to force a user to create or update records in a target model. This is needed if the access rights of the target model do not allow write access for
+                                            public website users (usergroup 'base.group_public'). It may also be needed if e.g. the creation of a record in the target model creates records in other models as well if the
+                                            records in the other model needs extra user rights.
+                                            <br/>
+                                            The easies way to find if extra rights are needed is simply to try it. Create the form without being logged in and submit it. If you get an access error you
+                                            know that additional rights are needed.
+                                            <br/>
+                                            If you need to force a user it is best to create a new user for this form and assign only the needed rights to this user. We strongly advise you NOT TO USE THE ADMIN USER because
+                                            this might be a very high security risk depending on the target model and form that you are creating.
+                                        </p>
+                                        <p><br/></p>
+
+                                        <h2>Frontend Validation</h2>
+                                        <p>
+                                            I very rare occasions it might be necessary to disable the frontend validation completely. Even if disabled the server will still run certain validations. Please contact our
+                                            support if you plan to disable frontend validation for a form for further consultation.
+                                        </p>
+                                        <p><br/></p>
+
+                                        <h2>Submission URL</h2>
+                                        <p>
+                                            This will send all your data to the given url. Be very careful because this may send all your data outside to a not well known service. Never use this without consulting our
+                                            support!
+                                        </p>
+                                        <p><br/></p>
+
+                                        <h2>After-Successful-Form-Submit</h2>
+                                        <p>
+                                            Settings in this section will determine the behavior after a form and it's data where successfully submitted and processed. So after the record was created or updated.
+                                        </p>
+                                        <h3>Clear form</h3>
+                                        <p>
+                                            If this is enabled the form will start 'fresh' after the submission. This means that no provided initial data will be shown and every form that always creates a new record would
+                                            be empty again. This is useful for forms for e.g "customer-comments" where the user should be able to always send a new comment once the other one was sendet.
+                                        </p>
+                                        <h3>Redirect URL</h3>
+                                        <p>
+                                            You can set the URL that is opened after the form was successfully submitted. This is in most cases a thank-you-page. These settings come in handy if you want a custom thank
+                                            you page e.g. on your website. You can set any url here so you might also redirect to a partner page after a form was processed. If you do not set anything here the form will
+                                            redirect to the default thank you page of the form which is /fso/form/thanks/[form_id]
+                                        </p>
+                                    </page>
+                                    <page string="Advanced Field-Settings">
+                                        <p><br/></p>
+
+                                        <h1>Hidden fields for default setting</h1>
+                                        <p>
+                                            Sometimes you want to force a value in the target record or you want to hide a required field to simplify the form. E.g. lets say you want a special checkout-fields form but
+                                            you do not want to show the country field because the only allowed country is Austria. You can not simply remove the country field because country is a required field in the
+                                            checkout process. In such a case you can add the css class 'hide_it' to hide the country-field from the user in the form and set the default value of the country-field to the id
+                                            of Austria.
+                                            <br/> <br/>
+                                            You get the id of a country if you go to Sale > Configuration > Localization > Countries and click on the desired country. You can then see the id of this country
+                                            in the url "...web?#id=13...". So in this example the number 13 would go into the field "default" in the advanced fields tab.
+                                            <br/> <br/>
+                                            We are not finished yet because fields that link to other models will only show a maximum of 200 records. If the id 13 is not in the first
+                                            200 records it can not be selected. To avoid this problem we need to limit the available records of the linked model. This can be done by the field 'domain'. With this field a search
+                                            domain can be set. To limit the available country records to only austria the search-domain would be [('id', '=', 13)].
+                                            <br/> <br/>
+                                            Now that we have hidden the field with 'hide_it' assigned a default value of '13' and a search domain of '[('id', '=', 13)]' the country would be austria for all partners created
+                                            by this form.
+                                        </p>
+                                    </page>
+                                    <page string="Advanced Form-Use-Cases">
+                                        <p><br/></p>
+
+                                        <h1>Starting a survey after the form submission</h1>
+                                        <p>To open a FS-Online survey after a form was successfully submitted you simply set the redirect url to the survey start page.</p>
+                                        <p>
+                                            If a user is logged in the survey will be linked to the partner of the user automatically. If the users of the form are not logged in the survey would be linked to the partner of the
+                                            public user or no partner at all. If you still want to link the survey to a specific partner you may be able to set a special placeholder in the redirect url setting in the near future
+                                            [Placeholder is work in progress]
+                                        </p>
+                                    </page>
+                                </notebook>
                             </page>
                         </notebook>
                         
@@ -178,6 +346,7 @@
             <field name="arch" type="xml">
                 <tree string="FSON Forms" default_order="sequence">
                     <field name="sequence" widget="handle"/>
+                        <field name="type"/>
                         <field name="name"/>
                         <field name="model_id"/>
                         <field name="frontend_validation"/>
@@ -193,6 +362,7 @@
             <field name="arch" type="xml">
                 <search string="FSON Forms Search">
                         <field name="name"/>
+                        <field name="type"/>
                         <field name="model_id"/>
                         <field name="frontend_validation"/>
                         <field name="submission_url"/>
