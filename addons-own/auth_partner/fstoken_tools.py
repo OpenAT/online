@@ -3,8 +3,8 @@
 from openerp import fields
 from openerp.http import request
 from openerp.tools.translate import _
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import datetime
-import time
 # from openerp.addons.web.controllers.main import login_and_redirect, set_cookie_and_redirect
 
 import logging
@@ -31,7 +31,7 @@ def fstoken_sanitize(fs_ptoken):
     return token, errors
 
 
-def fstoken_check(fs_ptoken, log_usage=True):
+def _fstoken_check(fs_ptoken):
     # Sanitize the token string
     token_record, errors = fstoken_sanitize(fs_ptoken)
     if errors:
@@ -130,6 +130,25 @@ def fstoken_check(fs_ptoken, log_usage=True):
     return token_record, user, errors
 
 
+def fstoken_check(fs_ptoken, log_usage=True, store_usage=False):
+    token_record, token_user, token_errors = _fstoken_check(fs_ptoken)
+
+    # Log token usage
+    if log_usage:
+        log_token_usage(fs_ptoken, token_record, token_user, token_errors, request.httprequest)
+
+    # Store token usage for valid tokens
+    if store_usage and token_record and not token_errors:
+        # User is already logged in
+        if token_user and token_user.id == request.session.uid:
+            store_token_usage(fs_ptoken, token_record, token_user, request.httprequest, login=False)
+        # Current user is not the token user therefore this token-check will lead to a login
+        else:
+            store_token_usage(fs_ptoken, token_record, token_user, request.httprequest, login=True)
+
+    return token_record, token_user, token_errors
+
+
 def log_token_usage(fs_ptoken, token_record, token_user, token_errors, httprequest):
     url = httprequest.url
     prefix = "fs_ptoken usage:"
@@ -141,7 +160,7 @@ def log_token_usage(fs_ptoken, token_record, token_user, token_errors, httpreque
         _logger.info("%s SUCCESS %s" % (prefix, token_info))
 
 
-def store_token_usage(fs_ptoken, token_record, token_user, httprequest):
+def store_token_usage(fs_ptoken, token_record, token_user, httprequest, login=False):
     token_log_obj = token_record.env['res.partner.fstoken.log'].sudo()
     token_log_obj.create({
         'log_date': datetime.datetime.now(),
@@ -152,4 +171,5 @@ def store_token_usage(fs_ptoken, token_record, token_user, httprequest):
         'url': httprequest.url,
         'ip': httprequest.remote_addr,
         'device': httprequest.user_agent,
+        'login': login,
     })
