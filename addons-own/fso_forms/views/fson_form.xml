@@ -14,8 +14,8 @@
                                 <field name="name"/>
                                 <field name="type"/>
                                 <field name="model_id"/>
-                                <field name="edit_existing_record_if_logged_in"/>
-                                <field name="submit_button_text"/>
+                                <field name="edit_existing_record_if_logged_in" attrs="{'invisible': [('type','!=','standard')]}"/>
+                                <field name="submit_button_text" attrs="{'invisible': [('type','!=','standard')]}"/>
                             </group>
                             <group name="system_data">
                                 <field name="website_url" widget="url" readonly="1"/>
@@ -24,7 +24,7 @@
                                 <field name="write_date" readonly="True"/>
                             </group>
                         </group>
-                        <group>
+                        <group name="email_login" attrs="{'invisible': [('type','!=','standard')]}">
                             <group name="email" string="E-Mail Settings">
                                 <field name="email_only"/>
                                 <field name="confirmation_email_template"/>
@@ -37,8 +37,17 @@
                                 <field name="show_token_login_form"/>
                             </group>
                         </group>
+                        <h3 style="color:darkred" class="oe_edit_only">Attention!</h3>
+                        <p class="oe_edit_only">
+                            Please test every form extensively and with all targeted user roles (e.g. public-user, admin-user, backend-user) before using it in production! Use a incognito tab in your browser and clear all
+                            caches to make sure you are really using the correct user while testing the form!
+                        </p>
                         <notebook name="main_notebook">
                             <page string="Form Fields" name="form_fields">
+                                <h3 style="color:darkred" class="oe_edit_only">Attention!</h3>
+                                <p class="oe_edit_only">
+                                    Advanced settings of newly added fields can only be edited (by clicking on the page-with-pencil icon) after the form was saved once after adding a new field to the form!
+                                </p>
                                 <!-- ATTENTION: We pass the current model_id to the context of the inner tree view!
                                                 This is the only way without saving first that i found -->
                                 <field name="field_ids"
@@ -119,13 +128,13 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Form-Snippet-Areas" name="form_snippets">
+                            <page string="Form-Snippet-Areas" name="form_snippets" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="snippet_area_top"/>
                                     <field name="snippet_area_bottom"/>
                                 </group>
                             </page>
-                            <page string="Thank You Page">
+                            <page string="Thank You Page" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="website_url_thanks" widget="url" readonly="1"/>
                                     <field name="redirect_after_submit"/>
@@ -133,7 +142,7 @@
                                     <field name="thank_you_page_snippets"/>
                                 </group>
                             </page>
-                            <page string="Token Login Form">
+                            <page string="Token Login Form" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="tlf_headline"/>
                                     <field name="tlf_label"/>
@@ -146,18 +155,20 @@
                                 </group>
                             </page>
                             <page string="Danger Zone">
-                                <group name="force_user" string="Force User">
+                                <group name="force_user" string="Force User" attrs="{'invisible': [('type','!=','standard')]}">
                                     <field name="create_as_user"/>
                                     <field name="create_as_user_nologin"/>
+                                    <field name="update_as_user"/>
+                                    <field name="update_as_user_nologin"/>
                                     <field name="custom_css" invisible="1"/>
                                 </group>
                                 <group name="frontend_validation" string="Frontend Validation">
                                     <field name="frontend_validation"/>
                                 </group>
-                                <group name="submission_settings" string="Submission Settings">
+                                <group name="submission_settings" string="Submission Settings" attrs="{'invisible': [('type','!=','standard')]}">
                                     <field name="submission_url"/>
                                 </group>
-                                <group name="redirect_after_form_submit_settings" string="After-Successful-Form-Submit Settings">
+                                <group name="redirect_after_form_submit_settings" string="After-Successful-Form-Submit Settings" attrs="{'invisible': [('type','!=','standard')]}">
                                     <field name="clear_session_data_after_submit"/>
                                     <field name="redirect_url"/>
                                     <field name="redirect_url_target"/>
@@ -168,10 +179,21 @@
                             </page>
                             <page string="Help">
                                 <p><br/></p>
-                                 <h1 style="color:darkred">Attention!</h1>
+                                 <h1 style="color:darkred">FS-Online Form Generator</h1>
                                 <p>
-                                    Advanced settings of fields can only be edited (by clicking on the page-with-pencil icon) after the form was saved at
-                                    least once after adding the field to the form!
+                                    You can create forms to create or update records for <strong>any</strong> model in FS-Online. You may create forms to create or update partner data, to subscribe to your newsletter,
+                                    to subscribe for a petition, to create leads and many more. Creating an entirely new form for a model is a task for an administrator or an advanced FS-Online user because it requires
+                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be
+                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new
+                                    form extensively before enabling it on your website!
+                                </p>
+                                <p>
+                                    Besides regular forms for models you can also create special forms of type 'checkout' and 'giftee' to create forms for you donation forms (for the online-shop). These forms can than be set
+                                    in the product settings and will override the default set of field e.g. in the checkout process.
+                                </p>
+                                <p>
+                                    You may also create forms that do <strong>not</strong> store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a
+                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab.
                                 </p>
                                 <p><br/></p>
                                 <notebook name="help">
@@ -229,17 +251,85 @@
                                     <page string="Danger Zone Settings">
                                         <p><br/></p>
 
-                                        <h1>TODO</h1>
+                                        <h1>Danger Zone Settings</h1>
+                                        <p> The settings in the danger zone are for advanced users. If you are not sure about a setting please contact our support!</p>
+                                        <p><br/></p>
+
+                                        <h2>Force user</h2>
+                                        <p>
+                                            It may be necessary to force a user to create or update records in a target model. This is needed if the access rights of the target model do not allow write access for
+                                            public website users (usergroup 'base.group_public'). It may also be needed if e.g. the creation of a record in the target model creates records in other models as well if the
+                                            records in the other model needs extra user rights.
+                                            <br/>
+                                            The easies way to find if extra rights are needed is simply to try it. Create the form without being logged in and submit it. If you get an access error you
+                                            know that additional rights are needed.
+                                            <br/>
+                                            If you need to force a user it is best to create a new user for this form and assign only the needed rights to this user. We strongly advise you NOT TO USE THE ADMIN USER because
+                                            this might be a very high security risk depending on the target model and form that you are creating.
+                                        </p>
+                                        <p><br/></p>
+
+                                        <h2>Frontend Validation</h2>
+                                        <p>
+                                            I very rare occasions it might be necessary to disable the frontend validation completely. Even if disabled the server will still run certain validations. Please contact our
+                                            support if you plan to disable frontend validation for a form for further consultation.
+                                        </p>
+                                        <p><br/></p>
+
+                                        <h2>Submission URL</h2>
+                                        <p>
+                                            This will send all your data to the given url. Be very careful because this may send all your data outside to a not well known service. Never use this without consulting our
+                                            support!
+                                        </p>
+                                        <p><br/></p>
+
+                                        <h2>After-Successful-Form-Submit</h2>
+                                        <p>
+                                            Settings in this section will determine the behavior after a form and it's data where successfully submitted and processed. So after the record was created or updated.
+                                        </p>
+                                        <h3>Clear form</h3>
+                                        <p>
+                                            If this is enabled the form will start 'fresh' after the submission. This means that no provided initial data will be shown and every form that always creates a new record would
+                                            be empty again. This is useful for forms for e.g "customer-comments" where the user should be able to always send a new comment once the other one was sendet.
+                                        </p>
+                                        <h3>Redirect URL</h3>
+                                        <p>
+                                            You can set the URL that is opened after the form was successfully submitted. This is in most cases a thank-you-page. These settings come in handy if you want a custom thank
+                                            you page e.g. on your website. You can set any url here so you might also redirect to a partner page after a form was processed. If you do not set anything here the form will
+                                            redirect to the default thank you page of the form which is /fso/form/thanks/[form_id]
+                                        </p>
                                     </page>
                                     <page string="Advanced Field-Settings">
                                         <p><br/></p>
 
-                                        <h1>TODO</h1>
+                                        <h1>Hidden fields for default setting</h1>
+                                        <p>
+                                            Sometimes you want to force a value in the target record or you want to hide a required field to simplify the form. E.g. lets say you want a special checkout-fields form but
+                                            you do not want to show the country field because the only allowed country is Austria. You can not simply remove the country field because country is a required field in the
+                                            checkout process. In such a case you can add the css class 'hide_it' to hide the country-field from the user in the form and set the default value of the country-field to the id
+                                            of Austria.
+                                            <br/> <br/>
+                                            You get the id of a country if you go to Sale > Configuration > Localization > Countries and click on the desired country. You can then see the id of this country
+                                            in the url "...web?#id=13...". So in this example the number 13 would go into the field "default" in the advanced fields tab.
+                                            <br/> <br/>
+                                            We are not finished yet because fields that link to other models will only show a maximum of 200 records. If the id 13 is not in the first
+                                            200 records it can not be selected. To avoid this problem we need to limit the available records of the linked model. This can be done by the field 'domain'. With this field a search
+                                            domain can be set. To limit the available country records to only austria the search-domain would be [('id', '=', 13)].
+                                            <br/> <br/>
+                                            Now that we have hidden the field with 'hide_it' assigned a default value of '13' and a search domain of '[('id', '=', 13)]' the country would be austria for all partners created
+                                            by this form.
+                                        </p>
                                     </page>
                                     <page string="Advanced Form-Use-Cases">
                                         <p><br/></p>
 
-                                        <h1>TODO</h1>
+                                        <h1>Starting a survey after the form submission</h1>
+                                        <p>To open a FS-Online survey after a form was successfully submitted you simply set the redirect url to the survey start page.</p>
+                                        <p>
+                                            If a user is logged in the survey will be linked to the partner of the user automatically. If the users of the form are not logged in the survey would be linked to the partner of the
+                                            public user or no partner at all. If you still want to link the survey to a specific partner you may be able to set a special placeholder in the redirect url setting in the near future
+                                            [Placeholder is work in progress]
+                                        </p>
                                     </page>
                                 </notebook>
                             </page>

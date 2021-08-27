@@ -67,8 +67,13 @@
 
                     <group name="special_rendering_style"
                            string="Rendering Style"
-                           attrs="{'invisible': [('field_ttype','not in',['selection', 'many2one', 'boolean'])]}">
-                        <field name="style"/>
+                           attrs="{'invisible': [('type', 'not in', ['model', 'mail_message']),('field_ttype','not in',[False, 'selection', 'many2one', 'boolean'])]}">
+                        <field name="style"
+                               attrs="{'invisible': [ ('type', 'not in', ['model']),('field_ttype','not in',['selection', 'many2one', 'boolean']) ] }"/>
+                        <field name="mail_message_style"
+                               attrs="{'invisible': [('type', 'not in', ['mail_message'])]}"/>
+                        <field name="mail_message_rows"
+                               attrs="{'invisible': ['|',('type', 'not in', ['mail_message']),('mail_message_style', '!=', 'textarea')]}"/>
                         <field name="yes_text"
                                attrs="{'invisible': [('style','not in',['radio_selectnone', 'radio'])]}"/>
                         <field name="no_text"

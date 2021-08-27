@@ -134,18 +134,31 @@
                     <t t-if="field.type == 'mail_message'">
                         <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
                             <label t-att-class="'control-label f-' + f_name" t-att-for="f_name"><t t-raw="field.label"/></label>
-                            <textarea
-                                    t-att-id="f_name"
-                                    t-att-name="f_name"
-                                    class="form-control"
-                                    rows="8"
-                                    t-att-placeholder="field.placeholder"
-                                    t-att-disabled="f_readonly"
-                                    t-att-required="f_required"
-                                    t-att="validation_rule"
-                                    autocomplete="off">
-                                <t t-esc="f_value.strip() if f_value else ''"/>
-                            </textarea>
+                            <t t-if="field.mail_message_style == 'textarea'">
+                                <textarea
+                                        t-att-id="f_name"
+                                        t-att-name="f_name"
+                                        class="form-control"
+                                        t-att-rows="field.mail_message_rows"
+                                        t-att-placeholder="field.placeholder"
+                                        t-att-disabled="f_readonly"
+                                        t-att-required="f_required"
+                                        t-att="validation_rule"
+                                        autocomplete="off"><t t-esc="f_value.strip() if f_value else ''"/></textarea>
+                            </t>
+                            <t t-if="field.mail_message_style == 'text'">
+                                <input
+                                        type="text"
+                                        t-att-id="f_name"
+                                        t-att-name="f_name"
+                                        class="form-control"
+                                        t-att-placeholder="field.placeholder"
+                                        t-att-disabled="f_readonly"
+                                        t-att-required="f_required"
+                                        t-att="validation_rule"
+                                        t-att-value="f_value"
+                                        autocomplete="off"/>
+                            </t>
                         </div>
                     </t>
 
@@ -167,7 +180,10 @@
                         <t t-if="f_type in request.env['fson.form_field']._allowed_field_types">
 
                             <!-- form group -->
-                            <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')">
+                            <div t-att-name="'form-group-'+f_name"
+                                 t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ' f-style-' + f_style + ((' has-error ' + form_field_errors.get(f_name)) if form_field_errors.get(f_name) else '')"
+                                 t-att-style="'bob'"
+                            >
 
                                 <!-- ALL FIELD TYPES: LABEL -->
                                 <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if f_required and not f_readonly else '')"

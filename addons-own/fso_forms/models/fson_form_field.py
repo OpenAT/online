@@ -18,6 +18,8 @@ class FSONFormField(models.Model):
                                              'sosync_fs_id', 'sosync_write_date', 'sosync_synced_version'])
     _hpf_cls = 'hide_it'
 
+    name = fields.Char(string="Name", compute="compute_name", readonly=True)
+
     type = fields.Selection(string="Type", selection=[('model', 'Model Field'),
                                                       ('honeypot', 'Honeypot Field'),
                                                       ('snippet_area', 'Snippet Area'),
@@ -72,6 +74,11 @@ class FSONFormField(models.Model):
                                         ('radio_selectnone', 'Radio + SelectNone'),
                                         ('radio', 'Radio')],
                              string='Field Style')
+    mail_message_style = fields.Selection(selection=[('textarea', 'Text Area'),
+                                                     ('text', 'Input')],
+                                          default="textarea",
+                                          string='Message Field Style')
+    mail_message_rows = fields.Integer(string="Textarea Rows", default=8)
     force_selection = fields.Boolean(string="Force Selection", help="Forces a selection for radio and selection "
                                                                     "styled fields")
     information = fields.Html(string='Information', help='Information Text or Snippet Area if no field is selected!',
@@ -104,6 +111,11 @@ class FSONFormField(models.Model):
         else:
             raise ValueError("FS-Online Form-Field-Type %s is not supported" % form_field.type)
         return f_name
+
+    @api.depends('type')
+    def compute_name(self):
+        for f in self:
+            f.name = f.form_field_name()
 
     # TODO: Add file type or mime type restrictions for binary fields
     #       HINT: check html  parameter 'accept' and 'type'

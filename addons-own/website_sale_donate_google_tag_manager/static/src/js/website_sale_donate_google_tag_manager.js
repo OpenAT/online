@@ -66,7 +66,7 @@ function push_to_datalayer (gtm_event_data) {
     if (Object.keys(gtm_event_data).length === 0) {
         console.log(`ERROR! gtm_event_data seems to be empty:\n${JSON.stringify(gtm_event_data, undefined, 2)}`)
     } else {
-        // console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data, undefined, 2)}`);
+        console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data, undefined, 2)}`);
         //console.log(`PUSH GTM DATA LAYER EVENT:\n${JSON.stringify(gtm_event_data['event'], undefined, 2)}`);
         dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
         dataLayer.push(gtm_event_data);
@@ -84,6 +84,7 @@ function gtm_fsonline_product_detail () {
     // console.log('gtm_fsonline_product_detail');
 
     var $odoo_product_page = $("#product_detail");
+
     if ($odoo_product_page.length) {
         var odoo_product_detail = get_odoo_product_details_for_gtm($odoo_product_page);
         // Measure a view of product details. This example assumes the detail view occurs on pageload,

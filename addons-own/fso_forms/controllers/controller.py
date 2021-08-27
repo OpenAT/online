@@ -340,14 +340,9 @@ class FsoForms(http.Controller):
             # Get the name of the field in the form
             f_name = f.form_field_name()
 
-            # Mail Message Field (Chatter / Comment)
-            # --------------------------------------
-            if f.type == 'mail_message':
-                values[f_name] = form_field_data.get(f_name, '')
-
             # Regular Model Field
             # -------------------
-            elif f.type == 'model':
+            if f.type == 'model':
                 # ATTENTION: Skipp readonly fields if a user is logged in and a record was found
                 if f.readonly and request.website.user_id.id != request.uid and record:
                     continue
@@ -425,6 +420,7 @@ class FsoForms(http.Controller):
             for f in form.field_ids:
 
                 f_name = f.form_field_name()
+
 
                 # Regular model fields
                 if f.type == 'model':
@@ -793,7 +789,12 @@ class FsoForms(http.Controller):
                             # Update record
                             # -------------
                             else:
-                                record.write(values)
+                                if form.update_as_user:
+                                    record.sudo(form.update_as_user.id).write(values)
+                                elif form.update_as_user_nologin and not self.is_logged_in():
+                                    record.sudo(form.update_as_user_nologin.id).write(values)
+                                else:
+                                    record.write(values)
                                 messages.append(_('Data was successfully updated!'))
                             # Update the session data
                             # HINT: If clear_session_data_after_submit is set the form will be empty at the next
