@@ -40,6 +40,7 @@ function get_odoo_product_details_for_gtm (odoo_product_html) {
         if (typeof val === 'string' || val instanceof String) {
             // Remove whitespace and newlines from all strings
             val = val.trim()
+            // TODO: remove whitespace... e.g. for numbers like "22 444,23"
             // Convert price to a string with two digits
             if (val && key === 'price') {
                 val = val.replaceAll(',', '.');
