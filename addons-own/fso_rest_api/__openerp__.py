@@ -64,5 +64,6 @@ If you need to make local or manual changes create a new integration!
         'data/payment_acquirer.xml',
         'data/res_country.xml',
         'data/res_currency.xml',
+        'data/product_payment_interval.xml'
     ],
 }
