@@ -15,7 +15,7 @@ class TestFsoRestApiProductPaymentInterval(FsoRestApiTestCase):
 
     def test_create_product_payment_interval_is_denied(self):
         response = self.create_via_api(data={
-            "name": "Test Ierval"
+            "name": "Test Interval"
         })
         self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
 
