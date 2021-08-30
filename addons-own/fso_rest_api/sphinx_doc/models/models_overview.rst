@@ -29,6 +29,14 @@ Currency
 Currencies known by the system.
 
 
+Payment intervals
+--------------------------------------------------------------
+
+:ref:`product_payment_interval`
+
+Recurring payment intervals known by the system.
+
+
 Partner
 --------------------------------------------------------------
 

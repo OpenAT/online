@@ -10,6 +10,7 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     models_overview
     res_country
     res_currency
+    product_payment_interval
     res_partner
     frst_personemail
     frst_groups
