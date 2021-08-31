@@ -631,13 +631,22 @@ class FsoForms(http.Controller):
                 f_name = f.name
                 comment = form_field_data.get(f_name, None)
                 if comment:
-                    # ATTENTION: subtype must be text (will search for correct subtype by xmlref)
+                    # HINT: get_external_id() will return a dict like {id: xml-id-name}
                     subtype_xml_id_name = f.mail_message_subtype.get_external_id().get(f.mail_message_subtype.id)
+                    user = request.env.user
+                    message_txt = ("%s\n"
+                                   "\n"
+                                   "---\n"
+                                   "%s, user: %s, login: %s,\n"
+                                   "%s, form-%s, field-%s, label: %s\n" % (
+                                       comment,
+                                       user.partner_id.name, user.id, user.login,
+                                       f.mail_message_subtype.name, form.id, f.id, f.label))
                     record.sudo().with_context(mail_post_autofollow=False).message_post(
-                        body=str(comment),
-                        type='notification',
+                        body=message_txt,
+                        type='comment',
                         subtype=subtype_xml_id_name,
-                        content_sybtype="plaintext")
+                        content_subtype="plaintext")
 
     def is_logged_in(self):
         # The default website user does not count as a logged in user
