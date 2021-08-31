@@ -14,15 +14,17 @@ Special fields
 """"""""""""""""""""
 The state of the transaction. Can be either:
 
-- ``done`` The payment was successfully processed. **Use this for donatinos.**
+- ``done`` The payment was successfully processed
 - ``draft`` Payment still in draft
-- ``pending`` Payment is in progress
+- ``pending`` Payment is in progress. **Use this for direct debit donations processed by DataDialog**
 - ``error`` Error during payment
 - ``cancel`` Payment was cancelled
 
 ``frst_iban``
 """"""""""""""""""""
 The international bank account number.
+
+.. NOTE:: This is required for direct debit.
 
 ``reference``
 """"""""""""""""""""
