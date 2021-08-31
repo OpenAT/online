@@ -37,6 +37,14 @@ Payment intervals
 Recurring payment intervals known by the system.
 
 
+Payment interval lines
+--------------------------------------------------------------
+
+:ref:`product_payment_interval_lines`
+
+Assigns possible payment intervals to a :ref:`product_template`.
+
+
 Partner
 --------------------------------------------------------------
 

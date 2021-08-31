@@ -11,6 +11,7 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     res_country
     res_currency
     product_payment_interval
+    product_payment_interval_lines
     res_partner
     frst_personemail
     frst_groups
