@@ -50,7 +50,7 @@ The state of the order. Can be one of these values:
 
 ``date_order``
 """""""""""""""""""""
-The date and time the order was placed.
+The date and time when the order was placed.
 
 ``amount_total``
 """""""""""""""""""""
@@ -118,14 +118,34 @@ The foreign key of the :ref:`product_product`.
 """""""""""""""""""""
 Free text. Ideally, this is the website URL on which the order was placed.
 
+``price_unit``
+"""""""""""""""""""""
+The donation amount or the price of a single product unit.
+
+``product_uos_qty``
+"""""""""""""""""""""
+Quantity of the donation or product.
+
+- For donations, the quantity should be 1
+- For products, set the actual quantity
+
 ``price_donate``
 """""""""""""""""""""
-The product price or donation amount for this order line.
+The donation amount or the sum of all the product units (``price_unit`` x ``product_uos_qty``).
+
+``payment_interval_id``
+"""""""""""""""""""""""
+The foreign key to the interval (:ref:`product_payment_interval`) of the recurring donation.
+
+- For donations, the interval can be anything that ``product.template`` allows.
+- For products, use the ``id`` for the interval ``once-only``.
 
 ``zgruppedetail_ids``
 """""""""""""""""""""
-A list of foreign keys to :ref:`frst_zgruppedetail`. For donations, use this to specify
-sponsorship for a specific project, person, or animal.
+A list of foreign keys to :ref:`frst_zgruppedetail`. For donations, use this to specify the
+sponsorship type and to select a specific project, person, or animal.
+
+.. HINT:: Consult DataDialog for correct combinations.
 
 ..
     Commented: in case sill needed
