@@ -546,7 +546,7 @@ class website_sale_donate(website_sale):
                 # Append the mail message fields and data
                 for f_field in fso_forms_billing_fields:
                     if f_field.type == 'mail_message':
-                        f_name = f_field.form_field_name()
+                        f_name = f_field.name
                         if f_name in data:
                             values['checkout'][f_name] = data[f_name]
 
@@ -623,7 +623,7 @@ class website_sale_donate(website_sale):
                 for gf_field in fso_forms_giftee_fields:
                     if gf_field.type not in ['model', 'mail_message']:
                         continue
-                    f_name = gf_field.form_field_name()
+                    f_name = gf_field.name
                     gf_name = 'giftee_' + f_name
                     if gf_field.type == 'model':
                         giftee_form_data[f_name] = data.get(gf_name, None)
@@ -658,7 +658,7 @@ class website_sale_donate(website_sale):
             mail_message_data = {}
             for f_field in fso_form_checkout_fields:
                 if f_field.type == 'mail_message':
-                    f_name = f_field.form_field_name()
+                    f_name = f_field.name
                     form_f_name = f_name
                     if form_f_name in checkout:
                         mail_message_data[f_name] = checkout[form_f_name]
@@ -683,7 +683,7 @@ class website_sale_donate(website_sale):
             # Get the giftee data from the 'checkout' dict
             for gf_field in giftee_fields:
                 if gf_field.type in ['model', 'mail_message']:
-                    f_name = gf_field.form_field_name()
+                    f_name = gf_field.name
                     form_f_name = 'giftee_' + f_name
                     if form_f_name in checkout:
                         if gf_field.type == 'model':
@@ -740,7 +740,7 @@ class website_sale_donate(website_sale):
         if fso_forms_billing_fields:
             mandatory_enabled_mapped_form_fields = fso_forms_billing_fields.filtered(
                 lambda f: f.show and f.type == 'model' and f.mandatory)
-            return [field.form_field_name() for field in mandatory_enabled_mapped_form_fields]
+            return [field.name for field in mandatory_enabled_mapped_form_fields]
         else:
             billing_fields = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),
@@ -753,7 +753,7 @@ class website_sale_donate(website_sale):
         if fso_forms_billing_fields:
             nonmandatory_enabled_mapped_form_fields = fso_forms_billing_fields.filtered(
                 lambda f: f.show and f.type == 'model' and not f.mandatory)
-            return [field.form_field_name() for field in nonmandatory_enabled_mapped_form_fields]
+            return [field.name for field in nonmandatory_enabled_mapped_form_fields]
         else:
             billing_fields = request.env['website.checkout_billing_fields']
             billing_fields = billing_fields.search([('res_partner_field_id', '!=', False),

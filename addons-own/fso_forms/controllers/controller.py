@@ -249,7 +249,7 @@ class FsoForms(http.Controller):
 
         # SPAM detection by honeypot fields
         honey_pot_fields = (f for f in form.field_ids if f.type == 'honeypot')
-        honey_pot_test = any(field_data.get(f.form_field_name(), None) for f in honey_pot_fields)
+        honey_pot_test = any(field_data.get(f.name, None) for f in honey_pot_fields)
         if honey_pot_test:
             return {'honey_pot_test': True}
 
@@ -264,7 +264,7 @@ class FsoForms(http.Controller):
                 if f.readonly and request.website.user_id.id != request.uid:
                     continue
 
-                f_name = f.form_field_name()
+                f_name = f.name
                 f_display_name = f.label if f.label else f_name
                 f_type = f.field_id.ttype
                 f_style = f.style
@@ -338,7 +338,7 @@ class FsoForms(http.Controller):
                 continue
 
             # Get the name of the field in the form
-            f_name = f.form_field_name()
+            f_name = f.name
 
             # Regular Model Field
             # -------------------
@@ -419,7 +419,7 @@ class FsoForms(http.Controller):
         if kwargs:
             for f in form.field_ids:
 
-                f_name = f.form_field_name()
+                f_name = f.name
 
 
                 # Regular model fields
@@ -434,7 +434,7 @@ class FsoForms(http.Controller):
                     # because the are expected like this in the template 'form_fields'
                     # TODO: Localization - !!! Right now we expect DE values from the forms !!!
                     if f.field_id.ttype == 'date':
-                        date_string = kwargs.get(f.form_field_name(), '')
+                        date_string = kwargs.get(f.name, '')
                         if date_string:
                             try:
                                 date = datetime.datetime.strptime(date_string, '%d.%m.%Y')
@@ -455,7 +455,7 @@ class FsoForms(http.Controller):
             return form_values
 
         for f in form.field_ids:
-            f_name = f.form_field_name()
+            f_name = f.name
 
             if f_name in kwargs:
 
@@ -628,7 +628,7 @@ class FsoForms(http.Controller):
     def post_messages(self, form, form_field_data, record):
         for f in form.field_ids:
             if f.type == 'mail_message':
-                f_name = f.form_field_name()
+                f_name = f.name
                 comment = form_field_data.get(f_name, None)
                 if comment:
                     # ATTENTION: subtype must be text (will search for correct subtype by xmlref)

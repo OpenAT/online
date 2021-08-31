@@ -79,7 +79,7 @@
                     <!-- The calculated field name based on the field type -->
                     <!-- INFO: The field_name_prefix might be set by xml-templates like the giftee fields in website_sale_donate where multiple fso_forms are rendered in one form -->
                     <t t-set="field_name_prefix" t-value="field_name_prefix if field_name_prefix else ''"/>
-                    <t t-set="f_name" t-value="field_name_prefix + field.form_field_name()"/>
+                    <t t-set="f_name" t-value="field_name_prefix + field.name"/>
                     <t t-set="css_classes" t-value="field.css_classes"/>
                     <t t-set="f_style" t-value="field.style or 'none'"/>
                     <t t-set="f_required" t-value="field.mandatory"/>
