@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-01 16:38+0000\n"
-"PO-Revision-Date: 2019-08-01 16:38+0000\n"
+"POT-Creation-Date: 2021-08-31 10:15+0000\n"
+"PO-Revision-Date: 2021-08-31 10:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,19 +16,84 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: fso_forms
-#: view:website:fso_forms.form
+#: view:website:fso_forms.form_fields
 msgid "&times;"
 msgstr "&times;"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
+msgid ".fso-form-widget-image"
+msgstr ".fso-form-widget-image"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid ".hide_it"
+msgstr ".hide_it"
+
+#. module: fso_forms
+#: help:fson.form,show_token_login_form:0
+msgid "A form to enter the fs_ptoken will show up if not logged in when accessing the form!"
+msgstr "Es wird eine Form zur Tokeneingabe angezeigt falls man nicht eingeloggt ist."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
 msgid "A positive or negative non-decimal number"
-msgstr "A positive or negative non-decimal number"
+msgstr "Eine positive oder negative Zahl"
+
+#. module: fso_forms
+#: help:fson.form,create_as_user:0
+msgid "ALWAYS create new records with this user!"
+msgstr "Neue Datensätze werden IMMER mit diesem Benutzer angelegt!"
+
+#. module: fso_forms
+#: help:fson.form,update_as_user:0
+msgid "ALWAYS update records with this user!"
+msgstr "Datensätze werden IMMER mit diesem Benutzer aktualisiert!"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg"
-msgstr "Accept a value from a file input based on a required mimetype e.g.: data-rule-accept=image/png,image/jpeg"
+msgstr "Überprüft den File-Input auf den korrekten Mimetyp z.b.: data-rule-accept=image/png,image/jpeg"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Advanced Field-Settings"
+msgstr "Erweiterte Feldeinstellungen"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Advanced Form-Use-Cases"
+msgstr "Fortgeschrittene Anwendungsfälle"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Advanced settings of newly added fields can only be edited (by clicking on the page-with-pencil icon) after the form was saved once after adding a new field to the form!"
+msgstr "Die erweiterten Feldeinstellungen (aufrufbar durch Klick auf das Seite-mit-Bleistift-Symbol) können erst aufgerufen werden wenn das Formular nach dem Hinzufügen des Feldes einmal gespeichert wurde"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "After-Successful-Form-Submit"
+msgstr "Nach erfolgreicher Formübermittlung"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "After-Successful-Form-Submit Settings"
+msgstr "Nach erfolgreicher Formübermittlung: Einstellungen"
+
+#. module: fso_forms
+#: field:fson.form,create_as_user:0
+msgid "Always create records as user"
+msgstr "Datensätze immer als Benutzer anlegen"
+
+#. module: fso_forms
+#: field:fson.form,update_as_user:0
+msgid "Always update records as user"
+msgstr "Datensätze immer als Benutzer aktualisieren"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Attention!"
+msgstr "Achtung!"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -36,9 +101,20 @@ msgid "BIC is the business identifier code (ISO 9362). This BIC check is not a g
 msgstr "BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity."
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Basics"
+msgstr "Grundlagen"
+
+#. module: fso_forms
 #: help:fson.form_field,css_classes:0
 msgid "Besides Bootstrap classes you can use special fso-form-widget-* classes e.g.: for image previews 'fso-form-widget-image' or image icons 'fso-form-widget-icon'!"
-msgstr "Besides Bootstrap classes you can use special fso-form-widget-* classes e.g.: for image previews 'fso-form-widget-image' or image icons 'fso-form-widget-icon'!"
+msgstr "Neben den Bootstrap CSS-Klassen können auch spezielle fso-form-widget-* Klassen z.B. für eine Bildervorschau 'fso-form-widget-image' oder Icons 'fso-form-widget-icon' verwendet werden!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Besides regular forms for models you can also create special forms of type 'checkout' and 'giftee' to create forms for you donation forms (for the online-shop). These forms can than be set\n"
+"                                    in the product settings and will override the default set of field e.g. in the checkout process."
+msgstr "Neben standard Formularen kann der Formulargenerator auch spezielle Formulare vom Typ 'checkout' oder 'giftee' erstellen. Diese können dann für Spendenformnulare (Produkte) verwendet werden."
 
 #. module: fso_forms
 #: field:fson.form,snippet_area_bottom:0
@@ -53,52 +129,67 @@ msgstr "CSS Klassen"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all"
-msgstr "Check for specific brand. Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all"
+msgstr "Prüfe die Marke. Verfügbare Prüfungen: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!"
-msgstr "Check if the string format seems like an valid e-mail address. This can not check if the e-mail really works!"
+msgstr "Prüfe ob die Eingabe ein gültiges E-Mail Format hat. Dies prüft nicht ob die E-Mail auch tatsächlich existiert!"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a \".\" and not a \",\""
-msgstr "Check if the string is a valid float number and if the value is equal or higher than the number given. Please not that the number to check must be in EN format therefore with a \".\" and not a \",\""
+msgstr "Überprüfe ob die Eingabe eine Gleitkommazahl ist und niedriger oder höher als der Schwellwert. Please not that the number to check must be in EN format therefore with a \".\" and not a \",\""
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Check if the string may be a credit card based on the Luhn algorithm"
-msgstr "Check if the string may be a credit card based on the Luhn algorithm"
+msgstr "Überprüfe ob die Eingabe eine Kreditkartennummer darstellt basierend auf dem Luhn Algorithmus"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself"
-msgstr "Check if the string seems like a valid IBAN.  It has a country - specific format, that is checked here too. Validation is case-insensitive. Please make sure to normalize input yourself"
+msgstr "Überprüfe ob die Eingabe eine IBAN Nummer sein kann.  Das länderspezifische Format wird dabei berücksichtigt. Die Validierung ignoriert Groß- bzw Kleinschreibung. Bitte stellen Sie jedoch sicher die Eingabe vor der Prüfung zu normalisieren"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Check is the string has a valid German float number format like 124,56. A \",\" must be in the string for this validation!"
-msgstr "Check is the string has a valid German float number format like 124,56. A \",\" must be in the string for this validation!"
+msgstr "Überprüfe die Eingabe auf ein DE-Nummernformat z.B. 124,56. A \",\" muss in der Zahl für enhalten sein damit die Überprüfung funktioniert!"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and \"Now\""
-msgstr "Checks a String for a German Date Format of DD.MM.YYYY like 31.12.1980. Must be between 1900-01-01 and \"Now\""
+msgstr "Überprüfe die Eingabe auf ein DE-Datumsformat: DD.MM.YYYY z.B. 31.12.1980. Muss zwischen 1900-01-01 und \"jetzt\" sein."
 
 #. module: fso_forms
 #: field:fson.form,clear_session_data_after_submit:0
 msgid "Clear Form after Submit"
-msgstr "Clear Form after Submit"
+msgstr "Neustart (leere Formular) nach erfolgreicher Übermittlung"
 
 #. module: fso_forms
-#: field:fson.form_field,clearfix:0
-msgid "Clearfix"
-msgstr "Clearfix"
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Clear form"
+msgstr "Neustart nach erfolgreicher Übermittlung"
 
 #. module: fso_forms
-#: view:website:fso_forms.form
+#: view:website:fso_forms.form_fields
 msgid "Close"
 msgstr "Beenden"
+
+#. module: fso_forms
+#: selection:fson.form_field,type:0
+msgid "Comment / Note"
+msgstr "Kommentar / Bemerkung"
+
+#. module: fso_forms
+#: field:fson.form_field,mail_message_subtype:0
+msgid "Comment Subtype"
+msgstr "Kommentartyp"
+
+#. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+msgid "Common Settings"
+msgstr "Allg. Einstellungen"
 
 #. module: fso_forms
 #: field:fson.form_field,confirmation_email:0
@@ -116,6 +207,21 @@ msgid "Confirmation email template fso forms"
 msgstr "Bestätigungs E-Mail Vorlage"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "CornflowerBlue:"
+msgstr "CornflowerBlue:"
+
+#. module: fso_forms
+#: help:fson.form,create_as_user_nologin:0
+msgid "Create new records with this user only if not logged in!"
+msgstr "Neue Datensätze werden mit diesem Benutzer angelegt wenn kein Benutzer angemeldet ist!"
+
+#. module: fso_forms
+#: field:fson.form,create_as_user_nologin:0
+msgid "Create records if not logged in as user"
+msgstr "Neue Datensätze mit diesem Benutzer anlegen"
+
+#. module: fso_forms
 #: field:fson.form,create_uid:0
 #: field:fson.form_field,create_uid:0
 msgid "Created by"
@@ -130,12 +236,17 @@ msgstr "Erstellt am"
 #. module: fso_forms
 #: field:fson.form,custom_css:0
 msgid "Custom CSS"
-msgstr "Custom CSS"
+msgstr "Eigenes CSS"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Custom Frontend Validation Methods:"
-msgstr "Custom Frontend Validation Methods:"
+msgstr "Eigene Frontend-Validierungsmethoden:"
+
+#. module: fso_forms
+#: help:fson.form_field,honeypot:0
+msgid "DEPRECATED! use type='honeypot' instead!This field is a honeypot field to detect SPAM. It must be invisible in the form! If it is filled it meansthat this was a bot and we can dismiss the form input!"
+msgstr "DEPRECATED! use type='honeypot' instead!This field is a honeypot field to detect SPAM. It must be invisible in the form! If it is filled it meansthat this was a bot and we can dismiss the form input!"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -143,16 +254,36 @@ msgid "Danger Zone"
 msgstr "Danger Zone"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:394
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Danger Zone Settings"
+msgstr "Danger Zone Einstellungen"
+
+#. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+msgid "Data Handling"
+msgstr "Datenverarbeitung"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:796
 #, python-format
 msgid "Data was successfully submitted!"
 msgstr "Daten wurden erfolgreich übermittelt!"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:397
+#: code:addons/fso_forms/controllers/controller.py:807
 #, python-format
 msgid "Data was successfully updated!"
 msgstr "Daten wurden erfolgreich aktualisiert!"
+
+#. module: fso_forms
+#: field:fson.form_field,default:0
+msgid "Default Field Value"
+msgstr "Standardwert"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Disabled Form-Fields (show=False)"
+msgstr "Deaktivierte Form-Felder (show=False)"
 
 #. module: fso_forms
 #: field:fson.form,display_name:0
@@ -163,7 +294,7 @@ msgstr "Anzeigename"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Displays a preview of the image for binary fields"
-msgstr "Displays a preview of the image for binary fields"
+msgstr "Zeige Bildvorschau für Binärfelder"
 
 #. module: fso_forms
 #: help:fson.form,email_only:0
@@ -173,12 +304,17 @@ msgstr "Es wird kein Eintrag in der Datenbank erstellt sondern nur ein E-Mail ve
 #. module: fso_forms
 #: help:fson.form_field,readonly:0
 msgid "Do not allow changing the data of the field if logged in and a record exits already! WARNING: This has NO effect if no record exists of no user is logged in!"
-msgstr "Do not allow changing the data of the field if logged in and a record exits already! WARNING: This has NO effect if no record exists of no user is logged in!"
+msgstr "Datenänderung an diesem Feld verbieten wenn ein Benutzer angemeldet ist und bereits ein Datensatz existiert  WARNUNG: Diese Einstellung hat keinen Effekt wenn kein Benutzer angemeldet ist oder kein Datensatz existiert!"
 
 #. module: fso_forms
 #: help:fson.form_field,nodata:0
 msgid "Do not show/pre-fill data in the website form if logged in."
-msgstr "Do not show/pre-fill data in the website form if logged in."
+msgstr "Keine Daten vorausfüllen (wenn ein Benutzer angemeldet ist)."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "DodgerBlue:"
+msgstr "DodgerBlue:"
 
 #. module: fso_forms
 #: field:fson.form,email_only:0
@@ -186,10 +322,16 @@ msgid "E-Mail Only"
 msgstr "Nur E-Mails versenden"
 
 #. module: fso_forms
-#: code:addons/fso_forms/models/fso_forms.py:102
+#: view:fson.form:fso_forms.fson_form_form
+msgid "E-Mail Settings"
+msgstr "E-Mail Einstellungen"
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fson_form.py:117
+#: view:fson.form:fso_forms.fson_form_form
 #, python-format
 msgid "Edit"
-msgstr "Editieren"
+msgstr "Bearbeiten"
 
 #. module: fso_forms
 #: field:fson.form,thank_you_page_edit_data_button:0
@@ -214,37 +356,47 @@ msgstr "Aktiviere JavaScript-Frontend-Form-Validierung mittels jquery-validate!"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Enter [Value] words or less."
-msgstr "Enter [Value] words or less."
+msgstr "[Value] Wörter oder weniger."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Enter [Value] words or more."
-msgstr "Enter [Value] words or more."
+msgstr "[Value] Wörter oder mehr."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Enter between [min max] words."
-msgstr "Enter between [min max] words."
+msgstr "Eingabe zwischen [min max] Wörtern."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Example Usage for combined rules:"
-msgstr "Example Usage for combined rules:"
+msgstr "Beispiele für kombinierte Regeln:"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Example Usage:"
-msgstr "Example Usage:"
+msgstr "Beispiele:"
+
+#. module: fso_forms
+#: model:mail.message.subtype,name:fso_forms.form_comment_subtype
+msgid "FS-Online Form Comment"
+msgstr "FS-Online Formular Kommentar"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "FS-Online Form Generator"
+msgstr "FS-Online Formulargenerator"
 
 #. module: fso_forms
 #: model:res.groups,name:fso_forms.group_fso_forms_manager
 msgid "FSO Forms Manager Group"
-msgstr "FSO Forms Manager Group"
+msgstr "FSON Formulargenerator Manager-Gruppe"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "FSON Form"
-msgstr "FSON Form"
+msgstr "FSON Formular"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_tree
@@ -261,22 +413,17 @@ msgstr "Web-Formulare"
 #: model:ir.actions.act_window,name:fso_forms.fson_form_field_action
 #: model:ir.ui.menu,name:fso_forms.fson_form_field_menu
 msgid "FSON Forms Fields"
-msgstr "FSON Forms Fields"
+msgstr "FSON Formularfelder"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_search
 msgid "FSON Forms Search"
-msgstr "FSON Forms Search"
-
-#. module: fso_forms
-#: field:fson.form_field,field_id:0
-msgid "Field"
-msgstr "Feld"
+msgstr "FSON Formularsuche"
 
 #. module: fso_forms
 #: field:fson.form_field,field_model_name:0
 msgid "Field Model"
-msgstr "Field Model"
+msgstr "Model des Feldes"
 
 #. module: fso_forms
 #: field:fson.form_field,style:0
@@ -286,7 +433,12 @@ msgstr "Feld Stil"
 #. module: fso_forms
 #: field:fson.form_field,field_ttype:0
 msgid "Field Type"
-msgstr "Field Type"
+msgstr "Feldtyp"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Field color codes"
+msgstr "Farbcode des Feldes"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -300,9 +452,24 @@ msgid "File Name Field"
 msgstr "Feld für Dateinamen"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "FireBrick:"
+msgstr "FireBrick:"
+
+#. module: fso_forms
+#: help:fson.form_field,domain:0
+msgid "For Many2one fields to limit the available records to choose from"
+msgstr "Suchdomain für Many2one Felder um die verfügbaren Werte einzuschränken."
+
+#. module: fso_forms
+#: help:fson.form_field,default:0
+msgid "For Many2one or selection fields please use the id or the XMLID of the target-record.This can also be used with 'hidden' fields to enforce a value for a field!"
+msgstr "Bitte die ID oder XMLID des Ziel-Datensatzes für Many2one oder Selection-Felder verwenden. In Verbindung mit versteckten Feldern können so Standardwerte für die Zieldatensätze festgelegt werden!"
+
+#. module: fso_forms
 #: help:fson.form_field,mandatory:0
 msgid "For boolean fields mandatory means you have to choose 'yes'even if it is shown as a radio button!"
-msgstr "For boolean fields mandatory means you have to choose 'yes'even if it is shown as a radio button!"
+msgstr "Erzwungen erzwingt bei Boolschen-Feldern den Wert 'Wahr' selbst wenn es als Radio-Button dargestellt wird!"
 
 #. module: fso_forms
 #: field:fson.form_field,force_selection:0
@@ -310,9 +477,19 @@ msgid "Force Selection"
 msgstr "Erzwinge Auswahl"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Force User"
+msgstr "Erzwinge Benutzer"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Force user"
+msgstr "Erzwinge Benutzer"
+
+#. module: fso_forms
 #: help:fson.form_field,force_selection:0
 msgid "Forces a selection for radio and selection styled fields"
-msgstr "Forces a selection for radio and selection styled fields"
+msgstr "Erzwinge eine Auswahl für Radio oder Selection Felder"
 
 #. module: fso_forms
 #: field:fson.form_field,form_id:0
@@ -327,17 +504,32 @@ msgstr "Formularfelder"
 #. module: fso_forms
 #: field:fson.form_field,form_model_name:0
 msgid "Form Model"
-msgstr "Form Model"
+msgstr "Formularmodell"
 
 #. module: fso_forms
 #: help:fson.form_field,form_model_name:0
 msgid "Form Model name"
-msgstr "Form Model Name"
+msgstr "Formularmodell-Name"
 
 #. module: fso_forms
 #: field:fson.form,name:0
 msgid "Form Name"
 msgstr "Formularname"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Form-Fields for Comments"
+msgstr "Form-Felder für Kommentare"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Form-Fields for Snippet Areas or Honeypot Fields"
+msgstr "Form-Felder für Snippet Bereiche oder Honeypot Felder"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Form-Fields with a default value or that mark a login or email-to field"
+msgstr "Form-Felder mit einem Standardwert oder die als Login oder E-Mail-An Feld markiert sind"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -355,7 +547,9 @@ msgid "Forms"
 msgstr "Formulare"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
 #: field:fson.form,frontend_validation:0
+#: view:fson.form_field:fso_forms.fson_form_field_form
 #: field:fson.form_field,validation_rule:0
 msgid "Frontend Validation"
 msgstr "Frontend Validierung"
@@ -363,7 +557,7 @@ msgstr "Frontend Validierung"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Frontend Validation Methods"
-msgstr "Frontend Validation Methods"
+msgstr "Frontend Validierungsmethoden"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -371,15 +565,51 @@ msgid "Help"
 msgstr "Hilfe"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Hidden fields for default setting"
+msgstr "Versteckte Felder für Standardwerte"
+
+#. module: fso_forms
 #: field:fson.form_field,nodata:0
 msgid "Hide Data if logged in"
-msgstr "Hide Data if logged in"
+msgstr "Daten nicht vorausfüllen wenn angemeldet"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Hides a field by moving it offscreen"
+msgstr "Versteck ein Feld (wir ins Off verschoben)"
+
+#. module: fso_forms
+#: field:fson.form_field,honeypot:0
+msgid "Honeypot"
+msgstr "Honeypot"
+
+#. module: fso_forms
+#: selection:fson.form_field,type:0
+msgid "Honeypot Field"
+msgstr "Honeypot Feld"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "I very rare occasions it might be necessary to disable the frontend validation completely. Even if disabled the server will still run certain validations. Please contact our\n"
+"                                            support if you plan to disable frontend validation for a form for further consultation."
+msgstr "In sehr seltenen Fällen kann es erforderlich werden die Frontend-Validierung abzuschalten. Am Server werden dennoch wesentliche Prüfungen durchgeführt. Bitte kontaktieren Sie unseren\n"
+"                                            Support falls Sie planen die Validierung abzuschalten."
 
 #. module: fso_forms
 #: field:fson.form,id:0
 #: field:fson.form_field,id:0
 msgid "ID"
 msgstr "ID"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "If a user is logged in the survey will be linked to the partner of the user automatically. If the users of the form are not logged in the survey would be linked to the partner of the\n"
+"                                            public user or no partner at all. If you still want to link the survey to a specific partner you may be able to set a special placeholder in the redirect url setting in the near future\n"
+"                                            [Placeholder is work in progress]"
+msgstr "Wenn ein Benutzer angemeldet ist wird die Umfrage automatisch die zugehörige Person des Benutzers verwenden. Ist kein Benutzer angemeldet wird der\n"
+"                                            public-user oder keine Person verlinkt. In kürze kann auch ein spezieller Platzhalter in der Redirect-URL (ULR der Dankesseite) verwendet werden um die Umfrage mit dem gewünschten\n"
+"                                            Benutzer aufzurufen [Dies ist jedoch noch in Arbeit]"
 
 #. module: fso_forms
 #: help:fson.form,thank_you_page_edit_data_button:0
@@ -390,18 +620,40 @@ msgstr "Aktiviert einen Button auf der Dankesseite der es ermöglicht zum Formul
 #: help:fson.form,edit_existing_record_if_logged_in:0
 msgid "If set and a user is logged in (e.g. by token) he can edit one existing record related to model linked to the form. If the current form model is not res.partner or res.user you can mark a res.partner or res.user many2one field of the form as the login field. The record in the form-model where the marked field matches the logged in user (or the users partner) can than be edited.\n"
 "Clear Session Data after Submit WILL NOT WORK if this is set and a user is logged in!"
-msgstr "If set and a user is logged in (e.g. by token) he can edit one existing record related to model linked to the form. If the current form model is not res.partner or res.user you can mark a res.partner or res.user many2one field of the form as the login field. The record in the form-model where the marked field matches the logged in user (or the users partner) can than be edited.\n"
-"Clear Session Data after Submit WILL NOT WORK if this is set and a user is logged in!"
+msgstr "Wenn aktiviert dann können angemeldete Benutzer bestehende Datensätze aktualisieren statt immer neue anzulegen. Ist das Formularmodell nicht 'res.partner' oder 'res.user' muss das Feld im Ziel Modell des Formulares markiert werden das auf 'res.partner' oder 'res.user' zeigt. Es wird dann im Ziel-Modell des Formulares nach Datensätzen gesucht die im markierten Feld dem.\n"
+"Angemeldeten Benutzer oder dessen Person entsprechen. Wird genau ein Datensatz gefunden wird dieser dann im Formular verwendet und kann verändert werden. Die Einstellung 'Leere-Formular nach erfgolgreicher Übermittlung' hat keinen Effekt wenn dies gesetzt ist und ein Benutzer angemeldet ist!"
+
+#. module: fso_forms
+#: help:fson.form,thank_you_page_edit_redirect:0
+msgid "If set the Edit Button will redirect to this page instead ofthe regular form page!"
+msgstr "Der Edit Button wird diese URL aufrufen statt der standard Formularseite!"
 
 #. module: fso_forms
 #: help:fson.form,clear_session_data_after_submit:0
 msgid "If set the form will be empty again after a successful submit!"
-msgstr "If set the form will be empty again after a successful submit!"
+msgstr "Wenn gesetzt wird die Form nach erfolgreicher Übermittlung der Daten geleert um z.B. einen neuen Datensatz anlegen zu können!"
+
+#. module: fso_forms
+#: help:fson.form,login_required:0
+msgid "If set you can only access the form if logged in."
+msgstr "Erwzingt einen angemeldeten Benutzer bevor das Formular angezeigt wird"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "If this is enabled the form will start 'fresh' after the submission. This means that no provided initial data will be shown and every form that always creates a new record would\n"
+"                                            be empty again. This is useful for forms for e.g \"customer-comments\" where the user should be able to always send a new comment once the other one was sendet."
+msgstr "Wenn gesetzt wird die Form nach erfolgreicher Übermittlung der Daten geleert um z.B. einen neuen Datensatz anlegen zu können!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "If you need to force a user it is best to create a new user for this form and assign only the needed rights to this user. We strongly advise you NOT TO USE THE ADMIN USER because\n"
+"                                            this might be a very high security risk depending on the target model and form that you are creating."
+msgstr "Falls sie aufgrund fehlernder Benutzerrechte im Ziel-Modell einen Nutzer erzwingen müssen sollten sie unbedingt einen neuen Benutzer anlegen und diesem Benutzer nur die erforderlichen Rechte geben. Bitte verwenden Sie niemals den admin user da dies ein Sicherheitsrisiko darstellt."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Important Built In Frontend Validation Methods:"
-msgstr "Important Built In Frontend Validation Methods:"
+msgstr "Wichtige eingebaute Fronten-Validierungen:"
 
 #. module: fso_forms
 #: field:fson.form_field,information:0
@@ -419,24 +671,41 @@ msgid "Information Email Template"
 msgstr "Internes E-Mail: Vorlage"
 
 #. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+msgid "Information Text or Snippet Area Content"
+msgstr "Inhalt des Snippet-Bereich"
+
+#. module: fso_forms
 #: help:fson.form_field,information:0
 msgid "Information Text or Snippet Area if no field is selected!"
-msgstr "Information Text or Snippet Area if no field is selected!"
+msgstr ""
 
 #. module: fso_forms
 #: field:res.partner,information_email_receipient_fso_form:0
 msgid "Information email receipient fso form"
-msgstr "Information email receipient fso form"
+msgstr "Empfänger Mail Adresse für das Informations-E-Mail"
 
 #. module: fso_forms
 #: field:email.template,information_email_template_fso_forms:0
 msgid "Information email template fso forms"
-msgstr "Information email template fso forms"
+msgstr "Informations-E-Mail Vorlage"
+
+#. module: fso_forms
+#: selection:fson.form_field,mail_message_style:0
+msgid "Input"
+msgstr "Input"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "It may be necessary to force a user to create or update records in a target model. This is needed if the access rights of the target model do not allow write access for\n"
+"                                            public website users (usergroup 'base.group_public'). It may also be needed if e.g. the creation of a record in the target model creates records in other models as well if the\n"
+"                                            records in the other model needs extra user rights."
+msgstr "Falls sie aufgrund fehlernder Benutzerrechte im Ziel-Modell einen Nutzer für Datenänderungen erzwingen müssen sollten sie unbedingt einen neuen Benutzer anlegen und diesem Benutzer nur die erforderlichen Rechte geben. Bitte verwenden Sie niemals den admin Benutzer da dies ein Sicherheitsrisiko darstellt"
 
 #. module: fso_forms
 #: help:fson.form_field,validation_rule:0
 msgid "JQuery Frontend Validation Settings"
-msgstr "JQuery Frontend Validation Settings"
+msgstr "JQuery-Frontend-Validierung Einstellungen"
 
 #. module: fso_forms
 #: field:fson.form_field,label:0
@@ -464,12 +733,32 @@ msgstr "Aktualisiert am"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Letters, numbers, and underscores only"
-msgstr "Letters, numbers, and underscores only"
+msgstr "Nur Buchstaben, Nummern und Unterstrich"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "LightGrey:"
+msgstr "LightGrey:"
+
+#. module: fso_forms
+#: field:fson.form_field,clearfix:0
+msgid "Linebreak"
+msgstr "Zeilenumbruch"
 
 #. module: fso_forms
 #: field:fson.form_field,login:0
 msgid "Login Record"
 msgstr "Login"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Login Settings"
+msgstr "Login Einstellungen"
+
+#. module: fso_forms
+#: field:fson.form,login_required:0
+msgid "Login required"
+msgstr "Login erforderlich"
 
 #. module: fso_forms
 #: field:fson.form,logout_button_text:0
@@ -482,14 +771,40 @@ msgid "Mandatory"
 msgstr "Pflichtfeld"
 
 #. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+msgid "Mark this field as:"
+msgstr "Markiere Feld als:"
+
+#. module: fso_forms
+#: field:fson.form_field,mail_message_style:0
+msgid "Message Field Style"
+msgstr "Kommentarfeld Stil"
+
+#. module: fso_forms
 #: field:fson.form,model_id:0
 msgid "Model"
 msgstr "Modell"
 
 #. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+#: selection:fson.form_field,type:0
+msgid "Model Field"
+msgstr "Modell-Feld"
+
+#. module: fso_forms
 #: help:fson.form_field,field_model_name:0
 msgid "Model name"
-msgstr "Model name"
+msgstr "Modellname"
+
+#. module: fso_forms
+#: field:fson.form_field,field_id:0
+msgid "Model-Field"
+msgstr "Modell-Feld"
+
+#. module: fso_forms
+#: field:fson.form_field,name:0
+msgid "Name"
+msgstr "Name"
 
 #. module: fso_forms
 #: field:fson.form_field,no_text:0
@@ -497,13 +812,18 @@ msgid "No Text"
 msgstr "Nein Text"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:237
+#: selection:fson.form,type:0
+msgid "No Type Set"
+msgstr "Kein Typ gewählt"
+
+#. module: fso_forms
+#: code:addons/fso_forms/controllers/controller.py:291
 #, python-format
 msgid "No value for mandatory field %s"
 msgstr "Pflichtfeld %s wurde nicht ausgefüllt!"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:232
+#: code:addons/fso_forms/controllers/controller.py:286
 #, python-format
 msgid "No value selected for field %s"
 msgstr "Nichts ausgewählt für das Feld %s"
@@ -511,27 +831,33 @@ msgstr "Nichts ausgewählt für das Feld %s"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "No white space allowed"
-msgstr "No white space allowed"
+msgstr "Kein 'white space' erlaubt"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Now that we have hidden the field with 'hide_it' assigned a default value of '13' and a search domain of '[('id', '=', 13)]' the country would be austria for all partners created\n"
+"                                            by this form."
+msgstr "Nun da wir das Feld mit 'hide_it' versteckt haben, den Standardwert '13' gesetzt haben und die Suchdomain '[('id', '=', 13)]' eingestellt haben, wird das Land Österreich für alle neu erstellen Datensätze verwendet.\n"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Older \"accept\" file extension method"
-msgstr "Older \"accept\" file extension method"
+msgstr "Ältere \"accept\" Dateierweiterungsmethode"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Only digits are allowed (0-9)"
-msgstr "Only digits are allowed (0-9)"
+msgstr "Nur Nummern erlaubt (0-9)"
 
 #. module: fso_forms
 #: help:fson.form_field,no_text:0
 msgid "Only for radio-styled boolean fields"
-msgstr "Only for radio-styled boolean fields"
+msgstr "Nur für radio-styled boolean Felder"
 
 #. module: fso_forms
 #: help:fson.form_field,yes_text:0
 msgid "Only for radio-styled boolean fields!"
-msgstr "Only for radio-styled boolean fields!"
+msgstr "Nur für radio-styled boolean Felder!"
 
 #. module: fso_forms
 #: help:fson.form_field,login:0
@@ -554,22 +880,38 @@ msgid "Places a DIV box with .clearfix after this field"
 msgstr "Platziert eine DIV Box mit .clearfix nach diesem Feld. Dies ist wie ein erzwungener Umbruch!"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:247
+#: code:addons/fso_forms/controllers/controller.py:301
 #, python-format
 msgid "Please enter a valid date for field %s"
 msgstr "Bitte geben sie ein gültiges Datum für das Feld %s ein."
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:268
+#: code:addons/fso_forms/controllers/controller.py:322
 #, python-format
 msgid "Please enter a valid float for field %s"
 msgstr "Bitte geben Sie eine Gleitkommazahl für das Feld %s ein."
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:256
+#: code:addons/fso_forms/controllers/controller.py:310
 #, python-format
 msgid "Please enter a valid number for field %s"
 msgstr "Bitte geben Sie eine Nummer für das Feld %s ein."
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fson_form_field.py:206
+#, python-format
+msgid "Please make sure a search-domain is set if you set a default value for a Many2Onefield!\n"
+"\n"
+"Otherwise the default value may not be in the selectable values for thefield because the Many2One values are limited to the first 200 results!"
+msgstr "Bitte verwenden Sie eine Such-Domain für Many2One Felder mit einem Standardwert!\n"
+"\n"
+"Sonst könnte es sein, dass der gewünschte Wert nicht auswählbar ist da maximal 200 Werte geladen werden!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Please test every form extensively and with all targeted user roles (e.g. public-user, admin-user, backend-user) before using it in production! Use a incognito tab in your browser and clear all\n"
+"                            caches to make sure you are really using the correct user while testing the form!"
+msgstr "Bitte testen sie jedes neue Formular vor dem produktiven Einsatz mit allen gewünschten Benutzern (z.B. public-user, admin-user, backend-user)! Sie können z.B. einen Inkongnito-Tab verwenden und den Cache leeren um sicher mit dem gewünschten Benutzer zu testen."
 
 #. module: fso_forms
 #: selection:fson.form_field,style:0
@@ -587,29 +929,35 @@ msgid "Readonly if logged in"
 msgstr "Schreibgeschützt wenn angemeldet"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
 #: field:fson.form,redirect_url:0
 msgid "Redirect URL"
 msgstr "Redirect URL"
 
 #. module: fso_forms
+#: field:fson.form,thank_you_page_edit_redirect:0
+msgid "Redirect URL after Edit on Thank You Page"
+msgstr "Redirect URL nach dem Editieren auf der Dankesseite"
+
+#. module: fso_forms
 #: help:fson.form,redirect_url_if_logged_in:0
 msgid "Redirect URL after form feedback if logged in! Do not set unless you really need to!If set the Thank You Page will not be called!"
-msgstr "Redirect URL after form feedback if logged in! Do not set unless you really need to!If set the Thank You Page will not be called!"
+msgstr "Redirect URL nach erfolgreicher Formübermittlung wenn ein Benutzer angemeldet ist!"
 
 #. module: fso_forms
 #: help:fson.form,redirect_url:0
 msgid "Redirect URL after form feedback! Do not set unless you really need to!If set the Thank You Page will not be called!"
-msgstr "Redirect URL after form feedback! Do not set unless you really need to!If set the Thank You Page will not be called!"
+msgstr "Redirect URL nach erfolgreicher Formübermittlung!"
 
 #. module: fso_forms
 #: field:fson.form,redirect_url_if_logged_in:0
 msgid "Redirect URL if logged in"
-msgstr "Redirect URL if logged in"
+msgstr "Redirect URL wenn angemeldet"
 
 #. module: fso_forms
 #: field:fson.form,redirect_url_if_logged_in_target:0
 msgid "Redirect URL if logged in target"
-msgstr "Redirect URL if logged in target"
+msgstr "Redirect URL wenn angemeldet target"
 
 #. module: fso_forms
 #: field:fson.form,redirect_url_target:0
@@ -619,12 +967,22 @@ msgstr "Redirect URL target"
 #. module: fso_forms
 #: field:fson.form,redirect_after_submit:0
 msgid "Redirect after successful submit!"
-msgstr "Redirect after successful submit!"
+msgstr "Redirect nach erfolgreicher Formübermittlung!"
 
 #. module: fso_forms
 #: help:fson.form,redirect_after_submit:0
 msgid "Redirect after the successful submission of the form.If not set the user will stay on the form page"
-msgstr "Redirect after the successful submission of the form.If not set the user will stay on the form page"
+msgstr "Redirect nach erfolgreicher Formübermittlung. Wenn nicht gesetzt bleibt man auf der Form-Seite"
+
+#. module: fso_forms
+#: view:fson.form_field:fso_forms.fson_form_field_form
+msgid "Rendering Style"
+msgstr "Rendering Stil"
+
+#. module: fso_forms
+#: field:fson.form_field,domain:0
+msgid "Search-Domain for Many2one Fields"
+msgstr "Such-Domain für Many2one Felder"
 
 #. module: fso_forms
 #: selection:fson.form_field,style:0
@@ -634,7 +992,7 @@ msgstr "Auswahl"
 #. module: fso_forms
 #: help:fson.form_field,confirmation_email:0
 msgid "Send a confirmation e-mail to this address"
-msgstr "Send a confirmation e-mail to this address"
+msgstr "Sende eine Bestätigungs-E-Mail an diese E-Mail Adresse"
 
 #. module: fso_forms
 #: field:fson.form,sequence:0
@@ -649,9 +1007,29 @@ msgid "Sequence number for ordering"
 msgstr "Sequenznummer für die Sortierung"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Settings in this section will determine the behavior after a form and it's data where successfully submitted and processed. So after the record was created or updated."
+msgstr "Die Einstellungen in diesem Bereich bestimmen das Verhalten nach erfolgreicher Formübermittlung. Also nachdem der Datensatz erstellt oder aktualisiert wurde."
+
+#. module: fso_forms
+#: selection:fson.form,type:0
+msgid "Shop Checkout Fields"
+msgstr "Shop Checkout Felder"
+
+#. module: fso_forms
+#: selection:fson.form,type:0
+msgid "Shop Giftee Fields"
+msgstr "Shop Geschenkspendenfelder"
+
+#. module: fso_forms
 #: field:fson.form_field,show:0
 msgid "Show"
 msgstr "Anzeigen"
+
+#. module: fso_forms
+#: field:fson.form,show_token_login_form:0
+msgid "Show Token Login Form"
+msgstr "Zeige Token-Eingabe-Formular"
 
 #. module: fso_forms
 #: help:fson.form_field,show:0
@@ -661,40 +1039,71 @@ msgstr "Zeige Feld in der Webseite"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "Simple add a semicolon \";\" seperated string of rules prefixed with \"data-rule-\"."
-msgstr "Simple add a semicolon \";\" seperated string of rules prefixed with \"data-rule-\"."
+msgstr "Einfach mehrere Regeln mit \";\" trennen. Allen Regeln wird dabei \"data-rule-\" vorangestellt."
+
+#. module: fso_forms
+#: selection:fson.form_field,type:0
+msgid "Snippet Area"
+msgstr "Snippet Area"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
-msgid "Special CSS widget classes"
-msgstr "Special CSS widget classes"
+msgid "Sometimes you want to force a value in the target record or you want to hide a required field to simplify the form. E.g. lets say you want a special checkout-fields form but\n"
+"                                            you do not want to show the country field because the only allowed country is Austria. You can not simply remove the country field because country is a required field in the\n"
+"                                            checkout process. In such a case you can add the css class 'hide_it' to hide the country-field from the user in the form and set the default value of the country-field to the id\n"
+"                                            of Austria."
+msgstr "Manchmal ist es erforderlich einen Wert in neu angelegten Datensätzen zu erzwingen. Angenommen man möchte alle Datensätzte mit Wert 'Österreich' für das Feld 'Land' anlegen. Dies kann einfach über die Angabe eines Wertes im Feld 'Standardwert' erfolgen. "
+"Auch kann man ein Feld mit einem Standardwert verstecken indem man die Klasse 'hide_it' hinzufügt. Die Kombination von Standardwert und dem verstecken des Feldes kann also dazu verwendet werden um ein Formular zu vereinfachen."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Special CSS-classes for fields"
+msgstr "Spezielle CSS-Klassen für Felder"
+
+#. module: fso_forms
+#: selection:fson.form,type:0
+msgid "Standard"
+msgstr "Standard"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Starting a survey after the form submission"
+msgstr "Umfrage nach erfolgreicher Form-Übermittlung starten"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "String must be at least [number of characters] long"
-msgstr "String must be at least [number of characters] long"
+msgstr "Die Zeichenkette muss mindestens [number of characters] lang sein"
 
 #. module: fso_forms
 #: help:fson.form,submission_url:0
 msgid "Subission URL for form data! Do not set unless you really need to!If set no record will be"
-msgstr "Subission URL for form data! Do not set unless you really need to!If set no record will be"
+msgstr "Daten and diese URL senden! ACHTUNG: Unbedingt im Vorfeld mit unserem Support abklären falls Sie dies verwenden möchten!"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Submission Settings"
+msgstr "Übertragungseinstellungen"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
 #: field:fson.form,submission_url:0
 msgid "Submission URL"
-msgstr "Submission URL"
+msgstr "Übertragungs-URL"
 
 #. module: fso_forms
-#: code:addons/fso_forms/controllers/controller.py:409
+#: code:addons/fso_forms/controllers/controller.py:775
+#: code:addons/fso_forms/controllers/controller.py:820
 #, python-format
 msgid "Submission failed!\n"
 "\n"
 "%s"
-msgstr "Submission failed!\n"
+msgstr "Übertragung fehlgeschlagen!\n"
 "\n"
 "%s"
 
 #. module: fso_forms
-#: code:addons/fso_forms/models/fso_forms.py:44
+#: code:addons/fso_forms/models/fson_form.py:58
 #, python-format
 msgid "Submit"
 msgstr "Senden"
@@ -705,9 +1114,29 @@ msgid "Submit Button Text"
 msgstr "Sende-Button Text"
 
 #. module: fso_forms
+#: field:fson.form,tlf_bottom_snippets:0
+msgid "TLF Bottom Snippets"
+msgstr "TLF Bottom Snippets"
+
+#. module: fso_forms
+#: field:fson.form,tlf_top_snippets:0
+msgid "TLF Top Snippets"
+msgstr "TLF Top Snippets"
+
+#. module: fso_forms
 #: help:fson.form,custom_css:0
 msgid "TODO! This is not working yet!!!"
 msgstr "TODO! This is not working yet!!!"
+
+#. module: fso_forms
+#: selection:fson.form_field,mail_message_style:0
+msgid "Text Area"
+msgstr "Text Area"
+
+#. module: fso_forms
+#: field:fson.form_field,mail_message_rows:0
+msgid "Textarea Rows"
+msgstr "Textarea Rows"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -720,14 +1149,89 @@ msgid "Thank you page"
 msgstr "Dankesseite"
 
 #. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "The easies way to find if extra rights are needed is simply to try it. Create the form without being logged in and submit it. If you get an access error you\n"
+"                                            know that additional rights are needed."
+msgstr "Der einfachste Weg die richtigen Rechte zu finden ist es einfach die Form zu übermitteln. Fehlende Rechte und die zugehörigen Benutzergruppen werden dann einfach in der Fehlermeldung angezeigt."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "The settings in the danger zone are for advanced users. If you are not sure about a setting please contact our support!"
+msgstr "Die Einstellungen in der danger zone sind nur für Administratoren oder fortgeschrittenen Benutzer gedacht. Im Zweifellsfall bitte immer mit unserem Support abstimmen!"
+
+#. module: fso_forms
 #: help:fson.form_field,placeholder:0
 msgid "This is the placeholder text that will be shown inside of the input fields!"
-msgstr "This is the placeholder text that will be shown inside of the input fields!"
+msgstr "Platzhalter Text der im Inneren der Form-Felder angezeigt wird!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "This will send all your data to the given url. Be very careful because this may send all your data outside to a not well known service. Never use this without consulting our\n"
+"                                            support!"
+msgstr "This will send all your data to the given url. Be very careful because this may send all your data outside to a not well known service. Never use this without consulting our\n"
+"                                            support!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "To open a FS-Online survey after a form was successfully submitted you simply set the redirect url to the survey start page."
+msgstr "To open a FS-Online survey after a form was successfully submitted you simply set the redirect url to the survey start page."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Token Login Form"
+msgstr "Token Login Form"
+
+#. module: fso_forms
+#: field:fson.form,tlf_headline:0
+msgid "Token Login Form Headline"
+msgstr "Token Login Form Überschrift"
+
+#. module: fso_forms
+#: field:fson.form,tlf_label:0
+msgid "Token Login Form Label"
+msgstr "Token Login Form Label"
+
+#. module: fso_forms
+#: field:fson.form,tlf_logout_button:0
+msgid "Token Login Form Logout Button"
+msgstr "Token Login Form Logout Button"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Token Login Form Snippet Areas"
+msgstr "Token Login Form Snippet Bereich"
+
+#. module: fso_forms
+#: field:fson.form,tlf_submit_button:0
+msgid "Token Login Form Submit Button"
+msgstr "Token Login Form Sende-Button"
+
+#. module: fso_forms
+#: help:fson.form,tlf_bottom_snippets:0
+#: help:fson.form,tlf_top_snippets:0
+msgid "Token Login Form Top Snippets"
+msgstr "Token Login Form Top Snippets"
 
 #. module: fso_forms
 #: field:fson.form,snippet_area_top:0
 msgid "Top Snippet Area"
 msgstr "Oberer Snippet-Bereich"
+
+#. module: fso_forms
+#: field:fson.form,type:0
+#: field:fson.form_field,type:0
+msgid "Type"
+msgstr "Typ"
+
+#. module: fso_forms
+#: field:fson.form,update_as_user_nologin:0
+msgid "Update records if not logged in as user"
+msgstr "Aktualisiere Datensätze wenn nicht angemeldet als Benutzer"
+
+#. module: fso_forms
+#: help:fson.form,update_as_user_nologin:0
+msgid "Update records with this user only if not logged in!"
+msgstr "Aktualisiere Datensätze wenn nicht angemeldet als dieser Benutzer!"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -745,7 +1249,32 @@ msgid "WIP: Check if at least one item with a value other than an empty string i
 msgstr "WIP: Check if at least one item with a value other than an empty string is selected. This is useful for radio and selection fields!"
 
 #. module: fso_forms
-#: view:website:fso_forms.form
+#: code:addons/fso_forms/models/fson_form_field.py:205
+#, python-format
+msgid "Warning"
+msgstr "Warning"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "We are not finished yet because fields that link to other models will only show a maximum of 200 records. If the id 13 is not in the first\n"
+"                                            200 records it can not be selected. To avoid this problem we need to limit the available records of the linked model. This can be done by the field 'domain'. With this field a search\n"
+"                                            domain can be set. To limit the available country records to only austria the search-domain would be [('id', '=', 13)]."
+msgstr "We are not finished yet because fields that link to other models will only show a maximum of 200 records. If the id 13 is not in the first\n"
+"                                            200 records it can not be selected. To avoid this problem we need to limit the available records of the linked model. This can be done by the field 'domain'. With this field a search\n"
+"                                            domain can be set. To limit the available country records to only austria the search-domain would be [('id', '=', 13)]."
+
+#. module: fso_forms
+#: field:fson.form,website_url:0
+msgid "Website URL"
+msgstr "Website URL"
+
+#. module: fso_forms
+#: field:fson.form,website_url_thanks:0
+msgid "Website URL Thank you Page"
+msgstr "Website URL Dankesseite"
+
+#. module: fso_forms
+#: view:website:fso_forms.form_fields
 msgid "Yes"
 msgstr "Ja"
 
@@ -753,6 +1282,32 @@ msgstr "Ja"
 #: field:fson.form_field,yes_text:0
 msgid "Yes Text"
 msgstr "Ja Text"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "You can create forms to create or update records for"
+msgstr "You can create forms to create or update records for"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "You can set the URL that is opened after the form was successfully submitted. This is in most cases a thank-you-page. These settings come in handy if you want a custom thank\n"
+"                                            you page e.g. on your website. You can set any url here so you might also redirect to a partner page after a form was processed. If you do not set anything here the form will\n"
+"                                            redirect to the default thank you page of the form which is /fso/form/thanks/[form_id]"
+msgstr "You can set the URL that is opened after the form was successfully submitted. This is in most cases a thank-you-page. These settings come in handy if you want a custom thank\n"
+"                                            you page e.g. on your website. You can set any url here so you might also redirect to a partner page after a form was processed. If you do not set anything here the form will\n"
+"                                            redirect to the default thank you page of the form which is /fso/form/thanks/[form_id]"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "You get the id of a country if you go to Sale > Configuration > Localization > Countries and click on the desired country. You can then see the id of this country\n"
+"                                            in the url \"...web?#id=13...\". So in this example the number 13 would go into the field \"default\" in the advanced fields tab."
+msgstr "You get the id of a country if you go to Sale > Configuration > Localization > Countries and click on the desired country. You can then see the id of this country\n"
+"                                            in the url \"...web?#id=13...\". So in this example the number 13 would go into the field \"default\" in the advanced fields tab."
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "You may also create forms that do"
+msgstr "You may also create forms that do"
 
 #. module: fso_forms
 #: view:website:fso_forms.thank_you_redirect
@@ -780,6 +1335,11 @@ msgstr "accept=True"
 #: view:fson.form:fso_forms.fson_form_form
 msgid "alphanumeric=True"
 msgstr "alphanumeric=True"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "any"
+msgstr "any"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -847,11 +1407,6 @@ msgid "force_selection=True"
 msgstr "force_selection=True"
 
 #. module: fso_forms
-#: view:fson.form:fso_forms.fson_form_form
-msgid "fso-form-widget-image"
-msgstr "fso-form-widget-image"
-
-#. module: fso_forms
 #: view:website:fso_forms.thank_you_redirect
 msgid "here."
 msgstr "here."
@@ -883,6 +1438,24 @@ msgstr "minlength=[number of characters]"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
+msgid "model in FS-Online. You may create forms to create or update partner data, to subscribe to your newsletter,\n"
+"                                    to subscribe for a petition, to create leads and many more. Creating an entirely new form for a model is a task for an administrator or an advanced FS-Online user because it requires\n"
+"                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be\n"
+"                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new\n"
+"                                    form extensively before enabling it on your website!"
+msgstr "model in FS-Online. You may create forms to create or update partner data, to subscribe to your newsletter,\n"
+"                                    to subscribe for a petition, to create leads and many more. Creating an entirely new form for a model is a task for an administrator or an advanced FS-Online user because it requires\n"
+"                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be\n"
+"                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new\n"
+"                                    form extensively before enabling it on your website!"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "not"
+msgstr "not"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
 msgid "nowhitespace=True"
 msgstr "nowhitespace=True"
 
@@ -890,6 +1463,13 @@ msgstr "nowhitespace=True"
 #: view:fson.form:fso_forms.fson_form_form
 msgid "rangeWords=[Number-of-Words-min Number-of-Words-max]"
 msgstr "rangeWords=[Number-of-Words-min Number-of-Words-max]"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a\n"
+"                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab."
+msgstr "store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a\n"
+"                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab."
 
 #. module: fso_forms
 #: help:fson.form_field,field_ttype:0
