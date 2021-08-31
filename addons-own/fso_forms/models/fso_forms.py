@@ -19,6 +19,7 @@ class FSONForm(models.Model):
     _order = 'sequence'
 
     sequence = fields.Integer('Sequence', help='Sequence number for ordering', default=1000)
+    type = fields.Selection(string='Type', selection=[('', 'No Type Set'), ('standard', 'Standard')],)
     name = fields.Char(string="Form Name", required=True)
 
     model_id = fields.Many2one(string="Model", comodel_name="ir.model", required=True)
@@ -287,15 +288,19 @@ class FSONFormField(models.Model):
         for r in self:
             if r.honeypot:
                 if r.field_id:
-                    raise ValidationError('You can not select a real field for a honeypot field!')
+                    raise ValidationError('You can not select a real field for a honeypot field! %s %s'
+                                          '' % (r, r.form_id))
                 if r.mandatory:
-                    raise ValidationError('Honeypot fields must not be mandatory or the frontend validation will fail!')
+                    raise ValidationError('Honeypot fields must not be mandatory or the frontend validation will fail! '
+                                          '%s %s' % (r, r.form_id))
                 if self._hpf_cls not in r.css_classes:
                     raise ValidationError("The class %s is missing for a honey pot field!" % self._hpf_cls)
                 if r.readonly:
-                    raise ValidationError("Honeypot fields can not be readonly!")
+                    raise ValidationError("Honeypot fields can not be readonly! %s %s"
+                                          "" % (r, r.form_id))
                 if r.default:
-                    raise ValidationError("Honeypot fields can not have a default value!")
+                    raise ValidationError("Honeypot fields can not have a default value! %s %s"
+                                          "" % (r, r.form_id))
             if r.field_id:
                 # Check readonly
                 if not r.default and r.field_id.readonly and r.show:
@@ -309,29 +314,33 @@ class FSONFormField(models.Model):
                 # Check required fields
                 #if r.field_id.required and (not r.mandatory or not r.show):
                 if r.field_id.required and not r.mandatory:
-                    raise ValueError('System-Required fields must have show and mandatory set to True in the form!')
+                    raise ValueError('System-Required fields must have show and mandatory set to True in the form! '
+                                     '%s %s' % (r, r.form_id))
                 # Check binary_name_field_id
                 if r.field_id.ttype != 'binary' and r.binary_name_field_id:
-                    raise ValueError('"File Name" field must be empty for non binary fields!')
+                    raise ValueError('"File Name" field must be empty for non binary fields! %s %s'
+                                     '' % (r, r.form_id))
                 # Check login field
                 if r.login:
                     if r.field_ttype != 'many2one':
-                        raise ValueError('The login field must be of type "many2one"!')
+                        raise ValueError('The login field must be of type "many2one"! %s %s'
+                                         '' % (r, r.form_id))
                     if r.field_id.relation not in ['res.partner', 'res.user']:
-                        raise ValueError('The login field must relate to the "res.partner" or "res.user" model!')
+                        raise ValueError('The login field must relate to the "res.partner" or "res.user" model! %s %s'
+                                         '' % (r, r.form_id))
             if r.binary_name_field_id:
                 # Check field_id
                 if not r.field_id or (r.field_id and r.field_id.ttype != 'binary'):
-                    raise ValueError('"File Name" field must be empty for non binary fields!')
+                    raise ValueError('"File Name" field must be empty for non binary fields! %s' % r)
                 # Check readonly
                 if r.binary_name_field_id.readonly:
-                    raise ValidationError('"File Name" field is readonly!')
+                    raise ValidationError('"File Name" field is readonly! %s' % r)
                 # Check protected fields
                 if r.binary_name_field_id.name in self._protected_fields:
-                    raise ValidationError('"File Name" field can not be a protected or system field!')
+                    raise ValidationError('"File Name" field can not be a protected or system field! %s' % r)
                 # Check required fields
                 if r.binary_name_field_id.required and (not r.mandatory or not r.show):
-                    raise ValueError('Required fields must have show and mandatory set to True in the form!')
+                    raise ValueError('Required fields must have show and mandatory set to True in the form! %s' % r)
 
     @api.onchange('show', 'mandatory', 'field_id', 'binary_name_field_id', 'login', 'honeypot')
     def oc_show(self):
