@@ -56,13 +56,13 @@
         <!--    ACCESS RULE:
                 Restrict deletion of records for group "frst_api_group": Logged in user must be creator of the record!
         -->
-        <record model="ir.rule" id="rule_restrict_del_frst_api_group_product_payment_interval_lines">
-            <field name="name">Fundraising Studio REST API Group: Delete own records only product.payment_interval_lines</field>
+        <record model="ir.rule" id="rule_restrict_mod_frst_api_group_product_payment_interval_lines">
+            <field name="name">Fundraising Studio REST API Group: Update/delete own records only product.payment_interval_lines</field>
             <field name="model_id" ref="website_sale_donate.model_product_payment_interval_lines"/>
             <field name="domain_force">[('create_uid.id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('fso_rest_api.frst_api_group'))]"/>
             <field name="perm_read" eval=""/>
-            <field name="perm_write" eval=""/>
+            <field name="perm_write" eval="True"/>
             <field name="perm_create" eval=""/>
             <field name="perm_unlink" eval="True"/>
             <field name="global" eval="False"/>
