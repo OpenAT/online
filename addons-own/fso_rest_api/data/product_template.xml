@@ -71,20 +71,19 @@
         </record>
 
         <!--    ACCESS RULE:
-                Restrict deletion of records for group "frst_api_group": Logged in user must be creator of the record!
+                Restrict update of records for group "frst_api_group": Logged in user must be creator of the record!
         -->
-        <!--
-        <record model="ir.rule" id="rule_restrict_delete_frst_api_group_product_template">
-            <field name="name">Fundraising Studio REST API Group: Delete own records only product.template</field>
+        <record model="ir.rule" id="rule_restrict_update_frst_api_group_product_template">
+            <field name="name">Fundraising Studio REST API Group: Update own records only product.template</field>
             <field name="model_id" ref="sale.model_product_template"/>
             <field name="domain_force">[('create_uid.id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('fso_rest_api.frst_api_group'))]"/>
             <field name="perm_read" eval=""/>
-            <field name="perm_write" eval=""/>
+            <field name="perm_write" eval="True"/>
             <field name="perm_create" eval=""/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="perm_unlink" eval=""/>
             <field name="global" eval="False"/>
         </record>
-        -->
+
     </data>
 </openerp>
