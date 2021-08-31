@@ -15,8 +15,9 @@
                         <field name="user_id"/>
                         <field name="partner_id"/>
                         <field name="url"/>
-                        <field name="ip"/>
+                        <field name="ip" password="True"/>
                         <field name="device"/>
+                        <field name="login"/>
                     </group>
                 </form>
             </field>
@@ -32,8 +33,9 @@
                     <field name="user_id"/>
                     <field name="partner_id"/>
                     <field name="url"/>
-                    <field name="ip"/>
+                    <field name="ip" password="True"/>
                     <field name="device"/>
+                    <field name="login"/>
                 </tree>
             </field>
         </record>
@@ -48,8 +50,9 @@
                         <field name="user_id"/>
                         <field name="partner_id"/>
                         <field name="url"/>
-                        <field name="ip"/>
+                        <field name="ip" password="True"/>
                         <field name="device"/>
+                        <field name="login" />
                 </search>
             </field>
         </record>

@@ -83,7 +83,7 @@ class ResPartnerFSToken(models.Model):
     @api.multi
     def _compute_usage_statistic(self):
         for token in self:
-            token.number_of_checks = len(token.log_ids) or 0
+            token.number_of_checks = len(token.log_ids.filtered("login")) if token.log_ids else 0
 
             sorted_logs = token.log_ids.sorted()
             token.last_datetime_of_use = sorted_logs[0].log_date if sorted_logs else False

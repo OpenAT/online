@@ -70,6 +70,7 @@ partner, messages_token, warnings_token, errors_token = fstoken(fs_ptoken=kwargs
     'data': [
         'security/fs_token_security.xml',
         'security/ir.model.access.csv',
+        'data/run_on_install_update.xml',
         'views/views.xml',
         'views/res_partner_fstoken_log.xml',
     ],

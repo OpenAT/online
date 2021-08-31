@@ -15,7 +15,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp import models, fields
+from openerp import models, fields, api
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
+import datetime
+
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class ResPartnerFSToken(models.Model):
@@ -37,3 +42,17 @@ class ResPartnerFSToken(models.Model):
     url = fields.Char(string='URL')
     ip = fields.Char(string='IP')
     device = fields.Char(string='Device')
+
+    login = fields.Boolean(string="Login",
+                           index=True,
+                           help="If set this was a token usage where the user was logged in by"
+                                "using the token. If he was already logged in when using the token"
+                                "this field will not be set!")
+
+    @api.model
+    def on_install_update_set_login_field(self):
+        # There was no login field before this date so we must set all earlier entries to login=True
+        start_date = datetime.datetime.strptime('2021-08-26', "%Y-%m-%d").strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+        log_entries = self.sudo().search([('create_date', '<=', start_date), ('login', '=', False)])
+        _logger.info("Found %s log entries before %s to set 'login=True'" % (len(log_entries), start_date))
+        log_entries.write({'login': True})

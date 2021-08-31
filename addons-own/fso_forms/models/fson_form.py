@@ -19,7 +19,9 @@ class FSONForm(models.Model):
     _order = 'sequence'
 
     sequence = fields.Integer('Sequence', help='Sequence number for ordering', default=1000)
+
     type = fields.Selection(string='Type', selection=[('', 'No Type Set'), ('standard', 'Standard')],)
+
     name = fields.Char(string="Form Name", required=True)
 
     model_id = fields.Many2one(string="Model", comodel_name="ir.model", required=True)
@@ -29,7 +31,11 @@ class FSONForm(models.Model):
     create_as_user = fields.Many2one(string="Always create records as user", comodel_name="res.users",
                                      help="ALWAYS create new records with this user!")
     create_as_user_nologin = fields.Many2one(string="Create records if not logged in as user", comodel_name="res.users",
-                                             help="Create new records with this user only not logged in!")
+                                             help="Create new records with this user only if not logged in!")
+    update_as_user = fields.Many2one(string="Always update records as user", comodel_name="res.users",
+                                     help="ALWAYS update records with this user!")
+    update_as_user_nologin = fields.Many2one(string="Update records if not logged in as user", comodel_name="res.users",
+                                             help="Update records with this user only if not logged in!")
 
     submission_url = fields.Char(string="Submission URL", default=False,
                                  help="Subission URL for form data! Do not set unless you really need to!"

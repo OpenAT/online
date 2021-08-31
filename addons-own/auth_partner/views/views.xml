@@ -30,8 +30,9 @@
                                 <field name="user_id"/>
                                 <field name="partner_id"/>
                                 <field name="url"/>
-                                <field name="ip"/>
+                                <field name="ip" password="True"/>
                                 <field name="device"/>
+                                <field name="login"/>
                             </tree>
                         </field>
                     </group>
