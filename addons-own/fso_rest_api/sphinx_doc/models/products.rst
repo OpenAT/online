@@ -46,7 +46,6 @@ The name of the donation or product.
 """""""""""""""""""""
 A short description of the donation or product.
 
-
 ``fs_product_type``
 """""""""""""""""""""
 The FundraisingStudio type of the donation or product, can be either:
@@ -54,7 +53,6 @@ The FundraisingStudio type of the donation or product, can be either:
 - ``donation`` Donations, Sponsorships. **Use this for donations.**
 - ``product`` Physical products, e.g. event tickets
 - ``mediation`` E.g. pet adoptions
-
 
 ``type``
 """""""""""""""""""""
@@ -64,6 +62,12 @@ The type of the donation or product, can be either:
 - ``product`` A stockable physical product
 - ``consu`` A consumable good that is not exactly measured, like paper
 
+``payment_interval_lines_ids``
+""""""""""""""""""""""""""""""
+The possible payment intervals associated with this product template.
+
+When placing a :ref:`sale_order_line`, only intervals that are linked via interval lines
+can be used for the ``payment_interval_id``.
 
 ..
     Commented for future use:
@@ -79,7 +83,6 @@ The type of the donation or product, can be either:
     website_published_end
     website_visible
     default_code
-
 
 Methods
 -------
