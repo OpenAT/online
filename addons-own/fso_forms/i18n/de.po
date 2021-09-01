@@ -1286,7 +1286,7 @@ msgstr "Ja Text"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "You can create forms to create or update records for"
-msgstr "You can create forms to create or update records for"
+msgstr "Sie können Formulare für"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -1301,18 +1301,18 @@ msgstr "You can set the URL that is opened after the form was successfully submi
 #: view:fson.form:fso_forms.fson_form_form
 msgid "You get the id of a country if you go to Sale > Configuration > Localization > Countries and click on the desired country. You can then see the id of this country\n"
 "                                            in the url \"...web?#id=13...\". So in this example the number 13 would go into the field \"default\" in the advanced fields tab."
-msgstr "You get the id of a country if you go to Sale > Configuration > Localization > Countries and click on the desired country. You can then see the id of this country\n"
-"                                            in the url \"...web?#id=13...\". So in this example the number 13 would go into the field \"default\" in the advanced fields tab."
+msgstr "Die ID des Landes können Sie herausfinden indem Sie auf Sale > Configuration > Localization > Countries gehen und auf das gewünschte Land klicken. Die ID des Landes ist dann\n"
+"                                            in der URL zu finden: \"...web?#id=13...\". In diesem Beispiel wäre es die ID 13 die im Feld \"default\" (Standardwert) in den Erweitereten Einstellungen gesetzt werden müsste."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "You may also create forms that do"
-msgstr "You may also create forms that do"
+msgstr "Sie können auch Formulare anlegen die"
 
 #. module: fso_forms
 #: view:website:fso_forms.thank_you_redirect
 msgid "You will be redirected shortly! If not please click"
-msgstr "You will be redirected shortly! If not please click"
+msgstr "Sie werden in Kürze umgeleitet! Falls nicht künnen Sie auch auf den Button klicken!"
 
 #. module: fso_forms
 #: selection:fson.form,redirect_url_if_logged_in_target:0
@@ -1339,7 +1339,7 @@ msgstr "alphanumeric=True"
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "any"
-msgstr "any"
+msgstr "jedes"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -1443,16 +1443,14 @@ msgid "model in FS-Online. You may create forms to create or update partner data
 "                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be\n"
 "                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new\n"
 "                                    form extensively before enabling it on your website!"
-msgstr "model in FS-Online. You may create forms to create or update partner data, to subscribe to your newsletter,\n"
-"                                    to subscribe for a petition, to create leads and many more. Creating an entirely new form for a model is a task for an administrator or an advanced FS-Online user because it requires\n"
-"                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be\n"
-"                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new\n"
-"                                    form extensively before enabling it on your website!"
+msgstr "Modell in FS-Online erstellen! Sie können z.B. Formulare zur Aktualisierung von Personendaten, zur Anmeldung an Newslettergruppen, zur Anmeldung an Petitionen oder zur Erzeugung von Leads erstellen. Ein neues Formular für ein Modell zu "
+"erstellen ist eine Aufgabe für Administratoren oder fortgeschrittenen Anwender da es einiges an Wissen über die Pflichtfelder und Zugriffsrechte im gewünschten Zielmodell voraussetzt. Daher gibt es an einigen Stellen Qucik-Form-Buttons die automatisch "
+"ein Formular mit den erforderlichen Feldern erstellen! Ist das Formular erstmal erstellt können Einstellungen wie Feldreihenfolge, Label, Platzhaltertext, Anordnung, Sende-Button Text und vieles mehr ganz einfach angepasst werden."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "not"
-msgstr "not"
+msgstr ""
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -1468,8 +1466,8 @@ msgstr "rangeWords=[Number-of-Words-min Number-of-Words-max]"
 #: view:fson.form:fso_forms.fson_form_form
 msgid "store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a\n"
 "                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab."
-msgstr "store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a\n"
-"                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab."
+msgstr "gar keine Datensätze zu erzeugen oder aktualisieren sondern nur E-Mails versenden! Dies ist z.B.: sinnvoll wenn man ein Ihr-Kommmentar-an-uns-Formular \n"
+"                                    oder eine sehr einfache Umfrage erstellen möchte."
 
 #. module: fso_forms
 #: help:fson.form_field,field_ttype:0
