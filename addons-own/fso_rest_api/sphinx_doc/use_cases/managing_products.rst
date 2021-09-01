@@ -1,10 +1,10 @@
 .. _managing_products:
 
-=================
-Managing Products
-=================
+===============================
+Managing products
+===============================
 
-Search for donations or products
+Search for products
 --------------------------------
 To search for products we send a ``PATCH`` request to the route ``/product.template/call/search`` to call the
 ``search`` method and we provide a :ref:`search domain <search_domain>` as the first positional argument
@@ -37,7 +37,7 @@ of the search method to specify our search conditions.
         # print(response.content)
         # >>> b'[33, 37]'
 
-Read the donation or product data
+Read the product data
 ---------------------------------
 To get the data for the found ``product.template`` in the previous example we send a ``GET`` request to the
 route ``/product.template/{id}``.
@@ -89,7 +89,7 @@ route ``/product.template/{id}``.
             "payment_interval_lines_ids": [1]
         }
 
-Updating donation or product data
+Updating product data
 ---------------------------------
 To change product data we send a ``PUT`` request to the route ``/product.template/{id}`` and provide the
 field data as the json payload of the request.
@@ -126,11 +126,13 @@ field data as the json payload of the request.
 
 .. important:: An API user can **only modify its own records**. Records of other users are read-only.
 
-Creating a donation or product
+Creating a product
 ------------------------------
 
-To create a new donation or product we send a ``POST`` request to the route ``/product.template/{id}`` and provide the
+To create a new donation or product we send a ``POST`` request to the route ``/product.template`` and provide the
 field data as the json payload of the request.
+
+The example below also supplies values for the model :ref:`product_payment_interval_lines`.
 
 .. tabs::
 
@@ -210,8 +212,8 @@ field data as the json payload of the request.
 .. _Odoo_ORM_Documentation: https://www.odoo.com/documentation/8.0/reference/orm.html#openerp-models-relationals-format
 
 .. hint:: The possible payment intervals are directly provided via Odoo list operations. The example should be
-    sufficient for most cases, but you cen see the Odoo_ORM_Documentation_ for all the details.
+    sufficient for most cases, but you can see the Odoo_ORM_Documentation_ for all the details.
 
-Deleting a donation or product
+Deleting a product
 ------------------------------
 Products cannot be deleted via the API.
