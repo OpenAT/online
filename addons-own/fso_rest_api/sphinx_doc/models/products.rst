@@ -62,6 +62,12 @@ The type of the donation or product, can be either:
 - ``product`` A stockable physical product
 - ``consu`` A consumable good that is not exactly measured, like paper
 
+``product_variant_ids``
+"""""""""""""""""""""""
+An ``id`` list of all the associated :ref:`product_product` entries.
+
+.. HINT:: Donations should have exactly one variant (one :ref:`product_product`)
+
 ``payment_interval_lines_ids``
 """"""""""""""""""""""""""""""
 The possible payment intervals associated with this product template.
