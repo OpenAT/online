@@ -130,11 +130,13 @@ Products
 
 :ref:`products`
 
-``product.template`` represents products, and ``product.product`` represents variant of that product.
+``product.template`` represents both donation products or physical products. ``product.product`` represents
+a variant of that product.
 
-Most products (especially donations), are simply a template with an empty product variant.
+By default, products (especially donation products), have only one variant, which is automatically created, when
+creating the ``product.template``.
 
-Multiple variants are currently not supported.
+.. warning:: Multiple variants are currently not supported.
 
 Sale orders & Donations
 --------------------------------------------------------------

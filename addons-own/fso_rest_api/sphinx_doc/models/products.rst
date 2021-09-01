@@ -4,14 +4,14 @@
 product.template, product.product
 =========================================
 
-These two models represent products and its variants. The template can be seen as a container
-for one or more ``product_product`` entries (variants).
+These two models represent donation products or physical products and their variants. The template can be seen
+as a container for one or more ``product_product`` entries (variants).
 
 **Example 1:**
 
-- ``product.template`` Fight animal cruelty (donation)
+- ``product.template`` Fight animal cruelty (donation product)
 
-  - ``product.product`` Empty entry (it has no variants, it is a donation)
+  - ``product.product`` Default entry
 
 .. HINT:: This is the default for donation products.
 
@@ -31,7 +31,7 @@ for one or more ``product_product`` entries (variants).
 
   - ``product.product`` Size M White
 
-.. WARNING:: Example 2 is for explanation only. Only donations (template 1:1 products) are currently supported.
+.. WARNING:: Example 2 is for explanation only. Only products with their default variant are currently supported.
 
 .. _product_template:
 
@@ -44,55 +44,40 @@ Special fields
 
 ``name``
 """""""""""""""""""""
-The name of the donation or product.
+The name of the donation product or physical product.
 
 ``description_sale``
 """""""""""""""""""""
-A short description of the donation or product.
+A short description of the donation product or physical product.
 
 ``fs_product_type``
 """""""""""""""""""""
-The FundraisingStudio type of the donation or product, can be either:
+The FundraisingStudio type of the donation product or physical product, can be either:
 
-- ``donation`` Donations, Sponsorships. **Use this for donations.**
+- ``donation`` Donations, Sponsorships. **Use this for donation products.**
 - ``product`` Physical products, e.g. event tickets
 - ``mediation`` E.g. pet adoptions
 
 ``type``
 """""""""""""""""""""
-The type of the donation or product, can be either:
+The type of the donation product or physical product, can be either:
 
-- ``service`` Services. **Use this for donations!**
-- ``product`` A stockable physical product
+- ``service`` Services. **Use this for donation products.**
+- ``product`` A stockable, physical product
 - ``consu`` A consumable good that is not exactly measured, like paper
 
 ``product_variant_ids``
 """""""""""""""""""""""
 An ``id`` list of all the associated :ref:`product_product` entries.
 
-.. HINT:: Donations should have exactly one variant (one :ref:`product_product`)
+.. HINT:: Currently all products should have only their default variant.
 
 ``payment_interval_lines_ids``
 """"""""""""""""""""""""""""""
-The possible payment intervals associated with this product template.
+The possible payment intervals associated with this donation product or physical product.
 
 When placing a :ref:`sale_order_line`, only intervals that are linked via interval lines
 can be used for the ``payment_interval_id``.
-
-..
-    Commented for future use:
-
-    product_page_template
-    active
-    website_url
-    list_price
-    price_donate
-    price_donate_min
-    website_published
-    website_published_start
-    website_published_end
-    website_visible
-    default_code
 
 Methods
 -------
@@ -109,21 +94,19 @@ Only the ``search`` method is currently exposed by the api. See :ref:`searching`
 product.product
 =========================================
 
-Represents one variant of a product. Each variant is a separate entry, and multiple variants can
-reference the same ``product.template``.
+Represents one variant of a donation product or physical product. Each variant is a separate entry,
+and multiple variants can reference the same ``product.template``.
 
-**Most donation products will only need an empty entry of this model, in order to generate an id, to use
-as a foreign key for other models.**
+**Currently all products can have only a single default variant.**
 
 See example 2 in :ref:`products` for a detailed representation of templates and variants.
-
 
 Special fields
 --------------
 
 ``product_tmpl_id``
 """""""""""""""""""""
-The foreign key to :ref:`products`.
+The foreign key to :ref:`product.template <product_template>`.
 
 
 Methods
