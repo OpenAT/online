@@ -15,6 +15,10 @@ for one or more ``product_product`` entries (variants).
 
 .. HINT:: This is the default for donation products.
 
+.. HINT:: The API creates a :ref:`product_product` automatically.
+    After creating a :ref:`product_template` you can simply read the ``product_variants_id``
+    of the create-response to get values for ``product_id`` in :ref:`sale_order_line`.
+
 **Example 2:**
 
 - ``product.template`` T-Shirt (with 2 sizes, and 2 colors)
