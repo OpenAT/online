@@ -312,40 +312,42 @@ function gtm_fsonline_confirmation_page_after_purchase_step_4 () {
 // --------------------------------------------------------------------------------------------------------------------
 // END: HELPER FUNCTIONS FOR THE DATALAYER EVENTS
 // --------------------------------------------------------------------------------------------------------------------
-
-// Add event handler to redirect-to-payment-provider-form submission
-// TODO: Check if this can be added to "$(document).ready(function () { ..." below
-$("#wsd_pp_auto_submit_form.js_auto_submit_form form").on('submit', function(){
-    gtm_fsonline_purchase();
-});
-
-
 $(document).ready(function () {
+    console.log("Google Tag Manager Webshop Events")
 
-    // Regular add-to-cart handler
-    $(".oe_website_sale form[action='/shop/cart/update']").submit( function() {
-       gtm_fsonline_add_remove_cart($(this));
-    });
+    if (typeof dataLayer !== 'undefined') {
 
-    // Shopping-Cart-Changes event handling
-    $("input.js_quantity[data-line-id][data-product-id]").change( function() {
-        let product_quantity = $(this).val();
-        let $cart_line = $(this).closest("tr")
-        gtm_fsonline_add_remove_cart($cart_line, product_quantity);
-    })
+        // Regular add-to-cart handler
+        $(".oe_website_sale form[action='/shop/cart/update']").submit(function () {
+            gtm_fsonline_add_remove_cart($(this));
+        });
 
-    // GTM-EVENT-CHECKS on all pages (regular and opc)
-    gtm_fsonline_confirmation_page_after_purchase_step_4();
-    gtm_fsonline_product_detail();
-    gtm_fsonline_product_listing ();
+        // Shopping-Cart-Changes event handling
+        $("input.js_quantity[data-line-id][data-product-id]").change(function () {
+            let product_quantity = $(this).val();
+            let $cart_line = $(this).closest("tr")
+            gtm_fsonline_add_remove_cart($cart_line, product_quantity);
+        })
 
-    // GTM-EVENT-CHECKS for regular pages only
-    // HINT: For OPC Pages these functions are called in gtm_fsonline_purchase() to only send gtm-checkout-events
-    //       when purchasing the product (and not just when viewing the page)
-    if ( ! is_opc_page() ) {
-        gtm_fsonline_checkout_cart_step_1();
-        gtm_fsonline_checkout_userdata_step_2 ();
-        gtm_fsonline_checkout_paymentmethod_step_3 ();
+        // GTM-EVENT-CHECKS on all pages (regular and opc)
+        $("#wsd_pp_auto_submit_form.js_auto_submit_form form").on('submit', function () {
+            gtm_fsonline_purchase();
+        });
+        gtm_fsonline_confirmation_page_after_purchase_step_4();
+        gtm_fsonline_product_detail();
+        gtm_fsonline_product_listing();
+
+        // GTM-EVENT-CHECKS for regular pages only
+        // HINT: For OPC Pages these functions are called in gtm_fsonline_purchase() to only send gtm-checkout-events
+        //       when purchasing the product (and not just when viewing the page)
+        if (!is_opc_page()) {
+            gtm_fsonline_checkout_cart_step_1();
+            gtm_fsonline_checkout_userdata_step_2();
+            gtm_fsonline_checkout_paymentmethod_step_3();
+        }
+
+    } else {
+        console.log("WARNING: Google Tag Manager variable 'dataLayer' is not defined!")
     }
 
 });
