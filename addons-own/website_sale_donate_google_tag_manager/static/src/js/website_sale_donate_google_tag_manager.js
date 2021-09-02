@@ -348,5 +348,4 @@ $(document).ready(function () {
         gtm_fsonline_checkout_paymentmethod_step_3 ();
     }
 
-
 });

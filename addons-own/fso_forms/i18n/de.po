@@ -1444,13 +1444,13 @@ msgid "model in FS-Online. You may create forms to create or update partner data
 "                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new\n"
 "                                    form extensively before enabling it on your website!"
 msgstr "Modell in FS-Online erstellen! Sie können z.B. Formulare zur Aktualisierung von Personendaten, zur Anmeldung an Newslettergruppen, zur Anmeldung an Petitionen oder zur Erzeugung von Leads erstellen. Ein neues Formular für ein Modell zu "
-"erstellen ist eine Aufgabe für Administratoren oder fortgeschrittenen Anwender da es einiges an Wissen über die Pflichtfelder und Zugriffsrechte im gewünschten Zielmodell voraussetzt. Daher gibt es an einigen Stellen Qucik-Form-Buttons die automatisch "
+"erstellen ist eine Aufgabe für Administratoren oder fortgeschrittenen Anwender da es einiges an Wissen über die Pflichtfelder und Zugriffsrechte im gewünschten Zielmodell voraussetzt. Daher gibt es an einigen Stellen Quick-Form-Buttons die automatisch "
 "ein Formular mit den erforderlichen Feldern erstellen! Ist das Formular erstmal erstellt können Einstellungen wie Feldreihenfolge, Label, Platzhaltertext, Anordnung, Sende-Button Text und vieles mehr ganz einfach angepasst werden."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "not"
-msgstr ""
+msgstr "keine"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -1466,7 +1466,7 @@ msgstr "rangeWords=[Number-of-Words-min Number-of-Words-max]"
 #: view:fson.form:fso_forms.fson_form_form
 msgid "store or change data at all but just send some e-mails. This might be useful if you want a 'send-us-your-comment' form on the website or do a\n"
 "                                    very basic questionnaire or a very simple contest. For other advanced use cases of forms please check the 'Advanced Form-Use-Cases' tab."
-msgstr "gar keine Datensätze zu erzeugen oder aktualisieren sondern nur E-Mails versenden! Dies ist z.B.: sinnvoll wenn man ein Ihr-Kommmentar-an-uns-Formular \n"
+msgstr "Datensätze erzeugen oder aktualisieren sondern nur E-Mails versenden! Dies ist z.B.: sinnvoll wenn man ein 'Ihr-Kommmentar-an-uns-Formular' \n"
 "                                    oder eine sehr einfache Umfrage erstellen möchte."
 
 #. module: fso_forms

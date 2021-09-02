@@ -1,5 +1,7 @@
 <openerp>
   <data>
+    <!-- Compute the form 'type' if not set on install update (for giftee and checkout form field forms)  -->
+    <!--<function model="fson.form" name="compute_type_if_not_set"/>-->
 
     <!-- Compute the field 'type' for all fields on install update  -->
     <function model="fson.form_field" name="compute_type_if_not_set"/>

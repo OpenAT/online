@@ -76,10 +76,17 @@ class FSONForm(models.Model):
 
     @api.model
     def compute_type_if_not_set(self):
-        checkout_missing = self.search([('type', '=', False), ('product_template_ids', '!=', False)])
+        # Overwrite from fso_forms to respect the other types too
+        checkout_missing = self.search(['|', ('type', '=', ''), ('type', '=', False), ('product_template_ids', '!=', False)])
         logger.info("Found %s forms where type 'checkout' is missing" % len(checkout_missing))
         checkout_missing.write({'type': 'checkout'})
 
-        giftee_missing = self.search([('type', '=', False), ('ptemplate_giftee_ids', '!=', False)])
+        giftee_missing = self.search(['|', ('type', '=', ''), ('type', '=', False), ('ptemplate_giftee_ids', '!=', False)])
         logger.info("Found %s forms where type 'giftee' is missing" % len(giftee_missing))
         giftee_missing.write({'type': 'giftee'})
+
+        type_missing = self.search(['|', ('type', '=', ''), ('type', '=', False),
+                                    ('product_template_ids', '=', False),
+                                    ('ptemplate_giftee_ids', '=', False)])
+        logger.info("Found %s forms where type 'standard' is missing" % len(type_missing))
+        type_missing.write({'type': 'standard'})

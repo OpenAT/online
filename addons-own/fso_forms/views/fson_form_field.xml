@@ -97,7 +97,7 @@
                     <group name="field_marker"
                            string="Mark this field as:"
                            attrs="{'invisible': [('type','!=','model'), ('field_id','=',False)]}">
-                        <field name="login"/>
+                        <field name="login" attrs="{'invisible': [('field_ttype','not in',['many2one'])] }"/>
                         <field name="confirmation_email"/>
                     </group>
 
