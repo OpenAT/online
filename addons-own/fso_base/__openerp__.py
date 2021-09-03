@@ -112,6 +112,7 @@ TODO (must be done manually right now):
         'mail_follower_control',
         'mail_global_bcc',
         'mail_delete_access_link_portal',
+        'fso_mail_message_subtypes',
         'partner_firstname_lastname',
         'partner_fullhierarchy',
         'auth_doubleoptin',
