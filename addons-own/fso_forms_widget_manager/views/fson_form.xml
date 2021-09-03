@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="fso_form_widget_manager" model="ir.ui.view">
+            <field name="name">Add widget manager quick button</field>
+            <field name="model">fson.form</field>
+            <field name="inherit_id" ref="fso_forms.fson_form_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='button_open_redirect_page']" position="after">
+                    <button
+                            icon="fa-bar-chart-o"
+                            class="oe_inline oe_stat_button"
+                            type="object"
+                            name="button_open_widget_manager">
+                        <field string="Widget(s)"
+                               name="widget_manager_count"
+                               widget="statinfo" />
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
