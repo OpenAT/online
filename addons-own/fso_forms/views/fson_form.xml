@@ -9,6 +9,29 @@
             <field name="arch" type="xml">
                 <form string="FSON Form">
                     <sheet>
+                        <!-- HEAD (Button Box Name and Image) -->
+                        <div class="oe_right oe_button_box" style="width: 100%;" name="buttons">
+                            <button string="Form Page"
+                                    icon="fa-globe"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_form_page"/>
+                            <button string="Redirect Page"
+                                    icon="fa-globe"
+                                    class="oe_inline oe_stat_button"
+                                    type="object"
+                                    name="button_open_redirect_page"/>
+                            <!--<button-->
+                            <!--        icon="fa-external-link"-->
+                            <!--        class="oe_inline oe_stat_button"-->
+                            <!--        type="object"-->
+                            <!--        name="button_open_widget_manager">-->
+                            <!--    <field name="widget_manager_count"-->
+                            <!--           widget="statinfo"-->
+                            <!--           string="Widgets"/>-->
+                            <!--</button>-->
+                        </div>
+
                         <group>
                             <group name="basic_form_data">
                                 <field name="name"/>
@@ -351,7 +374,15 @@
                         <field name="model_id"/>
                         <field name="frontend_validation"/>
                         <field name="submission_url"/>
-                        <field name="redirect_url"/>
+                        <field name="url_after_successful_form_submit"/>
+                        <button icon="gtk-find"
+                                name="button_open_form_page"
+                                string="Open Form Page"
+                                type="object"/>
+                        <button icon="gtk-go-forward"
+                                name="button_open_redirect_page"
+                                string="Open Redirect Page"
+                                type="object"/>
                 </tree>
             </field>
         </record>

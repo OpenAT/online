@@ -140,6 +140,11 @@ class FSONForm(models.Model):
     tlf_logout_button = fields.Char("Token Login Form Logout Button", translate=True)
     tlf_bottom_snippets = fields.Html("TLF Bottom Snippets", translate=True, help="Token Login Form Top Snippets")
 
+    # Final Redirect URL
+    # ------------------
+    url_after_successful_form_submit = fields.Char(compute="_cmp_url_after_successful_form_submit",
+                                                   string="Computed Redirect URL")
+
     @api.depends('name')
     def _cmp_website_url(self):
         for r in self:
@@ -149,6 +154,19 @@ class FSONForm(models.Model):
     def _cmp_website_url_thanks(self):
         for r in self:
             r.website_url_thanks = '/fso/form/thanks/'+str(r.id)
+
+    @api.depends('name')
+    def _cmp_url_after_successful_form_submit(self):
+        for r in self:
+            default_website_user = r.env.ref('base.public_user', raise_if_not_found=True)
+            if not r.redirect_after_submit:
+                r.url_after_successful_form_submit = r.website_url
+            elif r.redirect_url_if_logged_in and r.env.user and default_website_user != r.env.user.id:
+                r.url_after_successful_form_submit = r.redirect_url_if_logged_in
+            elif r.redirect_url:
+                r.url_after_successful_form_submit = r.redirect_url
+            else:
+                r.url_after_successful_form_submit = r.website_url_thanks
 
     @api.constrains('model_id', 'field_ids')
     def constrain_model_id_field_ids(self):
@@ -220,3 +238,27 @@ class FSONForm(models.Model):
     #     type_missing = self.search([('type', '=', False)])
     #     logger.info("Found %s forms where type 'standard' is missing" % len(type_missing))
     #     type_missing.write({'type': 'standard'})
+
+    @api.multi
+    def button_open_form_page(self):
+        self.ensure_one()
+        active_form = self
+        return {
+            'name': _('Open Form Page'),
+            'type': 'ir.actions.act_url',
+            'res_model': 'ir.actions.act_url',
+            'target': 'new',
+            'url': active_form.website_url
+        }
+
+    @api.multi
+    def button_open_redirect_page(self):
+        self.ensure_one()
+        active_form = self
+        return {
+            'name': _('Open Redirect Page'),
+            'type': 'ir.actions.act_url',
+            'res_model': 'ir.actions.act_url',
+            'target': 'new',
+            'url': active_form.url_after_successful_form_submit
+        }
