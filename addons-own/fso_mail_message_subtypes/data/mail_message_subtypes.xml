@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="fson_change_bank_account_request" model="mail.message.subtype">
+            <field name="name">FS-Online Change Bank Account Request</field>
+            <field name="res_model" eval="False"/>
+            <field name="default" eval="False"/>
+        </record>
+
+        <record id="fson_change_contract_request" model="mail.message.subtype">
+            <field name="name">FS-Online Change Contract Request</field>
+            <field name="res_model" eval="False"/>
+            <field name="default" eval="False"/>
+        </record>
+
+        <record id="fson_question" model="mail.message.subtype">
+            <field name="name">FS-Online Question / Survey</field>
+            <field name="res_model" eval="False"/>
+            <field name="default" eval="False"/>
+        </record>
+
+    </data>
+</openerp>
