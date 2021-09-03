@@ -17,6 +17,10 @@
     margin: 0;
 }
 
+body .oe_website_sale #wsd_checkout_form_inside_row div.giftee-checkbox.form-group {
+    float: none;
+}
+
 input#giftee-checkbox {
     width: 32px;
     height: 32px;
