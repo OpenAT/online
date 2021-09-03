@@ -70,6 +70,7 @@ Module tasks:
         'fso_base_website',
         'website_sale_donate',
         'website_widget_manager',
+        'fso_forms_widget_manager',
         'payment_frst',
         'payment_ogonedadi',
         'payment_postfinance',
