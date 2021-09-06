@@ -20,7 +20,8 @@
                                     icon="fa-globe"
                                     class="oe_inline oe_stat_button"
                                     type="object"
-                                    name="button_open_redirect_page"/>
+                                    name="button_open_redirect_page"
+                                    attrs="{'invisible': [('type','!=','standard')]}"/>
                             <!--<button-->
                             <!--        icon="fa-external-link"-->
                             <!--        class="oe_inline oe_stat_button"-->
@@ -37,15 +38,21 @@
                                 <field name="name"/>
                                 <field name="type"/>
                                 <field name="model_id"/>
+                                <field name="redirect_after_submit" attrs="{'invisible': [('type','!=','standard')]}"/>
                                 <field name="edit_existing_record_if_logged_in" attrs="{'invisible': [('type','!=','standard')]}"/>
-                                <field name="submit_button_text" attrs="{'invisible': [('type','!=','standard')]}"/>
+                                <field name="clear_session_data_after_submit"/>
+
                             </group>
                             <group name="system_data">
                                 <field name="website_url" widget="url" readonly="1"/>
+                                <field name="url_after_successful_form_submit" widget="url" readonly="1"/>
                                 <field name="id" readonly="True"/>
                                 <field name="create_date" readonly="True"/>
                                 <field name="write_date" readonly="True"/>
                             </group>
+                        </group>
+                        <group name="submit_button_settings"  attrs="{'invisible': [('type','!=','standard')]}">
+                            <field name="submit_button_text"/>
                         </group>
                         <group name="email_login" attrs="{'invisible': [('type','!=','standard')]}">
                             <group name="email" string="E-Mail Settings">
@@ -160,12 +167,11 @@
                             <page string="Thank You Page" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="website_url_thanks" widget="url" readonly="1"/>
-                                    <field name="redirect_after_submit"/>
                                     <field name="thank_you_page_edit_data_button" attrs="{'readonly': [('email_only','=',True)]}"/>
                                     <field name="thank_you_page_snippets"/>
                                 </group>
                             </page>
-                            <page string="Token Login Form" attrs="{'invisible': [('type','!=','standard')]}">
+                            <page name="token_login_form" string="Token Login Form" attrs="{'invisible': [('type','!=','standard')]}">
                                 <group>
                                     <field name="tlf_headline"/>
                                     <field name="tlf_label"/>
@@ -177,7 +183,7 @@
                                     <field name="tlf_bottom_snippets" readonly="1"/>
                                 </group>
                             </page>
-                            <page string="Danger Zone">
+                            <page string="Danger Zone" name="danger_zone">
                                 <group name="force_user" string="Force User" attrs="{'invisible': [('type','!=','standard')]}">
                                     <field name="create_as_user"/>
                                     <field name="create_as_user_nologin"/>
@@ -192,7 +198,6 @@
                                     <field name="submission_url"/>
                                 </group>
                                 <group name="redirect_after_form_submit_settings" string="After-Successful-Form-Submit Settings" attrs="{'invisible': [('type','!=','standard')]}">
-                                    <field name="clear_session_data_after_submit"/>
                                     <field name="redirect_url"/>
                                     <field name="redirect_url_target"/>
                                     <field name="redirect_url_if_logged_in"/>

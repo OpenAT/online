@@ -45,27 +45,60 @@
 
         <!-- Website Template: thank_you_redirect -->
         <template id="thank_you_redirect" name="FSON Forms Website Thank You Redirection Template" page="True">
-            <html>
-                <head>
-                    <t t-if="redirect_target == '_parent'">
-                        <script>
-                            window.top.location.href = "<t t-esc="redirect_url"/>";
-                        </script>
-                    </t>
-                    <t t-if="redirect_target == '_blank'">
-                        <script>
-                            window.open("<t t-esc="redirect_url"/>", "<t t-esc="redirect_target"/>");
-                        </script>
-                    </t>
-                </head>
-                <body>
-                    <p>You will be redirected shortly! If not please click
-                        <a t-att-href="redirect_url" t-att-target="redirect_target">
-                            here.
+
+            <!--<html>-->
+            <!--    <head>-->
+            <!--        <t t-if="redirect_target == '_parent'">-->
+            <!--            <script>-->
+            <!--                window.top.location.href = "<t t-esc="redirect_url"/>";-->
+            <!--            </script>-->
+            <!--        </t>-->
+            <!--        <t t-if="redirect_target == '_blank'">-->
+            <!--            <script>-->
+            <!--                window.open("<t t-esc="redirect_url"/>", "<t t-esc="redirect_target"/>");-->
+            <!--            </script>-->
+            <!--        </t>-->
+            <!--    </head>-->
+            <!--    <body>-->
+            <!--        <p>You will be redirected shortly! If not please click-->
+            <!--            <a t-att-href="redirect_url" t-att-target="redirect_target">-->
+            <!--                here.-->
+            <!--            </a>-->
+            <!--        </p>-->
+            <!--    </body>-->
+            <!--</html>-->
+
+            <t t-call="website.layout">
+                <div id="fso_forms_thank_you_redirect_box" style="text-align: center; width: 100%">
+                    <h1>You will be redirected shortly! If not please click:</h1>
+                    <p>
+                        <br/>
+                        <a id="fso_forms_thank_you_redirect" class="btn btn-primary" t-att-href="redirect_url" t-att-target="redirect_target">
+                            Please click me!
                         </a>
                     </p>
-                </body>
-            </html>
+
+                    <t t-if="redirect_target == '_parent'">
+                       <script>
+                          window.top.location.href = "<t t-esc="redirect_url"/>";
+                       </script>
+                    </t>
+
+                    <t t-if="redirect_target == '_blank'">
+                        <!--<script>-->
+                        <!--    $(document).ready(function () {-->
+                        <!--        setTimeout(() => $("#fso_forms_thank_you_redirect").trigger('click'), 2000);-->
+                        <!--    })-->
+                        <!--</script>-->
+                        <script>
+                            setTimeout(() => window.open("<t t-esc="redirect_url"/>", "<t t-esc="redirect_target"/>"), 1000);
+                        </script>
+                    </t>
+
+                </div>
+
+            </t>
+
         </template>
         
         <!-- SubTemplate: form_fields -->

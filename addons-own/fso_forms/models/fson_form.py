@@ -155,7 +155,7 @@ class FSONForm(models.Model):
         for r in self:
             r.website_url_thanks = '/fso/form/thanks/'+str(r.id)
 
-    @api.depends('name')
+    @api.depends('redirect_after_submit', 'redirect_url_if_logged_in', 'redirect_url')
     def _cmp_url_after_successful_form_submit(self):
         for r in self:
             default_website_user = r.env.ref('base.public_user', raise_if_not_found=True)

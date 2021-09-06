@@ -823,7 +823,7 @@ class FsoForms(http.Controller):
                             # ATTENTION: This is really important or unwanted records and side effects may be created!
                             # HINT: Since we catch the Exception that would lead to an rollback and a backend gui
                             #       message and never raise it we have to do this by our own!
-                            # TODO: Check if this leafs open cursors behind or if odoo cleans them up after the
+                            # TODO: Check if this leaves open cursors behind or if odoo cleans them up after the
                             #       rollback!
                             record.env.cr.rollback()
 

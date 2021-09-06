@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-31 10:15+0000\n"
-"PO-Revision-Date: 2021-08-31 10:15+0000\n"
+"POT-Creation-Date: 2021-09-06 11:58+0000\n"
+"PO-Revision-Date: 2021-09-06 11:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -174,7 +174,7 @@ msgstr "Neustart nach erfolgreicher Übermittlung"
 #. module: fso_forms
 #: view:website:fso_forms.form_fields
 msgid "Close"
-msgstr "Beenden"
+msgstr "Close"
 
 #. module: fso_forms
 #: selection:fson.form_field,type:0
@@ -190,6 +190,11 @@ msgstr "Kommentartyp"
 #: view:fson.form_field:fso_forms.fson_form_field_form
 msgid "Common Settings"
 msgstr "Allg. Einstellungen"
+
+#. module: fso_forms
+#: field:fson.form,url_after_successful_form_submit:0
+msgid "Computed Redirect URL"
+msgstr "Computed Redirect URL"
 
 #. module: fso_forms
 #: field:fson.form_field,confirmation_email:0
@@ -379,6 +384,11 @@ msgid "Example Usage:"
 msgstr "Beispiele:"
 
 #. module: fso_forms
+#: model:mail.message.subtype,name:fso_forms.fson_comment
+msgid "FS-Online Comment"
+msgstr "FS-Online Comment"
+
+#. module: fso_forms
 #: model:mail.message.subtype,name:fso_forms.form_comment_subtype
 msgid "FS-Online Form Comment"
 msgstr "FS-Online Formular Kommentar"
@@ -515,6 +525,11 @@ msgstr "Formularmodell-Name"
 #: field:fson.form,name:0
 msgid "Form Name"
 msgstr "Formularname"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Form Page"
+msgstr "Form Page"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -678,7 +693,7 @@ msgstr "Inhalt des Snippet-Bereich"
 #. module: fso_forms
 #: help:fson.form_field,information:0
 msgid "Information Text or Snippet Area if no field is selected!"
-msgstr ""
+msgstr "Information Text or Snippet Area if no field is selected!"
 
 #. module: fso_forms
 #: field:res.partner,information_email_receipient_fso_form:0
@@ -838,6 +853,7 @@ msgstr "Kein 'white space' erlaubt"
 msgid "Now that we have hidden the field with 'hide_it' assigned a default value of '13' and a search domain of '[('id', '=', 13)]' the country would be austria for all partners created\n"
 "                                            by this form."
 msgstr "Nun da wir das Feld mit 'hide_it' versteckt haben, den Standardwert '13' gesetzt haben und die Suchdomain '[('id', '=', 13)]' eingestellt haben, wird das Land Österreich für alle neu erstellen Datensätze verwendet.\n"
+""
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -865,6 +881,20 @@ msgid "Only valid for many2one res.partner or res.user fields! If set and the lo
 msgstr "Only valid for many2one res.partner or res.user fields! If set and the logged user relates to the partner or is the user set in this field we try to load the corresponding record and it's data to prefil the form and update the existingrecord on form submit!"
 
 #. module: fso_forms
+#: code:addons/fso_forms/models/fson_form.py:247
+#: view:fson.form:fso_forms.fson_form_tree
+#, python-format
+msgid "Open Form Page"
+msgstr "Open Form Page"
+
+#. module: fso_forms
+#: code:addons/fso_forms/models/fson_form.py:259
+#: view:fson.form:fso_forms.fson_form_tree
+#, python-format
+msgid "Open Redirect Page"
+msgstr "Open Redirect Page"
+
+#. module: fso_forms
 #: model:ir.model,name:fso_forms.model_res_partner
 msgid "Partner"
 msgstr "Partner"
@@ -878,6 +908,11 @@ msgstr "Platzhalter Text"
 #: help:fson.form_field,clearfix:0
 msgid "Places a DIV box with .clearfix after this field"
 msgstr "Platziert eine DIV Box mit .clearfix nach diesem Feld. Dies ist wie ein erzwungener Umbruch!"
+
+#. module: fso_forms
+#: view:website:fso_forms.thank_you_redirect
+msgid "Please click me!"
+msgstr "Bitte klick mich!"
 
 #. module: fso_forms
 #: code:addons/fso_forms/controllers/controller.py:301
@@ -927,6 +962,11 @@ msgstr "Radio + KeineAuswahl"
 #: field:fson.form_field,readonly:0
 msgid "Readonly if logged in"
 msgstr "Schreibgeschützt wenn angemeldet"
+
+#. module: fso_forms
+#: view:fson.form:fso_forms.fson_form_form
+msgid "Redirect Page"
+msgstr "Redirect Page"
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -1052,8 +1092,7 @@ msgid "Sometimes you want to force a value in the target record or you want to h
 "                                            you do not want to show the country field because the only allowed country is Austria. You can not simply remove the country field because country is a required field in the\n"
 "                                            checkout process. In such a case you can add the css class 'hide_it' to hide the country-field from the user in the form and set the default value of the country-field to the id\n"
 "                                            of Austria."
-msgstr "Manchmal ist es erforderlich einen Wert in neu angelegten Datensätzen zu erzwingen. Angenommen man möchte alle Datensätzte mit Wert 'Österreich' für das Feld 'Land' anlegen. Dies kann einfach über die Angabe eines Wertes im Feld 'Standardwert' erfolgen. "
-"Auch kann man ein Feld mit einem Standardwert verstecken indem man die Klasse 'hide_it' hinzufügt. Die Kombination von Standardwert und dem verstecken des Feldes kann also dazu verwendet werden um ein Formular zu vereinfachen."
+msgstr "Manchmal ist es erforderlich einen Wert in neu angelegten Datensätzen zu erzwingen. Angenommen man möchte alle Datensätzte mit Wert 'Österreich' für das Feld 'Land' anlegen. Dies kann einfach über die Angabe eines Wertes im Feld 'Standardwert' erfolgen. Auch kann man ein Feld mit einem Standardwert verstecken indem man die Klasse 'hide_it' hinzufügt. Die Kombination von Standardwert und dem verstecken des Feldes kann also dazu verwendet werden um ein Formular zu vereinfachen."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
@@ -1311,8 +1350,8 @@ msgstr "Sie können auch Formulare anlegen die"
 
 #. module: fso_forms
 #: view:website:fso_forms.thank_you_redirect
-msgid "You will be redirected shortly! If not please click"
-msgstr "Sie werden in Kürze umgeleitet! Falls nicht künnen Sie auch auf den Button klicken!"
+msgid "You will be redirected shortly! If not please click:"
+msgstr "Sie werden gleich umgeleitet! Falls nicht bitte den Button klicken:"
 
 #. module: fso_forms
 #: selection:fson.form,redirect_url_if_logged_in_target:0
@@ -1407,11 +1446,6 @@ msgid "force_selection=True"
 msgstr "force_selection=True"
 
 #. module: fso_forms
-#: view:website:fso_forms.thank_you_redirect
-msgid "here."
-msgstr "here."
-
-#. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
 msgid "iban=True"
 msgstr "iban=True"
@@ -1443,9 +1477,7 @@ msgid "model in FS-Online. You may create forms to create or update partner data
 "                                    a fair amount of knowledge of the target model as well as the required fields and access rights. However once a form is set up most of its settings like labels or order of fields can be\n"
 "                                    edited by most backend users. Some target models include helper buttons that will create a form with most common and all needed fields automatically for you. Make sure to test every new\n"
 "                                    form extensively before enabling it on your website!"
-msgstr "Modell in FS-Online erstellen! Sie können z.B. Formulare zur Aktualisierung von Personendaten, zur Anmeldung an Newslettergruppen, zur Anmeldung an Petitionen oder zur Erzeugung von Leads erstellen. Ein neues Formular für ein Modell zu "
-"erstellen ist eine Aufgabe für Administratoren oder fortgeschrittenen Anwender da es einiges an Wissen über die Pflichtfelder und Zugriffsrechte im gewünschten Zielmodell voraussetzt. Daher gibt es an einigen Stellen Quick-Form-Buttons die automatisch "
-"ein Formular mit den erforderlichen Feldern erstellen! Ist das Formular erstmal erstellt können Einstellungen wie Feldreihenfolge, Label, Platzhaltertext, Anordnung, Sende-Button Text und vieles mehr ganz einfach angepasst werden."
+msgstr "Modell in FS-Online erstellen! Sie können z.B. Formulare zur Aktualisierung von Personendaten, zur Anmeldung an Newslettergruppen, zur Anmeldung an Petitionen oder zur Erzeugung von Leads erstellen. Ein neues Formular für ein Modell zu erstellen ist eine Aufgabe für Administratoren oder fortgeschrittenen Anwender da es einiges an Wissen über die Pflichtfelder und Zugriffsrechte im gewünschten Zielmodell voraussetzt. Daher gibt es an einigen Stellen Quick-Form-Buttons die automatisch ein Formular mit den erforderlichen Feldern erstellen! Ist das Formular erstmal erstellt können Einstellungen wie Feldreihenfolge, Label, Platzhaltertext, Anordnung, Sende-Button Text und vieles mehr ganz einfach angepasst werden."
 
 #. module: fso_forms
 #: view:fson.form:fso_forms.fson_form_form
