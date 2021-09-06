@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="fso_form_survey" model="ir.ui.view">
+            <field name="name">Add survey field and quick button</field>
+            <field name="model">fson.form</field>
+            <field name="inherit_id" ref="fso_forms.fson_form_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='button_open_redirect_page']" position="after">
+                    <button
+                            icon="fa-bar-chart-o"
+                            class="oe_inline oe_stat_button"
+                            type="object"
+                            name="button_open_survey_results"
+                            attrs="{'invisible': [('type','!=','standard')]}">
+                        <field string="Survey Results"
+                               name="survey_total"
+                               widget="statinfo" />
+                    </button>
+                </xpath>
+
+                <xpath expr="//page[@name='danger_zone']" position="before">
+                    <page name="survey" string="Survey" attrs="{'invisible': [('type','!=','standard')]}">
+                        <group name="survey_redirect" string="Start survey after successful form submit">
+                            <field name="redirect_survey_id"/>
+                            <field name="redirect_survey_target"/>
+                        </group>
+                        <group name="Survey Results">
+                            <field name="survey_result_ids"/>
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>
