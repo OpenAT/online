@@ -32,7 +32,7 @@ def _check_url(url):
     try:
         socket.gethostbyname(urlparse(url).hostname)
     except Exception:
-        message = _('DNS check failed for url %s!') % url
+        message = _('DNS check failed for url %s. This might be ok but please make sure to double check the URL') % url
         warning = {'warning': {'title': _('Warning'), 'message': message}}
         return False, warning
 
@@ -127,13 +127,13 @@ class WebsiteAsWidget(models.Model):
     @api.onchange('source_protocol', 'source_domain', 'source_page')
     def _onchange_source_page(self):
         # Check if the source page exits
-        if self.source_page:
-            if not self.search_page(self.source_page):
-                return {'warning': {'title': _('Warning!'),
-                                    'message': _('Source page %s not found! '
-                                                 'This may be ok but please check it to be sure.') % self.source_page
-                                    }
-                        }
+        # if self.source_page:
+        #     if not self.search_page(self.source_page):
+        #         return {'warning': {'title': _('Warning!'),
+        #                             'message': _('Source page %s not found! '
+        #                                          'This may be ok but please check it to be sure.') % self.source_page
+        #                             }
+        #                 }
 
         # Create a screenshot
         if self.source_protocol and self.source_domain and self.source_page:
