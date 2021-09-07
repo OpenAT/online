@@ -73,6 +73,9 @@ The foreign key of the :ref:`payment_transaction`.
 """""""""""""""""""""""
 The foreign key of the :ref:`payment_acquirer`.
 
+``order_line``
+"""""""""""""""""""""""
+The list of all associated :ref:`sale_order_line` entries.
 
 Methods
 -------
@@ -95,6 +98,11 @@ like price/amount, origin, etc.
 
 Special fields
 --------------
+
+``name``
+"""""""""""""""""""""
+Free text. The name or description for the order line. For example, you could use
+the name of the donation product or physical product here.
 
 ``state``
 """""""""""""""""""""

@@ -30,6 +30,7 @@
                     (0, 0, {'name': 'date_order'}),
                     (0, 0, {'name': 'amount_total'}),
                     (0, 0, {'name': 'state'}),
+                    (0, 0, {'name': 'order_line'}),
                     ]"
             />
         </record>
