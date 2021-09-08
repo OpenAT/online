@@ -26,6 +26,7 @@
                     (0, 0, {'name': 'esr_reference_number'}),
                     (0, 0, {'name': 'reference'}),
                     (0, 0, {'name': 'amount'}),
+                    (0, 0, {'name': 'acquirer_id'}),
                     ]"
             />
         </record>
