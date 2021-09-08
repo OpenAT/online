@@ -158,6 +158,10 @@ class FSONForm(models.Model):
     @api.depends('redirect_after_submit', 'redirect_url_if_logged_in', 'redirect_url')
     def _cmp_url_after_successful_form_submit(self):
         for r in self:
+            if r.type != 'standard':
+                r.url_after_successful_form_submit = False
+                continue
+
             default_website_user = r.env.ref('base.public_user', raise_if_not_found=True)
             if not r.redirect_after_submit:
                 r.url_after_successful_form_submit = r.website_url
