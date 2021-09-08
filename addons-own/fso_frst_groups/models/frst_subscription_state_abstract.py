@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 class FRSTGruppeState(models.AbstractModel):
     """
     This model is added to the subscription/groupbridgemodels e.g.: frst.personemailgruppe and extends them with a state
-    and various other fields. Therefore the naming is missleading! Should be named frst_subscription_state_abstract!
+    and various other fields.
+
+    Therefore the naming is missleading! Should be named frst_subscription_state_abstract!
 
     State Descriptions
     ------------------
@@ -64,7 +66,8 @@ class FRSTGruppeState(models.AbstractModel):
     gueltig_von = fields.Date("GueltigVon", required=True)
     gueltig_bis = fields.Date("GueltigBis", required=True)
 
-    # Group approval information
+    # Subscription approval information
+    # ---------------------------------
     bestaetigt_am_um = fields.Datetime("Bestaetigt", readonly=True)
     bestaetigt_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
                                                  ('phone_call', 'Phone Call'),

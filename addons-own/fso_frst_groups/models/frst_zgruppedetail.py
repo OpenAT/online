@@ -70,6 +70,10 @@ class FRSTzGruppeDetail(models.Model):
     #                                       "the past date 09.09.1999 when the group is created to indicate that "
     #                                       "an approval is needed before set the group to active.")
 
+    # Group-Settings for new Subscriptions
+    # ------------------------------------
+    # ATTENTION: These group settings may be overridden in the subscriptions!
+    # TODO: !!! Constrains for the settings and settings overrides !!!
     bestaetigung_erforderlich = fields.Boolean(string="Approval needed",
                                                default=False,
                                                help="If this checkbox is set gueltig_von and gueltig_bis will be set "
@@ -79,7 +83,16 @@ class FRSTzGruppeDetail(models.Model):
                                                    ('phone_call', "Phone Call"),
                                                    ('workflow', "Fundraising Studio Workflow"),
                                                    ],
-                                        string="Approval Type", default='doubleoptin')
+                                        string="Approval Type",
+                                        default='doubleoptin')
+    bestaetigung_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                            inverse_name="approval_workflow_zgruppedetail_ids",
+                                            string="Approval Workflow",
+                                            help="Fundraising Studio Approval Workflow")
+    on_create_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                         inverse_name="on_create_workflow_zgruppedetail_ids",
+                                         string="On-Create Workflow",
+                                         help="Fundraising Studio On-Create Workflow")
 
     # @api.multi
     # @api.depends('gruppe_lang', 'zgruppe_id')

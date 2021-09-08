@@ -39,6 +39,33 @@ class FRSTPersonEmailGruppe(models.Model):
     partner_frst_blocked = fields.Boolean(string="Partner blocked", readonly=True, index=True)
     partner_frst_blocked_email = fields.Boolean(string="Partner e-mail blocked", readonly=True, index=True)
 
+    # Subscription Group-Settings Overrides
+    # -------------------------------------
+    # TODO: !!! Constrains for the settings and settings overrides !!!
+    bestaetigung_erforderlich = fields.Boolean(string="Approval needed",
+                                               default=False,
+                                               readonly=True,
+                                               help="If this checkbox is set gueltig_von and gueltig_bis will be set "
+                                                    "to the past date 09.09.1999 when the group is created to indicate "
+                                                    "that an approval is needed before set the group to active.")
+    bestaetigung_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
+                                                   ('phone_call', "Phone Call"),
+                                                   ('workflow', "Fundraising Studio Workflow"),
+                                                   ],
+                                        readonly=True,
+                                        string="Approval Type",
+                                        default='doubleoptin')
+    bestaetigung_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                            inverse_name="approval_workflow_personemailgruppe_ids",
+                                            string="Approval Workflow",
+                                            readonly=True,
+                                            help="Fundraising Studio Approval Workflow")
+    on_create_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                         inverse_name="on_create_workflow_personemailgruppe_ids",
+                                         string="On-Create Workflow",
+                                         readonly=True,
+                                         help="Fundraising Studio On-Create Workflow")
+
     @api.multi
     def _compute_state(self):
         self.ensure_one()

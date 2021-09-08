@@ -35,6 +35,14 @@
                                 <field name="partner_frst_blocked_email"/>
                             </group>
                         </page>
+                        <page string="Group Settings Overrides" name="overrides">
+                            <group>
+                                <field name="bestaetigung_erforderlich"/>
+                                <field name="bestaetigung_typ"/>
+                                <field name="bestaetigung_workflow"/>
+                                <field name="on_create_workflow"/>
+                            </group>
+                        </page>
                         <page string="System" name="system">
                             <group>
                                 <field name="id"/>

@@ -6,6 +6,39 @@ from openerp import api, models, fields
 class CrmFacebookFormField(models.Model):
     _inherit = 'crm.facebook.form.field'
 
+    crm_field_type = fields.Selection(selection=[('', 'Standard'),
+                                                 ('subscription', 'Group Subscription')])
+
+    # For the crm_field_type 'subscription'
+    # ------------------------------------
+    # TODO: Constrains for the settings fields !!!
+    zgruppedetail_id = fields.Many2one(string="Fundraising Studio Group",
+                                       comodel_name="frst.zgruppedetail",
+                                       inverse_name='crm_fb_form_field_ids',
+                                       ondelete="set null", index=True,
+                                       domain=[('zgruppe_id', '!=', False),
+                                               ('zgruppe_id.tabellentyp_id', '=', '100110')],
+                                       help="Fundraising Studio E-Mail Group")
+    # Subscription Group-Settings Overrides
+    bestaetigung_erforderlich = fields.Boolean(string="Approval needed",
+                                               default=False,
+                                               help="If this checkbox is set gueltig_von and gueltig_bis will be set "
+                                                    "to the past date 09.09.1999 when the group is created to indicate "
+                                                    "that an approval is needed before set the group to active.")
+    bestaetigung_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
+                                                   ('phone_call', "Phone Call"),
+                                                   ('workflow', "Fundraising Studio Workflow"),
+                                                   ],
+                                        string="Approval Type", default='doubleoptin')
+    bestaetigung_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                            inverse_name="approval_workflow_fb_field_ids",
+                                            string="Approval Workflow",
+                                            help="Fundraising Studio Approval Workflow")
+    on_create_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                         inverse_name="on_create_workflow_fb_field_ids",
+                                         string="On-Create Workflow",
+                                         help="Fundraising Studio On-Create Workflow")
+
     # TODO: map contact_name to partner "name" field if contact_lastname is not used!!! on lead partner creation!
     # TODO: Choose a zGruppeDetail for the subscriptions! and Make sure PersonGruppe or PersonEmailGruppe will be set!
     # TODO: Choose the correct CDS Folder where the FRST Aktionen should be linked

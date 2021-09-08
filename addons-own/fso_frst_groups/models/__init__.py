@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import frst_gruppestate_abstract
+import frst_subscription_state_abstract
 import frst_checkboxmodel_abstract
 import frst_checkboxbridgemodel_abstract
-import frst_gruppesecurity_abstract
+import frst_subscription_security_abstract
 
 import frst_zgruppe
 import frst_zgruppedetail
@@ -14,5 +14,4 @@ import res_partner
 import frst_personemailgruppe
 import frst_personemail
 
-
-
+import frst_workflow

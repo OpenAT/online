@@ -16,6 +16,7 @@ class CrmFacebookFormField(models.Model):
                                 index=True,
                                 domain=[('model', '=', 'crm.lead'),
                                         ('ttype', 'in', ('char',
+                                                         'boolean',
                                                          'date',
                                                          'datetime',
                                                          'float',

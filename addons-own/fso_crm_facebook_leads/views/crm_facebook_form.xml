@@ -9,6 +9,22 @@
         <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_form"/>
         <field name="arch" type="xml">
 
+            <xpath expr="//field[@name='crm_field']" position="before">
+                <field name="crm_field_type"/>
+            </xpath>
+            <xpath expr="//field[@name='crm_field']" position="attributes">
+                <attrs>{readonly: [('crm_field_type', '!=', False)]}</attrs>
+            </xpath>
+            <xpath expr="//field[@name='crm_field']" position="after">
+                <field name="zgruppedetail_id"/>
+                <!-- TODO: Move this to the edit form of the field like in the forms generator ! -->
+                <field name="bestaetigung_erforderlich" attrs="{readonly: [('crm_field_type', '!=', 'subscription')]}"/>
+                <field name="bestaetigung_typ" attrs="{readonly: [('crm_field_type', '!=', 'subscription')]}"/>
+                <field name="bestaetigung_workflow" attrs="{readonly: [('crm_field_type', '!=', 'subscription')]}"/>
+                <field name="on_create_workflow" attrs="{readonly: [('crm_field_type', '!=', 'subscription')]}"/>
+            </xpath>
+
+
             <!-- BUTTON TO OPEN RELATED SUBSCRIPTIONS (PersonEmailGruppe) -->
             <xpath expr="//button[@name='button_open_lead_graph']" position="after">
                 <button name="button_open_personemailgruppe_graph"  type="object" icon="fa-envelope-o" class="oe_inline oe_stat_button">

@@ -56,6 +56,8 @@
                             <group name="subscription_settings" string="Subscription Approval Settings" invisible="0">
                                 <field name="bestaetigung_erforderlich"/>
                                 <field name="bestaetigung_typ"/>
+                                <field name="bestaetigung_workflow"/>
+                                <field name="on_create_workflow"/>
                             </group>
                         </page>
                         <!--<page name="subscribers" string="Subscribers">-->

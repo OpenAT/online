@@ -35,6 +35,33 @@ class FRSTPersonGruppe(models.Model):
     # partner_frst_blocked = fields.Boolean(related="partner_id.frst_blocked", store=True, readonly=True)
     # partner_frst_blocked_email = fields.Boolean(related="partner_id.frst_blocked_email", store=True, readonly=True)
 
+    # Subscription Group-Settings Overrides
+    # -------------------------------------
+    # TODO: !!! Constrains for the settings and settings overrides !!!
+    bestaetigung_erforderlich = fields.Boolean(string="Approval needed",
+                                               default=False,
+                                               readonly=True,
+                                               help="If this checkbox is set gueltig_von and gueltig_bis will be set "
+                                                    "to the past date 09.09.1999 when the group is created to indicate "
+                                                    "that an approval is needed before set the group to active.")
+    bestaetigung_typ = fields.Selection(selection=[('doubleoptin', 'DoubleOptIn'),
+                                                   ('phone_call', "Phone Call"),
+                                                   ('workflow', "Fundraising Studio Workflow"),
+                                                   ],
+                                        string="Approval Type",
+                                        readonly=True,
+                                        default='doubleoptin')
+    bestaetigung_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                            inverse_name="approval_workflow_persongruppe_ids",
+                                            string="Approval Workflow",
+                                            readonly=True,
+                                            help="Fundraising Studio Approval Workflow")
+    on_create_workflow = fields.Many2one(comodel_name="frst.workflow",
+                                         inverse_name="on_create_workflow_persongruppe_ids",
+                                         string="On-Create Workflow",
+                                         readonly=True,
+                                         help="Fundraising Studio On-Create Workflow")
+
     @api.model
     def create(self, values):
         res = super(FRSTPersonGruppe, self).create(values)
