@@ -34,6 +34,11 @@ class FSOCrmFacebookForm(models.Model):
                                        help="Fundraising Studio E-Mail Group")
     personemailgruppe_count = fields.Integer(string="Subscriptions", compute="cmp_personemailgruppe_count")
 
+    # TODO: For the crm_field_type 'subscription'
+    # ------------------------------------
+    # TODO: Constrains for the settings fields !!!
+    # TODO: !!! bestaetigung_erforderlich must be a selection field to explicitly show the override !!!
+
     # HINT: "verzeichnistyp_id = False" means the CDS record is not a folder but a file
     frst_zverzeichnis_id = fields.Many2one(string="Fundraising Studio CDS",
                                            comodel_name="frst.zverzeichnis", inverse_name='crm_fb_form_ids',

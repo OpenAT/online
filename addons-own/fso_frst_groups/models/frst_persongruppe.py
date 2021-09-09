@@ -38,6 +38,7 @@ class FRSTPersonGruppe(models.Model):
     # Subscription Group-Settings Overrides
     # -------------------------------------
     # TODO: !!! Constrains for the settings and settings overrides !!!
+    # TODO: !!! bestaetigung_erforderlich must be a selection field to explicitly show the override !!!
     bestaetigung_erforderlich = fields.Boolean(string="Approval needed",
                                                default=False,
                                                readonly=True,

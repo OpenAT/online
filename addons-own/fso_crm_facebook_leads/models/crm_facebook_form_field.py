@@ -12,6 +12,7 @@ class CrmFacebookFormField(models.Model):
     # For the crm_field_type 'subscription'
     # ------------------------------------
     # TODO: Constrains for the settings fields !!!
+    # TODO: !!! bestaetigung_erforderlich must be a selection field to explicitly show the override !!!
     zgruppedetail_id = fields.Many2one(string="Fundraising Studio Group",
                                        comodel_name="frst.zgruppedetail",
                                        inverse_name='crm_fb_form_field_ids',
