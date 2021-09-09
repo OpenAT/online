@@ -121,6 +121,7 @@ class PaymentTransactionConsale(models.Model):
                     'consale_currency']
 
         # Banktransfer Payment validations
+        # --------------------------------
         if data.get('consale_method', '') == 'banktransfer':
             consale_method_banktransfer_provider = data.get('consale_method_banktransfer_provider', '')
             if not consale_method_banktransfer_provider:
@@ -132,15 +133,19 @@ class PaymentTransactionConsale(models.Model):
                              'consale_method_account_bank']
 
         # Recurring Payment validations
-        if data.get('consale_recurring_payment_ever_months', None):
-            consale_recurring_payment_provider = data.get('consale_recurring_payment_provider', None)
-            if not consale_recurring_payment_provider:
-                raise ValidationError("The recurring payment provider 'consale_recurring_payment_provider' must be "
-                                      "set for recurring payments!")
-            if consale_recurring_payment_provider == 'frst':
-                if not data.get('consale_method', '') == 'banktransfer':
-                    raise ValidationError("Only 'banktransfer' method is allowed for recurring payment that should be "
-                                          "executed by Fundraising Studio")
+        # -----------------------------
+        # Check the sale order for recurring transactions
+        if tx and tx.sale_order_id:
+            recurring = any(sol.payment_interval_id for sol in tx.sale_order_id.order_line)
+            if recurring:
+                consale_recurring_payment_provider = data.get('consale_recurring_payment_provider', None)
+                if not consale_recurring_payment_provider:
+                    raise ValidationError("The recurring payment provider 'consale_recurring_payment_provider' must be "
+                                          "set for recurring payments!")
+                if consale_recurring_payment_provider == 'frst':
+                    if not data.get('consale_method', '') == 'banktransfer':
+                        raise ValidationError("Only 'banktransfer' method is allowed for recurring payment that "
+                                              "should be executed by Fundraising Studio")
 
         # Check if any required field value is missing
         missing_fields = tuple(f for f in required if not data.get(f, False))
