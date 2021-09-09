@@ -688,7 +688,7 @@ msgstr "Internes E-Mail: Vorlage"
 #. module: fso_forms
 #: view:fson.form_field:fso_forms.fson_form_field_form
 msgid "Information Text or Snippet Area Content"
-msgstr "Inhalt des Snippet-Bereich"
+msgstr "Feld-Zusatzinformation oder Inhalt des Snippet-Bereich"
 
 #. module: fso_forms
 #: help:fson.form_field,information:0
