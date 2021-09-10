@@ -18,19 +18,18 @@ class FsoFormsSurvey(FsoForms):
 
             # Add partner to survey user input if possible
             # --------------------------------------------
-            survey_user = None
+            survey_partner = None
 
             # res.partner form
             if form.model_id.model == 'res.partner' and record and record._name == 'res.partner':
-                survey_user = request.env['res.users'].sudo().search([('partner_id', '=', record.id)])
-
+                survey_partner = record
             # user is logged in
-            if not survey_user and form.is_logged_in():
-                survey_user = request.env.user
+            elif self.is_logged_in():
+                survey_partner = request.env.user.partner_id
 
             # Add the partner to the survey_user_input_vals
-            if survey_user:
-                survey_user_input_vals['partner_id'] = survey_user.partner_id.id
+            if survey_partner:
+                survey_user_input_vals['partner_id'] = survey_partner.id
 
             # Create the survey user input record
             # -----------------------------------
