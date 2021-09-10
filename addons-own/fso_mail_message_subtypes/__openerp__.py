@@ -43,5 +43,6 @@ e.g. as 'Bemerkungen' or 'Aufgaben'.
     'data': [
         'data/mail_message_subtypes.xml',
         'views/mail_message_subtype.xml',
+        'views/mail_message.xml',
     ],
 }
