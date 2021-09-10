@@ -38,8 +38,10 @@ e.g. as 'Bemerkungen' or 'Aufgaben'.
     'auto_install': False,
     'depends': [
         'mail',
+        'xml_id_field',
     ],
     'data': [
         'data/mail_message_subtypes.xml',
+        'views/mail_message_subtype.xml',
     ],
 }
