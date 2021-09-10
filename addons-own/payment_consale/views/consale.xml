@@ -10,21 +10,25 @@
                 <xpath expr='//notebook' position='inside'>
                     <page string="consale TX Details">
                         <group>
-                            <field name="consale_state"/>
-                            <field name="consale_transaction_date"/>
+
                             <field name="consale_provider_name"/>
-                            <field name="consale_provider_status"/>
+
                             <field name="consale_method"/>
                             <field name="consale_method_other"/>
                             <field name="consale_method_brand"/>
-                            <field name="consale_amount"/>
-                            <field name="consale_currency"/>
-                            <field name="consale_payid"/>
-                            <field name="consale_eci"/>
-                            <field name="consale_common_name"/>
+
+                            <field name="consale_method_banktransfer_provider"/>
+
+                            <field name="consale_method_account_owner"/>
+                            <field name="consale_method_account_iban"/>
+                            <field name="consale_method_account_bic"/>
+                            <field name="consale_method_account_bank"/>
+
+                            <field name="consale_recurring_payment_provider"/>
+
                             <field name="consale_error_code"/>
                             <field name="consale_error_msg"/>
-                            <field name="consale_ip_address"/>
+
                         </group>
                     </page>
                 </xpath>
