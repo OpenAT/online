@@ -75,6 +75,7 @@ Module tasks:
         'payment_frst',
         'payment_ogonedadi',
         'payment_postfinance',
+        'payment_consale',
         'auth_partner_form',
         'fso_con_zmr',
         'fso_website_email',
