@@ -73,6 +73,11 @@ The foreign key of the :ref:`payment_transaction`.
 """""""""""""""""""""""
 The foreign key of the :ref:`payment_acquirer`.
 
+.. important:: Use `External Payment (Connector Sale)` if
+
+    - You are processing payments yourself
+    - You send a direct debit order, to be processed by DataDialog
+
 ``order_line``
 """""""""""""""""""""""
 The list of all associated :ref:`sale_order_line` entries.
