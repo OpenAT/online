@@ -10,3 +10,4 @@ Use Cases
     managing_partner
     email_subscriptions
     managing_products
+    submitting_donations
