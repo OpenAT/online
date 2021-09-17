@@ -8,6 +8,11 @@ Contains a list of known payment acquirers, used to identify how a payment was r
 
 .. note:: Only reading is supported for this model.
 
+.. important:: Use `External Payment (Connector Sale)` if
+
+    - You are processing payments yourself
+    - You send a direct debit order, to be processed by DataDialog
+
 Fields
 ------
 - ``id`` ID used as foreign key in other models
@@ -15,17 +20,6 @@ Fields
 - ``environment`` Is the acquirer for test or production?
 - ``recurring_transactions`` Are recurring transactions supported?
 - ``provider`` Who is the payment provider?
-
-..
-    do_not_send_status_email
-    globally_hidden
-    ogonedadi_brand
-    ogonedadi_pm
-    ogonedadi_userid
-    redirect_url_after_form_feedback
-    validation
-    website_published
-
 
 Methods
 -------
