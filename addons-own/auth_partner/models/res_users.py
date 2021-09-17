@@ -42,7 +42,7 @@ class res_users(models.Model):
             # https://github.com/OCA/e-commerce/pull/190
             if not request:
                 raise
-            token_record, user_record, errors = fstoken_check(password, log_usage=False)
+            token_record, user_record, errors = fstoken_check(password, store_usage=True)
             if errors:
                 raise
 

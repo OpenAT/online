@@ -1,0 +1,86 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* fso_forms_survey
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-06 12:01+0000\n"
+"PO-Revision-Date: 2021-09-06 12:01+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: fso_forms_survey
+#: field:survey.user_input,fson_form_id:0
+msgid "FS-Online Form Origin"
+msgstr "FS-Online-Formular Herkunft"
+
+#. module: fso_forms_survey
+#: field:survey.survey,fson_form_id:0
+msgid "FS-Online Forms"
+msgstr "FS-Online Formulare"
+
+#. module: fso_forms_survey
+#: help:survey.survey,fson_form_id:0
+msgid "FS-Online Forms that start this survey after successful form submit"
+msgstr "FS-Online Formulare die diese Umfrage nach erfolgreicher Übermittlung starten."
+
+#. module: fso_forms_survey
+#: help:fson.form,redirect_survey_id:0
+msgid "Open survey after successful form submit"
+msgstr "Öffne Umfrage nach erfolgreicher Formübermittlung"
+
+#. module: fso_forms_survey
+#: field:fson.form,redirect_survey_id:0
+msgid "Redirect to Survey"
+msgstr "Unmleiten zur Umfrage"
+
+#. module: fso_forms_survey
+#: view:fson.form:fso_forms_survey.fso_form_survey
+msgid "Start survey after successful form submit"
+msgstr "Starte Umfrage nach erfolgreicher Formübermittlung"
+
+#. module: fso_forms_survey
+#: view:fson.form:fso_forms_survey.fso_form_survey
+#: model:ir.model,name:fso_forms_survey.model_survey_survey
+msgid "Survey"
+msgstr "Umfrage"
+
+#. module: fso_forms_survey
+#: field:fson.form,redirect_survey_target:0
+msgid "Survey Redirect target"
+msgstr "Umfrage Redirect-Target"
+
+#. module: fso_forms_survey
+#: code:addons/fso_forms_survey/models/fso_forms.py:63
+#: view:fson.form:fso_forms_survey.fso_form_survey
+#: field:fson.form,survey_result_ids:0
+#, python-format
+msgid "Survey Results"
+msgstr "Umfrageergebnisse"
+
+#. module: fso_forms_survey
+#: field:fson.form,survey_total:0
+msgid "Survey Results Total"
+msgstr "Umfrageergebnisse Total"
+
+#. module: fso_forms_survey
+#: model:ir.model,name:fso_forms_survey.model_survey_user_input
+msgid "Survey User Input"
+msgstr "Benutzereingaben"
+
+#. module: fso_forms_survey
+#: selection:fson.form,redirect_survey_target:0
+msgid "_blank"
+msgstr "_blank"
+
+#. module: fso_forms_survey
+#: selection:fson.form,redirect_survey_target:0
+msgid "_parent"
+msgstr "_parent"
+

@@ -58,6 +58,10 @@ class ProductTemplateExtensions(models.Model):
     def button_open_widget_manager(self):
         self.ensure_one()
         active_product_template = self
+        domain = []
+        if active_product_template.seo_url:
+            domain = ['|', ('source_page', '=like', '%' + active_product_template.seo_url)]
+        domain.append(('source_page', '=', active_product_template.website_url))
         return {
             'name': _('Widget Manager'),
             'type': 'ir.actions.act_window',
@@ -65,7 +69,7 @@ class ProductTemplateExtensions(models.Model):
             'view_type': 'form',
             'view_mode': 'tree,form',
             'target': 'current',
-            'domain': [('id', 'in', active_product_template.widget_manager_ids.ids)],
+            'domain': domain,
             'context': {'default_source_page': active_product_template.website_url}
         }
 

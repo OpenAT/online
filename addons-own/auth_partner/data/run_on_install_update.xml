@@ -1,0 +1,8 @@
+<openerp>
+  <data>
+
+    <!-- Compute the field 'type' for all fields on install update  -->
+    <function model="res.partner.fstoken.log" name="on_install_update_set_login_field"/>
+
+  </data>
+</openerp>

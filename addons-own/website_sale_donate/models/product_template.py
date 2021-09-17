@@ -43,12 +43,12 @@ class ProductTemplate(models.Model):
 
     # Custom Checkout Fields by product
     checkout_form_id = fields.Many2one(string="Checkout Fields Form", comodel_name='fson.form',
-                                       domain="[('product_template_ids', '!=', False)]",
+                                       domain="[('type', '=', 'checkout')]",
                                        help="Set custom checkout fields for this product")
 
     # Custom Checkout Giftee Fields by product
     giftee_form_id = fields.Many2one(string="Giftee Fields Form", comodel_name='fson.form',
-                                     domain="[('ptemplate_giftee_ids', '!=', False)]",
+                                     domain="[('type', '=', 'giftee')]",
                                      help="Set custom giftee fields for this product")
 
     giftee_email_template = fields.Many2one(string="Giftee Info E-Mail",
@@ -136,7 +136,6 @@ class ProductTemplate(models.Model):
 
         return super(ProductTemplate, self).copy(default=default)
 
-
     # Custom Checkout Fields Form Button Action
     # -----------------------------------------
     # TODO: Add frontend validations
@@ -147,7 +146,8 @@ class ProductTemplate(models.Model):
                 # Create the fso form
                 res_partner_model = self.env['ir.model'].search([('model', '=', 'res.partner')])
 
-                form_vals = {'name': _('Checkout fields form for product %s (id %s)') % (r.name, r.id),
+                form_vals = {'type': 'checkout',
+                             'name': _('Checkout fields form for product %s (id %s)') % (r.name, r.id),
                              'model_id': res_partner_model.id,
                              'submit_button_text': _('Continue'),
                              'clear_session_data_after_submit': True,
@@ -161,25 +161,29 @@ class ProductTemplate(models.Model):
                 form = self.env['fson.form'].create(form_vals)
 
                 # Create the fso form fields
-                f_fields = {'firstname': {'sequence': 10,
+                f_fields = {'firstname': {'type': 'model',
+                                          'sequence': 10,
                                           'show': True,
                                           'label': _('Firstname'),
                                           'mandatory': False,
                                           'css_classes': 'col-sm-6 col-md-6 col-lg-6',
                                           'clearfix': False},
-                            'lastname': {'sequence': 20,
+                            'lastname': {'type': 'model',
+                                         'sequence': 20,
                                          'show': True,
                                          'label': _('Lastname'),
                                          'mandatory': True,
                                          'css_classes': 'col-sm-6 col-md-6 col-lg-6',
                                          'clearfix': True},
-                            'email': {'sequence': 30,
+                            'email': {'type': 'model',
+                                      'sequence': 30,
                                       'label': _('E-Mail'),
                                       'show': True,
                                       'mandatory': True,
                                       'css_classes': 'col-sm-12 col-md-12 col-lg-12',
                                       'clearfix': True},
-                            'birthdate_web': {'sequence': 40,
+                            'birthdate_web': {'type': 'model',
+                                              'sequence': 40,
                                               'label': _('Birthdate'),
                                               'show': True,
                                               'mandatory': False,
@@ -187,13 +191,15 @@ class ProductTemplate(models.Model):
                                               'clearfix': True,
                                               'information': """ Um ihre Spenden von der Steuer absetzten zu können 
                                                                  ist die Angabe ihres Geburtsdatums erforderlich. """},
-                            'country_id': {'sequence': 50,
+                            'country_id': {'type': 'model',
+                                           'sequence': 50,
                                            'label': _('Country'),
                                            'show': True,
                                            'mandatory': True,
                                            'css_classes': 'col-sm-12 col-md-12 col-lg-12',
                                            'clearfix': True},
-                            'donation_deduction_optout_web': {'sequence': 60,
+                            'donation_deduction_optout_web': {'type': 'model',
+                                                              'sequence': 60,
                                                               'label': _('Meine Spenden nicht absetzen'),
                                                               'show': True,
                                                               'mandatory': False,
@@ -222,7 +228,8 @@ class ProductTemplate(models.Model):
                 # Create the fso form
                 res_partner_model = self.env['ir.model'].search([('model', '=', 'res.partner')])
 
-                form_vals = {'name': _('Giftee fields form for product %s (id %s)') % (r.name, r.id),
+                form_vals = {'type': 'giftee',
+                             'name': _('Giftee fields form for product %s (id %s)') % (r.name, r.id),
                              'model_id': res_partner_model.id,
                              'submit_button_text': _('Continue'),
                              'clear_session_data_after_submit': True,
@@ -236,25 +243,29 @@ class ProductTemplate(models.Model):
                 form = self.env['fson.form'].create(form_vals)
 
                 # Create the fso form fields
-                f_fields = {'firstname': {'sequence': 10,
+                f_fields = {'firstname': {'type': 'model',
+                                          'sequence': 10,
                                           'show': True,
                                           'label': _('Firstname'),
                                           'mandatory': False,
                                           'css_classes': 'col-sm-6 col-md-6 col-lg-6',
                                           'clearfix': False},
-                            'lastname': {'sequence': 20,
+                            'lastname': {'type': 'model',
+                                         'sequence': 20,
                                          'show': True,
                                          'label': _('Lastname'),
                                          'mandatory': True,
                                          'css_classes': 'col-sm-6 col-md-6 col-lg-6',
                                          'clearfix': True},
-                            'email': {'sequence': 30,
+                            'email': {'type': 'model',
+                                      'sequence': 30,
                                       'label': _('E-Mail'),
                                       'show': True,
                                       'mandatory': True,
                                       'css_classes': 'col-sm-12 col-md-12 col-lg-12',
                                       'clearfix': True},
-                            'birthdate_web': {'sequence': 40,
+                            'birthdate_web': {'type': 'model',
+                                              'sequence': 40,
                                               'label': _('Birthdate'),
                                               'show': True,
                                               'mandatory': False,
@@ -262,7 +273,8 @@ class ProductTemplate(models.Model):
                                               'clearfix': True,
                                               'information': """ Um ihre Spenden von der Steuer absetzten zu können 
                                                                  ist die Angabe ihres Geburtsdatums erforderlich. """},
-                            'country_id': {'sequence': 50,
+                            'country_id': {'type': 'model',
+                                           'sequence': 50,
                                            'label': _('Country'),
                                            'show': True,
                                            'mandatory': True,

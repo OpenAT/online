@@ -111,7 +111,7 @@
                             </group>
 
                             <group colspan="2" string="Webshop: Custom Checkout Fields">
-                                <field name="checkout_form_id" readonly="1"/>
+                                <field name="checkout_form_id"/>
                                 <button name="create_checkout_fields_form" type="object"
                                         string="Custom Checkout Fields"
                                         colspan="2"

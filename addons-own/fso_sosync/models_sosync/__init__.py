@@ -42,3 +42,6 @@ import mail_mass_mailing_contact
 
 # FRST CDS
 import frst_zverzeichnis
+
+# Chatter Messages
+import mail_message

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="mail_message_form_subtype_xml_id">
+        <field name="name">mail_message_form_subtype_xml_id</field>
+        <field name="model">mail.message</field>
+        <field name="inherit_id" ref="mail.view_message_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='subtype_id']" position="after">
+                    <field name="subtype_xml_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>
