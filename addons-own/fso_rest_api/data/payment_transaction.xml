@@ -21,12 +21,24 @@
                     (0, 0, {'name': 'write_date'}),
 
                     (0, 0, {'name': 'state'}),
-                    (0, 0, {'name': 'frst_iban'}),
                     (0, 0, {'name': 'acquirer_reference'}),
                     (0, 0, {'name': 'esr_reference_number'}),
                     (0, 0, {'name': 'reference'}),
                     (0, 0, {'name': 'amount'}),
                     (0, 0, {'name': 'acquirer_id'}),
+
+                    (0, 0, {'name': 'consale_provider_name'}),
+                    (0, 0, {'name': 'consale_method'}),
+                    (0, 0, {'name': 'consale_method_other'}),
+                    (0, 0, {'name': 'consale_method_brand'}),
+                    (0, 0, {'name': 'consale_method_banktransfer_provider'}),
+                    (0, 0, {'name': 'consale_method_account_owner'}),
+                    (0, 0, {'name': 'consale_method_account_iban'}),
+                    (0, 0, {'name': 'consale_method_account_bic'}),
+                    (0, 0, {'name': 'consale_method_account_bank'}),
+                    (0, 0, {'name': 'consale_recurring_payment_provider'}),
+                    (0, 0, {'name': 'consale_error_code'}),
+                    (0, 0, {'name': 'consale_error_msg'}),
                     ]"
             />
         </record>
