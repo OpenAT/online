@@ -1,5 +1,6 @@
 <!-- Copyright 2019 Ivan Yelizariev <https://it-projects.info/team/yelizariev>
      License LGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).-->
 <openerp><data>
-    <function model="res.users" name="reset_missing_openapi_tokens" />
+    <!-- Do not reset tokens on addon install, for improved security -->
+    <!-- <function model="res.users" name="reset_missing_openapi_tokens" /> -->
 </data></openerp>
