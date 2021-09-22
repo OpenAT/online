@@ -29,7 +29,7 @@ class TestFsoRestApiSaleOrder(FsoRestApiTestCase):
         model = self.read_first_from_api()
         self.assertModel(model)
 
-    def test_update_sale_order_is_denied(self):
+    def test_update_sale_order_works(self):
         expected_name = "TEST1"
         model = self.read_first_from_api()
 
@@ -40,7 +40,7 @@ class TestFsoRestApiSaleOrder(FsoRestApiTestCase):
             "id": int(model["id"]),
             "name": expected_name
         })
-        self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
+        self.assertEqual(response.status_code, self.HTTP_OK_NO_CONTENT)
 
     def test_delete_sale_order_is_denied(self):
         model = self.read_first_from_api()
