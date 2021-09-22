@@ -13,6 +13,7 @@ In order to submit a donation or a payment, the following process is required:
 2) Create a :ref:`sale_order` including one or more :ref:`sale_order_line` for the order details
 3) Create a :ref:`payment_transaction` for the payment details
 4) Update the :ref:`sale_order` setting the `state` and `payment_tx_id`
+5) Optional: send a :ref:`mail_message` with a comment for the organisation
 
 
 Example
@@ -109,3 +110,17 @@ Example
             'payment_tx_id': payment_transaction_id,
         }
         requests.put(api_base_url + '/sale.order/%s' % sale_order_id, auth=auth, json=sale_order_update_data)
+
+        # Optional:
+        # Send a comment for the organisation, subtype_id was looked up manually.
+        # This can be used for detailed information on the donation. E.g., the product is
+        # "Fight animal cruelty", but in the comment the donor specifies to only support dogs.
+        subtype_id = 61  # FS-Online Question / Survey
+        message_data = {
+            'body': 'Use my donation for dogs only.',
+            'model': 'sale.order',
+            'res_id': sale_order_id,
+            'type': 'comment',
+            'subtype_id': subtype_id
+        }
+        requests.post(api_base_url + '/mail.message', auth=auth, json=message_data)
