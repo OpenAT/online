@@ -66,5 +66,6 @@ If you need to make local or manual changes create a new integration!
         'data/res_currency.xml',
         'data/product_payment_interval.xml',
         'data/product_payment_interval_lines.xml',
+        'data/mail_message.xml',
     ],
 }
