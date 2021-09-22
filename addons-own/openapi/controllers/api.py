@@ -39,32 +39,32 @@ class ApiV1Controller(http.Controller):
     .. methods:
 
         CRUD Methods:
-        - `POST     .../<model>`               -> `CreateOne`
-        - `PUT      .../<model>/<id>`          -> `UpdateOne`
-        - `GET      .../<model>`               -> `ReadMulti`
-        - `GET      .../<model>/<id>`          -> `ReadOne`
-        - `DELETE   .../<model>/<id>`          -> `UnlinkOne`
+        - `POST     .../<endpoint_model>`               -> `CreateOne`
+        - `PUT      .../<endpoint_model>/<id>`          -> `UpdateOne`
+        - `GET      .../<endpoint_model>`               -> `ReadMulti`
+        - `GET      .../<endpoint_model>/<id>`          -> `ReadOne`
+        - `DELETE   .../<endpoint_model>/<id>`          -> `UnlinkOne`
 
         Auxiliary Methods:
-        - `PATCH    .../<model>/<id>/<method>`               -> `Call Method on Singleton Record`
-        - `PATCH    .../<model>/<method>`                    -> `Call Method on RecordSet`
+        - `PATCH    .../<endpoint_model>/<id>/<method>`               -> `Call Method on Singleton Record`
+        - `PATCH    .../<endpoint_model>/<method>`                    -> `Call Method on RecordSet`
         - `GET      .../report/pdf/<report_external_id>`     -> `Get Report as PDF`
         - `GET      .../report/html/<report_external_id>`    -> `Get Report as HTML`
     """
 
     _api_endpoint = API_ENDPOINT + API_ENDPOINT_V1
-    _api_endpoint = _api_endpoint + "/<namespace>"
+    _api_endpoint = _api_endpoint + "/<endpoint_namespace>"
     # CreateOne # ReadMulti
-    _api_endpoint_model = _api_endpoint + "/<model>"
+    _api_endpoint_model = _api_endpoint + "/<endpoint_model>"
     # ReadOne # UpdateOne # UnlinkOne
-    _api_endpoint_model_id = _api_endpoint + "/<model>/<int:id>"
+    _api_endpoint_model_id = _api_endpoint + "/<endpoint_model>/<int:id>"
     # Call Method on Singleton Record
     _api_endpoint_model_id_method = (
-        _api_endpoint + "/<model>/<int:id>/call/<method_name>"
+        _api_endpoint + "/<endpoint_model>/<int:id>/call/<method_name>"
     )
     # Call Method on RecordSet
-    _api_endpoint_model_method = _api_endpoint + "/<model>/call/<method_name>"
-    _api_endpoint_model_method_ids = _api_endpoint + "/<model>/call/<method_name>/<ids>"
+    _api_endpoint_model_method = _api_endpoint + "/<endpoint_model>/call/<method_name>"
+    _api_endpoint_model_method_ids = _api_endpoint + "/<endpoint_model>/call/<method_name>/<ids>"
     # Get Reports
     _api_report_docids = (
         _api_endpoint
@@ -79,8 +79,8 @@ class ApiV1Controller(http.Controller):
     @pinguin.route(
         _api_endpoint_model, methods=["POST"], type="apijson", auth="none", csrf=False
     )
-    def create_one__POST(self, namespace, model, **data):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+    def create_one__POST(self, endpoint_namespace, endpoint_model, **data):
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
 
         # Check if the method is allowed
         pinguin.method_is_allowed(
@@ -100,7 +100,7 @@ class ApiV1Controller(http.Controller):
         # else:
         #     context = kw.get('context') or {}
         return pinguin.wrap__resource__create_one(
-            modelname=model,
+            modelname=endpoint_model,
             context=conf["context"],
             data=data,
             success_code=pinguin.CODE__created,
@@ -111,13 +111,13 @@ class ApiV1Controller(http.Controller):
     @pinguin.route(
         _api_endpoint_model, methods=["GET"], type="http", auth="none", csrf=False
     )
-    def read_multi__GET(self, namespace, model, **kw):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+    def read_multi__GET(self, endpoint_namespace, endpoint_model, **kw):
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
         pinguin.method_is_allowed(
             "api_read", conf["method"], main=True, raise_exception=True
         )
         return pinguin.wrap__resource__read_all(
-            modelname=model,
+            modelname=endpoint_model,
             success_code=pinguin.CODE__success,
             out_fields=conf["out_fields_read_multi"],
         )
@@ -126,13 +126,13 @@ class ApiV1Controller(http.Controller):
     @pinguin.route(
         _api_endpoint_model_id, methods=["GET"], type="http", auth="none", csrf=False
     )
-    def read_one__GET(self, namespace, model, id, **kw):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+    def read_one__GET(self, endpoint_namespace, endpoint_model, id, **kw):
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
         pinguin.method_is_allowed(
             "api_read", conf["method"], main=True, raise_exception=True
         )
         return pinguin.wrap__resource__read_one(
-            modelname=model,
+            modelname=endpoint_model,
             id=id,
             success_code=pinguin.CODE__success,
             out_fields=conf["out_fields_read_one"],
@@ -142,8 +142,8 @@ class ApiV1Controller(http.Controller):
     @pinguin.route(
         _api_endpoint_model_id, methods=["PUT"], type="apijson", auth="none", csrf=False
     )
-    def update_one__PUT(self, namespace, model, id, **data):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+    def update_one__PUT(self, endpoint_namespace, endpoint_model, id, **data):
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
 
         pinguin.method_is_allowed(
             "api_update", conf["method"], main=True, raise_exception=True
@@ -155,20 +155,20 @@ class ApiV1Controller(http.Controller):
         )
 
         return pinguin.wrap__resource__update_one(
-            modelname=model, id=id, success_code=pinguin.CODE__ok_no_content, data=data
+            modelname=endpoint_model, id=id, success_code=pinguin.CODE__ok_no_content, data=data
         )
 
     # UnlinkOne
     @pinguin.route(
         _api_endpoint_model_id, methods=["DELETE"], type="http", auth="none", csrf=False
     )
-    def unlink_one__DELETE(self, namespace, model, id, **data):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+    def unlink_one__DELETE(self, endpoint_namespace, endpoint_model, id, **data):
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
         pinguin.method_is_allowed(
             "api_delete", conf["method"], main=True, raise_exception=True
         )
         return pinguin.wrap__resource__unlink_one(
-            modelname=model, id=id, success_code=pinguin.CODE__ok_no_content
+            modelname=endpoint_model, id=id, success_code=pinguin.CODE__ok_no_content
         )
 
     # ######################
@@ -184,12 +184,12 @@ class ApiV1Controller(http.Controller):
         csrf=False,
     )
     def call_method_one__PATCH(
-        self, namespace, model, id, method_name, **method_params
+        self, endpoint_namespace, endpoint_model, id, method_name, **method_params
     ):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
         pinguin.method_is_allowed(method_name, conf["method"])
         return pinguin.wrap__resource__call_method(
-            modelname=model,
+            modelname=endpoint_model,
             ids=[id],
             method=method_name,
             method_params=method_params,
@@ -205,14 +205,14 @@ class ApiV1Controller(http.Controller):
         csrf=False,
     )
     def call_method_multi__PATCH(
-        self, namespace, model, method_name, ids=None, **method_params
+        self, endpoint_namespace, endpoint_model, method_name, ids=None, **method_params
     ):
-        conf = pinguin.get_model_openapi_access(namespace, model)
+        conf = pinguin.get_model_openapi_access(endpoint_namespace, endpoint_model)
         pinguin.method_is_allowed(method_name, conf["method"])
         ids = ids and ids.split(",") or []
         ids = [int(i) for i in ids]
         return pinguin.wrap__resource__call_method(
-            modelname=model,
+            modelname=endpoint_model,
             ids=ids,
             method=method_name,
             method_params=method_params,
@@ -223,9 +223,9 @@ class ApiV1Controller(http.Controller):
     @pinguin.route(
         _api_report_docids, methods=["GET"], type="http", auth="none", csrf=False
     )
-    def report__GET(self, converter, namespace, report_external_id, docids):
+    def report__GET(self, converter, endpoint_namespace, report_external_id, docids):
         return pinguin.wrap__resource__get_report(
-            namespace=namespace,
+            namespace=endpoint_namespace,
             report_external_id=report_external_id,
             docids=docids,
             converter=converter,
