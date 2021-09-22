@@ -12,4 +12,5 @@ from . import test_res_country
 from . import test_res_currency
 from . import test_product_payment_interval
 from . import test_product_payment_interval_lines
+from . import test_mail_message
 from . import test_mail_message_subtype
