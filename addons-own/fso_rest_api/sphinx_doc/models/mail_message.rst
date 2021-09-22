@@ -4,7 +4,13 @@
 mail.message
 =========================================
 
-Contains messages or comments.
+Contains messages or comments. The comment can be assigned to either a person or a
+sale order via the ``model`` field.
+
+Example:
+    A donor donates for the product "Fight animal cruelty". The form contains a comment field.
+    In the comment field, the donor writes "Use my donation for dogs only." - this text would
+    be sent via ``mail.message``, with the target model ``sale.order``.
 
 .. note:: Only creating is supported for this model.
 
