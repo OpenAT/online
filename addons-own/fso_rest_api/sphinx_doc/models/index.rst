@@ -21,3 +21,4 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     sale_orders
     payment_acquirer
     payment_transaction
+    mail_message

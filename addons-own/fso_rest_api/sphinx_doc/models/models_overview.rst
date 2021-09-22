@@ -161,3 +161,18 @@ Payment transaction
 :ref:`payment_transaction`
 
 Represents an actual payment, including all the payment specific information.
+
+
+Mail Message (Comments)
+--------------------------------------------------------------
+
+:ref:`mail_message`
+
+Represents a message or comment.
+
+Mail Message Subtype
+--------------------------------------------------------------
+
+:ref:`mail_message_subtype`
+
+Categorizes messages and comments.
