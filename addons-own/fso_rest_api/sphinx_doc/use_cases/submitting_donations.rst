@@ -52,7 +52,7 @@ Example
         sale_order_lines_data = [
             (0, False, {
                 'name': 'Fight animal cruelty',
-                'state': 'done',
+                'state': 'confirmed',
                 'product_id': product_id,
                 'fs_origin': 'https://my-site.at/form',
                 'price_unit': 55.25,
@@ -104,9 +104,9 @@ Example
         payment_transaction_id = payment_transaction_response.json()["id"]
 
         # Finally, update the sale order with the new payment transaction ID
-        # and set the state to 'done'
+        # and set the state to 'manual'
         sale_order_update_data = {
-            'state': 'done',
+            'state': 'manual',
             'payment_tx_id': payment_transaction_id,
         }
         requests.put(api_base_url + '/sale.order/%s' % sale_order_id, auth=auth, json=sale_order_update_data)

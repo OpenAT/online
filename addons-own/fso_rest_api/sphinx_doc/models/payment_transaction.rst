@@ -23,7 +23,7 @@ The foreign key of the :ref:`payment_acquirer`.
 """"""""""""""""""""
 The state of the transaction. Can be either:
 
-- ``done`` The payment was successfully processed
+- ``done`` The payment was successfully processed. **Use this for all payments NOT processed by DataDialog.**
 - ``draft`` Payment still in draft
 - ``pending`` Payment is in progress. **Use this for direct debit donations processed by DataDialog**
 - ``error`` Error during payment

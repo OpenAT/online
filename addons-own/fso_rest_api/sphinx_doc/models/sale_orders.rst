@@ -38,13 +38,13 @@ For example ``ORG4711``.
 """""""""""""""""""""
 The state of the order. Can be one of these values:
 
-- ``done`` The order is completed. **Use this for donations.**
+- ``done`` The order is completed
 - ``draft`` Draft quotation
 - ``sent`` Quotiont was sent
 - ``cancel`` The order was cancelled
 - ``waiting_date`` The order awaits a specific date
 - ``progress`` The order is in progress
-- ``manual`` Order was manually approved
+- ``manual`` Order was manually approved. **Use this for donations.**
 - ``shipping_except`` Shipping error
 - ``invoice_except`` Invoicing error
 
@@ -113,10 +113,10 @@ the name of the donation product or physical product here.
 """""""""""""""""""""
 State of the order line. Should correspond to the :ref:`sale_order`.
 
-- ``done`` The order line is completed. **Use this for donations.**
+- ``done`` The order line is completed.
 - ``cancelled`` The related order was cancelled
 - ``draft`` The related order is in draft mode
-- ``confirmed`` The sale order is completed
+- ``confirmed`` The sale order is completed. **Use this for donations.**
 - ``exception`` Error
 
 ``order_id``
