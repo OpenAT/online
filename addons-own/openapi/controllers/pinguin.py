@@ -381,12 +381,12 @@ def route(*args, **kwargs):
             setup_db(request.httprequest, db_name)
             authenticated_user = authenticate_token_for_user(user_token)
             namespace = get_namespace_by_name_from_users_namespaces(
-                authenticated_user, ikwargs["namespace"], raise_exception=True
+                authenticated_user, ikwargs["endpoint_namespace"], raise_exception=True
             )
             data_for_log = {
                 "namespace_id": namespace.id,
                 "namespace": namespace.name,
-                "model": ikwargs["model"],
+                "model": ikwargs["endpoint_model"],
                 "namespace_log_request": namespace.log_request,
                 "namespace_log_response": namespace.log_response,
                 "user_id": authenticated_user.id,

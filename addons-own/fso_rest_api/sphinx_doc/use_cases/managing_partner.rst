@@ -199,7 +199,7 @@ field data as the json payload of the request.
 Creating a partner
 ------------------
 
-To create a new partner data we send a ``POST`` request to the route ``/res.partner/{id}`` and provide the
+To create a new partner data we send a ``POST`` request to the route ``/res.partner`` and provide the
 field data as the json payload of the request.
 
 .. tabs::

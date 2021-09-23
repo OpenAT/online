@@ -8,8 +8,17 @@ Please make sure to start with :ref:`models_overview` to get a basic understandi
     :maxdepth: 1
 
     models_overview
+    res_country
+    res_currency
+    product_payment_interval
+    product_payment_interval_lines
     res_partner
     frst_personemail
     frst_groups
     frst_group_subscriptions
     frst_zverzeichnis
+    products
+    sale_orders
+    payment_acquirer
+    payment_transaction
+    mail_message
