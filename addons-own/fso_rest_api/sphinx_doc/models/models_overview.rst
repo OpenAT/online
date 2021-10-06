@@ -13,6 +13,38 @@ The full list of available models with their fields and data types can be found 
 
 --------------------------------------------------------------------------------------------------------------------
 
+Country
+--------------------------------------------------------------
+
+:ref:`res_country`
+
+Countries known by the system.
+
+
+Currency
+--------------------------------------------------------------
+
+:ref:`res_currency`
+
+Currencies known by the system.
+
+
+Payment intervals
+--------------------------------------------------------------
+
+:ref:`product_payment_interval`
+
+Recurring payment intervals known by the system.
+
+
+Payment interval lines
+--------------------------------------------------------------
+
+:ref:`product_payment_interval_lines`
+
+Assigns possible payment intervals to a :ref:`product_template`.
+
+
 Partner
 --------------------------------------------------------------
 
@@ -91,3 +123,56 @@ and how accounting entries are handled.
 
     You are able to link actions (mail, email, sms, contracts) to a cds record for cumulative reporting and
     centralized monitoring.
+
+
+Products
+--------------------------------------------------------------
+
+:ref:`products`
+
+``product.template`` represents both donation products or physical products. ``product.product`` represents
+a variant of that product.
+
+By default, products (especially donation products), have only one variant, which is automatically created, when
+creating the ``product.template``.
+
+.. warning:: Multiple variants are currently not supported.
+
+Sale orders & Donations
+--------------------------------------------------------------
+
+:ref:`sale_orders`
+
+``sale.order`` represents an order, and ``sale.order.line`` represents an order line.
+
+An order can contain multiple lines.
+
+Payment acquirer
+--------------------------------------------------------------
+
+:ref:`payment_acquirer`
+
+Specifies how a payment was acquired.
+
+
+Payment transaction
+--------------------------------------------------------------
+
+:ref:`payment_transaction`
+
+Represents an actual payment, including all the payment specific information.
+
+
+Mail Message (Comments)
+--------------------------------------------------------------
+
+:ref:`mail_message`
+
+Represents a message or comment.
+
+Mail Message Subtype
+--------------------------------------------------------------
+
+:ref:`mail_message_subtype`
+
+Categorizes messages and comments.

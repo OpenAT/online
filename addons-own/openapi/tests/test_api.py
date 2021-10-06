@@ -37,9 +37,9 @@ class TestAPI(HttpCase):
         self.api_namespace = self.phantom_env.ref('openapi.namespace_demo')
 
     def request(self, method, url, auth=None, **kwargs):
-        kwargs.setdefault("model", self.model_name)
-        kwargs.setdefault("namespace", self.api_namespace.name)
-        url = ("http://localhost:%d/api/v1/{namespace}" % PORT + url).format(**kwargs)
+        kwargs.setdefault("endpoint_model", self.model_name)
+        kwargs.setdefault("endpoint_namespace", self.api_namespace.name)
+        url = ("http://localhost:%d/api/v1/{endpoint_namespace}" % PORT + url).format(**kwargs)
         self.opener = requests.Session()
         self.opener.cookies["session_id"] = self.session_id
         return self.opener.request(

@@ -45,7 +45,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="res.partner" href="res_partner.html" />
+    <link rel="next" title="res.country" href="res_country.html" />
     <link rel="prev" title="Models" href="index.html" /> 
 </head>
 
@@ -116,6 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../basics/gotchas_conventions.html">Gotchas and Conventions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#charset">Charset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#content-type">Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#calling-model-methods">Calling model methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#date-and-datetime-fields">Date and Datetime Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#locale">Locale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#language">Language</a></li>
@@ -132,11 +133,53 @@
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Models</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Models Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#country">Country</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#currency">Currency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-intervals">Payment intervals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-interval-lines">Payment interval lines</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#partner">Partner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#email-addresses">Email Addresses</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#groups">Groups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#group-subscriptions">Group Subscriptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fundraising-studio-cds">Fundraising Studio CDS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#products">Products</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sale-orders-donations">Sale orders &amp; Donations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-acquirer">Payment acquirer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-transaction">Payment transaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mail-message-comments">Mail Message (Comments)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mail-message-subtype">Mail Message Subtype</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="res_country.html">res.country</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="res_country.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="res_country.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_country.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="res_currency.html">res.currency</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="res_currency.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="res_currency.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_currency.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="product_payment_interval.html">product.payment_interval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_payment_interval.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_payment_interval.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="product_payment_interval.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="product_payment_interval_lines.html">product.payment_interval_lines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_payment_interval_lines.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_payment_interval_lines.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="product_payment_interval_lines.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="res_partner.html">res.partner</a><ul>
@@ -233,6 +276,117 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="products.html">product.template, product.product</a></li>
+<li class="toctree-l2"><a class="reference internal" href="products.html#product-template">product.template</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="products.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#description-sale"><code class="docutils literal notranslate"><span class="pre">description_sale</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#fs-product-type"><code class="docutils literal notranslate"><span class="pre">fs_product_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#type"><code class="docutils literal notranslate"><span class="pre">type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#product-variant-ids"><code class="docutils literal notranslate"><span class="pre">product_variant_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#payment-interval-lines-ids"><code class="docutils literal notranslate"><span class="pre">payment_interval_lines_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="products.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="products.html#product-product">product.product</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="products.html#id3">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#product-tmpl-id"><code class="docutils literal notranslate"><span class="pre">product_tmpl_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="products.html#id4">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#id5"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sale_orders.html">sale.order, sale.order.line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sale_orders.html#sale-order">sale.order</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#date-order"><code class="docutils literal notranslate"><span class="pre">date_order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#amount-total"><code class="docutils literal notranslate"><span class="pre">amount_total</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#partner-id"><code class="docutils literal notranslate"><span class="pre">partner_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#giftee-partner-id"><code class="docutils literal notranslate"><span class="pre">giftee_partner_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#payment-tx-id"><code class="docutils literal notranslate"><span class="pre">payment_tx_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#payment-acquirer-id"><code class="docutils literal notranslate"><span class="pre">payment_acquirer_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#order-line"><code class="docutils literal notranslate"><span class="pre">order_line</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sale_orders.html#sale-order-line">sale.order.line</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#id3">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#id4"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#id5"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#order-id"><code class="docutils literal notranslate"><span class="pre">order_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#product-id"><code class="docutils literal notranslate"><span class="pre">product_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#fs-origin"><code class="docutils literal notranslate"><span class="pre">fs_origin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#price-unit"><code class="docutils literal notranslate"><span class="pre">price_unit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#product-uos-qty"><code class="docutils literal notranslate"><span class="pre">product_uos_qty</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#price-donate"><code class="docutils literal notranslate"><span class="pre">price_donate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#payment-interval-id"><code class="docutils literal notranslate"><span class="pre">payment_interval_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#zgruppedetail-ids"><code class="docutils literal notranslate"><span class="pre">zgruppedetail_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#id6">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#id7"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="payment_acquirer.html">payment.acquirer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="payment_acquirer.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="payment_acquirer.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="payment_acquirer.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="payment_transaction.html">payment.transaction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="payment_transaction.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#acquirer-id"><code class="docutils literal notranslate"><span class="pre">acquirer_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#reference"><code class="docutils literal notranslate"><span class="pre">reference</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#acquirer-reference"><code class="docutils literal notranslate"><span class="pre">acquirer_reference</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#esr-reference-number"><code class="docutils literal notranslate"><span class="pre">esr_reference_number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#amount"><code class="docutils literal notranslate"><span class="pre">amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-provider-name"><code class="docutils literal notranslate"><span class="pre">consale_provider_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method"><code class="docutils literal notranslate"><span class="pre">consale_method</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-other"><code class="docutils literal notranslate"><span class="pre">consale_method_other</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-brand"><code class="docutils literal notranslate"><span class="pre">consale_method_brand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-banktransfer-provider"><code class="docutils literal notranslate"><span class="pre">consale_method_banktransfer_provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-owner"><code class="docutils literal notranslate"><span class="pre">consale_method_account_owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-iban"><code class="docutils literal notranslate"><span class="pre">consale_method_account_iban</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-bic"><code class="docutils literal notranslate"><span class="pre">consale_method_account_bic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-bank"><code class="docutils literal notranslate"><span class="pre">consale_method_account_bank</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-recurring-payment-provider"><code class="docutils literal notranslate"><span class="pre">consale_recurring_payment_provider</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="payment_transaction.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mail_message.html">mail.message</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mail_message.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mail_message.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mail_message.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mail_message.html#mail-message-subtype">mail.message.subtype</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
@@ -275,6 +429,19 @@
 <li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#create-email-groups">Create email groups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#subscribe-to-a-newsletter">Subscribe to a newsletter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#unsubscribe-from-a-newsletter">Unsubscribe from a newsletter</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_products.html">Managing products</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#search-for-products">Search for products</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#read-the-product-data">Read the product data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#updating-product-data">Updating product data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#creating-a-product">Creating a product</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#deleting-a-product">Deleting a product</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/submitting_donations.html">Submitting Donations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/submitting_donations.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/submitting_donations.html#example">Example</a></li>
 </ul>
 </li>
 </ul>
@@ -345,7 +512,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="res_partner.html" class="btn btn-neutral float-right" title="res.partner" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="res_country.html" class="btn btn-neutral float-right" title="res.country" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Models" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
@@ -364,16 +531,46 @@ The full list of available models with their fields and data types can be found 
 <div class="contents local topic" id="common-models">
 <p class="topic-title">Common Models</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#partner" id="id2">Partner</a></p></li>
-<li><p><a class="reference internal" href="#email-addresses" id="id3">Email Addresses</a></p></li>
-<li><p><a class="reference internal" href="#groups" id="id4">Groups</a></p></li>
-<li><p><a class="reference internal" href="#group-subscriptions" id="id5">Group Subscriptions</a></p></li>
-<li><p><a class="reference internal" href="#fundraising-studio-cds" id="id6">Fundraising Studio CDS</a></p></li>
+<li><p><a class="reference internal" href="#country" id="id2">Country</a></p></li>
+<li><p><a class="reference internal" href="#currency" id="id3">Currency</a></p></li>
+<li><p><a class="reference internal" href="#payment-intervals" id="id4">Payment intervals</a></p></li>
+<li><p><a class="reference internal" href="#payment-interval-lines" id="id5">Payment interval lines</a></p></li>
+<li><p><a class="reference internal" href="#partner" id="id6">Partner</a></p></li>
+<li><p><a class="reference internal" href="#email-addresses" id="id7">Email Addresses</a></p></li>
+<li><p><a class="reference internal" href="#groups" id="id8">Groups</a></p></li>
+<li><p><a class="reference internal" href="#group-subscriptions" id="id9">Group Subscriptions</a></p></li>
+<li><p><a class="reference internal" href="#fundraising-studio-cds" id="id10">Fundraising Studio CDS</a></p></li>
+<li><p><a class="reference internal" href="#products" id="id11">Products</a></p></li>
+<li><p><a class="reference internal" href="#sale-orders-donations" id="id12">Sale orders &amp; Donations</a></p></li>
+<li><p><a class="reference internal" href="#payment-acquirer" id="id13">Payment acquirer</a></p></li>
+<li><p><a class="reference internal" href="#payment-transaction" id="id14">Payment transaction</a></p></li>
+<li><p><a class="reference internal" href="#mail-message-comments" id="id15">Mail Message (Comments)</a></p></li>
+<li><p><a class="reference internal" href="#mail-message-subtype" id="id16">Mail Message Subtype</a></p></li>
 </ul>
 </div>
 <hr class="docutils" />
+<div class="section" id="country">
+<h2><a class="toc-backref" href="#id2">Country</a><a class="headerlink" href="#country" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="res_country.html#res-country"><span class="std std-ref">res.country</span></a></p>
+<p>Countries known by the system.</p>
+</div>
+<div class="section" id="currency">
+<h2><a class="toc-backref" href="#id3">Currency</a><a class="headerlink" href="#currency" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="res_currency.html#res-currency"><span class="std std-ref">res.currency</span></a></p>
+<p>Currencies known by the system.</p>
+</div>
+<div class="section" id="payment-intervals">
+<h2><a class="toc-backref" href="#id4">Payment intervals</a><a class="headerlink" href="#payment-intervals" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="product_payment_interval.html#product-payment-interval"><span class="std std-ref">product.payment_interval</span></a></p>
+<p>Recurring payment intervals known by the system.</p>
+</div>
+<div class="section" id="payment-interval-lines">
+<h2><a class="toc-backref" href="#id5">Payment interval lines</a><a class="headerlink" href="#payment-interval-lines" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="product_payment_interval_lines.html#product-payment-interval-lines"><span class="std std-ref">product.payment_interval_lines</span></a></p>
+<p>Assigns possible payment intervals to a <a class="reference internal" href="products.html#product-template"><span class="std std-ref">product.template</span></a>.</p>
+</div>
 <div class="section" id="partner">
-<h2><a class="toc-backref" href="#id2">Partner</a><a class="headerlink" href="#partner" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Partner</a><a class="headerlink" href="#partner" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="res_partner.html#res-partner"><span class="std std-ref">res.partner</span></a></p>
 <p>A <a class="reference internal" href="res_partner.html#res-partner"><span class="std std-ref">res.partner</span></a> record represents most likely a person.
 This may be a donor, an employee or any other kind of contact.</p>
@@ -386,7 +583,7 @@ this documentation!</p>
 <a class="reference internal" href="frst_group_subscriptions.html#frst-persongruppe"><span class="std std-ref">frst.persongruppe</span></a>.</p>
 </div>
 <div class="section" id="email-addresses">
-<h2><a class="toc-backref" href="#id3">Email Addresses</a><a class="headerlink" href="#email-addresses" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Email Addresses</a><a class="headerlink" href="#email-addresses" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="frst_personemail.html#frst-personemail"><span class="std std-ref">frst.personemail</span></a></p>
 <p>A <a class="reference internal" href="frst_personemail.html#frst-personemail"><span class="std std-ref">frst.personemail</span></a> record represents an email address of a partner.
 Two partners may have identical email addresses but the emails must be unique per partner.</p>
@@ -395,7 +592,7 @@ field <code class="docutils literal notranslate"><span class="pre">email</span><
 <em>main email address</em> handling!</p>
 </div>
 <div class="section" id="groups">
-<h2><a class="toc-backref" href="#id4">Groups</a><a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Groups</a><a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="frst_groups.html#frst-groups"><span class="std std-ref">frst.zgruppe, frst.zgruppedetail</span></a></p>
 <p>Fundraising Studio Groups are very versatile and therefore used for many, many things.
 They can be assigned to <a class="reference internal" href="res_partner.html#res-partner"><span class="std std-ref">partner</span></a>, <a class="reference internal" href="frst_personemail.html#frst-personemail"><span class="std std-ref">email addresses</span></a> and a lot of other
@@ -405,7 +602,7 @@ of groups to a partner to opt-out or opt-in for communication channels (email, s
 relevant settings like the <em>donation report submission</em> to the austrian tax office.</p>
 </div>
 <div class="section" id="group-subscriptions">
-<h2><a class="toc-backref" href="#id5">Group Subscriptions</a><a class="headerlink" href="#group-subscriptions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Group Subscriptions</a><a class="headerlink" href="#group-subscriptions" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="frst_group_subscriptions.html#frst-group-subscriptions"><span class="std std-ref">frst.persongruppe, frst.personemailgruppe</span></a></p>
 <p>An assignment of a group to a record is called <em>group subscription</em> or just subscription. These assignments
 or <em>group subscription records</em> have a status that indicates if this assignment is e.g. <em>active</em>, <em>expired</em> or
@@ -419,7 +616,7 @@ or <em>group subscription records</em> have a status that indicates if this assi
 <p><a class="reference internal" href="res_partner.html#res-partner"><span class="std std-ref">res.partner</span></a> &lt; <a class="reference internal" href="frst_group_subscriptions.html#frst-persongruppe"><span class="std std-ref">frst.persongruppe</span></a> &gt; <a class="reference internal" href="frst_groups.html#frst-zgruppedetail"><span class="std std-ref">frst.zgruppedetail</span></a> &gt; <a class="reference internal" href="frst_groups.html#frst-zgruppe"><span class="std std-ref">frst.zgruppe</span></a></p>
 </div>
 <div class="section" id="fundraising-studio-cds">
-<h2><a class="toc-backref" href="#id6">Fundraising Studio CDS</a><a class="headerlink" href="#fundraising-studio-cds" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Fundraising Studio CDS</a><a class="headerlink" href="#fundraising-studio-cds" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="frst_zverzeichnis.html#frst-zverzeichnis"><span class="std std-ref">frst.zverzeichnis</span></a></p>
 <p>The Fundraising Studio CDS (or <em>Verzeichnis</em>) is a tree like structure to link any kind of document to it like
 Contracts, Donations, Leads and many more. It can be imagined like a traditional folder structure where you can
@@ -432,6 +629,44 @@ and how accounting entries are handled.</p>
 centralized monitoring.</p>
 </div>
 </div>
+<div class="section" id="products">
+<h2><a class="toc-backref" href="#id11">Products</a><a class="headerlink" href="#products" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="products.html#products"><span class="std std-ref">product.template, product.product</span></a></p>
+<p><code class="docutils literal notranslate"><span class="pre">product.template</span></code> represents both donation products or physical products. <code class="docutils literal notranslate"><span class="pre">product.product</span></code> represents
+a variant of that product.</p>
+<p>By default, products (especially donation products), have only one variant, which is automatically created, when
+creating the <code class="docutils literal notranslate"><span class="pre">product.template</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Multiple variants are currently not supported.</p>
+</div>
+</div>
+<div class="section" id="sale-orders-donations">
+<h2><a class="toc-backref" href="#id12">Sale orders &amp; Donations</a><a class="headerlink" href="#sale-orders-donations" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="sale_orders.html#sale-orders"><span class="std std-ref">sale.order, sale.order.line</span></a></p>
+<p><code class="docutils literal notranslate"><span class="pre">sale.order</span></code> represents an order, and <code class="docutils literal notranslate"><span class="pre">sale.order.line</span></code> represents an order line.</p>
+<p>An order can contain multiple lines.</p>
+</div>
+<div class="section" id="payment-acquirer">
+<h2><a class="toc-backref" href="#id13">Payment acquirer</a><a class="headerlink" href="#payment-acquirer" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="payment_acquirer.html#payment-acquirer"><span class="std std-ref">payment.acquirer</span></a></p>
+<p>Specifies how a payment was acquired.</p>
+</div>
+<div class="section" id="payment-transaction">
+<h2><a class="toc-backref" href="#id14">Payment transaction</a><a class="headerlink" href="#payment-transaction" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="payment_transaction.html#payment-transaction"><span class="std std-ref">payment.transaction</span></a></p>
+<p>Represents an actual payment, including all the payment specific information.</p>
+</div>
+<div class="section" id="mail-message-comments">
+<h2><a class="toc-backref" href="#id15">Mail Message (Comments)</a><a class="headerlink" href="#mail-message-comments" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="mail_message.html#mail-message"><span class="std std-ref">mail.message</span></a></p>
+<p>Represents a message or comment.</p>
+</div>
+<div class="section" id="mail-message-subtype">
+<h2><a class="toc-backref" href="#id16">Mail Message Subtype</a><a class="headerlink" href="#mail-message-subtype" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="mail_message.html#mail-message-subtype"><span class="std std-ref">mail.message.subtype</span></a></p>
+<p>Categorizes messages and comments.</p>
+</div>
 </div>
 
 
@@ -440,7 +675,7 @@ centralized monitoring.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="res_partner.html" class="btn btn-neutral float-right" title="res.partner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="res_country.html" class="btn btn-neutral float-right" title="res.country" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="index.html" class="btn btn-neutral float-left" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

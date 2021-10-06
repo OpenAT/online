@@ -38,8 +38,11 @@ class ResUsers(models.Model):
         return openapi_token
 
     @api.model
-    def reset_all_openapi_tokens(self):
-        self.search([]).reset_openapi_token()
+    def reset_missing_openapi_tokens(self):
+        missing_token_domain = [
+            ('openapi_token', '=', False)
+        ]
+        self.search(missing_token_domain).reset_openapi_token()
 
     def check_credentials(self, cr, uid, password):
         try:

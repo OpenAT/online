@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- =================== -->
+        <!-- payment.transaction -->
+        <!-- =================== -->
+
+        <!-- ir.export field list for openapi access -->
+        <record id="frst_rest_api_payment_transaction_export" model="ir.exports">
+            <field name="name">Fundraising Studio Rest API Payment Transaction Fields</field>
+            <field name="resource">payment.transaction</field>
+            <field
+                name="export_fields"
+                eval="[
+                    (0, 0, {'name': 'id'}),
+                    (0, 0, {'name': 'create_uid'}),
+                    (0, 0, {'name': 'create_date'}),
+                    (0, 0, {'name': 'write_uid'}),
+                    (0, 0, {'name': 'write_date'}),
+
+                    (0, 0, {'name': 'state'}),
+                    (0, 0, {'name': 'acquirer_reference'}),
+                    (0, 0, {'name': 'esr_reference_number'}),
+                    (0, 0, {'name': 'reference'}),
+                    (0, 0, {'name': 'amount'}),
+                    (0, 0, {'name': 'acquirer_id'}),
+
+                    (0, 0, {'name': 'consale_provider_name'}),
+                    (0, 0, {'name': 'consale_method'}),
+                    (0, 0, {'name': 'consale_method_other'}),
+                    (0, 0, {'name': 'consale_method_brand'}),
+                    (0, 0, {'name': 'consale_method_banktransfer_provider'}),
+                    (0, 0, {'name': 'consale_method_account_owner'}),
+                    (0, 0, {'name': 'consale_method_account_iban'}),
+                    (0, 0, {'name': 'consale_method_account_bic'}),
+                    (0, 0, {'name': 'consale_method_account_bank'}),
+                    (0, 0, {'name': 'consale_recurring_payment_provider'}),
+                    (0, 0, {'name': 'consale_error_code'}),
+                    (0, 0, {'name': 'consale_error_msg'}),
+                    ]"
+            />
+        </record>
+
+        <!-- "context" for openapi access -->
+        <record id="frst_rest_api_payment_transaction_context" model="openapi.access.create.context">
+            <field name="name">frst_rest_api_payment_transaction_context</field>
+            <field name="model_id" ref="payment.model_payment_transaction" />
+            <field name="context">{"lang": "de_DE"}</field>
+        </record>
+
+        <!-- openapi access -->
+        <record id="frst_rest_api_payment_transaction_access" model="openapi.access">
+            <field name="namespace_id" ref="frst_rest_api_namespace" />
+            <field name="model_id" ref="payment.model_payment_transaction" />
+
+            <field name="api_create" eval="True" />
+            <field name="api_read" eval="True" />
+            <field name="api_update" eval="False" />
+            <field name="api_delete" eval="False" />
+
+            <field name="api_public_methods" eval="True" />
+            <field name="public_methods" eval="'search\n'"/>
+            <field name="private_methods" eval="" />
+
+            <field name="allowed_fields_id" ref="fso_rest_api.frst_rest_api_payment_transaction_export" />
+            <field name="read_one_id" ref="fso_rest_api.frst_rest_api_payment_transaction_export" />
+            <field name="read_many_id" ref="fso_rest_api.frst_rest_api_payment_transaction_export" />
+
+            <field
+                name="create_context_ids"
+                eval="[(4, ref('fso_rest_api.frst_rest_api_payment_transaction_context'))]"
+            />
+        </record>
+
+        <!--    ACCESS RULE:
+                Restrict deletion of records for group "frst_api_group": Logged in user must be creator of the record!
+        -->
+        <!--
+        <record model="ir.rule" id="rule_restrict_delete_frst_api_group_payment_transaction">
+            <field name="name">Fundraising Studio REST API Group: Delete own records only payment.transaction</field>
+            <field name="model_id" ref="payment.model_payment_transaction"/>
+            <field name="domain_force">[('create_uid.id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('fso_rest_api.frst_api_group'))]"/>
+            <field name="perm_read" eval=""/>
+            <field name="perm_write" eval=""/>
+            <field name="perm_create" eval=""/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+        -->
+
+    </data>
+</openerp>

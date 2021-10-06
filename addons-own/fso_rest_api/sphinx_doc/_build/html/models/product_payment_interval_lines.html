@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>product.payment_interval_lines &mdash; Fundraising Studio REST API o8 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="res.partner" href="res_partner.html" />
+    <link rel="prev" title="product.payment_interval" href="product_payment_interval.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Fundraising Studio REST API
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basics/index.html">Basics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../basics/introduction.html">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/introduction.html#where-to-start">Where to start?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#swagger-ui">Swagger UI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../basics/tutorial.html#authorize-yourself">1. Authorize yourself</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../basics/tutorial.html#try-the-routes">2. Try the routes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/tutorial.html#calling-methods">Calling Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/access_security.html">Access and Security</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#user-with-restricted-rights">User with restricted rights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/access_security.html#security-advisory">Security advisory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/gotchas_conventions.html">Gotchas and Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#charset">Charset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#content-type">Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#calling-model-methods">Calling model methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#date-and-datetime-fields">Date and Datetime Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#locale">Locale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/gotchas_conventions.html#language">Language</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../basics/usage_limits_logging.html">Limits, Costs, Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-limits">Usage Limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#usage-costs">Usage Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#repair-costs">Repair Costs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../basics/usage_limits_logging.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="models_overview.html">Models Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#country">Country</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#currency">Currency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#payment-intervals">Payment intervals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#payment-interval-lines">Payment interval lines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#partner">Partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#email-addresses">Email Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#groups">Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#group-subscriptions">Group Subscriptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#fundraising-studio-cds">Fundraising Studio CDS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#products">Products</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#sale-orders-donations">Sale orders &amp; Donations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#payment-acquirer">Payment acquirer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#payment-transaction">Payment transaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#mail-message-comments">Mail Message (Comments)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_overview.html#mail-message-subtype">Mail Message Subtype</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="res_country.html">res.country</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="res_country.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="res_country.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_country.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="res_currency.html">res.currency</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="res_currency.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="res_currency.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_currency.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="product_payment_interval.html">product.payment_interval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_payment_interval.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_payment_interval.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="product_payment_interval.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">product.payment_interval_lines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="res_partner.html">res.partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="res_partner.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="res_partner.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_partner.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="res_partner.html#email"><code class="docutils literal notranslate"><span class="pre">email</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="res_partner.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="res_partner.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_personemail.html">frst.personemail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_personemail.html#required-fields">Required fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frst_personemail.html#non-obvious-behaviours">Non obvious behaviours</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#last-email-update"><code class="docutils literal notranslate"><span class="pre">last_email_update</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#forced-main-address"><code class="docutils literal notranslate"><span class="pre">forced_main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#main-address"><code class="docutils literal notranslate"><span class="pre">main_address</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_personemail.html#gueltig-von-gueltig-bis"><code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code>, <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_groups.html">frst.zgruppe, frst.zgruppedetail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_groups.html#frst-zgruppe">frst.zgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#special-fields">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#gruppe-lang"><code class="docutils literal notranslate"><span class="pre">gruppe_lang</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#tabellentyp-id"><code class="docutils literal notranslate"><span class="pre">tabellentyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#gui-anzeigen"><code class="docutils literal notranslate"><span class="pre">gui_anzeigen</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_groups.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_groups.html#frst-zgruppedetail">frst.zgruppedetail</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#required-fields">Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#id3">Special Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#zgruppe-id"><code class="docutils literal notranslate"><span class="pre">zgruppe_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#geltungsbereich"><code class="docutils literal notranslate"><span class="pre">geltungsbereich</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#bestaetigung-erforderlich"><code class="docutils literal notranslate"><span class="pre">bestaetigung_erforderlich</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#bestaetigung-typ"><code class="docutils literal notranslate"><span class="pre">bestaetigung_typ</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_groups.html#id4">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_groups.html#id5"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_group_subscriptions.html">frst.persongruppe, frst.personemailgruppe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#common-fields">Common fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#steuerung-bit"><code class="docutils literal notranslate"><span class="pre">steuerung_bit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#gueltig-von-gueltig-bis"><code class="docutils literal notranslate"><span class="pre">gueltig_von</span></code>, <code class="docutils literal notranslate"><span class="pre">gueltig_bis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#bestaetigt-am-um"><code class="docutils literal notranslate"><span class="pre">bestaetigt_am_um</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#bestaetigt-typ"><code class="docutils literal notranslate"><span class="pre">bestaetigt_typ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#bestaetigt-herkunft"><code class="docutils literal notranslate"><span class="pre">bestaetigt_herkunft</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#common-required-fields">Common required fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#zgruppedetail-id"><code class="docutils literal notranslate"><span class="pre">zgruppedetail_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#frst-persongruppe">frst.persongruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#required-fields">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#partner-id"><code class="docutils literal notranslate"><span class="pre">partner_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_group_subscriptions.html#frst-personemailgruppe">frst.personemailgruppe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#id4">Required fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_group_subscriptions.html#frst-personemail-id"><code class="docutils literal notranslate"><span class="pre">frst_personemail_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="frst_zverzeichnis.html">frst.zverzeichnis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#required-fields">Required Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#special-fields">Special Fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#verzeichnistyp-id"><code class="docutils literal notranslate"><span class="pre">verzeichnistyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#bezeichnungstyp-id"><code class="docutils literal notranslate"><span class="pre">bezeichnungstyp_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#parent-id"><code class="docutils literal notranslate"><span class="pre">parent_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#startdatum"><code class="docutils literal notranslate"><span class="pre">startdatum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#endedatum"><code class="docutils literal notranslate"><span class="pre">endedatum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="frst_zverzeichnis.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="frst_zverzeichnis.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="products.html">product.template, product.product</a></li>
+<li class="toctree-l2"><a class="reference internal" href="products.html#product-template">product.template</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="products.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#description-sale"><code class="docutils literal notranslate"><span class="pre">description_sale</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#fs-product-type"><code class="docutils literal notranslate"><span class="pre">fs_product_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#type"><code class="docutils literal notranslate"><span class="pre">type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#product-variant-ids"><code class="docutils literal notranslate"><span class="pre">product_variant_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="products.html#payment-interval-lines-ids"><code class="docutils literal notranslate"><span class="pre">payment_interval_lines_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="products.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="products.html#product-product">product.product</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="products.html#id3">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#product-tmpl-id"><code class="docutils literal notranslate"><span class="pre">product_tmpl_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="products.html#id4">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="products.html#id5"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sale_orders.html">sale.order, sale.order.line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sale_orders.html#sale-order">sale.order</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#date-order"><code class="docutils literal notranslate"><span class="pre">date_order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#amount-total"><code class="docutils literal notranslate"><span class="pre">amount_total</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#partner-id"><code class="docutils literal notranslate"><span class="pre">partner_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#giftee-partner-id"><code class="docutils literal notranslate"><span class="pre">giftee_partner_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#payment-tx-id"><code class="docutils literal notranslate"><span class="pre">payment_tx_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#payment-acquirer-id"><code class="docutils literal notranslate"><span class="pre">payment_acquirer_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#order-line"><code class="docutils literal notranslate"><span class="pre">order_line</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sale_orders.html#sale-order-line">sale.order.line</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#id3">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#id4"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#id5"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#order-id"><code class="docutils literal notranslate"><span class="pre">order_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#product-id"><code class="docutils literal notranslate"><span class="pre">product_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#fs-origin"><code class="docutils literal notranslate"><span class="pre">fs_origin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#price-unit"><code class="docutils literal notranslate"><span class="pre">price_unit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#product-uos-qty"><code class="docutils literal notranslate"><span class="pre">product_uos_qty</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#price-donate"><code class="docutils literal notranslate"><span class="pre">price_donate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#payment-interval-id"><code class="docutils literal notranslate"><span class="pre">payment_interval_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#zgruppedetail-ids"><code class="docutils literal notranslate"><span class="pre">zgruppedetail_ids</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sale_orders.html#id6">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sale_orders.html#id7"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="payment_acquirer.html">payment.acquirer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="payment_acquirer.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="payment_acquirer.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="payment_acquirer.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="payment_transaction.html">payment.transaction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="payment_transaction.html#special-fields">Special fields</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#acquirer-id"><code class="docutils literal notranslate"><span class="pre">acquirer_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#state"><code class="docutils literal notranslate"><span class="pre">state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#reference"><code class="docutils literal notranslate"><span class="pre">reference</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#acquirer-reference"><code class="docutils literal notranslate"><span class="pre">acquirer_reference</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#esr-reference-number"><code class="docutils literal notranslate"><span class="pre">esr_reference_number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#amount"><code class="docutils literal notranslate"><span class="pre">amount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-provider-name"><code class="docutils literal notranslate"><span class="pre">consale_provider_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method"><code class="docutils literal notranslate"><span class="pre">consale_method</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-other"><code class="docutils literal notranslate"><span class="pre">consale_method_other</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-brand"><code class="docutils literal notranslate"><span class="pre">consale_method_brand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-banktransfer-provider"><code class="docutils literal notranslate"><span class="pre">consale_method_banktransfer_provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-owner"><code class="docutils literal notranslate"><span class="pre">consale_method_account_owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-iban"><code class="docutils literal notranslate"><span class="pre">consale_method_account_iban</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-bic"><code class="docutils literal notranslate"><span class="pre">consale_method_account_bic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-method-account-bank"><code class="docutils literal notranslate"><span class="pre">consale_method_account_bank</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#consale-recurring-payment-provider"><code class="docutils literal notranslate"><span class="pre">consale_recurring_payment_provider</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="payment_transaction.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="payment_transaction.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mail_message.html">mail.message</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mail_message.html#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mail_message.html#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mail_message.html#search"><code class="docutils literal notranslate"><span class="pre">search</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mail_message.html#mail-message-subtype">mail.message.subtype</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../searching/index.html">Searching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../searching/searching.html">Searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-basics">Search Basics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#name-search">Name search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#combining-criteria-with-or">Combining criteria with <code class="docutils literal notranslate"><span class="pre">OR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#negate-an-operator">Negate an operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/searching.html#searching-for-related-data">Searching for related data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/searching.html#search-method-options"><code class="docutils literal notranslate"><span class="pre">search</span></code> method options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../searching/search_domain.html">Search Domain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../searching/search_domain.html#domain-criterion">domain criterion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#field-name-str"><code class="docutils literal notranslate"><span class="pre">field_name</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#operator-str"><code class="docutils literal notranslate"><span class="pre">operator</span></code> (<code class="docutils literal notranslate"><span class="pre">str</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../searching/search_domain.html#value"><code class="docutils literal notranslate"><span class="pre">value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../searching/search_domain.html#logical-operators">Logical Operators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../use_cases/index.html">Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_partner.html">Managing Partner</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#search-for-partner">Search for partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#read-the-partner-data">Read the partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#updating-partner-data">Updating partner data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#creating-a-partner">Creating a partner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_partner.html#deleting-a-partner">Deleting a partner</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/email_subscriptions.html">Email Subscriptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#search-for-email-group-folders">Search for email group folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#search-for-email-groups">Search for email groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#create-email-groups">Create email groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#subscribe-to-a-newsletter">Subscribe to a newsletter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/email_subscriptions.html#unsubscribe-from-a-newsletter">Unsubscribe from a newsletter</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/managing_products.html">Managing products</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#search-for-products">Search for products</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#read-the-product-data">Read the product data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#updating-product-data">Updating product data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#creating-a-product">Creating a product</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/managing_products.html#deleting-a-product">Deleting a product</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../use_cases/submitting_donations.html">Submitting Donations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/submitting_donations.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../use_cases/submitting_donations.html#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Fundraising Studio REST API</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Models</a> &raquo;</li>
+        
+      <li>product.payment_interval_lines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/models/product_payment_interval_lines.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="res_partner.html" class="btn btn-neutral float-right" title="res.partner" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="product_payment_interval.html" class="btn btn-neutral float-left" title="product.payment_interval" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="product-payment-interval-lines">
+<span id="id1"></span><h1>product.payment_interval_lines<a class="headerlink" href="#product-payment-interval-lines" title="Permalink to this headline">¶</a></h1>
+<p>Each entry in this model designates a possible <a class="reference internal" href="product_payment_interval.html#product-payment-interval"><span class="std std-ref">product.payment_interval</span></a> for a given
+<a class="reference internal" href="products.html#product-template"><span class="std std-ref">product.template</span></a>.</p>
+<p><strong>Example:</strong></p>
+<p>A donation for “Fight animal cruelty” should only allow one-time, monthly or annual payments.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">product.template</span></code> Donation: Fight animal cruelty</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">product.payment_interval_lines</span></code> One time donation (<code class="docutils literal notranslate"><span class="pre">once-only</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">product.payment_interval_lines</span></code> Recurring monthly (<code class="docutils literal notranslate"><span class="pre">monthly</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">product.payment_interval_lines</span></code> Recurring annually (<code class="docutils literal notranslate"><span class="pre">annually</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This information is relevant when placing a <a class="reference internal" href="sale_orders.html#sale-order-line"><span class="std std-ref">sale.order.line</span></a>, because the
+order line checks the possible payment intervals for a given product.</p>
+</div>
+<div class="section" id="fields">
+<h2>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code> ID used as foreign key in other models</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">product_id</span></code> The <code class="docutils literal notranslate"><span class="pre">id</span></code> of the <a class="reference internal" href="products.html#product-template"><span class="std std-ref">product.template</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">payment_interval_id</span></code> The <code class="docutils literal notranslate"><span class="pre">id</span></code> of the <a class="reference internal" href="product_payment_interval.html#product-payment-interval"><span class="std std-ref">product.payment_interval</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="search">
+<h3><code class="docutils literal notranslate"><span class="pre">search</span></code><a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h3>
+<p>Only the <code class="docutils literal notranslate"><span class="pre">search</span></code> method is currently exposed by the api. See <a class="reference internal" href="../searching/searching.html#searching"><span class="std std-ref">Searching</span></a> for more information about searching.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="res_partner.html" class="btn btn-neutral float-right" title="res.partner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="product_payment_interval.html" class="btn btn-neutral float-left" title="product.payment_interval" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Michael Karrer, Martin Kaip.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
