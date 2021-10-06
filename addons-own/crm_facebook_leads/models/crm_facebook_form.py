@@ -121,7 +121,10 @@ class CrmFacebookForm(models.Model):
         self.mappings.unlink()
         r = requests.get(facebook_graph_api_url + self.fb_form_id,
                          params={'access_token': self.crm_page_id.fb_page_access_token,
-                                 'fields': 'questions'}).json()
+                                 'fields': 'questions,legal_content'}).json()
+
+        # Regular questions
+        # -----------------
         if r.get('questions'):
             for question in r.get('questions'):
                 self.env['crm.facebook.form.field'].create({
@@ -130,6 +133,19 @@ class CrmFacebookForm(models.Model):
                     'fb_field_id': question['id'],
                     'fb_field_key': question['key'],
                     'fb_field_type': question.get('type', False)
+                })
+
+        # Disclaimer/Consent checkboxes
+        # -----------------------------
+        # HINT: This is sometimes abused by the customers for newsletter signup
+        if r.get('legal_content') and r['legal_content'].get('custom_disclaimer'):
+            for checkbox in r['legal_content']['custom_disclaimer'].get('checkboxes', []):
+                self.env['crm.facebook.form.field'].create({
+                    'crm_form_id': self.id,
+                    'fb_label': checkbox['text'],
+                    'fb_field_id': checkbox['id'],
+                    'fb_field_key': checkbox['key'],
+                    'fb_field_type': "CONSENTCHECKBOX"
                 })
 
     # TODO: We Could add the facebook form locale information to this process!
@@ -176,7 +192,8 @@ class CrmFacebookForm(models.Model):
             'crm_form_id': crm_form.id,
         }
 
-        # Loop through facebook form fields (questions)
+        # Loop through the question answers
+        # ---------------------------------
         # TODO: Currently we only support facebook questions with a single answer/value
         for question in facebook_lead_data['field_data']:
             question_fb_field_key = question.get('name')
@@ -245,7 +262,26 @@ class CrmFacebookForm(models.Model):
             else:
                 vals['name'] = 'facebook_lead_' + vals['fb_lead_id']
 
+        # Loop through the disclaimer answers
+        # -----------------------------------
+        for checkbox in facebook_lead_data.get('custom_disclaimer_responses', []):
+            checkbox_fb_field_key = checkbox.get('checkbox_key')
+            checkbox_val = True if checkbox['is_checked'] == "1" else False
+
+            # Check if the facebook field is mapped to a crm.lead field
+            crm_facebook_form_field = crm_form.mappings.filtered(lambda f: f.fb_field_key == checkbox_fb_field_key)
+
+            if crm_facebook_form_field:
+                odoo_field = crm_facebook_form_field.crm_field
+                odoo_field_name = odoo_field.name
+                odoo_field_type = odoo_field.ttype
+                assert odoo_field_type == 'boolean', "Disclaimer checkbox must be mapped to a boolean field!"
+                vals.update({odoo_field_name: checkbox_val})
+            else:
+                vals['description'] += checkbox_fb_field_key + ': ' + str(checkbox_val) + '\n'
+
         # Return the values
+        # -----------------
         return vals
 
     @api.multi
@@ -296,7 +332,8 @@ class CrmFacebookForm(models.Model):
             imported_fb_lead_ids = crm_form.crm_lead_ids.mapped('fb_lead_id')
 
             # Get leads data from facebook for this form
-            fb_request_url = facebook_graph_api_url + crm_form.fb_form_id + "/leads"
+            fb_request_url = facebook_graph_api_url + crm_form.fb_form_id + "/leads" + \
+                             "?fields=created_time,field_data,custom_disclaimer_responses"
             logger.info("Import facebook leads from request url: %s" % fb_request_url)
             answer = requests.get(fb_request_url,
                                   params={'access_token': crm_form.crm_page_id.fb_page_access_token}).json()
