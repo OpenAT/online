@@ -49,4 +49,34 @@
         <field name="args" eval="'()'"/>
     </record>
 
+    <!-- Cron computation of the subscription_name frst.personemailgruppe -->
+    <record id="ir_cron_scheduled_compute_name_personemailgruppe" model="ir.cron" forcecreate="1">
+        <field name="name">Compute subscription_name for frst.personemailgruppe (E-Mail-Gruppen-Anmeldungen)</field>
+        <field name="priority" eval="60000" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.today() + timedelta(days=1)).strftime('%Y-%m-%d 03:48:00')" />
+        <field name="doall" eval="False"/>
+        <field name="model">frst.personemailgruppe</field>
+        <field name="function">compute_all_subscription_name</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
+    <!-- Cron computation of the subscription_name frst.persongruppe  -->
+    <record id="ir_cron_scheduled_compute_name_persongruppe" model="ir.cron" forcecreate="1">
+        <field name="name">Compute subscription_name for frst.persongruppe (Personengruppen-Anmeldungen)</field>
+        <field name="priority" eval="60000" />
+        <field name="active" eval="False"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.today() + timedelta(days=1)).strftime('%Y-%m-%d 03:48:00')" />
+        <field name="doall" eval="False"/>
+        <field name="model">frst.persongruppe</field>
+        <field name="function">compute_all_subscription_name</field>
+        <field name="args" eval="'()'"/>
+    </record>
+
 </data></openerp>

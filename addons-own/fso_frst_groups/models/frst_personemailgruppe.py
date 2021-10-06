@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class FRSTPersonEmailGruppe(models.Model):
     _name = "frst.personemailgruppe"
     _inherit = ["frst.gruppestate", "frst.checkboxbridgemodel", "fso.merge", "frst.gruppesecurity"]
-    _rec_name = 'zgruppedetail_id'
+    _rec_name = 'subscription_name'
     _description = 'group subscriptions for emails'
 
     _group_model_field = 'zgruppedetail_id'
@@ -23,11 +23,11 @@ class FRSTPersonEmailGruppe(models.Model):
             'newsletter_web': 30104,
         }
 
-    # display_name = fields.Char('Subscription Name',
-    #                            compute='_compute_display_name',
-    #                            search="_search_display_name",
-    #                            readonly=True,
-    #                            store=False)
+    subscription_name = fields.Char('Subscription Name',
+                                    compute='_compute_subscription_name',
+                                    search="_search_subscription_name",
+                                    readonly=True,
+                                    store=True)
     zgruppedetail_id = fields.Many2one(comodel_name="frst.zgruppedetail", inverse_name='frst_personemailgruppe_ids',
                                        string="Gruppe",
                                        domain=[('zgruppe_id.tabellentyp_id', '=', '100110')],
@@ -110,19 +110,23 @@ class FRSTPersonEmailGruppe(models.Model):
         else:
             return False
 
-    # @api.multi
-    # @api.depends('zgruppedetail_id', 'frst_personemail_id')
-    # def _compute_display_name(self):
-    #     for r in self:
-    #         r.display_name = "%s (FRST-ID: %s) %s" % (
-    #             r.zgruppedetail_id.gruppe_lang or r.zgruppedetail_id.gruppe_kurz,
-    #             r.zgruppedetail_id.sosync_fs_id if 'sosync_fs_id' in r._fields else '0',
-    #             r.frst_personemail_id.email
-    #         )
-    #
-    # def _search_display_name(self, operator, value):
-    #     return ['|', '|',
-    #               ('zgruppedetail_id.gruppe_lang', operator, value),
-    #               ('zgruppedetail_id.sosync_fs_id', operator, value),
-    #               ('frst_personemail_id.email', operator, value)
-    #             ]
+    @api.multi
+    @api.depends('zgruppedetail_id', 'frst_personemail_id')
+    def _compute_subscription_name(self):
+        for r in self:
+            r.subscription_name = _("%s -> %s") % (
+                r.frst_personemail_id.email,
+                r.zgruppedetail_id.gruppe_lang or r.zgruppedetail_id.gruppe_kurz)
+
+    @api.model
+    def compute_all_subscription_name(self):
+        logger.info("compute_all_subscription_name for %s" % self._name)
+        self.search([])._compute_subscription_name()
+
+    def _search_subscription_name(self, operator, value):
+        return ['|', '|', '|',
+                  ('zgruppedetail_id.gruppe_lang', operator, value),
+                  ('zgruppedetail_id.gruppe_kurz', operator, value),
+                  ('frst_personemail_id.email', operator, value),
+                  ('frst_personemail_id.partner_id', operator, value)
+                ]

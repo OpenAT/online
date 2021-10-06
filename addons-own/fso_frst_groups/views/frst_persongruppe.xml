@@ -14,6 +14,9 @@
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
+                    <group name="subscription_name">
+                        <field name="subscription_name"/>
+                    </group>
                     <group name="base_data">
                         <field name="zgruppedetail_id"/>
                         <field name="partner_id"/>
@@ -48,6 +51,7 @@
         <field name="arch" type="xml">
             <tree string="PersonGruppe">
                 <field name="id"/>
+                <field name="subscription_name"/>
                 <field name="zgruppedetail_id"/>
                 <field name="partner_id"/>
                 <field name="steuerung_bit"/>
@@ -69,6 +73,7 @@
         <field name="arch" type="xml">
             <search string="PersonGruppe">
                 <field name="id"/>
+                <field name="subscription_name"/>
                 <field name="zgruppedetail_id"/>
                 <field name="partner_id"/>
                 <field name="steuerung_bit"/>
