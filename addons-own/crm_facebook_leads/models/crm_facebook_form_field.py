@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import api, models, fields
+from openerp.tools.translate import _
 
 
 class CrmFacebookFormField(models.Model):
@@ -15,7 +16,8 @@ class CrmFacebookFormField(models.Model):
     crm_field = fields.Many2one('ir.model.fields',
                                 index=True,
                                 domain=[('model', '=', 'crm.lead'),
-                                        ('ttype', 'in', ('char',
+                                        ('ttype', 'in', ('boolean',
+                                                         'char',
                                                          'date',
                                                          'datetime',
                                                          'float',
@@ -31,6 +33,15 @@ class CrmFacebookFormField(models.Model):
     _sql_constraints = [
         ('field_unique', 'unique(crm_form_id, crm_field, fb_field_key)', 'Mapping must be unique per form')
     ]
+
+    @api.constrains
+    def constrain_consentcheckbox(self):
+        for f in self:
+            if f.crm_field:
+                if f.fb_field_type == 'CONSENTCHECKBOX':
+                    assert f.crm_field.ttype == 'boolean', _("Consent Checkboxes can only be mapped to boolean fields!")
+                else:
+                    assert f.crm_field.ttype != 'boolean', _("Question fields can not be mapped to boolean fields!")
 
     @api.model
     def facebook_field_type_to_odoo_field_name(self):
