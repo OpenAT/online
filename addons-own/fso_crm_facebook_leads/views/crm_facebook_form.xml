@@ -54,6 +54,10 @@
                 </group>
             </xpath>
 
+            <xpath expr="//field[@name='crm_field']" position="after">
+                <field name="zgruppedetail_id"/>
+            </xpath>
+
             <xpath expr="//page[@string='Mappings']" position="after">
                 <page string="Hilfe">
                     <h1>Hilfe</h1>

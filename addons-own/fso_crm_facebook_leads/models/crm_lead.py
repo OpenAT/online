@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 from openerp import api, models, fields
 
 import logging
@@ -25,6 +26,15 @@ class CrmLead(models.Model):
                                            comodel_name='frst.personemailgruppe', inverse_name="crm_lead_ids",
                                            readonly=True, ondelete='set null', index=True,
                                            track_visibility='onchange')
+
+    # Additional e-mail group subscriptions by consent fields
+    additional_subscription_ids = fields.Many2many(string="Additional Subscriptions",
+                                                   comodel_name='frst.personemailgruppe',
+                                                   inverse_name="additional_crm_lead_ids",
+                                                   readonly=True,
+                                                   ondelete='set null',
+                                                   index=True,
+                                                   track_visibility='onchange')
 
     # Will copy the import type to crm.lead at lead creation: Done in facebook_data_to_lead_data()
     frst_import_type = fields.Selection(string="Fundraising Studio Type",
@@ -55,10 +65,12 @@ class CrmLead(models.Model):
 
                 wizard.action_apply()
 
-            # Create a FRST group subscription ("PersonEmailGruppe") if set in the form
+            p_personemail = lead.partner_id.main_personemail_id
+            lead_email = lead.email_from
+            cds_id = lead.frst_zverzeichnis_id.id if lead.frst_zverzeichnis_id else False
+
+            # CREATE A FRST GROUP SUBSCRIPTION ("PERSONEMAILGRUPPE") IF SET IN THE FORM
             if lead.crm_form_id.zgruppedetail_id:
-                p_personemail = lead.partner_id.main_personemail_id
-                lead_email = lead.email_from
 
                 if not p_personemail:
                     logger.error("The person (id %s) created by the facebook lead has no main email! "
@@ -72,13 +84,37 @@ class CrmLead(models.Model):
                     peg_vals = {
                         'zgruppedetail_id': lead.crm_form_id.zgruppedetail_id.id,
                         'frst_personemail_id': p_personemail.id,
-                        'frst_zverzeichnis_id': lead.frst_zverzeichnis_id.id if lead.frst_zverzeichnis_id else False,
                         'crm_lead_ids': [(4, lead.id, False)],
                         'fb_form_id': lead.crm_form_id.id
                     }
+                    if cds_id:
+                        peg_vals['frst_zverzeichnis_id'] = cds_id
                     peg = self.env['frst.personemailgruppe'].create(peg_vals)
                     logger.info("Created subscription (PersonEmailGruppe (id %s)) for facebook crm.lead (id %s)"
                                 "" % (peg.id, lead.id))
+
+            # SUBSCRIPTIONS FOR CONSENT CHECKBOX FIELDS
+            for mapped_field in lead.crm_form_id.mappings:
+                if mapped_field.zgruppedetail_id:
+                    assert not mapped_field.crm_field, "Group subscription fields can not be mapped " \
+                                                       "to crm fields also!"
+                    regex = ur"%s:\ (?P<result>.*)" % mapped_field.fb_field_key
+                    field_value = re.findall(regex,
+                                             lead.description,
+                                             re.MULTILINE)
+                    if field_value and field_value[0] == 'True':
+                        subscription_vals = {
+                            'zgruppedetail_id': mapped_field.zgruppedetail_id.id,
+                            'frst_personemail_id': p_personemail.id,
+                            'additional_crm_lead_ids': [(4, lead.id, False)],
+                            'fb_form_id': lead.crm_form_id.id
+                        }
+                        if cds_id:
+                            subscription_vals['frst_zverzeichnis_id'] = cds_id
+                        subscription = self.env['frst.personemailgruppe'].create(subscription_vals)
+                        logger.info(
+                            "Created subscription (PersonEmailGruppe (id %s)) for facebook crm.lead (id %s)"
+                            "" % (subscription.id, subscription.id))
 
         return lead
 

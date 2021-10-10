@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+<data>
+
+    <record id="crm_facebook_form_field_form_frst" model="ir.ui.view">
+        <field name="name">crm_facebook_form_field_form_frst</field>
+        <field name="model">crm.facebook.form.field</field>
+        <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_field_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='crm_field']" position="after">
+                <field name="zgruppedetail_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="crm_facebook_form_field_tree_frst" model="ir.ui.view">
+        <field name="name">crm_facebook_form_field_tree_frst</field>
+        <field name="model">crm.facebook.form.field</field>
+        <field name="inherit_id" ref="crm_facebook_leads.crm_facebook_form_field_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='crm_field']" position="after">
+                <field name="zgruppedetail_id"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</data>
+</openerp>

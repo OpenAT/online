@@ -13,3 +13,10 @@ class FRSTzGruppeDetail(models.Model):
                                       readonly=True,
                                       help="Facebook Leads Forms that may use this group in the crm.lead "
                                            "creation process")
+
+    facebook_form_field_ids = fields.One2many(string="Facebook Lead Form Fields",
+                                              comodel_name='crm.facebook.form.field',
+                                              inverse_name='zgruppedetail_id',
+                                              readonly=True,
+                                              help="Facebook Leads Form Fields that may use this group in the crm.lead "
+                                                   "creation process")

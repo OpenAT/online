@@ -34,11 +34,11 @@ class CrmFacebookFormField(models.Model):
         ('field_unique', 'unique(crm_form_id, crm_field, fb_field_key)', 'Mapping must be unique per form')
     ]
 
-    @api.constrains
+    @api.constrains('crm_field', 'fb_field_type')
     def constrain_consentcheckbox(self):
         for f in self:
             if f.crm_field:
-                if f.fb_field_type == 'CONSENTCHECKBOX':
+                if f.fb_field_type == 'CONSENT_CHECKBOX':
                     assert f.crm_field.ttype == 'boolean', _("Consent Checkboxes can only be mapped to boolean fields!")
                 else:
                     assert f.crm_field.ttype != 'boolean', _("Question fields can not be mapped to boolean fields!")

@@ -12,6 +12,14 @@ class FRSTPersonEmailGruppe(models.Model):
                                    comodel_name="crm.lead", inverse_name="personemailgruppe_id",
                                    readonly=True,
                                    help="Used for crm.leads created by facebook lead imports")
+
+    additional_crm_lead_ids = fields.Many2many(string="Additional CRM Leads",
+                                               comodel_name="crm.lead",
+                                               inverse_name="additional_subscription_ids",
+                                               readonly=True,
+                                               help="Used for crm.leads created by facebook lead imports from "
+                                                    "consent checkboxes")
+
     # ATTENTION: This field will be set on Facebook lead import (crm.lead creation) and
     #            on install and update of this addon. It is basically a computed field.
     fb_form_id = fields.Many2one(string='Facebook Form ID', comodel_name='crm.facebook.form',

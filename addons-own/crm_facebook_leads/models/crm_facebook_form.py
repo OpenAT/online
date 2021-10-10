@@ -145,7 +145,7 @@ class CrmFacebookForm(models.Model):
                     'fb_label': checkbox['text'],
                     'fb_field_id': checkbox['id'],
                     'fb_field_key': checkbox['key'],
-                    'fb_field_type': "CONSENTCHECKBOX"
+                    'fb_field_type': "CONSENT_CHECKBOX"
                 })
 
     # TODO: We Could add the facebook form locale information to this process!
@@ -243,6 +243,7 @@ class CrmFacebookForm(models.Model):
             if odoo_field_name and odoo_field_value:
                 vals.update({odoo_field_name: odoo_field_value})
             else:
+                # ATTENTION: This is porcelain and is expected by other addons - do not change the structure!
                 vals['description'] += question_fb_field_key + ': ' + question_val + '\n'
 
         # Use Email for 'contact_lastname' if the fields 'contact_name' and 'contact_lastname' and 'partner_name' are
@@ -271,13 +272,14 @@ class CrmFacebookForm(models.Model):
             # Check if the facebook field is mapped to a crm.lead field
             crm_facebook_form_field = crm_form.mappings.filtered(lambda f: f.fb_field_key == checkbox_fb_field_key)
 
-            if crm_facebook_form_field:
+            if crm_facebook_form_field and crm_facebook_form_field.crm_field:
                 odoo_field = crm_facebook_form_field.crm_field
                 odoo_field_name = odoo_field.name
                 odoo_field_type = odoo_field.ttype
                 assert odoo_field_type == 'boolean', "Disclaimer checkbox must be mapped to a boolean field!"
                 vals.update({odoo_field_name: checkbox_val})
             else:
+                # ATTENTION: This is porcelain and is expected by other addons - do not change the structure!
                 vals['description'] += checkbox_fb_field_key + ': ' + str(checkbox_val) + '\n'
 
         # Return the values
