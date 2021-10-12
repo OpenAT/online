@@ -13,7 +13,13 @@ function removeAllButLast(string, token) {
 // ------------------------------------------------------
 function get_odoo_product_details_for_gtm (odoo_product_html) {
     if (! odoo_product_html || ! odoo_product_html.length) {
-        console.log('odoo_product_html is empty!');
+        console.log('get_odoo_product_details_for_gtm() odoo_product_html is empty!');
+        openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
+            if (gtm_sale_order_data && gtm_sale_order_data.products) {
+                console.log('get_odoo_product_details_for_gtm() return product data from sale order!');
+                return gtm_sale_order_data.products
+            }
+        });
         return {}
     }
     let $odoo_product = odoo_product_html;
@@ -33,6 +39,7 @@ function get_odoo_product_details_for_gtm (odoo_product_html) {
         'variant': $odoo_product.find("input[name=product_id]").val() || $odoo_product.find("input.js_quantity").data("product-id"),  // the selected product-variant-id
     }
 
+    // clean product-data values
     for (let key in product_data) {
         let val = product_data[key];
         // console.log(`PARSE key: ${key}, val: ${val}`);
@@ -264,15 +271,6 @@ function gtm_fsonline_purchase(){
 
     openerp.jsonRpc("/shop/sale_order_data_for_gtm/").then(function (gtm_sale_order_data) {
         if (gtm_sale_order_data && gtm_sale_order_data.products) {
-
-            // For one-page-checkout pages
-            if ( is_opc_page() ) {
-                console.log('gtm_fsonline_purchase: one-page-checkout page detected');
-                gtm_fsonline_checkout_cart_step_1();
-                gtm_fsonline_checkout_userdata_step_2 ();
-                gtm_fsonline_checkout_paymentmethod_step_3 ();
-            }
-
             let event_data = {
                 'event': 'fsonline.purchase',
                 'ecommerce': {
@@ -307,11 +305,52 @@ function gtm_fsonline_confirmation_page_after_purchase_step_4 () {
         push_to_datalayer(event_data)
     }
 }
-
-
 // --------------------------------------------------------------------------------------------------------------------
 // END: HELPER FUNCTIONS FOR THE DATALAYER EVENTS
 // --------------------------------------------------------------------------------------------------------------------
+
+
+// ----------------------
+// PURCHASE EVENT HANDLER
+// ----------------------
+$(".js_auto_submit_form form").on('submit', function () {
+    console.log("GOOGLE TAG MANAGER PURCHASE: .js_auto_submit_form form submit!")
+    gtm_fsonline_purchase();
+});
+
+
+// ----------------------------------
+// PRE PURCHASE FOR OPC PRODUCT PAGES
+// ----------------------------------
+// TODO: Since the Sale order is not ready yet we can not get the product data from the SO - so we need to extract
+//       it from the html for OPC pages ...
+//       For now we simply disabled these events to not return the event with an empty product list ...
+// $("form.payment_opc_acquirer_form").on('submit', function () {
+//     console.log("Purchase: form.payment_opc_acquirer_form submit!")
+//     // For one-page-checkout pages
+//     if ( is_opc_page() ) {
+//         console.log('gtm_fsonline_purchase: one-page-checkout page detected');
+//         gtm_fsonline_checkout_cart_step_1();
+//         gtm_fsonline_checkout_userdata_step_2 ();
+//         gtm_fsonline_checkout_paymentmethod_step_3 ();
+//     }
+// });
+//
+// $("form#wsd_checkout_form").on('submit', function () {
+//     console.log("Purchase: form#wsd_checkout_form submit!")
+//     // For one-page-checkout pages
+//     if ( is_opc_page() ) {
+//         console.log('gtm_fsonline_purchase: one-page-checkout page detected');
+//         gtm_fsonline_checkout_cart_step_1();
+//         gtm_fsonline_checkout_userdata_step_2 ();
+//         gtm_fsonline_checkout_paymentmethod_step_3 ();
+//     }
+// });
+
+
+// -----------------------------------------------
+// GTM-EVENT-CHECKS on all pages (regular and opc)
+// -----------------------------------------------
 $(document).ready(function () {
     console.log("Google Tag Manager Webshop Events")
 
@@ -329,10 +368,8 @@ $(document).ready(function () {
             gtm_fsonline_add_remove_cart($cart_line, product_quantity);
         })
 
-        // GTM-EVENT-CHECKS on all pages (regular and opc)
-        $("#wsd_pp_auto_submit_form.js_auto_submit_form form").on('submit', function () {
-            gtm_fsonline_purchase();
-        });
+
+
         gtm_fsonline_confirmation_page_after_purchase_step_4();
         gtm_fsonline_product_detail();
         gtm_fsonline_product_listing();
