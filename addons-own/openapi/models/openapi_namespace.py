@@ -161,7 +161,7 @@ class Namespace(models.Model):
                 ("basePath", "/api/v1/%s" % self.name),
                 ("schemes", [parsed_current_host.scheme]),
                 ("consumes",
-                    ["multipart/form-data", "application/x-www-form-urlencoded"],),
+                    ["application/json"],),
                 ("produces", ["application/json"]),
                 (
                     "paths",
