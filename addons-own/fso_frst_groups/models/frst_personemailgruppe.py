@@ -148,6 +148,7 @@ class FRSTPersonEmailGruppe(models.Model):
 
         if res and 'subscription_name' not in vals:
             if 'zgruppedetail_id' in vals or 'frst_personemail_id' in vals:
-                res._compute_subscription_name()
+                for r in self:
+                    r._compute_subscription_name()
 
         return res
