@@ -96,4 +96,5 @@ class FRSTPersonGruppe(models.Model):
         res = super(FRSTPersonGruppe, self).write(vals)
         if res and 'subscription_name' not in vals:
             if 'zgruppedetail_id' in vals or 'partner_id' in vals:
-                res._compute_subscription_name()
+                for r in self:
+                    r._compute_subscription_name()
