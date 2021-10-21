@@ -91,6 +91,8 @@ class FRSTPersonGruppe(models.Model):
             if 'zgruppedetail_id' in vals or 'partner_id' in vals:
                 res._compute_subscription_name()
 
+        return res
+
     @api.multi
     def write(self, vals):
         res = super(FRSTPersonGruppe, self).write(vals)
@@ -98,3 +100,5 @@ class FRSTPersonGruppe(models.Model):
             if 'zgruppedetail_id' in vals or 'partner_id' in vals:
                 for r in self:
                     r._compute_subscription_name()
+
+        return res
