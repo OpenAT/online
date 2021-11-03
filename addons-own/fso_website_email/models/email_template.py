@@ -222,7 +222,7 @@ class EmailTemplate(models.Model):
                 # ATTENTION: This step will try a lot of requests.packages.urllib3.connectionpool connections
                 #            which may lead to long processing times.
                 email_body_prepared_premailer = PremailerWithTimeout(email_body_prepared,
-                                                                     method='xml',
+                                                                     method='html',
                                                                      base_url=self.get_base_url(),
                                                                      preserve_internal_links=True,
                                                                      keep_style_tags=False,
