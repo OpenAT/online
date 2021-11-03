@@ -823,15 +823,16 @@
 					newUrl = settings[iframeId].baseUrl + iframeParams[iframeId];
 				};	
 			}
-			
-			if(newUrl.indexOf('&') > -1 || newUrl.indexOf('?') > -1){
-				newUrl = newUrl + "&" + newParams.join("&");
-			} else {
-				newUrl = newUrl + "?" + newParams.join("&");
-			}
-			log(iframeId, 'checkGetParam() set iframe.src to: ' + newUrl);
-			iframe.src = newUrl;
 
+			if (newParams.length > 0) {
+                if(newUrl.indexOf('&') > -1 || newUrl.indexOf('?') > -1){
+                    newUrl = newUrl + "&" + newParams.join("&");
+                } else {
+                    newUrl = newUrl + "?" + newParams.join("&");
+                }
+                log(iframeId, 'checkGetParam() set iframe.src to: ' + newUrl);
+                iframe.src = newUrl;
+			}
 		}
 
 		function useGetParam(){
