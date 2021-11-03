@@ -95,10 +95,9 @@ class FRSTPersonGruppe(models.Model):
 
     @api.multi
     def write(self, vals):
-        res = super(FRSTPersonGruppe, self).write(vals)
-        if res and 'subscription_name' not in vals:
+        res_bool = super(FRSTPersonGruppe, self).write(vals)
+        if res_bool and 'subscription_name' not in vals:
             if 'zgruppedetail_id' in vals or 'partner_id' in vals:
-                for r in self:
-                    r._compute_subscription_name()
+                self._compute_subscription_name()
 
-        return res
+        return res_bool
