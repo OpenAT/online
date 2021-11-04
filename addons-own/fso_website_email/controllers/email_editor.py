@@ -105,7 +105,7 @@ class FSOEmailEditor(http.Controller):
                                       page=page,
                                       step=templates_per_page,
                                       scope=8,
-                                      url_args=kw)
+                                      url_args=keep.args)
         templates = template_obj.search(template_domain,
                                         limit=templates_per_page,
                                         offset=pager['offset'],
