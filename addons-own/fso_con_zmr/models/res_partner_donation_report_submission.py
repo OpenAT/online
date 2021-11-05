@@ -828,13 +828,13 @@ class DonationReportSubmission(models.Model):
         # HINT: In this case we expect that the submission was NOT received at all by FinanzOnline
         # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
         if response.status_code != 200:
-            result = common_update_submission_vals.update({
+            common_update_submission_vals.update({
                 'state': 'error',
                 'error_type': 'http_code_not_200',
                 'error_code': response.status_code,
                 'error_detail': response.content,
             })
-            return result
+            return common_update_submission_vals
 
         # Response http code IS 200 but no response content
         # -------------------------------------------------
@@ -842,12 +842,12 @@ class DonationReportSubmission(models.Model):
         # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
         #            exist in the DataBox 48 hours after the submission_datetime
         elif not response.content:
-            result = common_update_submission_vals.update({
+            common_update_submission_vals.update({
                 'state': 'unexpected_response',
                 'response_error_type': 'unexpected_no_content',
                 'response_error_code': 'no_response_content',
             })
-            return result
+            return common_update_submission_vals
 
         # ------------------------------------------------
         # Parse and extract data from the response content
@@ -855,8 +855,8 @@ class DonationReportSubmission(models.Model):
         content_pretty, returncode, returnmsg, error = self._parse_response_content(response)
         if error:
             assert isinstance(error, dict), "'error' must be a dict! error: %s" % str(error)
-            result = common_update_submission_vals.update(error)
-            return result
+            common_update_submission_vals.update(error)
+            return common_update_submission_vals
 
         # Add the pretty printed content to the common vals
         common_update_submission_vals['response_content_parsed'] = content_pretty
@@ -867,32 +867,31 @@ class DonationReportSubmission(models.Model):
         # ATTENTION: Submission will be set to state 'error' by check_response() if no answer file
         #            exist in the DataBox 48 hours after the submission_datetime
         if not returncode:
-            result = common_update_submission_vals.update({
+            common_update_submission_vals.update({
                 'state': 'unexpected_response',
                 'response_error_type': 'unexpected_parser',
                 'response_error_detail': 'No return code in response content!',
             })
-            return result
+            return common_update_submission_vals
 
         # FinanzOnline File Upload known error
         # ------------------------------------
         # HINT: In this case we expect that the submission was rejected by FinanzOnline
         # HINT: Donation reports can be removed and set to state 'new' from submissions in state 'error'
         elif returncode != '0':
-            result = common_update_submission_vals.update({
+            common_update_submission_vals.update({
                 'state': 'error',
                 'error_type': self.file_upload_error_return_codes().get(returncode, 'file_upload_error'),
                 'error_code': returncode,
                 'error_detail': returnmsg,
             })
-            return result
+            return common_update_submission_vals
 
         # -----------------------------------------------
         # FileUpload was successful (The normal response)
         # -----------------------------------------------
         common_update_submission_vals['state'] = 'submitted'
-        result = common_update_submission_vals
-        return result
+        return common_update_submission_vals
 
     @api.multi
     def _update_submission_by_response(self, response, request_duration="", submission_datetime=""):
