@@ -312,10 +312,12 @@ class EmailTemplate(models.Model):
         if not context_lang:
             logger.warning('screenshot_update() No language set in context! '
                            'Language of request user "%s" with id "%s" is "%s"' % (user.name, user.id, user.lang))
+
+            website = self.env['website'].sudo().browse([1])[0]
+            website_default_lang = website.default_lang_id.code
+
             if user.lang:
                 # Check if the users language is the same as the default website language!
-                website = self.env['website'].sudo().browse([1])[0]
-                website_default_lang = website.default_lang_id.code
                 if website_default_lang != user.lang:
                     logger.warning('screenshot_update() Language "%s" of request user is NOT the '
                                    'default website language "%s"' % (user.lang, website_default_lang))
@@ -324,8 +326,13 @@ class EmailTemplate(models.Model):
                 logger.warning('screenshot_update() switching context language to user language %s' % user.lang)
                 self = self.with_context(lang=user.lang)
 
+            elif website_default_lang:
+                # Update the context to the website default lang
+                logger.warning('screenshot_update() switching context language to website default language %s' % website_default_lang)
+                self = self.with_context(lang=website_default_lang)
+
             else:
-                raise ValidationError("No language in context and no language for the user set!")
+                raise ValidationError("No language set in either context, user or website default.")
 
         # GENERATE THE SCREENSHOT
         # -----------------------
