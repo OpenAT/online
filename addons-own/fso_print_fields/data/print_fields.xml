@@ -402,6 +402,13 @@
                    eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
         </record>
         
-    
+        <record id="pf_keyaktionsid" model="fso.print_field">
+            <field name="sequence" eval="305"/>
+            <field name="name">KeyAktionsID</field>
+            <field name="fs_email_placeholder">%KeyAktionsID%</field>
+            <field name="group_ids"
+                   eval="[(4, ref('fso_print_fields.pfg_system')),]"/>
+        </record>
+
     </data>
 </openerp>
