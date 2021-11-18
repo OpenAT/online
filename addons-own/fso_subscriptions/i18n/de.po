@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-05 15:46+0000\n"
-"PO-Revision-Date: 2019-11-05 15:46+0000\n"
+"POT-Creation-Date: 2021-11-18 09:07+0000\n"
+"PO-Revision-Date: 2021-11-18 09:07+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: fso_subscriptions
+#: selection:mail.mass_mailing.list,list_type:0
+msgid "Activism"
+msgstr "Aktivismus"
 
 #. module: fso_subscriptions
 #: field:mail.mass_mailing.contact,pf_anrede:0
@@ -29,6 +34,11 @@ msgstr "AnredeKurz"
 #: field:mail.mass_mailing.contact,pf_anredelang:0
 msgid "AnredeLang"
 msgstr "AnredeLang"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_anredetitel:0
+msgid "Anredetitel"
+msgstr "Anredetitel"
 
 #. module: fso_subscriptions
 #: field:mail.mass_mailing.list,bestaetigung_typ:0
@@ -142,7 +152,7 @@ msgid "Dynamic Subscription Goal"
 msgstr "Dynamisches Anmeldeziel"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:164
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:174
 #, python-format
 msgid "E-Mail"
 msgstr "E-Mail"
@@ -178,7 +188,7 @@ msgid "Female"
 msgstr "Frau"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:154
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:161
 #, python-format
 msgid "Firstname"
 msgstr "Vorname"
@@ -224,7 +234,7 @@ msgid "Goal Text After"
 msgstr "Text hinter dem Ziel"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:73
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:74
 #, python-format
 msgid "Help us to reach"
 msgstr "Hilf uns"
@@ -250,7 +260,7 @@ msgid "If this checkbox is set an E-Mail will be send to thesubscriber containin
 msgstr "If this checkbox is set an E-Mail will be send to the subscriber containing a link to confirm the subscription (Double-Opt-In)"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:116
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:120
 #, python-format
 msgid "If you select a list type other than 'none', 'partner mandatory' must be set!"
 msgstr "If you select a list type other than 'none', 'partner mandatory' must be set!"
@@ -291,7 +301,7 @@ msgid "Jahresbeitrag"
 msgstr "Jahresbeitrag"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:159
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:168
 #, python-format
 msgid "Lastname"
 msgstr "Nachname"
@@ -347,6 +357,11 @@ msgid "Mass Mailing Contact"
 msgstr "Massenmail Kontakt"
 
 #. module: fso_subscriptions
+#: field:fson.form,mass_mailing_list_ids:0
+msgid "Mass Mailing List (FSO Subscription)"
+msgstr "Mass Mailing List (FSO Subscription)"
+
+#. module: fso_subscriptions
 #: field:mail.mass_mailing.contact,mobile:0
 msgid "Mobile"
 msgstr "Mobil"
@@ -392,12 +407,24 @@ msgid "None"
 msgstr "Kein Typ"
 
 #. module: fso_subscriptions
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:196
+#: field:mail.mass_mailing.contact,origin:0
+#, python-format
+msgid "Origin"
+msgstr "Origin"
+
+#. module: fso_subscriptions
+#: help:mail.mass_mailing.contact,origin:0
+msgid "Origin information like the web-link, the campaign or similar"
+msgstr "Origin information like the web-link, the campaign or similar"
+
+#. module: fso_subscriptions
 #: selection:mail.mass_mailing.contact,gender:0
 msgid "Other"
 msgstr "Andere"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:176
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:190
 #, python-format
 msgid "Partner"
 msgstr "Person"
@@ -479,7 +506,7 @@ msgid "Street2"
 msgstr "Straße 2"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:143
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:148
 #, python-format
 msgid "Subscribe"
 msgstr "Anmelden"
@@ -505,7 +532,7 @@ msgid "Subscription Goal"
 msgstr "Ziel"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:169
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:182
 #, python-format
 msgid "Subscription List"
 msgstr "Anmeldeliste"
@@ -516,7 +543,7 @@ msgid "Subscription Manager"
 msgstr "Subscription Manager"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:141
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:146
 #, python-format
 msgid "Subscription form for mailing list %s (id %s)"
 msgstr "Anmeldelistenformular für Liste %s (id %s)"
@@ -550,6 +577,16 @@ msgstr "System list are available to all installations and must not be removed!"
 #: field:mail.mass_mailing.contact,pf_teilbeitrag:0
 msgid "Teilbeitrag"
 msgstr "Teilbeitrag"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_titel:0
+msgid "Titel"
+msgstr "Titel"
+
+#. module: fso_subscriptions
+#: field:mail.mass_mailing.contact,pf_titelnachgestellt:0
+msgid "TitelNachgestellt"
+msgstr "TitelNachgestellt"
 
 #. module: fso_subscriptions
 #: field:mail.mass_mailing.contact,pf_titelnachname:0
@@ -627,7 +664,7 @@ msgid "WunschSpendenbetrag"
 msgstr "WunschSpendenbetrag"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:123
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:127
 #, python-format
 msgid "You must set all or none of %s"
 msgstr "You must set all or none of %s"
@@ -648,31 +685,31 @@ msgid "Zip"
 msgstr "PLZ"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:130
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:134
 #, python-format
 msgid "goal can not be negative"
 msgstr "Das Ziel darf nicht negativ sein"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:133
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:137
 #, python-format
 msgid "goal_dynamic can not be negative"
 msgstr "Das dynamische Ziel darf nicht negativ sein"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:126
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:130
 #, python-format
 msgid "goal_increase_at must be between 10 and 120"
 msgstr "goal_increase_at must be between 10 and 120"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:128
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:132
 #, python-format
 msgid "goal_increase_step must be 1 or more"
 msgstr "goal_increase_step must be 1 or more"
 
 #. module: fso_subscriptions
-#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:74
+#: code:addons/fso_subscriptions/models/mail_mass_mailing_list.py:75
 #, python-format
 msgid "subscriptions!"
 msgstr "zu erreichen!"

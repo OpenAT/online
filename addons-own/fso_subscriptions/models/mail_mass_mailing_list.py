@@ -19,6 +19,7 @@ class MailMassMailingList(models.Model):
                                                            ('petition', "Petition"),
                                                            ('sms', 'SMS Subscription'),
                                                            ('whatsapp', "WhatsApp Subscription"),
+                                                           ('activism', "Activism"),
                                                            ('none', "None")],
                                  default='email', required=True)
 
