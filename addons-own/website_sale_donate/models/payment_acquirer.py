@@ -23,3 +23,4 @@ class PaymentAcquirer(models.Model):
                                               help='Will not send website_sale_donate.email_template_webshop. '
                                                    'Setting used in payment provider controllers!')
 
+    post_msg = fields.Html(translate=True)
