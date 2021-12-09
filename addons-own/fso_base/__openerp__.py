@@ -137,6 +137,7 @@ TODO (must be done manually right now):
         #
         'data/instance_system_user_group.xml',
         'security/ir.model.access.csv',
+        'security/email_templates_security.xml',
         #
         'views/templates_backend_css.xml',
         'views/res_company.xml',

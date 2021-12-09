@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <record model="ir.rule" id="rule_restrict_edit_transaction_state_email_template">
+            <field name="name">Only edit non-transaction state E-Mails</field>
+            <field name="model_id" ref="email_template.model_email_template"/>
+            <field name="domain_force" eval="[('id', '!=', ref('fso_base.email_template_webshop'))]" />
+            <!-- <field name="domain_force" eval="[('id', '!=', 37)]" /> -->
+            <field name="perm_read" eval=""/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval=""/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="True"/>
+        </record>
+
+    </data>
+</openerp>
