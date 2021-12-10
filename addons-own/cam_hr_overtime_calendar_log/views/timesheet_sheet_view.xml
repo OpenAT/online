@@ -8,6 +8,7 @@
                     <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
                     <field name="arch" type="xml">
                         <button name="button_confirm" position="before">
+                            <!-- First button is hidden by default, and only made visible for managers -->
                             <button name="button_compute_all_users"
                                     string="Recompute all open sheets for all users"
                                     type="object"
@@ -20,7 +21,7 @@
                     </field>
         </record>
 
-        <record id="cam_hr_overtime_calendar_log_timesheet_sheet_form_restrict_non_manager" model="ir.ui.view">
+        <record id="cam_hr_overtime_calendar_log_timesheet_sheet_form_enable_manager" model="ir.ui.view">
                     <field name="name">hr_timesheet_sheet.cam_hr_overtime_calendar_log_extensions</field>
                     <field name="model">hr_timesheet_sheet.sheet</field>
                     <field name="inherit_id" ref="cam_hr_overtime_calendar_log_timesheet_sheet_form"/>
