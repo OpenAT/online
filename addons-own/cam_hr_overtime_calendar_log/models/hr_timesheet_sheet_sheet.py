@@ -60,4 +60,16 @@ class HRTimesheetSheetSheet(models.Model):
 
         return True
 
+    @api.multi
+    def button_compute_all_users(self):
+        timesheets = self.search([('state', '=', 'draft')],
+                                 order="date_from")
 
+        users_log = ', '.join([str(sheet.user_id.id) for sheet in timesheets])
+        _logger.debug("Calculating open time sheets for users: %s" % users_log)
+
+        # Recalculate
+        for sheet in timesheets:
+            sheet.button_compute()
+
+        return True
