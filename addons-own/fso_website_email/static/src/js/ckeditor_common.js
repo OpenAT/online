@@ -76,6 +76,13 @@
             }
 
             classes = classes.replace(/\s{2,}/g, ' ').trim();
+
+            if (!(classes && classes.length)) {
+                // Base class is coded to ignore empty classes.
+                // To trick the base class, an array with a null
+                // element is sent instead of a string.
+                classes = [ null ];
+            }
             // console.log('make_link() after: ' + classes);
             return this._super(url, new_window, label, classes);
         },
