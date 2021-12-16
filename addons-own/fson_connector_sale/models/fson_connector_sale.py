@@ -178,7 +178,7 @@ class FSOConnectorSale(models.Model):
     consale_provider_status = fields.Char(string="Transaction Status Information", con='tx, payment_consale')
 
     consale_method = fields.Selection(selection=[('paypal', 'PayPal'),
-                                                 ('sofortueberweisung', 'Sofortüberweisung'),
+                                                 ('directdebit', 'Direct Debit'),
                                                  ('applepay', 'Apple Pay'),
                                                  ('googlepay', 'Google Pay'),
                                                  ('banktransfer', 'Bank Transfer'),

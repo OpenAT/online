@@ -39,7 +39,7 @@ class PaymentTransactionConsale(models.Model):
     consale_provider_name = fields.Char(string='Payment Provider Name',
                                         help='External Service- and/or Payment-Provider-Name')
     consale_method = fields.Selection(selection=[('paypal', 'PayPal'),
-                                                 ('sofortueberweisung', 'Sofortüberweisung'),
+                                                 ('directdebit', 'Direct Debit'),
                                                  ('applepay', 'Apple Pay'),
                                                  ('googlepay', 'Google Pay'),
                                                  ('banktransfer', 'Bank Transfer'),
