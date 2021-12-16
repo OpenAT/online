@@ -17,7 +17,7 @@
                             <field name="consale_method_other"/>
                             <field name="consale_method_brand"/>
 
-                            <field name="consale_method_banktransfer_provider"/>
+                            <field name="consale_method_directdebit_provider"/>
 
                             <field name="consale_method_account_owner"/>
                             <field name="consale_method_account_iban"/>

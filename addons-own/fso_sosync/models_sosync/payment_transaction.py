@@ -47,7 +47,7 @@ class PaymentTransactionSosync(models.Model):
     consale_method_other = fields.Char(sosync="fson-to-frst")
     consale_method_brand = fields.Char(sosync="fson-to-frst")
 
-    consale_method_banktransfer_provider = fields.Selection(sosync="fson-to-frst")
+    consale_method_directdebit_provider = fields.Selection(sosync="fson-to-frst")
 
     consale_method_account_owner = fields.Char(sosync="fson-to-frst")
     consale_method_account_iban = fields.Char(sosync="fson-to-frst")

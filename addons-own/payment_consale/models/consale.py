@@ -49,10 +49,10 @@ class PaymentTransactionConsale(models.Model):
     consale_method_other = fields.Char(string='"Other" Payment Method Name')
     consale_method_brand = fields.Char(string='Payment Method Brand', help="e.g.: Visa, Mastercard, Apple, ...")
 
-    # For consale_method 'banktransfer'
-    consale_method_banktransfer_provider = fields.Selection(string="Bank Transfer Payment Provider",
-                                                            selection=[('frst', 'Fundraising Studio'),
-                                                                       ('external', 'External Service')])
+    # For consale_method 'directdebit'
+    consale_method_directdebit_provider = fields.Selection(string="Direct Debit Payment Provider",
+                                                           selection=[('frst', 'Fundraising Studio'),
+                                                                      ('external', 'External Service')])
     consale_method_account_owner = fields.Char(string='Account Owner')
     consale_method_account_iban = fields.Char(string='Account IBAN')
     consale_method_account_bic = fields.Char(string='Account BIC')
@@ -111,14 +111,14 @@ class PaymentTransactionConsale(models.Model):
                     'amount',
                     'currency_id']
 
-        # Banktransfer Payment validations
+        # Direct Debit Payment validations
         # --------------------------------
-        if data.get('consale_method', '') == 'banktransfer':
-            consale_method_banktransfer_provider = data.get('consale_method_banktransfer_provider', '')
-            if not consale_method_banktransfer_provider:
-                raise ValidationError("The field 'consale_method_banktransfer_provider' is required for the payment "
-                                      "method 'banktransfer'!")
-            if consale_method_banktransfer_provider == 'frst':
+        if data.get('consale_method', '') == 'directdebit':
+            consale_method_directdebit_provider = data.get('consale_method_directdebit_provider', '')
+            if not consale_method_directdebit_provider:
+                raise ValidationError("The field 'consale_method_directdebit_provider' is required for the payment "
+                                      "method 'directdebit'!")
+            if consale_method_directdebit_provider == 'frst':
                 required += ['consale_method_account_owner',
                              'consale_method_account_iban',
                              'consale_method_account_bank']
@@ -134,8 +134,8 @@ class PaymentTransactionConsale(models.Model):
                     raise ValidationError("The recurring payment provider 'consale_recurring_payment_provider' must be "
                                           "set for recurring payments!")
                 if consale_recurring_payment_provider == 'frst':
-                    if not data.get('consale_method', '') == 'banktransfer':
-                        raise ValidationError("Only 'banktransfer' method is allowed for recurring payment that "
+                    if not data.get('consale_method', '') == 'directdebit':
+                        raise ValidationError("Only 'directdebit' method is allowed for recurring payment that "
                                               "should be executed by Fundraising Studio")
 
         # Check if any required field value is missing
