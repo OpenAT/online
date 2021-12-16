@@ -29,7 +29,141 @@ of contact.
 
 Required Fields
 ---------------
-The minimum requirement for a new contact is the field ``lastname``.
+The minimum requirement for a new contact are the fields ``lastname`` and ``email``.
+
+Fields
+---------------
+
+``id``
+""""""""""""""""""""""""""""""
+The identity column for the partner.
+
+``firstname``
+""""""""""""""""""""""""""""""
+The first name of the partner.
+
+``lastname``
+""""""""""""""""""""""""""""""
+The last name of the partner.
+
+``name_zwei``
+""""""""""""""""""""""""""""""
+Additional name field.
+
+``company_name_web``
+""""""""""""""""""""""""""""""
+Name for organisations or companies.
+
+``birthdate_web``
+""""""""""""""""""""""""""""""
+Birthdate for the partner.
+
+``frst_zverzeichnis_id``
+""""""""""""""""""""""""""""""
+The :ref:`frst_zverzeichnis` for the origin of the partner. Get this ID from the organisation or from DataDialog or
+create one via the API.
+
+``gender``
+""""""""""""""""""""""""""""""
+Gender of the partner, can be either
+
+- ``male``
+- ``female``
+- ``other``
+
+``title_web``
+""""""""""""""""""""""""""""""
+Title of the partner.
+
+``phone``
+""""""""""""""""""""""""""""""
+The land line phone number.
+
+
+``mobile``
+""""""""""""""""""""""""""""""
+The mobile phone number.
+
+``fax``
+""""""""""""""""""""""""""""""
+The fax number.
+
+``street``
+""""""""""""""""""""""""""""""
+The street of the postal address.
+
+``street_number_web``
+""""""""""""""""""""""""""""""
+The street number of the postal address.
+
+``city``
+""""""""""""""""""""""""""""""
+The city of the postal address.
+
+``zip``
+""""""""""""""""""""""""""""""
+The ZIP number or postal code of the postal address.
+
+``country_id``
+""""""""""""""""""""""""""""""
+The :ref:`res_country` foreign key for the nationality of the partner.
+
+``email``
+""""""""""""""""""""""""""""""
+The main E-Mail address of the partner. This is automatically synchronized with the
+:ref:`frst_personemail` model, which holds all E-Mail addresses for a partner.
+
+``main_personemail_id``
+""""""""""""""""""""""""""""""
+Foreign key to the main :ref:`frst_personemail`.
+
+``frst_personemail_ids``
+""""""""""""""""""""""""""""""
+Foreign key list of all the :ref:`frst_personemail` of the partner.
+
+``newsletter_web``
+""""""""""""""""""""""""""""""
+If true, subscribe the partners main E-Mail address to the default newsletter of the organisation.
+
+``gdpr_accepted``
+""""""""""""""""""""""""""""""
+If true, the partner accepted the GDPR notice.
+
+``donation_deduction_optout_web``
+"""""""""""""""""""""""""""""""""
+The partner does not want to deduct his donation from taxes.
+
+``bpk_forced_firstname``
+"""""""""""""""""""""""""""""""""
+When querying the Austrian BPK number, use this first name instead of the partners first name.
+Leave empty unless required for tax deduction. If using ``bpk_forced``, all ``bpk_forced_*`` fields
+are required.
+
+``bpk_forced_lastname``
+"""""""""""""""""""""""""""""""""
+When querying the Austrian BPK number, use this last name instead of the partners last name.
+Leave empty unless required for tax deduction. If using ``bpk_forced``, all ``bpk_forced_*`` fields
+except ``zip`` and ``street`` are required.
+
+``bpk_forced_birthdate``
+"""""""""""""""""""""""""""""""""
+When querying the Austrian BPK number, use this birthdate instead of the partners birth date.
+Leave empty unless required for tax deduction. If using ``bpk_forced``, all ``bpk_forced_*`` fields
+except ``zip`` and ``street`` are required.
+
+
+``bpk_forced_zip``
+"""""""""""""""""""""""""""""""""
+When querying the Austrian BPK number, use this ZIP/postal code instead of the partners ZIP/postal code.
+Leave empty unless required for tax deduction. If using ``bpk_forced``, all ``bpk_forced_*`` fields
+except ``zip`` and ``street`` are required.
+
+
+``bpk_forced_street``
+"""""""""""""""""""""""""""""""""
+When querying the Austrian BPK number, use this street instead of the partners street.
+Leave empty unless required for tax deduction. If using ``bpk_forced``, all ``bpk_forced_*`` fields
+except ``zip`` and ``street`` are required.
 
 Special Fields
 --------------
