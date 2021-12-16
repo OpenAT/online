@@ -54,7 +54,7 @@ External service and/or payment provider name. For example: My Company/Stripe
 Can be one of these values:
 
 - ``paypal`` PayPal
-- ``sofortueberweisung`` Instant bank transfer
+- ``directdebit`` Direct debit
 - ``applepay`` Apple Pay
 - ``googlepay`` Google Pay
 - ``banktransfer`` Bank transfer
@@ -71,9 +71,9 @@ The brand name for the payment method. E.g., if the ``consale_method`` = ``credi
 ``consale_method_brand`` could be ``Visa``, or ``Mastercard``.
 
 
-``consale_method_banktransfer_provider``
+``consale_method_directdebit_provider``
 """""""""""""""""""""""""""""""""""""""""
-When the ``consale_method`` = ``banktransfer``, specify one of these values
+When the ``consale_method`` = ``directdebit``, specify one of these values
 
 - ``frst`` If DataDialog is supposed to handle the direct debit
 - ``external`` If the direct debit is handled by yourself or externally
@@ -96,7 +96,7 @@ The bank name.
 
 ``consale_recurring_payment_provider``
 """""""""""""""""""""""""""""""""""""""""
-When the ``consale_method`` = ``banktransfer``, specify one of these values
+When the ``consale_method`` = ``directdebit``, specify one of these values
 
 - ``frst`` If DataDialog is supposed to handle the recurring payment
 - ``external`` If the recurring payment is handled by yourself or externally
