@@ -719,11 +719,12 @@ class FsoForms(http.Controller):
             if form.show_token_login_form:
                 tlf_kwargs = deepcopy(kwargs)
                 tlf_kwargs.pop('token_data_submission_url', None)
-                tlf_kwargs.pop('redirect_url_after_token_login', None)
+                redirect_url = tlf_kwargs.pop('redirect_url_after_token_login', request.httprequest.url)
+                assert redirect_url.startswith(request.httprequest.host_url), 'Only local redirects allowed!'
                 tlf_kwargs.pop('tlf_record', None)
                 token_login_form = AuthPartnerForm().web_login_fs_ptoken(
                     token_data_submission_url=request.httprequest.url,
-                    redirect_url_after_token_login=request.httprequest.url,
+                    redirect_url_after_token_login=redirect_url,
                     tlf_record=form,
                     # tlf_top_snippets=form.tlf_top_snippets,
                     # tlf_headline=form.tlf_headline,
