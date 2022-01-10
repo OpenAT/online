@@ -27,6 +27,10 @@
                     (0, 0, {'name': 'amount'}),
                     (0, 0, {'name': 'acquirer_id'}),
                     (0, 0, {'name': 'currency_id'}),
+                    (0, 0, {'name': 'sale_order_id'}),
+
+                    (0, 0, {'name': 'partner_country_id'}),
+                    (0, 0, {'name': 'partner_lang'}),
 
                     (0, 0, {'name': 'consale_provider_name'}),
                     (0, 0, {'name': 'consale_method'}),
