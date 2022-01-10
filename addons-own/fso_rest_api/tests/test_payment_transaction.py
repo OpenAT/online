@@ -46,7 +46,7 @@ class TestFsoRestApiPaymentTransaction(FsoRestApiTestCase):
         model = self.read_first_from_api()
         self.assertModel(model)
 
-    def test_update_payment_transaction_is_denied(self):
+    def test_update_payment_transaction_works_for_self(self):
         _ = self.create_payment_transaction("TEST1", 1.0)
         expected_ref = "TEST2"
         model = self.read_first_from_api()
@@ -58,7 +58,29 @@ class TestFsoRestApiPaymentTransaction(FsoRestApiTestCase):
             "id": int(model["id"]),
             "reference": expected_ref
         })
-        self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
+        self.assertEqual(response.status_code, self.HTTP_OK_NO_CONTENT)
+
+    def test_update_payment_transaction_other_is_denied(self):
+        country = self.read_first_from_api(model="res.country")
+        currency = self.read_first_from_api(model="res.currency")
+        acquirer = self.read_first_from_api(model="payment.acquirer")
+        other_transaction = self.phantom_env[self._model_name].sudo().create({
+            "acquirer_id": acquirer["id"],
+            "partner_country_id": country["id"],
+            "currency_id": currency["id"],
+            "reference": "TEST1",
+            "amount": 41.50
+        })
+
+        expected_ref = "TEST2"
+
+        response = self.update_via_api(data={
+            "id": int(other_transaction["id"]),
+            "reference": expected_ref
+        })
+        # self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
+        reloaded_payment_transaction = self.phantom_env[self._model_name].browse(int(other_transaction["id"]))
+        self.assertNotEqual(reloaded_payment_transaction.reference, expected_ref)
 
     def test_delete_payment_transaction_is_denied(self):
         _ = self.create_payment_transaction("TEST1", 1.0)
