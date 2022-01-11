@@ -23,7 +23,7 @@ class FsoRestApiTestCase(HttpCase):
     HTTP_OK_CREATED = pinguin.CODE__created
     HTTP_OK_ACCEPTED = pinguin.CODE__accepted
     HTTP_OK_NO_CONTENT = pinguin.CODE__ok_no_content
-    HTTP_REJECTED, _ = pinguin.CODE__server_rejects
+    HTTP_REJECTED, _, _ = pinguin.CODE__server_rejects
     HTTP_UNAUTHORIZED, _, _ = pinguin.CODE__no_user_auth
     HTTP_FORBIDDEN, _, _ = pinguin.CODE__method_blocked
 

@@ -37,7 +37,30 @@ class TestFsoRestApiSaleOrderLine(FsoRestApiTestCase):
         model = self.read_first_from_api()
         self.assertModel(model)
 
-    def test_update_sale_order_line_is_denied(self):
+    def test_update_sale_order_line_own_works(self):
+        initial_origin = "https://localhost/test"
+        partner = self.read_first_from_api(model="res.partner")
+        order = self.create_sale_order(partner["id"], "TEST1")
+        product = self.read_first_from_api(model="product.product")
+
+        response = self.create_via_api(data={
+            "order_id": order["id"],
+            "product_id": product["id"],
+            "fs_origin": initial_origin
+        })
+        model = response.json()
+
+        expected_origin = "https://localhost/changed"
+        response = self.update_via_api(data={
+            "id": int(model["id"]),
+            "fs_origin": expected_origin
+        })
+
+        self.assertEqual(response.status_code, self.HTTP_OK_NO_CONTENT)
+        actual = self.phantom_env[self._model_name].browse([int(model["id"])])
+        self.assertEqual(actual.fs_origin, expected_origin)
+
+    def test_update_sale_order_line_other_is_denied(self):
         expected_origin = "https://localhost/test"
         model = self.read_first_from_api()
 
@@ -48,7 +71,7 @@ class TestFsoRestApiSaleOrderLine(FsoRestApiTestCase):
             "id": int(model["id"]),
             "fs_origin": expected_origin
         })
-        self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
+        self.assertEqual(response.status_code, self.HTTP_REJECTED)
 
     def test_delete_sale_order_line_is_denied(self):
         model = self.read_first_from_api()
