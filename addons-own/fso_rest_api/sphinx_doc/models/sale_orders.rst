@@ -114,7 +114,7 @@ the name of the donation product or physical product here.
 State of the order line. Should correspond to the :ref:`sale_order`.
 
 - ``done`` The order line is completed.
-- ``cancelled`` The related order was cancelled
+- ``cancel`` The related order was cancelled
 - ``draft`` The related order is in draft mode
 - ``confirmed`` The sale order is completed. **Use this for donations.**
 - ``exception`` Error
