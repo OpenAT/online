@@ -67,6 +67,9 @@ class TestFsoRestApiProductTemplate(FsoRestApiTestCase):
         self.assertTrue(not str(response.status_code).startswith("2"))
         self.assertTrue("Access Denied" in response.content)
 
+        reloaded_product_template = self.phantom_env[self._model_name].browse(int(model["id"]))
+        self.assertNotEqual(reloaded_product_template.name, expected_name)
+
     def test_delete_product_template_is_denied(self):
         model = self.read_first_from_api()
         response = self.delete_via_api(model["id"])
