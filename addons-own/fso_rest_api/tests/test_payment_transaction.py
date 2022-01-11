@@ -46,7 +46,7 @@ class TestFsoRestApiPaymentTransaction(FsoRestApiTestCase):
         model = self.read_first_from_api()
         self.assertModel(model)
 
-    def test_update_payment_transaction_works_for_self(self):
+    def test_update_payment_transaction_works_for_own(self):
         _ = self.create_payment_transaction("TEST1", 1.0)
         expected_ref = "TEST2"
         model = self.read_first_from_api()
@@ -64,23 +64,27 @@ class TestFsoRestApiPaymentTransaction(FsoRestApiTestCase):
         country = self.read_first_from_api(model="res.country")
         currency = self.read_first_from_api(model="res.currency")
         acquirer = self.read_first_from_api(model="payment.acquirer")
-        other_transaction = self.phantom_env[self._model_name].sudo().create({
+        partner = self.env["res.partner"].search([['country_id', '!=', False]], limit=1)
+        payment_transaction_obj = self.phantom_env[self._model_name].sudo()
+        other_transaction = payment_transaction_obj.create({
+            "partner_id": partner["id"],
             "acquirer_id": acquirer["id"],
             "partner_country_id": country["id"],
             "currency_id": currency["id"],
             "reference": "TEST1",
-            "amount": 41.50
+            "amount": 41.50,
         })
 
-        expected_ref = "TEST2"
-
+        expected_amount = 999
         response = self.update_via_api(data={
             "id": int(other_transaction["id"]),
-            "reference": expected_ref
+            "amount": expected_amount
         })
-        # self.assertEqual(response.status_code, self.HTTP_FORBIDDEN)
+
         reloaded_payment_transaction = self.phantom_env[self._model_name].browse(int(other_transaction["id"]))
-        self.assertNotEqual(reloaded_payment_transaction.reference, expected_ref)
+        logger.info("RECORD OWNER of payment.transaction %s = %s" % (reloaded_payment_transaction.id, reloaded_payment_transaction.create_uid.id))
+        self.assertNotEqual(reloaded_payment_transaction.amount, expected_amount)
+        self.assertEqual(response.status_code, self.HTTP_REJECTED)
 
     def test_delete_payment_transaction_is_denied(self):
         _ = self.create_payment_transaction("TEST1", 1.0)
