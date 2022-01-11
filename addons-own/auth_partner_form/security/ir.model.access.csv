@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_website_config_settings,access_website_config_settings,model_website_config_settings,,1,0,0,0
 access_website_apf_partner_fields,access_website_apf_partner_fields,model_website_apf_partner_fields,,1,0,0,0
+access_website_apf_manager,access_website_apf_manager,model_website_apf_partner_fields,auth_partner_form_manager_group,1,1,1,1

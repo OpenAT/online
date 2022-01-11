@@ -53,6 +53,7 @@ ATTENTION: The token must be at least 6 chars long, is alphanumeric and case sen
         'auth_partner',
     ],
     'data': [
+        'data/auth_partner_user_group.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
