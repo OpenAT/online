@@ -51,7 +51,8 @@ class PaymentTransactionConsale(models.Model):
 
     # For consale_method 'directdebit'
     consale_method_directdebit_provider = fields.Selection(string="Direct Debit Payment Provider",
-                                                           selection=[('frst', 'Fundraising Studio'),
+                                                           selection=[('', 'None'),
+                                                                      ('frst', 'Fundraising Studio'),
                                                                       ('external', 'External Service')])
     consale_method_account_owner = fields.Char(string='Account Owner')
     consale_method_account_iban = fields.Char(string='Account IBAN')
@@ -60,7 +61,8 @@ class PaymentTransactionConsale(models.Model):
 
     # For recurring payments
     consale_recurring_payment_provider = fields.Selection(string="Recurring Payment Provider",
-                                                          selection=[('frst', 'Fundraising Studio'),
+                                                          selection=[('', 'None'),
+                                                                     ('frst', 'Fundraising Studio'),
                                                                      ('external', 'External Service')])
 
     consale_error_code = fields.Char(string='Error Code')
