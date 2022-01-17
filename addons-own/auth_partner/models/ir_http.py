@@ -65,7 +65,13 @@ class ir_http(orm.AbstractModel):
         # Login token_user and redirect to url without fs_ptoken (to avoid copy and paste of the url with token)
         login = token_user.login
         password = token_record.name
-        redirect = login_and_redirect(request.db, login, password, redirect_url=url_no_fs_ptoken)
+        redirect_url_after_token_login = request.httprequest.args.get('redirect_url_after_token_login', '')
+
+        if redirect_url_after_token_login:
+            assert redirect_url_after_token_login.startswith(request.httprequest.host_url), 'Only local redirects allowed!'
+            redirect = login_and_redirect(request.db, login, password, redirect_url=redirect_url_after_token_login)
+        else:
+            redirect = login_and_redirect(request.db, login, password, redirect_url=url_no_fs_ptoken)
 
         # Add token and token-fs-origin to the context (after login_and_redirect because it may change the env)
         if hasattr(request, 'session') and hasattr(request.session, 'context'):
