@@ -51,12 +51,21 @@ class ir_http(orm.AbstractModel):
                 request.session.context.pop('fs_origin', False)
             return redirect_no_fs_ptoken
 
+        redirect_url_after_token_login = request.httprequest.args.get('redirect_url_after_token_login', '')
+
         # User already logged in
         if token_user.id == request.session.uid:
             # Store the token usage
             # HINT: Token usage would only be stored if the user also get's logged in - to track also further attempts
             #       we explicitly store the token at this place but with login=False
             store_token_usage(fs_ptoken, token_record, token_user, request.httprequest, login=False)
+
+            if redirect_url_after_token_login:
+                assert redirect_url_after_token_login.startswith(
+                    request.httprequest.host_url), 'Only local redirects allowed!'
+                redirect = werkzeug.utils.redirect(redirect_url_after_token_login, '303')
+                return redirect
+
             return redirect_no_fs_ptoken
 
         # Logout current user (to destroy the session and clean the cache)
@@ -65,7 +74,6 @@ class ir_http(orm.AbstractModel):
         # Login token_user and redirect to url without fs_ptoken (to avoid copy and paste of the url with token)
         login = token_user.login
         password = token_record.name
-        redirect_url_after_token_login = request.httprequest.args.get('redirect_url_after_token_login', '')
 
         if redirect_url_after_token_login:
             assert redirect_url_after_token_login.startswith(request.httprequest.host_url), 'Only local redirects allowed!'
