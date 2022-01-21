@@ -1238,6 +1238,8 @@ def get_OAS_definitions_part(
                 field_property.update(type="string")
             elif meta["type"] == "text":
                 field_property.update(type="string")
+            elif meta["type"] == "html":
+                field_property.update(type="string")
             elif meta["type"] == "binary":
                 field_property.update(type="string", format="binary")
             elif meta["type"] == "boolean":
