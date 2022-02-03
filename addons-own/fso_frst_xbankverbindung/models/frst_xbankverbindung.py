@@ -14,3 +14,6 @@ class FRSTxBankverbindung(models.Model):
 
     beschreibung = fields.Char(string="Beschreibung")
     kurzbezeichnung = fields.Char(string="Kurzbezeichnung")
+    bankleitzahl = fields.Char(string="Bankleitzahl")
+    kontonummer = fields.Char(string="Kontonummer")
+    xiban = fields.Char(string="IBAN")
