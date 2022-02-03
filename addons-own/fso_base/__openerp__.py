@@ -128,6 +128,7 @@ TODO (must be done manually right now):
         'need_action_menu_disabled',
         'fso_gdpr',
         'fso_sosync_partner_security',
+        'fso_frst_xbankverbindung',
     ],
     'data': [
         #

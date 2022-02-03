@@ -82,6 +82,7 @@
         <!-- SYSTEM: fso_base.menu_fsonline_system -->
         
             <!-- FUNDRASING STUDIO: fso_base.menu_fsonline_system -->
+                <menuitem id="menu_frst_setting_xbankverbindung" string="xBankverbindung" action="fso_frst_xbankverbindung.frst_xbankverbindung_action" parent="fso_base.menu_frst_settings" sequence="2500"/>
                 <!-- Seriendruckfelder -->
                 <menuitem id="menu_frst_settings_print_fields" action="fso_print_fields.fso_print_field_action" parent="fso_base.menu_frst_settings" sequence="2100"/>
                 <menuitem id="menu_frst_settings_print_field_groups" action="fso_print_fields.fso_print_field_group_action" parent="fso_base.menu_frst_settings" sequence="2110"/>
