@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+    
+    <!-- FORM VIEW -->
+    <record model="ir.ui.view" id="frst_xbankverbindung_form">
+        <field name="name">frst_xbankverbindung_form</field>
+        <field name="model">frst.xbankverbindung</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="xBankverbindung">
+                <group string="xBankverbindung">
+                    <group>
+                        <field name="kurzbezeichnung"/>
+                        <field name="beschreibung"/>
+                    </group>
+                    <group>
+                        <field name="xiban"/>
+                        <field name="bankleitzahl"/>
+                        <field name="kontonummer"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+    <!-- TREE/LIST VIEW -->
+    <record model="ir.ui.view" id="frst_xbankverbindung_tree">
+        <field name="name">frst_xbankverbindung_tree</field>
+        <field name="model">frst.xbankverbindung</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="xBankverbindung">
+                <field name="id"/>
+                <field name="kurzbezeichnung"/>
+                <field name="beschreibung"/>
+                <field name="xiban"/>
+                <field name="bankleitzahl"/>
+                <field name="kontonummer"/>
+            </tree>
+        </field>
+    </record>
+    <!-- SEARCH VIEW -->
+    <record model="ir.ui.view" id="frst_xbankverbindung_search">
+        <field name="name">frst_xbankverbindung_search</field>
+        <field name="model">frst.xbankverbindung</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="xBankverbindung">
+                <field name="id"/>
+                <field name="kurzbezeichnung"/>
+                <field name="beschreibung"/>
+                <field name="xiban"/>
+                <field name="bankleitzahl"/>
+                <field name="kontonummer"/>
+            </search>
+        </field>
+    </record>
+    <!-- ACTIONS -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/how-do-you-define-specific-not-default-views-for-each-view-mode-type-form-tree-etc-in-act-window-xml-76275 -->
+    <!-- https://www.odoo.com/de_DE/forum/hilfe-1/question/multiple-create-form-views-same-model-107193 -->
+    <record id="frst_xbankverbindung_action" model="ir.actions.act_window" >
+        <field name="name">xBankverbindung</field>
+        <field name="res_model">frst.xbankverbindung</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="frst_xbankverbindung_search"/>
+    </record>
+    <record id="frst_xbankverbindung_tree_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="frst_xbankverbindung_tree"/>
+        <field name="act_window_id" ref="frst_xbankverbindung_action"/>
+    </record>
+    <record id="frst_xbankverbindung_form_viewaction" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="frst_xbankverbindung_form"/>
+        <field name="act_window_id" ref="frst_xbankverbindung_action"/>
+    </record>
+    <!-- And we add the Action to a Menu with the shortcut menuitem -->
+    <menuitem id="frst_xbankverbindung_menu" action="frst_xbankverbindung_action" parent="base.menu_config" sequence="1265"/>
+    
+</data></openerp>

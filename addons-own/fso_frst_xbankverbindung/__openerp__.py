@@ -36,6 +36,7 @@ FS-Online Fundraising Studio xBankverbindung
     'depends': [
     ],
     'data': [
-        # 'views/frst_personemail.xml',
+        'security/ir.model.access.csv',
+        'views/frst_xbankverbindung.xml',
     ],
 }
