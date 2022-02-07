@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="acquirer_form_frst_xbankverbindung_payment" model="ir.ui.view">
+        <field name="name">acquirer.form.frst_xbankverbindung_payment</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.acquirer_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="frst_xbankverbindung_id" />
+            </xpath>
+        </field>
+    </record>
+
+</data></openerp>
