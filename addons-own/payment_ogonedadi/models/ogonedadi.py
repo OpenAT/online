@@ -15,6 +15,7 @@ from openerp.addons.payment_ogonedadi.data import ogonedadi
 from openerp.osv import osv, fields
 from openerp.tools import float_round
 from openerp.tools.float_utils import float_compare, float_repr
+from openerp import api
 
 _logger = logging.getLogger(__name__)
 
@@ -52,6 +53,13 @@ class PaymentAcquirerOgonedadi(osv.Model):
         'ogonedadi_brand': fields.char('Payment Method Type e.g. VISA (BRAND)'),
         'ogonedadi_tp': fields.char('Payment Form Template URL (TP)')
     }
+
+    @api.multi
+    def name_get(self):
+        return [
+            (record.id, "%s (%s)" % (record.name, record.ogonedadi_pspid) if record.ogonedadi_pspid else record.name)
+            for record in self
+        ]
 
     def _ogonedadi_generate_shasign(self, acquirer, inout, values):
         """ Generate the shasign for incoming or outgoing communications.
