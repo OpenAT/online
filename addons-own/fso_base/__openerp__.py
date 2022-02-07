@@ -129,6 +129,7 @@ TODO (must be done manually right now):
         'fso_gdpr',
         'fso_sosync_partner_security',
         'fso_frst_xbankverbindung',
+        'fso_frst_xbankverbindung_payment',
     ],
     'data': [
         #
