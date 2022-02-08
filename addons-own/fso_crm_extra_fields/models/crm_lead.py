@@ -18,6 +18,12 @@ class CrmLead(models.Model):
     contact_title_web = fields.Char(string='Title Web')
     contact_birthdate_web = fields.Date(string='Birthdate Web')
     contact_newsletter_web = fields.Boolean(string='Newsletter Web')
+    contact_gender = fields.Selection(string="Gender",
+                                      selection=[
+                                          ("male", "Male"),
+                                          ("female", "Female"),
+                                          ("other", "Other"),
+                                      ])
 
     @api.model
     def _lead_create_contact(self, lead, name, is_company, parent_id=False):
@@ -35,6 +41,7 @@ class CrmLead(models.Model):
                 'title_web': lead.contact_title_web,
                 'birthdate_web': lead.contact_birthdate_web,
                 'newsletter_web': lead.contact_newsletter_web,
+                'gender': lead.contact_gender,
             })
 
         return partner_id

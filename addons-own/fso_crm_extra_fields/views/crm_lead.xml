@@ -19,6 +19,7 @@
                         <field name="contact_title_web"/>
                         <field name="contact_birthdate_web"/>
                         <field name="contact_newsletter_web"/>
+                        <field name="contact_gender"/>
                     </group>
                 </page>
             </xpath>
@@ -40,6 +41,7 @@
                         <field name="contact_title_web"/>
                         <field name="contact_birthdate_web"/>
                         <field name="contact_newsletter_web"/>
+                        <field name="contact_gender"/>
                     </group>
                 </page>
             </xpath>
