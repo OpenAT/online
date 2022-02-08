@@ -18,12 +18,6 @@ class CrmLead(models.Model):
     contact_title_web = fields.Char(string='Title Web')
     contact_birthdate_web = fields.Date(string='Birthdate Web')
     contact_newsletter_web = fields.Boolean(string='Newsletter Web')
-    # contact_gender = fields.Selection(string="Gender",
-    #                                   selection=[
-    #                                       ("male", "Male"),
-    #                                       ("female", "Female"),
-    #                                       ("other", "Other"),
-    #                                   ])
     contact_gender = fields.Char(string="Gender")
 
     _gender_map = {
