@@ -22,6 +22,17 @@
             </field>
         </record>
 
+        <record id="acquirer_tree_ogonedadi" model="ir.ui.view">
+            <field name="name">acquirer.tree.ogonedadi</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_list"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="ogonedadi_pspid"/>
+                </field>
+            </field>
+        </record>
+
         <record id="transaction_form_ogonedadi" model="ir.ui.view">
             <field name="name">acquirer.transaction.form.ogonedadi</field>
             <field name="model">payment.transaction</field>
