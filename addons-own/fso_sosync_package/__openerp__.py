@@ -46,6 +46,7 @@ Do NOT depend on specific sosync packages that are only applicable to some insta
         'fso_sosync_fso_frst_xbankverbindung',
         'fso_sosync_fso_frst_xbankverbindung_payment',
         'fso_sosync_product',
+        'fso_sosync_survey',
     ],
     'data': [
      ],
