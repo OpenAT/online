@@ -10,3 +10,4 @@ class ProductProductSosync(models.Model):
 
     default_code = fields.Char(sosync="fson-to-frst")
     product_tmpl_id = fields.Many2one(sosync="fson-to-frst")
+    attribute_value_ids = fields.Many2many(sosync="fson-to-frst")
