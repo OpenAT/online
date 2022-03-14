@@ -38,6 +38,6 @@ Eenable xBankverbindung synchronization via Sosync
         'fso_frst_xbankverbindung',
     ],
     'data': [
-        # 'views/data.xml',
+        'security/ir.model.access.csv',
     ],
 }
