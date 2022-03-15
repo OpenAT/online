@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <!-- =============================== -->
+    <!-- CREATE SOSYNC JOB QUEUE ACTIONS -->
+    <!-- =============================== -->
+
+    <!-- Server Action to manually submit a sync jobs -->
+    <record id="submit_sync_job" model="ir.actions.server">
+        <field name="name">Submit Sync Job</field>
+        <field name="model_id" ref="model_sosync_job_queue"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_model') == 'sosync.job.queue':
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+
+                # Submit the sync job(s)
+                self.submit_sync_job(cr, uid, ids, context=context)
+        </field>
+    </record>
+    <!-- Add Server Action submit_sync_job to the More menu -->
+    <record id="ir_submit_sync_job" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'sosync.job.queue'"/>
+        <field name="name">Submit Sync Job</field>
+        <field name="value" eval="'ir.actions.server,%d'%submit_sync_job"/>
+    </record>
+
+    <!-- ================================= -->
+    <!-- CREATE SYNC JOB ACTIONS PER MODEL -->
+    <!-- ================================= -->
+
+    <!-- Server Action to run create_sync_job res.partner -->
+    <record id="create_sync_job" model="ir.actions.server">
+        <field name="name">Create Sync Job</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_model') == 'res.partner':
+                ids = []
+                if context.get('active_domain'):
+                    ids = self.search(cr, uid, context['active_domain'], context=context)
+                elif context.get('active_ids'):
+                    ids = context['active_ids']
+
+                # Create the sync job(s)
+                self.create_sync_job(cr, uid, ids, context=context)
+        </field>
+    </record>
+    <!-- Add Server Action create_sync_job res.partner to the More menu -->
+    <record id="ir_create_sync_job" model="ir.values">
+        <field name="key2" eval="'client_action_multi'"/>
+        <field name="model" eval="'res.partner'"/>
+        <field name="name">Create Sync Job</field>
+        <field name="value" eval="'ir.actions.server,%d'%create_sync_job"/>
+    </record>
+
+</data></openerp>

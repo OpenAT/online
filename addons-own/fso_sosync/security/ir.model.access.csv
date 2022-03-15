@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_sosync_queue_manager,access_sosync_queue_manager,model_sosync_job_queue,fso_sosync.group_sosync_manager,1,1,1,1

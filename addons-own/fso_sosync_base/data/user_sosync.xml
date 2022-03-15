@@ -36,8 +36,7 @@
             <!-- Inherited Groups -->
             <field name="implied_ids"
                    eval="[
-                   (4, ref('base.studio')),
-                   (4, ref('fso_sosync.group_sosync_manager')),
+                   (4, ref('fso_sosync_base.group_sosync_manager')),
                    ]"/>
         </record>
 

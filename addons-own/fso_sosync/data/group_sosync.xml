@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data noupdate="0">
+
+        <!-- sosync GROUP -->
+        <record id="base.sosync" model="res.groups">
+            <!-- Inherited Groups -->
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('base.studio')),
+                   (4, ref('fso_sosync_base.group_sosync_manager')),
+                   ]"/>
+        </record>
+
+    </data>
+</openerp>

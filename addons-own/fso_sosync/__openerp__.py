@@ -56,26 +56,21 @@ sosync_skipped_flows: SaleOrder,Partner,BPK|None
     'application': True,
     'auto_install': False,
     'depends': [
+        'fso_sosync_base',
         'fsonline',
     ],
     'data': [
         # Security
-        'security/security_groups.xml',
-        'security/ir.model.access.csv',
         #
         # Views and CSS
         'views/templates_backend_css.xml',
-        'views/sosync_job_queue.xml',
-        'views/sosync_job_queue_wizard.xml',
         # Deprecated Views
         #'views/sosync_job.xml',
         #'views/sosync_job_wizard.xml',
         #
         # Data: User and Actions
         'data/actions.xml',
-        'data/scheduled_actions.xml',
-        'data/scheduled_actions_noupdate.xml',
-        'data/user_sosync.xml',
+        'data/group_sosync.xml',
         #
         # Extended Sosync-Model Views
         'views/res_partner.xml',
