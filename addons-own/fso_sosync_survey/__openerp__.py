@@ -38,7 +38,7 @@ survey.question, survey.label, survey.user_input, survey.user_input_line
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'fso_sosync_base',
         'survey',
     ],
     'data': [

@@ -38,7 +38,7 @@ product.attribute, product.attribute.lines, product.attribute.values, product.at
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'fso_sosync_base',
         'product',
     ],
     'data': [

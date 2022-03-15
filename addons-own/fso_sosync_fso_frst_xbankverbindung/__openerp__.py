@@ -34,7 +34,7 @@ Eenable xBankverbindung synchronization via Sosync
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'fso_sosync_base',
         'fso_frst_xbankverbindung',
     ],
     'data': [

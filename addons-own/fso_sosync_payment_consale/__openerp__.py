@@ -37,7 +37,7 @@ Specifies sosync tracked fields for model payment.transaction
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'fso_sosync_base',
         'payment_consale',
     ],
     'data': [

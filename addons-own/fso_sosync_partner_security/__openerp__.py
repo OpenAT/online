@@ -38,6 +38,10 @@ linked to an FS-Online Administration- or System-User.
     'application': False,
     'auto_install': False,
     'depends': [
+        # DO NOT depend on fso_sosync_base. It is an optional
+        # dependency, the addon is supposed to work with and
+        # without fso_sosync_base.
+        # 'fso_sosync_base',
         'contacts',
     ],
     'data': [

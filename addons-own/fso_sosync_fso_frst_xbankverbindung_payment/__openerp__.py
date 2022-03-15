@@ -34,7 +34,7 @@ FS-Online Fundraising Studio sosync module to sync the frst_xbankverbindung_id o
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'fso_sosync_base',
         'fso_frst_xbankverbindung_payment',
     ],
     'data': [

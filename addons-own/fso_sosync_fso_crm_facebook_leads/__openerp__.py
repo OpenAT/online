@@ -37,7 +37,7 @@ Specifies sosync tracked fields for model crm.lead
     'application': False,
     'auto_install': False,
     'depends': [
-        'fso_sosync',
+        'fso_sosync_base',
         'fso_crm_facebook_leads',
     ],
     'data': [
