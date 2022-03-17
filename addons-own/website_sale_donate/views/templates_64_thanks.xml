@@ -44,7 +44,7 @@
                                         <div class="payment_information">
                                             <h3>Payment Information</h3>
                                             <p class="payment_status">
-                                                <div class="payment_status"><span>Payment Method: </span><span class="badge" t-field="order.payment_tx_id.acquirer_id"/></div>
+                                                <div class="payment_status"><span>Payment Method: </span><span class="badge" t-field="order.payment_tx_id.acquirer_id.name"/></div>
                                                 <div class="payment_status"><span>Payment Reference: </span><span class="badge" t-field="order.payment_tx_id.reference"/></div>
                                                 <div class="payment_status"><span>Payment Status: </span><span class="badge" t-field="order.payment_tx_id.state"/></div>
                                                 <div class="payment_status"><span>Total Amount: </span><span class="badge" t-field="order.amount_total"/></div>
