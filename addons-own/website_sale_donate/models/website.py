@@ -1,8 +1,9 @@
 # -*- coding: utf-'8' "-*-"
 __author__ = 'Michael Karrer'
 
-from openerp import models, fields, api
+from openerp import models, fields, api, SUPERUSER_ID
 from openerp.tools.translate import _
+from openerp.addons.web.http import request
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -172,3 +173,15 @@ class Website(models.Model):
                 lines_to_update.sudo().write({'fs_ptoken': fs_ptoken, 'fs_origin': fs_origin})
 
         return so
+
+    def sale_get_transaction_include_cancelled(self, cr, uid, ids, context=None):
+        """ Gets the sale transaction, even if it is cancelled """
+        transaction_obj = self.pool.get('payment.transaction')
+        tx_id = request.session.get('sale_transaction_id')
+        if tx_id:
+            tx_ids = transaction_obj.search(cr, SUPERUSER_ID, [('id', '=', tx_id)], context=context)
+            if tx_ids:
+                return transaction_obj.browse(cr, SUPERUSER_ID, tx_ids[0], context=context)
+            else:
+                request.session['sale_transaction_id'] = False
+        return False

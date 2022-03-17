@@ -1248,9 +1248,12 @@ class website_sale_donate(website_sale):
 
         # Find payment transaction (from current session)
         if transaction_id is None:
-            tx = request.website.sale_get_transaction()
+            tx = request.website.sale_get_transaction_include_cancelled()
         else:
             tx = request.registry['payment.transaction'].browse(cr, uid, transaction_id, context=context)
+
+        if tx:
+            _logger.info('/shop/payment/validate: tx.id: %s state: %s' % (tx.id, tx.state))
 
         # Update redirect_url_after_form_feedback from payment provider if set
         if tx and tx.acquirer_id and tx.acquirer_id.redirect_url_after_form_feedback:
