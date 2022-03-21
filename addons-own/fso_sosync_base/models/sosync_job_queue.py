@@ -88,16 +88,16 @@ class SosyncJobQueue(models.Model):
     def init(self, cr, context=None):
         # Remove scheduled cron job to make sure it will be recreated with values from xml file
         model_data_obj = self.pool.get('ir.model.data')
-        scheduler_a = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'fso_sosync.ir_cron_scheduled_job_queue_cleanup_1')
+        scheduler_a = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID, 'fso_sosync_base.ir_cron_scheduled_job_queue_cleanup_1')
         if scheduler_a:
-            logger.info("Unlink fso_sosync.ir_cron_scheduled_job_queue_cleanup_1 on install/update for recreation!")
+            logger.info("Unlink fso_sosync_base.ir_cron_scheduled_job_queue_cleanup_1 on install/update for recreation!")
             scheduler_a.unlink()
 
         # TODO: Remove this code after sosync.job model was removed on all instances
         # Remove scheduled cron job to make sure it will be recreated with values from xml file
         model_data_obj = self.pool.get('ir.model.data')
         scheduler_b = model_data_obj.xmlid_to_object(cr, SUPERUSER_ID,
-                                             'fso_sosync.ir_cron_scheduled_cleanup_sosync_job_model_and_table')
+                                             'fso_sosync_base.ir_cron_scheduled_cleanup_sosync_job_model_and_table')
         if scheduler_b:
             logger.info("Unlink ir_cron_scheduled_cleanup_sosync_job_model_and_table on install/update for recreation!")
             scheduler_b.unlink()
@@ -306,7 +306,7 @@ class SosyncJobQueue(models.Model):
 
         # Limit the number of submissions per scheduled run to the interval length in seconds
         # HINT: This suggests that a submission should time-out after one second
-        scheduled_action = self.env.ref('fso_sosync.ir_cron_scheduled_job_queue_submission')
+        scheduled_action = self.env.ref('fso_sosync_base.ir_cron_scheduled_job_queue_submission')
         interval_to_seconds = {
             "weeks": 7 * 24 * 60 * 60,
             "days": 24 * 60 * 60,
