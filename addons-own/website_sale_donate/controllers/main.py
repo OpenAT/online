@@ -1233,7 +1233,7 @@ class website_sale_donate(website_sale):
     # HINT: Overwrite was necessary because of unwanted redirects e.g.: to /shop in orig. controller
     @http.route()
     def payment_validate(self, transaction_id=None, sale_order_id=None, **post):
-        _logger.info('/shop/payment/validate: START for sale_order_id: %s' % sale_order_id)
+        _logger.info('/shop/payment/validate: START for sale_order_id: %s, transaction_id: %s' % (sale_order_id, transaction_id))
         cr, uid, context = request.cr, request.uid, request.context
         sale_order_obj = request.registry['sale.order']
 
