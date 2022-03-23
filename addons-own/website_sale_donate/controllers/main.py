@@ -1254,6 +1254,8 @@ class website_sale_donate(website_sale):
 
         if tx:
             _logger.info('/shop/payment/validate: tx.id: %s state: %s' % (tx.id, tx.state))
+        else:
+            _logger.info('/shop/payment/validate: tx was None')
 
         # Update redirect_url_after_form_feedback from payment provider if set
         if tx and tx.acquirer_id and tx.acquirer_id.redirect_url_after_form_feedback:
