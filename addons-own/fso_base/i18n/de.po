@@ -889,6 +889,11 @@ msgid "Product"
 msgstr "Produkt"
 
 #. module: fso_base
+#: selection:product.template,fs_product_type:0
+msgid "Shipping"
+msgstr "Versand"
+
+#. module: fso_base
 #: model:ir.model,name:fso_base.model_product_template
 msgid "Product Template"
 msgstr "Produktvorlage"

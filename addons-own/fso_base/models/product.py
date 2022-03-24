@@ -12,5 +12,6 @@ class ProductTemplate(models.Model):
                                                   ('product', 'Product'),                # Produkt: includes Mitgliedschaft, Event Ticket
                                                   #('eventticket', 'Event Ticket'),      # Event Ticket
                                                   ('mediation', 'Mediation'),            # e.g. Tiervermittlung
+                                                  ('shipping', 'Shipping'),              # e.g. Versandkosten
                                                   ],
                                        string="Type")
