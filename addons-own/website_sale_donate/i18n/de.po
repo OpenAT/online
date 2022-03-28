@@ -2302,6 +2302,11 @@ msgid "Order Number:"
 msgstr "Auftragsnummer:"
 
 #. module: website_sale_donate
+#: field:payment.acquirer,base_url_for_form_feedback:0
+msgid "Override the system base URL with this URL"
+msgstr "System Basis-URL mit dieser URL überschreiben"
+
+#. module: website_sale_donate
 #: field:product.acquirer_lines,acquirer_pre_msg:0
 msgid "Overwrite Default Acquirer Message"
 msgstr "Standard Zahlungsanbieternachricht überschreiben"
@@ -3230,6 +3235,11 @@ msgstr "Das \"Fundraising Studio Gruppen\" Feld fügt die Gruppen autom beim der
 #: help:sale.order.line,fs_origin:0
 msgid "The Fundraising Studio activity ID"
 msgstr "The Fundraising Studio Aktivitäts ID"
+
+#. module: website_sale_donate
+#: help:payment.acquirer,base_url_for_form_feedback:0
+msgid "The payment provider is told to send the feedback calls to this base URL instead of the system base URL. This allows support for different domains for providers."
+msgstr "Dem Zahlungsanbieter wird mitgeteilt, diese URL für die Antwort-Requests zu verwenden, anstatt die System Basis-URL. Dies ermöglicht die Unterstützung unterschiedlicher Domänen für Zahlungsanbieter."
 
 #. module: website_sale_donate
 #: help:product.product,sale_delay:0

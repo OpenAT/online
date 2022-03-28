@@ -154,6 +154,10 @@ class PaymentAcquirerOgonedadi(osv.Model):
         base_url = self.pool['ir.config_parameter'].get_param(cr, uid, 'web.base.url')
         acquirer = self.browse(cr, uid, id, context=context)
 
+        # Override base URL with acquirer base_url_for_form_feedback
+        if acquirer.base_url_for_form_feedback:
+            base_url = acquirer.base_url_for_form_feedback
+
         ogonedadi_tx_values = dict(tx_values)
         # AMOUNT calculation changed! see: https://github.com/odoo/odoo/commit/7c2521a79bc9443adab1bc63007e70661a8c22b7
         temp_ogonedadi_tx_values = {

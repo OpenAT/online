@@ -360,6 +360,7 @@
                     <field name="submit_button_class"/>
                     <field name="redirect_url_after_form_feedback"/>
                     <field name="do_not_send_status_email"/>
+                    <field name="base_url_for_form_feedback"/>
                 </field>
                 <!-- Add the Name and the Icon (used in website too) before group name="acquirer_base" -->
                 <xpath expr="//group[@name='acquirer_base']" position="before">
