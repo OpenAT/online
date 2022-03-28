@@ -178,6 +178,10 @@ class Website(models.Model):
         """ Gets the sale transaction, even if it is cancelled """
         transaction_obj = self.pool.get('payment.transaction')
         tx_id = request.session.get('sale_transaction_id')
+        last_tx_id = request.session.pop('last_sale_transaction_id', None)
+
+        _logger.info("sale_get_transaction_include_cancelled(): Session variables: sale_transaction_id: %s, last_sale_transaction_id: %s" % (tx_id, last_tx_id))
+
         if tx_id:
             tx_ids = transaction_obj.search(cr, SUPERUSER_ID, [('id', '=', tx_id)], context=context)
             if tx_ids:
