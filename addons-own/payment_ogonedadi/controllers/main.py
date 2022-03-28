@@ -30,7 +30,6 @@ class OgonedadiController(http.Controller):
         # form_feedback will call finally _ogonedadi_form_validate (call besides others) and return True or False
         # INFO: form_feedback is also inherited by website_sale and website_sale_payment_fix
         request.registry['payment.transaction'].form_feedback(cr, uid, post, 'ogonedadi', context=context)
-        request.session['last_sale_transaction_id'] = request.session.get('sale_transaction_id')
 
         # Finally redirect to /shop/payment/validate
         # HINT: /shop/payment/validate is the default url hard coded in a lot of places
