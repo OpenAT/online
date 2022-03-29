@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="product_public_category_form_goals" model="ir.ui.view">
+        <field name="name">product.public.category.form.goals</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="website_sale_categories.product_public_category_form"/>
+        <field name="arch" type="xml">
+            <form string="Shop Category" position="inside">
+                <group string="Funding goal">
+                    <field name="goal"/>
+                    <field name="goal_reached" readonly="1"/>
+                    <field name="product_tmpl_ids" readonly="1" widget="many2many_tags"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+</data></openerp>
