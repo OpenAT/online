@@ -12,7 +12,7 @@ class ProductPublicCategoryGoal(models.Model):
     goal = fields.Float(string="Funding goal")
     goal_reached = fields.Integer(string="Funding goal reached %",
                                   compute="_cmp_goal_reached",
-                                  store=True)
+                                  store=False)
 
     product_tmpl_ids = fields.Many2many(string='Funding goal products',
                                         comodel_name="product.template",
