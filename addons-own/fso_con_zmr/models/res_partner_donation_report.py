@@ -985,7 +985,8 @@ class ResPartnerFADonationReport(models.Model):
                     [('partner_id', '!=', r.partner_id.id),
                      ('bpk_company_id', '=', r.bpk_company_id.id),
                      ('betrag', '>', 0),
-                     ('submission_bpk_private', '=', bpk_private)])
+                     ('submission_bpk_private', '=', bpk_private),
+                     ('meldungs_jahr', '=', r.meldungs_jahr)])
 
                 # If the last donation report of the "other" person is a successfully submitted
                 # "Stornierungsmeldung" and the private BPK of the 'other' person is no longer the private BPK of 'this'
