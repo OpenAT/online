@@ -2,18 +2,17 @@
 <openerp>
     <data noupdate="0">
 
-        <template id="blog_page_snippet_areas" inherit_id="website_blog.index" name="Blog Page Complete Snippet Areas">
-            //*[@id="wrap"]/div[1]/section/div/div/div/h1
-<!--            <xpath expr="//*[@id='wrap']/div[1]/section/div/div/div/h1" position="before">
-                <div class="blog_page_snippets blog_page_snippets_top">
-                    <div t-field='blog_post.snippets_top' class="oe_no_empty"/>
+        <template id="blog_page_snippet_areas" inherit_id="website_blog.blog_post_short" name="Blog Page Complete Snippet Areas">
+            <xpath expr="//div/h1" position="before">
+                <div class="blog_snippets blog_page_snippets_top">
+                    <div t-field='blog.snippets_top' class="oe_no_empty"/>
                 </div>
-            </xpath>-->
- <!--           <xpath expr="//div[@id='AJAXErrorModal']" position="after">
-                <div class="blog_page_snippets blog_page_snippets_bottom">
-                    <div t-field='page.snippets_bottom' class="oe_no_empty"/>
+            </xpath>
+            <xpath expr="//div/h3" position="after">
+                <div class="blog_snippets blog_page_snippets_bottom">
+                    <div t-field='blog.snippets_bottom' class="oe_no_empty"/>
                 </div>
-            </xpath>-->
+            </xpath>
         </template>
 
     </data>
