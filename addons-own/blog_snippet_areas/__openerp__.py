@@ -25,7 +25,7 @@
     'summary': """blog_snippet_areas""",
     # 'description': """""", # See static/description
     'author': "Datadialog - Joachim Grubelnik",
-    'website': "http://www.datadialog.net/",
+    'website': "https://www.datadialog.net/",
     'category': 'Uncategorized',
     'version': '0.1',
     'installable': True,
