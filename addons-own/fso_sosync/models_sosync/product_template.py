@@ -74,3 +74,5 @@ class ProductTemplateSosync(models.Model):
 
     giftee_form_id = fields.Many2one(sosync="fson-to-frst")
     giftee_email_template = fields.Many2one(sosync="fson-to-frst")
+
+    categ_id = fields.Many2one(sosync="fson-to-frst")

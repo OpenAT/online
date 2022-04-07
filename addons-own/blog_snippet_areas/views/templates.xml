@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <template id="blog_page_snippet_areas" inherit_id="website_blog.blog_post_short" name="Blog Page Complete Snippet Areas">
+            <xpath expr="//div/h1" position="before">
+                <div class="blog_snippets blog_page_snippets_top">
+                    <div t-field='blog.snippets_top' class="oe_no_empty"/>
+                </div>
+            </xpath>
+            <xpath expr="//div/h3" position="after">
+                <div class="blog_snippets blog_page_snippets_bottom">
+                    <div t-field='blog.snippets_bottom' class="oe_no_empty"/>
+                </div>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>
