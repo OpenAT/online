@@ -980,9 +980,59 @@ class ResPartnerFADonationReport(models.Model):
             bpk_private = bpk.bpk_private
             if bpk_private and (not r.cancellation_for_bpk_private and r.betrag > 0):
 
-                # Search for non-cancellation donation reports with a different partner but the same private BPK number
+                # Get all reports with the same private bpk for the same year
+                # but with a different partner id
+                r_same_bpk_all = r.sudo().search(
+                    [('partner_id', '!=', r.partner_id.id),
+                     ('bpk_company_id', '=', r.bpk_company_id.id),
+                     ('submission_bpk_private', '=', bpk_private),
+                     ('meldungs_jahr', '=', r.meldungs_jahr)])
+
+                # Get unique partner ids from the reports list
+                okay_partner_dict = dict.fromkeys(r_same_bpk_all.mapped('partner_id'))
+
+                # Cycle all partners, calculate the actual sum
+                # and remove partners, with a sum > 0.
+                #
+                # Example:
+                #    partner A in 2021: E15, A20, S0, E10, S0, E100
+                #                       Sum 100 --> remove
+                #
+                #    partner B in 2021: E12, A30, S0, E15, S0
+                #                       Sum 0 --> do not remove
+                for partner in okay_partner_dict:
+                    # Get reports for current partner
+                    # IMPORTANT: sort by anlage_am_um ascending
+                    report_history = r_same_bpk_all\
+                        .filtered(lambda dr: dr.partner_id.id == partner.id)\
+                        .sorted(lambda dr: dr.anlage_am_um)
+
+                    submitted = 0.0
+                    for h in report_history:
+                        if h.submission_type != "S" and h.state == "response_ok":
+                            logger.debug("[%s] %s: %s EUR %s --> setting sum" % (h.anlage_am_um, h.submission_type, h.state, h.betrag))
+                            submitted = h.betrag
+                        elif h.submission_type == "S" and h.state == "response_ok":
+                            logger.debug("[%s] %s: %s EUR %s --> clearing sum" % (h.anlage_am_um, h.submission_type, h.state, h.betrag))
+                            submitted = 0
+                        else:
+                            logger.debug("[%s] %s: %s EUR %s --> ignoring" % (h.anlage_am_um, h.submission_type, h.state, h.betrag))
+
+                    if submitted > 0.0:
+                        # Partner submitted something, remove from okay dictionary
+                        okay_partner_dict.pop(partner.id)
+                        logger.info("Partner %s has currently EUR %s submitted, removing from okay-list." % (partner.id, submitted))
+                    else:
+                        logger.info("Partner %s has nothing submitted." % partner.id)
+
+                partner_with_zero_sum = [op.id for op in okay_partner_dict]
+
+                # Search for non-cancellation donation reports with a different partner but the same private BPK number.
+                # Exclude partners that have sum of zero. This allows the same bpk to submit for a different partner, if
+                # all other partners had a sum of zero.
                 r_same_bpk = r.sudo().search(
                     [('partner_id', '!=', r.partner_id.id),
+                     ('partner_id', 'not in', partner_with_zero_sum),
                      ('bpk_company_id', '=', r.bpk_company_id.id),
                      ('betrag', '>', 0),
                      ('submission_bpk_private', '=', bpk_private),
