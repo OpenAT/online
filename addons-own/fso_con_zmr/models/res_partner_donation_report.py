@@ -1000,6 +1000,7 @@ class ResPartnerFADonationReport(models.Model):
                 #
                 #    partner B in 2021: E12, A30, S0, E15, S0
                 #                       Sum 0 --> do not remove
+                partner_with_zero_sum = []
                 for partner in okay_partner_dict:
                     # Get reports for current partner
                     # IMPORTANT: sort by anlage_am_um ascending
@@ -1020,12 +1021,10 @@ class ResPartnerFADonationReport(models.Model):
 
                     if submitted > 0.0:
                         # Partner submitted something, remove from okay dictionary
-                        okay_partner_dict.pop(partner.id)
                         logger.info("Partner %s has currently EUR %s submitted, removing from okay-list." % (partner.id, submitted))
                     else:
+                        partner_with_zero_sum.append(partner.id)
                         logger.info("Partner %s has nothing submitted." % partner.id)
-
-                partner_with_zero_sum = [op.id for op in okay_partner_dict]
 
                 # Search for non-cancellation donation reports with a different partner but the same private BPK number.
                 # Exclude partners that have sum of zero. This allows the same bpk to submit for a different partner, if
