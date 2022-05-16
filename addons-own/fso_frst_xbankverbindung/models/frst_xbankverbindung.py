@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class FRSTxBankverbindung(models.Model):
     """
-    The FundraisingStudio xBankverbindung.
+    The FundraisingStudio organisation xBankverbindung.
     """
     _name = "frst.xbankverbindung"
 
