@@ -294,7 +294,7 @@ class BaseSosync(models.AbstractModel):
             job_priority = getattr(self, '_sync_job_priority', False)
 
         # Create sync jobs
-        for record in self:
+        for record in self.sudo():
             sosync_write_date = sosync_write_date or record.sosync_write_date
 
             # Create job values
