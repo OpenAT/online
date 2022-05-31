@@ -38,7 +38,7 @@ msgstr "Öffne Umfrage nach erfolgreicher Formübermittlung"
 #. module: fso_forms_survey
 #: field:fson.form,redirect_survey_id:0
 msgid "Redirect to Survey"
-msgstr "Unmleiten zur Umfrage"
+msgstr "Umleiten zur Umfrage"
 
 #. module: fso_forms_survey
 #: view:fson.form:fso_forms_survey.fso_form_survey
