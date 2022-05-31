@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <!-- Add survey css tags to start page -->
+        <template id="survey_init_css" inherit_id="survey.survey_init" name="Survey Start Page CSS class">
+            <xpath expr="//div[@class='wrap']" position="attributes">
+                <attribute name="class" />
+                <attribute name="t-att-class">'wrap survey-%s' % survey.id + (" %s" % survey.css_class if survey.css_class else '')</attribute>
+            </xpath>
+        </template>
+
+        <!-- Add survey css tags to survey forms -->
+        <template id="survey_css" inherit_id="survey.survey" name="Survey CSS class">
+            <xpath expr="//div[@class='wrap']" position="attributes">
+                <attribute name="class" />
+                <attribute name="t-att-class">'wrap survey-%s' % survey.id + (" %s" % survey.css_class if survey.css_class else '')</attribute>
+            </xpath>
+        </template>
+
+        <!-- Custom start survey button text -->
+        <template id="survey_init_button" inherit_id="survey.survey_init" name="Survey Start Page Button">
+            <xpath expr="//a[@class='btn btn-primary btn-lg']" position="replace">
+                <a class="btn btn-primary btn-lg" t-att-href="'/survey/fill/%s/%s' % (slug(survey), token)">
+                    <t t-if="survey.start_button_text">
+                        <t t-esc="survey.start_button_text" />
+                    </t>
+                    <t t-if="not survey.start_button_text">
+                        Start Survey
+                    </t>
+                </a>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>
