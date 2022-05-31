@@ -23,6 +23,8 @@ class FSONForm(models.Model):
 
     survey_total = fields.Integer(string="Survey Results Total", compute="compute_survey_total")
 
+    survey_start_directly = fields.Boolean(string="Start survey directly, without start page")
+
     # @api.constrains('redirect_survey_id', 'redirect_url', 'redirect_url_target', 'redirect_url_if_logged_in',
     #                 'redirect_url_if_logged_in_target')
     # def constrain_redirect_urls(self):

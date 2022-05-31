@@ -37,7 +37,10 @@ class FsoFormsSurvey(FsoForms):
 
             # Force the redirect url to the survey start page with the correct survey user input token
             # ----------------------------------------------------------------------------------------
-            forced_redirect_url = '/survey/start/%s/%s' % (form.redirect_survey_id.id, survey_user_input.token)
+            if form.survey_start_directly:
+                forced_redirect_url = '/survey/fill/%s/%s' % (form.redirect_survey_id.id, survey_user_input.token)
+            else:
+                forced_redirect_url = '/survey/start/%s/%s' % (form.redirect_survey_id.id, survey_user_input.token)
             forced_redirect_target = form.redirect_survey_target
 
         # Return _redirect_after_form_submit

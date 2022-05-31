@@ -84,3 +84,7 @@ msgstr "_blank"
 msgid "_parent"
 msgstr "_parent"
 
+#. module: fso_forms_survey
+#: field:fson.form,survey_start_directly:0
+msgid "Start survey directly, without start page"
+msgstr "Umfrage direkt starten, ohne Startseite"

@@ -26,6 +26,7 @@
                         <group name="survey_redirect" string="Start survey after successful form submit">
                             <field name="redirect_survey_id"/>
                             <field name="redirect_survey_target"/>
+                            <field name="survey_start_directly"/>
                         </group>
                         <group name="Survey Results">
                             <field name="survey_result_ids"/>
