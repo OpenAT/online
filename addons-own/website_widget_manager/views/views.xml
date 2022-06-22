@@ -74,7 +74,12 @@
                     <p class="oe_read_only" style="color:grey; font-size:12px;">
                         Please place this widget embed code inside your webpage.<br/>
                         Please make sure to place this widget only in elements where the width will match the base width
-                        for the agreed css media query widths!<br/>
+                        for the agreed css media query widths!<br/><br/>
+                        <strong>Important:</strong> Add the <strong>sandbox</strong> attribute to the iFrame, or the payment
+                        auto redirection might not work. At the very least, you need to lift the following restrictions:
+                        allow-top-navigation allow-scripts allow-forms<br/>
+                        You may need additional restrictions lifted, be sure to test payment!<br/>
+                        <br/>
                     </p>
                     <div colspan="2" class="oe_read_only">
                         <code style="border: 1px solid #e4e4e4; padding: 9px 12px; display: block; background-color: #fdfdfd;">
