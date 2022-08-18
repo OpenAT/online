@@ -2,6 +2,13 @@
 <openerp>
     <data noupdate="0">
 
+        <!-- Fix survey page display text -->
+        <template id="page_fix" name="PageFix" inherit_id="survey.page">
+            <xpath expr="//div[@class='page-header']/p[@class='pull-right']" position="replace">
+                <p class="pull-right">Page <span t-raw='page_nr + 1'/> of <span t-raw="len(survey.page_ids)"/></p>
+            </xpath>
+        </template>
+
         <!-- Add survey css tags to start page -->
         <template id="survey_init_css" inherit_id="survey.survey_init" name="Survey Start Page CSS class">
             <xpath expr="//div[@class='wrap']" position="attributes">
