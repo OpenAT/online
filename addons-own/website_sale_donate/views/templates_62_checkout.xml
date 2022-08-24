@@ -8,6 +8,7 @@
 
         <!-- SUBTEMPLATE Billing Fields - Odoo Field Renderer -->
         <template id="wsd_billing_fields_loop" name="wsd checkout-form-billing-field-loop">
+            <t t-set="honey_pot_count" t-value="0" />
             <t t-foreach="billing_fields or []" t-as="billing_field">
                 <t t-if="billing_field.show">
                     <t t-set="css_classes" t-value="billing_field.css_classes"/>
@@ -37,21 +38,23 @@
                             <!-- FORM GROUP -->
                             <div t-att-class="'form-group has-feedback ' + css_classes + ' f-type-' + f_type + ((' has-error ' + error.get(f_name)) if error.get(f_name) else '')">
 
-                                <!-- ALL FIELD TYPES: LABEL -->
-                                <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
-                                       t-att-for="f_name">
+                                <!-- ALL FIELD TYPES, EXCEPT FOR THE HONEY_POT_FIELD: LABEL -->
+                                <t t-if="f_name != 'honey_pot_field'">
+                                    <label t-att-class="'control-label f-' + f_name + (' mandatory text-danger' if billing_field.mandatory else '')"
+                                           t-att-for="f_name">
 
-                                    <!-- BOOLEAN FIELD AS CHECKBOX -->
-                                    <t t-if="f_type == 'boolean' and not billing_field.style">
-                                        <input type="checkbox"
-                                               t-att-name="f_name"
-                                               t-att-value="checkout.get(f_name)"
-                                               t-att-checked="True if checkout.get(f_name) else ''"
-                                               t-att-required="billing_field.mandatory"/>
-                                    </t>
+                                        <!-- BOOLEAN FIELD AS CHECKBOX -->
+                                        <t t-if="f_type == 'boolean' and not billing_field.style">
+                                            <input type="checkbox"
+                                                   t-att-name="f_name"
+                                                   t-att-value="checkout.get(f_name)"
+                                                   t-att-checked="True if checkout.get(f_name) else ''"
+                                                   t-att-required="billing_field.mandatory"/>
+                                        </t>
 
-                                    <t t-raw="billing_field.label"/>
-                                </label>
+                                        <t t-raw="billing_field.label"/>
+                                    </label>
+                                </t>
 
                                 <!-- ALL FIELD TYPES: MODAL BOX -->
                                 <t t-if="billing_field.information">
@@ -127,14 +130,23 @@
 
                                 <!-- CHAR FIELDS -->
                                 <t t-if="f_type == 'char'">
-                                    <input type="text"
-                                           t-att-name="f_name"
-                                           class="form-control"
-                                           t-att-value="checkout.get(f_name) if not billing_field.nodata else ''"
-                                           t-att-placeholder="billing_field.placeholder"
-                                           t-att-required="billing_field.mandatory"
-                                           t-att="validation_rule"
-                                    />
+                                    <t t-if="f_name == 'honey_pot_field'">
+                                        <t t-set="honey_pot_count" t-value="honey_pot_count + 1" />
+                                        <div class="form-group has-feedback col-lg-6 hide_it">
+                                            <label t-att-class="'control-label f-hpf-' + str(honey_pot_count)" t-att-for="'hpf-' + str(honey_pot_count)"></label>
+                                            <input type="text" t-att-id="'hpf-' + str(honey_pot_count)" name="hpf-1" class="form-control" value="" tabindex="-1" autocomplete="off" />
+                                        </div>
+                                    </t>
+                                    <t t-if="f_name != 'honey_pot_field'">
+                                        <input type="text"
+                                               t-att-name="f_name"
+                                               class="form-control"
+                                               t-att-value="checkout.get(f_name) if not billing_field.nodata else ''"
+                                               t-att-placeholder="billing_field.placeholder"
+                                               t-att-required="billing_field.mandatory"
+                                               t-att="validation_rule"
+                                               />
+                                    </t>
                                 </t>
 
                                 <!-- DATE FIELDS -->

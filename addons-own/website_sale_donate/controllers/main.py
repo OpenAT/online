@@ -223,6 +223,11 @@ class website_sale_donate(website_sale):
         if request.httprequest.method == 'POST' \
                 and product.product_page_template == u'website_sale_donate.ppt_opc' \
                 and 'json_cart_update' not in request.session:
+
+            # CHECK FOR HONEY POT FIELD
+            if self.tapped_into_honeypot(kwargs):
+                return None
+
             # Create or Update sales Order
             # and set the Quantity to the value of the qty selector in the checkoutbox
             if 'add_qty' in kwargs and not 'set_qty' in kwargs:
@@ -1454,3 +1459,19 @@ class website_sale_donate(website_sale):
             return {
                 'error': 'Could not get Data for Sale-Order %s. Maybe you have the wrong user rights?' % sale_order_id,
             }
+
+    @http.route(['/shop/confirm_order'], type='http', auth="public", website=True)
+    def confirm_order(self, **post):
+        # CHECK FOR HONEY POT FIELD
+        if self.tapped_into_honeypot(post):
+            return None
+
+        res = super(website_sale_donate, self).confirm_order(**post)
+        return res
+
+    def tapped_into_honeypot(self, data):
+        if data.get("hpf-1", "") != "":
+            _logger.warning("Honey pot: Cancelling /shop/confirm_order because a honey pot field had a value.")
+            return True
+
+        return False
