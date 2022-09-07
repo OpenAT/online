@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="fson_appointed_date" model="mail.message.subtype">
+            <field name="name">FS-Online appointed date</field>
+            <field name="res_model" eval="False" />
+            <field name="default" eval="False" />
+            <field name="xml_id">fso_mail_message_subtypes_appointed_date.fson_appointed_date</field>
+        </record>
+
+    </data>
+</openerp>
