@@ -4,15 +4,13 @@
     'name': 'fso_partner_appointed_date',
     'summary': '''FS-Online appointed date field.''',
     'description': '''
-FS-Online Instance Configuration
+FS-Online appointed date
 ================================
+Add appointed date field on res.partner to be used for special
+dates in workflows.
 
-Customer configuration for the instance wsca
+Setting this field generates a mail.message with the date.
 
-- Default settings
-- View modifications
-- CSS
-- Translations
     ''',
     'author': 'Martin Kaip',
     'version': '0.1',
