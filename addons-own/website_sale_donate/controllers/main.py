@@ -312,6 +312,9 @@ class website_sale_donate(website_sale):
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
 
+        if kwargs.get('price_donate'):
+            productpage.qcontext['price_donate'] = kwargs.get('price_donate')
+
         # Find selected payment interval
         # 1. Set payment interval from form post data
         if kwargs.get('payment_interval_id'):
