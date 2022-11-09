@@ -32,7 +32,7 @@
                            data-rule-iban="True"
                            t-att-value="partner_values['frst_iban']"/>
                 </div>
-                <div class="form-group has-feedback" for="frst_bic">
+                <div class="form-group has-feedback hidden" for="frst_bic">
                     <label class="control-label" for="frst_bic">BIC</label>
                     <input type="text" name='frst_bic' class="form-control" id="frst_bic"
                            placeholder="Enter BIC"
