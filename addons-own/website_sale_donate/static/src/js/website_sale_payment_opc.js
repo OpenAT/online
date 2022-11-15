@@ -84,6 +84,9 @@ $(document).ready(function () {
                     // console.log('Fallback to price_donate value');
                     former_price_donate_value = parseFloat($("input#price_donate").val());
                 }
+                if (!former_price_donate_value) {
+                    former_price_donate_value = parseFloat($("b[data-oe-field='price']>span.oe_currency_value")[0].innerText);
+                }
                 let current_months = parseInt($selected_option.attr('data-payment-interval-length-in-months'));
                 former_payment_interval.removeAttr('data-checked-before');
                 // console.log('former_payment_interval: ', former_payment_interval.attr('data-payment-interval-external-id'));
@@ -94,6 +97,7 @@ $(document).ready(function () {
                     let current_price_donate_value_rounded = Math.round((current_price_donate_value + Number.EPSILON) * 100) / 100
                     $("input#price_donate").val(current_price_donate_value_rounded).trigger("change");
                     $("input#price_donate").attr('data-value-float', current_price_donate_value);
+                    $("b[data-oe-field='price']>span.oe_currency_value")[0].innerText = current_price_donate_value_rounded;
                 }
             }
             $selected_option.attr('data-checked-before', '1');
