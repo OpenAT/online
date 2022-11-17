@@ -51,7 +51,11 @@ $(document).ready(function () {
                     former_price_donate_value = parseFloat($("input#price_donate").val());
                 }
                 if (!former_price_donate_value) {
-                    former_price_donate_value = parseFloat($("b[data-oe-field='price']>span.oe_currency_value")[0].innerText);
+                    let element = $("b[data-oe-field='price']>span.oe_currency_value")[0];
+                    if (!element) {
+                        element = $("b.oe_price>span.oe_currency_value")[0];
+                    }
+                    former_price_donate_value = parseFloat(element.innerText);
                 }
                 let current_months = parseInt($(this).attr('data-payment-interval-length-in-months'));
                 former_payment_interval.removeAttr('data-checked-before');
@@ -85,7 +89,11 @@ $(document).ready(function () {
                     former_price_donate_value = parseFloat($("input#price_donate").val());
                 }
                 if (!former_price_donate_value) {
-                    former_price_donate_value = parseFloat($("b[data-oe-field='price']>span.oe_currency_value")[0].innerText);
+                    let element = $("b[data-oe-field='price']>span.oe_currency_value")[0];
+                    if (!element) {
+                        element = $("b.oe_price>span.oe_currency_value")[0];
+                    }
+                    former_price_donate_value = parseFloat(element.innerText);
                 }
                 let current_months = parseInt($selected_option.attr('data-payment-interval-length-in-months'));
                 former_payment_interval.removeAttr('data-checked-before');
