@@ -51,11 +51,7 @@ $(document).ready(function () {
                     former_price_donate_value = parseFloat($("input#price_donate").val());
                 }
                 if (!former_price_donate_value) {
-                    let element = $("b[data-oe-field='price']>span.oe_currency_value")[0];
-                    if (!element) {
-                        element = $("b.oe_price>span.oe_currency_value")[0];
-                    }
-                    former_price_donate_value = parseFloat(element.innerText);
+                    former_price_donate_value = parseFloat($("b.oe_price>span.oe_currency_value")[0].innerText);
                 }
                 let current_months = parseInt($(this).attr('data-payment-interval-length-in-months'));
                 former_payment_interval.removeAttr('data-checked-before');
@@ -67,7 +63,7 @@ $(document).ready(function () {
                     let current_price_donate_value_rounded = Math.round((current_price_donate_value + Number.EPSILON) * 100) / 100
                     $("input#price_donate").val(current_price_donate_value_rounded).trigger("change");
                     $("input#price_donate").attr('data-value-float', current_price_donate_value);
-                    $("b[data-oe-field='price']>span.oe_currency_value")[0].innerText = current_price_donate_value_rounded;
+                    $("b.oe_price>span.oe_currency_value")[0].innerText = current_price_donate_value_rounded;
                 }
             }
             $(this).attr('data-checked-before', '1');
@@ -89,11 +85,7 @@ $(document).ready(function () {
                     former_price_donate_value = parseFloat($("input#price_donate").val());
                 }
                 if (!former_price_donate_value) {
-                    let element = $("b[data-oe-field='price']>span.oe_currency_value")[0];
-                    if (!element) {
-                        element = $("b.oe_price>span.oe_currency_value")[0];
-                    }
-                    former_price_donate_value = parseFloat(element.innerText);
+                    former_price_donate_value = parseFloat($("b.oe_price>span.oe_currency_value")[0].innerText);
                 }
                 let current_months = parseInt($selected_option.attr('data-payment-interval-length-in-months'));
                 former_payment_interval.removeAttr('data-checked-before');
@@ -105,7 +97,7 @@ $(document).ready(function () {
                     let current_price_donate_value_rounded = Math.round((current_price_donate_value + Number.EPSILON) * 100) / 100
                     $("input#price_donate").val(current_price_donate_value_rounded).trigger("change");
                     $("input#price_donate").attr('data-value-float', current_price_donate_value);
-                    $("b[data-oe-field='price']>span.oe_currency_value")[0].innerText = current_price_donate_value_rounded;
+                    $("b.oe_price>span.oe_currency_value")[0].innerText = current_price_donate_value_rounded;
                 }
             }
             $selected_option.attr('data-checked-before', '1');
