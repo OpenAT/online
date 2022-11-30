@@ -28,6 +28,13 @@ _logger = logging.getLogger(__name__)
 
 
 class website_sale_donate(website_sale):
+    # List of Tuple (GET-Param, QContext-Field) to map
+    # which GET Parameters are mapped to the qcontext
+    # in order to pre-fill the form with parameters
+    _product_page_parameter_pass_through = [
+        ('price_donate', 'price_donate'),
+        ('payment_interval', 'payment_interval_id'),
+    ]
 
     # Sort countries and states by website language
     # HINT: Sort by "language in context" for name field is not implemented in o8 fixed in o9 and up!
@@ -312,8 +319,9 @@ class website_sale_donate(website_sale):
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
 
-        if kwargs.get('price_donate'):
-            productpage.qcontext['price_donate'] = kwargs.get('price_donate')
+        for get_param, qcontext_field in self._product_page_parameter_pass_through:
+            if kwargs.get(get_param):
+                productpage.qcontext[qcontext_field] = kwargs.get(get_param)
 
         # Find selected payment interval
         # 1. Set payment interval from form post data
