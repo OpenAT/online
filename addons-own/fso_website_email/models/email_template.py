@@ -42,16 +42,16 @@ except Exception as e:
 
 
 # Create an adapter for requests that will use TLSv1 (and not sslv2 which is insecure and disabled in most webservers)
-# TODO: Make sure request uses TLSv1 and not SSL v2.x
+# TODO: Make sure request uses TLSv1.2 and not SSL v2.x
 #       https://lukasa.co.uk/2017/02/Configuring_TLS_With_Requests/
 #       https://lukasa.co.uk/2013/01/Choosing_SSL_Version_In_Requests/
 #       https://stackoverflow.com/questions/14102416/python-requests-requests-exceptions-sslerror-errno-8-ssl-c504-eof-occurred
-class RequestsTLSv1Adapter(HTTPAdapter):
+class RequestsTLSv12Adapter(HTTPAdapter):
     def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
         self.poolmanager = PoolManager(num_pools=connections,
                                        maxsize=maxsize,
                                        block=block,
-                                       ssl_version=ssl.PROTOCOL_TLSv1,
+                                       ssl_version=ssl.PROTOCOL_TLSv1_2,
                                        **pool_kwargs)
 
 
@@ -62,7 +62,7 @@ class PremailerWithTimeout(Premailer):
 
         # Start a new session and mount the TLSv1 Adapter
         s = requests.Session()
-        s.mount(url, RequestsTLSv1Adapter())
+        s.mount(url, RequestsTLSv12Adapter())
 
         # Get the url with timeout
         res = s.get(url, timeout=14.0)
