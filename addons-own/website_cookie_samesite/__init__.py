@@ -1,46 +1,36 @@
 # -*- coding: utf-8 -*-
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 
 import logging
 import openerp
+
 from openerp.http import Response
 
 
 _logger = logging.getLogger(__name__)
 
 
-def wsgi_postload():
+def module_postload():
+    _logger.warning("POSTLOAD: start")
+
     if openerp.service.wsgi_server:
         _logger.warning("POSTLOAD: WSGI server found.")
-        root_handler = openerp.service.wsgi_server.module_handlers[0]
 
-        if root_handler and type(root_handler) is openerp.http.Root:
-            _logger.warning("POSTLOAD: WSGI root handler found, monkey patching get_response() to include \"SameSite=None; Secure\" cookie attributes")
-            root_handler.get_response = get_response.__get__(root_handler, openerp.http.Root)
-        else:
-            _logger.warning("POSTLOAD: WSGI root handler was null or of unexpected type, doing nothing.")
-
+        for handler in openerp.service.wsgi_server.module_handlers:
+            i = 0
+            if type(handler) is openerp.http.Root:
+                i = i + 1
+                _logger.warning("POSTLOAD: WSGI handler %s, monkey patching get_response() to include \"SameSite=None; Secure\" cookie attributes" % i)
+                handler.get_response = patched_get_response.__get__(handler, openerp.http.Root)
     else:
         _logger.warning("POSTLOAD: WSGI server was NOT found doing nothing.")
 
-def wsgi_uninstall(a, b):
-    if openerp.service.wsgi_server:
-        _logger.warning("UNINSTALL: WSGI server found.")
-        root_handler = openerp.service.wsgi_server.module_handlers[0]
+    _logger.warning("POSTLOAD: end")
 
-        if root_handler and type(root_handler) is openerp.http.Root:
-            _logger.warning("UNINSTALL: WSGI root handler found, monkey patching get_response() to its original implementation")
-            root_handler.get_response = openerp.http.Root.get_response.__get__(root_handler, openerp.http.Root)
-        else:
-            _logger.warning("UNINSTALL: WSGI root handler was null or of unexpected type, doing nothing.")
-
-    else:
-        _logger.warning("UNINSTALL: WSGI server was NOT found doing nothing.")
 
 # This is basically a copy of the get_response method of the Root class
 # in /odoo/openerp/http.py, with code added to add cookie attributes
 # (see for loop at the end)
-def get_response(self, httprequest, result, explicit_session):
+def patched_get_response(self, httprequest, result, explicit_session):
     if isinstance(result, Response) and result.is_qweb:
         try:
             result.flatten()
@@ -71,9 +61,10 @@ def get_response(self, httprequest, result, explicit_session):
         response.set_cookie('session_id', httprequest.session.sid, max_age=90 * 24 * 60 * 60)
 
     # Search for the session cookie header, and add Samesite attributes
+    _logger.debug("ADDING SameSite=None; Secure to Set-Cookie attributes.")
     for idx in range(0, len(response.headers)):
-        if response.headers[idx][0] == 'Set-Cookie' and response.headers[idx][1].startswith(b'session_id'):
-            new_cookie_value = response.headers[idx][1] + b'; SameSite=None; Secure;'
-            response.headers[idx] = ('Set-Cookie', new_cookie_value)
+       if response.headers[idx][0] == 'Set-Cookie' and response.headers[idx][1].startswith(b'session_id'):
+           new_cookie_value = response.headers[idx][1] + b'; SameSite=None; Secure;'
+           response.headers[idx] = ('Set-Cookie', new_cookie_value)
 
     return response

@@ -12,10 +12,10 @@
     "depends": [],
     "data": [],
     "qweb": [],
-    "post_load": "wsgi_postload",
+    "post_load": "module_postload",
     "pre_init_hook": None,
     "post_init_hook": None,
-    "uninstall_hook": "wsgi_uninstall",
+    "uninstall_hook": None,
     "auto_install": False,
     "installable": True,
 }
