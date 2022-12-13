@@ -11,18 +11,31 @@ _logger = logging.getLogger(__name__)
 
 def wsgi_postload():
     if openerp.service.wsgi_server:
-        _logger.warning("WSGI server found.")
+        _logger.warning("POSTLOAD: WSGI server found.")
         root_handler = openerp.service.wsgi_server.module_handlers[0]
 
         if root_handler and type(root_handler) is openerp.http.Root:
-            _logger.warning("WSGI root handler found, monkey patching get_response() to include \"SameSite=None; Secure\" cookie attributes")
+            _logger.warning("POSTLOAD: WSGI root handler found, monkey patching get_response() to include \"SameSite=None; Secure\" cookie attributes")
             root_handler.get_response = get_response.__get__(root_handler, openerp.http.Root)
         else:
-            _logger.warning("WSGI root handler was null or of unexpected type, doing nothing.")
+            _logger.warning("POSTLOAD: WSGI root handler was null or of unexpected type, doing nothing.")
 
     else:
-        _logger.warning("WSGI server was NOT found doing nothing.")
+        _logger.warning("POSTLOAD: WSGI server was NOT found doing nothing.")
 
+def wsgi_uninstall(a, b):
+    if openerp.service.wsgi_server:
+        _logger.warning("UNINSTALL: WSGI server found.")
+        root_handler = openerp.service.wsgi_server.module_handlers[0]
+
+        if root_handler and type(root_handler) is openerp.http.Root:
+            _logger.warning("UNINSTALL: WSGI root handler found, monkey patching get_response() to its original implementation")
+            root_handler.get_response = openerp.http.Root.get_response.__get__(root_handler, openerp.http.Root)
+        else:
+            _logger.warning("UNINSTALL: WSGI root handler was null or of unexpected type, doing nothing.")
+
+    else:
+        _logger.warning("UNINSTALL: WSGI server was NOT found doing nothing.")
 
 # This is basically a copy of the get_response method of the Root class
 # in /odoo/openerp/http.py, with code added to add cookie attributes

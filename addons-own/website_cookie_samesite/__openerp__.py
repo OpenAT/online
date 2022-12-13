@@ -15,7 +15,7 @@
     "post_load": "wsgi_postload",
     "pre_init_hook": None,
     "post_init_hook": None,
-    "uninstall_hook": None,
+    "uninstall_hook": "wsgi_uninstall",
     "auto_install": False,
     "installable": True,
 }
