@@ -32,8 +32,8 @@ class website_sale_donate(website_sale):
     # which GET Parameters are mapped to the qcontext
     # in order to pre-fill the form with parameters
     _product_page_parameter_pass_through = [
-        ('price_donate', 'price_donate'),
-        ('payment_interval', 'payment_interval_id'),
+        ('price_donate', 'price_donate', lambda d: d),
+        ('payment_interval', 'payment_interval_id', lambda d: int(d)),
     ]
 
     # Sort countries and states by website language
@@ -319,14 +319,12 @@ class website_sale_donate(website_sale):
         productpage.qcontext['warnings'] = kwargs.get('warnings')
         kwargs['warnings'] = None
 
-        for get_param, qcontext_field in self._product_page_parameter_pass_through:
-            if kwargs.get(get_param):
-                productpage.qcontext[qcontext_field] = kwargs.get(get_param)
-
         # Find selected payment interval
         # 1. Set payment interval from form post data
-        if kwargs.get('payment_interval_id'):
-            productpage.qcontext['payment_interval_id'] = kwargs.get('payment_interval_id')
+        for get_param, qcontext_field, convert_func in self._product_page_parameter_pass_through:
+            if kwargs.get(get_param):
+                productpage.qcontext[qcontext_field] = convert_func(kwargs.get(get_param))
+
         # 2. Or Set payment interval from defaults (only if not already set in productpage.qcontext)
         if not productpage.qcontext.get('payment_interval_id'):
             payment_interval_id = self._get_payment_interval_id(product)
