@@ -63,7 +63,7 @@ def patched_get_response(self, httprequest, result, explicit_session):
     # Search for the session cookie header, and add Samesite attributes
     _logger.debug("ADDING SameSite=None; Secure to Set-Cookie attributes.")
     for idx in range(0, len(response.headers)):
-       if response.headers[idx][0] == 'Set-Cookie' and response.headers[idx][1].startswith(b'session_id'):
+       if response.headers[idx][0] == 'Set-Cookie':
            new_cookie_value = response.headers[idx][1] + b'; SameSite=None; Secure;'
            response.headers[idx] = ('Set-Cookie', new_cookie_value)
 
