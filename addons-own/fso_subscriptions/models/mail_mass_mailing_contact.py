@@ -98,6 +98,9 @@ class MailMassMailingContact(models.Model):
 
     @api.model
     def new_partner_vals(self, list_contact_vals):
+        if not list_contact_vals.get("lastname"):
+            list_contact_vals["lastname"] = list_contact_vals.get("email")
+
         partner_vals = super(MailMassMailingContact, self).new_partner_vals(list_contact_vals)
         partner_vals.update({
             'gender': list_contact_vals.get('gender', False),
