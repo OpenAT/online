@@ -58,6 +58,9 @@ class ProductTemplate(models.Model):
 
     giftee_checkbox_text = fields.Char(string="Giftee-Checkbox Text", translate=True)
 
+    giftee_is_mandatory = fields.Boolean(string="Giftee form is mandatory",
+                                         help="If checked, the giftee form must be filled in")
+
     # Custom donation input template (arbitrary price and donation buttons in checkout box)
     # HINT: dit stands for donation input template
     donation_input_template = fields.Selection(string="Donation Input Template",

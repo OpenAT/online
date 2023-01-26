@@ -470,10 +470,9 @@
             <t t-set="giftee_product" t-value="product if product else website_sale_order.website_order_line[-1].product_id if website_sale_order and website_sale_order.website_order_line else False"/>
 
             <t t-if="fso_forms_giftee_fields">
-                <t t-set="giftee_enabled" t-value="True if (enable_giftee_checkbox or website_sale_order.giftee_partner_id) else ''"/>
+                <t t-set="giftee_enabled" t-value="True if (enable_giftee_checkbox or website_sale_order.giftee_partner_id or giftee_product.giftee_is_mandatory) else ''"/>
                 <div t-att-class="'giftee-column col-sm-12 col-md-12 col-lg-12'">
                     <div class="giftee-row">
-
                         <div class="giftee-checkbox form-group col-sm-12- col-md-12 col-lg-12">
                             <!-- LABEL for all fields -->
                             <label class="control-label h3"
@@ -484,6 +483,7 @@
                                        data-toggle="collapse"
                                        data-target="#giftee-fields"
                                        t-att-checked="giftee_enabled"
+                                       t-att-disabled="giftee_product.giftee_is_mandatory"
                                        aria-expanded="false"
                                        aria-controls="collapseExample"
                                        name="enable_giftee_checkbox"/>

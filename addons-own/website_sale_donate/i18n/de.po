@@ -1686,6 +1686,12 @@ msgid "Giftee-Checkbox Text"
 msgstr "Label der Geschenkspenden-Checkbox"
 
 #. module: website_sale_donate
+#: field:product.product,giftee_is_mandatory:0
+#: field:product.template,giftee_is_mandatory:0
+msgid "Giftee form is mandatory"
+msgstr "Die/der Beschenkte muss ausgefüllt werden"
+
+#. module: website_sale_donate
 #: help:product.product,packaging_ids:0
 msgid "Gives the different ways to package the same product. This has no impact on the picking order and is mainly used if you use the EDI module."
 msgstr "Gives the different ways to package the same product. This has no impact on the picking order and is mainly used if you use the EDI module."

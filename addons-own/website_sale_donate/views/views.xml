@@ -127,6 +127,7 @@
                                         attrs="{'invisible': [('giftee_form_id', '!=', False)]}"
                                 />
                                 <field name="giftee_checkbox_text" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
+                                <field name="giftee_is_mandatory" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
                                 <field name="giftee_email_template" attrs="{'invisible': [('giftee_form_id', '=', False)]}"/>
                             </group>
 
