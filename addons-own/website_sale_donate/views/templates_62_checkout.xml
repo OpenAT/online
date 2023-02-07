@@ -488,6 +488,16 @@
                                        aria-controls="collapseExample"
                                        name="enable_giftee_checkbox"/>
                                 <t t-esc="giftee_product.giftee_checkbox_text if giftee_product else False or 'Diese Spende ist ein Geschenk'"/>
+                                <!--
+                                Disabled checkboxes are not transmitted by the browser in form submit.
+                                Hence, if the checkbox is disabled, we render a hidden input containing
+                                the same name and value as the checkbox.
+                                -->
+                                <input t-if="giftee_product.giftee_is_mandatory"
+                                       type="hidden"
+                                       name="enable_giftee_checkbox"
+                                       t-att-value="giftee_product.giftee_is_mandatory"
+                                       />
                             </label>
                         </div>
 
