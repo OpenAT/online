@@ -235,7 +235,16 @@ class sale_order(osv.Model):
                                                                  line_id=line_id, context=context)
         if context.get('price_donate'):
             res.update({'price_unit': context.get('price_donate')})
+
         return res
+
+    # def _apply_price_donate_to_order_line(self, cr, uid, context, line_id):
+    #     try:
+    #         if line_id:
+    #             line_recordset = self.pool.get('sale.order.line').browse(cr=cr, uid=uid, arg=[line_id], context=context)
+    #             line_recordset.update({'price_donate': context.get('price_donate')})
+    #     except Exception as ex:
+    #         _logger.error(ex)
 
     # extend _cart_update to write price_donate and payment_interval to the sale.order.line if existing in kwargs
     def _cart_update(self, cr, uid, ids, product_id=None, line_id=None, add_qty=0, set_qty=0, context=None, **kwargs):
@@ -299,7 +308,7 @@ class sale_order(osv.Model):
             #             if it is lower then do not set price_donate = do not alter price_unit
             if price_donate \
                     and is_float_gtz(price_donate) \
-                    and sol.product_id.price_donate \
+                    and (sol.product_id.price_donate or sol.product_id.product_tmpl_id.auto_recompute_price_donate) \
                     and price_donate >= sol.product_id.price_donate_min:
                 sol.price_donate = price_donate
                 # sol_obj.write(cr, SUPERUSER_ID, [line_id], {'price_donate': price_donate, }, context=context)

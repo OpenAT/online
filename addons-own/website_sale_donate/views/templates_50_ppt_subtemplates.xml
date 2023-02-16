@@ -213,6 +213,15 @@
                             <t t-call="website_sale_donate.product_quantity_selector"/>
                             <!-- Price -->
                             <t t-call="website_sale.product_price"/>
+
+                            <!-- If auto_recompute_price_donate is active, render an invisble price_donate field,
+                                 some JavaScript will compute the price when the interval is changed -->
+                            <input t-if="product.auto_recompute_price_donate"
+                                   type="hidden"
+                                   id="price_donate"
+                                   name="price_donate"
+                                   t-att-value="product.list_price" />
+
                             <!-- payment interval radio boxes -->
                             <!-- HINT: payment_interval_ids is DEPRECATED use payment_interval_lines_ids instead -->
                             <t t-if="product.payment_interval_lines_ids or product.payment_interval_ids">
