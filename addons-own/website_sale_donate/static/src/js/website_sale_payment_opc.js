@@ -44,6 +44,11 @@ $(document).ready(function () {
             } else {
                 let former_payment_interval = $("input[name='payment_interval_id'][data-checked-before='1']");
                 let former_months = parseInt(former_payment_interval.attr('data-payment-interval-length-in-months'));
+
+                // Treat once_only like yearly
+                if (former_months == 0)
+                    former_months = 12;
+
                 let $price_donate = $("input#price_donate");
                 let former_price_donate_value = parseFloat($price_donate.attr('data-value-float'));
                 if (!former_price_donate_value) {
@@ -54,6 +59,11 @@ $(document).ready(function () {
                     former_price_donate_value = parseFloat($("b.oe_price>span.oe_currency_value")[0].innerText);
                 }
                 let current_months = parseInt($(this).attr('data-payment-interval-length-in-months'));
+
+                // Treat once_only like yearly
+                if (current_months == 0)
+                    current_months = 12;
+
                 former_payment_interval.removeAttr('data-checked-before');
                 // console.log('former_payment_interval: ', former_payment_interval.attr('data-payment-interval-external-id'));
                 // console.log('former_months', former_months, 'former_price_donate_value', former_price_donate_value, 'current_months', current_months);
@@ -78,6 +88,11 @@ $(document).ready(function () {
             } else {
                 let former_payment_interval = $("select[name='payment_interval_id'] option[data-checked-before='1']");
                 let former_months = parseInt(former_payment_interval.attr('data-payment-interval-length-in-months'));
+
+                // Treat once_only like yearly
+                if (former_months == 0)
+                    former_months = 12;
+
                 let $price_donate = $("input#price_donate");
                 let former_price_donate_value = parseFloat($price_donate.attr('data-value-float'));
                 if (!former_price_donate_value) {
@@ -88,6 +103,11 @@ $(document).ready(function () {
                     former_price_donate_value = parseFloat($("b.oe_price>span.oe_currency_value")[0].innerText);
                 }
                 let current_months = parseInt($selected_option.attr('data-payment-interval-length-in-months'));
+
+                // Treat once_only like yearly
+                if (current_months == 0)
+                    current_months = 12;
+
                 former_payment_interval.removeAttr('data-checked-before');
                 // console.log('former_payment_interval: ', former_payment_interval.attr('data-payment-interval-external-id'));
                 // console.log('former_months', former_months, 'former_price_donate_value', former_price_donate_value, 'current_months', current_months);
