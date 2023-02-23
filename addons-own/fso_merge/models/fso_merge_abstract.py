@@ -247,9 +247,12 @@ class FSOMergeAbstract(models.AbstractModel):
 
     @api.model
     def _fso_merge_message_post(self, rec_to_remove=None, rec_to_keep=None):
-        logger.info("FSO MERGE: Add merge-info-message to the chatter for record-to-keep (ID %s)" % rec_to_keep.id)
-        rec_to_keep.message_post(body="FSO MERGE: Record %s (ID %s) was merged into this record!"
+        if rec_to_keep._model._name != "res.users":
+            logger.info("FSO MERGE: Add merge-info-message to the chatter for record-to-keep (ID %s)" % rec_to_keep.id)
+            rec_to_keep.message_post(body="FSO MERGE: Record %s (ID %s) was merged into this record!"
                                       "" % (rec_to_remove.display_name, rec_to_remove.id))
+        else:
+            logger.info("FSO MERGE: Not adding merge-info-message, model is res.users (ID %s)." % rec_to_keep.id)
 
     @api.model
     def _fso_merge_unlink(self, rec_to_remove=None):
