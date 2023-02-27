@@ -8,7 +8,17 @@
     }
 
     function try_delete_template (e) {
-        var template_id = e.path[0].dataset.templateId;
+        var template_id = 0;
+
+        if (e.path) {
+            template_id = e.path[0].dataset.templateId;
+        } else if (e.composedPath) {
+            template_id = e.composedPath()[0].dataset.templateId;
+        } else {
+            console.error("Could not delete template. e.path and e.composedPath were not found.");
+        }
+
+        console.log("Template to delete: " + template_id);
 
         $('#email_templates').after(
             openerp.qweb.render(
