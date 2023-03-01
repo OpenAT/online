@@ -21,7 +21,7 @@ class MailMassMailingContact(models.Model):
 
     # ATTENTION: personemail_id can only be set by users in the 'mass_mailing.access_mass_mailing_contact' group!
     personemail_id = fields.Many2one(comodel_name='frst.personemail', string="Person Email (FRST)",
-                                     domain=[('email', '!=', False)])
+                                     domain=[('email', '!=', False)], index=True)
 
     # ATTENTION: This is not available in Fundraising Studio!
     pe_partner_id = fields.Many2one(string="Partner der PersonEmail", comodel_name='res.partner',

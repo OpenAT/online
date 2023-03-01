@@ -35,7 +35,7 @@ class FRSTPersonEmailGruppe(models.Model):
 
             # Search for existing mailing list contact
             # ----------------------------------------
-            lc = mlist.contact_ids.filtered(lambda r: r.personemail_id == peg.frst_personemail_id)
+            lc = mlist.contact_ids.search([('personemail_id', '=', peg.frst_personemail_id.id)])
             assert len(lc) <= 1, _("More than one list contact found for the same PersonEmail in one mailing list! %s"
                                    ) % lc.ids
 
