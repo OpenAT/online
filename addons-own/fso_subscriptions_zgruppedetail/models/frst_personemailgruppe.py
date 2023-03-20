@@ -6,7 +6,6 @@ from datetime import timedelta
 import logging
 logger = logging.getLogger(__name__)
 
-
 # PersonEmailGruppe: FRST groups for email addresses
 class FRSTPersonEmailGruppe(models.Model):
     _inherit = "frst.personemailgruppe"
@@ -20,6 +19,7 @@ class FRSTPersonEmailGruppe(models.Model):
     @api.multi
     def compute_mass_mailing_list_contact_ids(self, vals):
         mlists = self.env['mail.mass_mailing.list'].sudo().search([('zgruppedetail_id', '!=', False)])
+        mlistcontacts = self.env['mail.mass_mailing.contact']
         mlists_zgroups = mlists.mapped('zgruppedetail_id')
 
         # Only process PersonEmailGroups with a zGruppeDetail used in a mailing list
@@ -35,7 +35,7 @@ class FRSTPersonEmailGruppe(models.Model):
 
             # Search for existing mailing list contact
             # ----------------------------------------
-            lc = mlist.contact_ids.search([('personemail_id', '=', peg.frst_personemail_id.id)])
+            lc = mlistcontacts.search([('list_id', '=', mlist.id), ('personemail_id', '=', peg.frst_personemail_id.id)])
             assert len(lc) <= 1, _("More than one list contact found for the same PersonEmail in one mailing list! %s"
                                    ) % lc.ids
 
