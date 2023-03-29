@@ -11,6 +11,7 @@ from urlparse import urlparse
 # from openerp.addons.website.models.website import slug
 
 import locale
+import ast
 # import re
 
 # import copy
@@ -272,6 +273,7 @@ class website_sale_donate(website_sale):
 
         # Add Information that the product page controller was called
         productpage.qcontext['product_controller_called'] = True
+        productpage.qcontext['ast'] = ast
 
         # Render Custom Product Template based on the product_page_template field if any set
         # Add One-Page-Checkout qcontext if template is ppt_opc
