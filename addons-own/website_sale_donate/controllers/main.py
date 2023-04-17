@@ -426,11 +426,16 @@ class website_sale_donate(website_sale):
         # Redirect to the calling page (referrer) if the browser has added it
         # HINT: Not every browser adds the referrer to the header
         referrer = request.httprequest.referrer
+        _logger.info("Use REFERER (from request): %s" % referrer)
+
         if not referrer:
             if request.session.get('last_page'):
                 referrer = request.session.get('last_page')
+                _logger.info("Use REFERER (from session last_page): %s" % referrer)
             else:
                 referrer = '/shop/product/%s' % product.product_tmpl_id.id
+                _logger.info("Use REFERER (from product.product_tmpl_id Point 1): %s" % referrer)
+
         if '?' not in referrer:
             referrer = referrer + '?'
 
@@ -462,6 +467,8 @@ class website_sale_donate(website_sale):
             # ATTENTION! Remove kwargs to avoid calling OPC product pages with all kwargs again!
             if "/product" in referrer:
                 referrer = '/shop/product/%s?' % product.product_tmpl_id.id
+                _logger.info("Use REFERER (from product.product_tmpl_id Point 2): %s" % referrer)
+
             # Add the warning to the referer page
             referrer = referrer + '&warnings=' + warnings
             _logger.error("cart_update(): END, arbitrary price (%s) ERROR! Warnings: %s! Redirecting to referrer: %s"
