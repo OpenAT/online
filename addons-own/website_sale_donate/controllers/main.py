@@ -420,21 +420,15 @@ class website_sale_donate(website_sale):
             _logger.warning("cart_update(): START")
 
         cr, uid, context = request.cr, request.uid, request.context
-
         product = request.registry['product.product'].browse(cr, SUPERUSER_ID, [int(product_id)], context=context)
+        referrer = None
 
-        # Redirect to the calling page (referrer) if the browser has added it
-        # HINT: Not every browser adds the referrer to the header
-        referrer = request.httprequest.referrer
-        _logger.info("Use REFERER (from request): %s" % referrer)
-
-        if not referrer:
-            if request.session.get('last_page'):
-                referrer = request.session.get('last_page')
-                _logger.info("Use REFERER (from session last_page): %s" % referrer)
-            else:
-                referrer = '/shop/product/%s' % product.product_tmpl_id.id
-                _logger.info("Use REFERER (from product.product_tmpl_id Point 1): %s" % referrer)
+        if request.session.get('last_page'):
+            referrer = request.session.get('last_page')
+            _logger.info("Use REFERER (from session last_page): %s" % referrer)
+        else:
+            referrer = '/shop/product/%s' % product.product_tmpl_id.id
+            _logger.info("Use REFERER (from product.product_tmpl_id Point 1): %s" % referrer)
 
         if '?' not in referrer:
             referrer = referrer + '?'
