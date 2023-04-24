@@ -32,3 +32,6 @@ class SaleOrderLineSosync(models.Model):
     # fs_product_type is now also copied by _cart_update() to the so line
     # ATTENTION: in product.template fs_product_type is a selection field but in so line for convenience only a char
     fs_product_type = fields.Char(sosync="fson-to-frst")
+
+    cat_root_id = fields.Many2one(sosync="fson-to-frst")
+    cat_id = fields.Many2one(sosync="fson-to-frst")
