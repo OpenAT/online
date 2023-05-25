@@ -12,6 +12,7 @@
                     <group>
                         <field name="id" readonly="True"/>
                         <field name="url" widget="url"/>
+                        <field name="verify_ssl" />
                         <field name="timeout"/>
                     </group>
                     <group>

@@ -84,6 +84,9 @@ class FSONWebhookTarget(models.Model):
     crt_key = fields.Binary(string="SSL-Cert-Key (PEM)")
 
     timeout = fields.Integer(string="Timeout in seconds", required=True, default=10)
+    verify_ssl = fields.Boolean(string="Verify SSL", default=True,
+                                help="This should always be on. Only turn this off for exceptional cases, where no sensitive data is sent.")
+
 
     @api.constrains('auth_type', 'user', 'password', 'crt_pem', 'crt_key')
     def constrain_auth_type(self):
@@ -235,7 +238,7 @@ class FSONWebhooks(models.Model):
             "Key 'headers' missing in request_kwargs or not a dict!")
 
         session = Session()
-        session.verify = True
+        session.verify = tgt.verify_ssl
 
         # Target
         request_kwargs['url'] = tgt.url
