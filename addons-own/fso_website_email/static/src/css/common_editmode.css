@@ -221,3 +221,10 @@ body #oe_snippets .nav > li.active {
     font-size: 16px;
     font-family: "Courier New", Courier, monospace;
 }
+
+/* Fix hover button not clickable because
+it is too far down */
+a:has(img) {
+    display: inline-block;
+}
+
