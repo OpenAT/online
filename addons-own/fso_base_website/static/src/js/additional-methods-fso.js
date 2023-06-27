@@ -18,6 +18,17 @@ $.validator.addMethod("dateDEBirthdate", function (value, element, params) {
     return this.optional(element) || test;
 }, $.validator.messages.date);
 
+$.validator.addMethod("dateDE", function (value, element, params) {
+    // Use moment.js to validate the date input
+    // HINT: If nothing is passed to moment#isBefore, it will default to the current time.
+    var test = moment(value, 'DD.MM.YYYY', 'de', true).isBetween('1900-01-01', moment().add(1, 'y'), 'year');
+    // Debug
+    // console.log(value);
+    // console.log(test);
+    // HINT: .optional() is there to return true as long as the input is empty
+    return this.optional(element) || test;
+}, $.validator.messages.date);
+
 $.validator.addMethod("floatDE", function (value, element) {
     // HINT: .optional() is there to return true as long as the input is empty
     return this.optional( element ) || /^[0-9]+[,]*[0-9]*$/.test( value );
