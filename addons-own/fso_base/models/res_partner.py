@@ -57,6 +57,8 @@ class ResPartner(models.Model):
     firstname = fields.Char(index=True, track_visibility='onchange')
     lastname = fields.Char(index=True, track_visibility='onchange')
 
+    svuid_nummer = fields.Char(string="SV/UID Nummer")
+
     # DISABLED FOR NOW: Extend the gender field for all FS options
     # ATTENTION: Makes for web no sense therefore disabled!
     #gender = fields.Selection(selection_add=[('male_male', 'Male/Male'),

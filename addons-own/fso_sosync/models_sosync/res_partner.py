@@ -105,3 +105,4 @@ class ResPartnerSosync(models.Model):
     fson_admin_user = fields.Boolean(sosync="fson-to-frst")
     fson_donor_user = fields.Boolean(sosync="fson-to-frst")
 
+    svuid_nummer = fields.Char(sosync="True")

@@ -13,6 +13,7 @@
                 <field name="email" position="after">
                     <field name="donation_deduction_optout_web"/>
                     <field name="donation_deduction_disabled"/>
+                    <field name="svuid_nummer" />
                 </field>
             </field>
         </record>
@@ -35,6 +36,7 @@
                     <field name="country_id"/>
                     <field name="newsletter_web"/>
                     <field name="birthdate_web"/>
+                    <field name="svuid_nummer" />
                 </field>
                 <filter string="Salesperson" position="before">
                     <filter string="Anrede" context="{'group_by': 'gender'}"/>
