@@ -363,12 +363,16 @@ class BaseSosync(models.AbstractModel):
         values = values if values else dict()
 
         # Detect sosync-record-version changes
+        create_values = values
         sosync_write_date, watched_fields = self.sosync_check(values=values)
         if sosync_write_date:
-            values['sosync_write_date'] = sosync_write_date
+            # When adding the sosync_write_date, clone the dictionary
+            # first, otherwise all subsequently created models will
+            create_values = dict(values)
+            create_values['sosync_write_date'] = sosync_write_date
 
         # Create the record
-        new_record = super(BaseSosync, self).create(values, **kwargs)
+        new_record = super(BaseSosync, self).create(create_values, **kwargs)
 
         # Create the sosync sync job
         if new_record and sosync_write_date:
