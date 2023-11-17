@@ -516,7 +516,7 @@
 					        	    response;
 					        	if (params.match(addUrlParams)) {
 					        		params = params.replace(addUrlParams,"");
-					        		returnParams = params.substring(0, params.length - 1);
+					        		returnParams = params.substring(0, params.length);
 					        	}
 					        	response = this.pathname + returnParams;
 					        	sendMsg(0,0,'inPageAnchor','#'+response);
