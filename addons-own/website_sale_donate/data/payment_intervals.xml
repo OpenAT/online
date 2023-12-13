@@ -14,7 +14,7 @@
         </record>
         <record id="quarterly" model="product.payment_interval">
             <field name="name">quarterly</field>
-            <field name="length_in_months">4</field>
+            <field name="length_in_months">3</field>
         </record>
         <record id="monthly_4" model="product.payment_interval">
             <field name="name">4-monthly</field>
