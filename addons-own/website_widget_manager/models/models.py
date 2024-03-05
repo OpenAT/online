@@ -184,11 +184,9 @@ class WebsiteAsWidget(models.Model):
             widget_code_header = Template("""<!-- FS-Online widgets-resize-scripts -->
 <script type="text/javascript" src="$script_url"></script>
 <script type="text/javascript">
-    //<![CDATA[ 
-        document.addEventListener("DOMContentLoaded", function(event) {
-            iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: false, inPageAnchors: true, log: false}, '.fso_iframe') 
-        });
-    //]]>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    iFrameResize({baseUrl: '$base_url', heightCalculationMethod: 'taggedElement', checkOrigin: false, enablePublicMethods: true, useGetParam: true, inPageLinks: false, inPageAnchors: true, log: false}, '.fso_iframe')
+  });
 </script>
 """).substitute(script_url=resize_script_url, base_url=source_base)
 
