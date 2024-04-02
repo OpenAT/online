@@ -16,6 +16,8 @@
                 eval="[
                     (0, 0, {'name': 'id'}),
                     (0, 0, {'name': 'name'}),
+                    (0, 0, {'name': 'xml_id'}),
+                    (0, 0, {'name': 'length_in_months'}),
                     ]"
             />
         </record>
