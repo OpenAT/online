@@ -191,15 +191,27 @@ class FSOEmailEditor(http.Controller):
         # Copy existing e-mail template
         if template_model == 'email.template':
             template_to_copy = request.env[template_model].browse([template_id])
+
             if not template_to_copy:
                 return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
-            request.env['email.template'].sudo().create({
-                'name': new_name,
-                'model_id': template_to_copy.model_id.id,
-                'fso_email_template': template_to_copy.fso_email_template,
-                'fso_template_view_id': template_to_copy.fso_template_view_id.id,
-                'body_html': template_to_copy.body_html,
+
+            new_template = template_to_copy.copy()
+            new_template.write({
+                'name': new_name
             })
+
+            # request.env['email.template'].sudo().create({
+            #     'name': new_name,
+            #     'model_id': template_to_copy.model_id.id,
+            #     'fso_email_template': template_to_copy.fso_email_template,
+            #     'fso_template_view_id': template_to_copy.fso_template_view_id.id,
+            #     'body_html': template_to_copy.body_html,
+            #     'fso_email_text': template_to_copy.fso_email_text,
+            #     'subject': template_to_copy.subject,
+            #     'email_from': template_to_copy.email_from,
+            #     'email_to': template_to_copy.email_to,
+            #     'reply_to': template_to_copy.reply_to,
+            # })
             return request.redirect('/fso/email/select?%s' % urllib.urlencode(kw))
 
         # Return to the e-mail theme/template selection page
