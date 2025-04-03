@@ -65,7 +65,7 @@ class PremailerWithTimeout(Premailer):
         s.mount(url, RequestsTLSv1Adapter())
 
         # Get the url with timeout
-        res = s.get(url, timeout=14.0)
+        res = s.get(url, verify=False, timeout=14.0)
         return res.text
 
 
